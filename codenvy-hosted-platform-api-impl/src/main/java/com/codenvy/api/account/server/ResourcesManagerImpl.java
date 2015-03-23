@@ -27,15 +27,9 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.runner.dto.ResourcesDescriptor;
 import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.dto.server.DtoFactory;
-import org.everrest.websockets.WSConnectionContext;
-import org.everrest.websockets.message.ChannelBroadcastMessage;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -52,19 +46,20 @@ import static java.lang.String.format;
  * @author Max Shaposhnik
  */
 public class ResourcesManagerImpl implements ResourcesManager {
-    private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
-
-    private final AccountDao   accountDao;
-    private final WorkspaceDao workspaceDao;
-    private final Integer      freeMaxLimit;
+    private final AccountDao               accountDao;
+    private final WorkspaceDao             workspaceDao;
+    private final Integer                  freeMaxLimit;
+    private final ResourcesChangesNotifier resourcesChangesNotifier;
 
     @Inject
     public ResourcesManagerImpl(@Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
                                 AccountDao accountDao,
-                                WorkspaceDao workspaceDao) {
+                                WorkspaceDao workspaceDao,
+                                ResourcesChangesNotifier resourcesChangesNotifier) {
         this.freeMaxLimit = freeMaxLimit;
         this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
+        this.resourcesChangesNotifier = resourcesChangesNotifier;
     }
 
     @Override
@@ -82,8 +77,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
             Workspace workspace = ownWorkspaces.get(resourcesDescriptor.getWorkspaceId());
 
             if (resourcesDescriptor.getRunnerRam() != null) {
-                workspace.getAttributes()
-                         .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
+                workspace.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
             }
 
             if (resourcesDescriptor.getBuilderTimeout() != null) {
@@ -92,13 +86,12 @@ public class ResourcesManagerImpl implements ResourcesManager {
             }
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
-                workspace.getAttributes().put(Constants.RUNNER_LIFETIME,
-                                              Integer.toString(resourcesDescriptor.getRunnerTimeout()));
+                workspace.getAttributes().put(Constants.RUNNER_LIFETIME, Integer.toString(resourcesDescriptor.getRunnerTimeout()));
             }
             workspaceDao.update(workspace);
             if (resourcesDescriptor.getRunnerRam() != null) {
-                publishResourcesChangedWsEvent(resourcesDescriptor.getWorkspaceId(),
-                                               Integer.toString(resourcesDescriptor.getRunnerRam()));
+                resourcesChangesNotifier.publishTotalMemoryChangedEvent(resourcesDescriptor.getWorkspaceId(),
+                                                                        Integer.toString(resourcesDescriptor.getRunnerRam()));
             }
         }
     }
@@ -112,11 +105,12 @@ public class ResourcesManagerImpl implements ResourcesManager {
                         format("Workspace %s is not related to account %s", resourcesDescriptor.getWorkspaceId(), accountId));
             }
 
-            if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null &&
-                resourcesDescriptor.getBuilderTimeout() == null) {
+            if (resourcesDescriptor.getRunnerTimeout() == null && resourcesDescriptor.getRunnerRam() == null
+                && resourcesDescriptor.getBuilderTimeout() == null) {
                 throw new ConflictException(
                         format("Missed description of resources for workspace %s", resourcesDescriptor.getWorkspaceId()));
             }
+
             Integer runnerRam = resourcesDescriptor.getRunnerRam();
             if (runnerRam != null) {
                 if (runnerRam < 0) {
@@ -125,43 +119,23 @@ public class ResourcesManagerImpl implements ResourcesManager {
                 }
 
                 final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
-                if ((activeSaasSubscription == null || "sas-community".equals(activeSaasSubscription.getPlanId())) &&
-                    runnerRam > freeMaxLimit) {
+                if ((activeSaasSubscription == null || "sas-community".equals(activeSaasSubscription.getPlanId()))
+                    && runnerRam > freeMaxLimit) {
                     throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
                                                        resourcesDescriptor.getWorkspaceId()));
 
                 }
-
-            }
-            if (resourcesDescriptor.getBuilderTimeout() != null) {
-                if (resourcesDescriptor.getBuilderTimeout() < 0) {
-                    throw new ConflictException(format("Builder timeout for workspace %s is a negative number",
-                                                       resourcesDescriptor.getWorkspaceId()));
-                }
             }
 
-            if (resourcesDescriptor.getRunnerTimeout() != null) {
-                if (resourcesDescriptor.getRunnerTimeout() < -1) { // we allow -1 here
-                    throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
-                                                       resourcesDescriptor.getWorkspaceId()));
-                }
+            if (resourcesDescriptor.getBuilderTimeout() != null && resourcesDescriptor.getBuilderTimeout() < 0) {
+                throw new ConflictException(format("Builder timeout for workspace %s is a negative number",
+                                                   resourcesDescriptor.getWorkspaceId()));
             }
-        }
-    }
 
-    private void publishResourcesChangedWsEvent(String workspaceId, String totalMemory) {
-        try {
-            final ChannelBroadcastMessage bm = new ChannelBroadcastMessage();
-
-            bm.setChannel(format("workspace:resources:%s", workspaceId));
-
-            final ResourcesDescriptor resourcesDescriptor = DtoFactory.getInstance().createDto(ResourcesDescriptor.class)
-                                                                      .withTotalMemory(totalMemory);
-
-            bm.setBody(DtoFactory.getInstance().toJson(resourcesDescriptor));
-            WSConnectionContext.sendMessage(bm);
-        } catch (Exception e) {
-            LOG.error(e.getMessage(), e);
+            if (resourcesDescriptor.getRunnerTimeout() != null && resourcesDescriptor.getRunnerTimeout() < -1) {// we allow -1 here
+                throw new ConflictException(format("Runner timeout for workspace %s is a negative number",
+                                                   resourcesDescriptor.getWorkspaceId()));
+            }
         }
     }
 }

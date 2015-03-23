@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.server;
 
-import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.subscription.ServiceId;
 
 import org.eclipse.che.api.account.server.ResourcesManager;
@@ -62,7 +61,6 @@ import static org.testng.Assert.assertEquals;
 public class ResourcesManagerImplTest {
     private static final String ACCOUNT_ID = "accountId";
 
-    private static final Long    FREE_MEMORY         = 61440L;
     private static final Integer MAX_LIMIT           = 4096;
     private static final String  FIRST_WORKSPACE_ID  = "firstWorkspace";
     private static final String  SECOND_WORKSPACE_ID = "secondWorkspace";
@@ -74,7 +72,7 @@ public class ResourcesManagerImplTest {
     AccountDao accountDao;
 
     @Mock
-    MeterBasedStorage meterBasedStorage;
+    ResourcesChangesNotifier resourcesChangesNotifier;
 
     ResourcesManager resourcesManager;
 
@@ -95,7 +93,7 @@ public class ResourcesManagerImplTest {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(firstWorkspace, secondWorkspace));
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
 
-        resourcesManager = new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao);
+        resourcesManager = new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao, resourcesChangesNotifier);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
@@ -160,24 +158,6 @@ public class ResourcesManagerImplTest {
     }
 
     @Test
-    public void shouldRedistributeRAMResources() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(FIRST_WORKSPACE_ID)
-                                                                       .withRunnerRam(512),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(SECOND_WORKSPACE_ID)
-                                                                       .withRunnerRam(512)));
-
-        ArgumentCaptor<Workspace> workspaceArgumentCaptor = ArgumentCaptor.forClass(Workspace.class);
-        verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
-
-        for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
-            assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "512");
-        }
-    }
-
-    @Test
     public void shouldRedistributeRunnerLimitResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -214,12 +194,39 @@ public class ResourcesManagerImplTest {
     }
 
     @Test
+    public void shouldRedistributeRAMResources() throws Exception {
+        resourcesManager.redistributeResources(ACCOUNT_ID,
+                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                       .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                       .withRunnerRam(1024),
+                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                       .withWorkspaceId(SECOND_WORKSPACE_ID)
+                                                                       .withRunnerRam(2048)));
+
+        ArgumentCaptor<Workspace> workspaceArgumentCaptor = ArgumentCaptor.forClass(Workspace.class);
+        verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
+
+        for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
+            switch (workspace.getId()) {
+                case FIRST_WORKSPACE_ID:
+                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "1024");
+                    break;
+                case SECOND_WORKSPACE_ID:
+                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "2048");
+                    break;
+            }
+        }
+
+        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq("1024"));
+        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("2048"));
+    }
+
+    @Test
     public void shouldBeAbleToAddMemoryWithoutLimitationForAccountWithNotCommunitySubscription() throws Exception {
         //given
         Subscription subscription = Mockito.mock(Subscription.class);
         when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
         when(accountDao.getActiveSubscription(eq(ACCOUNT_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
-
 
         //when
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -243,5 +250,8 @@ public class ResourcesManagerImplTest {
                     break;
             }
         }
+
+        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq(String.valueOf(Integer.MAX_VALUE)));
+        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("0"));
     }
 }

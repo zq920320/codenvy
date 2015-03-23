@@ -21,6 +21,7 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
+import com.codenvy.api.account.server.ResourcesChangesNotifier;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
@@ -36,6 +37,7 @@ import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -43,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
@@ -57,6 +60,7 @@ import static com.codenvy.api.account.subscription.ServiceId.SAAS;
 public class SaasSubscriptionService extends SubscriptionService {
     private static final Logger LOG = LoggerFactory.getLogger(SaasSubscriptionService.class);
 
+    private final int                       freeMaxLimit;
     private final WorkspaceDao              workspaceDao;
     private final AccountDao                accountDao;
     private final MeterBasedStorage         meterBasedStorage;
@@ -66,9 +70,11 @@ public class SaasSubscriptionService extends SubscriptionService {
     private final SubscriptionMailSender    mailSender;
     private final BillingService            billingService;
     private final SubscriptionServiceHelper subscriptionServiceHelper;
+    private final ResourcesChangesNotifier  resourcesChangesNotifier;
 
     @Inject
-    public SaasSubscriptionService(WorkspaceDao workspaceDao,
+    public SaasSubscriptionService(@Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
+                                   WorkspaceDao workspaceDao,
                                    AccountDao accountDao,
                                    MeterBasedStorage meterBasedStorage,
                                    BillingPeriod billingPeriod,
@@ -76,8 +82,10 @@ public class SaasSubscriptionService extends SubscriptionService {
                                    EventService eventService,
                                    SubscriptionMailSender mailSender,
                                    BillingService billingService,
-                                   SubscriptionServiceHelper subscriptionServiceHelper) {
+                                   SubscriptionServiceHelper subscriptionServiceHelper,
+                                   ResourcesChangesNotifier resourcesChangesNotifier) {
         super(SAAS, SAAS);
+        this.freeMaxLimit = freeMaxLimit;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
         this.meterBasedStorage = meterBasedStorage;
@@ -87,6 +95,7 @@ public class SaasSubscriptionService extends SubscriptionService {
         this.mailSender = mailSender;
         this.billingService = billingService;
         this.subscriptionServiceHelper = subscriptionServiceHelper;
+        this.resourcesChangesNotifier = resourcesChangesNotifier;
     }
 
     @Override
@@ -127,8 +136,33 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
-        billingService.removeSubscription(subscription.getAccountId(), subscription.getEndDate().getTime());
         eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
+
+        billingService.removeSubscription(subscription.getAccountId(), subscription.getEndDate().getTime());
+
+        List<Workspace> workspaces;
+        try {
+            workspaces = workspaceDao.getByAccount(subscription.getAccountId());
+        } catch (ServerException e) {
+            LOG.error("Can't get workspaces by account %s for resetting runner ram to max allowed");
+            return;
+        }
+        for (Workspace workspace : workspaces) {
+            if (!workspace.getAttributes().containsKey(Constants.RUNNER_MAX_MEMORY_SIZE)) {
+                continue;
+            }
+
+            final String runnerRam = workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE);
+            if (Integer.parseInt(runnerRam) > freeMaxLimit) {
+                workspace.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, String.valueOf(freeMaxLimit));
+                try {
+                    workspaceDao.update(workspace);
+                    resourcesChangesNotifier.publishTotalMemoryChangedEvent(workspace.getId(), String.valueOf(freeMaxLimit));
+                } catch (NotFoundException | ConflictException | ServerException e) {
+                    LOG.error("Can't reset size of runner ram to max allowed for workspace " + workspace.getId());
+                }
+            }
+        }
     }
 
     @Override
