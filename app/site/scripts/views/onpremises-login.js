@@ -48,7 +48,7 @@
 
                 __submit : function(){
                     Account.processLogin(
-                            $(this.el).find("input[name='username']").val(),
+                            $(this.el).find("input[name='username']").val().toLowerCase(),
                             $(this.el).find("input[name='password']").val(),
                             Account.getQueryParameterByName('redirect_url'),
                             _.bind(function(d){
