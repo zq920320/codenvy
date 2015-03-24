@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 
+import static java.lang.String.format;
+
 /**
  * Locks and unlocks account and its workspaces
  *
@@ -57,7 +59,7 @@ public class AccountLocker {
             account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY);
             accountDao.update(account);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error removing lock property from account  {} .", accountId);
+            LOG.error(format("Error removing lock property from account %s .", accountId), e);
         }
 
         try {
@@ -66,11 +68,11 @@ public class AccountLocker {
                 try {
                     workspaceDao.update(ws);
                 } catch (NotFoundException | ServerException | ConflictException e) {
-                    LOG.error("Error removing lock property from workspace  {} .", ws.getId());
+                    LOG.error(format("Error removing lock property from workspace %s .", ws.getId()), e);
                 }
             }
         } catch (ServerException e) {
-            LOG.error("Error removing lock property from workspace {} .", accountId);
+            LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
         }
         eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
     }
@@ -81,7 +83,7 @@ public class AccountLocker {
             account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
             accountDao.update(account);
         } catch (ServerException | NotFoundException e) {
-            LOG.error("Error writing lock property into account  {} .", accountId);
+            LOG.error(format("Error writing lock property into account %s .", accountId), e);
         }
 
         eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
@@ -91,11 +93,11 @@ public class AccountLocker {
                 try {
                     workspaceDao.update(ws);
                 } catch (NotFoundException | ServerException | ConflictException e) {
-                    LOG.error("Error writing  lock property into workspace  {} .", ws.getId());
+                    LOG.error(format("Error writing lock property into workspace %s .", ws.getId()), e);
                 }
             }
         } catch (ServerException e) {
-            e.printStackTrace();
+            LOG.error(format("Can't get account's workspaces %s for writing lock property", accountId), e);
         }
     }
 
@@ -105,7 +107,7 @@ public class AccountLocker {
             account.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
             accountDao.update(account);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error writing lock property into account  {} .", accountId);
+            LOG.error(format("Error writing lock property into account %s .", accountId), e);
         }
     }
 
@@ -117,7 +119,7 @@ public class AccountLocker {
             account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY);
             accountDao.update(account);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error removing lock property from account  {} .", accountId);
+            LOG.error(format("Error removing lock property from account %s .", accountId), e);
         }
     }
 }

@@ -21,8 +21,8 @@ import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
 import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
 import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
 import com.codenvy.api.account.subscription.saas.job.RefillJob;
-import com.codenvy.api.account.subscription.saas.limit.ActiveRunHolder;
-import com.codenvy.api.account.subscription.saas.limit.ActiveRunRemainResourcesChecker;
+import com.codenvy.api.account.subscription.saas.limit.ActiveTasksHolder;
+import com.codenvy.api.account.subscription.saas.limit.ActiveTasksInterrupter;
 import com.codenvy.api.account.subscription.saas.limit.CheckRemainResourcesOnStopSubscriber;
 import com.codenvy.api.account.subscription.schedulers.GenerateInvoicesJob;
 import com.codenvy.api.account.subscription.schedulers.MailScheduler;
@@ -45,8 +45,8 @@ public class SubscriptionModule extends AbstractModule {
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(SaasSubscriptionService.class);
 
-        bind(ActiveRunHolder.class);
-        bind(ActiveRunRemainResourcesChecker.class).asEagerSingleton();
+        bind(ActiveTasksHolder.class).asEagerSingleton();
+        bind(ActiveTasksInterrupter.class).asEagerSingleton();
         bind(CheckRemainResourcesOnStopSubscriber.class).asEagerSingleton();
         bind(RefillJob.class);
         bind(MeterBasedCharger.class);

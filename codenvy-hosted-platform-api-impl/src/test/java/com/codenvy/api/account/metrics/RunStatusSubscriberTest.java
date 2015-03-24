@@ -17,8 +17,6 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.runner.RunQueue;
@@ -68,8 +66,7 @@ public class RunStatusSubscriberTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, runQueue, resourcesUsageTracker,
-                                                      new MonthlyBillingPeriod());
+        runStatusSubscriber = new RunStatusSubscriber(10, eventService, workspaceDao, runQueue, resourcesUsageTracker);
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
 

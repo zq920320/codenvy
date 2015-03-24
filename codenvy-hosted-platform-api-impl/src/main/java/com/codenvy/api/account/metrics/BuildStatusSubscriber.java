@@ -17,17 +17,13 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.billing.BillingPeriod;
-
 import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
-import org.eclipse.che.api.builder.dto.DependencyRequest;
 import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
@@ -38,7 +34,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Date;
 
 /**
  * Registers start and end of builder resources usage
@@ -46,7 +41,7 @@ import java.util.Date;
  * @author Max Shaposhnik
  */
 @Singleton
-public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
+public class BuildStatusSubscriber extends MeteredBuildEventSubscriber {
     private static final Logger LOG = LoggerFactory.getLogger(BuildStatusSubscriber.class);
 
     private final Integer               schedulingPeriod;
@@ -54,21 +49,19 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
     private final ResourcesUsageTracker resourcesUsageTracker;
     private final WorkspaceDao          workspaceDao;
     private final BuildQueue            buildQueue;
-    private final BillingPeriod         billingPeriod;
 
     @Inject
     public BuildStatusSubscriber(@Named(BuildTasksActivityChecker.RUN_ACTIVITY_CHECKING_PERIOD) Integer schedulingPeriod,
                                  EventService eventService,
                                  WorkspaceDao workspaceDao,
                                  BuildQueue buildQueue,
-                                 ResourcesUsageTracker resourcesUsageTracker,
-                                 BillingPeriod billingPeriod) {
+                                 ResourcesUsageTracker resourcesUsageTracker) {
+        super(buildQueue);
         this.schedulingPeriod = schedulingPeriod;
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
         this.buildQueue = buildQueue;
         this.resourcesUsageTracker = resourcesUsageTracker;
-        this.billingPeriod = billingPeriod;
     }
 
     @PostConstruct
@@ -82,17 +75,14 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
     }
 
     @Override
-    public void onEvent(BuilderEvent event) {
+    public void onMeteredBuildEvent(BuilderEvent event) {
         switch (event.getType()) {
             case BEGIN:
-                if (!isDependencyRequest(event)) {
-                    registerMemoryUsage(event);
-                }
+                registerMemoryUsage(event);
                 break;
             case DONE:
                 resourcesUsageTracker.resourceUsageStopped(BuildTasksActivityChecker.PFX + String.valueOf(event.getTaskId()));
                 break;
-            default:
         }
     }
 
@@ -103,12 +93,7 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
             final BaseBuilderRequest request = task.getRequest();
             final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(BuildTasksActivityChecker.BUILDER_MEMORY_SIZE,
                                                                            task.getCreationTime(),
-                                                                           Math.min(task.getCreationTime() +
-                                                                                    schedulingPeriod,
-                                                                                    billingPeriod
-                                                                                            .get(new Date(
-                                                                                                    task.getCreationTime()))
-                                                                                            .getEndDate().getTime()),
+                                                                           task.getCreationTime() + schedulingPeriod,
                                                                            request.getUserId(),
                                                                            workspace.getAccountId(),
                                                                            workspace.getId(),
@@ -117,19 +102,8 @@ public class BuildStatusSubscriber implements EventSubscriber<BuilderEvent> {
 
             resourcesUsageTracker.resourceUsageStarted(memoryUsedMetric);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error registration usage of resources by build process {} in workspace {} in project {}",
-                      event.getTaskId(),
-                      event.getWorkspace(), event.getProject());
+            LOG.error(String.format("Error registration usage of resources by build process %s in workspace %s in project %s",
+                                    event.getTaskId(), event.getWorkspace(), event.getProject()), e);
         }
-    }
-
-    private boolean isDependencyRequest(BuilderEvent event) {
-        try {
-            final BaseBuilderRequest request = buildQueue.getTask(event.getTaskId()).getRequest();
-            return request instanceof DependencyRequest;
-        } catch (NotFoundException e) {
-            LOG.error("Unable to determine request type for request {}", event.getTaskId());
-        }
-        return false;
     }
 }

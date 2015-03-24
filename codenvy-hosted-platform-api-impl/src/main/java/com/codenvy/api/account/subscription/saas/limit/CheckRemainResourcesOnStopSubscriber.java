@@ -18,21 +18,15 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.AccountLocker;
-import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.account.billing.BillingService;
-import com.codenvy.api.account.billing.ResourcesFilter;
-import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.account.metrics.MeteredBuildEventSubscriber;
 
-import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.runner.internal.RunnerEvent;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,91 +34,83 @@ import org.slf4j.LoggerFactory;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
-import java.util.List;
+
+import static org.eclipse.che.api.builder.internal.BuilderEvent.EventType.DONE;
+import static org.eclipse.che.api.runner.internal.RunnerEvent.EventType.STOPPED;
 
 /**
- * After run stops, checks that remaining RAM resources is enough, or block further runs for given account.
+ * After run or build stops, checks that remaining RAM resources is enough, or block further runs for given account.
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com) on 1/15/15
+ * @author Sergii Leschenko
  */
-public class CheckRemainResourcesOnStopSubscriber implements EventSubscriber<RunnerEvent> {
+public class CheckRemainResourcesOnStopSubscriber {
     private static final Logger LOG = LoggerFactory.getLogger(CheckRemainResourcesOnStopSubscriber.class);
 
-    private final EventService    eventService;
-    private final WorkspaceDao    workspaceDao;
-    private final AccountDao      accountDao;
-    private final BillingService  service;
-    private final ActiveRunHolder activeRunHolder;
-    private final BillingPeriod   billingPeriod;
-    private final AccountLocker   accountLocker;
-
+    private final EventService         eventService;
+    private final WorkspaceDao         workspaceDao;
+    private final AccountLocker        accountLocker;
+    private final ResourcesChecker     resourcesChecker;
+    final         BuildEventSubscriber buildEventSubscriber;
+    final         RunEventSubscriber   runEventSubscriber;
 
     @Inject
     public CheckRemainResourcesOnStopSubscriber(EventService eventService,
                                                 WorkspaceDao workspaceDao,
-                                                AccountDao accountDao,
-                                                BillingService service,
-                                                ActiveRunHolder activeRunHolder,
-                                                BillingPeriod billingPeriod,
-                                                AccountLocker accountLocker) {
+                                                AccountLocker accountLocker,
+                                                ResourcesChecker resourcesChecker,
+                                                BuildQueue buildQueue) {
         this.eventService = eventService;
         this.workspaceDao = workspaceDao;
-        this.accountDao = accountDao;
-        this.billingPeriod = billingPeriod;
-        this.service = service;
+        this.resourcesChecker = resourcesChecker;
         this.accountLocker = accountLocker;
-        this.activeRunHolder = activeRunHolder;
+        this.runEventSubscriber = new RunEventSubscriber();
+        this.buildEventSubscriber = new BuildEventSubscriber(buildQueue);
     }
 
-
     @PostConstruct
-    private void startScheduling() {
-        eventService.subscribe(this);
+    private void subscribe() {
+        eventService.subscribe(runEventSubscriber);
+        eventService.subscribe(buildEventSubscriber);
     }
 
     @PreDestroy
     private void unsubscribe() {
-        eventService.unsubscribe(this);
+        eventService.unsubscribe(runEventSubscriber);
+        eventService.unsubscribe(buildEventSubscriber);
     }
 
-    @Override
-    public void onEvent(RunnerEvent event) {
-        switch (event.getType()) {
-            case STARTED:
-                activeRunHolder.addRun(event);
-                break;
-            case STOPPED:
-                activeRunHolder.removeRun(event);
-                checkRemainResources(event);
-                break;
-            default:
+    class RunEventSubscriber implements EventSubscriber<RunnerEvent> {
+        @Override
+        public void onEvent(RunnerEvent event) {
+            if (STOPPED.equals(event.getType())) {
+                checkRemainResources(event.getWorkspace());
+            }
         }
     }
 
-    private void checkRemainResources(RunnerEvent event) {
-        try {
-            final Workspace workspace = workspaceDao.getById(event.getWorkspace());
-            final Account account = accountDao.getById(workspace.getAccountId());
-            final Subscription activeSaasSubscription = accountDao.getActiveSubscription(workspace.getAccountId(), ServiceId.SAAS);
-            if (activeSaasSubscription != null && !"sas-community".equals(activeSaasSubscription.getPlanId())) {
-                return;
-            }
+    class BuildEventSubscriber extends MeteredBuildEventSubscriber {
+        public BuildEventSubscriber(BuildQueue buildQueue) {
+            super(buildQueue);
+        }
 
-            final List<AccountResources> usedMemory = service.getEstimatedUsageByAccount(ResourcesFilter.builder()
-                                                                                                        .withAccountId(workspace.getAccountId())
-                                                                                                        .withFromDate(
-                                                                                                                billingPeriod.getCurrent()
-                                                                                                                             .getStartDate()
-                                                                                                                             .getTime())
-                                                                                                        .withTillDate(
-                                                                                                                System.currentTimeMillis())
-                                                                                                        .withPaidGbHMoreThan(0)
-                                                                                                        .build());
-            if (!usedMemory.isEmpty()) {
-                accountLocker.lockResources(account.getId());
+        @Override
+        public void onMeteredBuildEvent(BuilderEvent event) {
+            if (DONE.equals(event.getType())) {
+                checkRemainResources(event.getWorkspace());
+            }
+        }
+    }
+
+    private void checkRemainResources(String workspaceId) {
+        try {
+            final String accountId = workspaceDao.getById(workspaceId).getAccountId();
+
+            if (!resourcesChecker.hasAvailableResources(accountId)) {
+                accountLocker.lockResources(accountId);
             }
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error check remaining resources {} in workspace {} .", event.getProcessId(), event.getWorkspace());
+            LOG.error("Error check remaining resources in workspace {} .", workspaceId);
         }
     }
 }

@@ -17,8 +17,6 @@
  */
 package com.codenvy.api.account.metrics;
 
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-
 import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
@@ -29,6 +27,7 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -64,29 +63,26 @@ public class BuildStatusSubscriberTest {
     BuildQueue            buildQueue;
     @Mock
     ResourcesUsageTracker resourcesUsageTracker;
-    @Mock
-    BuildRequest          buildRequest;
-    @Mock
-    BuildQueueTask        buildQueueTask;
 
     BuildStatusSubscriber buildStatusSubscriber;
 
+    @Mock
+    BuildQueueTask buildQueueTask;
+
     @BeforeMethod
     public void setUp() throws Exception {
-        buildStatusSubscriber = new BuildStatusSubscriber(10, eventService, workspaceDao, buildQueue, resourcesUsageTracker,
-                                                          new MonthlyBillingPeriod());
+        buildStatusSubscriber = new BuildStatusSubscriber(10, eventService, workspaceDao, buildQueue, resourcesUsageTracker);
+
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId("accountId")
                                                                           .withId(WS_ID));
-
-        when(buildRequest.getUserId()).thenReturn("userId");
-
-        when(buildQueueTask.getRequest()).thenReturn(buildRequest);
 
         when(buildQueue.getTask(anyLong())).thenReturn(buildQueueTask);
     }
 
     @Test
-    public void shouldCreateMemoryUsedRecordWhenBuildStarted() throws ServerException {
+    public void shouldCreateMemoryUsedRecordWhenMeteredBuildStarted() throws ServerException {
+        when(buildQueueTask.getRequest()).thenReturn(createBuilderRequest(true));
+
         buildStatusSubscriber.onEvent(BuilderEvent.beginEvent(PROCESS_ID, WS_ID, "/project"));
 
         verify(resourcesUsageTracker).resourceUsageStarted(argThat(new ArgumentMatcher<MemoryUsedMetric>() {
@@ -94,15 +90,17 @@ public class BuildStatusSubscriberTest {
             public boolean matches(Object argument) {
                 final MemoryUsedMetric memoryUsedMetric = (MemoryUsedMetric)argument;
                 return memoryUsedMetric.getRunId().equals(BuildTasksActivityChecker.PFX + String.valueOf(PROCESS_ID))
-                       && memoryUsedMetric.getUserId().equals("userId")
-                       && memoryUsedMetric.getAccountId().equals("accountId")
+                       && "userId".equals(memoryUsedMetric.getUserId())
+                       && "accountId".equals(memoryUsedMetric.getAccountId())
                        && memoryUsedMetric.getAmount() == 1536;
             }
         }));
     }
 
     @Test
-    public void shouldNotCreateMemoryUsedRecordWhenDependencyResolvingStarted() throws ServerException {
+    public void shouldNotCreateMemoryUsedRecordWhenNotMeteredBuildStarted() throws ServerException {
+        when(buildQueueTask.getRequest()).thenReturn(createBuilderRequest(false));
+
         BaseBuilderRequest myRequest = mock(DependencyRequest.class);
         when(buildQueueTask.getRequest()).thenReturn(myRequest);
         buildStatusSubscriber.onEvent(BuilderEvent.beginEvent(PROCESS_ID, WS_ID, "/project"));
@@ -112,6 +110,8 @@ public class BuildStatusSubscriberTest {
 
     @Test
     public void shouldCreateMemoryUsedRecordWithMinValueForBuildDuration() throws ServerException {
+        when(buildQueueTask.getRequest()).thenReturn(createBuilderRequest(true));
+
         buildStatusSubscriber.onEvent(BuilderEvent.beginEvent(PROCESS_ID, WS_ID, "/project"));
 
         verify(resourcesUsageTracker).resourceUsageStarted(argThat(new ArgumentMatcher<MemoryUsedMetric>() {
@@ -124,9 +124,22 @@ public class BuildStatusSubscriberTest {
     }
 
     @Test
-    public void shouldStopUsingResourcesWhenBuildStopped() throws ServerException {
+    public void shouldStopUsingResourcesWhenMeteredBuildStopped() throws ServerException {
+        when(buildQueueTask.getRequest()).thenReturn(createBuilderRequest(true));
+
         buildStatusSubscriber.onEvent(BuilderEvent.doneEvent(PROCESS_ID, WS_ID, "/project"));
 
         verify(resourcesUsageTracker).resourceUsageStopped(eq(BuildTasksActivityChecker.PFX + PROCESS_ID));
+    }
+
+    private BaseBuilderRequest createBuilderRequest(boolean metered) {
+        BaseBuilderRequest baseBuilderRequest;
+        if (metered) {
+            baseBuilderRequest = DtoFactory.getInstance().createDto(BuildRequest.class);
+        } else {
+            baseBuilderRequest = DtoFactory.getInstance().createDto(DependencyRequest.class);
+        }
+        baseBuilderRequest.setUserId("userId");
+        return baseBuilderRequest;
     }
 }

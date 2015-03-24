@@ -78,7 +78,6 @@ public class AccountLockEvent {
         return new AccountLockEvent(EventType.ACCOUNT_UNLOCKED, account);
     }
 
-
     @Override
     public String toString() {
         return "AccountLockEvent{" +

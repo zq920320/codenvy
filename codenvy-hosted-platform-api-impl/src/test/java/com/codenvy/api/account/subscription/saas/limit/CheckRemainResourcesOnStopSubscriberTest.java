@@ -18,116 +18,112 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.AccountLocker;
-import com.codenvy.api.account.billing.BillingService;
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-import com.codenvy.api.account.billing.ResourcesFilter;
-import com.codenvy.api.account.impl.shared.dto.AccountResources;
-import com.codenvy.api.account.subscription.ServiceId;
 
-import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.server.dao.Subscription;
+import org.eclipse.che.api.builder.BuildQueue;
+import org.eclipse.che.api.builder.BuildQueueTask;
+import org.eclipse.che.api.builder.dto.BuildRequest;
+import org.eclipse.che.api.builder.dto.DependencyRequest;
+import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.internal.RunnerEvent;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
-
+/**
+ * Tests for {@link CheckRemainResourcesOnStopSubscriber}
+ *
+ * @author Sergii Leschenko
+ */
 @Listeners(MockitoTestNGListener.class)
 public class CheckRemainResourcesOnStopSubscriberTest {
-    private static final long   PROCESS_ID = 1L;
-    private static final Double FREE_LIMIT = 100D;
-    private static final String WS_ID      = "workspaceId";
-    private static final String ACC_ID     = "accountId";
+    private static final String WS_ID  = "workspaceId";
+    private static final String ACC_ID = "accountId";
 
     @Mock
-    EventService    eventService;
+    BuildQueue       buildQueue;
     @Mock
-    WorkspaceDao    workspaceDao;
+    ResourcesChecker resourcesChecker;
     @Mock
-    AccountDao      accountDao;
+    AccountLocker    accountLocker;
     @Mock
-    BillingService  service;
-    @Mock
-    ActiveRunHolder activeRunHolder;
-    @Mock
-    AccountLocker   accountLocker;
+    WorkspaceDao     workspaceDao;
 
+    @InjectMocks
     CheckRemainResourcesOnStopSubscriber subscriber;
+
+    @Mock
+    BuildQueueTask buildQueueTask;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        subscriber = new CheckRemainResourcesOnStopSubscriber(eventService, workspaceDao, accountDao, service,
-                                                              activeRunHolder, new MonthlyBillingPeriod(), accountLocker);
-
-        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withAccountId(ACC_ID)
-                                                                          .withId(WS_ID));
-
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID));
-    }
-
-
-    @Test
-    public void shouldAddEventOnRunStarted() throws Exception {
-        subscriber.onEvent(RunnerEvent.startedEvent(PROCESS_ID, WS_ID, "/project"));
-
-        verify(activeRunHolder, times(1)).addRun(any(RunnerEvent.class));
+        when(workspaceDao.getById(eq(WS_ID))).thenReturn(new Workspace().withAccountId(ACC_ID)
+                                                                        .withId(WS_ID));
+        when(buildQueue.getTask(anyLong())).thenReturn(buildQueueTask);
     }
 
     @Test
-    public void shouldAddEventOnRunStopped() throws Exception {
-        Subscription subscription = Mockito.mock(Subscription.class);
-        when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
-        when(accountDao.getActiveSubscription(eq(ACC_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACC_ID).withAttributes(new HashMap<String, String>()));
+    public void shouldLockAccountResourcesIfNoResourcesLeftOnMeteredBuildDoneEvent() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+        when(resourcesChecker.hasAvailableResources(eq(ACC_ID))).thenReturn(false);
 
-        subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
+        subscriber.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "/project"));
 
-        verify(activeRunHolder, times(1)).removeRun(any(RunnerEvent.class));
+        verify(accountLocker).lockResources(eq(ACC_ID));
     }
 
     @Test
-    public void shouldNotUpdateAccountAndWorkspacesIfResourcesAreLeft() throws Exception {
-        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
-        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
-                                                                                             .withId(WS_ID)));
+    public void shouldNoLockAccountResourcesIfNoResourcesLeftOnNoMeteredBuildDoneEvent() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(DependencyRequest.class));
+        when(resourcesChecker.hasAvailableResources(eq(ACC_ID))).thenReturn(false);
 
-        subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
+        subscriber.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "/project"));
 
         verifyZeroInteractions(accountLocker);
     }
 
     @Test
-    public void shouldUpdateAccountAndWorkspacesIfNoResourcesLeft() throws Exception {
-        when(service.getEstimatedUsageByAccount((ResourcesFilter)anyObject()))
-                .thenReturn(Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)));
-        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(new Workspace().withAccountId(ACC_ID)
-                                                                                             .withId(WS_ID)));
+    public void shouldNoLockAccountResourcesIfResourcesLeftOnMeteredBuildDoneEvent() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+        when(resourcesChecker.hasAvailableResources(eq(ACC_ID))).thenReturn(true);
 
-        subscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
+        subscriber.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "/project"));
+
+        verifyZeroInteractions(accountLocker);
+    }
+
+    @Test
+    public void shouldLockAccountResourcesIfNoResourcesLeftOnRunStopEvent() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+
+        when(resourcesChecker.hasAvailableResources(eq(ACC_ID))).thenReturn(false);
+
+        subscriber.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "/project"));
 
         verify(accountLocker).lockResources(eq(ACC_ID));
     }
 
+    @Test
+    public void shouldNoLockAccountResourcesIfResourcesLeftOnRunStopEvent() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+        when(resourcesChecker.hasAvailableResources(eq(ACC_ID))).thenReturn(true);
+
+        subscriber.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "/project"));
+
+        verifyZeroInteractions(accountLocker);
+    }
 
 }
