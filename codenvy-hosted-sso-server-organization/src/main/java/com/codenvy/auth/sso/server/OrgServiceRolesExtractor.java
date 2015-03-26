@@ -92,7 +92,11 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
 
     @Override
     public Set<String> extractRoles(AccessTicket ticket, String workspaceId, String accountId) {
-
+        //TODO: find better solution
+        //skip roles extraction if ticket handler type equals to 'sysldap'
+        if ("sysldap".equals(ticket.getAuthHandlerType())) {
+            return emptySet();
+        }
         try {
 
             if (allowedRole != null && !getRoles(ticket.getPrincipal().getId()).contains(allowedRole)) {
