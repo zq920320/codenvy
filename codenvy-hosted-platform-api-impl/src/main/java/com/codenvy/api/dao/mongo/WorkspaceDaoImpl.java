@@ -239,8 +239,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             throw new ConflictException("Workspace name required");
         }
         if (!WS_NAME.matcher(workspaceName).matches()) {
-            throw new ConflictException("Incorrect workspace name, it should be between 3 to 20 characters and may contain digits, latin " +
-                                        "letters, underscores, dots, dashes and should start and end only with digits or latin letters");
+            throw new ConflictException("Incorrect workspace name, it should be between 3 to 20 characters and may contain digits, " +
+                                        "latin letters, underscores, dots, dashes and should start and end only with digits, " +
+                                        "latin letters or underscores");
         }
     }
 
