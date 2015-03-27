@@ -106,7 +106,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
 
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
                                                                 .withWorkspaceId(machine.getWorkspaceId())
-                                                                .withProject(project)
+                                                                .withProject(project.getPath())
                                                                 .withHostFolder(machine.getHostProjectsFolder().toString())
                                                                 .withToken(EnvironmentContext.getCurrent().getUser().getToken());
 
@@ -128,7 +128,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
         final MachineImpl machine = machines.get(machineId);
 
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
-                                                                .withProject(project)
+                                                                .withProject(project.getPath())
                                                                 .withHostFolder(machine.getHostProjectsFolder().toString());
 
         final URI uri = UriBuilder.fromUri("/internal/machine/binding")

@@ -46,7 +46,7 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
     private final DBCollection subscriptionCollection;
 
     @Inject
-    public MongoSubscriptionQueryBuilder(DB db,
+    public MongoSubscriptionQueryBuilder(@Named("mongo.db.organization") DB db,
                                          @Named(SUBSCRIPTION_COLLECTION) String subscriptionCollectionName) {
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
     }

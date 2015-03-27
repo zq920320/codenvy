@@ -17,7 +17,6 @@
  */
 package com.codenvy.machine.dto;
 
-import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.dto.shared.DTO;
 
 /**
@@ -31,11 +30,11 @@ public interface MachineCopyProjectRequest {
 
     MachineCopyProjectRequest withWorkspaceId(String workspaceId);
 
-    ProjectBinding getProject();
+    String getProject();
 
-    void setProject(ProjectBinding projectBinding);
+    void setProject(String project);
 
-    MachineCopyProjectRequest withProject(ProjectBinding projectBinding);
+    MachineCopyProjectRequest withProject(String project);
 
     String getHostFolder();
 

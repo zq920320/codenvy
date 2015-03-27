@@ -93,9 +93,9 @@ public class MachineSlaveService {
     @Consumes(MediaType.APPLICATION_JSON)
     public void copyProjectToMachine(MachineCopyProjectRequest binding) throws ServerException {
         try {
-            copyProjectSource(new File(binding.getHostFolder(), binding.getProject().getPath()),
+            copyProjectSource(new File(binding.getHostFolder(), binding.getProject()),
                               binding.getWorkspaceId(),
-                              binding.getProject().getPath(),
+                              binding.getProject(),
                               binding.getToken());
         } catch (IOException e) {
             IoUtil.deleteRecursive(new File(binding.getHostFolder()));
@@ -108,7 +108,7 @@ public class MachineSlaveService {
     @DELETE
     @Consumes(MediaType.APPLICATION_JSON)
     public void removeProjectOnMachine(MachineCopyProjectRequest binding) throws ServerException {
-        final File fullPath = new File(binding.getHostFolder(), binding.getProject().getPath());
+        final File fullPath = new File(binding.getHostFolder(), binding.getProject());
         if (IoUtil.deleteRecursive(fullPath)) {
             throw new ServerException("Error occurred on removing of binding");
         }
