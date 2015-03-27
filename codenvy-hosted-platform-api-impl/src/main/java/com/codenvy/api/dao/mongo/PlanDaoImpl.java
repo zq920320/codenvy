@@ -17,17 +17,19 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import org.eclipse.che.api.account.server.dao.PlanDao;
-import org.eclipse.che.api.account.shared.dto.Plan;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.dto.server.DtoFactory;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -36,7 +38,7 @@ import java.util.List;
 import java.util.Map;
 
 /**
- * <p>Implementation of {@link com.codenvy.api.account.server.dao.PlanDao} based on MongoDB storage.</p>
+ * <p>Implementation of {@link org.eclipse.che.api.account.server.dao.PlanDao} based on MongoDB storage.</p>
  *
  * @author Alexander Garagatyi
  */
@@ -81,10 +83,16 @@ public class PlanDaoImpl implements PlanDao {
         final BasicDBObject planObj = (BasicDBObject)dbObj;
         @SuppressWarnings("unchecked") //properties is always Map of Strings
         final Map<String, String> properties = (Map<String, String>)planObj.get("properties");
-        return DtoFactory.getInstance().createDto(Plan.class).withId(planObj.getString("id"))
+        return DtoFactory.getInstance().createDto(Plan.class)
+                         .withId(planObj.getString("id"))
                          .withPaid(planObj.getBoolean("paid"))
                          .withSalesOnly(planObj.getBoolean("salesOnly"))
                          .withServiceId(planObj.getString("serviceId"))
-                         .withProperties(properties);
+                         .withProperties(properties)
+                         .withDescription(planObj.getString("description"))
+                         .withBillingContractTerm(planObj.getInt("billingContractTerm"))
+                         .withTrialDuration(planObj.getInt("trialDuration"))
+                         .withBillingCycle(planObj.getInt("billingCycle"))
+                         .withBillingCycleType(BillingCycleType.valueOf(planObj.getString("billingCycleType")));
     }
 }

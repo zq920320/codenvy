@@ -60,6 +60,10 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
 
     private static final String COLL_NAME = "workspaces";
 
+    private static final String INCORRECT_WORKSPACE_NAME_MESSAGE = "Incorrect workspace name, it should be between 3 to 20 characters " +
+                                                                   "and may contain digits, latin letters, underscores, dots, dashes and " +
+                                                                   "should start and end only with digits, latin letters or underscores";
+
     @Mock
     private MemberDao        memberDao;
     private WorkspaceDaoImpl workspaceDao;
@@ -91,27 +95,27 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         workspaceDao.create(new Workspace().withName(null));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = INCORRECT_WORKSPACE_NAME_MESSAGE)
     public void shouldNotBeAbleToCreateWorkspaceWithNameLengthMoreThan20Characters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("12345678901234567890x"));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = INCORRECT_WORKSPACE_NAME_MESSAGE)
     public void shouldNotBeAbleToCreateWorkspaceWithNameLengthLessThan3Characters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("ws"));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = INCORRECT_WORKSPACE_NAME_MESSAGE)
     public void shouldNotBeAbleToCreateWorkspaceWithNameStartsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName(".ws"));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = INCORRECT_WORKSPACE_NAME_MESSAGE)
     public void shouldNotBeAbleToCreateWorkspaceWithNameEndsNotWithLetterOrDigit() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("ws-"));
     }
 
-    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "Incorrect workspace name")
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = INCORRECT_WORKSPACE_NAME_MESSAGE)
     public void shouldNotBeAbleToCreateWorkspaceWithNameWhichContainsIllegalCharacters() throws ConflictException, ServerException {
         workspaceDao.create(new Workspace().withName("worksp@ce"));
     }

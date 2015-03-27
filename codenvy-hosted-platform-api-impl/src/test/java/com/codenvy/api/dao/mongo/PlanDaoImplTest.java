@@ -20,17 +20,20 @@ package com.codenvy.api.dao.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
-import org.eclipse.che.api.account.server.dao.PlanDao;
-import org.eclipse.che.api.account.shared.dto.Plan;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.dto.server.DtoFactory;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoException;
 import com.mongodb.ServerAddress;
 
+import org.eclipse.che.api.account.server.dao.PlanDao;
+import org.eclipse.che.api.account.shared.dto.BillingCycleType;
+import org.eclipse.che.api.account.shared.dto.Plan;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -40,6 +43,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -67,8 +74,10 @@ public class PlanDaoImplTest {
         InetSocketAddress serverAddress = server.bind();
 
         client = new MongoClient(new ServerAddress(serverAddress));
-        db = client.getDB(DB_NAME);
-        collection = db.getCollection(COLL_NAME);
+        db = spy(client.getDB(DB_NAME));
+        collection = spy(db.getCollection(COLL_NAME));
+
+        when(db.getCollection(COLL_NAME)).thenReturn(collection);
 
         planDao = new PlanDaoImpl(db, COLL_NAME);
     }
@@ -81,10 +90,8 @@ public class PlanDaoImplTest {
 
     @Test
     public void shouldBeAbleToGetPlans() throws ServerException {
-        Plan plan1 = DtoFactory.getInstance().createDto(Plan.class).withId("id1").withPaid(true).withServiceId("serv1").withProperties(
-                Collections.singletonMap("key", "value"));
-        Plan plan2 = DtoFactory.getInstance().createDto(Plan.class).withId("id2").withPaid(true).withServiceId("serv2").withProperties(
-                Collections.singletonMap("key", "value"));
+        Plan plan1 = createPlan().withId("id1");
+        Plan plan2 = createPlan().withId("id2");
 
         collection.save(toDbObject(plan1));
         collection.save(toDbObject(plan2));
@@ -106,11 +113,59 @@ public class PlanDaoImplTest {
         assertTrue(planDao.getPlans().isEmpty());
     }
 
+    @Test
+    public void shouldBeAbleToGetPlansById() throws Exception {
+        Plan plan1 = createPlan().withId("id1");
+        Plan plan2 = createPlan().withId("id2");
+
+        collection.save(toDbObject(plan1));
+        collection.save(toDbObject(plan2));
+
+        Plan actual = planDao.getPlanById("id2");
+
+        assertEquals(actual, plan2);
+    }
+
+    @Test(expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp = "No plan id2 found")
+    public void shouldThrowNotFoundExceptionIfPlanIsNotFoundOnGetPLanById() throws Exception {
+        planDao.getPlanById("id2");
+    }
+
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "message")
+    public void shouldThrowServerExceptionIfMongoExceptionOccursOnGetPlanById() throws Exception {
+        doThrow(new MongoException("message")).when(collection).findOne(any(DBObject.class));
+
+        planDao.getPlanById("id2");
+    }
+
+    private Plan createPlan() {
+        return DtoFactory.getInstance().createDto(Plan.class)
+                         .withId("plan_id")
+                         .withServiceId("service_id")
+                         .withProperties(Collections.singletonMap("key", "value"))
+                         .withTrialDuration(7)
+                         .withPaid(true)
+                         .withSalesOnly(false)
+                         .withBillingCycleType(BillingCycleType.AutoRenew)
+                         .withBillingCycle(1)
+                         .withBillingContractTerm(12)
+                         .withDescription("plan description");
+    }
+
     private DBObject toDbObject(Plan plan) {
         final DBObject properties = new BasicDBObject();
         properties.putAll(plan.getProperties());
 
-        return new BasicDBObject().append("id", plan.getId()).append("serviceId", plan.getServiceId()).append("paid", plan.isPaid()).append(
-                "properties", properties);
+        return new BasicDBObject()
+                .append("id", plan.getId())
+                .append("serviceId", plan.getServiceId())
+                .append("properties", properties)
+                .append("trialDuration", plan.getTrialDuration())
+                .append("paid", plan.isPaid())
+                .append("salesOnly", plan.getSalesOnly())
+                .append("billingCycleType", plan.getBillingCycleType().toString())
+                .append("billingCycle", plan.getBillingCycle())
+                .append("billingContractTerm", plan.getBillingContractTerm())
+                .append("description", plan.getDescription());
     }
 }
