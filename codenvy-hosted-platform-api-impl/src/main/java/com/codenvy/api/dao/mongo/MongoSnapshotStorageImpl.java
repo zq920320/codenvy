@@ -52,7 +52,7 @@ import static java.lang.String.format;
  */
 public class MongoSnapshotStorageImpl implements SnapshotStorage {
     private static final Logger LOG                = LoggerFactory.getLogger(MongoSnapshotStorageImpl.class);
-    private static final String MACHINE_COLLECTION = "storage.machine.collection";
+    private static final String MACHINE_COLLECTION = "storage.machine.db.collection";
 
     private final DBCollection machineCollection;
 

@@ -28,10 +28,10 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class MachineMongoDatabaseProvider extends MongoDatabaseProvider {
-    protected static final String DB_URL      = "machine.storage.db.url";
-    protected static final String DB_NAME     = "machine.storage.db.name";
-    protected static final String DB_USERNAME = "machine.storage.db.username";
-    protected static final String DB_PASSWORD = "machine.storage.db.password";
+    protected static final String DB_URL      = "storage.machine.db.url";
+    protected static final String DB_NAME     = "storage.machine.db.name";
+    protected static final String DB_USERNAME = "storage.machine.db.username";
+    protected static final String DB_PASSWORD = "storage.machine.db.password";
 
     @Inject
     public MachineMongoDatabaseProvider(@Named(DB_URL) String dbUrl,

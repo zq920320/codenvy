@@ -18,21 +18,13 @@
 package com.codenvy.machine;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-
-import org.eclipse.che.inject.DynaModule;
 
 /**
  * @author Alexander Garagatyi
  */
-@DynaModule
-public class MachineSynchronizeModule extends AbstractModule {
+public class MachineSlaveModule extends AbstractModule {
     @Override
     protected void configure() {
-        install(new FactoryModuleBuilder()
-                        .implement(org.eclipse.che.api.machine.server.SynchronizeTask.class, SynchronizeTaskImpl.class)
-                        .build(org.eclipse.che.api.machine.server.SynchronizeTaskFactory.class));
-
-        bind(com.codenvy.machine.SynchronizeEventListener.class).asEagerSingleton();
+        bind(com.codenvy.machine.MachineSlaveService.class);
     }
 }
