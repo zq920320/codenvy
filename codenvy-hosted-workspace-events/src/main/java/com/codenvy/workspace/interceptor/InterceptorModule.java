@@ -18,6 +18,8 @@
 package com.codenvy.workspace.interceptor;
 
 import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 
@@ -34,14 +36,18 @@ public class InterceptorModule extends AbstractModule {
     protected void configure() {
         AddWorkspaceMemberInterceptor addWorkspaceMemberInterceptor = new AddWorkspaceMemberInterceptor();
         CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
+        FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
+        FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
         requestInjection(addWorkspaceMemberInterceptor);
+        requestInjection(factoryWorkspaceInterceptor);
         requestInjection(createWorkspaceInterceptor);
+        requestInjection(factoryResourcesInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         Matchers.returns(Matchers.subclassesOf(Response.class)),
-                        addWorkspaceMemberInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        Matchers.returns(Matchers.subclassesOf(Response.class)),
-                        createWorkspaceInterceptor);
+                        addWorkspaceMemberInterceptor, createWorkspaceInterceptor, factoryWorkspaceInterceptor);
+        bindInterceptor(Matchers.subclassesOf(WorkspaceDao.class),
+                        Matchers.any(),
+                        factoryResourcesInterceptor);
         bind(com.codenvy.workspace.listener.StopAppOnRemoveWsListener.class).asEagerSingleton();
     }
 }

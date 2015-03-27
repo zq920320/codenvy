@@ -122,8 +122,13 @@ public class TemplateProcessor {
                 context.setVariable("factoryCharge", charge);
             } else if (charge.getServiceId().equals(ServiceId.SAAS)) {
                 Map<String, String> newDetails = new HashMap<>();
+                int i = 0;
                 for (Map.Entry<String, String> entry : charge.getDetails().entrySet()) {
-                    newDetails.put(workspaceDao.getById(entry.getKey()).getName(), entry.getValue());
+                    try {
+                        newDetails.put(workspaceDao.getById(entry.getKey()).getName(), entry.getValue());
+                    } catch (NotFoundException e) {
+                        newDetails.put(String.format("not_existing_workspace_%d", ++i), entry.getValue());
+                    }
                 }
                 charge.setDetails(newDetails);
                 context.setVariable("saasCharge", charge);
