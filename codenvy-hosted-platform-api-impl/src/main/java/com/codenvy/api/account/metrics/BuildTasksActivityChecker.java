@@ -76,27 +76,31 @@ public class BuildTasksActivityChecker {
 
     @ScheduleRate(periodParameterName = RUN_ACTIVITY_CHECKING_PERIOD)
     public void check() {
-        for (BuildQueueTask task : buildQueue.getTasks()) {
-            BuildTaskDescriptor descriptor;
-            try {
-                descriptor = task.getDescriptor();
-            } catch (BuilderException e) {
-                LOG.warn("Can't get task descriptor of build task {}", task.getId(), e);
-                continue;
-            } catch (NotFoundException e) {
-                // expired task
-                continue;
-            }
+        try {
+            for (BuildQueueTask task : buildQueue.getTasks()) {
+                BuildTaskDescriptor descriptor;
+                try {
+                    descriptor = task.getDescriptor();
+                } catch (BuilderException e) {
+                    LOG.warn("Can't get task descriptor of build task {}", task.getId(), e);
+                    continue;
+                } catch (NotFoundException e) {
+                    // expired task
+                    continue;
+                }
 
-            final BaseBuilderRequest request = task.getRequest();
-            if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())
-                && !(request instanceof DependencyRequest)) {
-                resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getTaskId()));
+                final BaseBuilderRequest request = task.getRequest();
+                if (IN_PROGRESS.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())
+                    && !(request instanceof DependencyRequest)) {
+                    resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getTaskId()));
 
-                final long time = currentTimeMillis();
-                final String analyticsID = task.getCreationTime() + "-" + descriptor.getTaskId();
-                LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, BUILDER_MEMORY_SIZE);
+                    final long time = currentTimeMillis();
+                    final String analyticsID = task.getCreationTime() + "-" + descriptor.getTaskId();
+                    LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, BUILDER_MEMORY_SIZE);
+                }
             }
+        } catch (Exception e) {
+            LOG.error("Error of builds memory usage registration. " + e.getLocalizedMessage(), e);
         }
     }
 

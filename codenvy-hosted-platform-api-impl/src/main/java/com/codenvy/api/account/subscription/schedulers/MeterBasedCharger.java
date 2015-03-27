@@ -69,7 +69,7 @@ public class MeterBasedCharger {
         this.invoices_limit = invoices_limit;
     }
 
-    @ScheduleDelay(delay = 5)
+    @ScheduleDelay(delay = 60)
     public void chargeInvoices() {
         try {
             List<Invoice> notPaidInvoices = billingService.getInvoices(InvoiceFilter.builder()
@@ -79,8 +79,8 @@ public class MeterBasedCharger {
             for (Invoice invoice : notPaidInvoices) {
                 doCharge(invoice);
             }
-        } catch (ServerException e) {
-            LOG.error("Can't get receipts", e);
+        } catch (Exception e) {
+            LOG.error("Error of invoices charging. " + e.getLocalizedMessage(), e);
         }
     }
 
