@@ -38,13 +38,13 @@ public class IMDownloadsInstallScript extends AbstractLongValueResulted {
     /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
-        return context.cloneAndPut(MetricFilter.ARTIFACT, IMDownloadsList.ARTIFACT_INSTALL_CODENVY.replace("_", "-"));
+        return context.cloneAndPut(MetricFilter.ARTIFACT, IMDownloadsList.ARTIFACT_INSTALL_CODENVY_SINGLE.replace("_", "-"));
     }
 
     /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
-        return new String[]{IMDownloadsList.ARTIFACT_INSTALL_CODENVY};
+        return new String[]{IMDownloadsList.ARTIFACT_INSTALL_CODENVY_SINGLE};
     }
 
     /** {@inheritDoc} */

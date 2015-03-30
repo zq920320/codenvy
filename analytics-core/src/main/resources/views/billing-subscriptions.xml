@@ -29,16 +29,16 @@
                 <parameter key="description" value="Credit card added"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="credit_card_removed"/>
-                <parameter key="description" value="Credit card removed"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="credit_card_charge_success"/>
                 <parameter key="description" value="Credit card charged - success"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="credit_card_charge_failed"/>
                 <parameter key="description" value="Credit card charged - failed"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="credit_card_removed"/>
+                <parameter key="description" value="Credit card removed"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_locked"/>
@@ -51,9 +51,6 @@
         </section>
 
         <section name="on_prem_subscriptions">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="On-Prem Subscriptions"/>
-            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="trial_started"/>
                 <parameter key="description" value="Trial started"/>
@@ -61,6 +58,9 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="trial_expired"/>
                 <parameter key="description" value="Trial expired"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="On-Prem Subscriptions"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="subscription_added"/>

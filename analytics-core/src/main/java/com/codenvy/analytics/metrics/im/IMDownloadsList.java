@@ -32,10 +32,15 @@ import javax.annotation.security.RolesAllowed;
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class IMDownloadsList extends AbstractListValueResulted implements ReadBasedSummariziable {
-    public static final String ARTIFACT_CODENVY         = "codenvy";
-    public static final String ARTIFACT_INSTALL_CODENVY = "install_codenvy";
-    public static final String CODENVY_BINARIES         = "codenvy binaries";
-    public static final String INSTALL_SCRIPT           = "install script";
+    public static final String ARTIFACT_CODENVY                = "codenvy";
+    public static final String ARTIFACT_INSTALL_CODENVY_SINGLE = "install_codenvy";
+    public static final String ARTIFACT_INSTALL_CODENVY_MULTI  = "install_codenvy_multi";
+    public static final String ARTIFACT_INSTALL_CLI            = "install_im_cli";
+
+    public static final String CODENVY_BINARIES      = "codenvy";
+    public static final String INSTALL_SINGLE_SCRIPT = "single-node script";
+    public static final String INSTALL_MULTI_SCRIPT  = "multi-node script";
+    public static final String INSTALL_IM_SCRIPT     = "im";
 
     public IMDownloadsList() {
         super(MetricType.IM_DOWNLOADS_LIST);
@@ -61,7 +66,9 @@ public class IMDownloadsList extends AbstractListValueResulted implements ReadBa
                             IM_ARTIFACT,
                             IM_VERSION,
                             CODENVY_BINARIES,
-                            INSTALL_SCRIPT};
+                            INSTALL_SINGLE_SCRIPT,
+                            INSTALL_MULTI_SCRIPT,
+                            INSTALL_IM_SCRIPT};
     }
 
     /** {@inheritDoc} */
@@ -70,7 +77,9 @@ public class IMDownloadsList extends AbstractListValueResulted implements ReadBa
         DBObject group = new BasicDBObject();
         group.put(ID, null);
         group.put(CODENVY_BINARIES, new BasicDBObject("$sum", "$" + ARTIFACT_CODENVY));
-        group.put(INSTALL_SCRIPT, new BasicDBObject("$sum", "$" + ARTIFACT_INSTALL_CODENVY));
+        group.put(INSTALL_SINGLE_SCRIPT, new BasicDBObject("$sum", "$" + ARTIFACT_INSTALL_CODENVY_SINGLE));
+        group.put(INSTALL_MULTI_SCRIPT, new BasicDBObject("$sum", "$" + ARTIFACT_INSTALL_CODENVY_MULTI));
+        group.put(INSTALL_IM_SCRIPT, new BasicDBObject("$sum", "$" + ARTIFACT_INSTALL_CLI));
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 }
