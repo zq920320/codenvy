@@ -64,6 +64,7 @@ import java.util.jar.JarFile;
 import static com.codenvy.analytics.DateRangeUtils.getNumberOfUnitsBetweenDates;
 import static com.codenvy.analytics.Utils.initDateInterval;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static java.lang.String.format;
 
 
 /**
@@ -252,18 +253,23 @@ public class ViewBuilder extends Feature {
 
     /** Query data for specific view. */
     protected ViewData loadViewData(ViewConfiguration viewConf, Context context) throws IOException {
-        try {
-            ViewData viewData = new ViewData(viewConf.getSections().size());
+        ViewData viewData = new ViewData(viewConf.getSections().size());
 
-            for (SectionConfiguration sectionConf : viewConf.getSections()) {
-                String sectionId = getId(sectionConf.getName(), context);
-                viewData.put(sectionConf.getName(), jdbcPersister.loadData(sectionId));
+        for (SectionConfiguration sectionConf : viewConf.getSections()) {
+            String sectionId = getId(sectionConf.getName(), context);
+
+            SectionData sectionData;
+            try {
+                sectionData = jdbcPersister.loadData(sectionId);
+            } catch (SQLException e) {
+                sectionData = new SectionData();
+                LOG.warn(format("Can't load '%s' probably view wasn't built", sectionId));
             }
 
-            return viewData;
-        } catch (SQLException e) {
-            throw new IOException(e);
+            viewData.put(sectionConf.getName(), sectionData);
         }
+
+        return viewData;
     }
 
     public void retainViewData(String viewId,

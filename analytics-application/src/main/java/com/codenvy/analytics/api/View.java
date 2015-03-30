@@ -443,37 +443,39 @@ public class View {
      */
     private ViewData supplyUserWsIdWithNames(ViewData viewData) throws IOException {
         for (SectionData sectionData : viewData.values()) {
-            int userColumn = -1;
-            int wsColumn = -1;
+            if (!sectionData.isEmpty()) {
+                int userColumn = -1;
+                int wsColumn = -1;
 
-            List<ValueData> row = sectionData.get(0);
-            for (int i = 0; i < row.size(); i++) {
-                if (userColumnNames.contains(row.get(i).getAsString())) {
-                    userColumn = i;
-                } else if (workspaceColumnNames.contains(row.get(i).getAsString())) {
-                    wsColumn = i;
-                }
-            }
-
-            for (int i = 1; i < sectionData.size(); i++) {
-                row = sectionData.get(i);
-                List<ValueData> newRow = new ArrayList<>(row.size());
-
-                for (int j = 0; j < row.size(); j++) {
-                    if (j == userColumn) {
-                        String id = row.get(j).getAsString();
-                        String userName = getUserNameById(id);
-                        newRow.add(getNamedValue(id, userName));
-                    } else if (j == wsColumn) {
-                        String id = row.get(j).getAsString();
-                        String wsName = getWsNameById(id);
-                        newRow.add(getNamedValue(id, wsName));
-                    } else {
-                        newRow.add(row.get(j));
+                List<ValueData> row = sectionData.get(0);
+                for (int i = 0; i < row.size(); i++) {
+                    if (userColumnNames.contains(row.get(i).getAsString())) {
+                        userColumn = i;
+                    } else if (workspaceColumnNames.contains(row.get(i).getAsString())) {
+                        wsColumn = i;
                     }
                 }
 
-                sectionData.set(i, newRow);
+                for (int i = 1; i < sectionData.size(); i++) {
+                    row = sectionData.get(i);
+                    List<ValueData> newRow = new ArrayList<>(row.size());
+
+                    for (int j = 0; j < row.size(); j++) {
+                        if (j == userColumn) {
+                            String id = row.get(j).getAsString();
+                            String userName = getUserNameById(id);
+                            newRow.add(getNamedValue(id, userName));
+                        } else if (j == wsColumn) {
+                            String id = row.get(j).getAsString();
+                            String wsName = getWsNameById(id);
+                            newRow.add(getNamedValue(id, wsName));
+                        } else {
+                            newRow.add(row.get(j));
+                        }
+                    }
+
+                    sectionData.set(i, newRow);
+                }
             }
         }
 
