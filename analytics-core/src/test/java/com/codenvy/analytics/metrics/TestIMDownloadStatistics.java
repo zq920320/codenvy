@@ -111,7 +111,7 @@ public class TestIMDownloadStatistics extends BaseTest {
 
         Map<String, ValueData> m = treatAsMap(l.getAll().get(0));
         assertEquals(m.get(IMDownloadsList.CODENVY_BINARIES), LongValueData.valueOf(2));
-        assertEquals(m.get(IMDownloadsList.INSTALL_SCRIPT), LongValueData.valueOf(1));
+        assertEquals(m.get(IMDownloadsList.INSTALL_SINGLE_SCRIPT), LongValueData.valueOf(1));
     }
 }
 
