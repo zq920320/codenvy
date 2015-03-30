@@ -19,7 +19,7 @@ package com.codenvy.api.account.subscription.saas.limit;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.commons.schedule.ScheduleRate;
+import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,17 +46,21 @@ public class ActiveTasksInterrupter implements Runnable {
         this.resourcesChecker = resourcesChecker;
     }
 
-    @ScheduleRate(period = 60)
+    @ScheduleDelay(delay = 60)
     @Override
     public void run() {
-        for (String account : activeTasksHolder.getAccountsWithActiveTasks()) {
-            try {
-                if (!resourcesChecker.hasAvailableResources(account)) {
-                    interruptAccountTasks(account);
+        try {
+            for (String account : activeTasksHolder.getAccountsWithActiveTasks()) {
+                try {
+                    if (!resourcesChecker.hasAvailableResources(account)) {
+                        interruptAccountTasks(account);
+                    }
+                } catch (NotFoundException | ServerException e) {
+                    LOG.error("Error check remaining resources  in account {} .", account);
                 }
-            } catch (NotFoundException | ServerException e) {
-                LOG.error("Error check remaining resources  in account {} .", account);
             }
+        } catch (Exception e) {
+            LOG.error("Error of checking consumed resources by active tasks. " + e.getLocalizedMessage(), e);
         }
     }
 

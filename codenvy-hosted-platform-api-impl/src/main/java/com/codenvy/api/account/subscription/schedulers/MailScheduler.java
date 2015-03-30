@@ -25,7 +25,6 @@ import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 
 import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.mail.MessagingException;
-import java.io.IOException;
 import java.io.StringWriter;
 import java.util.List;
 
@@ -87,8 +84,8 @@ public class MailScheduler {
                     LOG.error("Can't send email", e);
                 }
             }
-        } catch (IOException | MessagingException | ServerException e) {
-            LOG.error("Can't get not send invoices", e);
+        } catch (Exception e) {
+            LOG.error("Error of invoices sending. " + e.getLocalizedMessage(), e);
         }
     }
 

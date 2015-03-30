@@ -73,26 +73,30 @@ public class RunTasksActivityChecker {
 
     @ScheduleRate(periodParameterName = RUN_ACTIVITY_CHECKING_PERIOD)
     public void check() {
-        for (RunQueueTask runTask : runQueue.getTasks()) {
-            ApplicationProcessDescriptor descriptor;
-            try {
-                descriptor = runTask.getDescriptor();
-            } catch (RunnerException e) {
-                LOG.warn("Can't get task descriptor of run task {}", runTask.getId(), e);
-                continue;
-            } catch (NotFoundException e) {
-                // expired task
-                continue;
-            }
+        try {
+            for (RunQueueTask runTask : runQueue.getTasks()) {
+                ApplicationProcessDescriptor descriptor;
+                try {
+                    descriptor = runTask.getDescriptor();
+                } catch (RunnerException e) {
+                    LOG.warn("Can't get task descriptor of run task {}", runTask.getId(), e);
+                    continue;
+                } catch (NotFoundException e) {
+                    // expired task
+                    continue;
+                }
 
-            final RunRequest request = runTask.getRequest();
-            if (RUNNING.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
-                resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getProcessId()));
+                final RunRequest request = runTask.getRequest();
+                if (RUNNING.equals(descriptor.getStatus()) && isExpiredTickPeriod(descriptor.getStartTime())) {
+                    resourcesUsageTracker.resourceInUse(PFX + String.valueOf(descriptor.getProcessId()));
 
-                final long time = currentTimeMillis();
-                final String analyticsID = descriptor.getCreationTime() + "-" + descriptor.getProcessId();
-                LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, request.getMemorySize());
+                    final long time = currentTimeMillis();
+                    final String analyticsID = descriptor.getCreationTime() + "-" + descriptor.getProcessId();
+                    LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, request.getMemorySize());
+                }
             }
+        } catch (Exception e) {
+            LOG.error("Error of runs memory usage registration. " + e.getLocalizedMessage(), e);
         }
     }
 
