@@ -18,16 +18,13 @@
 package com.codenvy.machine;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-
-import org.eclipse.che.inject.DynaModule;
 
 /**
  * @author Alexander Garagatyi
  */
-public class MachineMasterModule extends AbstractModule {
+public class MachineNodeModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(org.eclipse.che.api.machine.server.MachineSlave.class).to(com.codenvy.machine.RemoteMachineSlaveImpl.class);
+        bind(com.codenvy.machine.MachineNodeService.class);
     }
 }

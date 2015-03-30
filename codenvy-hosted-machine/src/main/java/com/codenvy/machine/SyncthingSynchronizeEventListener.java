@@ -38,12 +38,12 @@ import java.util.concurrent.ConcurrentHashMap;
  * @author Alexander Garagatyi
  */
 @Singleton
-public class SynchronizeEventListener implements EventSubscriber<VirtualFileEvent> {
+public class SyncthingSynchronizeEventListener implements EventSubscriber<VirtualFileEvent> {
     private EventService                                                 eventService;
     private ConcurrentHashMap<String, Set<SyncthingSynchronizeNotifier>> syncNotifiers;
 
     @Inject
-    public SynchronizeEventListener(EventService eventService) {
+    public SyncthingSynchronizeEventListener(EventService eventService) {
         this.eventService = eventService;
         this.syncNotifiers = new ConcurrentHashMap<>();
     }

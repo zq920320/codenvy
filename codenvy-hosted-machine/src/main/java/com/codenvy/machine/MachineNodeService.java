@@ -51,8 +51,8 @@ import java.util.concurrent.Executors;
  */
 @Path("/internal/machine")
 @Singleton
-public class MachineSlaveService {
-    private static final Logger LOG = LoggerFactory.getLogger(MachineSlaveService.class);
+public class MachineNodeService {
+    private static final Logger LOG = LoggerFactory.getLogger(MachineNodeService.class);
 
     private final String            syncWorkingDir;
     private final String            apiEndpoint;
@@ -67,14 +67,14 @@ public class MachineSlaveService {
     private final ExecutorService                                     executor;
 
     @Inject
-    public MachineSlaveService(CustomPortService portService,
-                               @Named("machine.sync.slave.api_token") String machineSyncApiToken,
-                               @Named("machine.sync.slave.port_max") int machineSyncMaxPort,
-                               @Named("machine.sync.slave.port_min") int machineSyncMinPort,
-                               @Named("machine.sync.slave.conf") String machineSyncTaskConfTemplate,
-                               @Named("machine.sync.slave.exec") String machineSyncTaskExecutable,
-                               @Named("machine.sync.workdir") String syncWorkingDir,
-                               @Named("api.endpoint") String apiEndpoint) {
+    public MachineNodeService(CustomPortService portService,
+                              @Named("machine.sync.slave.api_token") String machineSyncApiToken,
+                              @Named("machine.sync.slave.port_max") int machineSyncMaxPort,
+                              @Named("machine.sync.slave.port_min") int machineSyncMinPort,
+                              @Named("machine.sync.slave.conf") String machineSyncTaskConfTemplate,
+                              @Named("machine.sync.slave.exec") String machineSyncTaskExecutable,
+                              @Named("machine.sync.workdir") String syncWorkingDir,
+                              @Named("api.endpoint") String apiEndpoint) {
         this.portService = portService;
         this.machineSyncApiToken = machineSyncApiToken;
         this.machineSyncMaxPort = machineSyncMaxPort;

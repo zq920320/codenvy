@@ -24,6 +24,7 @@ import org.eclipse.che.api.core.util.FileCleaner;
 import org.eclipse.che.api.core.util.FileLineConsumer;
 import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.core.util.ProcessUtil;
+import org.eclipse.che.commons.lang.NameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -78,7 +79,7 @@ public class SyncthingSynchronizeTask implements Runnable, Cancellable {
         LOG.info("Server sync task is starting");
         Path syncWorkingDir = null;
         try {
-            syncWorkingDir = Files.createTempDirectory(Paths.get(workingDir), "machine-sync-");
+            syncWorkingDir = Files.createDirectories(Paths.get(workingDir, NameGenerator.generate("machine-sync-", 16)));
             CommandLine cl = new CommandLine(syncTaskExecutable)
                     .add(syncTaskConfTemplate)
                     .add(syncWorkingDir.toString())
@@ -103,7 +104,9 @@ public class SyncthingSynchronizeTask implements Runnable, Cancellable {
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
         } finally {
-            FileCleaner.addFile(syncWorkingDir.toFile());
+            if (syncWorkingDir != null) {
+                FileCleaner.addFile(syncWorkingDir.toFile());
+            }
         }
         LOG.info("Sync task is finishing");
     }

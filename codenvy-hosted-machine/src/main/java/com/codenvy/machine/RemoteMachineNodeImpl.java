@@ -30,8 +30,8 @@ import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.util.CustomPortService;
 import org.eclipse.che.api.machine.server.MachineImpl;
-import org.eclipse.che.api.machine.server.MachineSlave;
-import org.eclipse.che.api.machine.server.Machines;
+import org.eclipse.che.api.machine.server.MachineNode;
+import org.eclipse.che.api.machine.server.MachineRegistry;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
@@ -57,34 +57,34 @@ import java.util.concurrent.Executors;
  * @author Alexander Garagatyi
  */
 @Singleton
-public class RemoteMachineSlaveImpl implements MachineSlave {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteMachineSlaveImpl.class);
+public class RemoteMachineNodeImpl implements MachineNode {
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteMachineNodeImpl.class);
 
-    private final String                   vfsSyncTaskExecutable;
-    private final String                   vfsSyncTaskConfTemplate;
-    private final int                      vfsMinSyncPort;
-    private final int                      vfsMaxSyncPort;
-    private final String                   vfsGuiToken;
-    private final String                   syncWorkingDir;
-    private final LocalFSMountStrategy     mountStrategy;
-    private final SynchronizeEventListener synchronizeEventListener;
-    private final CustomPortService        portService;
-    private final Machines                 machines;
-    private final ExecutorService          executor;
+    private final String                            vfsSyncTaskExecutable;
+    private final String                            vfsSyncTaskConfTemplate;
+    private final int                               vfsMinSyncPort;
+    private final int                               vfsMaxSyncPort;
+    private final String                            vfsGuiToken;
+    private final String                            syncWorkingDir;
+    private final LocalFSMountStrategy              mountStrategy;
+    private final SyncthingSynchronizeEventListener syncthingSynchronizeEventListener;
+    private final CustomPortService                 portService;
+    private final MachineRegistry                   machineRegistry;
+    private final ExecutorService                   executor;
 
     private final ConcurrentHashMap<String, Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier>> vfsSyncTasks;
 
     @Inject
-    public RemoteMachineSlaveImpl(@Named("machine.sync.vfs.exec") String vfsSyncTaskExecutable,
-                                  @Named("machine.sync.vfs.conf") String vfsSyncTaskConfTemplate,
-                                  @Named("machine.sync.vfs.port_min") int vfsMinSyncPort,
-                                  @Named("machine.sync.vfs.port_max") int vfsMaxSyncPort,
-                                  @Named("machine.sync.vfs.api_token") String vfsGuiToken,
-                                  @Named("machine.sync.workdir") String syncWorkingDir,
-                                  LocalFSMountStrategy mountStrategy,
-                                  SynchronizeEventListener synchronizeEventListener,
-                                  CustomPortService portService,
-                                  Machines machines) {
+    public RemoteMachineNodeImpl(@Named("machine.sync.vfs.exec") String vfsSyncTaskExecutable,
+                                 @Named("machine.sync.vfs.conf") String vfsSyncTaskConfTemplate,
+                                 @Named("machine.sync.vfs.port_min") int vfsMinSyncPort,
+                                 @Named("machine.sync.vfs.port_max") int vfsMaxSyncPort,
+                                 @Named("machine.sync.vfs.api_token") String vfsGuiToken,
+                                 @Named("machine.sync.workdir") String syncWorkingDir,
+                                 LocalFSMountStrategy mountStrategy,
+                                 SyncthingSynchronizeEventListener syncthingSynchronizeEventListener,
+                                 CustomPortService portService,
+                                 MachineRegistry machineRegistry) {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
         this.vfsMinSyncPort = vfsMinSyncPort;
@@ -92,9 +92,9 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
         this.vfsGuiToken = vfsGuiToken;
         this.syncWorkingDir = syncWorkingDir;
         this.mountStrategy = mountStrategy;
-        this.synchronizeEventListener = synchronizeEventListener;
+        this.syncthingSynchronizeEventListener = syncthingSynchronizeEventListener;
         this.portService = portService;
-        this.machines = machines;
+        this.machineRegistry = machineRegistry;
         this.vfsSyncTasks = new ConcurrentHashMap<>();
         this.executor =
                 Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteMachineSlaveImpl-").setDaemon(true).build());
@@ -102,7 +102,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
 
     @Override
     public void copyProjectToMachine(String machineId, ProjectBinding project) throws ServerException, NotFoundException {
-        final MachineImpl machine = machines.get(machineId);
+        final MachineImpl machine = machineRegistry.get(machineId);
 
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
                                                                 .withWorkspaceId(machine.getWorkspaceId())
@@ -110,9 +110,10 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
                                                                 .withHostFolder(machine.getHostProjectsFolder().toString())
                                                                 .withToken(EnvironmentContext.getCurrent().getUser().getToken());
 
-        final URI uri = UriBuilder.fromUri("/internal/machine/binding")
+        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
                                   .host(machine.getLocationAddress())
                                   .port(8080)
+                                  .scheme("http")
                                   .build();
 
         try {
@@ -125,15 +126,16 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
 
     @Override
     public void removeProjectFromMachine(String machineId, ProjectBinding project) throws NotFoundException, ServerException {
-        final MachineImpl machine = machines.get(machineId);
+        final MachineImpl machine = machineRegistry.get(machineId);
 
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
                                                                 .withProject(project.getPath())
                                                                 .withHostFolder(machine.getHostProjectsFolder().toString());
 
-        final URI uri = UriBuilder.fromUri("/internal/machine/binding")
+        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
                                   .host(machine.getLocationAddress())
                                   .port(8080)
+                                  .scheme("http")
                                   .build();
 
         try {
@@ -146,7 +148,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
 
     @Override
     public void startSynchronization(String machineId, ProjectBinding projectBinding) throws ServerException, NotFoundException {
-        final MachineImpl machine = machines.get(machineId);
+        final MachineImpl machine = machineRegistry.get(machineId);
 
         int vfsSyncListenPort = 0;
         int vfsSyncApiPort = 0;
@@ -169,7 +171,11 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
                                                                                        projectBinding.getPath()).toString())
                                                                 .withSyncPort(vfsSyncListenPort);
 
-            final URI uri = UriBuilder.fromUri("/internal/machine/sync").host(machine.getLocationAddress()).build();
+            final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/sync")
+                                      .host(machine.getLocationAddress())
+                                      .port(8080)
+                                      .scheme("http")
+                                      .build();
 
             try {
                 syncListenerConf = HttpJsonHelper.request(RemoteSyncListener.class, uri.toString(), "POST", synchronizationConf);
@@ -200,7 +206,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
 
             executor.submit(syncTask);
 
-            synchronizeEventListener.addProjectSynchronizeNotifier(SyncNotifier);
+            syncthingSynchronizeEventListener.addProjectSynchronizeNotifier(SyncNotifier);
         } catch (Exception e) {
             try {
                 if (syncListenerConf == null) {
@@ -228,7 +234,7 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
     private void release(String machineId, String path) throws Exception {
         final Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier> vfsSynchronizer = vfsSyncTasks.get(machineId + "/" + path);
         if (vfsSynchronizer != null) {
-            synchronizeEventListener.removeProjectSynchronizeNotifier(vfsSynchronizer.second);
+            syncthingSynchronizeEventListener.removeProjectSynchronizeNotifier(vfsSynchronizer.second);
             for (int port : vfsSynchronizer.first.getPorts()) {
                 if (port != 0) {
                     portService.release(port);
@@ -241,11 +247,12 @@ public class RemoteMachineSlaveImpl implements MachineSlave {
             }
         }
 
-        final MachineImpl machine = machines.get(machineId);
+        final MachineImpl machine = machineRegistry.get(machineId);
 
-        final URI uri = UriBuilder.fromUri("/internal/machine/sync")
+        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/sync")
                                   .host(machine.getLocationAddress())
                                   .port(8080)
+                                  .scheme("http")
                                   .build();
 
         SynchronizationConf synchronizationConf = DtoFactory.getInstance().createDto(SynchronizationConf.class)

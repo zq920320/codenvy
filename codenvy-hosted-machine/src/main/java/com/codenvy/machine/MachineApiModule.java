@@ -22,9 +22,9 @@ import com.google.inject.AbstractModule;
 /**
  * @author Alexander Garagatyi
  */
-public class MachineSlaveModule extends AbstractModule {
+public class MachineApiModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(com.codenvy.machine.MachineSlaveService.class);
+        bind(org.eclipse.che.api.machine.server.MachineNode.class).to(com.codenvy.machine.RemoteMachineNodeImpl.class);
     }
 }
