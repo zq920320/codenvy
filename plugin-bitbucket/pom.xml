@@ -25,5 +25,6 @@
     <modules>
         <module>codenvy-plugin-bitbucket-oauth1</module>
         <module>codenvy-plugin-bitbucket-git-provider</module>
+        <module>codenvy-plugin-bitbucket-ext-bitbucket</module>
     </modules>
 </project>
