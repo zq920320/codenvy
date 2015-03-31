@@ -18,7 +18,7 @@
         <groupId>com.codenvy.plugin</groupId>
         <version>3.9.0-SNAPSHOT</version>
     </parent>
-    <artifactId>codenvy-plugin-wso2-ext-wso2</artifactId>
+    <artifactId>codenvy-plugin-wso2-git-provider</artifactId>
     <name>Codenvy Plugin :: WSO2 :: Credential provider</name>
     <dependencies>
         <dependency>

@@ -24,6 +24,6 @@
     <name>Codenvy Plugin :: WSO2 :: Parent</name>
     <modules>
         <module>codenvy-plugin-wso2-oauth2</module>
-        <module>codenvy-plugin-wso2-ext-wso2</module>
+        <module>codenvy-plugin-wso2-git-provider</module>
     </modules>
 </project>
