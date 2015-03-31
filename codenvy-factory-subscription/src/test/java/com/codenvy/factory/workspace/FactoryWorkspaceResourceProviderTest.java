@@ -44,12 +44,10 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.net.URLEncoder;
 import java.util.Collections;
 import java.util.Map;
 
-import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
@@ -93,7 +91,6 @@ public class FactoryWorkspaceResourceProviderTest {
 
 
     private String               encodedFactoryUrl;
-    private String               nonEncodedFactoryUrl;
     private CreateWorkspaceEvent event;
 
     private FactoryWorkspaceResourceProvider provider;
@@ -101,8 +98,6 @@ public class FactoryWorkspaceResourceProviderTest {
     @BeforeMethod
     public void setUp() throws Exception {
         encodedFactoryUrl = URLEncoder.encode("http://dev.box.com/factory?id=factory123456", "UTF-8");
-        nonEncodedFactoryUrl =
-                URLEncoder.encode("http://dev.box.com/factory?v=1.1&vcsUrl=http://github.com/codenvy/platform-api.git", "UTF-8");
         event = new CreateWorkspaceEvent(new Workspace().withId(WS_ID)
                                                         .withTemporary(true));
         provider = new FactoryWorkspaceResourceProvider(trackedRunnerLifetime,
@@ -114,8 +109,7 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         apiEndpoint,
                                                         workspaceDao,
                                                         accountDao,
-                                                        new EventService(),
-                                                        factoryBuilder);
+                                                        new EventService());
         Field field = HttpJsonHelper.class.getDeclaredField("httpJsonHelperImpl");
         field.setAccessible(true);
         field.set(null, jsonHelper);
@@ -125,7 +119,6 @@ public class FactoryWorkspaceResourceProviderTest {
         when(author.getAccountId()).thenReturn(ACCOUNT_ID);
         when(workspaceDao.getById(WS_ID)).thenReturn(workspace);
         when(workspace.getAttributes()).thenReturn(attributes);
-        when(factoryBuilder.buildEncoded(any(URI.class))).thenReturn(factory);
         when(workspace.withAttributes(anyMapOf(String.class, String.class))).thenReturn(workspace);
         Subscription subscription = new Subscription().withProperties(Collections.singletonMap("RAM", "8GB"));
         when(accountDao.getActiveSubscription(ACCOUNT_ID, "Factory")).thenReturn(subscription);
@@ -141,18 +134,6 @@ public class FactoryWorkspaceResourceProviderTest {
     @Test
     public void shouldSetCommonAttributesIfWsDoesNotContainFactoryUrl() throws NotFoundException, ServerException, ConflictException {
         when(attributes.get("factoryUrl")).thenReturn(null);
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
-    }
-
-    @Test
-    public void shouldSetCommonAttributesIfNonEncodedFactoryIsNotTracked()
-            throws ApiException, IOException {
-        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factory.getCreator()).thenReturn(null);
-
         provider.onEvent(event);
 
         verify(workspaceDao).update(workspace);
@@ -197,17 +178,6 @@ public class FactoryWorkspaceResourceProviderTest {
     }
 
     @Test
-    public void shouldSetCommonValuesIfNonEncodedTrackedFactoryHasNoSubscriptions() throws ApiException, IOException {
-        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(accountDao.getActiveSubscription(ACCOUNT_ID, "Factory")).thenReturn(null);
-
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
-    }
-
-    @Test
     public void shouldSetTrackedValuesIfEncodedFactoryIsTracked() throws ApiException, IOException {
         when(attributes.get("factoryUrl")).thenReturn(encodedFactoryUrl);
         when(jsonHelper.request(eq(Factory.class),
@@ -216,16 +186,6 @@ public class FactoryWorkspaceResourceProviderTest {
                                 isNull(),
                                 eq(Pair.of("validate", false))))
                 .thenReturn(factory);
-
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(trackedRunnerLifetime, "8192", trackedBuilderExecutionTime, true);
-    }
-
-    @Test
-    public void shouldSetTrackedValuesIfNonEncodedFactoryIsTracked() throws ApiException, IOException {
-        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
 
         provider.onEvent(event);
 
@@ -246,8 +206,7 @@ public class FactoryWorkspaceResourceProviderTest {
                                                         apiEndpoint,
                                                         workspaceDao,
                                                         accountDao,
-                                                        new EventService(),
-                                                        factoryBuilder);
+                                                        new EventService());
 
 
         provider.onEvent(event);
@@ -290,18 +249,6 @@ public class FactoryWorkspaceResourceProviderTest {
         verify(workspaceDao).update(workspace);
         verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
     }
-
-    @Test
-    public void shouldSetCommonValuesIfExeptionIsThrownOnBuildNonEncodedFactory() throws ApiException, IOException {
-        when(attributes.get("factoryUrl")).thenReturn(nonEncodedFactoryUrl);
-        when(factoryBuilder.buildEncoded(any(URI.class))).thenThrow(new ApiException(""));
-
-        provider.onEvent(event);
-
-        verify(workspaceDao).update(workspace);
-        verifySettingOfAttributes(runnerLifetime, runnerRam, builderExecutionTime, false);
-    }
-
 
 
     private void verifySettingOfAttributes(String runnerLifetime, String runnerRam, String builderExecutionTime, boolean runnerInfra) {

@@ -20,11 +20,11 @@ package com.codenvy.factory.workspace;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.factory.FactoryBuilder;
 import org.eclipse.che.api.factory.dto.Factory;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
@@ -43,7 +43,6 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -79,7 +78,6 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
     private final WorkspaceDao   workspaceDao;
     private final AccountDao     accountDao;
     private final EventService   eventService;
-    private final FactoryBuilder factoryBuilder;
 
     @Inject
     public FactoryWorkspaceResourceProvider(@Named(TRACKED_RUNNER_LIFETIME) String trackedRunnerLifetime,
@@ -91,8 +89,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                             @Named("api.endpoint") String apiEndpoint,
                                             WorkspaceDao workspaceDao,
                                             AccountDao accountDao,
-                                            EventService eventService,
-                                            FactoryBuilder factoryBuilder) {
+                                            EventService eventService) {
         this.trackedRunnerLifetime = trackedRunnerLifetime;
         this.trackedBuilderExecutionTime = trackedBuilderExecutionTime;
         this.trackedRunnerRam = trackedRunnerRam;
@@ -102,7 +99,6 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
         this.apiEndpoint = apiEndpoint;
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
-        this.factoryBuilder = factoryBuilder;
         this.accountDao = accountDao;
     }
 
@@ -137,7 +133,7 @@ public class FactoryWorkspaceResourceProvider implements EventSubscriber<CreateW
                                                                                          .build().toString());
                             factory = HttpJsonHelper.request(Factory.class, factoryObjectLink, Pair.of("validate", false));
                         } else {
-                            factory = factoryBuilder.buildEncoded(URI.create(factoryUrl));
+                            throw new ConflictException("Non encoded factories is not supported anymore.");
                         }
 
                         String accountId;
