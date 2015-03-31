@@ -26,8 +26,8 @@
     <modules>
         <module>plugin-google</module>
         <module>plugin-bitbucket</module>
-        <!--module>plugin-wso2</module>
-        <module>plugin-projectlocker</module-->
+        <module>plugin-wso2</module>
+        <!--module>plugin-projectlocker</module-->
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
