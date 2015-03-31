@@ -14,22 +14,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>codenvy-plugin-git-parent</artifactId>
-        <groupId>com.codenvy.ide</groupId>
-        <version>1.12.0-SNAPSHOT</version>
+        <artifactId>codenvy-plugin-bitbucket-parent</artifactId>
+        <groupId>com.codenvy.plugin</groupId>
+        <version>3.9.0-SNAPSHOT</version>
     </parent>
-    <artifactId>codenvy-ext-git-provider-bitbucket</artifactId>
-    <name>Codenvy :: Plugin Git :: Bitbucket CredentialProvider</name>
+    <artifactId>codenvy-plugin-bitbucket-git-provider</artifactId>
+    <name>Codenvy Plugin :: Bitbucket :: Credential provider</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-git</artifactId>
-            <version>${project.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth1-bitbucket</artifactId>
-            <version>${codenvy.security.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-git-ext-git</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
     </dependencies>
 </project>
