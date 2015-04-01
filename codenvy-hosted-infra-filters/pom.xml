@@ -26,18 +26,8 @@
         <version>0.16.0-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-infra-filters</artifactId>
-    <name>Codenvy Hosted :: Web filters</name>
+    <name>Codenvy :: Hosted :: Web filters</name>
     <dependencies>
-        <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-env</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-workspace</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
         <dependency>
             <groupId>javax.inject</groupId>
             <artifactId>javax.inject</artifactId>
@@ -47,6 +37,16 @@
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
             <version>${javax.ws.rs.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-workspace</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-env</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <!-- Logger -->
         <dependency>
