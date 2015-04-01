@@ -30,19 +30,19 @@
     <name>Codenvy Factory :: MongoDB storage</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-inject</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-services</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-factory</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-factory</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-inject</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
