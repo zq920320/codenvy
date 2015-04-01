@@ -85,7 +85,7 @@ public class MachineNodeService {
         this.apiEndpoint = apiEndpoint;
         this.syncTasks = new ConcurrentHashMap<>();
         this.executor =
-                Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("MachineSlaveService-").setDaemon(true).build());
+                Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("MachineSlaveService-%d").setDaemon(true).build());
     }
 
     @Path("/binding")

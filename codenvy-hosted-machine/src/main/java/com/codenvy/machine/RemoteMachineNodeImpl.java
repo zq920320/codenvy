@@ -96,8 +96,8 @@ public class RemoteMachineNodeImpl implements MachineNode {
         this.portService = portService;
         this.machineRegistry = machineRegistry;
         this.vfsSyncTasks = new ConcurrentHashMap<>();
-        this.executor =
-                Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteMachineSlaveImpl-").setDaemon(true).build());
+        this.executor = Executors
+                .newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteMachineSlaveImpl-%d").setDaemon(true).build());
     }
 
     @Override
