@@ -15,6 +15,7 @@ import com.googlecode.gwt.test.patchers.PatchMethod;
 
 import org.eclipse.che.ide.util.Config;
 
+
 /**
  * Patcher for Utils class. Replace native method into Utils.
  *
