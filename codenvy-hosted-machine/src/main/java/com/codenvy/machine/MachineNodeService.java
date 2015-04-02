@@ -58,8 +58,6 @@ public class MachineNodeService {
     private final String            apiEndpoint;
     private final String            machineSyncTaskExecutable;
     private final String            machineSyncTaskConfTemplate;
-    private final int               machineSyncMinPort;
-    private final int               machineSyncMaxPort;
     private final String            machineSyncApiToken;
     private final CustomPortService portService;
 
@@ -69,16 +67,12 @@ public class MachineNodeService {
     @Inject
     public MachineNodeService(CustomPortService portService,
                               @Named("machine.sync.slave.api_token") String machineSyncApiToken,
-                              @Named("machine.sync.slave.port_max") int machineSyncMaxPort,
-                              @Named("machine.sync.slave.port_min") int machineSyncMinPort,
                               @Named("machine.sync.slave.conf") String machineSyncTaskConfTemplate,
                               @Named("machine.sync.slave.exec") String machineSyncTaskExecutable,
                               @Named("machine.sync.workdir") String syncWorkingDir,
                               @Named("api.endpoint") String apiEndpoint) {
         this.portService = portService;
         this.machineSyncApiToken = machineSyncApiToken;
-        this.machineSyncMaxPort = machineSyncMaxPort;
-        this.machineSyncMinPort = machineSyncMinPort;
         this.machineSyncTaskConfTemplate = machineSyncTaskConfTemplate;
         this.machineSyncTaskExecutable = machineSyncTaskExecutable;
         this.syncWorkingDir = syncWorkingDir;
@@ -125,11 +119,11 @@ public class MachineNodeService {
 
         try {
 
-            if ((machineSyncListenPort = portService.acquire(machineSyncMinPort, machineSyncMaxPort)) == -1) {
+            if ((machineSyncListenPort = portService.acquire()) == -1) {
                 throw new ServerException("Machine synchronization failed");
             }
 
-            if ((machineSyncApiPort = portService.acquire(machineSyncMinPort, machineSyncMaxPort)) == -1) {
+            if ((machineSyncApiPort = portService.acquire()) == -1) {
                 throw new ServerException("Machine synchronization failed");
             }
 

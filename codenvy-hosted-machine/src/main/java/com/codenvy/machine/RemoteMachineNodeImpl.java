@@ -62,8 +62,6 @@ public class RemoteMachineNodeImpl implements MachineNode {
 
     private final String                            vfsSyncTaskExecutable;
     private final String                            vfsSyncTaskConfTemplate;
-    private final int                               vfsMinSyncPort;
-    private final int                               vfsMaxSyncPort;
     private final String                            vfsGuiToken;
     private final String                            syncWorkingDir;
     private final LocalFSMountStrategy              mountStrategy;
@@ -77,8 +75,6 @@ public class RemoteMachineNodeImpl implements MachineNode {
     @Inject
     public RemoteMachineNodeImpl(@Named("machine.sync.vfs.exec") String vfsSyncTaskExecutable,
                                  @Named("machine.sync.vfs.conf") String vfsSyncTaskConfTemplate,
-                                 @Named("machine.sync.vfs.port_min") int vfsMinSyncPort,
-                                 @Named("machine.sync.vfs.port_max") int vfsMaxSyncPort,
                                  @Named("machine.sync.vfs.api_token") String vfsGuiToken,
                                  @Named("machine.sync.workdir") String syncWorkingDir,
                                  LocalFSMountStrategy mountStrategy,
@@ -87,8 +83,6 @@ public class RemoteMachineNodeImpl implements MachineNode {
                                  MachineRegistry machineRegistry) {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
-        this.vfsMinSyncPort = vfsMinSyncPort;
-        this.vfsMaxSyncPort = vfsMaxSyncPort;
         this.vfsGuiToken = vfsGuiToken;
         this.syncWorkingDir = syncWorkingDir;
         this.mountStrategy = mountStrategy;
@@ -158,11 +152,11 @@ public class RemoteMachineNodeImpl implements MachineNode {
         try {
             final File mountPath = mountStrategy.getMountPath(machine.getWorkspaceId());
 
-            if ((vfsSyncListenPort = portService.acquire(vfsMinSyncPort, vfsMaxSyncPort)) == -1) {
+            if ((vfsSyncListenPort = portService.acquire()) == -1) {
                 throw new ServerException("Machine synchronization failed");
             }
 
-            if ((vfsSyncApiPort = portService.acquire(vfsMinSyncPort, vfsMaxSyncPort)) == -1) {
+            if ((vfsSyncApiPort = portService.acquire()) == -1) {
                 throw new ServerException("Machine synchronization failed");
             }
 
