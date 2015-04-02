@@ -35,4 +35,10 @@ public interface SynchronizationConf {
     void setSyncPort(int syncPort);
 
     SynchronizationConf withSyncPort(int syncPort);
+
+    String getSyncAddress();
+
+    void setSyncAddress(String syncAddress);
+
+    SynchronizationConf withSyncAddress(String syncAddress);
 }

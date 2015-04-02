@@ -37,6 +37,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
@@ -82,17 +83,27 @@ public class MachineNodeService {
                 Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("MachineSlaveService-%d").setDaemon(true).build());
     }
 
+    @Path("/folder/{path:.*}")
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void createProjectsFolderForMachine(@PathParam("path") String path) throws ServerException {
+        if (!new File("/" + path).mkdir()) {
+            throw new ServerException("Can't create folder " + path);
+        }
+    }
+
     @Path("/binding")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void copyProjectToMachine(MachineCopyProjectRequest binding) throws ServerException {
+        final File fullPath = new File(binding.getHostFolder(), binding.getProject());
         try {
-            copyProjectSource(new File(binding.getHostFolder(), binding.getProject()),
+            copyProjectSource(fullPath,
                               binding.getWorkspaceId(),
                               binding.getProject(),
                               binding.getToken());
         } catch (IOException e) {
-            IoUtil.deleteRecursive(new File(binding.getHostFolder()));
+            IoUtil.deleteRecursive(fullPath);
             LOG.warn(e.getLocalizedMessage(), e);
             throw new ServerException("Project binding failed. " + e.getLocalizedMessage());
         }
@@ -133,7 +144,7 @@ public class MachineNodeService {
                                                           synchronizationConf.getSyncPath(),
                                                           machineSyncListenPort,
                                                           machineSyncApiPort,
-                                                          "127.0.0.1:" + synchronizationConf.getSyncPort(),
+                                                          synchronizationConf.getSyncAddress()+ ":" + synchronizationConf.getSyncPort(),
                                                           machineSyncApiToken);
 
             syncTasks.put(synchronizationConf.getSyncPath(), runnerSyncTask);

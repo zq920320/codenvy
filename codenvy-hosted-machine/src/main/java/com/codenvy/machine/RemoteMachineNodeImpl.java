@@ -163,7 +163,8 @@ public class RemoteMachineNodeImpl implements MachineNode {
             SynchronizationConf synchronizationConf = DtoFactory.getInstance().createDto(SynchronizationConf.class)
                                                                 .withSyncPath(new File(machine.getHostProjectsFolder(),
                                                                                        projectBinding.getPath()).toString())
-                                                                .withSyncPort(vfsSyncListenPort);
+                                                                .withSyncPort(vfsSyncListenPort)
+                                                                .withSyncAddress(machine.getLocationAddress());
 
             final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/sync")
                                       .host(machine.getLocationAddress())
@@ -187,7 +188,7 @@ public class RemoteMachineNodeImpl implements MachineNode {
                                                                              vfsSyncPath,
                                                                              vfsSyncListenPort,
                                                                              vfsSyncApiPort,
-                                                                             "127.0.0.1:" + syncListenerConf.getPort(),
+                                                                             machine.getLocationAddress()+ ":" + syncListenerConf.getPort(),
                                                                              vfsGuiToken);
 
             SyncthingSynchronizeNotifier SyncNotifier = new SyncthingSynchronizeNotifier(machine.getWorkspaceId(),
