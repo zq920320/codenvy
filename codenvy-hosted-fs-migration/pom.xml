@@ -26,11 +26,12 @@
         <version>0.16.0-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-fs-migration</artifactId>
+    <name>Codenvy :: Hosted :: FS migration</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.vfs</groupId>
-            <artifactId>codenvy-vfs-impl</artifactId>
-            <version>${codenvy.vfs.impl.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-vfs-impl</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
     </dependencies>
 </project>
