@@ -46,7 +46,20 @@ public interface MeterBasedStorage {
      *         starting of period
      * @param until
      *         end of period
-     * @return total number of consumed  GB*h group by workspace id's
+     * @return total number of consumed GB*h group by workspace id's
      */
     Map<String, Double> getMemoryUsedReport(String accountId, long from, long until) throws ServerException;
+
+    /**
+     * Get total consumed GB*h of account by given workspace during given period
+     *
+     * @param workspaceId
+     *         given workspaceId
+     * @param from
+     *         starting of period
+     * @param until
+     *         end of period
+     * @return total number of consumed GB*h
+     */
+    Double getUsedMemoryByWorkspace(String workspaceId, long from, long until) throws ServerException;
 }

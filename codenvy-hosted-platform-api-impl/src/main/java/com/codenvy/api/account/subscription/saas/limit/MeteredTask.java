@@ -22,7 +22,7 @@ package com.codenvy.api.account.subscription.saas.limit;
  *
  * @author Sergii Leschenko
  */
-public interface Interruptable {
+public interface MeteredTask {
     String getId();
 
     void interrupt() throws Exception;

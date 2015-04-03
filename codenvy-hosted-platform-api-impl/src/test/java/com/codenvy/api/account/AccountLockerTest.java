@@ -37,24 +37,27 @@ import java.util.Arrays;
 
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 
 /**
- * Tests for {@link com.codenvy.api.account.AccountLocker}
+ * Tests for {@link AccountLocker}
  *
  * @author Sergii Leschenko
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class AccountLockerTest {
     @Mock
-    AccountDao   accountDao;
+    AccountDao      accountDao;
     @Mock
-    WorkspaceDao workspaceDao;
+    WorkspaceDao    workspaceDao;
     @Mock
-    EventService eventService;
+    WorkspaceLocker workspaceLocker;
+    @Mock
+    EventService    eventService;
 
     @InjectMocks
     AccountLocker accountLocker;
@@ -76,13 +79,8 @@ public class AccountLockerTest {
                        && account.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceDao, times(2)).update(argThat(new ArgumentMatcher<Workspace>() {
-            @Override
-            public boolean matches(Object o) {
-                Workspace workspace = (Workspace)o;
-                return workspace.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
-            }
-        }));
+        verify(workspaceLocker).lockResources(eq("ws_1"));
+        verify(workspaceLocker).lockResources(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
@@ -109,13 +107,8 @@ public class AccountLockerTest {
                        && !account.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceDao, times(2)).update(argThat(new ArgumentMatcher<Workspace>() {
-            @Override
-            public boolean matches(Object o) {
-                Workspace workspace = (Workspace)o;
-                return !workspace.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
-            }
-        }));
+        verify(workspaceLocker).unlockResources(eq("ws_1"));
+        verify(workspaceLocker).unlockResources(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {

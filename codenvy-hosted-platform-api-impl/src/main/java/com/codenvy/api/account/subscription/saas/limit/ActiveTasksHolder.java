@@ -18,10 +18,13 @@
 package com.codenvy.api.account.subscription.saas.limit;
 
 import com.codenvy.api.account.metrics.MeteredBuildEventSubscriber;
-import com.google.common.collect.HashMultimap;
+import com.codenvy.api.account.server.WorkspaceResourcesUsageLimitChangedEvent;
+import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.account.subscription.SubscriptionEvent;
+import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 
+import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.NotFoundException;
@@ -39,9 +42,13 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
-import java.util.Set;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import static java.lang.String.format;
 
@@ -54,59 +61,121 @@ import static java.lang.String.format;
 public class ActiveTasksHolder {
     private static final Logger LOG = LoggerFactory.getLogger(ActiveTasksHolder.class);
 
-    private final Multimap<String, Interruptable> activeTasks;
-    private final WorkspaceDao                    workspaceDao;
-    private final EventService                    eventService;
-    private final RunQueue                        runQueue;
-    private final BuildQueue                      buildQueue;
-    final         BuildEventSubscriber            buildEventSubscriber;
-    final         RunEventSubscriber              runEventSubscriber;
+    private final Multimap<String, MeteredTask>  activeTasks;
+    private final Map<String, ResourcesWatchdog> activeWatchdogs;
+    private final ReadWriteLock                  lock;
+    private final WorkspaceDao                   workspaceDao;
+    private final EventService                   eventService;
+    private final RunQueue                       runQueue;
+    private final BuildQueue                     buildQueue;
+    private final ResourcesWatchdogFactory       resourcesWatchdogFactory;
+
+    final BuildEventSubscriber               buildEventSubscriber;
+    final RunEventSubscriber                 runEventSubscriber;
+    final ChangeSubscriptionSubscriber       changeSubscriptionSubscriber;
+    final ChangeResourceUsageLimitSubscriber changeResourceUsageLimitSubscriber;
 
     @Inject
     public ActiveTasksHolder(WorkspaceDao workspaceDao,
                              EventService eventService,
                              BuildQueue buildQueue,
-                             RunQueue runQueue) {
+                             RunQueue runQueue,
+                             ResourcesWatchdogFactory resourcesWatchdogFactory) {
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.runQueue = runQueue;
         this.buildQueue = buildQueue;
+        this.resourcesWatchdogFactory = resourcesWatchdogFactory;
+
         this.buildEventSubscriber = new BuildEventSubscriber(buildQueue);
         this.runEventSubscriber = new RunEventSubscriber();
-        this.activeTasks = Multimaps.synchronizedMultimap(HashMultimap.<String, Interruptable>create());
+        this.changeSubscriptionSubscriber = new ChangeSubscriptionSubscriber();
+        this.changeResourceUsageLimitSubscriber = new ChangeResourceUsageLimitSubscriber();
+
+        this.activeTasks = ArrayListMultimap.create();
+        this.activeWatchdogs = new HashMap<>();
+        this.lock = new ReentrantReadWriteLock();
     }
 
-    public Set<String> getAccountsWithActiveTasks() {
-        return activeTasks.keySet();
+    /**
+     * @return watchdogs which have active tasks
+     */
+    public Collection<ResourcesWatchdog> getActiveWatchdogs() {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<>(activeWatchdogs.values());
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
-    public Collection<Interruptable> getActiveTasks(String accountId) {
-        return activeTasks.get(accountId);
+    /**
+     * @param watchdogId
+     *         given watchdog
+     * @return active tasks by given watchdog
+     */
+    public Collection<MeteredTask> getActiveTasks(String watchdogId) {
+        lock.readLock().lock();
+        try {
+            return new ArrayList<>(activeTasks.get(watchdogId));
+        } finally {
+            lock.readLock().unlock();
+        }
     }
 
     @PostConstruct
     private void subscribe() {
         eventService.subscribe(buildEventSubscriber);
         eventService.subscribe(runEventSubscriber);
+        eventService.subscribe(changeSubscriptionSubscriber);
+        eventService.subscribe(changeResourceUsageLimitSubscriber);
     }
 
     @PreDestroy
     private void unsubscribe() {
         eventService.unsubscribe(buildEventSubscriber);
         eventService.unsubscribe(runEventSubscriber);
+        eventService.unsubscribe(changeSubscriptionSubscriber);
+        eventService.unsubscribe(changeResourceUsageLimitSubscriber);
     }
 
-    private void addInterruptableTask(String workspaceId, Interruptable interruptable) {
+    private void addMeteredTask(String workspaceId, MeteredTask meteredTask) {
         String accountId = getAccountId(workspaceId);
         if (accountId != null) {
-            activeTasks.put(accountId, interruptable);
+            lock.writeLock().lock();
+            try {
+                if (!activeWatchdogs.containsKey(accountId)) {
+                    activeWatchdogs.put(accountId, resourcesWatchdogFactory.createAccountWatchdog(accountId));
+                }
+                activeTasks.put(accountId, meteredTask);
+
+                if (!activeWatchdogs.containsKey(workspaceId)) {
+                    activeWatchdogs.put(workspaceId, resourcesWatchdogFactory.createWorkspaceWatchdog(workspaceId));
+                }
+                activeTasks.put(workspaceId, meteredTask);
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
     }
 
-    private void removeInterruptableTask(String workspaceId, Interruptable interruptable) {
+    private void removeMeteredTask(String workspaceId, MeteredTask meteredTask) {
         String accountId = getAccountId(workspaceId);
         if (accountId != null) {
-            activeTasks.remove(accountId, interruptable);
+            lock.writeLock().lock();
+            try {
+                activeTasks.remove(accountId, meteredTask);
+                if (activeTasks.containsKey(accountId)) {
+                    activeWatchdogs.remove(accountId);
+                }
+
+                activeTasks.remove(workspaceId, meteredTask);
+                if (activeWatchdogs.containsKey(workspaceId)) {
+                    activeWatchdogs.remove(workspaceId);
+                }
+            } finally {
+                lock.writeLock().unlock();
+            }
         }
     }
 
@@ -120,6 +189,48 @@ public class ActiveTasksHolder {
         return null;
     }
 
+
+    class ChangeSubscriptionSubscriber implements EventSubscriber<SubscriptionEvent> {
+        @Override
+        public void onEvent(SubscriptionEvent event) {
+            Subscription subscription = event.getSubscription();
+            if (!ServiceId.SAAS.equals(subscription.getServiceId())) {
+                return;
+            }
+
+            switch (event.getType()) {
+                case ADDED:
+                case REMOVED:
+                    recheckWatchdog(subscription.getAccountId());
+                    break;
+                case RENEWED:
+                    //do nothing
+                    break;
+            }
+        }
+    }
+
+    class ChangeResourceUsageLimitSubscriber implements EventSubscriber<WorkspaceResourcesUsageLimitChangedEvent> {
+        @Override
+        public void onEvent(WorkspaceResourcesUsageLimitChangedEvent event) {
+            recheckWatchdog(event.getWorkspaceId());
+        }
+    }
+
+    private void recheckWatchdog(String watchdogId) {
+        ResourcesWatchdog resourcesWatchdog = null;
+        lock.readLock().lock();
+        try {
+            resourcesWatchdog = activeWatchdogs.get(watchdogId);
+        } finally {
+            lock.readLock().unlock();
+        }
+
+        if (resourcesWatchdog != null) {
+            resourcesWatchdog.checkLimit();
+        }
+    }
+
     class BuildEventSubscriber extends MeteredBuildEventSubscriber {
         public BuildEventSubscriber(BuildQueue buildQueue) {
             super(buildQueue);
@@ -129,10 +240,10 @@ public class ActiveTasksHolder {
         public void onMeteredBuildEvent(BuilderEvent event) {
             switch (event.getType()) {
                 case BEGIN:
-                    addInterruptableTask(event.getWorkspace(), new InterruptableBuild(event));
+                    addMeteredTask(event.getWorkspace(), new MeteredTaskBuild(event));
                     break;
                 case DONE:
-                    removeInterruptableTask(event.getWorkspace(), new InterruptableBuild(event));
+                    removeMeteredTask(event.getWorkspace(), new MeteredTaskBuild(event));
                     break;
             }
         }
@@ -143,19 +254,19 @@ public class ActiveTasksHolder {
         public void onEvent(RunnerEvent event) {
             switch (event.getType()) {
                 case STARTED:
-                    addInterruptableTask(event.getWorkspace(), new InterruptableRun(event));
+                    addMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
                     break;
                 case STOPPED:
-                    removeInterruptableTask(event.getWorkspace(), new InterruptableRun(event));
+                    removeMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
                     break;
             }
         }
     }
 
-    private class InterruptableBuild implements Interruptable {
+    private class MeteredTaskBuild implements MeteredTask {
         private BuilderEvent builderEvent;
 
-        public InterruptableBuild(BuilderEvent builderEvent) {
+        public MeteredTaskBuild(BuilderEvent builderEvent) {
             this.builderEvent = builderEvent;
         }
 
@@ -171,9 +282,7 @@ public class ActiveTasksHolder {
 
         @Override
         public int hashCode() {
-            int hash = 7;
-            hash = 31 * hash + (int)(builderEvent.getTaskId() ^ (builderEvent.getTaskId() >>> 32));
-            return hash;
+            return 7 + (int)(builderEvent.getTaskId() ^ (builderEvent.getTaskId() >>> 32));
         }
 
         @Override
@@ -181,18 +290,18 @@ public class ActiveTasksHolder {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof InterruptableBuild)) {
+            if (!(obj instanceof MeteredTaskBuild)) {
                 return false;
             }
-            final InterruptableBuild other = (InterruptableBuild)obj;
+            final MeteredTaskBuild other = (MeteredTaskBuild)obj;
             return Objects.equals(builderEvent.getTaskId(), other.builderEvent.getTaskId());
         }
     }
 
-    private class InterruptableRun implements Interruptable {
+    private class MeteredTaskRun implements MeteredTask {
         private RunnerEvent runnerEvent;
 
-        public InterruptableRun(RunnerEvent runnerEvent) {
+        public MeteredTaskRun(RunnerEvent runnerEvent) {
             this.runnerEvent = runnerEvent;
         }
 
@@ -208,9 +317,7 @@ public class ActiveTasksHolder {
 
         @Override
         public int hashCode() {
-            int hash = 11;
-            hash = 31 * hash + (int)(runnerEvent.getProcessId() ^ (runnerEvent.getProcessId() >>> 32));
-            return hash;
+            return 11 + (int)(runnerEvent.getProcessId() ^ (runnerEvent.getProcessId() >>> 32));
         }
 
         @Override
@@ -218,10 +325,10 @@ public class ActiveTasksHolder {
             if (this == obj) {
                 return true;
             }
-            if (!(obj instanceof InterruptableRun)) {
+            if (!(obj instanceof MeteredTaskRun)) {
                 return false;
             }
-            final InterruptableRun other = (InterruptableRun)obj;
+            final MeteredTaskRun other = (MeteredTaskRun)obj;
             return Objects.equals(runnerEvent.getProcessId(), other.runnerEvent.getProcessId());
         }
     }
