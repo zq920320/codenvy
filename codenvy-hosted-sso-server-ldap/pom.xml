@@ -27,7 +27,7 @@
     </parent>
     <artifactId>codenvy-hosted-sso-server-ldap</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy Security :: System LDAP</name>
+    <name>Codenvy :: Hosted :: System LDAP</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>

@@ -32,8 +32,10 @@ import java.text.ParseException;
 import java.util.Date;
 import java.util.Map;
 
-
-public class SQLMeterBasedStorageTest extends AbstractSQLTest {
+/**
+ * Tests for {@link SqlMeterBasedStorage}
+ */
+public class SqlMeterBasedStorageTest extends AbstractSQLTest {
 
 
     private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
@@ -199,13 +201,51 @@ public class SQLMeterBasedStorageTest extends AbstractSQLTest {
                                                                       "run-7"));
 
         //then
-
         Map<String, Double> result = meterBasedStorage
                 .getMemoryUsedReport("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
                                      sdf.parse("10-01-2014 12:10:00").getTime());
         Assert.assertEquals(result.get("ws-124"), 0.283333);
         Assert.assertEquals(result.get("ws-235423"), 0.216667);
         Assert.assertEquals(2, result.size());
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldGetSumForGivenWorkspace(SqlMeterBasedStorage meterBasedStorage) throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2013 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2013 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-1"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2014 09:55:00").getTime(),
+                                                                      sdf.parse("10-01-2014 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-2"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("10-01-2014 12:00:00").getTime(),
+                                                                      sdf.parse("10-01-2014 12:20:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-235423",
+                                                                      "run-6"));
+
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
+                                                                      sdf.parse("10-01-2015 10:00:00").getTime(),
+                                                                      sdf.parse("10-01-2015 10:05:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-46534",
+                                                                      "ws-other",
+                                                                      "run-7"));
+
+        Double result = meterBasedStorage.getUsedMemoryByWorkspace("ws-235423", sdf.parse("10-01-2014 10:00:00").getTime(),
+                                                                   sdf.parse("10-01-2014 12:10:00").getTime());
+        Assert.assertEquals(result, 0.1875);
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Metric with given id and period already exist")

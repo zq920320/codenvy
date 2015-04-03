@@ -17,6 +17,9 @@
  */
 package com.codenvy.api.account.server;
 
+import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.Period;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.subscription.ServiceId;
 
 import org.eclipse.che.api.account.server.ResourcesManager;
@@ -28,11 +31,13 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
@@ -41,10 +46,16 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
+import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -66,18 +77,28 @@ public class ResourcesManagerImplTest {
     private static final String  SECOND_WORKSPACE_ID = "secondWorkspace";
 
     @Mock
-    WorkspaceDao workspaceDao;
-
+    WorkspaceDao             workspaceDao;
     @Mock
-    AccountDao accountDao;
-
+    AccountDao               accountDao;
     @Mock
     ResourcesChangesNotifier resourcesChangesNotifier;
+    @Mock
+    BillingPeriod            billingPeriod;
+    @Mock
+    MeterBasedStorage        meterBasedStorage;
+    @Mock
+    EventService             eventService;
 
     ResourcesManager resourcesManager;
 
+    @Mock
+    Period period;
+
     @BeforeMethod
     public void setUp() throws NotFoundException, ServerException {
+        when(billingPeriod.getCurrent()).thenReturn(period);
+        when(period.getStartDate()).thenReturn(new Date());
+
         Map<String, String> firstAttributes = new HashMap<>();
         firstAttributes.put(Constants.RUNNER_MAX_MEMORY_SIZE, "1024");
         Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
@@ -93,7 +114,8 @@ public class ResourcesManagerImplTest {
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(firstWorkspace, secondWorkspace));
         when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
 
-        resourcesManager = new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao, resourcesChangesNotifier);
+        resourcesManager = new ResourcesManagerImpl(MAX_LIMIT, accountDao, workspaceDao, resourcesChangesNotifier, billingPeriod,
+                                                    meterBasedStorage, eventService);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
@@ -155,6 +177,14 @@ public class ResourcesManagerImplTest {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                                    .withRunnerRam(5000)));
+    }
+
+    @Test(expectedExceptions = ConflictException.class,
+            expectedExceptionsMessageRegExp = "Resources usage limit for workspace \\w* is a negative number")
+    public void shouldThrowConflictExceptionIfValueOfResourcesUsageLimitIsNegativeNumber() throws Exception {
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(SECOND_WORKSPACE_ID)
+                                                                                   .withResourcesUsageLimit(-2D)));
     }
 
     @Test
@@ -253,5 +283,129 @@ public class ResourcesManagerImplTest {
 
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq(String.valueOf(Integer.MAX_VALUE)));
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("0"));
+    }
+
+    @Test
+    public void shouldRemoveResourcesUsageLimitButDoNotRemoveWorkspaceLockIfNewValueEqualsToMinus1AndAccountIsLocked() throws Exception {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(eq(ACCOUNT_ID))).thenReturn(new Account().withAttributes(attributes));
+
+        Map<String, String> firstAttributes = new HashMap<>();
+        firstAttributes.put(RESOURCES_USAGE_LIMIT_PROPERTY, "1");
+        firstAttributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
+                                                  .withId(FIRST_WORKSPACE_ID)
+                                                  .withAttributes(firstAttributes);
+
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(firstWorkspace));
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(-1D)));
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                Workspace workspace = (Workspace)o;
+                return !workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)
+                        && workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldRemoveResourcesUsageLimitAndRemoveWorkspaceLockIfNewValueEqualsToMinus1AndAccountIsNotLocked() throws Exception {
+        when(accountDao.getById(eq(ACCOUNT_ID))).thenReturn(new Account());
+
+        Map<String, String> firstAttributes = new HashMap<>();
+        firstAttributes.put(RESOURCES_USAGE_LIMIT_PROPERTY, "1");
+        firstAttributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
+                                                  .withId(FIRST_WORKSPACE_ID)
+                                                  .withAttributes(firstAttributes);
+
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(firstWorkspace));
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(-1D)));
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                Workspace workspace = (Workspace)o;
+                return !workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)
+                       && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldUnlockWorkspaceIfNewResourcesUsageMoreThanUsedResourcesAndAccountIsNotLocked() throws Exception {
+        when(accountDao.getById(eq(ACCOUNT_ID))).thenReturn(new Account());
+        when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(25D);
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(50D)));
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                final Workspace workspace = (Workspace)o;
+                return FIRST_WORKSPACE_ID.equals(workspace.getId())
+                       && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldDoNotUnlockWorkspaceIfNewResourcesUsageMoreThanUsedResourcesAndAccountIsLocked() throws Exception {
+        Map<String, String> attributes = new HashMap<>();
+        attributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(eq(ACCOUNT_ID))).thenReturn(new Account().withAttributes(attributes));
+        when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(25D);
+
+        Map<String, String> firstAttributes = new HashMap<>();
+        firstAttributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
+                                                  .withId(FIRST_WORKSPACE_ID)
+                                                  .withAttributes(firstAttributes);
+
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(firstWorkspace));
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(50D)));
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                final Workspace workspace = (Workspace)o;
+                return FIRST_WORKSPACE_ID.equals(workspace.getId())
+                       && workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+    }
+
+    @Test
+    public void shouldLockWorkspaceIfNewResourcesUsageLessThanUsedResources() throws Exception {
+        when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(50D);
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(25D)));
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                final Workspace workspace = (Workspace)o;
+                return FIRST_WORKSPACE_ID.equals(workspace.getId())
+                       && "true".equals(workspace.getAttributes().get(RESOURCES_LOCKED_PROPERTY));
+            }
+        }));
     }
 }

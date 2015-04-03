@@ -27,37 +27,32 @@
     </parent>
     <artifactId>codenvy-hosted-sso-oauth</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy Security :: SSO Oauth bridge</name>
+    <name>Codenvy :: Hosted :: SSO Oauth bridge</name>
     <dependencies>
-        <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-lang</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-auth-bearer</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-account</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-account</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-auth</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-auth</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-workspace</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-workspace</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2</artifactId>
-            <version>${codenvy.security.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-lang</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

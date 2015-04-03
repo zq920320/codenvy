@@ -17,6 +17,11 @@
  */
 package com.codenvy.api.account.subscription.saas.limit;
 
+import com.codenvy.api.account.server.WorkspaceResourcesUsageLimitChangedEvent;
+import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.account.subscription.SubscriptionEvent;
+
+import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BuildRequest;
@@ -36,6 +41,8 @@ import org.testng.annotations.Test;
 
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -48,18 +55,22 @@ import static org.testng.Assert.assertTrue;
 @Listeners(MockitoTestNGListener.class)
 public class ActiveTasksHolderTest {
     @Mock
-    WorkspaceDao workspaceDao;
+    WorkspaceDao             workspaceDao;
     @Mock
-    EventService eventService;
+    EventService             eventService;
     @Mock
-    RunQueue     runQueue;
+    RunQueue                 runQueue;
     @Mock
-    BuildQueue   buildQueue;
+    BuildQueue               buildQueue;
+    @Mock
+    ResourcesWatchdogFactory watchdogFactory;
 
     ActiveTasksHolder activeTasksHolder;
 
     @Mock
-    BuildQueueTask buildQueueTask;
+    BuildQueueTask    buildQueueTask;
+    @Mock
+    ResourcesWatchdog resourcesWatchdog;
 
     private static final String ACC_ID = "accountId";
     private static final String WS_ID  = "workspaceId";
@@ -71,7 +82,7 @@ public class ActiveTasksHolderTest {
         when(buildQueue.getTask(anyLong())).thenReturn(buildQueueTask);
 
         //create instance manually without @InjectMocks because it is to necessary have new instance in each test
-        activeTasksHolder = new ActiveTasksHolder(workspaceDao, eventService, buildQueue, runQueue);
+        activeTasksHolder = new ActiveTasksHolder(workspaceDao, eventService, buildQueue, runQueue, watchdogFactory);
     }
 
     @Test
@@ -110,7 +121,32 @@ public class ActiveTasksHolderTest {
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
         activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project2"));
 
-        assertTrue(activeTasksHolder.getAccountsWithActiveTasks().isEmpty());
+        assertTrue(activeTasksHolder.getActiveWatchdogs().isEmpty());
         assertTrue(activeTasksHolder.getActiveTasks(ACC_ID).isEmpty());
+    }
+
+    @Test
+    public void shouldRecheckWatchdogLimitWhenSaasSubscriptionRemovedAndExistActiveTask() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+        when(watchdogFactory.createAccountWatchdog(eq(ACC_ID))).thenReturn(resourcesWatchdog);
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.changeSubscriptionSubscriber.onEvent(SubscriptionEvent.subscriptionAddedEvent(new Subscription()
+                                                                                                                .withServiceId(
+                                                                                                                        ServiceId.SAAS)
+                                                                                                                .withAccountId(ACC_ID)));
+
+        verify(resourcesWatchdog).checkLimit();
+    }
+
+    @Test
+    public void shouldRecheckWatchdogLimitWhenWorkspaceResourcesUsageLimitChanged() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+        when(watchdogFactory.createWorkspaceWatchdog(eq(WS_ID))).thenReturn(resourcesWatchdog);
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.changeResourceUsageLimitSubscriber.onEvent(new WorkspaceResourcesUsageLimitChangedEvent(WS_ID));
+
+        verify(resourcesWatchdog).checkLimit();
     }
 }

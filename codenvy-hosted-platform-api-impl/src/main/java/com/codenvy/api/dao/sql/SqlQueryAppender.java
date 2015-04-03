@@ -17,7 +17,10 @@
  */
 package com.codenvy.api.dao.sql;
 
+import static com.google.common.base.CharMatcher.is;
+
 import com.codenvy.api.dao.sql.postgresql.Int8RangeType;
+import com.google.common.base.CharMatcher;
 
 import java.sql.SQLException;
 
@@ -114,7 +117,7 @@ public class SqlQueryAppender {
     public static boolean appendLessOrEqual(StringBuilder queryBuilder, String fieldName, Object fieldValue) {
         if (fieldValue != null) {
             appendWhereOrAnd(queryBuilder);
-            queryBuilder.append(" ").append(fieldName).append(" >= ");
+            queryBuilder.append(" ").append(fieldName).append(" <= ");
             appendValue(queryBuilder, fieldValue);
             return true;
         }
@@ -139,8 +142,13 @@ public class SqlQueryAppender {
     }
 
     public static void appendWhereOrAnd(StringBuilder queryBuilder) {
-        if (queryBuilder.indexOf("WHERE") == -1 || queryBuilder.indexOf(") ", queryBuilder.lastIndexOf("WHERE")) > 0) {
+        if (queryBuilder.indexOf("WHERE") == -1) {
             queryBuilder.append(" WHERE ");
+        } else {
+            String whereTail = queryBuilder.substring(queryBuilder.lastIndexOf("WHERE"));
+            if (is('(').countIn(whereTail) + is('[').countIn(whereTail) < is(')').countIn(whereTail)) {
+                queryBuilder.append(" WHERE ");
+            }
         }
         if (queryBuilder.lastIndexOf("WHERE") != queryBuilder.length() - 6) {
             queryBuilder.append(" AND ");
@@ -148,8 +156,15 @@ public class SqlQueryAppender {
     }
 
     public static void appendHavingOrAnd(StringBuilder queryBuilder) {
-        if (queryBuilder.indexOf("HAVING") == -1  || queryBuilder.indexOf(") ", queryBuilder.lastIndexOf("HAVING")) > 0) {
+
+        if (queryBuilder.indexOf("HAVING") == -1) {
             queryBuilder.append(" HAVING ");
+        } else {
+            String havingTail = queryBuilder.substring(queryBuilder.lastIndexOf("HAVING"));
+            //we have HAVING in subquery
+            if (is('(').countIn(havingTail) < is(')').countIn(havingTail)) {
+                queryBuilder.append(" HAVING ");
+            }
         }
         if (queryBuilder.lastIndexOf("HAVING") != queryBuilder.length() - 7) {
             queryBuilder.append(" AND ");

@@ -20,7 +20,6 @@ package com.codenvy.api.account;
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
@@ -41,15 +40,17 @@ import static java.lang.String.format;
 public class AccountLocker {
     private static final Logger LOG = LoggerFactory.getLogger(AccountLocker.class);
 
-    private final AccountDao   accountDao;
-    private final WorkspaceDao workspaceDao;
-    private final EventService eventService;
+    private final AccountDao      accountDao;
+    private final WorkspaceDao    workspaceDao;
+    private final EventService    eventService;
+    private final WorkspaceLocker workspaceLocker;
 
     @Inject
-    public AccountLocker(AccountDao accountDao, WorkspaceDao workspaceDao, EventService eventService) {
+    public AccountLocker(AccountDao accountDao, WorkspaceDao workspaceDao, EventService eventService, WorkspaceLocker workspaceLocker) {
         this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
+        this.workspaceLocker = workspaceLocker;
     }
 
     public void unlockResources(String accountId) {
@@ -63,13 +64,8 @@ public class AccountLocker {
         }
 
         try {
-            for (Workspace ws : workspaceDao.getByAccount(accountId)) {
-                ws.getAttributes().remove(Constants.RESOURCES_LOCKED_PROPERTY);
-                try {
-                    workspaceDao.update(ws);
-                } catch (NotFoundException | ServerException | ConflictException e) {
-                    LOG.error(format("Error removing lock property from workspace %s .", ws.getId()), e);
-                }
+            for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
+                workspaceLocker.unlockResources(workspace.getId());
             }
         } catch (ServerException e) {
             LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
@@ -88,13 +84,8 @@ public class AccountLocker {
 
         eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
         try {
-            for (Workspace ws : workspaceDao.getByAccount(accountId)) {
-                ws.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
-                try {
-                    workspaceDao.update(ws);
-                } catch (NotFoundException | ServerException | ConflictException e) {
-                    LOG.error(format("Error writing lock property into workspace %s .", ws.getId()), e);
-                }
+            for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
+                workspaceLocker.lockResources(workspace.getId());
             }
         } catch (ServerException e) {
             LOG.error(format("Can't get account's workspaces %s for writing lock property", accountId), e);

@@ -40,6 +40,7 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ACCOUNT_GB_WS_TOTAL;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_ID;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_RUNID;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_SELECT_WORKSPACE_GB_TOTAL;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.METRIC_UPDATE;
 
 /**
@@ -184,6 +185,27 @@ public class SqlMeterBasedStorage implements MeterBasedStorage {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
         return result;
+    }
+
+    @Override
+    public Double getUsedMemoryByWorkspace(String workspaceId, long from, long until) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            try (PreparedStatement statement = connection.prepareStatement(METRIC_SELECT_WORKSPACE_GB_TOTAL)) {
+                Int8RangeType range = new Int8RangeType(from, until, true, true);
+                statement.setObject(1, range);
+                statement.setObject(2, range);
+                statement.setString(3, workspaceId);
+                statement.setObject(4, range);
+                try (ResultSet resultSet = statement.executeQuery()) {
+                    if (resultSet.next()) {
+                        return resultSet.getDouble(1);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+        return 0D;
     }
 
     static final class SQLUsageInformer implements UsageInformer {

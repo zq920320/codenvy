@@ -76,8 +76,7 @@ public interface SqlDaoQueries {
             " M.FWORKSPACE_ID ";
 
 
-
-    String PREPAID_AMOUNT =  " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
+    String PREPAID_AMOUNT  = " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?)";
     String FFREE_AMOUNT    = "ROUND(CAST(LEAST(" + GBH_SUM + ", ?) as numeric), 6)";
     String FPREPAID_AMOUNT = "ROUND(CAST(LEAST(GREATEST(" + GBH_SUM +
                              " -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) as numeric), 6)";
@@ -281,6 +280,15 @@ public interface SqlDaoQueries {
                                                "   AND M.FDURING && ?" +
                                                "GROUP BY M.FWORKSPACE_ID";
 
+    String METRIC_SELECT_WORKSPACE_GB_TOTAL = "SELECT " +
+                                              "  " + GBH_SUM + " AS FAMOUNT, " +
+                                              "   M.FWORKSPACE_ID " +
+                                              "FROM " +
+                                              "  METRICS AS M " +
+                                              "WHERE " +
+                                              "   M.FWORKSPACE_ID=?" +
+                                              "   AND M.FDURING && ?" +
+                                              "GROUP BY M.FWORKSPACE_ID";
 
     String METRIC_UPDATE = "UPDATE  METRICS " +
                            " SET FDURING=? " +

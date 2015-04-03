@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.billing;
 
-import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.impl.shared.dto.ClientToken;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.CreditCardDescriptor;
@@ -62,13 +61,9 @@ public class CreditCardService extends Service {
 
     private final CreditCardDao creditCardDao;
 
-    private final AccountLocker accountLocker;
-
-
     @Inject
-    public CreditCardService(CreditCardDao creditCardDao, AccountLocker accountLocker) {
+    public CreditCardService(CreditCardDao creditCardDao) {
         this.creditCardDao = creditCardDao;
-        this.accountLocker = accountLocker;
     }
 
     @ApiOperation(value = "Client token",
