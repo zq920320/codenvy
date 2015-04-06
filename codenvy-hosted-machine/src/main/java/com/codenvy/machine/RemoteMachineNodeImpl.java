@@ -17,6 +17,7 @@
  */
 package com.codenvy.machine;
 
+import com.codenvy.machine.docker.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
@@ -29,9 +30,7 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.util.CustomPortService;
-import org.eclipse.che.api.machine.server.MachineImpl;
-import org.eclipse.che.api.machine.server.MachineNode;
-import org.eclipse.che.api.machine.server.MachineRegistry;
+import org.eclipse.che.api.machine.server.MachineException;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
@@ -57,7 +56,7 @@ import java.util.concurrent.Executors;
  * @author Alexander Garagatyi
  */
 @Singleton
-public class RemoteMachineNodeImpl implements MachineNode {
+public class RemoteMachineNodeImpl implements DockerNode {
     private static final Logger LOG = LoggerFactory.getLogger(RemoteMachineNodeImpl.class);
 
     private final String                            vfsSyncTaskExecutable;
@@ -67,7 +66,6 @@ public class RemoteMachineNodeImpl implements MachineNode {
     private final LocalFSMountStrategy              mountStrategy;
     private final SyncthingSynchronizeEventListener syncthingSynchronizeEventListener;
     private final CustomPortService                 portService;
-    private final MachineRegistry                   machineRegistry;
     private final ExecutorService                   executor;
 
     private final ConcurrentHashMap<String, Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier>> vfsSyncTasks;
@@ -79,8 +77,7 @@ public class RemoteMachineNodeImpl implements MachineNode {
                                  @Named("machine.sync.workdir") String syncWorkingDir,
                                  LocalFSMountStrategy mountStrategy,
                                  SyncthingSynchronizeEventListener syncthingSynchronizeEventListener,
-                                 CustomPortService portService,
-                                 MachineRegistry machineRegistry) {
+                                 CustomPortService portService) {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
         this.vfsGuiToken = vfsGuiToken;
@@ -88,69 +85,98 @@ public class RemoteMachineNodeImpl implements MachineNode {
         this.mountStrategy = mountStrategy;
         this.syncthingSynchronizeEventListener = syncthingSynchronizeEventListener;
         this.portService = portService;
-        this.machineRegistry = machineRegistry;
         this.vfsSyncTasks = new ConcurrentHashMap<>();
         this.executor = Executors
                 .newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteMachineSlaveImpl-%d").setDaemon(true).build());
     }
 
     @Override
-    public void copyProjectToMachine(String machineId, ProjectBinding project) throws ServerException, NotFoundException {
-        final MachineImpl machine = machineRegistry.get(machineId);
+    public void bindProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
+            throws MachineException {
+        copyProject(nodeLocation, hostProjectsFolder, workspaceId, project);
 
+        try {
+            startSynchronization(nodeLocation, hostProjectsFolder, workspaceId, project);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public void unbindProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
+            throws MachineException {
+        try {
+            stopSynchronization(nodeLocation, hostProjectsFolder, project);
+        } catch (MachineException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+//            try {
+//                machine.getMachineLogsOutput().writeLine("[ERROR] " + e.getLocalizedMessage());
+//            } catch (IOException ignored) {
+//            }
+        }
+
+        try {
+            removeProject(nodeLocation, hostProjectsFolder, project);
+        } catch (MachineException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+//            try {
+//                machine.getMachineLogsOutput().writeLine("[ERROR] " + e.getLocalizedMessage());
+//            } catch (IOException ignored) {
+//            }
+            throw e;
+        }
+
+    }
+
+    @Override
+    public void createProjectsFolder(String nodeLocation, String hostProjectsFolder) throws MachineException {
+        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/folder/")
+                                  .path(hostProjectsFolder)
+                                  .host(nodeLocation)
+                                  .port(8080)
+                                  .scheme("http")
+                                  .build();
+
+        try {
+            HttpJsonHelper.request(null, uri.toString(), "POST", null);
+        } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException | NotFoundException | ServerException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new MachineException("Machine creation failed");
+        }
+    }
+
+    private void copyProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
+            throws MachineException {
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
-                                                                .withWorkspaceId(machine.getWorkspaceId())
+                                                                .withWorkspaceId(workspaceId)
                                                                 .withProject(project.getPath())
-                                                                .withHostFolder(machine.getHostProjectsFolder().toString())
+                                                                .withHostFolder(hostProjectsFolder)
                                                                 .withToken(EnvironmentContext.getCurrent().getUser().getToken());
 
         final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
-                                  .host(machine.getLocationAddress())
+                                  .host(nodeLocation)
                                   .port(8080)
                                   .scheme("http")
                                   .build();
 
         try {
             HttpJsonHelper.request(null, uri.toString(), "POST", bindingConf);
-        } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException e) {
+        } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException | NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException("Project binding failed.");
+            throw new MachineException("Project binding failed.");
+        } catch (ServerException e) {
+            throw new MachineException(e.getLocalizedMessage(), e);
         }
     }
 
-    @Override
-    public void removeProjectFromMachine(String machineId, ProjectBinding project) throws NotFoundException, ServerException {
-        final MachineImpl machine = machineRegistry.get(machineId);
-
-        final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
-                                                                .withProject(project.getPath())
-                                                                .withHostFolder(machine.getHostProjectsFolder().toString());
-
-        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
-                                  .host(machine.getLocationAddress())
-                                  .port(8080)
-                                  .scheme("http")
-                                  .build();
-
-        try {
-            HttpJsonHelper.request(null, uri.toString(), "DELETE", bindingConf);
-        } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException("Error occurred on removing of binding");
-        }
-    }
-
-    @Override
-    public void startSynchronization(String machineId, ProjectBinding projectBinding) throws ServerException, NotFoundException {
-        final MachineImpl machine = machineRegistry.get(machineId);
-
+    private void startSynchronization(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding projectBinding) {
         int vfsSyncListenPort = 0;
         int vfsSyncApiPort = 0;
         RemoteSyncListener syncListenerConf = null;
         final String project = projectBinding.getPath();
 
         try {
-            final File mountPath = mountStrategy.getMountPath(machine.getWorkspaceId());
+            final File mountPath = mountStrategy.getMountPath(workspaceId);
 
             if ((vfsSyncListenPort = portService.acquire()) == -1) {
                 throw new ServerException("Machine synchronization failed");
@@ -161,13 +187,13 @@ public class RemoteMachineNodeImpl implements MachineNode {
             }
 
             SynchronizationConf synchronizationConf = DtoFactory.getInstance().createDto(SynchronizationConf.class)
-                                                                .withSyncPath(new File(machine.getHostProjectsFolder(),
+                                                                .withSyncPath(new File(hostProjectsFolder,
                                                                                        projectBinding.getPath()).toString())
                                                                 .withSyncPort(vfsSyncListenPort)
-                                                                .withSyncAddress(machine.getLocationAddress());
+                                                                .withSyncAddress(nodeLocation);
 
             final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/sync")
-                                      .host(machine.getLocationAddress())
+                                      .host(nodeLocation)
                                       .port(8080)
                                       .scheme("http")
                                       .build();
@@ -188,15 +214,15 @@ public class RemoteMachineNodeImpl implements MachineNode {
                                                                              vfsSyncPath,
                                                                              vfsSyncListenPort,
                                                                              vfsSyncApiPort,
-                                                                             machine.getLocationAddress()+ ":" + syncListenerConf.getPort(),
+                                                                             nodeLocation + ":" + syncListenerConf.getPort(),
                                                                              vfsGuiToken);
 
-            SyncthingSynchronizeNotifier SyncNotifier = new SyncthingSynchronizeNotifier(machine.getWorkspaceId(),
+            SyncthingSynchronizeNotifier SyncNotifier = new SyncthingSynchronizeNotifier(workspaceId,
                                                                                          project,
                                                                                          vfsSyncApiPort,
                                                                                          vfsGuiToken);
 
-            vfsSyncTasks.put(machineId + "/" + project, Pair.of(syncTask, SyncNotifier));
+            vfsSyncTasks.put(hostProjectsFolder + "/" + project, Pair.of(syncTask, SyncNotifier));
 
 
             executor.submit(syncTask);
@@ -208,7 +234,7 @@ public class RemoteMachineNodeImpl implements MachineNode {
                     portService.release(vfsSyncListenPort);
                     portService.release(vfsSyncApiPort);
                 } else {
-                    release(machineId, project);
+                    release(nodeLocation, hostProjectsFolder, projectBinding);
                 }
             } catch (Exception e1) {
                 LOG.error(e.getLocalizedMessage(), e);
@@ -216,18 +242,40 @@ public class RemoteMachineNodeImpl implements MachineNode {
         }
     }
 
-    @Override
-    public void stopSynchronization(String machineId, ProjectBinding project) throws ServerException {
+    private void removeProject(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding)
+            throws MachineException {
+        final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
+                                                                .withProject(projectBinding.getPath())
+                                                                .withHostFolder(hostProjectsFolder);
+
+        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
+                                  .host(nodeLocation)
+                                  .port(8080)
+                                  .scheme("http")
+                                  .build();
+
         try {
-            release(machineId, project.getPath());
-        } catch (Exception e) {
+            HttpJsonHelper.request(null, uri.toString(), "DELETE", bindingConf);
+        } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException | NotFoundException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException(e.getLocalizedMessage(), e);
+            throw new MachineException("Error occurred on removing of binding");
+        } catch (ServerException e) {
+            throw new MachineException(e.getLocalizedMessage(), e);
         }
     }
 
-    private void release(String machineId, String path) throws Exception {
-        final Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier> vfsSynchronizer = vfsSyncTasks.get(machineId + "/" + path);
+    private void stopSynchronization(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding)
+            throws MachineException {
+        try {
+            release(nodeLocation, hostProjectsFolder, projectBinding);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new MachineException(e.getLocalizedMessage(), e);
+        }
+    }
+
+    private void release(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding) throws Exception {
+        final Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier> vfsSynchronizer = vfsSyncTasks.get(hostProjectsFolder + "/" + projectBinding.getPath());
         if (vfsSynchronizer != null) {
             syncthingSynchronizeEventListener.removeProjectSynchronizeNotifier(vfsSynchronizer.second);
             for (int port : vfsSynchronizer.first.getPorts()) {
@@ -242,16 +290,14 @@ public class RemoteMachineNodeImpl implements MachineNode {
             }
         }
 
-        final MachineImpl machine = machineRegistry.get(machineId);
-
         final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/sync")
-                                  .host(machine.getLocationAddress())
+                                  .host(nodeLocation)
                                   .port(8080)
                                   .scheme("http")
                                   .build();
 
         SynchronizationConf synchronizationConf = DtoFactory.getInstance().createDto(SynchronizationConf.class)
-                                                            .withSyncPath(new File(machine.getHostProjectsFolder(), path).toString());
+                                                            .withSyncPath(new File(hostProjectsFolder, projectBinding.getPath()).toString());
 
         try {
             HttpJsonHelper.request(null, uri.toString(), "DELETE", synchronizationConf);

@@ -25,6 +25,6 @@ import com.google.inject.AbstractModule;
 public class MachineApiModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(org.eclipse.che.api.machine.server.MachineNode.class).to(com.codenvy.machine.RemoteMachineNodeImpl.class);
+        bind(com.codenvy.machine.docker.DockerNode.class).to(com.codenvy.machine.RemoteMachineNodeImpl.class);
     }
 }
