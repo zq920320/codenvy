@@ -61,20 +61,20 @@ public class UserDaoTest extends BaseTest {
     @BeforeMethod
     public void setUp() throws Exception {
         final InitialLdapContextFactory ldapEnv = new InitialLdapContextFactory(embeddedLdapServer.getUrl(),
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null,
-                                                            null);
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null,
+                                                                                null);
         userDao = new UserDaoImpl(accountDao,
                                   memberDao,
                                   profileDao,
                                   workspaceDao,
                                   ldapEnv,
-                                  "dc=codenvy;dc=com",
+                                  new String[]{"dc=codenvy;dc=com"},
                                   new UserAttributesMapper(),
                                   new EventService());
         users = new User[]{

@@ -64,7 +64,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     private final MemberDao                 memberDao;
     private final PreferenceDao             preferenceDao;
     private final InitialLdapContextFactory contextFactory;
-    private final String                    userContainerDn;
+    private final String                    userContainerDns[];
     private final String                    userDn;
     private final String                    roleAttrName;
     private final String                    allowedRole;
@@ -74,7 +74,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     AccountDao accountDao,
                                     MemberDao memberDao,
                                     PreferenceDao preferenceDao,
-                                    @Named("user.ldap.user_container_dn") String userContainerDn,
+                                    @Named("user.ldap.user_container_dn") String[] userContainerDns,
                                     @Named("user.ldap.user_dn") String userDn,
                                     @Nullable @Named("user.ldap.attr.role_name") String roleAttrName,
                                     @Nullable @Named("user.ldap.allowed_role") String allowedRole,
@@ -85,7 +85,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         this.preferenceDao = preferenceDao;
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
-        this.userContainerDn = userContainerDn;
+        this.userContainerDns = userContainerDns;
         this.userDn = userDn;
         this.contextFactory = contextFactory;
     }
@@ -145,7 +145,19 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         try {
             context = contextFactory.createContext();
 
-            final Attributes userAttrs = context.getAttributes(getUserDn(id));
+            Attributes userAttrs = null;
+
+            for (String containerDn : userContainerDns) {
+                try {
+                    userAttrs = context.getAttributes(formatDn(id, containerDn));
+                } catch (NameNotFoundException ignored) {
+                    //its okay
+                }
+            }
+
+            if (userAttrs == null) {
+                throw new NotFoundException(format("User '%s' was not found", id));
+            }
 
             rolesEnum = userAttrs.get(roleAttrName).getAll();
 
@@ -165,8 +177,8 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         }
     }
 
-    private String getUserDn(String userId) {
-        return userDn + '=' + userId + ',' + userContainerDn;
+    private String formatDn(String userId, String containerDn) {
+        return userDn + '=' + userId + ',' + containerDn;
     }
 
     private void close(Context ctx) {

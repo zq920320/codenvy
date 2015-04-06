@@ -67,7 +67,7 @@ public class UserDaoImpl implements UserDao {
     private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 
     private final String                    userObjectclassFilter;
-    private final String                    userContainerDn;
+    private final String[]                  userContainerDns;
     private final EventService              eventService;
     private final AccountDao                accountDao;
     private final MemberDao                 memberDao;
@@ -80,7 +80,7 @@ public class UserDaoImpl implements UserDao {
     /**
      * Creates new instance of {@code UserDaoImpl}.
      *
-     * @param userContainerDn
+     * @param userContainerDns
      *         full name of root object for user records, e.g. {@code ou=People,dc=codenvy,dc=com}
      * @param userAttributesMapper
      *         UserAttributesMapper
@@ -92,11 +92,11 @@ public class UserDaoImpl implements UserDao {
                        UserProfileDao profileDao,
                        WorkspaceDao workspaceDao,
                        InitialLdapContextFactory contextFactory,
-                       @Named("user.ldap.user_container_dn") String userContainerDn,
+                       @Named("user.ldap.user_container_dn") String[] userContainerDns,
                        UserAttributesMapper userAttributesMapper,
                        EventService eventService) {
         this.contextFactory = contextFactory;
-        this.userContainerDn = userContainerDn;
+        this.userContainerDns = userContainerDns;
         this.userAttributesMapper = userAttributesMapper;
         this.eventService = eventService;
         this.accountDao = accountDao;
@@ -118,25 +118,13 @@ public class UserDaoImpl implements UserDao {
             LOG.warn("Empty username or password");
             return false;
         }
+        final String id = getByAlias(alias).getId();
         try {
-            final User user = doGetByAlias(alias);
-            if (user == null) {
-                throw new NotFoundException("User not found " + alias);
+            boolean authenticated = false;
+            for (int i = 0; i < userContainerDns.length && !authenticated; i++) {
+                authenticated = doAuthenticate(formatDn(id, userContainerDns[i]), password);
             }
-            final String id = user.getId();
-            final String userDn = getUserDn(id);
-            InitialLdapContext authContext = null;
-            try {
-                authContext = contextFactory.createContext(userDn, password);
-                return true;
-            } catch (AuthenticationException e) {
-                LOG.warn(format("Invalid password for user %s", userDn));
-                return false;
-            } catch (NamingException e) {
-                throw new ServerException(format("Authentication failed for user '%s'", alias), e);
-            } finally {
-                close(authContext);
-            }
+            return authenticated;
         } catch (NamingException e) {
             throw new ServerException(format("Authentication failed for user '%s'", alias), e);
         }
@@ -154,7 +142,8 @@ public class UserDaoImpl implements UserDao {
                 }
             }
             context = contextFactory.createContext();
-            newContext = context.createSubcontext(getUserDn(user.getId()), userAttributesMapper.toAttributes(user));
+            //FIXME find better way for selecting user container dn
+            newContext = context.createSubcontext(formatDn(user.getId(), userContainerDns[0]), userAttributesMapper.toAttributes(user));
 
             logUserEvent("user-created", user);
         } catch (NameAlreadyBoundException e) {
@@ -190,7 +179,8 @@ public class UserDaoImpl implements UserDao {
                 final ModificationItem[] mods = userAttributesMapper.createModifications(existed, user);
                 if (mods.length > 0) {
                     context = contextFactory.createContext();
-                    context.modifyAttributes(getUserDn(id), mods);
+                    final String containerDn = findContainerDn(context, id);
+                    context.modifyAttributes(formatDn(id, containerDn), mods);
                 }
             } catch (NamingException e) {
 
@@ -238,7 +228,10 @@ public class UserDaoImpl implements UserDao {
         InitialLdapContext context = null;
         try {
             context = contextFactory.createContext();
-            context.destroySubcontext(getUserDn(id));
+
+            final String containerDn = findContainerDn(context, id);
+
+            context.destroySubcontext(formatDn(id, containerDn));
             logUserEvent("user-removed", user);
             eventService.publish(new RemoveUserEvent(id));
         } catch (NameNotFoundException e) {
@@ -253,9 +246,7 @@ public class UserDaoImpl implements UserDao {
     @Override
     public User getByAlias(String alias) throws NotFoundException, ServerException {
         try {
-
             final User user = doGetByAlias(alias);
-
             if (user == null) {
                 throw new NotFoundException("User not found " + alias);
             }
@@ -300,9 +291,12 @@ public class UserDaoImpl implements UserDao {
         InitialLdapContext context = null;
         try {
             context = contextFactory.createContext();
-            final Attributes attributes = getUserAttributesByAlias(context, alias);
-            if (attributes != null) {
-                user = userAttributesMapper.fromAttributes(attributes);
+            for (String userContainerDn : userContainerDns) {
+                final Attributes attributes = doGetAttributesByAlias(context, alias, userContainerDn);
+                if (attributes != null) {
+                    user = userAttributesMapper.fromAttributes(attributes);
+                    break;
+                }
             }
         } finally {
             close(context);
@@ -315,9 +309,12 @@ public class UserDaoImpl implements UserDao {
         InitialLdapContext context = null;
         try {
             context = contextFactory.createContext();
-            final Attributes attributes = getUserAttributesById(context, id);
-            if (attributes != null) {
-                user = userAttributesMapper.fromAttributes(attributes);
+            for (String containerDn : userContainerDns) {
+                final Attributes attributes = tryGetAttributesById(context, id, containerDn);
+                if (attributes != null) {
+                    user = userAttributesMapper.fromAttributes(attributes);
+                    break;
+                }
             }
         } finally {
             close(context);
@@ -325,25 +322,25 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
-    protected String getUserDn(String userId) {
-        return userAttributesMapper.userDn + '=' + userId + ',' + userContainerDn;
+    private String formatDn(String userId, String containerDn) {
+        return userAttributesMapper.userDn + '=' + userId + ',' + containerDn;
     }
 
-    protected Attributes getUserAttributesById(InitialLdapContext context, String userId) throws NamingException {
+    private Attributes tryGetAttributesById(InitialLdapContext context, String userId, String containerDn) throws NamingException {
         try {
-            return context.getAttributes(getUserDn(userId));
+            return context.getAttributes(formatDn(userId, containerDn));
         } catch (NameNotFoundException e) {
             return null;
         }
     }
 
-    protected Attributes getUserAttributesByAlias(InitialLdapContext context, String alias) throws NamingException {
+    private Attributes doGetAttributesByAlias(InitialLdapContext context, String alias, String containerDn) throws NamingException {
         final SearchControls constraints = new SearchControls();
         constraints.setSearchScope(SearchControls.SUBTREE_SCOPE);
         final String filter = "(&(" + userAttributesMapper.userAliasesAttr + '=' + alias + ")(" + userObjectclassFilter + "))";
         NamingEnumeration<SearchResult> enumeration = null;
         try {
-            enumeration = context.search(userContainerDn, filter, constraints);
+            enumeration = context.search(containerDn, filter, constraints);
             if (enumeration.hasMore()) {
                 return enumeration.nextElement().getAttributes();
             }
@@ -351,6 +348,27 @@ public class UserDaoImpl implements UserDao {
         } finally {
             close(enumeration);
         }
+    }
+
+    private boolean doAuthenticate(String userDn, String password) throws NamingException {
+        InitialLdapContext context = null;
+        try {
+            context = contextFactory.createContext(userDn, password);
+            return true;
+        } catch (AuthenticationException authEx) {
+            return false;
+        } finally {
+            close(context);
+        }
+    }
+
+    private String findContainerDn(InitialLdapContext context, String userId) throws NamingException {
+        for (String containerDn : userContainerDns) {
+            if (tryGetAttributesById(context, userId, containerDn) != null) {
+                return containerDn;
+            }
+        }
+        return null;
     }
 
     private void close(Context ctx) {
