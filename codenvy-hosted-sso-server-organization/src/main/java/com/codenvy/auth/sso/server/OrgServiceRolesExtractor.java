@@ -25,6 +25,8 @@ import org.eclipse.che.api.core.ServerException;
 
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
 
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
@@ -46,6 +48,7 @@ import javax.naming.ldap.InitialLdapContext;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.lang.Boolean.parseBoolean;
 import static java.lang.String.format;
@@ -57,7 +60,8 @@ import static java.util.Collections.emptySet;
  * @author Alexander Garagatyi
  */
 public class OrgServiceRolesExtractor implements RolesExtractor {
-    private static final Logger LOG = LoggerFactory.getLogger(OrgServiceRolesExtractor.class);
+    private static final Logger  LOG       = LoggerFactory.getLogger(OrgServiceRolesExtractor.class);
+    private static final Pattern SEPARATOR = Pattern.compile(" *; *");
 
     private final UserDao                   userDao;
     private final AccountDao                accountDao;
@@ -74,7 +78,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     AccountDao accountDao,
                                     MemberDao memberDao,
                                     PreferenceDao preferenceDao,
-                                    @Named("user.ldap.user_container_dn") String[] userContainerDns,
+                                    @Named("user.ldap.user_container_dn") String userContainerDns,
                                     @Named("user.ldap.user_dn") String userDn,
                                     @Nullable @Named("user.ldap.attr.role_name") String roleAttrName,
                                     @Nullable @Named("user.ldap.allowed_role") String allowedRole,
@@ -85,7 +89,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         this.preferenceDao = preferenceDao;
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
-        this.userContainerDns = userContainerDns;
+        this.userContainerDns = Iterables.toArray(Splitter.on(SEPARATOR).split(userContainerDns), String.class);
         this.userDn = userDn;
         this.contextFactory = contextFactory;
     }
@@ -146,10 +150,12 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             context = contextFactory.createContext();
 
             Attributes userAttrs = null;
-
             for (String containerDn : userContainerDns) {
                 try {
                     userAttrs = context.getAttributes(formatDn(id, containerDn));
+                    if (userAttrs != null) {
+                        break;
+                    }
                 } catch (NameNotFoundException ignored) {
                     //its okay
                 }
@@ -167,8 +173,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             }
 
             return roles;
-        } catch (NameNotFoundException nfEx) {
-            throw new NotFoundException(format("User with id '%s' was not found", id));
         } catch (NamingException e) {
             throw new ServerException(e.getMessage(), e);
         } finally {

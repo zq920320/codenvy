@@ -23,7 +23,11 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
+
 import com.codenvy.api.event.user.RemoveUserEvent;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
@@ -54,6 +58,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
@@ -64,7 +69,8 @@ import static java.lang.String.format;
  */
 @Singleton
 public class UserDaoImpl implements UserDao {
-    private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
+    private static final Logger  LOG       = LoggerFactory.getLogger(UserDaoImpl.class);
+    private static final Pattern SEPARATOR = Pattern.compile(" *; *");
 
     private final String                    userObjectclassFilter;
     private final String[]                  userContainerDns;
@@ -81,7 +87,7 @@ public class UserDaoImpl implements UserDao {
      * Creates new instance of {@code UserDaoImpl}.
      *
      * @param userContainerDns
-     *         full name of root object for user records, e.g. {@code ou=People,dc=codenvy,dc=com}
+     *         full names of root object for user records, e.g. {@code ou=People,dc=codenvy,dc=com}
      * @param userAttributesMapper
      *         UserAttributesMapper
      */
@@ -92,11 +98,11 @@ public class UserDaoImpl implements UserDao {
                        UserProfileDao profileDao,
                        WorkspaceDao workspaceDao,
                        InitialLdapContextFactory contextFactory,
-                       @Named("user.ldap.user_container_dn") String[] userContainerDns,
+                       @Named("user.ldap.user_container_dn") String userContainerDns,
                        UserAttributesMapper userAttributesMapper,
                        EventService eventService) {
         this.contextFactory = contextFactory;
-        this.userContainerDns = userContainerDns;
+        this.userContainerDns = Iterables.toArray(Splitter.on(SEPARATOR).split(userContainerDns), String.class);
         this.userAttributesMapper = userAttributesMapper;
         this.eventService = eventService;
         this.accountDao = accountDao;
@@ -310,7 +316,7 @@ public class UserDaoImpl implements UserDao {
         try {
             context = contextFactory.createContext();
             for (String containerDn : userContainerDns) {
-                final Attributes attributes = tryGetAttributesById(context, id, containerDn);
+                final Attributes attributes = doGetAttributesById(context, id, containerDn);
                 if (attributes != null) {
                     user = userAttributesMapper.fromAttributes(attributes);
                     break;
@@ -326,7 +332,7 @@ public class UserDaoImpl implements UserDao {
         return userAttributesMapper.userDn + '=' + userId + ',' + containerDn;
     }
 
-    private Attributes tryGetAttributesById(InitialLdapContext context, String userId, String containerDn) throws NamingException {
+    private Attributes doGetAttributesById(InitialLdapContext context, String userId, String containerDn) throws NamingException {
         try {
             return context.getAttributes(formatDn(userId, containerDn));
         } catch (NameNotFoundException e) {
@@ -364,7 +370,7 @@ public class UserDaoImpl implements UserDao {
 
     private String findContainerDn(InitialLdapContext context, String userId) throws NamingException {
         for (String containerDn : userContainerDns) {
-            if (tryGetAttributesById(context, userId, containerDn) != null) {
+            if (doGetAttributesById(context, userId, containerDn) != null) {
                 return containerDn;
             }
         }

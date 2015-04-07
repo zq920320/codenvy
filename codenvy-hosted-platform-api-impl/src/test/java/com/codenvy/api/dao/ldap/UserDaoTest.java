@@ -74,7 +74,7 @@ public class UserDaoTest extends BaseTest {
                                   profileDao,
                                   workspaceDao,
                                   ldapEnv,
-                                  new String[]{"dc=codenvy;dc=com"},
+                                  "dc=codenvy,dc=com",
                                   new UserAttributesMapper(),
                                   new EventService());
         users = new User[]{
