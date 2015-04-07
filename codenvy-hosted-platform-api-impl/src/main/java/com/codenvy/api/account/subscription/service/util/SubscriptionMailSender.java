@@ -112,7 +112,7 @@ public class SubscriptionMailSender {
         properties.put("number", ccNumber);
         LOG.debug("Send credit card added notifications to {}", accountOwnersEmails);
         try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Credit Card Added to Codenvy",
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Codenvy Pay-as-you-Go Subscription",
                       accountOwnersEmails, MediaType.TEXT_HTML, properties);
         } catch (IOException | MessagingException e) {
             LOG.warn("Unable to send credit card added notifications email, account: {}", accountId);
