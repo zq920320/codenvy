@@ -60,12 +60,9 @@ public class UserProfileDaoTest extends BaseTest {
         allowedAttributes[1] = Pair.of("telephoneNumber", "phone");
         allowedAttributes[2] = Pair.of("description", "about");
 
-        final ProfileAttributesMapper mapper = new ProfileAttributesMapper("dc=codenvy;dc=com",
-                                                                           "cn",
-                                                                           "uid",
-                                                                           allowedAttributes);
+        final ProfileAttributesMapper mapper = new ProfileAttributesMapper("cn", "uid", allowedAttributes);
 
-        profileDao = new UserProfileDaoImpl(contextFactory, mapper);
+        profileDao = new UserProfileDaoImpl(contextFactory, mapper, "dc=codenvy,dc=com");
 
         final Attributes attributes = new BasicAttributes();
         attributes.put(new BasicAttribute("objectClass", "inetOrgPerson"));
@@ -75,7 +72,7 @@ public class UserProfileDaoTest extends BaseTest {
         attributes.put(new BasicAttribute("password", "test password"));
         attributes.put(new BasicAttribute("telephoneNumber", "+380000000000"));
         attributes.put(new BasicAttribute("description", "test description"));
-        contextFactory.createContext().createSubcontext(mapper.getProfileDn("profile-id"), attributes);
+        contextFactory.createContext().createSubcontext(mapper.formatDn("profile-id", "dc=codenvy,dc=com"), attributes);
     }
 
     @Test

@@ -17,6 +17,9 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.google.common.base.Splitter;
+import com.google.common.collect.Iterables;
+
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.Profile;
@@ -26,12 +29,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.ModificationItem;
 import javax.naming.ldap.InitialLdapContext;
 
+
+import java.util.regex.Pattern;
 
 import static java.lang.String.format;
 
@@ -42,15 +48,21 @@ import static java.lang.String.format;
  */
 public class UserProfileDaoImpl implements UserProfileDao {
 
-    private static final Logger LOG = LoggerFactory.getLogger(UserProfileDaoImpl.class);
+    private static final Logger  LOG       = LoggerFactory.getLogger(UserProfileDaoImpl.class);
+    private static final Pattern SEPARATOR = Pattern.compile(" *; *");
+
 
     private final InitialLdapContextFactory contextFactory;
     private final ProfileAttributesMapper   attributesMapper;
+    private final String[]                  profileContainerDns;
 
     @Inject
-    public UserProfileDaoImpl(InitialLdapContextFactory contextFactory, ProfileAttributesMapper attributesMapper) {
+    public UserProfileDaoImpl(InitialLdapContextFactory contextFactory,
+                              ProfileAttributesMapper attributesMapper,
+                              @Named("profile.ldap.profile_container_dn") String profileContainerDn) {
         this.contextFactory = contextFactory;
         this.attributesMapper = attributesMapper;
+        this.profileContainerDns = Iterables.toArray(Splitter.on(SEPARATOR).split(profileContainerDn), String.class);
     }
 
     /**
@@ -77,7 +89,8 @@ public class UserProfileDaoImpl implements UserProfileDao {
             final ModificationItem[] mods = attributesMapper.createModifications(existing.getAttributes(), profile.getAttributes());
             if (mods.length > 0) {
                 context = contextFactory.createContext();
-                context.modifyAttributes(attributesMapper.getProfileDn(id), mods);
+                final String containerDn = findContainerDn(context, id);
+                context.modifyAttributes(attributesMapper.formatDn(id, containerDn), mods);
             }
         } catch (NamingException ex) {
             throw new ServerException(format("Unable to update profile '%s'", profile.getId()));
@@ -105,9 +118,12 @@ public class UserProfileDaoImpl implements UserProfileDao {
         InitialLdapContext context = null;
         try {
             context = contextFactory.createContext();
-            final Attributes attributes = getProfileAttributes(context, id);
-            if (attributes != null) {
-                profile = attributesMapper.asProfile(attributes);
+            for (String containerDn : profileContainerDns) {
+                final Attributes attributes = getProfileAttributes(context, id, containerDn);
+                if (attributes != null) {
+                    profile = attributesMapper.asProfile(attributes);
+                    break;
+                }
             }
         } finally {
             close(context);
@@ -115,9 +131,18 @@ public class UserProfileDaoImpl implements UserProfileDao {
         return profile;
     }
 
-    private Attributes getProfileAttributes(InitialLdapContext ctx, String id) throws NamingException {
+    private String findContainerDn(InitialLdapContext context, String id) throws NamingException {
+        for (String containerDn : profileContainerDns) {
+            if (getProfileAttributes(context, id, containerDn) != null) {
+                return containerDn;
+            }
+        }
+        return null;
+    }
+
+    private Attributes getProfileAttributes(InitialLdapContext ctx, String id, String containerDn) throws NamingException {
         try {
-            return ctx.getAttributes(attributesMapper.getProfileDn(id));
+            return ctx.getAttributes(attributesMapper.formatDn(id, containerDn));
         } catch (NameNotFoundException nnfEx) {
             return null;
         }

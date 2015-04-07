@@ -49,7 +49,6 @@ public class ProfileAttributesMapper {
 
     private final String              profileDn;
     private final String              profileIdAttr;
-    private final String              profileContainerDn;
     private final Map<String, String> allowedAttributes;
 
     /**
@@ -71,8 +70,6 @@ public class ProfileAttributesMapper {
      *      "phone" : "Users phone number"
      * </pre>
      *
-     * @param profileContainerDn
-     *         full name of root object for profile records, e.g. <i>ou=People,dc=codenvy,dc=com</i>
      * @param profileDn
      *         name of attribute that contains name of profile object. Typical value is 'cn'
      * @param profileIdAttr
@@ -81,13 +78,11 @@ public class ProfileAttributesMapper {
      *         attributes which will be fetched from ldap storage
      */
     @Inject
-    public ProfileAttributesMapper(@Named("profile.ldap.profile_container_dn") String profileContainerDn,
-                                   @Named("profile.ldap.profile_dn") String profileDn,
+    public ProfileAttributesMapper(@Named("profile.ldap.profile_dn") String profileDn,
                                    @Named("profile.ldap.attr.id") String profileIdAttr,
                                    @Named("profile.ldap.allowed_attributes") Pair<String, String>[] allowedAttributes) {
         this.profileDn = profileDn;
         this.profileIdAttr = profileIdAttr;
-        this.profileContainerDn = profileContainerDn;
         this.allowedAttributes = new HashMap<>();
         for (Pair<String, String> pair : allowedAttributes) {
             this.allowedAttributes.put(pair.first, pair.second);
@@ -101,8 +96,8 @@ public class ProfileAttributesMapper {
                             .withAttributes(asMap(attributes.getAll()));
     }
 
-    public String getProfileDn(String id) {
-        return profileDn + '=' + id + ',' + profileContainerDn;
+    public String formatDn(String id, String containerDn) {
+        return profileDn + '=' + id + ',' + containerDn;
     }
 
     public ModificationItem[] createModifications(Map<String, String> existing, Map<String, String> update) {
