@@ -52,7 +52,6 @@ import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 public class SubscriptionMailSender {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
-    private static final String TEMPLATE_SAAS_SIGNUP    = "/email-templates/saas-sign-up.html";
     private static final String TEMPLATE_CC_ADDED       = "/email-templates/saas-add-credit-card.html";
     private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
     private static final String TEMPLATE_CC_DELETE      = "/email-templates/saas-remove-credit-card.html";
@@ -92,17 +91,6 @@ public class SubscriptionMailSender {
         }
         LOG.debug("Send invoice to {}", accountOwnersEmails);
         sendEmail(text, subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
-    }
-
-    public void sendSaasSignupNotification(String accountId) throws ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send saas signup notifications to {}", accountOwnersEmails);
-        try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_SAAS_SIGNUP)), "Welcome to Codenvy",
-                      accountOwnersEmails, MediaType.TEXT_HTML, null);
-        } catch (IOException | MessagingException e) {
-            LOG.warn("Unable to send saas signup notifications email, account: {}", accountId);
-        }
     }
 
     public void sendCCAddedNotification(String accountId, String ccNumber, String ccType) throws ServerException {

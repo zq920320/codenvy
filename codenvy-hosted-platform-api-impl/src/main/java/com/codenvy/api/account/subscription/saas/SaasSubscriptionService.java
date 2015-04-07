@@ -67,7 +67,6 @@ public class SaasSubscriptionService extends SubscriptionService {
     private final BillingPeriod             billingPeriod;
     private final AccountLocker             accountLocker;
     private final EventService              eventService;
-    private final SubscriptionMailSender    mailSender;
     private final BillingService            billingService;
     private final SubscriptionServiceHelper subscriptionServiceHelper;
     private final ResourcesChangesNotifier  resourcesChangesNotifier;
@@ -80,7 +79,6 @@ public class SaasSubscriptionService extends SubscriptionService {
                                    BillingPeriod billingPeriod,
                                    AccountLocker accountLocker,
                                    EventService eventService,
-                                   SubscriptionMailSender mailSender,
                                    BillingService billingService,
                                    SubscriptionServiceHelper subscriptionServiceHelper,
                                    ResourcesChangesNotifier resourcesChangesNotifier) {
@@ -92,7 +90,6 @@ public class SaasSubscriptionService extends SubscriptionService {
         this.billingPeriod = billingPeriod;
         this.accountLocker = accountLocker;
         this.eventService = eventService;
-        this.mailSender = mailSender;
         this.billingService = billingService;
         this.subscriptionServiceHelper = subscriptionServiceHelper;
         this.resourcesChangesNotifier = resourcesChangesNotifier;
@@ -131,7 +128,6 @@ public class SaasSubscriptionService extends SubscriptionService {
                                        subscription.getStartDate().getTime(),
                                        subscription.getEndDate().getTime());
 
-        mailSender.sendSaasSignupNotification(subscription.getAccountId());
     }
 
     @Override
