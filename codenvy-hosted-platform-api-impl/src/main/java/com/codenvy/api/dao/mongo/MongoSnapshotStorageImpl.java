@@ -21,7 +21,7 @@ import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.machine.server.ProjectBindingImpl;
-import org.eclipse.che.api.machine.server.Snapshot;
+import org.eclipse.che.api.machine.server.SnapshotImpl;
 import org.eclipse.che.api.machine.server.SnapshotStorage;
 import org.eclipse.che.api.machine.server.spi.ImageKey;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
@@ -34,6 +34,7 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
+import org.eclipse.che.api.machine.shared.Snapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     }
 
     @Override
-    public Snapshot getSnapshot(String snapshotId) throws NotFoundException, ServerException {
+    public SnapshotImpl getSnapshot(String snapshotId) throws NotFoundException, ServerException {
         final DBObject snapshotDocument;
         try {
             snapshotDocument = machineCollection.findOne(new BasicDBObject("_id", snapshotId));
@@ -80,7 +81,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     }
 
     @Override
-    public void saveSnapshot(Snapshot snapshot) throws ServerException, ForbiddenException {
+    public void saveSnapshot(SnapshotImpl snapshot) throws ServerException, ForbiddenException {
         requiredNotNull(snapshot.getOwner(), "Owner");
         requiredNotNull(snapshot.getId(), "Id");
         requiredNotNull(snapshot.getImageType(), "Image type");
@@ -95,7 +96,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     }
 
     @Override
-    public List<Snapshot> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws ServerException {
+    public List<SnapshotImpl> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws ServerException {
         BasicDBObject query = new BasicDBObject("owner", owner);
         query.append("workspaceId", workspaceId);
         if (project != null) {
@@ -103,7 +104,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         }
 
         try (DBCursor snapshots = machineCollection.find(query)) {
-            final ArrayList<Snapshot> result = new ArrayList<>();
+            final ArrayList<SnapshotImpl> result = new ArrayList<>();
             for (DBObject snapshotObj : snapshots) {
                 result.add(toSnapshot(snapshotObj));
             }
@@ -128,7 +129,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         }
     }
 
-    private Snapshot toSnapshot(DBObject object) {
+    private SnapshotImpl toSnapshot(DBObject object) {
         final BasicDBObject snapshotObject = (BasicDBObject)object;
         final BasicDBList projectBindingsObject = (BasicDBList)snapshotObject.get("projectBindings");
         final List<ProjectBinding> projectBindings = new ArrayList<>(projectBindingsObject.size());
@@ -136,17 +137,18 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
             projectBindings.add(new ProjectBindingImpl().withPath(((BasicDBObject)projectBinding).getString("path")));
         }
 
-        return new Snapshot(snapshotObject.getString("_id"),
+        return new SnapshotImpl(snapshotObject.getString("_id"),
                             snapshotObject.getString("imageType"),
                             new ImageKeyImpl(MongoUtil.asMap(snapshotObject.get("imageKey"))),
                             snapshotObject.getString("owner"),
                             snapshotObject.getLong("creationDate"),
                             snapshotObject.getString("workspaceId"),
                             projectBindings,
-                            snapshotObject.getString("description"));
+                            snapshotObject.getString("description"),
+                            snapshotObject.getString("label"));
     }
 
-    private DBObject toDBObject(Snapshot snapshot) {
+    private DBObject toDBObject(SnapshotImpl snapshot) {
         final BasicDBList projectBindings = new BasicDBList();
         for (ProjectBinding projectBinding : snapshot.getProjects()) {
             projectBindings.add(new BasicDBObject("path", projectBinding.getPath()));
@@ -159,7 +161,8 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
                                   .append("workspaceId", snapshot.getWorkspaceId())
                                   .append("projectBindings", projectBindings)
                                   .append("creationDate", snapshot.getCreationDate())
-                                  .append("description", snapshot.getDescription());
+                                  .append("description", snapshot.getDescription())
+                                  .append("label", snapshot.getLabel());
     }
 
     /**
