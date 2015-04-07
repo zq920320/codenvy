@@ -98,7 +98,6 @@ public class SaasSubscriptionServiceTest {
                                               billingPeriod,
                                               accountLocker,
                                               eventService,
-                                              mailSender,
                                               billingService,
                                               subscriptionServiceHelper,
                                               resourcesChangesNotifier);
