@@ -31,6 +31,8 @@ import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.commons.user.UserImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.MockSettings;
+import org.mockito.internal.creation.MockSettingsImpl;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -58,17 +60,16 @@ import static org.testng.Assert.assertTrue;
 public class OrgServiceRolesExtractorTest {
 
     @Mock
-    UserDao                  userDao;
+    UserDao       userDao;
     @Mock
-    AccountDao               accountDao;
+    AccountDao    accountDao;
     @Mock
-    MemberDao                memberDao;
+    MemberDao     memberDao;
     @Mock
-    PreferenceDao            preferenceDao;
-    @InjectMocks
-    OrgServiceRolesExtractor extractor;
+    PreferenceDao preferenceDao;
 
-    AccessTicket ticket;
+    OrgServiceRolesExtractor extractor;
+    AccessTicket             ticket;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -81,6 +82,16 @@ public class OrgServiceRolesExtractorTest {
         ticket = new AccessTicket("token", user, "authHandler");
 
         when(userDao.getById(user.getId())).thenReturn(new User().withId("id"));
+
+        extractor = spy(new OrgServiceRolesExtractor(userDao,
+                                                     accountDao,
+                                                     memberDao,
+                                                     preferenceDao,
+                                                     "cd=codenvy,cd=com",
+                                                     null,
+                                                     null,
+                                                     null,
+                                                     null));
     }
 
     @Test
@@ -96,7 +107,7 @@ public class OrgServiceRolesExtractorTest {
                                                                                     accountDao,
                                                                                     memberDao,
                                                                                     preferenceDao,
-                                                                                    null,
+                                                                                    "cd=codenvy,cd=com",
                                                                                     null,
                                                                                     "member",
                                                                                     "admin",
@@ -112,7 +123,7 @@ public class OrgServiceRolesExtractorTest {
                                                                                     accountDao,
                                                                                     memberDao,
                                                                                     preferenceDao,
-                                                                                    null,
+                                                                                    "cd=codenvy,cd=com",
                                                                                     null,
                                                                                     "member",
                                                                                     "codenvy-user",
