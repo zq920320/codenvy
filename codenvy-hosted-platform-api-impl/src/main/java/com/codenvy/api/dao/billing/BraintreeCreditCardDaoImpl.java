@@ -247,6 +247,13 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
 
     private void afterDeleteCheckAndNotify(String accountId, com.braintreegateway.CreditCard card) throws ServerException {
+        //Get paid GbH before removing subscription
+        ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
+                                                .withPaidGbHMoreThan(0)
+                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
+                                                .withTillDate(System.currentTimeMillis())
+                                                .build();
+        List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
 
         // Remove saas subscription
         try {
@@ -259,14 +266,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
             LOG.warn("Unable to remove subscription after CC deletion.", e);
         }
 
-
         // Check is paid resources used, lock and send notify emails.
-        ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
-                                                .withPaidGbHMoreThan(0)
-                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
-                                                .withTillDate(System.currentTimeMillis())
-                                                .build();
-        List<AccountResources> resources = billingService.getEstimatedUsageByAccount(filter);
         if (!resources.isEmpty()) {
             accountLocker.lock(accountId);
             subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(resources.get(0).getPaidAmount()));

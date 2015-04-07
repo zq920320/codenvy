@@ -88,9 +88,10 @@ public class MailSchedulerTest {
                 final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
 
                 final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 2
+                return states.size() == 3
                        && states.contains(PaymentState.PAYMENT_FAIL.getState())
                        && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
+                       && states.contains(PaymentState.NOT_REQUIRED.getState())
                        && invoiceFilter.getIsMailNotSend()
                        && INVOICES_LIMIT == invoiceFilter.getMaxItems()
                        && invoiceFilter.getSkipCount() == null;
@@ -119,9 +120,10 @@ public class MailSchedulerTest {
                 final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
 
                 final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 2
+                return states.size() == 3
                        && states.contains(PaymentState.PAYMENT_FAIL.getState())
                        && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
+                       && states.contains(PaymentState.NOT_REQUIRED.getState())
                        && invoiceFilter.getIsMailNotSend()
                        && INVOICES_LIMIT == invoiceFilter.getMaxItems()
                        && invoiceFilter.getSkipCount() == null;

@@ -35,6 +35,7 @@ import java.util.List;
  * @author Alexander Garagatyi
  */
 @Deprecated
+//TODO Remove this class
 public class SubscriptionExpirationManager {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionExpirationManager.class);
 

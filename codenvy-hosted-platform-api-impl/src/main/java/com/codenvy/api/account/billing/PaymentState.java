@@ -33,7 +33,6 @@ public enum PaymentState {
 
     PAID_SUCCESSFULLY("successful");
 
-
     private final String state;
 
     private PaymentState(String state) {

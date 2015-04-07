@@ -137,8 +137,8 @@ public class SaasSubscriptionService extends SubscriptionService {
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
         eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
-
-        billingService.removeSubscription(subscription.getAccountId(), subscription.getEndDate().getTime());
+        //TODO replace System.currentTimeMillis() to subscription.getEndDate().getTime() when end date of subscription will be updated after removing of subscription
+        billingService.removeSubscription(subscription.getAccountId(), System.currentTimeMillis());
 
         List<Workspace> workspaces;
         try {

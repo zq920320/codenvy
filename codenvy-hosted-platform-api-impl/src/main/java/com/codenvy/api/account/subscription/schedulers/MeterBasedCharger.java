@@ -93,6 +93,7 @@ public class MeterBasedCharger {
         final String ccToken = getCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
+            accountLocker.lock(invoice.getAccountId());
             return;
         }
 

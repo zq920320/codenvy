@@ -55,42 +55,6 @@ public interface BillingService {
     List<Invoice> getInvoices(InvoiceFilter filter) throws ServerException;
 
     /**
-     * Get list of invoices with given Payment state.
-     *
-     * @param state
-     *         state of payment.
-     * @param maxItems
-     *         limit number of items in result
-     * @param skipCount
-     *         how many items skip from the beginning
-     * @return - list of invoices with given Payment state.
-     * @throws ServerException
-     */
-    List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException;
-
-    /**
-     * @param accountId
-     *         account id.
-     * @param maxItems
-     *         limit number of items in result
-     * @param skipCount
-     *         how many items skip from the beginning
-     * @return all invoices for given account.
-     * @throws ServerException
-     */
-    List<Invoice> getInvoices(String accountId, int maxItems, int skipCount) throws ServerException;
-
-    /**
-     * @param maxItems
-     *         limit number of items in result
-     * @param skipCount
-     *         how many items skip from the beginning
-     * @return list of invoices that should be send to user.
-     * @throws ServerException
-     */
-    List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException;
-
-    /**
      * Get invoice by id.
      *
      * @param id
@@ -160,5 +124,19 @@ public interface BillingService {
      * @return resources related to accounts by given period
      */
     List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException;
+
+    /**
+     * Checks availability of resources for account by given period.
+     *
+     * @param accountId
+     *         id of account
+     * @param from
+     *         begin of period
+     * @param till
+     *         end of period
+     * @return if account has available resources {@code true} else {@code false}
+     * @throws ServerException
+     */
+    boolean hasAvailableResources(String accountId, Long from, Long till) throws ServerException;
 
 }

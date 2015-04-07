@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
+import com.codenvy.api.account.billing.PaymentState;
+
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
@@ -80,11 +82,10 @@ public class SubscriptionMailSender {
         this.mailClient = mailClient;
     }
 
-
     public void sendInvoice(String accountId, String state, String text) throws IOException, MessagingException, ServerException {
         String subject;
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        if (PAID_SUCCESSFULLY.getState().equals(state)) {
+        if (PAID_SUCCESSFULLY.getState().equals(state) || PaymentState.NOT_REQUIRED.getState().equals(state)) {
             subject = invoiceSubject;
         } else {
             subject = billingFailedSubject;
@@ -144,7 +145,6 @@ public class SubscriptionMailSender {
             LOG.warn("Unable to send account locked notifications, account: {}", accountId);
         }
     }
-
 
     private List<String> getAccountOwnersEmails(String accountId) throws ServerException {
         List<String> emails = new ArrayList<>();
