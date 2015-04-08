@@ -24,7 +24,6 @@ import com.codenvy.api.account.billing.TemplateProcessor;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 
-import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,8 +80,8 @@ public class MailScheduler {
                     subscriptionMailSender
                             .sendInvoice(notSendInvoice.getAccountId(), notSendInvoice.getPaymentState(), htmlBody.toString());
                     billingService.markInvoiceAsSent(notSendInvoice.getId());
-                } catch (ApiException e) {
-                    LOG.error("Can't send email", e);
+                } catch (Exception e) {
+                    LOG.error("Can't send invoice " + notSendInvoice.getId(), e);
                 }
             }
         } catch (Exception e) {
