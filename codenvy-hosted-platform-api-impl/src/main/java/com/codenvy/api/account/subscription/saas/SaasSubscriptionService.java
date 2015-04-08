@@ -23,7 +23,6 @@ import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.ResourcesChangesNotifier;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
-import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 
 import org.eclipse.che.api.account.server.SubscriptionService;
@@ -115,7 +114,9 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
+        //TODO Enable payment when will be exist Saas prepaid subscriptions with non null number of GbH
+        //Saas subscriptions will be paid in end of billing period
+        //subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
         subscriptionServiceHelper.setDates(subscription);
 
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
@@ -168,7 +169,6 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void onCheckSubscriptions() throws ApiException {
-        //TODO Implement
     }
 
     @Override

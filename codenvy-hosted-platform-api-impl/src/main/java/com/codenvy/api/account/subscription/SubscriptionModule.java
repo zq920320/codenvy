@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account.subscription;
 
-import com.codenvy.api.account.subscription.factory.FactorySubscriptionService;
 import com.codenvy.api.account.subscription.onpremises.OnPremisesSubscriptionService;
 import com.codenvy.api.account.subscription.saas.SaasSubscriptionService;
 import com.codenvy.api.account.subscription.saas.job.RefillJob;
@@ -40,7 +39,6 @@ public class SubscriptionModule extends AbstractModule {
     protected void configure() {
         Multibinder<SubscriptionService> subscriptionServiceBinder =
                 Multibinder.newSetBinder(binder(), org.eclipse.che.api.account.server.SubscriptionService.class);
-        subscriptionServiceBinder.addBinding().to(FactorySubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(SaasSubscriptionService.class);
 

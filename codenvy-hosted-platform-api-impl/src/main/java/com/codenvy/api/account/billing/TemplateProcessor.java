@@ -118,9 +118,7 @@ public class TemplateProcessor {
             }
         }
         for (Charge charge : invoice.getCharges()) {
-            if (charge.getServiceId().equals(ServiceId.FACTORY)) {
-                context.setVariable("factoryCharge", charge);
-            } else if (charge.getServiceId().equals(ServiceId.SAAS)) {
+            if (charge.getServiceId().equals(ServiceId.SAAS)) {
                 Map<String, String> newDetails = new HashMap<>();
                 int i = 0;
                 for (Map.Entry<String, String> entry : charge.getDetails().entrySet()) {
