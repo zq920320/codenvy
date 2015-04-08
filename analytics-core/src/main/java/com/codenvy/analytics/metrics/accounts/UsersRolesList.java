@@ -42,12 +42,13 @@ import java.util.Map;
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
-public class AccountUsersRolesList extends AbstractAccountMetric {
+public class UsersRolesList extends AbstractAccountMetric {
 
-    public AccountUsersRolesList() {
-        super(MetricType.ACCOUNT_USERS_ROLES_LIST);
+    public UsersRolesList() {
+        super(MetricType.USERS_ROLES_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         MemberDescriptor accountById = getAccountMembership(context);
@@ -77,11 +78,13 @@ public class AccountUsersRolesList extends AbstractAccountMetric {
         return new ListValueData(list2Return);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users roles in workspaces";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;

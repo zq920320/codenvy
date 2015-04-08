@@ -37,6 +37,10 @@
                 <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
                 <a class="nav" href="/analytics/pages/tasks-view.jsp" id="topmenu-tasks">Tasks</a>
 
+                <% if (request.isUserInRole("system/admin") || request.isUserInRole("system/manager")) { %>
+
+                <% } %>
+
                 <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
                     <div class="nav">
                         <div>
@@ -90,7 +94,7 @@
                         <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getCurrentUserId(request)%>">My statistics</a></li>
                         <li><a href="/site/private/select-tenant">My workspace</a></li>
                         <% if (request.isUserInRole("user")) { %>
-                            <li><a href="/analytics/pages/accounts-view.jsp">Organization</a></li>
+                            <li><a href="/analytics/pages/current-user-accounts-view.jsp">Organization</a></li>
                         <% } %>
                         <li><a href="/">Codenvy main page</a></li>
                         <li><a href="#" onclick="analytics.util.processUserLogOut()">Logout</a></li>

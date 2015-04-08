@@ -33,11 +33,13 @@ import java.util.List;
 @Singleton
 public class DummyHTTPTransport implements MetricTransport {
 
+    /** {@inheritDoc} */
     @Override
     public <DTO> DTO getResource(Class<DTO> dtoInterface, String method, String path) throws IOException {
         return getDto(dtoInterface);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <DTO> List<DTO> getResources(Class<DTO> dtoInterface, String method, String path) throws IOException {
         return Arrays.asList(getDto(dtoInterface));

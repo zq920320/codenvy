@@ -29,7 +29,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.accounts.AbstractAccountMetric;
-import com.codenvy.analytics.metrics.accounts.AccountWorkspacesList;
+import com.codenvy.analytics.metrics.accounts.CurrentUserWorkspacesList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -194,7 +194,7 @@ public class Utils {
         try {
             Set<String> users = new HashSet<>();
 
-            Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
+            Metric accountsMetric = MetricFactory.getMetric(MetricType.CURRENT_USER_ACCOUNTS_LIST);
             ListValueData accounts = getAsList(accountsMetric, Context.EMPTY);
 
             for (ValueData account : accounts.getAll()) {
@@ -217,7 +217,7 @@ public class Utils {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.ACCOUNT_ID, accountId);
 
-        Metric usersMetric = MetricFactory.getMetric(MetricType.ACCOUNT_USERS_ROLES_LIST);
+        Metric usersMetric = MetricFactory.getMetric(MetricType.USERS_ROLES_LIST);
         ListValueData usersData = getAsList(usersMetric, builder.build());
 
         for (ValueData user : usersData.getAll()) {
@@ -255,7 +255,7 @@ public class Utils {
         try {
             String role = context.get(MetricFilter.DATA_UNIVERSE.toString());
 
-            Metric accountsMetric = MetricFactory.getMetric(MetricType.ACCOUNTS_LIST);
+            Metric accountsMetric = MetricFactory.getMetric(MetricType.CURRENT_USER_ACCOUNTS_LIST);
             ListValueData accounts = getAsList(accountsMetric, Context.EMPTY);
 
             if (isAccountsRoleExists(role)) {
@@ -271,13 +271,13 @@ public class Utils {
 
     private Set<String> getWorkspacesByRole(String role, ListValueData accounts) throws IOException {
         Set<String> result = new HashSet<>();
-        Metric accountWorkspaces = MetricFactory.getMetric(MetricType.ACCOUNT_WORKSPACES_LIST);
+        Metric accountWorkspaces = MetricFactory.getMetric(MetricType.CURRENT_USER_WORKSPACES_LIST);
 
         for (ValueData account : accounts.getAll()) {
             Map<String, ValueData> accountData = ((MapValueData)account).getAll();
 
             Context.Builder builder = new Context.Builder();
-            builder.put(MetricFilter.ACCOUNT_ID, accountData.get(AccountWorkspacesList.ACCOUNT_ID).getAsString());
+            builder.put(MetricFilter.ACCOUNT_ID, accountData.get(CurrentUserWorkspacesList.ACCOUNT_ID).getAsString());
 
             ListValueData workspaces = getAsList(accountWorkspaces, builder.build());
             if (isWorkspacesRoleExists(role)) {
@@ -286,7 +286,7 @@ public class Utils {
 
             for (ValueData workspace : workspaces.getAll()) {
                 Map<String, ValueData> workspaceData = ((MapValueData)workspace).getAll();
-                result.add(workspaceData.get(AccountWorkspacesList.WORKSPACE_ID).getAsString());
+                result.add(workspaceData.get(CurrentUserWorkspacesList.WORKSPACE_ID).getAsString());
             }
         }
 

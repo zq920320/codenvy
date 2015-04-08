@@ -110,7 +110,7 @@ public class TestAbstractAccountMetric extends BaseTest {
 
     private class TestedMetric extends AbstractAccountMetric {
         public TestedMetric() {
-            super(MetricType.ACCOUNT_USERS_ROLES_LIST);
+            super(MetricType.USERS_ROLES_LIST);
         }
 
         @Override

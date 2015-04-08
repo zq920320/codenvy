@@ -34,7 +34,7 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="accounts"></div>
+                            <div class="item" id="current_user_accounts_list"></div>
                         </div>
                     </div>
                 </div>

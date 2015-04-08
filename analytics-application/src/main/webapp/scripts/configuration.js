@@ -1140,13 +1140,12 @@ function AnalyticsConfiguration() {
         accounts: {
             widgetLabel: "Accounts",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "accounts",
+            modelViewName: "current_user_accounts_list",
 
             columnLinkPrefixList: {
-                "ID": "/analytics/pages/account-view.jsp?account_id",
+                "ID": "/analytics/pages/current-account-view.jsp?account_id",
                 "User": "/analytics/pages/user-view.jsp?user"
             }
-
         },
 
         accountOverview: {
@@ -1158,13 +1157,13 @@ function AnalyticsConfiguration() {
         accountSubscriptions: {
             widgetLabel: "Subscriptions",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "account_subscriptions_list"
+            modelViewName: "current_user_subscriptions_list"
         },
 
         accountWorkspaces: {
             widgetLabel: "Workspaces",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "account_workspaces_list",
+            modelViewName: "current_user_workspaces_list",
 
             columnLinkPrefixList: {
                 "Workspace": "/analytics/pages/workspace-view.jsp?ws"
@@ -1174,7 +1173,7 @@ function AnalyticsConfiguration() {
         accountUsers: {
             widgetLabel: "Users",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "account_users_roles",
+            modelViewName: "users_roles",
 
             isPaginable: true,    // default value is "false"
 

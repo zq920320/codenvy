@@ -27,7 +27,8 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
-import org.eclipse.che.api.account.shared.dto.SubscriptionDescriptor;
+import org.eclipse.che.api.user.shared.dto.UserDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
@@ -41,37 +42,47 @@ import java.util.Map;
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
-public class AccountSubscriptionsList extends AbstractAccountMetric {
+public class CurrentUserWorkspacesList extends AbstractAccountMetric {
 
-    public AccountSubscriptionsList() {
-        super(MetricType.ACCOUNT_SUBSCRIPTIONS_LIST);
+    public CurrentUserWorkspacesList() {
+        super(MetricType.CURRENT_USER_WORKSPACES_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Subscriptions data for account";
+        return "Workspaces data for account";
     }
 
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
-    }
-
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
-        MemberDescriptor accountMembership = getAccountMembership(context);
-        List<SubscriptionDescriptor> subscriptions = getSubscriptions(accountMembership.getAccountReference().getId());
+        MemberDescriptor accountById = getAccountMembership(context);
+
+        UserDescriptor user = getCurrentUser();
+        String currentUserId = user.getId();
 
         List<ValueData> list2Return = new ArrayList<>();
-
-        for (SubscriptionDescriptor subscription : subscriptions) {
+        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getAccountReference().getId())) {
             Map<String, ValueData> m = new HashMap<>();
-            m.put(SUBSCRIPTION_SERVICE_ID, StringValueData.valueOf(subscription.getServiceId()));
-            m.put(SUBSCRIPTION_PROPERTIES, StringValueData.valueOf(subscription.getProperties().toString()));
+            m.put(ACCOUNT_ID, new StringValueData(workspace.getAccountId()));
+            m.put(WORKSPACE_ID, new StringValueData(workspace.getId()));
+            m.put(WORKSPACE_NAME, new StringValueData(workspace.getName()));
+            m.put(WORKSPACE_TEMPORARY, new StringValueData(String.valueOf(workspace.isTemporary())));
+
+            String rolesCurrentUser = getUserRoleInWorkspace(currentUserId, workspace.getId());
+            m.put(WORKSPACE_ROLES, rolesCurrentUser != null ? StringValueData.valueOf(rolesCurrentUser) : StringValueData.DEFAULT);
 
             list2Return.add(new MapValueData(m));
         }
 
         return new ListValueData(list2Return);
+    }
+
+
+    /** {@inheritDoc} */
+    @Override
+    public Class<? extends ValueData> getValueDataClass() {
+        return ListValueData.class;
     }
 }

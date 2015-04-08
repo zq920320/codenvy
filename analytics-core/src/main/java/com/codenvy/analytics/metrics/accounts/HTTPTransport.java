@@ -50,6 +50,7 @@ public class HTTPTransport implements MetricTransport {
         this.baseUrl = configurator.getString(API_ENDPOINT);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <DTO> DTO getResource(Class<DTO> dtoInterface,
                                  String method,
@@ -58,6 +59,7 @@ public class HTTPTransport implements MetricTransport {
         return DtoFactory.getInstance().createDtoFromJson(json, dtoInterface);
     }
 
+    /** {@inheritDoc} */
     @Override
     public <DTO> List<DTO> getResources(Class<DTO> dtoInterface,
                                         String method,

@@ -17,7 +17,7 @@
  */
 package com.codenvy.analytics.metrics.accounts;
 
-import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
@@ -29,29 +29,27 @@ import java.io.IOException;
  * @author Anatoliy Bazko
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
-public class AccountsList extends AbstractAccountMetric {
+public class Accounts extends AbstractAccountMetric {
 
-    public AccountsList() {
-        super(MetricType.ACCOUNTS_LIST);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public String getDescription() {
-        return "List of all accounts";
+    public Accounts() {
+        super(MetricType.ACCOUNTS);
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
-        // TODO [AB] stub
-        return ListValueData.DEFAULT;
+        return LongValueData.DEFAULT;
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public String getDescription() {
+        return "The number of accounts in the list";
+    }
 
     /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return ListValueData.class;
+        return LongValueData.class;
     }
 }
