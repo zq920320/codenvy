@@ -19,8 +19,8 @@ package com.codenvy.analytics.util;
 
 
 import com.codenvy.analytics.BaseTest;
-import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
 
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;

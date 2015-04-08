@@ -21,7 +21,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -40,8 +45,7 @@ public class Configurator {
 
     private static final String  CONFIGURATION     = "analytics.properties";
     private static final String  ANALYTICS_TMP_DIR = "analytics.tmp_dir";
-    private static final Pattern TEMPLATE_PROP_VAR = Pattern.compile("\\$\\{([^\\}]*)\\}");
-    private static final Pattern TEMPLATE_ENV_VAR  = Pattern.compile("\\$([^\\/]*)[\\/]?");
+    private static final Pattern TEMPLATE_ENV_VAR = Pattern.compile("\\$\\{([^\\}]*)\\}"); // ${VAR}
 
     private final Properties properties;
 
@@ -69,7 +73,7 @@ public class Configurator {
             return null;
         }
 
-        return replaceEnvVariables(replacePropVariables(currentValue));
+        return replaceEnvVariables(currentValue);
     }
 
     private String replaceEnvVariables(String currentValue) {
@@ -80,16 +84,6 @@ public class Configurator {
 
                 String var = template.substring(1, template.length() - (endsWithSeparator ? 1 : 0));
                 return System.getenv(var) + (endsWithSeparator ? File.separator : "");
-            }
-        });
-    }
-
-    private String replacePropVariables(String currentValue) {
-        return doReplaceVariable(TEMPLATE_PROP_VAR, currentValue, new ReplaceVariableAction() {
-            @Override
-            public String getValue(String template) {
-                String var = template.substring(2, template.length() - 1);
-                return getString(var);
             }
         });
     }

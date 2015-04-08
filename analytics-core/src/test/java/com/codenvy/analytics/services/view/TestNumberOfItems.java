@@ -22,15 +22,26 @@ import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.CollectionValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.OutputSupplier;
 
+import org.apache.commons.io.IOUtils;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -78,12 +89,8 @@ public class TestNumberOfItems extends BaseTest {
                     String resourceAsString = new String(ByteStreams.toByteArray(in), "UTF-8");
                     resourceAsString = resourceAsString.replace(originalDate, newDate);
 
-                    ByteStreams.write(resourceAsString.getBytes("UTF-8"), new OutputSupplier<OutputStream>() {
-                        @Override
-                        public OutputStream getOutput() throws IOException {
-                            return out;
-                        }
-                    });
+                    byte[] buf = resourceAsString.getBytes("UTF-8");
+                    IOUtils.copy(new ByteArrayInputStream(buf), out);
 
                     return resource;
                 }

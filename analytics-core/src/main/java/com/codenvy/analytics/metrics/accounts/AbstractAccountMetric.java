@@ -27,12 +27,13 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataLoader;
-import com.codenvy.api.account.shared.dto.AccountDescriptor;
-import com.codenvy.api.account.shared.dto.MemberDescriptor;
-import com.codenvy.api.account.shared.dto.SubscriptionDescriptor;
-import com.codenvy.api.user.shared.dto.ProfileDescriptor;
-import com.codenvy.api.user.shared.dto.UserDescriptor;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+
+import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
+import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
+import org.eclipse.che.api.account.shared.dto.SubscriptionDescriptor;
+import org.eclipse.che.api.user.shared.dto.ProfileDescriptor;
+import org.eclipse.che.api.user.shared.dto.UserDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import java.io.IOException;
 import java.util.Collections;

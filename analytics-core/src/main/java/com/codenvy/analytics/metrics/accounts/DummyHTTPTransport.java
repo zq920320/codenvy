@@ -17,7 +17,8 @@
  */
 package com.codenvy.analytics.metrics.accounts;
 
-import com.codenvy.dto.server.DtoFactory;
+
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
 import java.io.IOException;

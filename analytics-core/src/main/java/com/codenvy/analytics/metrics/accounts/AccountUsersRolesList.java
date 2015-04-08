@@ -25,9 +25,10 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
-import com.codenvy.api.account.shared.dto.MemberDescriptor;
-import com.codenvy.api.user.shared.dto.UserDescriptor;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+
+import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
+import org.eclipse.che.api.user.shared.dto.UserDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;

@@ -18,14 +18,19 @@
 package com.codenvy.analytics.impl;
 
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricNotFoundException;
+import com.codenvy.analytics.metrics.MetricRestrictionException;
 import com.codenvy.analytics.util.MetricDTOFactory;
-import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
-import com.codenvy.api.analytics.shared.dto.MetricInfoListDTO;
-import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
-import com.codenvy.api.analytics.shared.dto.MetricValueListDTO;
-import com.codenvy.dto.server.DtoFactory;
+
+import org.eclipse.che.api.analytics.MetricHandler;
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoListDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricValueDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricValueListDTO;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriInfo;

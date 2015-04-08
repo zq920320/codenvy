@@ -18,9 +18,10 @@
 package com.codenvy.analytics.api;
 
 import com.codenvy.analytics.impl.FileBasedMetricHandler;
-import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.inject.DynaModule;
 import com.google.inject.AbstractModule;
+
+import org.eclipse.che.api.analytics.MetricHandler;
+import org.eclipse.che.inject.DynaModule;
 
 /** @author Anatoliy Bazko */
 @DynaModule

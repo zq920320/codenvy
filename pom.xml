@@ -23,7 +23,7 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy</groupId>
-        <version>1.12.1</version>
+        <version>1.19.0</version>
         <relativePath />
     </parent>
     <groupId>com.codenvy.analytics</groupId>
@@ -40,7 +40,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/analytics.git</developerConnection>
-        <tag>2.0.0</tag>
+        <tag>HEAD</tag>
     </scm>
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>

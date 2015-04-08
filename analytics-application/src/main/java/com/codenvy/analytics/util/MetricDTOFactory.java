@@ -19,11 +19,12 @@ package com.codenvy.analytics.util;
 
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.Metric;
-import com.codenvy.api.analytics.AnalyticsService;
-import com.codenvy.api.analytics.Constants;
-import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
-import com.codenvy.api.core.rest.shared.dto.Link;
-import com.codenvy.dto.server.DtoFactory;
+
+import org.eclipse.che.api.analytics.AnalyticsService;
+import org.eclipse.che.api.analytics.Constants;
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.MediaType;

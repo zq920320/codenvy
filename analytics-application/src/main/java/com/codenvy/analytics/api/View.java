@@ -37,11 +37,11 @@ import com.codenvy.analytics.services.view.SectionData;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
 import com.codenvy.analytics.util.Utils;
-import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
-import com.codenvy.dto.server.DtoFactory;
-import com.codenvy.dto.server.JsonArrayImpl;
-import com.codenvy.dto.server.JsonStringMapImpl;
 
+import org.eclipse.che.api.analytics.shared.dto.MetricValueDTO;
+import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.dto.server.JsonArrayImpl;
+import org.eclipse.che.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

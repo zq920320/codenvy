@@ -1,18 +1,18 @@
 # Common configuration
-analytics.home_dir=$CATALINA_HOME
-analytics.tmp_dir=$CATALINA_TMPDIR
-analytics.data_dir=$HOME/analytics_data
+analytics.home_dir=${CATALINA_HOME}
+analytics.tmp_dir=${CATALINA_TMPDIR}
+analytics.data_dir=${HOME}/analytics_data
 
 # Pig server configuration
-analytics.pig.logs_dir=$HOME/logs-production
-analytics.pig.scripts_dir=${analytics.home_dir}/pig/scripts
+analytics.pig.logs_dir=${HOME}/logs-production
+analytics.pig.scripts_dir=${CATALINA_HOME}/pig/scripts
 
 # MongoDB storage configuration
 analytics.mongodb.embedded=false
 analytics.mongodb.url=
 
 # JDBC data persister configuration
-analytics.jdbc.url=jdbc:hsqldb:file:${analytics.data_dir}/database/analytics
+analytics.jdbc.url=jdbc:hsqldb:file:${HOME}/analytics_data/database/analytics
 analytics.jdbc.driver=org.hsqldb.jdbcDriver
 analytics.jdbc.user=sa
 analytics.jdbc.password=
@@ -57,8 +57,8 @@ analytics.log-checker.mail_to=
 # Reports configuration
 analytics.reports=reports.xml
 analytics.reports.available=true
-analytics.reports.dir=${analytics.home_dir}/webapps/analytics/reports
-analytics.reports.backup_dir=${analytics.data_dir}/backup/reports
+analytics.reports.dir=${CATALINA_HOME}/webapps/analytics/reports
+analytics.reports.backup_dir=${HOME}/analytics_data/backup/reports
 analytics.reports.recipients=recipients.xml
 analytics.reports.mail_text=Hi.\n\nBest regards, Analytics Team.
 analytics.reports.mail_subject=[period] Analytics reports

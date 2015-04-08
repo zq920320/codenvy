@@ -31,13 +31,14 @@ import com.codenvy.analytics.metrics.Parameters.PassedDaysCount;
 import com.codenvy.analytics.metrics.Parameters.TimeUnit;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.codenvy.analytics.persistent.MongoDataLoader;
-import com.codenvy.api.user.server.dao.User;
-import com.codenvy.api.user.shared.dto.UserDescriptor;
-import com.codenvy.api.workspace.server.Constants;
-import com.codenvy.api.workspace.server.dao.Workspace;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
+
+import org.eclipse.che.api.user.server.Constants;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.shared.dto.UserDescriptor;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DateFormat;

@@ -17,9 +17,9 @@
  */
 package com.codenvy.analytics.api;
 
-import com.codenvy.inject.DynaModule;
 import com.google.inject.servlet.ServletModule;
 
+import org.eclipse.che.inject.DynaModule;
 import org.everrest.guice.servlet.GuiceEverrestServlet;
 
 /** @author Anatoliy Bazko */

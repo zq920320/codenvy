@@ -18,10 +18,11 @@
 package com.codenvy.analytics.metrics.accounts;
 
 import com.codenvy.analytics.Configurator;
-import com.codenvy.commons.env.EnvironmentContext;
-import com.codenvy.commons.lang.IoUtil;
-import com.codenvy.commons.user.User;
-import com.codenvy.dto.server.DtoFactory;
+
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.commons.user.User;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

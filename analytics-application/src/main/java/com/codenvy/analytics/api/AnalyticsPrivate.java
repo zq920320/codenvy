@@ -21,14 +21,14 @@ package com.codenvy.analytics.api;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.metrics.MetricRestrictionException;
 import com.codenvy.analytics.util.Utils;
-import com.codenvy.api.analytics.MetricHandler;
-import com.codenvy.api.analytics.shared.dto.MetricInfoDTO;
-import com.codenvy.api.analytics.shared.dto.MetricInfoListDTO;
-import com.codenvy.api.analytics.shared.dto.MetricValueDTO;
-import com.codenvy.api.analytics.shared.dto.MetricValueListDTO;
-import com.codenvy.api.core.rest.annotations.GenerateLink;
 import com.google.inject.Inject;
 
+import org.eclipse.che.api.analytics.MetricHandler;
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricInfoListDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricValueDTO;
+import org.eclipse.che.api.analytics.shared.dto.MetricValueListDTO;
+import org.eclipse.che.api.core.rest.annotations.GenerateLink;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

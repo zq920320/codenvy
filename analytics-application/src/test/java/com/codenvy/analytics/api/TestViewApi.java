@@ -44,17 +44,32 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.JdbcDataPersisterFactory;
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 import com.codenvy.analytics.services.pig.PigRunner;
-import com.codenvy.analytics.services.view.*;
+import com.codenvy.analytics.services.view.CSVFileHolder;
+import com.codenvy.analytics.services.view.CSVReportPersister;
+import com.codenvy.analytics.services.view.DisplayConfiguration;
+import com.codenvy.analytics.services.view.ViewBuilder;
+import com.codenvy.analytics.services.view.ViewData;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.OutputSupplier;
 
+import org.apache.commons.io.IOUtils;
 import org.mockito.ArgumentCaptor;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.FileReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.URISyntaxException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -62,7 +77,12 @@ import java.util.Calendar;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
@@ -202,12 +222,8 @@ public class TestViewApi extends BaseTest {
                 String resourceAsString = new String(ByteStreams.toByteArray(in), "UTF-8");
                 resourceAsString = resourceAsString.replace(originalDate, newDate);
 
-                ByteStreams.write(resourceAsString.getBytes("UTF-8"), new OutputSupplier<OutputStream>() {
-                    @Override
-                    public OutputStream getOutput() throws IOException {
-                        return out;
-                    }
-                });
+                byte[] buf = resourceAsString.getBytes("UTF-8");
+                IOUtils.copy(new ByteArrayInputStream(buf), out);
 
                 return fixedLog;
             } finally {

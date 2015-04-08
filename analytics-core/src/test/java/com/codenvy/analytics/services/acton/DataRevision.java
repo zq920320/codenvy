@@ -24,14 +24,15 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.services.pig.PigRunner;
 import com.google.common.io.ByteStreams;
-import com.google.common.io.OutputSupplier;
+
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.text.DateFormat;
@@ -104,12 +105,8 @@ public class DataRevision extends BaseTest {
                 String resourceAsString = new String(ByteStreams.toByteArray(in), "UTF-8");
                 resourceAsString = resourceAsString.replace(originalDate, newDate);
 
-                ByteStreams.write(resourceAsString.getBytes("UTF-8"), new OutputSupplier<OutputStream>() {
-                    @Override
-                    public OutputStream getOutput() throws IOException {
-                        return out;
-                    }
-                });
+                byte[] buf = resourceAsString.getBytes("UTF-8");
+                IOUtils.copy(new ByteArrayInputStream(buf), out);
 
                 return fixedLog;
             } finally {

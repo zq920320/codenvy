@@ -30,11 +30,11 @@ import com.codenvy.analytics.pig.PigServer;
 import com.codenvy.analytics.services.integrity.TasksIntegrity;
 import com.codenvy.analytics.services.metrics.DataComputation;
 import com.codenvy.analytics.services.pig.ScriptsManager;
-import com.codenvy.commons.lang.NameGenerator;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 
 import org.apache.pig.data.TupleFactory;
+import org.eclipse.che.commons.lang.NameGenerator;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,23 +50,23 @@ import java.util.Map;
 public class BaseTest {
     public static final String BASE_DIR = "target";
 
-    protected static final String UID1 = NameGenerator.generate("user_1_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
-    protected static final String UID2 = NameGenerator.generate("user_2_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
-    protected static final String UID3 = NameGenerator.generate("user_3_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
-    protected static final String UID4 = NameGenerator.generate("user_4_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
-    protected static final String UID5 = NameGenerator.generate("user_5_", com.codenvy.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID1 = NameGenerator.generate("user_1_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID2 = NameGenerator.generate("user_2_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID3 = NameGenerator.generate("user_3_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID4 = NameGenerator.generate("user_4_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 3);
+    protected static final String UID5 = NameGenerator.generate("user_5_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 3);
 
-    protected static final String AUID1 = NameGenerator.generate("user_a1_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
-    protected static final String AUID2 = NameGenerator.generate("user_a2_", com.codenvy.api.user.server.Constants.ID_LENGTH - 4);
+    protected static final String AUID1 = NameGenerator.generate("user_a1_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 4);
+    protected static final String AUID2 = NameGenerator.generate("user_a2_", org.eclipse.che.api.user.server.Constants.ID_LENGTH - 4);
 
-    protected static final String WID1  = NameGenerator.generate("workspace_1_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);
-    protected static final String WID2  = NameGenerator.generate("workspace_2_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);
-    protected static final String WID3  = NameGenerator.generate("workspace_3_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);
-    protected static final String WID4  = NameGenerator.generate("workspace_4_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 3);
-    protected static final String TWID1 = NameGenerator.generate("workspace_t1_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
-    protected static final String TWID2 = NameGenerator.generate("workspace_t2_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
-    protected static final String TWID3 = NameGenerator.generate("workspace_t3_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
-    protected static final String TWID4 = NameGenerator.generate("workspace_t4_", com.codenvy.api.workspace.server.Constants.ID_LENGTH - 4);
+    protected static final String WID1  = NameGenerator.generate("workspace_1_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 3);
+    protected static final String WID2  = NameGenerator.generate("workspace_2_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 3);
+    protected static final String WID3  = NameGenerator.generate("workspace_3_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 3);
+    protected static final String WID4  = NameGenerator.generate("workspace_4_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 3);
+    protected static final String TWID1 = NameGenerator.generate("workspace_t1_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 4);
+    protected static final String TWID2 = NameGenerator.generate("workspace_t2_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 4);
+    protected static final String TWID3 = NameGenerator.generate("workspace_t3_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 4);
+    protected static final String TWID4 = NameGenerator.generate("workspace_t4_", org.eclipse.che.api.workspace.server.Constants.ID_LENGTH - 4);
 
     protected static final Logger LOG = LoggerFactory.getLogger(BaseTest.class);
 
