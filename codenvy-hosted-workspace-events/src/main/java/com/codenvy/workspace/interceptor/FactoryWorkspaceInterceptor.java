@@ -101,7 +101,8 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
                 }
 
                 if (factoryWorkspace != null && factoryWorkspace.getLocation().equals("owner")) {
-                    needAddOwner = true;
+                    // no need to add role if creator and user are the same (will throw role already exists exc).
+                    needAddOwner = !factory.getCreator().getUserId().equals(currentUser.getId());
                     invocation.getArguments()[1] = new SecurityContext() {
                         @Override
                         public Principal getUserPrincipal() {
