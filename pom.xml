@@ -34,7 +34,6 @@
         <module>codenvy-factory-services</module>
         <module>codenvy-factory-packaging-war</module>
         <module>codenvy-factory-storage-mongo</module>
-        <module>codenvy-factory-subscription</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/factory.git</connection>
