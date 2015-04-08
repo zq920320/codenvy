@@ -19,14 +19,14 @@
 filename=`ls analytics-tomcat-pkg/target | grep analytics-tomcat-pkg`
 if [ -z "$1" ] || [ "$1" == "prod" ]; then
     SSH_KEY_NAME=cl-server-prod-20130219
-    SSH_AS_USER_NAME=logreader
-    AS_IP=syslog.codenvycorp.com
+    SSH_AS_USER_NAME=codenvy
+    AS_IP=analytics.codenvycorp.com
     echo "============[ Production will be updated ]=============="
 elif [ "$1" == "stg" ]; then
     SSH_KEY_NAME=as1-cldide_cl-server.skey
     SSH_AS_USER_NAME=codenvy
-    AS_IP=syslog.codenvy-stg.com
-    echo "============[ Stagin will be updated ]=============="
+    AS_IP=analytics.codenvy-stg.com
+    echo "============[ Staging will be updated ]=============="
 else
     exit
 fi
