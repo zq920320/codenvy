@@ -38,6 +38,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 /**
+ * Synchronizes project source between VFS and machine using Syncthing
+ *
  * @author Alexander Garagatyi
  */
 public class SyncthingSynchronizeTask implements Runnable, Cancellable {
@@ -62,8 +64,7 @@ public class SyncthingSynchronizeTask implements Runnable, Cancellable {
                                     int listenPort,
                                     int apiPort,
                                     String remoteClientAddress,
-                                    String guiApiToken) throws ServerException {
-
+                                    String apiToken) throws ServerException {
         this.syncTaskExecutable = syncTaskExecutable;
         this.syncTaskConfTemplate = syncTaskConfTemplate;
         this.workingDir = workingDir;
@@ -71,7 +72,7 @@ public class SyncthingSynchronizeTask implements Runnable, Cancellable {
         this.listenPort = listenPort;
         this.apiPort = apiPort;
         this.remoteClientAddress = remoteClientAddress;
-        this.guiApiToken = guiApiToken;
+        this.guiApiToken = apiToken;
     }
 
     @Override
@@ -117,7 +118,7 @@ public class SyncthingSynchronizeTask implements Runnable, Cancellable {
     }
 
     public int[] getPorts() {
-        return new int[] {listenPort, apiPort};
+        return new int[]{listenPort, apiPort};
     }
 
     @Override

@@ -35,6 +35,8 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
+ * Listen for events about changes on VFS and activate send these changes for appropriate Syncthing listeners
+ *
  * @author Alexander Garagatyi
  */
 @Singleton

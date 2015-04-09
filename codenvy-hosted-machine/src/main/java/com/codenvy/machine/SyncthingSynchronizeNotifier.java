@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.net.HttpURLConnection;
 
 /**
+ * Notify Syncthing about changes in project's files on VFS
+ *
  * @author Alexander Garagatyi
  */
 public class SyncthingSynchronizeNotifier {

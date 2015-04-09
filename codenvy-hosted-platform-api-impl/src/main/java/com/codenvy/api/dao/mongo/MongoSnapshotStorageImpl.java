@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.machine.server.ProjectBindingImpl;
@@ -34,7 +33,6 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
-import org.eclipse.che.api.machine.shared.Snapshot;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -81,12 +79,7 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
     }
 
     @Override
-    public void saveSnapshot(SnapshotImpl snapshot) throws ServerException, ForbiddenException {
-        requiredNotNull(snapshot.getOwner(), "Owner");
-        requiredNotNull(snapshot.getId(), "Id");
-        requiredNotNull(snapshot.getImageType(), "Image type");
-        requiredNotNull(snapshot.getWorkspaceId(), "Workspace id");
-        requiredNotNull(snapshot.getImageKey(), "Image key");
+    public void saveSnapshot(SnapshotImpl snapshot) throws ServerException {
         try {
             machineCollection.save(toDBObject(snapshot));
         } catch (MongoException me) {
@@ -163,22 +156,6 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
                                   .append("creationDate", snapshot.getCreationDate())
                                   .append("description", snapshot.getDescription())
                                   .append("label", snapshot.getLabel());
-    }
-
-    /**
-     * Checks object reference is not {@code null}
-     *
-     * @param object
-     *         object reference to check
-     * @param subject
-     *         used as subject of exception message "{subject} required"
-     * @throws ForbiddenException
-     *         when object reference is {@code null}
-     */
-    private void requiredNotNull(Object object, String subject) throws ForbiddenException {
-        if (object == null) {
-            throw new ForbiddenException(subject + " required");
-        }
     }
 
     private static class ImageKeyImpl implements ImageKey {

@@ -17,11 +17,14 @@
  */
 package com.codenvy.machine;
 
+import com.codenvy.docker.DockerConnector;
+import com.codenvy.docker.SwarmDockerConnector;
+import com.codenvy.docker.json.ContainerInfo;
 import com.codenvy.machine.docker.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
@@ -33,7 +36,6 @@ import org.eclipse.che.api.core.util.CustomPortService;
 import org.eclipse.che.api.machine.server.MachineException;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
 import org.slf4j.Logger;
@@ -41,23 +43,18 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
- * REST API for machine slave runners
+ * REST client for remote machine node
  *
  * @author Alexander Garagatyi
  */
-@Singleton
-public class RemoteMachineNodeImpl implements DockerNode {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteMachineNodeImpl.class);
+public class RemoteDockerNode implements DockerNode {
+    private static final Logger LOG = LoggerFactory.getLogger(RemoteDockerNode.class);
 
     private final String                            vfsSyncTaskExecutable;
     private final String                            vfsSyncTaskConfTemplate;
@@ -66,18 +63,23 @@ public class RemoteMachineNodeImpl implements DockerNode {
     private final LocalFSMountStrategy              mountStrategy;
     private final SyncthingSynchronizeEventListener syncthingSynchronizeEventListener;
     private final CustomPortService                 portService;
-    private final ExecutorService                   executor;
+    private final SyncTasks                         syncTasks;
 
-    private final ConcurrentHashMap<String, Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier>> vfsSyncTasks;
+    private final String hostProjectsFolder;
+    private final String nodeLocation;
 
     @Inject
-    public RemoteMachineNodeImpl(@Named("machine.sync.vfs.exec") String vfsSyncTaskExecutable,
-                                 @Named("machine.sync.vfs.conf") String vfsSyncTaskConfTemplate,
-                                 @Named("machine.sync.vfs.api_token") String vfsGuiToken,
-                                 @Named("machine.sync.workdir") String syncWorkingDir,
-                                 LocalFSMountStrategy mountStrategy,
-                                 SyncthingSynchronizeEventListener syncthingSynchronizeEventListener,
-                                 CustomPortService portService) {
+    public RemoteDockerNode(@Named("machine.sync.vfs.exec") String vfsSyncTaskExecutable,
+                            @Named("machine.sync.vfs.conf") String vfsSyncTaskConfTemplate,
+                            @Named("machine.sync.vfs.api_token") String vfsGuiToken,
+                            @Named("machine.sync.workdir") String syncWorkingDir,
+                            @Named("machine.project.location") String machineProjectsDir,
+                            LocalFSMountStrategy mountStrategy,
+                            SyncthingSynchronizeEventListener syncthingSynchronizeEventListener,
+                            CustomPortService portService,
+                            DockerConnector dockerConnector,
+                            SyncTasks syncTasks,
+                            @Assisted String containerId) throws MachineException {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
         this.vfsGuiToken = vfsGuiToken;
@@ -85,51 +87,24 @@ public class RemoteMachineNodeImpl implements DockerNode {
         this.mountStrategy = mountStrategy;
         this.syncthingSynchronizeEventListener = syncthingSynchronizeEventListener;
         this.portService = portService;
-        this.vfsSyncTasks = new ConcurrentHashMap<>();
-        this.executor = Executors
-                .newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("RemoteMachineSlaveImpl-%d").setDaemon(true).build());
-    }
+        this.syncTasks = syncTasks;
+        this.hostProjectsFolder = new File(machineProjectsDir, containerId).toString();
 
-    @Override
-    public void bindProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
-            throws MachineException {
-        copyProject(nodeLocation, hostProjectsFolder, workspaceId, project);
-
-        try {
-            startSynchronization(nodeLocation, hostProjectsFolder, workspaceId, project);
-        } catch (Exception e) {
-            LOG.error(e.getLocalizedMessage(), e);
+        String nodeLocation = "127.0.0.1";
+        if (dockerConnector instanceof SwarmDockerConnector) {
+            try {
+                final ContainerInfo info = ((SwarmDockerConnector)dockerConnector).inspectContainerDirectly(containerId);
+                if (info != null) {
+                    nodeLocation = info.getNode().getIp();
+                }
+            } catch (IOException e) {
+                LOG.error(e.getLocalizedMessage(), e);
+                throw new MachineException("Internal server error occurs. Please contact support");
+            }
         }
-    }
+        this.nodeLocation = nodeLocation;
 
-    @Override
-    public void unbindProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
-            throws MachineException {
-        try {
-            stopSynchronization(nodeLocation, hostProjectsFolder, project);
-        } catch (MachineException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-//            try {
-//                machine.getMachineLogsOutput().writeLine("[ERROR] " + e.getLocalizedMessage());
-//            } catch (IOException ignored) {
-//            }
-        }
-
-        try {
-            removeProject(nodeLocation, hostProjectsFolder, project);
-        } catch (MachineException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-//            try {
-//                machine.getMachineLogsOutput().writeLine("[ERROR] " + e.getLocalizedMessage());
-//            } catch (IOException ignored) {
-//            }
-            throw e;
-        }
-
-    }
-
-    @Override
-    public void createProjectsFolder(String nodeLocation, String hostProjectsFolder) throws MachineException {
+        // We have to create folder, see https://github.com/docker/docker/issues/12061
         final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/folder/")
                                   .path(hostProjectsFolder)
                                   .host(nodeLocation)
@@ -141,11 +116,46 @@ public class RemoteMachineNodeImpl implements DockerNode {
             HttpJsonHelper.request(null, uri.toString(), "POST", null);
         } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException | NotFoundException | ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new MachineException("Machine creation failed");
+            throw new MachineException("Internal server error occurs. Please contact support");
         }
     }
 
-    private void copyProject(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding project)
+    @Override
+    public void bindProject(String workspaceId, ProjectBinding project)
+            throws MachineException {
+        copyProject(workspaceId, project);
+
+        try {
+            startSynchronization(workspaceId, project);
+        } catch (Exception e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+    }
+
+    @Override
+    public void unbindProject(String workspaceId, ProjectBinding project)
+            throws MachineException {
+        try {
+            stopSynchronization(project);
+        } catch (MachineException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+
+        try {
+            removeProject(project);
+        } catch (MachineException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw e;
+        }
+
+    }
+
+    @Override
+    public String getHostProjectsFolder() {
+        return hostProjectsFolder;
+    }
+
+    private void copyProject(String workspaceId, ProjectBinding project)
             throws MachineException {
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
                                                                 .withWorkspaceId(workspaceId)
@@ -169,7 +179,7 @@ public class RemoteMachineNodeImpl implements DockerNode {
         }
     }
 
-    private void startSynchronization(String nodeLocation, String hostProjectsFolder, String workspaceId, ProjectBinding projectBinding) {
+    private void startSynchronization(String workspaceId, ProjectBinding projectBinding) {
         int vfsSyncListenPort = 0;
         int vfsSyncApiPort = 0;
         RemoteSyncListener syncListenerConf = null;
@@ -208,33 +218,26 @@ public class RemoteMachineNodeImpl implements DockerNode {
             String vfsSyncPath = new File(mountPath, project).toString();
 
 
-            SyncthingSynchronizeTask syncTask = new SyncthingSynchronizeTask(vfsSyncTaskExecutable,
-                                                                             vfsSyncTaskConfTemplate,
-                                                                             syncWorkingDir,
-                                                                             vfsSyncPath,
-                                                                             vfsSyncListenPort,
-                                                                             vfsSyncApiPort,
-                                                                             nodeLocation + ":" + syncListenerConf.getPort(),
-                                                                             vfsGuiToken);
+            SyncthingSynchronizeTask syncTask = new VfsSyncthingSynchronizerTask(vfsSyncTaskExecutable,
+                                                                                 vfsSyncTaskConfTemplate,
+                                                                                 syncWorkingDir,
+                                                                                 vfsSyncPath,
+                                                                                 vfsSyncListenPort,
+                                                                                 vfsSyncApiPort,
+                                                                                 nodeLocation + ":" + syncListenerConf.getPort(),
+                                                                                 vfsGuiToken,
+                                                                                 workspaceId,
+                                                                                 project,
+                                                                                 syncthingSynchronizeEventListener);
 
-            SyncthingSynchronizeNotifier SyncNotifier = new SyncthingSynchronizeNotifier(workspaceId,
-                                                                                         project,
-                                                                                         vfsSyncApiPort,
-                                                                                         vfsGuiToken);
-
-            vfsSyncTasks.put(hostProjectsFolder + "/" + project, Pair.of(syncTask, SyncNotifier));
-
-
-            executor.submit(syncTask);
-
-            syncthingSynchronizeEventListener.addProjectSynchronizeNotifier(SyncNotifier);
+            syncTasks.startTask(hostProjectsFolder + "/" + project, syncTask);
         } catch (Exception e) {
             try {
                 if (syncListenerConf == null) {
                     portService.release(vfsSyncListenPort);
                     portService.release(vfsSyncApiPort);
                 } else {
-                    release(nodeLocation, hostProjectsFolder, projectBinding);
+                    release(projectBinding);
                 }
             } catch (Exception e1) {
                 LOG.error(e.getLocalizedMessage(), e);
@@ -242,8 +245,7 @@ public class RemoteMachineNodeImpl implements DockerNode {
         }
     }
 
-    private void removeProject(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding)
-            throws MachineException {
+    private void removeProject(ProjectBinding projectBinding) throws MachineException {
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
                                                                 .withProject(projectBinding.getPath())
                                                                 .withHostFolder(hostProjectsFolder);
@@ -264,29 +266,24 @@ public class RemoteMachineNodeImpl implements DockerNode {
         }
     }
 
-    private void stopSynchronization(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding)
+    private void stopSynchronization(ProjectBinding projectBinding)
             throws MachineException {
         try {
-            release(nodeLocation, hostProjectsFolder, projectBinding);
+            release(projectBinding);
         } catch (Exception e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new MachineException(e.getLocalizedMessage(), e);
         }
     }
 
-    private void release(String nodeLocation, String hostProjectsFolder, ProjectBinding projectBinding) throws Exception {
-        final Pair<SyncthingSynchronizeTask, SyncthingSynchronizeNotifier> vfsSynchronizer = vfsSyncTasks.get(hostProjectsFolder + "/" + projectBinding.getPath());
+    private void release(ProjectBinding projectBinding) throws Exception {
+        final SyncthingSynchronizeTask vfsSynchronizer = syncTasks.stopTask(hostProjectsFolder + "/" + projectBinding.getPath());
         if (vfsSynchronizer != null) {
-            syncthingSynchronizeEventListener.removeProjectSynchronizeNotifier(vfsSynchronizer.second);
-            for (int port : vfsSynchronizer.first.getPorts()) {
+
+            for (int port : vfsSynchronizer.getPorts()) {
                 if (port != 0) {
                     portService.release(port);
                 }
-            }
-            try {
-                vfsSynchronizer.first.cancel();
-            } catch (Exception e) {
-                LOG.error(e.getLocalizedMessage(), e);
             }
         }
 
@@ -297,7 +294,8 @@ public class RemoteMachineNodeImpl implements DockerNode {
                                   .build();
 
         SynchronizationConf synchronizationConf = DtoFactory.getInstance().createDto(SynchronizationConf.class)
-                                                            .withSyncPath(new File(hostProjectsFolder, projectBinding.getPath()).toString());
+                                                            .withSyncPath(
+                                                                    new File(hostProjectsFolder, projectBinding.getPath()).toString());
 
         try {
             HttpJsonHelper.request(null, uri.toString(), "DELETE", synchronizationConf);

@@ -55,13 +55,12 @@ import java.util.concurrent.Executors;
 public class MachineNodeService {
     private static final Logger LOG = LoggerFactory.getLogger(MachineNodeService.class);
 
-    private final String            syncWorkingDir;
-    private final String            apiEndpoint;
-    private final String            machineSyncTaskExecutable;
-    private final String            machineSyncTaskConfTemplate;
-    private final String            machineSyncApiToken;
-    private final CustomPortService portService;
-
+    private final String                                              syncWorkingDir;
+    private final String                                              apiEndpoint;
+    private final String                                              machineSyncTaskExecutable;
+    private final String                                              machineSyncTaskConfTemplate;
+    private final String                                              machineSyncApiToken;
+    private final CustomPortService                                   portService;
     private final ConcurrentHashMap<String, SyncthingSynchronizeTask> syncTasks;
     private final ExecutorService                                     executor;
 

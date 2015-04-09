@@ -17,7 +17,10 @@
  */
 package com.codenvy.machine;
 
+import com.codenvy.machine.docker.DockerNode;
+import com.codenvy.machine.docker.DockerNodeFactory;
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 /**
  * @author Alexander Garagatyi
@@ -25,6 +28,6 @@ import com.google.inject.AbstractModule;
 public class MachineApiModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(com.codenvy.machine.docker.DockerNode.class).to(com.codenvy.machine.RemoteMachineNodeImpl.class);
+        install(new FactoryModuleBuilder().implement(DockerNode.class, RemoteDockerNode.class).build(DockerNodeFactory.class));
     }
 }
