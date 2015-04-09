@@ -82,7 +82,7 @@ public class Configurator {
             public String getValue(String template) {
                 boolean endsWithSeparator = template.endsWith(File.separator);
 
-                String var = template.substring(1, template.length() - (endsWithSeparator ? 1 : 0));
+                String var = template.substring(2, template.length() - (endsWithSeparator ? 2 : 1));
                 return System.getenv(var) + (endsWithSeparator ? File.separator : "");
             }
         });

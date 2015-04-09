@@ -1136,8 +1136,8 @@ function AnalyticsConfiguration() {
             }
         },
 
-        /** for Accounts View */
-        accounts: {
+        /** for Organization View */
+        current_user_accounts: {
             widgetLabel: "Accounts",
             presenterType: "HorizontalTablePresenter",
             modelViewName: "current_user_accounts_list",
@@ -1473,7 +1473,18 @@ function AnalyticsConfiguration() {
                 "session_id": "/analytics/pages/session-view.jsp?session_id",
                 "project": "/analytics/pages/project-view.jsp?project"
             }
-        }
+        },
+
+        /** for Organization View */
+        accounts: {
+            widgetLabel: "Accounts",
+            presenterType: "EntryViewPresenter",
+            modelViewName: "accounts",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user"
+            }
+        },
     };
 
     var registeredModelParams = [

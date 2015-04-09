@@ -27,8 +27,7 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="accounts_list"/>
-                <parameter key="fields" value="account_id,account_user_id,account_roles,gg"/>
-                <!--TODO [AB]-->
+                <parameter key="fields" value="account_id,user,projects,workspaces,subscriptions"/>
             </row>
         </section>
     </view>

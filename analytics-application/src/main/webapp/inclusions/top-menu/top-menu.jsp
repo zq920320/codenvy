@@ -29,6 +29,10 @@
             </a>
 
             <div class="left">
+                <% if (request.isUserInRole("system/admin") || request.isUserInRole("system/manager")) { %>
+                    <a class="nav" href="/analytics/pages/accounts-view.jsp" id="topmenu-accounts">Accounts</a>
+                <% } %>
+
                 <a class="nav" href="/analytics/pages/users-view.jsp" id="topmenu-users">Users</a>
                 <a class="nav" href="/analytics/pages/sessions-view.jsp" id="topmenu-sessions">Sessions</a>
                 <a class="nav" href="/analytics/pages/workspaces-view.jsp" id="topmenu-workspaces">Workspaces</a>
@@ -36,10 +40,6 @@
                 <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
                 <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
                 <a class="nav" href="/analytics/pages/tasks-view.jsp" id="topmenu-tasks">Tasks</a>
-
-                <% if (request.isUserInRole("system/admin") || request.isUserInRole("system/manager")) { %>
-
-                <% } %>
 
                 <% if (FrontEndUtil.isCodenvyAdmin(request)) { %>
                     <div class="nav">
