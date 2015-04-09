@@ -4,7 +4,7 @@
  *
  *  [2012] - [2013] Codenvy, S.A.
  *  All Rights Reserved.
- * 
+ *
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -73,7 +73,7 @@
         // Verify subscriptions for Organization
         function checkSubscriptionFor(orgId) {
             var request;
-            var plansArray = ["Saas", "Factory"];
+            var plansArray = ["Saas"];
             var url = "/api/account/" + orgId + "/subscriptions";
             if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
                 request = new XMLHttpRequest();
@@ -102,7 +102,7 @@
             request.open("GET", url, true);
             request.send();
         }
-        // Sets Info for Premium User 
+        // Sets Info for Premium User
         function setPremiumUserInfo() {
             var request;
             var url = "/api/account";
@@ -269,9 +269,9 @@
                         createAccount(accountName)
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
-                        deferredResult.resolve(account);    
+                        deferredResult.resolve(account);
                         });
-                        
+
                     }
                 },
                 error: function(error){
@@ -324,7 +324,7 @@
             return deferredResult;
         };
 
-                                                                                                           
+
         var login = function(email, password) {
             if (isWebsocketEnabled()) {
                 var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
@@ -404,7 +404,7 @@
             isValidPassword: function(value) {
                 return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,}$/).test(value);
             },
-            
+
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
                 if ($.cookie('logged_in')) {
@@ -435,7 +435,7 @@
                                 .then(function(user){
                                     return addMemberToWorkspace(workspaceId,user.id);//add User to WS
                                 });
-                                
+
                             }
                         })
                         .then(function(){
@@ -499,7 +499,7 @@
                                 responseErr = "Authentication: Something went wrong. Please try again or contact support";
                             }
 
-                            
+
                             error([
                                 new AccountError(null, responseErr)
                             ]);
@@ -541,7 +541,7 @@
                                 responseErr = "Authentication: Something went wrong. Please try again or contact support";
                             }
 
-                            
+
                             error([
                                 new AccountError(null, responseErr)
                             ]);
@@ -586,7 +586,7 @@
                         responseErr = "Something went wrong. Please try again or contact support";
                     }
 
-                    
+
                     error([
                         new AccountError(null, responseErr)
                     ]);
@@ -619,7 +619,7 @@
                                 responseErr = "Something went wrong. Please try again or contact support";
                             }
 
-                            
+
                             error([
                                 new AccountError(null, responseErr)
                             ]);
@@ -631,9 +631,9 @@
                     }
 
                 });
-              
+
             },
-            
+
             joinWorkspace: function(username, bearertoken, workspace, success, error) {
                 var data = {
                     username: username.toLowerCase(),
@@ -872,7 +872,7 @@
                     ]);
                 });
             },
-            // Braintree payment: select account for payment 
+            // Braintree payment: select account for payment
             getAccounts: function(payment, success, error, redirect) {
                 $.when(Accounts.getAccounts()).done(function(accounts) {
                     switch (accounts.length) {
