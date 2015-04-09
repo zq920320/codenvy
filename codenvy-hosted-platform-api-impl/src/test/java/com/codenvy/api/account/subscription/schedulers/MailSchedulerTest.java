@@ -99,7 +99,7 @@ public class MailSchedulerTest {
         }));
 
         verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
+        verify(subscriptionMailSender).sendInvoice((Invoice)anyObject(), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
 
@@ -131,7 +131,7 @@ public class MailSchedulerTest {
         }));
 
         verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(subscriptionMailSender).sendInvoice(eq(ACCOUNT_ID), eq(invoice.getPaymentState()), anyString());
+        verify(subscriptionMailSender).sendInvoice((Invoice)anyObject(), anyString());
         verify(billingService).markInvoiceAsSent(eq(1L));
     }
 }
