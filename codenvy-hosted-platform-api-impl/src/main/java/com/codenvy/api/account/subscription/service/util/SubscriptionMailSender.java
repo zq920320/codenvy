@@ -18,6 +18,7 @@
 package com.codenvy.api.account.subscription.service.util;
 
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.impl.shared.dto.Invoice;
 
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
@@ -81,10 +82,16 @@ public class SubscriptionMailSender {
         this.mailClient = mailClient;
     }
 
-    public void sendInvoice(String accountId, String state, String text) throws IOException, MessagingException, ServerException {
+    public void sendInvoice(Invoice invoice, String text) throws IOException, MessagingException, ServerException {
         String subject;
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        if (PAID_SUCCESSFULLY.getState().equals(state) || PaymentState.NOT_REQUIRED.getState().equals(state)) {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(invoice.getAccountId());
+        if (accountOwnersEmails.isEmpty()) {
+            LOG.error("Can't send invoice " + invoice.getId() + " because account " + invoice.getAccountId() + " hasn't owner");
+            return;
+        }
+
+        if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())
+            || PaymentState.NOT_REQUIRED.getState().equals(invoice.getPaymentState())) {
             subject = invoiceSubject;
         } else {
             subject = billingFailedSubject;

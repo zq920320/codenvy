@@ -77,8 +77,7 @@ public class MailScheduler {
                 try {
                     StringWriter htmlBody = new StringWriter();
                     templateProcessor.processTemplate(notSendInvoice, htmlBody);
-                    subscriptionMailSender
-                            .sendInvoice(notSendInvoice.getAccountId(), notSendInvoice.getPaymentState(), htmlBody.toString());
+                    subscriptionMailSender.sendInvoice(notSendInvoice, htmlBody.toString());
                     billingService.markInvoiceAsSent(notSendInvoice.getId());
                 } catch (Exception e) {
                     LOG.error("Can't send invoice " + notSendInvoice.getId(), e);
