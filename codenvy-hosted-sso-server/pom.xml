@@ -88,6 +88,12 @@
             <version>${com.googlecode.gson.version}</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient</artifactId>
+            <version>4.3.6</version>
+            <scope>test</scope>
+        </dependency>
         <!-- Test dependencies -->
         <dependency>
             <groupId>org.everrest</groupId>

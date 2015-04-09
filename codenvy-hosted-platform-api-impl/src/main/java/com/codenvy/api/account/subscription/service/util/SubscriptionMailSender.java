@@ -17,6 +17,9 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
+import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.impl.shared.dto.Invoice;
+
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
@@ -50,7 +53,6 @@ import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 public class SubscriptionMailSender {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
-    private static final String TEMPLATE_SAAS_SIGNUP    = "/email-templates/saas-sign-up.html";
     private static final String TEMPLATE_CC_ADDED       = "/email-templates/saas-add-credit-card.html";
     private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
     private static final String TEMPLATE_CC_DELETE      = "/email-templates/saas-remove-credit-card.html";
@@ -80,28 +82,22 @@ public class SubscriptionMailSender {
         this.mailClient = mailClient;
     }
 
-
-    public void sendInvoice(String accountId, String state, String text) throws IOException, MessagingException, ServerException {
+    public void sendInvoice(Invoice invoice, String text) throws IOException, MessagingException, ServerException {
         String subject;
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        if (PAID_SUCCESSFULLY.getState().equals(state)) {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(invoice.getAccountId());
+        if (accountOwnersEmails.isEmpty()) {
+            LOG.error("Can't send invoice " + invoice.getId() + " because account " + invoice.getAccountId() + " hasn't owner");
+            return;
+        }
+
+        if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())
+            || PaymentState.NOT_REQUIRED.getState().equals(invoice.getPaymentState())) {
             subject = invoiceSubject;
         } else {
             subject = billingFailedSubject;
         }
         LOG.debug("Send invoice to {}", accountOwnersEmails);
         sendEmail(text, subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
-    }
-
-    public void sendSaasSignupNotification(String accountId) throws ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        LOG.debug("Send saas signup notifications to {}", accountOwnersEmails);
-        try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_SAAS_SIGNUP)), "Welcome to Codenvy",
-                      accountOwnersEmails, MediaType.TEXT_HTML, null);
-        } catch (IOException | MessagingException e) {
-            LOG.warn("Unable to send saas signup notifications email, account: {}", accountId);
-        }
     }
 
     public void sendCCAddedNotification(String accountId, String ccNumber, String ccType) throws ServerException {
@@ -111,7 +107,7 @@ public class SubscriptionMailSender {
         properties.put("number", ccNumber);
         LOG.debug("Send credit card added notifications to {}", accountOwnersEmails);
         try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Credit Card Added to Codenvy",
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Codenvy Pay-as-you-Go Subscription",
                       accountOwnersEmails, MediaType.TEXT_HTML, properties);
         } catch (IOException | MessagingException e) {
             LOG.warn("Unable to send credit card added notifications email, account: {}", accountId);
@@ -144,7 +140,6 @@ public class SubscriptionMailSender {
             LOG.warn("Unable to send account locked notifications, account: {}", accountId);
         }
     }
-
 
     private List<String> getAccountOwnersEmails(String accountId) throws ServerException {
         List<String> emails = new ArrayList<>();

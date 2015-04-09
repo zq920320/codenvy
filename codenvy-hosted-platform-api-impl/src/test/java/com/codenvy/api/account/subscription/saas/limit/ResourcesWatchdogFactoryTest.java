@@ -47,6 +47,7 @@ import java.util.Map;
 import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertTrue;
@@ -87,8 +88,7 @@ public class ResourcesWatchdogFactoryTest {
     @Test
     public void testReachingOfLimitWhenAccountHasCommunitySubscriptionAndPaidGhB() throws Exception {
         when(accountDao.getActiveSubscription(eq("ACC_ID"), eq(ServiceId.SAAS))).thenReturn(new Subscription().withPlanId("sas-community"));
-        when(billingService.getEstimatedUsageByAccount((ResourcesFilter)anyObject()))
-                .thenReturn(Collections.singletonList(DtoFactory.getInstance().createDto(AccountResources.class)));
+        when(billingService.hasAvailableResources(anyString(), anyLong(), anyLong())).thenReturn(false);
 
         ResourcesWatchdog resourcesWatchdog = factory.createAccountWatchdog("ACC_ID");
 
@@ -98,7 +98,7 @@ public class ResourcesWatchdogFactoryTest {
     @Test
     public void testReachingOfLimitWhenAccountHasCommunitySubscriptionAndDoesNotHasPaidGhB() throws Exception {
         when(accountDao.getActiveSubscription(eq("ACC_ID"), eq(ServiceId.SAAS))).thenReturn(new Subscription().withPlanId("sas-community"));
-        when(billingService.getEstimatedUsageByAccount((ResourcesFilter)anyObject())).thenReturn(Collections.<AccountResources>emptyList());
+        when(billingService.hasAvailableResources(anyString(), anyLong(), anyLong())).thenReturn(true);
 
         ResourcesWatchdog resourcesWatchdog = factory.createAccountWatchdog("ACC_ID");
 
@@ -108,8 +108,7 @@ public class ResourcesWatchdogFactoryTest {
     @Test
     public void testReachingOfLimitWhenAccountHasPaidSubscriptionAndPaidGhB() throws Exception {
         when(accountDao.getActiveSubscription(eq("ACC_ID"), eq(ServiceId.SAAS))).thenReturn(new Subscription().withPlanId("super-plan"));
-        when(billingService.getEstimatedUsageByAccount((ResourcesFilter)anyObject()))
-                .thenReturn(Collections.singletonList(DtoFactory.getInstance().createDto(AccountResources.class)));
+        when(billingService.hasAvailableResources(anyString(), anyLong(), anyLong())).thenReturn(false);
 
         ResourcesWatchdog resourcesWatchdog = factory.createAccountWatchdog("ACC_ID");
 

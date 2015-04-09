@@ -21,8 +21,6 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.WorkspaceLocker;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.BillingService;
-import com.codenvy.api.account.billing.ResourcesFilter;
-import com.codenvy.api.account.impl.shared.dto.AccountResources;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.subscription.ServiceId;
 
@@ -37,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.List;
 import java.util.Map;
 
 import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
@@ -106,18 +103,12 @@ public class ResourcesWatchdogFactory {
             }
 
             try {
-                List<AccountResources> usedMemory = billingService.getEstimatedUsageByAccount(ResourcesFilter.builder()
-                                                                                                             .withAccountId(accountId)
-                                                                                                             .withFromDate(
-                                                                                                                     billingPeriod
-                                                                                                                             .getCurrent()
-                                                                                                                             .getStartDate()
-                                                                                                                             .getTime())
-                                                                                                             .withTillDate(
-                                                                                                                     System.currentTimeMillis())
-                                                                                                             .withPaidGbHMoreThan(0)
-                                                                                                             .build());
-                return !usedMemory.isEmpty();
+                return !billingService.hasAvailableResources(accountId,
+                                                             billingPeriod
+                                                                     .getCurrent()
+                                                                     .getStartDate()
+                                                                     .getTime(),
+                                                             System.currentTimeMillis());
             } catch (ServerException e) {
                 LOG.error("Can't check resources consuming in account " + accountId, e);
             }

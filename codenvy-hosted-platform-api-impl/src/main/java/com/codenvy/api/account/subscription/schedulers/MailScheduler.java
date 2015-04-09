@@ -24,7 +24,6 @@ import com.codenvy.api.account.billing.TemplateProcessor;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 
-import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -69,7 +68,8 @@ public class MailScheduler {
             List<Invoice> notSendInvoices = billingService.getInvoices(InvoiceFilter.builder()
                                                                                     .withIsMailNotSend()
                                                                                     .withPaymentStates(PaymentState.PAYMENT_FAIL,
-                                                                                                       PaymentState.PAID_SUCCESSFULLY)
+                                                                                                       PaymentState.PAID_SUCCESSFULLY,
+                                                                                                       PaymentState.NOT_REQUIRED)
                                                                                     .withMaxItems(invoices_limit)
                                                                                     .withSkipCount(0)
                                                                                     .build());
@@ -77,11 +77,10 @@ public class MailScheduler {
                 try {
                     StringWriter htmlBody = new StringWriter();
                     templateProcessor.processTemplate(notSendInvoice, htmlBody);
-                    subscriptionMailSender
-                            .sendInvoice(notSendInvoice.getAccountId(), notSendInvoice.getPaymentState(), htmlBody.toString());
+                    subscriptionMailSender.sendInvoice(notSendInvoice, htmlBody.toString());
                     billingService.markInvoiceAsSent(notSendInvoice.getId());
-                } catch (ApiException e) {
-                    LOG.error("Can't send email", e);
+                } catch (Exception e) {
+                    LOG.error("Can't send invoice " + notSendInvoice.getId(), e);
                 }
             }
         } catch (Exception e) {

@@ -38,12 +38,13 @@ import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
-import java.text.ParseException;
 import java.util.List;
 
 import static com.google.common.collect.Iterables.get;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertFalse;
 
 
 public class SqlBillingServiceTest extends AbstractSQLTest {
@@ -61,13 +62,9 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         return result;
     }
 
-
     @Test(dataProvider = "storage")
-    public void shouldCalculateSimpleInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldCalculateSimpleInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
-
-
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
@@ -76,11 +73,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
+        List<Invoice> ac3 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-3"));
         //then
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
@@ -96,15 +94,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertNotNull(saasCharge.getDetails());
         assertEquals(saasCharge.getDetails().size(), 1);
         assertEquals(saasCharge.getDetails().get("ws-235423"), "216.0");
-
     }
 
     @Test(dataProvider = "storage", enabled = false)
-    public void shouldBeAbleToFilterInvoiceByDates(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToFilterInvoiceByDates(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
-
-
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
@@ -140,10 +134,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(invoice.getTotal(), 30.9);
     }
 
-
     @Test(dataProvider = "storage")
-    public void shouldCalculateFreeHours(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ServerException, ParseException {
+    public void shouldCalculateFreeHours(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(256,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
@@ -152,11 +144,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
+        List<Invoice> ac3 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-3"));
         //then
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
@@ -174,9 +167,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     }
 
     @Test(dataProvider = "storage")
-    public void shouldCalculateBetweenSeveralWorkspaces(MeterBasedStorage meterBasedStorage,
-                                                        BillingService billingService)
-            throws ServerException, ParseException {
+    public void shouldCalculateBetweenSeveralWorkspaces(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(256,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
@@ -194,11 +186,13 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-2",
                                      "run-234"));
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
+        List<Invoice> ac3 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-3"));
         //then
         assertEquals(ac3.size(), 1);
         Invoice invoice = get(ac3, 0);
@@ -217,10 +211,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(saasCharge.getDetails().get("ws-2"), "0.523056");
     }
 
-
     @Test(dataProvider = "storage")
-    public void shouldCalculateWithMultipleAccounts(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldCalculateWithMultipleAccounts(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -258,12 +250,17 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-235423",
                                      "run-234"));
 
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-1", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+
+
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        List<Invoice> ac3 = billingService.getInvoices("ac-3", -1, 0);
-        List<Invoice> ac5 = billingService.getInvoices("ac-5", -1, 0);
-        List<Invoice> ac1 = billingService.getInvoices("ac-1", -1, 0);
+        List<Invoice> ac3 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-3"));
+        List<Invoice> ac5 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5"));
+        List<Invoice> ac1 = billingService.getInvoices(getInvoiceFilterWithAccountId("ac-1"));
         //then
         assertEquals(ac3.size(), 1);
         assertEquals(get(ac3, 0).getTotal(), 30.9);
@@ -274,12 +271,10 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
         assertEquals(ac1.size(), 1);
         assertEquals(get(ac1, 0).getTotal(), 0.0);
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -308,23 +303,24 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-4567845",
                                      "run-345634"));
 
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-4", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
         //then
-        assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 2);
-        assertEquals(billingService.getInvoices(PaymentState.NOT_REQUIRED, -1, 0).size(), 1);
-        assertEquals(billingService.getInvoices(PaymentState.EXECUTING, -1, 0).size(), 0);
-        assertEquals(billingService.getInvoices(PaymentState.PAYMENT_FAIL, -1, 0).size(), 0);
-        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, -1, 0).size(), 0);
-        assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, -1, 0).size(), 0);
-
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)).size(), 2);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.NOT_REQUIRED)).size(), 1);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.EXECUTING)).size(), 0);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.PAYMENT_FAIL)).size(), 0);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.CREDIT_CARD_MISSING)).size(), 0);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.PAID_SUCCESSFULLY)).size(), 0);
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToSetPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -343,35 +339,34 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Invoice invoice = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1);
+        Invoice invoice = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1);
         billingService.setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, "cc111");
 
         //then
         assertEquals(invoice.getPaymentDate().longValue(), 0L);
-        assertEquals(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0).size(), 1);
-        assertEquals(billingService.getInvoices(PaymentState.EXECUTING, -1, 0).size(), 0);
-        List<Invoice> invoices = billingService.getInvoices(PaymentState.PAYMENT_FAIL, 50, 0);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)).size(), 1);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.EXECUTING)).size(), 0);
+        List<Invoice> invoices = billingService.getInvoices(getInvoicesFilterWithState(PaymentState.PAYMENT_FAIL));
         assertEquals(invoices.size(), 1);
 
         Invoice invoice1 = get(invoices, 0);
         Assert.assertTrue(invoice1.getPaymentDate() > 0);
         assertEquals(invoice1.getCreditCardId(), "cc111");
-        assertEquals(get(billingService.getInvoices(PaymentState.PAYMENT_FAIL, 50, 0), 0).getId(), invoice.getId());
-        assertEquals(billingService.getInvoices(PaymentState.CREDIT_CARD_MISSING, 50, 0).size(), 0);
-        assertEquals(billingService.getInvoices(PaymentState.PAID_SUCCESSFULLY, -1, 0).size(), 0);
-
+        assertEquals(get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.PAYMENT_FAIL)), 0).getId(), invoice.getId());
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.CREDIT_CARD_MISSING)).size(), 0);
+        assertEquals(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.PAID_SUCCESSFULLY)).size(), 0);
     }
 
-
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingFailPaymentInvoice(MeterBasedStorage meterBasedStorage,
-                                                                BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToSetGetByMailingFailPaymentInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -391,24 +386,24 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-235423",
                                      "run-234"));
 
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
+        Long id = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAYMENT_FAIL, "cc-234356");
 
         //then
-        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
+        List<Invoice> notSendInvoice = billingService.getInvoices(getInvoiceFilterWithNotSendInvoices());
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getId(), id);
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyInvoice(MeterBasedStorage meterBasedStorage,
-                                                                    BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToSetGetByMailingPaidSuccessfulyInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -427,25 +422,60 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
-
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
+        Long id = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1).getId();
         billingService.setPaymentState(id, PaymentState.PAID_SUCCESSFULLY, "cc-445");
 
         //then
-        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
+        List<Invoice> notSendInvoice = billingService.getInvoices(getInvoiceFilterWithNotSendInvoices());
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getId(), id);
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetGetByMailingCreditCardMissingInvoice(MeterBasedStorage meterBasedStorage,
-                                                                      BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToSetGetByMailingNotRequiredInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 10:20:56").getTime(),
+                                     sdf.parse("11-01-2015 10:20:56").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1254"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("01-01-2015 10:00:00").getTime(),
+                                     sdf.parse("10-01-2015 10:00:00").getTime(),
+                                     "usr-345",
+                                     "ac-3",
+                                     "ws-235423",
+                                     "run-234"));
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+
+        //when
+        billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
+                                        sdf.parse("01-02-2015 00:00:00").getTime());
+        Long id = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1).getId();
+        billingService.setPaymentState(id, PaymentState.NOT_REQUIRED, null);
+
+        //then
+        List<Invoice> notSendInvoice = billingService.getInvoices(getInvoiceFilterWithNotSendInvoices());
+        assertEquals(notSendInvoice.size(), 1);
+        assertEquals(get(notSendInvoice, 0).getId(), id);
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToSetGetByMailingCreditCardMissingInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -465,25 +495,24 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-235423",
                                      "run-234"));
 
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1).getId();
+        Long id = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
 
         //then
-        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
+        List<Invoice> notSendInvoice = billingService.getInvoices(getInvoiceFilterWithNotSendInvoices());
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getId(), id);
-
     }
 
-
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetByMailingPaymentNotRequiredInvoice(MeterBasedStorage meterBasedStorage,
-                                                                    BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToGetByMailingPaymentNotRequiredInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -504,20 +533,22 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
 
+        billingService.addSubscription("ac-5",
+                                       0,
+                                       sdf.parse("01-01-2014 00:00:00").getTime(),
+                                       sdf.parse("01-02-2016 00:00:00").getTime());
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
         //then
-        List<Invoice> notSendInvoice = billingService.getNotSendInvoices(-1, 0);
+        List<Invoice> notSendInvoice = billingService.getInvoices(getInvoiceFilterWithNotSendInvoices());
         assertEquals(notSendInvoice.size(), 1);
         assertEquals(get(notSendInvoice, 0).getAccountId(), "ac-5");
-
     }
 
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToSetInvoiceMailState(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException {
+    public void shouldBeAbleToSetInvoiceMailState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -536,32 +567,32 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Long id = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, -1, 0), 1).getId();
+        Long id = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1).getId();
         billingService.setPaymentState(id, PaymentState.CREDIT_CARD_MISSING, null);
         billingService.markInvoiceAsSent(id);
         //then
-        assertEquals(billingService.getNotSendInvoices(-1, 0).size(), 0);
+        assertTrue(billingService.getInvoices(getInvoiceFilterWithNotSendInvoices()).isEmpty());
     }
 
 
     @Test(dataProvider = "storage", expectedExceptions = NotFoundException.class, expectedExceptionsMessageRegExp =
             "Invoice with id " +
             "498509 is not found")
-    public void shouldFailIfInvoiceIsNotFound(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ServerException, NotFoundException {
+    public void shouldFailIfInvoiceIsNotFound(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         //when
         billingService.getInvoice(498509);
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetInvoicesById(MeterBasedStorage meterBasedStorage, BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToGetInvoicesById(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -580,23 +611,21 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ac-3",
                                      "ws-235423",
                                      "run-234"));
-
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
-        Invoice expected = get(billingService.getInvoices(PaymentState.WAITING_EXECUTOR, 50, 0), 1);
+        Invoice expected = get(billingService.getInvoices(getInvoicesFilterWithState(PaymentState.WAITING_EXECUTOR)), 1);
         Invoice actual = billingService.getInvoice(expected.getId());
         assertEquals(actual, expected);
-
-
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Not able to generate invoices. Result overlaps with existed invoices.")
-    public void shouldFailToCalculateInvoicesTwiceWithOverlappingPeriod(MeterBasedStorage meterBasedStorage,
-                                                                        BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldFailToCalculateInvoicesTwiceWithOverlappingPeriod(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -616,19 +645,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-235423",
                                      "run-234"));
 
+        billingService.addSubscription("ac-3", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.addSubscription("ac-5", 0, sdf.parse("01-01-2015 00:00:00").getTime(), sdf.parse("01-02-2015 00:00:00").getTime());
 
         //when
         billingService.generateInvoices(sdf.parse("01-01-2015 00:00:00").getTime(),
                                         sdf.parse("01-02-2015 00:00:00").getTime());
         billingService.generateInvoices(sdf.parse("09-01-2015 00:00:00").getTime(),
                                         sdf.parse("15-02-2015 00:00:00").getTime());
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTime(MeterBasedStorage meterBasedStorage,
-                                             BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTime(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //when
         billingService.addSubscription("ac-1", 34.34,
                                        sdf.parse("01-01-2015 00:00:00").getTime(),
@@ -637,9 +665,8 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Unable to add new prepaid time since it overlapping with existed period")
-    public void shouldNoBeAbleToAddPrepaidTimeForIntersectionPeriod(MeterBasedStorage meterBasedStorage,
-                                                                    BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNoBeAbleToAddPrepaidTimeForIntersectionPeriod(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //when
         billingService.addSubscription("ac-1", 34.34,
                                        sdf.parse("01-01-2015 00:00:00").getTime(),
@@ -647,14 +674,74 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.addSubscription("ac-1", 34.34,
                                        sdf.parse("15-01-2015 00:00:00").getTime(),
                                        sdf.parse("15-02-2015 00:00:00").getTime());
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToCalculateInvoiceWithoutPrepaid(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToClosePrepaidPeriod(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("01-01-2015 00:00:00").getTime(),
+                                                                      sdf.parse("30-01-2015 00:00:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-1",
+                                                                      "ws-7",
+                                                                      "run-1254"));
+        billingService.addSubscription("ac-1",
+                                       100,
+                                       sdf.parse("01-01-2015 00:00:00").getTime(),
+                                       sdf.parse("01-02-2015 00:00:00").getTime());
+        billingService.removeSubscription("ac-1", sdf.parse("15-01-2015 00:00:00").getTime());
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-1")), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 45.16129);
+        assertEquals(saasCharge.getPaidAmount(), 640.83871);
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldBeAbleToAddNewPrepaidTimeAfterClosingOldPrepaidPeriod(MeterBasedStorage meterBasedStorage,
+                                                                            BillingService billingService) throws Exception {
+        //given
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+                                                                      sdf.parse("01-01-2015 00:00:00").getTime(),
+                                                                      sdf.parse("30-01-2015 00:00:00").getTime(),
+                                                                      "usr-123",
+                                                                      "ac-1",
+                                                                      "ws-7",
+                                                                      "run-1254"));
+        billingService.addSubscription("ac-1",
+                                       100,
+                                       sdf.parse("01-01-2015 00:00:00").getTime(),
+                                       sdf.parse("01-02-2015 00:00:00").getTime());
+
+        billingService.removeSubscription("ac-1", sdf.parse("15-01-2015 00:00:00").getTime());
+
+        billingService.addSubscription("ac-1",
+                                       100,
+                                       sdf.parse("15-01-2015 00:00:00").getTime(),
+                                       sdf.parse("01-02-2015 00:00:00").getTime());
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
+        //then
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-1")), 0);
+        assertNotNull(actual);
+        Charge saasCharge = get(actual.getCharges(), 0);
+        assertNotNull(saasCharge);
+        assertEquals(saasCharge.getFreeAmount(), 10.0);
+        assertEquals(saasCharge.getPrePaidAmount(), 100.0);
+        assertEquals(saasCharge.getPaidAmount(), 586.0);
+    }
+
+    @Test(dataProvider = "storage")
+    public void shouldNotGenerateInvoiceWithoutPrepaid(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -670,22 +757,12 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
-        assertNotNull(actual);
-        Charge saasCharge = get(actual.getCharges(), 0);
-        assertNotNull(saasCharge);
-        assertEquals(saasCharge.getFreeAmount(), 10.0);
-        assertEquals(saasCharge.getPrePaidAmount(), 0.0);
-        assertEquals(saasCharge.getPaidAmount(), 274.0);
-
-
+        assertTrue(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")).isEmpty());
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddFromTheMiddleOfTheMonth(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddFromTheMiddleOfTheMonth(MeterBasedStorage meterBasedStorage,
+                                                                                        BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -704,22 +781,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         assertEquals(saasCharge.getFreeAmount(), 10.0);
         assertEquals(saasCharge.getPrePaidAmount(), 54.83871);
         assertEquals(saasCharge.getPaidAmount(), 219.16129);
-
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddTillTheMiddleOfTheMonth(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddTillTheMiddleOfTheMonth(MeterBasedStorage meterBasedStorage,
+                                                                                        BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -738,22 +811,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         assertEquals(saasCharge.getFreeAmount(), 10.0);
-        assertEquals(saasCharge.getPrePaidAmount(), 45, 16129);
-        assertEquals(saasCharge.getPaidAmount(), 228, 83871);
-
-
+        assertEquals(saasCharge.getPrePaidAmount(), 45.16129);
+        assertEquals(saasCharge.getPaidAmount(), 228.83871);
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddForTheFullMonth(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTimeForInvoicePrepaidAddForTheFullMonth(MeterBasedStorage meterBasedStorage,
+                                                                                BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -772,21 +841,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         assertEquals(saasCharge.getFreeAmount(), 10.0);
         assertEquals(saasCharge.getPrePaidAmount(), 100.0);
         assertEquals(saasCharge.getPaidAmount(), 174.0);
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoClosePeriods(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoClosePeriods(MeterBasedStorage meterBasedStorage,
+                                                                          BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -808,21 +874,18 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         assertEquals(saasCharge.getFreeAmount(), 10.0);
         assertEquals(saasCharge.getPrePaidAmount(), 100.0);
         assertEquals(saasCharge.getPaidAmount(), 174.0);
-
     }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoSeparatePeriods(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldBeAbleToAddPrepaidTimeForInvoiceFromTwoSeparatePeriods(MeterBasedStorage meterBasedStorage,
+                                                                             BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
@@ -844,44 +907,35 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
-        Invoice actual = get(billingService.getInvoices("ac-5", -1, 0), 0);
+        Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
         assertNotNull(actual);
         Charge saasCharge = get(actual.getCharges(), 0);
         assertNotNull(saasCharge);
         assertEquals(saasCharge.getFreeAmount(), 10.0);
         assertEquals(saasCharge.getPrePaidAmount(), 83.870968);
         assertEquals(saasCharge.getPaidAmount(), 190.129032);
-
     }
-
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateSuccessfulWithoutCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateSuccessfulWithoutCC(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, null);
-
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateSuccessfulWithEmptyCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateSuccessfulWithEmptyCC(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.PAID_SUCCESSFULLY, "");
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateFailWithoutCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateFailWithoutCC(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.PAYMENT_FAIL, null);
 
@@ -889,39 +943,31 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter is missing for states  PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateFailWithEmptyCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateFailWithEmptyCC(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.PAYMENT_FAIL, "");
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateNotRequiredWithCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateNotRequiredWithCC(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.NOT_REQUIRED, "CC");
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "Credit card parameter should be null for states different when PAYMENT_FAIL or PAID_SUCCESSFULLY")
-    public void shouldNotAllowToSetPaymentStateCCMissingWithCC(
-            MeterBasedStorage meterBasedStorage,
-            BillingService billingService)
-            throws ParseException, ServerException, NotFoundException {
+    public void shouldNotAllowToSetPaymentStateCCMissingWithCC(MeterBasedStorage meterBasedStorage,
+                                                               BillingService billingService) throws Exception {
         //given
         billingService.setPaymentState(1, PaymentState.CREDIT_CARD_MISSING, "CC");
     }
 
-
     @Test(dataProvider = "storage")
     public void shouldGetEstimationByAccountWithAllDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
-                                                                      BillingService billingService)
-            throws ServerException, ParseException {
+                                                                      BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2014 11:00:00").getTime(),
@@ -966,14 +1012,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
         assertEquals(resources.getFreeAmount(), 0.383333);
-
     }
-
 
     @Test(dataProvider = "storage")
     public void shouldGetEstimateByAccountWithDatesBetweenPeriod(MeterBasedStorage meterBasedStorage,
-                                                                 BillingService billingService)
-            throws ServerException, ParseException {
+                                                                 BillingService billingService) throws Exception {
         //given
         //when
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
@@ -1039,8 +1082,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
     @Test(dataProvider = "storage")
     public void shouldBeAbleToEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
-                                                                      BillingService billingService) throws ParseException,
-                                                                                                            ServerException {
+                                                                      BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
@@ -1055,7 +1097,6 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         billingService.addSubscription("ac-5", 100,
                                        sdf.parse("20-01-2015 00:00:00").getTime(),
                                        sdf.parse("15-02-2015 00:00:00").getTime());
-
 
         //when
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
@@ -1077,13 +1118,11 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(resources.getFreeAmount(), 10.0);
         assertEquals(resources.getPrePaidAmount(), 83.870968);
         assertEquals(resources.getPaidAmount(), 190.129032);
-
     }
 
     @Test(dataProvider = "storage")
     public void shouldBeAbleToLimitAndSkipEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
-                                                                                  BillingService billingService) throws ParseException,
-                                                                                                                        ServerException {
+                                                                                  BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
@@ -1124,14 +1163,63 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(resources.getFreeAmount(), 10.0);
         assertEquals(resources.getPrePaidAmount(), 45.161290);
         assertEquals(resources.getPaidAmount(), 228.838710);
-
     }
 
+    @Test(dataProvider = "storage")
+    public void shouldNoReturnPaidGbHForCommunityAccount(MeterBasedStorage meterBasedStorage, BillingService billingService)
+            throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 08:23:00").getTime(),
+                                     sdf.parse("11-01-2015 12:23:00").getTime(),
+                                     "usr-123",
+                                     "ac-5",
+                                     "ws-7",
+                                     "run-1256"));
+
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 08:23:00").getTime(),
+                                     sdf.parse("11-01-2015 12:23:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1252"));
+
+        billingService.addSubscription("ac-5", 10,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime() - 1);
+
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        Resources usage = billingService
+                .getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
+        List<AccountResources> usageAccount = billingService
+                .getEstimatedUsageByAccount(ResourcesFilter.builder()
+                                                           .withFromDate(period.getStartDate().getTime())
+                                                           .withTillDate(period.getEndDate().getTime())
+                                                           .build());
+
+        //then
+        assertEquals(usage.getFreeAmount(), 20.0);
+        assertEquals(usage.getPrePaidAmount(), 10.0);
+        assertEquals(usage.getPaidAmount(), 8.0);
+        assertEquals(usageAccount.size(), 2);
+        AccountResources ac5 = get(usageAccount, 0);
+        AccountResources ac6 = get(usageAccount, 1);
+
+        assertEquals(ac5.getFreeAmount(), 10.0);
+        assertEquals(ac5.getPrePaidAmount(), 10.0);
+        assertEquals(ac5.getPaidAmount(), 8.0);
+
+        assertEquals(ac6.getFreeAmount(), 10.0);
+        assertEquals(ac6.getPrePaidAmount(), 0.0);
+        assertEquals(ac6.getPaidAmount(), 0.0);
+    }
 
     @Test(dataProvider = "storage")
-    public void shouldBeAbleToGetEstimatedUsage(MeterBasedStorage meterBasedStorage,
-                                                BillingService billingService) throws ParseException,
-                                                                                      ServerException {
+    public void shouldBeAbleToGetEstimatedUsage(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
                 new MemoryUsedMetric(1024,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
@@ -1150,10 +1238,21 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1256"));
 
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 08:23:00").getTime(),
+                                     sdf.parse("11-01-2015 12:23:00").getTime(),
+                                     "usr-123",
+                                     "ac-7",
+                                     "ws-7",
+                                     "run-1252"));
+
+        billingService.addSubscription("ac-5", 0,
+                                       sdf.parse("15-12-2014 00:00:00").getTime(),
+                                       sdf.parse("15-02-2015 00:00:00").getTime() - 1);
         billingService.addSubscription("ac-6", 100,
                                        sdf.parse("15-12-2014 00:00:00").getTime(),
                                        sdf.parse("15-02-2015 00:00:00").getTime() - 1);
-
 
         //when
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
@@ -1167,12 +1266,13 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                            .build());
 
         //then
-        assertEquals(usage.getFreeAmount(), 20.0);
+        assertEquals(usage.getFreeAmount(), 30.0);
         assertEquals(usage.getPrePaidAmount(), 58.0);
         assertEquals(usage.getPaidAmount(), 18.0);
-        assertEquals(usageAccount.size(), 2);
+        assertEquals(usageAccount.size(), 3);
         AccountResources ac5 = get(usageAccount, 0);
         AccountResources ac6 = get(usageAccount, 1);
+        AccountResources ac7 = get(usageAccount, 2);
 
         assertEquals(ac5.getFreeAmount(), 10.0);
         assertEquals(ac5.getPrePaidAmount(), 0.0);
@@ -1182,7 +1282,105 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(ac6.getPrePaidAmount(), 58.0);
         assertEquals(ac6.getPaidAmount(), 0.0);
 
-
+        assertEquals(ac7.getFreeAmount(), 10.0);
+        assertEquals(ac7.getPrePaidAmount(), 0.0);
+        assertEquals(ac7.getPaidAmount(), 0.0);
     }
 
+    @Test(dataProvider = "storage")
+    public void testCheckingAvailableResourcesWhenAccountDoNotUseFullFreeAmount(MeterBasedStorage meterBasedStorage,
+                                                                                BillingService billingService) throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("10-01-2015 05:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
+    }
+
+    @Test(dataProvider = "storage")
+    public void testCheckingAvailableResourcesWhenAccountUseFullFreeAmount(MeterBasedStorage meterBasedStorage,
+                                                                           BillingService billingService) throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("10-01-2015 12:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        assertFalse(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
+    }
+
+    @Test(dataProvider = "storage")
+    public void testCheckingAvailableResourcesWhenAccountUseFullFreeAmountAndHasSubscription(MeterBasedStorage meterBasedStorage,
+                                                                                             BillingService billingService)
+            throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("10-01-2015 12:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        billingService.addSubscription("ac-6", 0, period.getStartDate().getTime(), period.getEndDate().getTime());
+
+        assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
+    }
+
+    @Test(dataProvider = "storage")
+    public void testCheckingAvailableResourcesWhenAccountUseFullFreeAmountAndHasInactiveClosePrepaidPeriod(
+            MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
+        meterBasedStorage.createMemoryUsedRecord(
+                new MemoryUsedMetric(1024,
+                                     sdf.parse("10-01-2015 01:00:00").getTime(),
+                                     sdf.parse("10-01-2015 12:00:00").getTime(),
+                                     "usr-123",
+                                     "ac-6",
+                                     "ws-7",
+                                     "run-1254"));
+        billingService.addSubscription("ac-6", 0, sdf.parse("10-01-2015 01:00:00").getTime(),
+                                       sdf.parse("10-01-2015 12:00:00").getTime());
+        billingService.removeSubscription("ac-6", sdf.parse("10-01-2015 02:00:00").getTime());
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        assertFalse(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(),
+                                                         sdf.parse("10-01-2015 12:00:00").getTime()));
+    }
+
+    private InvoiceFilter getInvoiceFilterWithAccountId(String accountId) throws ServerException {
+        return InvoiceFilter.builder()
+                            .withAccountId(accountId)
+                            .build();
+    }
+
+    private InvoiceFilter getInvoicesFilterWithState(PaymentState state) throws ServerException {
+        return InvoiceFilter.builder()
+                            .withPaymentStates(state)
+                            .build();
+    }
+
+    private InvoiceFilter getInvoiceFilterWithNotSendInvoices() throws ServerException {
+        return InvoiceFilter.builder()
+                            .withIsMailNotSend()
+                            .withPaymentStates(PaymentState.NOT_REQUIRED,
+                                               PaymentState.PAYMENT_FAIL,
+                                               PaymentState.PAID_SUCCESSFULLY,
+                                               PaymentState.CREDIT_CARD_MISSING)
+                            .build();
+    }
 }

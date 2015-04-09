@@ -23,10 +23,6 @@ package com.codenvy.api.account.subscription;
  */
 public interface ServiceId {
     /**
-     * Id of tracked factory subscription services
-     */
-    String FACTORY    = "Factory";
-    /**
      * Id of Saas subscription services
      */
     String SAAS       = "Saas";

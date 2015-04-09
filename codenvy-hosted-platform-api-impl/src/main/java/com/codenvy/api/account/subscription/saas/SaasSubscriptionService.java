@@ -23,7 +23,6 @@ import com.codenvy.api.account.billing.BillingService;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.server.ResourcesChangesNotifier;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
-import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 import com.codenvy.api.account.subscription.service.util.SubscriptionServiceHelper;
 
 import org.eclipse.che.api.account.server.SubscriptionService;
@@ -67,7 +66,6 @@ public class SaasSubscriptionService extends SubscriptionService {
     private final BillingPeriod             billingPeriod;
     private final AccountLocker             accountLocker;
     private final EventService              eventService;
-    private final SubscriptionMailSender    mailSender;
     private final BillingService            billingService;
     private final SubscriptionServiceHelper subscriptionServiceHelper;
     private final ResourcesChangesNotifier  resourcesChangesNotifier;
@@ -80,7 +78,6 @@ public class SaasSubscriptionService extends SubscriptionService {
                                    BillingPeriod billingPeriod,
                                    AccountLocker accountLocker,
                                    EventService eventService,
-                                   SubscriptionMailSender mailSender,
                                    BillingService billingService,
                                    SubscriptionServiceHelper subscriptionServiceHelper,
                                    ResourcesChangesNotifier resourcesChangesNotifier) {
@@ -92,7 +89,6 @@ public class SaasSubscriptionService extends SubscriptionService {
         this.billingPeriod = billingPeriod;
         this.accountLocker = accountLocker;
         this.eventService = eventService;
-        this.mailSender = mailSender;
         this.billingService = billingService;
         this.subscriptionServiceHelper = subscriptionServiceHelper;
         this.resourcesChangesNotifier = resourcesChangesNotifier;
@@ -118,7 +114,9 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void afterCreateSubscription(Subscription subscription) throws ApiException {
-        subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
+        //TODO Enable payment when will be exist Saas prepaid subscriptions with non null number of GbH
+        //Saas subscriptions will be paid in end of billing period
+        //subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
         subscriptionServiceHelper.setDates(subscription);
 
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
@@ -131,14 +129,13 @@ public class SaasSubscriptionService extends SubscriptionService {
                                        subscription.getStartDate().getTime(),
                                        subscription.getEndDate().getTime());
 
-        mailSender.sendSaasSignupNotification(subscription.getAccountId());
     }
 
     @Override
     public void onRemoveSubscription(Subscription subscription) throws ApiException {
         eventService.publish(SubscriptionEvent.subscriptionRemovedEvent(subscription));
-
-        billingService.removeSubscription(subscription.getAccountId(), subscription.getEndDate().getTime());
+        //TODO replace System.currentTimeMillis() to subscription.getEndDate().getTime() when end date of subscription will be updated after removing of subscription
+        billingService.removeSubscription(subscription.getAccountId(), System.currentTimeMillis());
 
         List<Workspace> workspaces;
         try {
@@ -172,7 +169,6 @@ public class SaasSubscriptionService extends SubscriptionService {
 
     @Override
     public void onCheckSubscriptions() throws ApiException {
-        //TODO Implement
     }
 
     @Override

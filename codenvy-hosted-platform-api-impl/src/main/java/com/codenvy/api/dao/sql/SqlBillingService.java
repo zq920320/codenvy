@@ -49,6 +49,7 @@ import java.util.UUID;
 
 import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNT_USAGE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.EXCESSIVE_ACCOUNT_USAGE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.FFREE_AMOUNT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.FPAID_AMOUNT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.FPREPAID_AMOUNT;
@@ -58,6 +59,7 @@ import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_AND_C
 import static com.codenvy.api.dao.sql.SqlDaoQueries.INVOICES_PAYMENT_STATE_UPDATE;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_INSERT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.MEMORY_CHARGES_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_CLOSE_PERIOD;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.PREPAID_INSERT;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendContainsRange;
 import static com.codenvy.api.dao.sql.SqlQueryAppender.appendEqual;
@@ -75,19 +77,14 @@ import static com.codenvy.api.dao.sql.SqlQueryAppender.appendOverlapRange;
  * @author Sergii Kabashniuk
  */
 public class SqlBillingService implements BillingService {
-
-
     private final ConnectionFactory connectionFactory;
     private final double            saasChargeableGbHPrice;
     private final double            saasFreeGbH;
 
-
     @Inject
     public SqlBillingService(ConnectionFactory connectionFactory,
                              @Named("subscription.saas.chargeable.gbh.price") Double saasChargeableGbHPrice,
-                             @Named("subscription.saas.usage.free.gbh") Double saasFreeGbH
-
-                            ) {
+                             @Named("subscription.saas.usage.free.gbh") Double saasFreeGbH) {
         this.connectionFactory = connectionFactory;
         this.saasChargeableGbHPrice = saasChargeableGbHPrice;
         this.saasFreeGbH = saasFreeGbH;
@@ -231,37 +228,6 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public List<Invoice> getInvoices(PaymentState state, int maxItems, int skipCount) throws ServerException {
-        return getInvoices(InvoiceFilter.builder()
-                                        .withPaymentStates(state)
-                                        .withMaxItems(maxItems)
-                                        .withSkipCount(skipCount)
-                                        .build());
-    }
-
-    @Override
-    public List<Invoice> getInvoices(String accountId, int maxItems, int skipCount) throws ServerException {
-        return getInvoices(InvoiceFilter.builder()
-                                        .withAccountId(accountId)
-                                        .withMaxItems(maxItems)
-                                        .withSkipCount(skipCount)
-                                        .build());
-    }
-
-    @Override
-    public List<Invoice> getNotSendInvoices(int maxItems, int skipCount) throws ServerException {
-        return getInvoices(InvoiceFilter.builder()
-                                        .withIsMailNotSend()
-                                        .withPaymentStates(PaymentState.NOT_REQUIRED,
-                                                           PaymentState.PAYMENT_FAIL,
-                                                           PaymentState.PAID_SUCCESSFULLY,
-                                                           PaymentState.CREDIT_CARD_MISSING)
-                                        .withMaxItems(maxItems)
-                                        .withSkipCount(skipCount).build());
-    }
-
-
-    @Override
     public Invoice getInvoice(long id) throws ServerException, NotFoundException {
         List<Invoice> invoices = getInvoices(InvoiceFilter.builder().withId(id).build());
         if (invoices.size() < 1) {
@@ -317,12 +283,26 @@ public class SqlBillingService implements BillingService {
 
     @Override
     public void removeSubscription(String accountId, long till) throws ServerException {
-        //TODO Implement it
+        try (Connection connection = connectionFactory.getConnection()) {
+            try {
+                connection.setAutoCommit(false);
+                try (PreparedStatement statement = connection.prepareStatement(PREPAID_CLOSE_PERIOD)) {
+                    statement.setLong(1, till);
+                    statement.setString(2, accountId);
+                    statement.execute();
+                }
+                connection.commit();
+            } catch (SQLException e) {
+                connection.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
     @Override
     public Resources getEstimatedUsage(long from, long till) throws ServerException {
-
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             StringBuilder select = new StringBuilder("SELECT ")
@@ -354,13 +334,11 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setObject(13, range);
 
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
-
-                    while (usageResultSet.next()) {
+                    if (usageResultSet.next()) {
                         return DtoFactory.getInstance().createDto(Resources.class)
                                          .withFreeAmount(usageResultSet.getDouble("FFREE_AMOUNT"))
                                          .withPaidAmount(usageResultSet.getDouble("FPAID_AMOUNT"))
-                                         .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
-                                ;
+                                         .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"));
                     }
 
                 }
@@ -377,7 +355,6 @@ public class SqlBillingService implements BillingService {
 
     @Override
     public List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException {
-
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT);
@@ -446,6 +423,39 @@ public class SqlBillingService implements BillingService {
         }
     }
 
+    @Override
+    public boolean hasAvailableResources(String accountId, Long from, Long till) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement usageStatement = connection.prepareStatement(EXCESSIVE_ACCOUNT_USAGE_SELECT)) {
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
+                usageStatement.setObject(1, range);
+                usageStatement.setObject(2, range);
+                usageStatement.setDouble(3, saasFreeGbH);
+                usageStatement.setObject(4, range);
+                usageStatement.setObject(5, range);
+                usageStatement.setDouble(6, saasFreeGbH);
+                usageStatement.setObject(7, range);
+                usageStatement.setObject(8, range);
+                usageStatement.setLong(9, till - from);
+                usageStatement.setObject(10, range);
+                usageStatement.setObject(11, till);
+                usageStatement.setString(12, accountId);
+                usageStatement.setObject(13, range);
+                usageStatement.setString(14, accountId);
+                try (ResultSet usageResultSet = usageStatement.executeQuery()) {
+                    if (usageResultSet.next()) {
+                        return !(usageResultSet.getDouble("FPAID_AMOUNT") > 0.0);
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
+
+        return false;
+    }
+
     private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)
             throws SQLException {
 
@@ -463,7 +473,6 @@ public class SqlBillingService implements BillingService {
             }
         }
         return mCharges;
-
     }
 
     private Invoice toInvoice(Connection connection, ResultSet invoicesResultSet) throws SQLException {
@@ -509,6 +518,4 @@ public class SqlBillingService implements BillingService {
         }
         return charges;
     }
-
-
 }
