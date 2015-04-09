@@ -1,10 +1,10 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- * 
- *  [2012] - [2013] Codenvy, S.A. 
+ *
+ *  [2012] - [2013] Codenvy, S.A.
  *  All Rights Reserved.
- * 
+ *
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
- 
+
 (function(window){
     define(["jquery", "underscore", "views/accountformbase", "models/account","validation"],
 
@@ -31,6 +31,10 @@
                      // remove cookie to be able to sign up
                     $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/"});});
                     $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/site"});});
+                    $("#signUp").click(function(){
+                      var url =  Account.appendQuery("create-account");
+                       window.location = url;
+                    });
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Login page", function(url){

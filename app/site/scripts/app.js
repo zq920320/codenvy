@@ -30,7 +30,8 @@ define(["jquery","config",
         "views/join_ws",
         "views/adminform",
         "views/create_ws_add_member",
-        "views/onpremises-login"
+        "views/onpremises-login",
+        "views/factory-usage-notification"
         ],
 
     function($,Config,
@@ -47,7 +48,8 @@ define(["jquery","config",
         JoiningWorkspace,
         AdminForm,
         CreateWsAdd_Member,
-        OnPremisesLogin){
+        OnPremisesLogin,
+        FactoryUsageNotification){
 
         function modernize(){
             Modernizr.load({
@@ -83,7 +85,15 @@ define(["jquery","config",
                         joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
                         creatWsAddMember = $(".create-ws-add-memeber"),
-                        onpremloginForm = $(".onpremloginForm");
+                        onpremloginForm = $(".onpremloginForm"),
+                        factoryUsageNotification =  $(".factory-notification");
+
+                    if(factoryUsageNotification.length !== 0){
+                        (function(){
+                            FactoryUsageNotification.get(factoryUsageNotification);
+                        }());
+                        
+                    }
 
                     if(onpremloginForm.length !== 0){
                         (function(){

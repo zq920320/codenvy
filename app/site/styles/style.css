@@ -405,3 +405,29 @@ body,h1,h2,h3,h4,h5,h6,a{
 	border: 0;
 	border-bottom: 1px solid #b4b4b4;
 }	
+.factory-notification {
+	margin-top: 0px;
+}
+.factory-notification a {
+	padding: 12px 30px;
+	margin: 5px 5px;
+	border-radius:5px;
+	border:none;
+	background:#F37943;
+	font-size:16px;
+	font-weight:400;
+	color:#fff;
+	-webkit-transition:all .5s ease;
+	-moz-transition:all .5s ease;
+	transition:all .5s ease;
+}
+.factory-notification p {
+	border-radius:5px;
+	border:none;
+	font-size:20px;
+	font-weight:400;
+	color:#fff;
+	margin-bottom: 15px;
+	padding: 30px;
+
+}

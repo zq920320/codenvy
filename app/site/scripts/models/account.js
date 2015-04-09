@@ -57,10 +57,13 @@
         var isBadGateway = function(jqXHR) {
             return jqXHR.status === 502;
         };
-        var getQueryParameterByName = function(name) {
+        var getQueryParameterByName = function(name, queryString) {
+            if (typeof queryString === 'undefined') {
+                queryString = window.location.search;
+            }
             name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
             var regex = new RegExp("[\\?&]" + name + "=([^&#]*)");
-            var results = regex.exec(window.location.search);
+            var results = regex.exec(queryString);
             if (results) {
                 return decodeURIComponent(results[1].replace(/\+/g, " "));
             }
@@ -378,10 +381,15 @@
         var redirectToUrl = function(url) {
             window.location = url;
         };
+        
+        var appendQuery = function(url) {
+            return url  +  window.location.search;
+        };
         return {
             removeCookie: removeCookie,
             isWebsocketEnabled: isWebsocketEnabled,
             getQueryParameterByName: getQueryParameterByName,
+            appendQuery: appendQuery,
             AccountError: AccountError,
             authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
