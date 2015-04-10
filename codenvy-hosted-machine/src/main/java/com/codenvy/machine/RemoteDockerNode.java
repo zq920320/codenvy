@@ -18,7 +18,7 @@
 package com.codenvy.machine;
 
 import com.codenvy.docker.DockerConnector;
-import com.codenvy.docker.SwarmDockerConnector;
+import com.codenvy.docker.swarm.SwarmDockerConnector;
 import com.codenvy.docker.json.ContainerInfo;
 import com.codenvy.machine.docker.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
