@@ -29,5 +29,7 @@ public class MetricModule extends AbstractModule {
         bind(RunTasksActivityChecker.class).asEagerSingleton();
         bind(BuildStatusSubscriber.class);
         bind(RunStatusSubscriber.class);
+        bind(AccountLockWebSocketMessenger.class);
+        bind(WorkspaceLockWebSocketMessenger.class);
     }
 }
