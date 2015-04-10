@@ -151,7 +151,7 @@ public class RemoteDockerNode implements DockerNode {
     }
 
     @Override
-    public String getHostProjectsFolder() {
+    public String getProjectsFolder() {
         return hostProjectsFolder;
     }
 
