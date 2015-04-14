@@ -18,17 +18,20 @@
 package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.WorkspaceLocker;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
+import java.util.Collections;
 
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -43,31 +46,65 @@ import static org.mockito.Mockito.when;
 @Listeners(MockitoTestNGListener.class)
 public class RefillJobTest {
     @Mock
-    AccountDao    accountDao;
+    AccountDao      accountDao;
     @Mock
-    AccountLocker accountLocker;
+    AccountLocker   accountLocker;
+    @Mock
+    WorkspaceDao    workspaceDao;
+    @Mock
+    WorkspaceLocker workspaceLocker;
 
     @InjectMocks
     RefillJob refillJob;
 
     @Test
     public void shouldRefillResources() throws Exception {
+        when(workspaceDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
         final Account lockedAccountId = new Account().withId("lockedAccountId");
-        when(accountDao.getAccountsWithLockedResources()).thenReturn(Arrays.asList(lockedAccountId));
+        when(accountDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
 
         refillJob.run();
 
         verify(accountLocker).unlockResources(eq("lockedAccountId"));
+        verifyZeroInteractions(workspaceLocker);
     }
 
     @Test
     public void shouldNotRefillResourcesForPaidLockedAccount() throws Exception {
+        when(workspaceDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
         final Account lockedAccountId = new Account().withId("lockedAccountId");
         lockedAccountId.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
-        when(accountDao.getAccountsWithLockedResources()).thenReturn(Arrays.asList(lockedAccountId));
+        when(accountDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
 
         refillJob.run();
 
+        verifyZeroInteractions(accountLocker);
+        verifyZeroInteractions(workspaceLocker);
+    }
+
+    @Test
+    public void shouldRefillResourcesForLockedWorkspace() throws Exception {
+        when(accountDao.getAccountsWithLockedResources()).thenReturn(Collections.<Account>emptyList());
+        final Workspace workspace = new Workspace().withId("workspaceId");
+        when(workspaceDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
+
+        refillJob.run();
+
+        verify(workspaceLocker).unlockResources(eq("workspaceId"));
+        verifyZeroInteractions(accountLocker);
+    }
+
+    @Test
+    public void shouldNotRefillResourcesForLockedWorkspaceWithPaidLockedAccount() throws Exception {
+        final Account lockedAccountId = new Account().withId("lockedAccountId");
+        lockedAccountId.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
+        when(accountDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
+        final Workspace workspace = new Workspace().withId("workspaceId").withAccountId("lockedAccountId");
+        when(workspaceDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
+
+        refillJob.run();
+
+        verifyZeroInteractions(workspaceLocker);
         verifyZeroInteractions(accountLocker);
     }
 }

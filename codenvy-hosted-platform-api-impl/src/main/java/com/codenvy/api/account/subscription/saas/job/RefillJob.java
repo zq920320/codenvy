@@ -19,18 +19,23 @@
 package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
+import com.codenvy.api.account.WorkspaceLocker;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.schedule.ScheduleCron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * Refill accounts with RAM limit exceeded at the beginning of new period.
@@ -42,14 +47,20 @@ import javax.inject.Singleton;
 public class RefillJob implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
-    private final AccountDao    accountDao;
-    private final AccountLocker accountLocker;
+    private final AccountDao      accountDao;
+    private final WorkspaceDao    workspaceDao;
+    private final AccountLocker   accountLocker;
+    private final WorkspaceLocker workspaceLocker;
 
     @Inject
     public RefillJob(AccountDao accountDao,
-                     AccountLocker accountLocker) {
+                     WorkspaceDao workspaceDao,
+                     AccountLocker accountLocker,
+                     WorkspaceLocker workspaceLocker) {
         this.accountDao = accountDao;
+        this.workspaceDao = workspaceDao;
         this.accountLocker = accountLocker;
+        this.workspaceLocker = workspaceLocker;
     }
 
 
@@ -57,9 +68,18 @@ public class RefillJob implements Runnable {
     @Override
     public void run() {
         try {
+            Set<String> accountIdsWithPaymentLock = new HashSet<>();
             for (Account account : accountDao.getAccountsWithLockedResources()) {
                 if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
                     accountLocker.unlockResources(account.getId());
+                } else {
+                    accountIdsWithPaymentLock.add(account.getId());
+                }
+            }
+
+            for (Workspace workspace : workspaceDao.getWorkspacesWithLockedResources()) {
+                if (!accountIdsWithPaymentLock.contains(workspace.getAccountId())) {
+                    workspaceLocker.unlockResources(workspace.getId());
                 }
             }
         } catch (ServerException | ForbiddenException e) {
