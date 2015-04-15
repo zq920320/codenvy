@@ -260,9 +260,10 @@
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(xhr, status, membership) {
-                    if (getOwnAccount(membership).accountReference.id){
-                        deferredResult.resolve(membership.accountReference); //returns Account
+                success: function(membership) {
+                    var account = getOwnAccount(membership);
+                    if (account.accountReference.id){
+                        deferredResult.resolve(account.accountReference); //returns Account
                     }
                     else {
                         // user hasn't memberships
