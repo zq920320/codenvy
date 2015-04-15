@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.server;
 
+import com.codenvy.api.account.WorkspaceLockEvent;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
 import com.codenvy.api.account.subscription.ServiceId;
@@ -104,13 +105,16 @@ public class ResourcesManagerImpl implements ResourcesManager {
                 workspace.getAttributes().put(Constants.RUNNER_LIFETIME, Integer.toString(resourcesDescriptor.getRunnerTimeout()));
             }
 
+            boolean changedWorkspaceLock = false;
             if (resourcesDescriptor.getResourcesUsageLimit() != null) {
                 Account account = accountDao.getById(accountId);
                 boolean isPermittedChangingWorkspaceLock = !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
                 if (resourcesDescriptor.getResourcesUsageLimit() == -1) {
                     workspace.getAttributes().remove(RESOURCES_USAGE_LIMIT_PROPERTY);
                     if (isPermittedChangingWorkspaceLock) {
-                        workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
+                        if (workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY) != null) {
+                            changedWorkspaceLock = true;
+                        }
                     }
                 } else {
                     workspace.getAttributes().put(RESOURCES_USAGE_LIMIT_PROPERTY,
@@ -121,20 +125,30 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                                                                        billingPeriodStart,
                                                                                        System.currentTimeMillis());
                         if (usedMemory < resourcesDescriptor.getResourcesUsageLimit()) {
-                            workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
+                            if (workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY) != null) {
+                                changedWorkspaceLock = true;
+                            }
                         } else {
                             workspace.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+                            changedWorkspaceLock = true;
                         }
                     }
                 }
             }
-
 
             workspaceDao.update(workspace);
 
             if (resourcesDescriptor.getRunnerRam() != null) {
                 resourcesChangesNotifier.publishTotalMemoryChangedEvent(resourcesDescriptor.getWorkspaceId(),
                                                                         Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
+
+            if (changedWorkspaceLock) {
+                if (workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                    eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspace.getId()));
+                } else {
+                    eventService.publish(WorkspaceLockEvent.workspaceUnlockedEvent(workspace.getId()));
+                }
             }
 
             if (resourcesDescriptor.getResourcesUsageLimit() != null) {

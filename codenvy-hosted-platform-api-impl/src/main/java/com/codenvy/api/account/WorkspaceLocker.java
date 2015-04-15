@@ -21,6 +21,7 @@ import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
@@ -38,10 +39,12 @@ import static java.lang.String.format;
 public class WorkspaceLocker {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceLocker.class);
     private final WorkspaceDao workspaceDao;
+    private final EventService eventService;
 
     @Inject
-    public WorkspaceLocker(WorkspaceDao workspaceDao) {
+    public WorkspaceLocker(WorkspaceDao workspaceDao, EventService eventService) {
         this.workspaceDao = workspaceDao;
+        this.eventService = eventService;
     }
 
     public void lockResources(String workspaceId) {
@@ -50,6 +53,7 @@ public class WorkspaceLocker {
             workspace.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
             try {
                 workspaceDao.update(workspace);
+                eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspaceId));
             } catch (NotFoundException | ServerException | ConflictException e) {
                 LOG.error(format("Error writing lock property into workspace %s .", workspace.getId()), e);
             }
@@ -65,6 +69,7 @@ public class WorkspaceLocker {
                 workspace.getAttributes().remove(Constants.RESOURCES_LOCKED_PROPERTY);
                 try {
                     workspaceDao.update(workspace);
+                    eventService.publish(WorkspaceLockEvent.workspaceUnlockedEvent(workspaceId));
                 } catch (NotFoundException | ServerException | ConflictException e) {
                     LOG.error(format("Error writing lock property into workspace %s .", workspace.getId()), e);
                 }

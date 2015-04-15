@@ -18,6 +18,7 @@
 package com.codenvy.api.account;
 
 import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.ArgumentMatcher;
@@ -32,6 +33,7 @@ import java.util.Map;
 
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -44,6 +46,8 @@ import static org.mockito.Mockito.when;
 public class WorkspaceLockerTest {
     @Mock
     WorkspaceDao workspaceDao;
+    @Mock
+    EventService eventService;
 
     @InjectMocks
     WorkspaceLocker workspaceLocker;
@@ -64,6 +68,16 @@ public class WorkspaceLockerTest {
                        "true".equals(o1.getAttributes().get(Constants.RESOURCES_LOCKED_PROPERTY));
             }
         }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_LOCKED);
+                }
+                return false;
+            }
+        }));
     }
 
     @Test
@@ -82,6 +96,16 @@ public class WorkspaceLockerTest {
                 final Workspace o1 = (Workspace)o;
                 return o1.getId().equals("WS_ID") &&
                        !o1.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_UNLOCKED);
+                }
+                return false;
             }
         }));
     }

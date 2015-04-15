@@ -17,14 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.workspace.event.CreateWorkspaceEvent;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.mongodb.BasicDBObject;
@@ -33,7 +25,18 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
+import com.mongodb.QueryBuilder;
 
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.dao.Member;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,6 +176,22 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             throw new ServerException("It is not possible to retrieve workspaces");
         }
         return workspaces;
+    }
+
+    @Override
+    public List<Workspace> getWorkspacesWithLockedResources() throws ServerException {
+        DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", Constants.RESOURCES_LOCKED_PROPERTY)).get();
+
+        try (DBCursor accounts = collection.find(query)) {
+            final ArrayList<Workspace> result = new ArrayList<>();
+            for (DBObject accountObj : accounts) {
+                result.add(toWorkspace(accountObj));
+            }
+            return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve workspaces");
+        }
     }
 
     @Override

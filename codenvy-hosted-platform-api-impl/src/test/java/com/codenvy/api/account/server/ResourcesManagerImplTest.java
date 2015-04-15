@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.account.server;
 
+import com.codenvy.api.account.WorkspaceLockEvent;
 import com.codenvy.api.account.billing.BillingPeriod;
 import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.metrics.MeterBasedStorage;
@@ -310,7 +311,17 @@ public class ResourcesManagerImplTest {
             public boolean matches(Object o) {
                 Workspace workspace = (Workspace)o;
                 return !workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)
-                        && workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+                       && workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
             }
         }));
     }
@@ -341,6 +352,19 @@ public class ResourcesManagerImplTest {
                        && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
+        verify(eventService, times(2)).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_UNLOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
+            }
+        }));
     }
 
     @Test
@@ -358,6 +382,19 @@ public class ResourcesManagerImplTest {
                 final Workspace workspace = (Workspace)o;
                 return FIRST_WORKSPACE_ID.equals(workspace.getId())
                        && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_LOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
             }
         }));
     }
@@ -389,6 +426,16 @@ public class ResourcesManagerImplTest {
                        && workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
+            }
+        }));
     }
 
     @Test
@@ -405,6 +452,19 @@ public class ResourcesManagerImplTest {
                 final Workspace workspace = (Workspace)o;
                 return FIRST_WORKSPACE_ID.equals(workspace.getId())
                        && "true".equals(workspace.getAttributes().get(RESOURCES_LOCKED_PROPERTY));
+            }
+        }));
+        verify(eventService, times(2)).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_LOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
             }
         }));
     }
