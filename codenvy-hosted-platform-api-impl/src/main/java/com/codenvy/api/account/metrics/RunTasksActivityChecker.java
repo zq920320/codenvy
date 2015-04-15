@@ -18,11 +18,11 @@
 package com.codenvy.api.account.metrics;
 
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.runner.RunQueue;
+/*import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.RunnerException;
 import org.eclipse.che.api.runner.dto.ApplicationProcessDescriptor;
-import org.eclipse.che.api.runner.dto.RunRequest;
+import org.eclipse.che.api.runner.dto.RunRequest;*/
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,7 +33,7 @@ import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
-import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
+//import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
 
 /**
  * Makes ticks about resources usage
@@ -42,18 +42,18 @@ import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
  */
 @Singleton
 public class RunTasksActivityChecker {
-    private static final Logger LOG = LoggerFactory.getLogger(RunTasksActivityChecker.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(RunTasksActivityChecker.class);
 
     static TimeUnit usedTimeUnit = TimeUnit.SECONDS;
 
     /** Period between run scheduler */
-    public static final String RUN_ACTIVITY_CHECKING_PERIOD = "metrics.run_activity_checking.period_sec";
+    //public static final String RUN_ACTIVITY_CHECKING_PERIOD = "metrics.run_activity_checking.period_sec";
 
     /** Period between ticks of resources use */
-    public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
+    //public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
 
     /** prefix to store ID in usage tracker (to avoid runner and builder ID's match) */
-    public static final String PFX = "run-";
+    /*public static final String PFX = "run-";
 
     private final Integer               runTickPeriod;
     private final Integer               schedulingPeriod;
@@ -104,5 +104,5 @@ public class RunTasksActivityChecker {
         //Difference between current time and start time in usedTimeUnit
         final long diff = (currentTimeMillis() - startTime) / TimeUnit.MILLISECONDS.convert(1, usedTimeUnit);
         return diff % runTickPeriod < schedulingPeriod;
-    }
+    }*/
 }

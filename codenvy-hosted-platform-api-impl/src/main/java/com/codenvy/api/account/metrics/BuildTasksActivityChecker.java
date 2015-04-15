@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.account.metrics;
 
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.BuilderException;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
 import org.eclipse.che.api.builder.dto.BuildTaskDescriptor;
-import org.eclipse.che.api.builder.dto.DependencyRequest;
+import org.eclipse.che.api.builder.dto.DependencyRequest;*/
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
@@ -34,7 +34,7 @@ import javax.inject.Singleton;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
-import static org.eclipse.che.api.builder.BuildStatus.IN_PROGRESS;
+//import static org.eclipse.che.api.builder.BuildStatus.IN_PROGRESS;
 
 /**
  * Periodically checks for build resources usage.
@@ -43,18 +43,18 @@ import static org.eclipse.che.api.builder.BuildStatus.IN_PROGRESS;
  */
 @Singleton
 public class BuildTasksActivityChecker {
-    private static final Logger LOG = LoggerFactory.getLogger(BuildTasksActivityChecker.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(BuildTasksActivityChecker.class);
 
     static TimeUnit usedTimeUnit = TimeUnit.SECONDS;
 
     /** Period between run scheduler */
-    public static final String RUN_ACTIVITY_CHECKING_PERIOD = "metrics.run_activity_checking.period_sec";
+//    public static final String RUN_ACTIVITY_CHECKING_PERIOD = "metrics.run_activity_checking.period_sec";
 
     /** Period between ticks of resources use */
-    public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
+//    public static final String RUN_TICK_PERIOD = "metrics.run_tick.period_sec";
 
     /** prefix to store ID in usage tracker (to avoid runner and builder ID's match) */
-    public static final String PFX = "build-";
+    /*public static final String PFX = "build-";
 
     public final static int BUILDER_MEMORY_SIZE = 1536; // assume that builder uses 1.5GB of RAM
 
@@ -108,5 +108,5 @@ public class BuildTasksActivityChecker {
         //Difference between current time and start time in usedTimeUnit
         final long diff = (currentTimeMillis() - startTime) / TimeUnit.MILLISECONDS.convert(1, usedTimeUnit);
         return diff % runTickPeriod < schedulingPeriod;
-    }
+    }*/
 }

@@ -36,7 +36,7 @@ import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.internal.Constants;
+//import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -145,7 +145,7 @@ public class SaasSubscriptionService extends SubscriptionService {
             return;
         }
         for (Workspace workspace : workspaces) {
-            if (!workspace.getAttributes().containsKey(Constants.RUNNER_MAX_MEMORY_SIZE)) {
+            /*if (!workspace.getAttributes().containsKey(Constants.RUNNER_MAX_MEMORY_SIZE)) {
                 continue;
             }
 
@@ -158,7 +158,7 @@ public class SaasSubscriptionService extends SubscriptionService {
                 } catch (NotFoundException | ConflictException | ServerException e) {
                     LOG.error("Can't reset size of runner ram to max allowed for workspace " + workspace.getId());
                 }
-            }
+            }*/
         }
     }
 

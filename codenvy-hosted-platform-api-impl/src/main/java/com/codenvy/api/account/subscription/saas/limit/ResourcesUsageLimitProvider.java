@@ -45,7 +45,7 @@ public class ResourcesUsageLimitProvider implements Runnable {
     @Override
     public void run() {
         try {
-            for (ResourcesWatchdog resourcesWatchdog : activeTasksHolder.getActiveWatchdogs()) {
+            /*for (ResourcesWatchdog resourcesWatchdog : activeTasksHolder.getActiveWatchdogs()) {
                 if (resourcesWatchdog.isLimitedReached()) {
                     for (MeteredTask meteredTask : activeTasksHolder.getActiveTasks(resourcesWatchdog.getId())) {
                         try {
@@ -56,7 +56,7 @@ public class ResourcesUsageLimitProvider implements Runnable {
                     }
                     resourcesWatchdog.lock();
                 }
-            }
+            }*/
         } catch (Exception e) {
             LOG.error("Error checking of resources usage limit", e);
         }

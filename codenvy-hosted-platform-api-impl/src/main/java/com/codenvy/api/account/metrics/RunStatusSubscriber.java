@@ -21,10 +21,10 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
-import org.eclipse.che.api.runner.RunQueue;
+/*import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.dto.RunRequest;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.runner.internal.RunnerEvent;*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
@@ -42,8 +42,8 @@ import javax.inject.Singleton;
  * @author Sergii Leschenko
  */
 @Singleton
-public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
-    private static final Logger LOG = LoggerFactory.getLogger(RunStatusSubscriber.class);
+public class RunStatusSubscriber/* implements EventSubscriber<RunnerEvent>*/ {
+    /*private static final Logger LOG = LoggerFactory.getLogger(RunStatusSubscriber.class);
 
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
@@ -106,5 +106,5 @@ public class RunStatusSubscriber implements EventSubscriber<RunnerEvent> {
             LOG.error("Error registration usage of resources by run process {} in workspace {} in project {}", event.getProcessId(),
                       event.getWorkspace(), event.getProject());
         }
-    }
+    }*/
 }

@@ -32,7 +32,7 @@ import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.internal.Constants;
+//import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
@@ -92,7 +92,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
         for (UpdateResourcesDescriptor resourcesDescriptor : updates) {
             Workspace workspace = ownWorkspaces.get(resourcesDescriptor.getWorkspaceId());
 
-            if (resourcesDescriptor.getRunnerRam() != null) {
+            /*if (resourcesDescriptor.getRunnerRam() != null) {
                 workspace.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resourcesDescriptor.getRunnerRam()));
             }
 
@@ -103,7 +103,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
 
             if (resourcesDescriptor.getRunnerTimeout() != null) {
                 workspace.getAttributes().put(Constants.RUNNER_LIFETIME, Integer.toString(resourcesDescriptor.getRunnerTimeout()));
-            }
+            }*/
 
             boolean changedWorkspaceLock = false;
             if (resourcesDescriptor.getResourcesUsageLimit() != null) {

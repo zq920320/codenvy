@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.account.metrics;
 
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
-import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.builder.internal.BuilderEvent;*/
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
@@ -42,7 +42,7 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class BuildStatusSubscriber extends MeteredBuildEventSubscriber {
-    private static final Logger LOG = LoggerFactory.getLogger(BuildStatusSubscriber.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(BuildStatusSubscriber.class);
 
     private final Integer               schedulingPeriod;
     private final EventService          eventService;
@@ -105,5 +105,5 @@ public class BuildStatusSubscriber extends MeteredBuildEventSubscriber {
             LOG.error(String.format("Error registration usage of resources by build process %s in workspace %s in project %s",
                                     event.getTaskId(), event.getWorkspace(), event.getProject()), e);
         }
-    }
+    }*/
 }

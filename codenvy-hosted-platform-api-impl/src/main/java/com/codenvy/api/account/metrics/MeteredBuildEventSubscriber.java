@@ -17,10 +17,10 @@
  */
 package com.codenvy.api.account.metrics;
 
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
 import org.eclipse.che.api.builder.dto.DependencyRequest;
-import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.builder.internal.BuilderEvent;*/
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.slf4j.Logger;
@@ -31,8 +31,8 @@ import org.slf4j.LoggerFactory;
  *
  * @author Sergii Leschenko
  */
-public abstract class MeteredBuildEventSubscriber implements EventSubscriber<BuilderEvent> {
-    private static final Logger LOG = LoggerFactory.getLogger(MeteredBuildEventSubscriber.class);
+public abstract class MeteredBuildEventSubscriber/* implements EventSubscriber<BuilderEvent>*/ {
+    /*private static final Logger LOG = LoggerFactory.getLogger(MeteredBuildEventSubscriber.class);
 
     private final BuildQueue buildQueue;
 
@@ -44,7 +44,7 @@ public abstract class MeteredBuildEventSubscriber implements EventSubscriber<Bui
      * Receives notification that an metered build event has been published to the EventService.
      * If the method throws an unchecked exception it is ignored.
      */
-    public abstract void onMeteredBuildEvent(BuilderEvent event);
+    /*public abstract void onMeteredBuildEvent(BuilderEvent event);
 
     @Override
     public void onEvent(BuilderEvent event) {
@@ -56,5 +56,5 @@ public abstract class MeteredBuildEventSubscriber implements EventSubscriber<Bui
         } catch (NotFoundException e) {
             LOG.error("Unable to determine request type for request {}", event.getTaskId());
         }
-    }
+    }*/
 }

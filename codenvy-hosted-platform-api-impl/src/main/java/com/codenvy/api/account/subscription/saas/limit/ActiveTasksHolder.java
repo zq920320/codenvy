@@ -25,14 +25,14 @@ import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
 import org.eclipse.che.api.account.server.dao.Subscription;
-import org.eclipse.che.api.builder.BuildQueue;
-import org.eclipse.che.api.builder.internal.BuilderEvent;
+//import org.eclipse.che.api.builder.BuildQueue;
+//import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
-import org.eclipse.che.api.runner.RunQueue;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+//import org.eclipse.che.api.runner.RunQueue;
+//import org.eclipse.che.api.runner.internal.RunnerEvent;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,18 +59,18 @@ import static java.lang.String.format;
  */
 @Singleton
 public class ActiveTasksHolder {
-    private static final Logger LOG = LoggerFactory.getLogger(ActiveTasksHolder.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(ActiveTasksHolder.class);
 
     private final Multimap<String, MeteredTask>  activeTasks;
     private final Map<String, ResourcesWatchdog> activeWatchdogs;
     private final ReadWriteLock                  lock;
     private final WorkspaceDao                   workspaceDao;
     private final EventService                   eventService;
-    private final RunQueue                       runQueue;
-    private final BuildQueue                     buildQueue;
+//    private final RunQueue                       runQueue;
+//    private final BuildQueue                     buildQueue;
     private final ResourcesWatchdogFactory       resourcesWatchdogFactory;
 
-    final BuildEventSubscriber               buildEventSubscriber;
+//    final BuildEventSubscriber               buildEventSubscriber;
     final RunEventSubscriber                 runEventSubscriber;
     final ChangeSubscriptionSubscriber       changeSubscriptionSubscriber;
     final ChangeResourceUsageLimitSubscriber changeResourceUsageLimitSubscriber;
@@ -78,16 +78,16 @@ public class ActiveTasksHolder {
     @Inject
     public ActiveTasksHolder(WorkspaceDao workspaceDao,
                              EventService eventService,
-                             BuildQueue buildQueue,
-                             RunQueue runQueue,
+//                             BuildQueue buildQueue,
+//                             RunQueue runQueue,
                              ResourcesWatchdogFactory resourcesWatchdogFactory) {
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
-        this.runQueue = runQueue;
-        this.buildQueue = buildQueue;
+//        this.runQueue = runQueue;
+//        this.buildQueue = buildQueue;
         this.resourcesWatchdogFactory = resourcesWatchdogFactory;
 
-        this.buildEventSubscriber = new BuildEventSubscriber(buildQueue);
+//        this.buildEventSubscriber = new BuildEventSubscriber(buildQueue);
         this.runEventSubscriber = new RunEventSubscriber();
         this.changeSubscriptionSubscriber = new ChangeSubscriptionSubscriber();
         this.changeResourceUsageLimitSubscriber = new ChangeResourceUsageLimitSubscriber();
@@ -100,7 +100,7 @@ public class ActiveTasksHolder {
     /**
      * @return watchdogs which have active tasks
      */
-    public Collection<ResourcesWatchdog> getActiveWatchdogs() {
+    /*public Collection<ResourcesWatchdog> getActiveWatchdogs() {
         lock.readLock().lock();
         try {
             return new ArrayList<>(activeWatchdogs.values());
@@ -114,7 +114,7 @@ public class ActiveTasksHolder {
      *         given watchdog
      * @return active tasks by given watchdog
      */
-    public Collection<MeteredTask> getActiveTasks(String watchdogId) {
+    /*public Collection<MeteredTask> getActiveTasks(String watchdogId) {
         lock.readLock().lock();
         try {
             return new ArrayList<>(activeTasks.get(watchdogId));
@@ -125,7 +125,7 @@ public class ActiveTasksHolder {
 
     @PostConstruct
     private void subscribe() {
-        eventService.subscribe(buildEventSubscriber);
+//        eventService.subscribe(buildEventSubscriber);
         eventService.subscribe(runEventSubscriber);
         eventService.subscribe(changeSubscriptionSubscriber);
         eventService.subscribe(changeResourceUsageLimitSubscriber);
@@ -133,7 +133,7 @@ public class ActiveTasksHolder {
 
     @PreDestroy
     private void unsubscribe() {
-        eventService.unsubscribe(buildEventSubscriber);
+//        eventService.unsubscribe(buildEventSubscriber);
         eventService.unsubscribe(runEventSubscriber);
         eventService.unsubscribe(changeSubscriptionSubscriber);
         eventService.unsubscribe(changeResourceUsageLimitSubscriber);
@@ -331,5 +331,5 @@ public class ActiveTasksHolder {
             final MeteredTaskRun other = (MeteredTaskRun)obj;
             return Objects.equals(runnerEvent.getProcessId(), other.runnerEvent.getProcessId());
         }
-    }
+    }*/
 }

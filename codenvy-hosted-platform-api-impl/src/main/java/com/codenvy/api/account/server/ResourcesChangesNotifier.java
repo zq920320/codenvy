@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.account.server;
 
-import org.eclipse.che.api.runner.dto.ResourcesDescriptor;
+//import org.eclipse.che.api.runner.dto.ResourcesDescriptor;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.everrest.websockets.WSConnectionContext;
 import org.everrest.websockets.message.ChannelBroadcastMessage;
@@ -35,7 +35,7 @@ public class ResourcesChangesNotifier {
     private static final Logger LOG = LoggerFactory.getLogger(ResourcesChangesNotifier.class);
 
     public void publishTotalMemoryChangedEvent(String workspaceId, String totalMemory) {
-        try {
+        /*try {
             final ChannelBroadcastMessage bm = new ChannelBroadcastMessage();
 
             bm.setChannel(format("workspace:resources:%s", workspaceId));
@@ -47,6 +47,6 @@ public class ResourcesChangesNotifier {
             WSConnectionContext.sendMessage(bm);
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);
-        }
+        }*/
     }
 }

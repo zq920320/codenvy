@@ -20,9 +20,9 @@ package com.codenvy.workspace.listener;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
-import org.eclipse.che.api.runner.RunQueue;
+/*import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.runner.internal.RunnerEvent;*/
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.slf4j.Logger;
@@ -44,7 +44,7 @@ import java.util.Set;
  */
 @Singleton
 public class StopAppOnRemoveWsListener {
-    private static final Logger LOG = LoggerFactory.getLogger(StopAppOnRemoveWsListener.class);
+    /*private static final Logger LOG = LoggerFactory.getLogger(StopAppOnRemoveWsListener.class);
     private final EventService                          eventService;
     private final RunQueue                              runQueue;
     private final EventSubscriber<DeleteWorkspaceEvent> deleteWsSubscriber;
@@ -126,5 +126,5 @@ public class StopAppOnRemoveWsListener {
     private void unsubscribe() {
         eventService.unsubscribe(deleteWsSubscriber);
         eventService.unsubscribe(runnerEventSubscriber);
-    }
+    }*/
 }
