@@ -254,7 +254,7 @@
             });
         };
 
-        var ensureExistenceAccount = function() {
+        var ensureExistenceAccount = function(username, accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             $.ajax({
@@ -267,7 +267,7 @@
                     }
                     else {
                         // user hasn't memberships
-                        createAccount()
+                        createAccount(username, accountName)
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
                         deferredResult.resolve(account);
@@ -282,10 +282,13 @@
             return deferredResult;
         };
 
-        var createAccount = function() {
+        var createAccount = function(username, accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
-            var data = {};
+            var data = {
+                name: accountName,
+                username: username
+            };
             $.ajax({
                 url: url,
                 type: "POST",
@@ -574,7 +577,7 @@
                 });
             },
 
-            processCreate: function(username, bearertoken, workspace, redirect_url, error) {
+            processCreate: function(username, bearertoken, accountName, workspaceName, redirect_url, error) {
                 var workspaceID;
                 authenticate(username, bearertoken)
                 .fail(function(response) {
@@ -591,10 +594,10 @@
                     ]);
                 })
                 .then(function(){
-                    if (workspace) {
-                        ensureExistenceAccount() // get/create account
+                    if (workspaceName) {
+                        ensureExistenceAccount(username, accountName) // get/create account
                         .then(function(account){
-                            return createWorkspace(workspace, account.id);
+                            return createWorkspace(workspaceName, account.id);
                         })
                         .then(function(workspace){
                             workspaceID = workspace.id; // store workspace id
