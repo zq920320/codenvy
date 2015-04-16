@@ -282,12 +282,10 @@
             return deferredResult;
         };
 
-        var createAccount = function(account) {
+        var createAccount = function() {
             var deferredResult = $.Deferred();
             var url = "/api/account";
-            var data = {
-                //name: account
-            };
+            var data = {};
             $.ajax({
                 url: url,
                 type: "POST",
