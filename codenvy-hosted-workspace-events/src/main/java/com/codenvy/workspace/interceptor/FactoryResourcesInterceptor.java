@@ -21,9 +21,9 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.factory.FactoryService;
-import org.eclipse.che.api.factory.dto.Factory;
-import org.eclipse.che.api.factory.dto.WorkspaceResources;
+//import org.eclipse.che.api.factory.FactoryService;
+//import org.eclipse.che.api.factory.dto.Factory;
+//import org.eclipse.che.api.factory.dto.WorkspaceResources;
 //import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.commons.lang.Pair;
@@ -47,7 +47,7 @@ public class FactoryResourcesInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
+        /*if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
             Workspace inbound = (Workspace)invocation.getArguments()[0];
             if (inbound.getAttributes().containsKey("sourceFactoryId")) {
                 String getFactoryUrl =
@@ -58,7 +58,7 @@ public class FactoryResourcesInterceptor implements MethodInterceptor {
                 org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
                 WorkspaceResources resources = factoryWorkspace.getResources();
                 if (resources != null) {
-/*                    if (resources.getRunnerRam() != null) {
+                    if (resources.getRunnerRam() != null) {
                         inbound.getAttributes()
                                .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resources.getRunnerRam()));
                     }
@@ -69,10 +69,10 @@ public class FactoryResourcesInterceptor implements MethodInterceptor {
                     if (resources.getBuilderTimeout() != null) {
                         inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
                                                     Integer.toString(resources.getBuilderTimeout()));
-                    }*/
+                    }
                 }
             }
-        }
+        }*/
         return invocation.proceed();
     }
 }

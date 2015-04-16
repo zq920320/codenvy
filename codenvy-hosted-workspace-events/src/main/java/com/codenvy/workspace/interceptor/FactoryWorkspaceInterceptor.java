@@ -22,8 +22,8 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.factory.FactoryService;
-import org.eclipse.che.api.factory.dto.Factory;
+/*import org.eclipse.che.api.factory.FactoryService;
+import org.eclipse.che.api.factory.dto.Factory;*/
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
@@ -63,7 +63,7 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
+        /*if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
             NewWorkspace inbound = (NewWorkspace)invocation.getArguments()[0];
             final SecurityContext oldContext = (SecurityContext)invocation.getArguments()[1];
             User currentUser = EnvironmentContext.getCurrent().getUser();
@@ -141,7 +141,7 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
                 }
                 return result;
             }
-        }
+        }*/
         return invocation.proceed();
     }
 }
