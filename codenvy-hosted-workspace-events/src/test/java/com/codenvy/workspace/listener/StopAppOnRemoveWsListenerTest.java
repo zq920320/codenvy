@@ -18,8 +18,8 @@
 package com.codenvy.workspace.listener;
 
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.RunQueue;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+/*import org.eclipse.che.api.runner.RunQueue;
+import org.eclipse.che.api.runner.internal.RunnerEvent;*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
@@ -41,7 +41,7 @@ import static org.testng.Assert.assertEquals;
 
 @Listeners(MockitoTestNGListener.class)
 public class StopAppOnRemoveWsListenerTest {
-    private static final long   PROCESS_ID     = 1234567891L;
+    /*private static final long   PROCESS_ID     = 1234567891L;
     private static final long   PROCESS_2_ID   = 1234567892L;
     private static final long   PROCESS_3_ID   = 1234567893L;
     private static final String WORKSPACE_ID   = "ws1_2345678";
@@ -126,5 +126,5 @@ public class StopAppOnRemoveWsListenerTest {
         Field f = listener.getClass().getDeclaredField("processes");
         f.setAccessible(true);
         return (Map)f.get(listener);
-    }
+    }*/
 }

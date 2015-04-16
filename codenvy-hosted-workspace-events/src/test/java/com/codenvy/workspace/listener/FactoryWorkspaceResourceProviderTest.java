@@ -27,9 +27,9 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
-import org.eclipse.che.api.factory.FactoryBuilder;
+/*import org.eclipse.che.api.factory.FactoryBuilder;
 import org.eclipse.che.api.factory.dto.Author;
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.dto.Factory;*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.lang.Pair;
@@ -57,7 +57,7 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceResourceProviderTest {
-    private static final String WS_ID      = "wsid";
+    /*private static final String WS_ID      = "wsid";
     private static final String ACCOUNT_ID = "accId";
 
     private String runnerLifetime       = "runnerLifetime";
@@ -177,5 +177,5 @@ public class FactoryWorkspaceResourceProviderTest {
         } else {
             verify(attributes, never()).put(eq("codenvy:runner_infra"), anyString());
         }
-    }
+    }*/
 }
