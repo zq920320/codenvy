@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.account.metrics;
 
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BaseBuilderRequest;
 import org.eclipse.che.api.builder.dto.BuildRequest;
 import org.eclipse.che.api.builder.dto.DependencyRequest;
-import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.builder.internal.BuilderEvent;*/
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(MockitoTestNGListener.class)
 public class BuildStatusSubscriberTest {
-    private static final long   PROCESS_ID = 1L;
+    /*private static final long   PROCESS_ID = 1L;
     private static final String WS_ID      = "workspaceId";
 
     @Mock
@@ -141,5 +141,5 @@ public class BuildStatusSubscriberTest {
         }
         baseBuilderRequest.setUserId("userId");
         return baseBuilderRequest;
-    }
+    }*/
 }

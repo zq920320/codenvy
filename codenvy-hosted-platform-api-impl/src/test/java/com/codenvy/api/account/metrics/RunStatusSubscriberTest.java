@@ -19,10 +19,10 @@ package com.codenvy.api.account.metrics;
 
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.RunQueue;
+/*import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.dto.RunRequest;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.runner.internal.RunnerEvent;*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.ArgumentMatcher;
@@ -46,7 +46,7 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(MockitoTestNGListener.class)
 public class RunStatusSubscriberTest {
-    private static final long   PROCESS_ID = 1;
+    /*private static final long   PROCESS_ID = 1;
     private static final String WS_ID      = "workspaceId";
 
     @Mock
@@ -112,5 +112,5 @@ public class RunStatusSubscriberTest {
         runStatusSubscriber.onEvent(RunnerEvent.stoppedEvent(PROCESS_ID, WS_ID, "/project"));
 
         verify(resourcesUsageTracker).resourceUsageStopped(eq(RunTasksActivityChecker.PFX + PROCESS_ID));
-    }
+    }*/
 }

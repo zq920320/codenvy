@@ -32,7 +32,7 @@ import org.eclipse.che.api.account.shared.dto.UsedAccountResources;
 import org.eclipse.che.api.account.shared.dto.WorkspaceResources;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.internal.Constants;
+//import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.ArgumentMatcher;
@@ -63,7 +63,7 @@ import static org.testng.Assert.assertEquals;
  */
 @Listeners(value = {MockitoTestNGListener.class})
 public class SaasSubscriptionServiceTest {
-    private static final int FREE_MAX_LIMIT = 4096;
+    /*private static final int FREE_MAX_LIMIT = 4096;
     @Mock
     WorkspaceDao              workspaceDao;
     @Mock
@@ -164,5 +164,5 @@ public class SaasSubscriptionServiceTest {
             }
         }));
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq("otherWorkspace"), eq(String.valueOf(FREE_MAX_LIMIT)));
-    }
+    }*/
 }

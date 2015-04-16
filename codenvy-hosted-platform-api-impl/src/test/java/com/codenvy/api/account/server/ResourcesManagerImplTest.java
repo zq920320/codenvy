@@ -33,7 +33,7 @@ import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.runner.internal.Constants;
+//import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -71,7 +71,7 @@ import static org.testng.Assert.assertEquals;
  */
 @Listeners(MockitoTestNGListener.class)
 public class ResourcesManagerImplTest {
-    private static final String ACCOUNT_ID = "accountId";
+    /*private static final String ACCOUNT_ID = "accountId";
 
     private static final Integer MAX_LIMIT           = 4096;
     private static final String  FIRST_WORKSPACE_ID  = "firstWorkspace";
@@ -467,5 +467,5 @@ public class ResourcesManagerImplTest {
                 return false;
             }
         }));
-    }
+    }*/
 }

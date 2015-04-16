@@ -17,11 +17,11 @@
  */
 package com.codenvy.api.account.metrics;
 
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.BuildStatus;
 import org.eclipse.che.api.builder.dto.BuildRequest;
-import org.eclipse.che.api.builder.dto.BuildTaskDescriptor;
+import org.eclipse.che.api.builder.dto.BuildTaskDescriptor;*/
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
@@ -50,7 +50,7 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(MockitoTestNGListener.class)
 public class BuildTasksActivityCheckerTest {
-    private static final long    PROCESS_ID        = 1L;
+    /*private static final long    PROCESS_ID        = 1L;
     private static final Integer TICK_PERIOD       = 200;
     private static final Integer SCHEDULING_PERIOD = 100;
 
@@ -138,5 +138,5 @@ public class BuildTasksActivityCheckerTest {
         when(buildTaskDescriptor.getTaskId()).thenReturn(processId);
         when(buildTaskDescriptor.getStartTime()).thenReturn(startTime);
         return buildTaskDescriptor;
-    }
+    }*/
 }

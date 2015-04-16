@@ -22,14 +22,14 @@ import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
 
 import org.eclipse.che.api.account.server.dao.Subscription;
-import org.eclipse.che.api.builder.BuildQueue;
+/*import org.eclipse.che.api.builder.BuildQueue;
 import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BuildRequest;
 import org.eclipse.che.api.builder.dto.DependencyRequest;
 import org.eclipse.che.api.builder.internal.BuilderEvent;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.runner.RunQueue;
-import org.eclipse.che.api.runner.internal.RunnerEvent;
+import org.eclipse.che.api.runner.internal.RunnerEvent;*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -54,7 +54,7 @@ import static org.testng.Assert.assertTrue;
  */
 @Listeners(MockitoTestNGListener.class)
 public class ActiveTasksHolderTest {
-    @Mock
+    /*@Mock
     WorkspaceDao             workspaceDao;
     @Mock
     EventService             eventService;
@@ -148,5 +148,5 @@ public class ActiveTasksHolderTest {
         activeTasksHolder.changeResourceUsageLimitSubscriber.onEvent(new WorkspaceResourcesUsageLimitChangedEvent(WS_ID));
 
         verify(resourcesWatchdog).checkLimit();
-    }
+    }*/
 }

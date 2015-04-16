@@ -20,11 +20,11 @@ package com.codenvy.api.account.metrics;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.runner.ApplicationStatus;
+/*import org.eclipse.che.api.runner.ApplicationStatus;
 import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.dto.ApplicationProcessDescriptor;
-import org.eclipse.che.api.runner.dto.RunRequest;
+import org.eclipse.che.api.runner.dto.RunRequest;*/
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -36,7 +36,7 @@ import java.util.Arrays;
 import java.util.concurrent.TimeUnit;
 
 import static java.lang.System.currentTimeMillis;
-import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
+//import static org.eclipse.che.api.runner.ApplicationStatus.RUNNING;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
@@ -52,7 +52,7 @@ import static org.mockito.Mockito.when;
  */
 @Listeners(MockitoTestNGListener.class)
 public class RunTasksActivityCheckerTest {
-    private static final long    PROCESS_ID        = 1L;
+    /*private static final long    PROCESS_ID        = 1L;
     private static final Integer TICK_PERIOD       = 200;
     private static final Integer SCHEDULING_PERIOD = 100;
 
@@ -139,5 +139,5 @@ public class RunTasksActivityCheckerTest {
         when(applicationDescriptor.getProcessId()).thenReturn(processId);
         when(applicationDescriptor.getStartTime()).thenReturn(startTime);
         return applicationDescriptor;
-    }
+    }*/
 }
