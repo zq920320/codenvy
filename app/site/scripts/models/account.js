@@ -254,7 +254,7 @@
             });
         };
 
-        var ensureExistenceAccount = function(accountName) {
+        var ensureExistenceAccount = function() {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             $.ajax({
@@ -267,7 +267,7 @@
                     }
                     else {
                         // user hasn't memberships
-                        createAccount(accountName)
+                        createAccount()
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
                         deferredResult.resolve(account);
@@ -286,7 +286,7 @@
             var deferredResult = $.Deferred();
             var url = "/api/account";
             var data = {
-                name: account
+                //name: account
             };
             $.ajax({
                 url: url,
@@ -303,12 +303,12 @@
             return deferredResult;
         };
 
-        var createWorkspace = function(workspace, account) {
+        var createWorkspace = function(workspace, accountId) {
             var deferredResult = $.Deferred();
             var url = "/api/workspace";
             var data = {
                 name: workspace,
-                accountId: account
+                accountId: accountId
             };
             $.ajax({
                 url: url,
@@ -423,11 +423,11 @@
                         .then(function(accounts){
                             var account = getOwnAccount(accounts);
                             if(!account.accountReference.id){//if user has no account
-                                var accountName = email.indexOf('@')>=0?email.substring(0, email.indexOf('@')):email; //email.substring(0, email.indexOf('@'));
-                                return createAccount(accountName)//create account
+                                var workspaceName = email.indexOf('@')>=0?email.substring(0, email.indexOf('@')):email; //email.substring(0, email.indexOf('@'));
+                                return createAccount()//create account
                                 .then(function(newAccount){
                                     account = newAccount;
-                                    return createWorkspace(accountName, account.id);//create WS
+                                    return createWorkspace(workspaceName, account.id);//create WS
                                 })
                                 .then(function(workspace){
                                     workspaceId = workspace.id;
@@ -594,7 +594,7 @@
                 })
                 .then(function(){
                     if (workspace) {
-                        ensureExistenceAccount(workspace) // get/create account
+                        ensureExistenceAccount() // get/create account
                         .then(function(account){
                             return createWorkspace(workspace, account.id);
                         })
