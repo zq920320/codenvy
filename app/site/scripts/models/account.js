@@ -287,7 +287,7 @@
             var url = "/api/account";
             var data = {
                 name: accountName,
-                username: username
+                userName: username
             };
             $.ajax({
                 url: url,
@@ -383,7 +383,7 @@
         var redirectToUrl = function(url) {
             window.location = url;
         };
-        
+
         var appendQuery = function(url) {
             return url  +  window.location.search;
         };
