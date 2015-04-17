@@ -246,15 +246,15 @@
             return ownAccount;
         };
 
-        var getUserMemberships = function(){
+/*        var getUserMemberships = function(){
             var url = "/api/account";
             return $.ajax({
                 url: url,
                 type: "GET",
             });
-        };
+        };*/
 
-        var ensureExistenceAccount = function(username, accountName) {
+        var ensureExistenceAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             $.ajax({
@@ -267,7 +267,7 @@
                     }
                     else {
                         // user hasn't memberships
-                        createAccount(username, accountName)
+                        createAccount(accountName)
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
                         deferredResult.resolve(account);
@@ -282,12 +282,11 @@
             return deferredResult;
         };
 
-        var createAccount = function(username, accountName) {
+        var createAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             var data = {
-                name: accountName,
-                username: username
+                name: accountName
             };
             $.ajax({
                 url: url,
@@ -415,57 +414,27 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
-                var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                var workspaceId;
-                //TODO login refactoring
+                //var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                if (!redirect_url){
+                    redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                }
                 login(email, password)
                 .then(function() {
-                        getUserMemberships()// getUserMemberships()
-                        .then(function(accounts){
-                            var account = getOwnAccount(accounts);
-                            if(!account.accountReference.id){//if user has no account
-                                var workspaceName = email.indexOf('@')>=0?email.substring(0, email.indexOf('@')):email; //email.substring(0, email.indexOf('@'));
-                                return createAccount()//create account
-                                .then(function(newAccount){
-                                    account = newAccount;
-                                    return createWorkspace(workspaceName, account.id);//create WS
-                                })
-                                .then(function(workspace){
-                                    workspaceId = workspace.id;
-                                    return getUserInfo();
-                                })
-                                .then(function(user){
-                                    return addMemberToWorkspace(workspaceId,user.id);//add User to WS
-                                });
-
-                            }
-                        })
-                        .then(function(){
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
-                        });
-
-                    })
-                    .fail(function(response /*, status , err*/ ) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            console.log(e);
-                            responseErr = "Something went wrong. Please try again or contact support";
-                        }
-                        error([
-                            new AccountError(null, responseErr)
-                        ]);
-                        }
-                    );
+                    success({url: redirect_url});
+                })
+                .fail(function(response /*, status , err*/ ) {
+                    var responseErr;
+                    try{
+                        responseErr = JSON.parse(response.responseText).message;
+                    }catch(e){
+                        console.log(e);
+                        responseErr = "Something went wrong. Please try again or contact support";
+                    }
+                    error([
+                        new AccountError(null, responseErr)
+                    ]);
+                    }
+                );
 
             },
 
@@ -579,6 +548,9 @@
 
             processCreate: function(username, bearertoken, accountName, workspaceName, redirect_url, error) {
                 var workspaceID;
+                if (!redirect_url){
+                    redirect_url = "/dashboard/";
+                }
                 authenticate(username, bearertoken)
                 .fail(function(response) {
                     var responseErr;
@@ -594,44 +566,33 @@
                     ]);
                 })
                 .then(function(){
-                    if (workspaceName) {
-                        ensureExistenceAccount(username, accountName) // get/create account
-                        .then(function(account){
-                            return createWorkspace(workspaceName, account.id);
-                        })
-                        .then(function(workspace){
-                            workspaceID = workspace.id; // store workspace id
-                            return getUserInfo();
-                        })
-                        .then(function(user){
-                            return addMemberToWorkspace(workspaceID,user.id);
-                        })
-                        .done(function() {
-                            if (redirect_url) {
-                                redirectToUrl(redirect_url);
-                            }else {
-                                redirectToUrl("/dashboard/");
-                            }
-                        })
-                        .fail(function(response) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Something went wrong. Please try again or contact support";
-                            }
-
-
-                            error([
-                                new AccountError(null, responseErr)
-                            ]);
-                        });
-                    } else if (redirect_url) {
+                    ensureExistenceAccount(accountName) // get/create account
+                    .then(function(account){
+                        return createWorkspace(workspaceName, account.id);
+                    })
+                    .then(function(workspace){
+                        workspaceID = workspace.id; // store workspace id
+                        return getUserInfo();
+                    })
+                    .then(function(user){
+                        return addMemberToWorkspace(workspaceID,user.id);
+                    })
+                    .done(function() {
                         redirectToUrl(redirect_url);
-                    } else {
-                        redirectToUrl("/dashboard/");
-                    }
+                    })
+                    .fail(function(response) {
+                        var responseErr;
+                        try{
+                            responseErr = JSON.parse(response.responseText).message;
+                        }catch(e){
+                            responseErr = "Something went wrong. Please try again or contact support";
+                        }
 
+
+                        error([
+                            new AccountError(null, responseErr)
+                        ]);
+                    });
                 });
 
             },
