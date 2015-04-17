@@ -286,12 +286,7 @@
             var deferredResult = $.Deferred();
             var url = "/api/account";
             var data = {
-<<<<<<< HEAD
                 name: accountName
-=======
-                name: accountName,
-                userName: username
->>>>>>> 750f9fd33120819761f007824ac9a36c049265b7
             };
             $.ajax({
                 url: url,
