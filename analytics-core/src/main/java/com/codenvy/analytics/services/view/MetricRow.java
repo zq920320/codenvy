@@ -96,9 +96,16 @@ public class MetricRow extends AbstractRow {
      */
     private static final String DATE_FORMAT = "date-format";
 
+    /**
+     * The format for time fields.
+     */
+    private static final String TIME_FORMAT = "time-format";
+
+
     private final Metric              metric;
     private final String              numericFormat;
     private final String              dateFormat;
+    private final String              timeFormat;
     private final String[]            fields;
     private final boolean             hideNegativeValues;
     private final List<String>        booleanFields;
@@ -133,6 +140,9 @@ public class MetricRow extends AbstractRow {
         dateFormat = parameters.containsKey(DATE_FORMAT)
                      ? parameters.get(DATE_FORMAT)
                      : DEFAULT_DATE_FORMAT;
+        timeFormat = parameters.containsKey(TIME_FORMAT)
+                     ? parameters.get(TIME_FORMAT)
+                     : DEFAULT_TIME_FORMAT;
 
         fields = parameters.containsKey(FIELDS) ? parameters.get(FIELDS).split(",") : new String[0];
 
@@ -147,18 +157,7 @@ public class MetricRow extends AbstractRow {
         this.timeFields = new HashMap<>();
 
         readFieldsParameters(parameters, DATE_FIELDS, dateFields, dateFormat);
-        readFieldsParameters(parameters, TIME_FIELDS, timeFields, DEFAULT_TIME_FORMAT);
-
-        if (parameters.containsKey(TIME_FIELDS)) {
-            for (String timeField : parameters.get(TIME_FIELDS).split(",")) {
-                if (timeField.contains("=")) {
-                    String[] fieldAndFormat = timeField.split("=");
-                    timeFields.put(fieldAndFormat[0], fieldAndFormat[1]);
-                } else {
-                    timeFields.put(timeField, DEFAULT_TIME_FORMAT);
-                }
-            }
-        }
+        readFieldsParameters(parameters, TIME_FIELDS, timeFields, timeFormat);
 
         eventFields = parameters.containsKey(EVENT_FIELDS)
                       ? Arrays.asList(parameters.get(EVENT_FIELDS).split(","))
@@ -251,7 +250,7 @@ public class MetricRow extends AbstractRow {
 
         } else if (clazz == LongValueData.class) {
             if (isTimeField) {
-                singleValue.add(formatTimeValue(valueData, DEFAULT_TIME_FORMAT));
+                singleValue.add(formatTimeValue(valueData, timeFormat));
             } else {
                 Long value = ((LongValueData)valueData).getAsLong();
                 if (value < 0 && hideNegativeValues) {
@@ -377,10 +376,12 @@ public class MetricRow extends AbstractRow {
             format = DEFAULT_TIME_FORMAT;
         }
 
+        int millis = (int)(milliseconds % 1000);
         int secs = (int)((milliseconds / 1000) % 60);
         int minutes = (int)((milliseconds / (1000 * 60)) % 60);
         int hours = (int)(milliseconds / (1000 * 60 * 60));
 
+        format = format.replace("SSS", DECIMAL_FORMAT.format(millis));
         format = format.replace("ss", DECIMAL_FORMAT.format(secs));
         format = format.replace("mm", DECIMAL_FORMAT.format(minutes));
         format = format.replace("HH", DECIMAL_FORMAT.format(hours));

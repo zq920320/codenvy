@@ -68,6 +68,7 @@
                 <parameter key="fields" value="session_id,date,end_time,user,time"/>
                 <parameter key="time-fields" value="time"/>
                 <parameter key="date-fields" value="date,end_time"/>
+                <parameter key="time-format" value="HH:mm:ss,SSS"/>
             </row>
         </section>
     </view>

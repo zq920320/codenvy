@@ -19,16 +19,24 @@ package com.codenvy.analytics.services.view;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.*;
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Parameters;
 
-import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import static org.testng.Assert.assertEquals;
 
@@ -56,6 +64,27 @@ public class TestMetricRow extends BaseTest {
         assertEquals(items.get(0), StringValueData.valueOf(fullDateFormat.format(new Date(1 * 60 * 60 * 1000))));
         assertEquals(items.get(1), StringValueData.valueOf(shortDateFormat.format(new Date(2 * 60 * 60 * 1000))));
         assertEquals(items.get(2), StringValueData.valueOf("10,800,000"));
+    }
+
+    @Test
+    public void testCustomFormatTimeValue15h50m() throws Exception {
+        Context context = Utils.initializeContext(Parameters.TimeUnit.DAY);
+
+        Map<String, String> parameters = new HashMap<>();
+        parameters.put("fields", "time1");
+        parameters.put("time-fields", "time1");
+        parameters.put("time-format", "HH:mm:ss,SSS");
+
+        ListValueTestedMetric metric = new ListValueTestedMetric();
+        Row row = new MetricRow(metric, parameters);
+
+        List<List<ValueData>> data = row.getData(context, 1);
+        assertEquals(data.size(), 1);
+
+        List<ValueData> items = data.get(0);
+        assertEquals(items.size(), 1);
+
+        assertEquals(items.get(0), StringValueData.valueOf("01:17:08,887"));
     }
 
     @Test
@@ -115,6 +144,7 @@ public class TestMetricRow extends BaseTest {
             values.put("date2", LongValueData.valueOf(2 * 60 * 60 * 1000));
             values.put("date3", LongValueData.valueOf(3 * 60 * 60 * 1000));
             values.put("float", DoubleValueData.valueOf(12345.6789));
+            values.put("time1", LongValueData.valueOf(1 * 60 * 60 * 1000 + 17 * 60 * 1000 + 8 * 1000 + 887));
 
             ValueData valueData = new MapValueData(values);
             return new ListValueData(Arrays.asList(valueData));
