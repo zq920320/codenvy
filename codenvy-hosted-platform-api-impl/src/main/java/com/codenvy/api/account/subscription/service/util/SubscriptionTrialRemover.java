@@ -17,8 +17,9 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
+import com.codenvy.api.dao.mongo.AccountDaoImpl;
+
 import org.eclipse.che.api.account.server.SubscriptionService;
-import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.account.shared.dto.SubscriptionState;
 import org.eclipse.che.api.core.ApiException;
@@ -38,10 +39,10 @@ import java.util.List;
 public class SubscriptionTrialRemover {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionTrialRemover.class);
 
-    private final AccountDao accountDao;
+    private final AccountDaoImpl accountDao;
 
     @Inject
-    public SubscriptionTrialRemover(AccountDao accountDao) {
+    public SubscriptionTrialRemover(AccountDaoImpl accountDao) {
         this.accountDao = accountDao;
     }
 

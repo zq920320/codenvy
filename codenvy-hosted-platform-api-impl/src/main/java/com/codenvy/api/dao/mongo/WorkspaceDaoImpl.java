@@ -178,7 +178,11 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         return workspaces;
     }
 
-    @Override
+    /**
+     * Get all workspaces which are locked after RAM runner resources was exceeded.
+     *
+     * @return all locked workspaces
+     */
     public List<Workspace> getWorkspacesWithLockedResources() throws ServerException {
         DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", Constants.RESOURCES_LOCKED_PROPERTY)).get();
 

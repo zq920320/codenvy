@@ -18,9 +18,9 @@
 package com.codenvy.api.account.subscription.service.util;
 
 import com.codenvy.api.account.PaymentService;
+import com.codenvy.api.dao.mongo.AccountDaoImpl;
 
 import org.eclipse.che.api.account.server.SubscriptionService;
-import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.PlanDao;
 import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.account.shared.dto.Plan;
@@ -44,12 +44,12 @@ import static java.lang.String.format;
 public class SubscriptionCharger {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionCharger.class);
 
-    private final AccountDao     accountDao;
+    private final AccountDaoImpl accountDao;
     private final PaymentService paymentService;
     private final PlanDao        planDao;
 
     @Inject
-    public SubscriptionCharger(AccountDao accountDao, PaymentService paymentService, PlanDao planDao) {
+    public SubscriptionCharger(AccountDaoImpl accountDao, PaymentService paymentService, PlanDao planDao) {
         this.accountDao = accountDao;
         this.paymentService = paymentService;
         this.planDao = planDao;

@@ -19,12 +19,12 @@ package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.WorkspaceLocker;
+import com.codenvy.api.dao.mongo.AccountDaoImpl;
+import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -46,13 +46,13 @@ import static org.mockito.Mockito.when;
 @Listeners(MockitoTestNGListener.class)
 public class RefillJobTest {
     @Mock
-    AccountDao      accountDao;
+    AccountDaoImpl   accountDao;
     @Mock
-    AccountLocker   accountLocker;
+    AccountLocker    accountLocker;
     @Mock
-    WorkspaceDao    workspaceDao;
+    WorkspaceDaoImpl workspaceDao;
     @Mock
-    WorkspaceLocker workspaceLocker;
+    WorkspaceLocker  workspaceLocker;
 
     @InjectMocks
     RefillJob refillJob;
