@@ -66,7 +66,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldCalculateSimpleInvoice(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -100,7 +100,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToFilterInvoiceByDates(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -109,7 +109,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-02-2015 10:00:00").getTime(),
                                      sdf.parse("10-02-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -157,13 +157,13 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(invoice.getCharges().size(), 1);
         Charge saasCharge = get(invoice.getCharges(), 0);
         assertEquals(saasCharge.getServiceId(), "Saas");
-        assertEquals(saasCharge.getFreeAmount(), 0.523056);
+        assertEquals(saasCharge.getFreeAmount(), 0.535609);
         assertEquals(saasCharge.getPaidAmount(), 0.0);
         assertEquals(saasCharge.getPaidPrice(), 0.15);
         assertEquals(saasCharge.getPrePaidAmount(), 0.0);
         assertNotNull(saasCharge.getDetails());
         assertEquals(saasCharge.getDetails().size(), 1);
-        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.523056");
+        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.535609");
     }
 
     @Test(dataProvider = "storage")
@@ -201,21 +201,21 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         assertEquals(invoice.getCharges().size(), 1);
         Charge saasCharge = get(invoice.getCharges(), 0);
         assertEquals(saasCharge.getServiceId(), "Saas");
-        assertEquals(saasCharge.getFreeAmount(), 1.046112);
+        assertEquals(saasCharge.getFreeAmount(), 1.071218);
         assertEquals(saasCharge.getPaidAmount(), 0.0);
         assertEquals(saasCharge.getPaidPrice(), 0.15);
         assertEquals(saasCharge.getPrePaidAmount(), 0.0);
         assertNotNull(saasCharge.getDetails());
         assertEquals(saasCharge.getDetails().size(), 2);
-        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.523056");
-        assertEquals(saasCharge.getDetails().get("ws-2"), "0.523056");
+        assertEquals(saasCharge.getDetails().get("ws-235423"), "0.535609");
+        assertEquals(saasCharge.getDetails().get("ws-2"), "0.535609");
     }
 
     @Test(dataProvider = "storage")
     public void shouldCalculateWithMultipleAccounts(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -224,7 +224,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("10-01-2015 18:20:56").getTime(),
                                      "usr-123",
@@ -242,7 +242,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-435876"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -277,7 +277,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToGetByPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -286,7 +286,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -295,7 +295,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-234"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("01-01-2015 11:00:00").getTime(),
                                      "usr-34",
@@ -323,7 +323,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToSetPaymentState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -332,7 +332,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -369,7 +369,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -378,7 +378,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -406,7 +406,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -415,7 +415,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -442,7 +442,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -451,7 +451,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -478,7 +478,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -487,7 +487,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -515,7 +515,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("10-01-2015 11:20:56").getTime(),
                                      "usr-123",
@@ -524,7 +524,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -551,7 +551,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToSetInvoiceMailState(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -560,7 +560,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -595,7 +595,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToGetInvoicesById(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -604,7 +604,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -628,7 +628,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("11-01-2015 10:20:56").getTime(),
                                      "usr-123",
@@ -637,7 +637,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 10:00:00").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-345",
@@ -679,7 +679,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     @Test(dataProvider = "storage")
     public void shouldBeAbleToClosePrepaidPeriod(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         //given
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("01-01-2015 00:00:00").getTime(),
                                                                       sdf.parse("30-01-2015 00:00:00").getTime(),
                                                                       "usr-123",
@@ -708,7 +708,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToAddNewPrepaidTimeAfterClosingOldPrepaidPeriod(MeterBasedStorage meterBasedStorage,
                                                                             BillingService billingService) throws Exception {
         //given
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("01-01-2015 00:00:00").getTime(),
                                                                       sdf.parse("30-01-2015 00:00:00").getTime(),
                                                                       "usr-123",
@@ -744,7 +744,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
             throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -765,7 +765,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                                         BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -795,7 +795,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                                         BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -825,7 +825,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                                 BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -855,7 +855,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                           BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -888,7 +888,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                              BillingService billingService) throws Exception {
         //given
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -992,7 +992,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                       "ws-235423",
                                                                       "run-234"));
 
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 12:20:00").getTime(),
                                                                       "usr-123",
@@ -1050,7 +1050,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                       "ws-235423",
                                                                       "run-234"));
 
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 12:20:00").getTime(),
                                                                       "usr-123",
@@ -1084,7 +1084,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
                                                                       BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -1124,7 +1124,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldBeAbleToLimitAndSkipEstimateUsageWithFreePrepaidAndPaidTime(MeterBasedStorage meterBasedStorage,
                                                                                   BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("21-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -1133,7 +1133,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("01-01-2015 08:23:00").getTime(),
                                      sdf.parse("02-01-2015 18:00:00").getTime(),
                                      "usr-123",
@@ -1169,7 +1169,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void shouldNoReturnPaidGbHForCommunityAccount(MeterBasedStorage meterBasedStorage, BillingService billingService)
             throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 08:23:00").getTime(),
                                      sdf.parse("11-01-2015 12:23:00").getTime(),
                                      "usr-123",
@@ -1178,7 +1178,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1256"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 08:23:00").getTime(),
                                      sdf.parse("11-01-2015 12:23:00").getTime(),
                                      "usr-123",
@@ -1221,7 +1221,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     @Test(dataProvider = "storage")
     public void shouldBeAbleToGetEstimatedUsage(MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("12-01-2015 21:00:00").getTime(),
                                      "usr-123",
@@ -1230,7 +1230,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1254"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 08:23:00").getTime(),
                                      sdf.parse("11-01-2015 12:23:00").getTime(),
                                      "usr-123",
@@ -1239,7 +1239,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "run-1256"));
 
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 08:23:00").getTime(),
                                      sdf.parse("11-01-2015 12:23:00").getTime(),
                                      "usr-123",
@@ -1291,7 +1291,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void testCheckingAvailableResourcesWhenAccountDoNotUseFullFreeAmount(MeterBasedStorage meterBasedStorage,
                                                                                 BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("10-01-2015 05:00:00").getTime(),
                                      "usr-123",
@@ -1308,7 +1308,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void testCheckingAvailableResourcesWhenAccountUseFullFreeAmount(MeterBasedStorage meterBasedStorage,
                                                                            BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("10-01-2015 12:00:00").getTime(),
                                      "usr-123",
@@ -1326,7 +1326,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                                                                              BillingService billingService)
             throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("10-01-2015 12:00:00").getTime(),
                                      "usr-123",
@@ -1345,7 +1345,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     public void testCheckingAvailableResourcesWhenAccountUseFullFreeAmountAndHasInactiveClosePrepaidPeriod(
             MeterBasedStorage meterBasedStorage, BillingService billingService) throws Exception {
         meterBasedStorage.createMemoryUsedRecord(
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 01:00:00").getTime(),
                                      sdf.parse("10-01-2015 12:00:00").getTime(),
                                      "usr-123",
