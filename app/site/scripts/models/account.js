@@ -263,14 +263,14 @@
                 success: function(membership) {
                     var account = getOwnAccount(membership);
                     if (account.accountReference.id){
-                        deferredResult.resolve(account.accountReference); //returns Account
+                        deferredResult.resolve(account.accountReference, false); //returns Account
                     }
                     else {
                         // user hasn't memberships
                         createAccount(accountName)
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
-                        deferredResult.resolve(account);
+                        deferredResult.resolve(account, true);
                         });
 
                     }
@@ -546,8 +546,9 @@
                 });
             },
 
-            processCreate: function(username, bearertoken, accountName, workspaceName, redirect_url, error) {
+            processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
                 var workspaceID;
+                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username) + bearertoken.substring(0,6);
                 if (!redirect_url){
                     redirect_url = "/dashboard/";
                 }
@@ -567,15 +568,17 @@
                 })
                 .then(function(){
                     ensureExistenceAccount(accountName) // get/create account
-                    .then(function(account){
-                        return createWorkspace(workspaceName, account.id);
-                    })
-                    .then(function(workspace){
-                        workspaceID = workspace.id; // store workspace id
-                        return getUserInfo();
-                    })
-                    .then(function(user){
-                        return addMemberToWorkspace(workspaceID,user.id);
+                    .then(function(account, created){
+                        if (created) {
+                        return createWorkspace(workspaceName, account.id)
+                                .then(function(workspace){
+                                    workspaceID = workspace.id; // store workspace id
+                                    return getUserInfo();
+                                })
+                                .then(function(user){
+                                    return addMemberToWorkspace(workspaceID,user.id);
+                                });
+                        }
                     })
                     .done(function() {
                         redirectToUrl(redirect_url);
@@ -772,6 +775,7 @@
                     ]);
                 });
             },
+
             /**
              * Encode all special characters including ~!*()'. Replace " " on "+"
              * @see http://xkr.us/articles/javascript/encode-compare/
