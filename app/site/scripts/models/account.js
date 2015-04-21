@@ -548,7 +548,7 @@
 
             processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
                 var workspaceID;
-                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username) + bearertoken.substring(0,6);
+                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
                 if (!redirect_url){
                     redirect_url = "/dashboard/";
                 }
