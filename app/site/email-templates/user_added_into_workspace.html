@@ -67,7 +67,7 @@ max-width: 100%;
 								<tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0; padding: 0;">
 									<td class="content-block" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; vertical-align: top; margin: 0; padding: 0 0 20px;" valign="top">
 										<h1 style="font-family: 'Helvetica Neue', Helvetica, Arial, 'Lucida Grande', sans-serif; box-sizing: border-box; font-size: 14px; color: #0d4269; line-height: 1.2; font-weight: 300; margin: 0 0 10px 0; padding: 0;">
-                      You've Been Added to a Codenvy Workspace
+                                            Codenvy Workspace Invite
                     </h1>
 									</td>
 								</tr>
@@ -78,27 +78,31 @@ max-width: 100%;
                         <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
                           <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0 0 20px 0; color: #595959;">
-                              Hi,
-                            </p>
-                            <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0 0 20px 0; color: #595959;">
-                              ${username.whoInvited} ${usermail.whoInvited} added you to a Codenvy workspace called ${workspace}.
+                                You have been invited to collaborate with ${usermail.whoInvited} in a Codenvy workspace called "${workspace}."
                             </p>
                           </td>
                         </tr>
                         <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0; text-align: center;">
                               <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0; text-align:center; padding-bottom: 30px;">
                                  <a href="${com.codenvy.masterhost.url}/ws/${workspace}" style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; text-decoration: none;  text-transform: uppercase; line-height:1.5; font-weight: bold; display: inline-block; cursor: pointer; color: #fff; border-radius: 6px; background-color: #399076; border: 1px solid #646567; padding: 8px 20px;">
-                                   Access the workspace here
+                                     Access Shared Workspace
                             </a>
                           </td>
                         </tr>
                         <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
+                            <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
+                                <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0 0 20px 0; color: #595959;">
+                                    If you believe this is an error contact the workspace admin (<a href="mailto:${admin.email}" style="color:#4787ff;">${admin.email}</a>).
+                                </p>
+                                <br />
+                            </td>
+                        </tr>
+                        <tr style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
                           <td style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0;">
                             <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0 0 20px 0; color: #595959;">
-                              Enjoy developing in the cloud.
+                                Regards,
                               <strong style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; font-weight: bold; color:#595959; margin: 0; display: block;">The Codenvy Team</strong>
                             </p>
-
                           </td>
                         </tr>
                       </tbody>
