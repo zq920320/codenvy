@@ -76,6 +76,10 @@ public class SubscriptionServiceHelper {
     }
 
     public void checkTrial(Subscription subscription) throws ForbiddenException, ServerException {
+        if (!isPresentTrial(subscription)) {
+            return;
+        }
+
         // check that user hasn't got trial before, omit for privileged user (e.g. system/admin)
         final User currentUser = EnvironmentContext.getCurrent().getUser();
         if (currentUser.isMemberOf("system/admin") || currentUser.isMemberOf("system/manager")) {
