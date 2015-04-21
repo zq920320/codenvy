@@ -68,11 +68,14 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
         EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
         if ("removeMember".equals(invocation.getMethod().getName())) {
             String workspaceId = (String)invocation.getArguments()[0];
+            Workspace ws = workspaceDao.getById(workspaceId);
+            if (ws.isTemporary()) {
+                return result;
+            }
             String userId = (String)invocation.getArguments()[1];
             String recipientEmail = userDao.getById(userId).getEmail();
-
             String senderEmail = environmentContext.getUser().getName();
-            Workspace ws = workspaceDao.getById(workspaceId);
+
             Map<String, String> props = new HashMap<>();
             props.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
             props.put("workspace", ws.getName());

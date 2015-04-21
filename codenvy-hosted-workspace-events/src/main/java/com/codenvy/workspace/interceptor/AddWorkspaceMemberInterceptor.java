@@ -71,13 +71,13 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
         if ("addMember".equals(invocation.getMethod().getName())) {
             MemberDescriptor descriptor = (MemberDescriptor)((Response)result).getEntity();
             EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
+            // Do not send notifications on join to temporary ws.
+            if (descriptor.getWorkspaceReference().isTemporary()) {
+                return result;
+            }
             List<Member> workspaceMembers = memberDao.getWorkspaceMembers(descriptor.getWorkspaceReference().getId());
             if (workspaceMembers.size() > 1) {
                 try {
-                    // Do not send notifications on join to temporary ws.
-                    if (descriptor.getWorkspaceReference().isTemporary())
-                        return result;
-
                     String adminEmail = "";
                     for (Member one : workspaceMembers) {
                         if (one.getRoles().contains("workspace/admin")) {
@@ -87,7 +87,6 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
                     }
 
                     String recipientEmail = userDao.getById(descriptor.getUserId()).getEmail();
-
                     String senderUserid = environmentContext.getUser().getId();
                     String senderEmail = userDao.getById(senderUserid).getEmail();
                     Map<String, String> props = new HashMap<>();
