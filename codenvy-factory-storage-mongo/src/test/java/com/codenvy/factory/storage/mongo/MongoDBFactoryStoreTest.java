@@ -20,11 +20,17 @@ package com.codenvy.factory.storage.mongo;
 import de.bwaldvogel.mongo.MongoServer;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBObjectBuilder;
+import com.mongodb.DBCollection;
+import com.mongodb.DBObject;
+import com.mongodb.MongoClient;
+import com.mongodb.ServerAddress;
+
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.FactoryBuilder;
 import org.eclipse.che.api.factory.FactoryImage;
-import org.eclipse.che.api.factory.FactoryStore;
 import org.eclipse.che.api.factory.dto.Action;
 import org.eclipse.che.api.factory.dto.Author;
 import org.eclipse.che.api.factory.dto.Factory;
@@ -33,17 +39,13 @@ import org.eclipse.che.api.factory.dto.OnAppLoaded;
 import org.eclipse.che.api.factory.dto.OnProjectOpened;
 import org.eclipse.che.api.project.shared.dto.ImportSourceDescriptor;
 import org.eclipse.che.api.project.shared.dto.NewProject;
+import org.eclipse.che.api.project.shared.dto.RunnerConfiguration;
+import org.eclipse.che.api.project.shared.dto.RunnersDescriptor;
 import org.eclipse.che.api.project.shared.dto.Source;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
-
+import org.testng.Assert;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
@@ -73,7 +75,7 @@ public class MongoDBFactoryStoreTest {
     private DBCollection   collection;
     private MongoClient    client;
     private MongoServer    server;
-    private FactoryStore   store;
+    private MongoDBFactoryStore   store;
     private FactoryBuilder factoryBuilder;
 
     @BeforeMethod
@@ -106,10 +108,17 @@ public class MongoDBFactoryStoreTest {
                                      .withCreated(777777777L)
                                      .withEmail("test@test.com"));
 
+
+        Map<String, RunnerConfiguration> mapConfigs = new HashMap<>();
+        RunnerConfiguration runnerConfiguration = DtoFactory.getInstance().createDto(RunnerConfiguration.class);
+        mapConfigs.put("this.is.my.project$configuration", runnerConfiguration);
+        RunnersDescriptor runnersDescriptor = DtoFactory.getInstance().createDto(RunnersDescriptor.class).withConfigs(mapConfigs);
+
         factory.setProject(DtoFactory.getInstance().createDto(NewProject.class)
                                      .withName("projectName")
                                      .withType("maven")
-                                     .withDescription("Description of project"));
+                                     .withDescription("Description of project")
+                                     .withRunners(runnersDescriptor));
 
         factory.setSource(DtoFactory.getInstance().createDto(Source.class)
                                     .withProject(DtoFactory.getInstance().createDto(ImportSourceDescriptor.class)
@@ -145,10 +154,8 @@ public class MongoDBFactoryStoreTest {
         Set<FactoryImage> images = new HashSet<>();
         String id = store.saveFactory(factory, images);
 
-        DBObject query = new BasicDBObject("_id", id);
-        DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
 
-        Factory result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Factory.class);
+        Factory result = store.getFactory(id);
         factory.setId(id);
 
         assertEquals(result, factory);
@@ -333,4 +340,41 @@ public class MongoDBFactoryStoreTest {
         store.updateFactory("1234", updatedFactory);
 
     }
+
+    /**
+     * Check encoding with dot
+     */
+    @Test
+    public void testEncodedDot() {
+        String original = "hello.my.string";
+        String encoded = store.encode(original);
+        Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOT + "string", encoded);
+        String decoded = store.decode(encoded);
+        Assert.assertEquals(original, decoded);
+    }
+
+    /**
+     * Check encoding with dollar
+     */
+    @Test
+    public void testEncodedDollar() {
+        String original = "hello$my$string";
+        String encoded = store.encode(original);
+        Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOLLAR + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
+        String decoded = store.decode(encoded);
+        Assert.assertEquals(original, decoded);
+    }
+
+    /**
+     * Check encoding with dot and dollar
+     */
+    @Test
+    public void testEncodedDotDollar() {
+        String original = "hello.my$string";
+        String encoded = store.encode(original);
+        Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
+        String decoded = store.decode(encoded);
+        Assert.assertEquals(original, decoded);
+    }
+
 }

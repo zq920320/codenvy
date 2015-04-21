@@ -18,15 +18,6 @@
 package com.codenvy.factory.storage.mongo;
 
 
-import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.factory.FactoryImage;
-import org.eclipse.che.api.factory.FactoryStore;
-import org.eclipse.che.api.factory.dto.Factory;
-import org.eclipse.che.commons.lang.NameGenerator;
-import org.eclipse.che.commons.lang.Pair;
-import org.eclipse.che.dto.server.DtoFactory;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
@@ -37,6 +28,15 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
 import com.mongodb.util.JSON;
 
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.factory.FactoryImage;
+import org.eclipse.che.api.factory.FactoryStore;
+import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.commons.lang.NameGenerator;
+import org.eclipse.che.commons.lang.Pair;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +66,16 @@ public class MongoDBFactoryStore implements FactoryStore {
     private static final String USERNAME   = "factory.mongo.username";
     private static final String PASSWORD   = "factory.mongo.password";
 
+
+    /**
+     * Escaped dot character as suggested by MongoDB
+     */
+    protected static final char ESCAPED_DOT = '\uFF0E';
+
+    /**
+     * Escaped dollar character as suggested by MongoDB
+     */
+    protected static final char ESCAPED_DOLLAR = '\uFF04';
 
     DBCollection factories;
 
@@ -113,7 +123,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
         factoryDatabuilder.add("_id", factoryUrl.getId());
-        factoryDatabuilder.add("factoryurl", JSON.parse(DtoFactory.getInstance().toJson(factoryUrl)));
+        factoryDatabuilder.add("factoryurl", JSON.parse(encode(DtoFactory.getInstance().toJson(factoryUrl))));
         factoryDatabuilder.add("images", imageList);
 
         factories.save(factoryDatabuilder.get());
@@ -133,7 +143,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
 
         // Processing factory
-        Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(res.get("factoryurl").toString(), Factory.class);
+        Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(decode(res.get("factoryurl").toString()), Factory.class);
 
         factoryUrl.setId((String)res.get("_id"));
 
@@ -149,7 +159,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
         DBCursor cursor = factories.find(query);
         for (DBObject one :cursor) {
-            Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(one.get("factoryurl").toString(), Factory.class);
+            Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(decode(one.get("factoryurl").toString()), Factory.class);
             factoryUrl.setId((String)one.get("_id"));
             result.add(factoryUrl);
         }
@@ -213,11 +223,32 @@ public class MongoDBFactoryStore implements FactoryStore {
 
         BasicDBObject factoryReplacement = new BasicDBObject("$set",
                                                              new BasicDBObject("factoryurl",
-                                                                               JSON.parse(DtoFactory.getInstance().toJson(clonedFactory))));
+                                                                               JSON.parse(encode(DtoFactory.getInstance()
+                                                                                                           .toJson(clonedFactory)))));
 
         factories.update(query, factoryReplacement);
 
         // return the factory ID
         return factory.getId();
+    }
+
+    /**
+     * Mongodb is avoiding storage of dot and $ sign. Documentation is suggesting that we encode such characters
+     * http://docs.mongodb.org/manual/reference/limits/#Restrictions-on-Field-Names
+     * http://docs.mongodb.org/manual/faq/developers/#faq-dollar-sign-escaping
+     * @param value the value to encode
+     * @return the encoded value
+     */
+    protected String encode(String value) {
+        return value.replace('.', ESCAPED_DOT).replace('$', ESCAPED_DOLLAR);
+    }
+
+    /**
+     * Decode the value
+     * @param value value to unescape
+     * @return the original value without any encoding
+     */
+    protected String decode(String value) {
+        return value.replace(ESCAPED_DOT, '.').replace(ESCAPED_DOLLAR, '$');
     }
 }
