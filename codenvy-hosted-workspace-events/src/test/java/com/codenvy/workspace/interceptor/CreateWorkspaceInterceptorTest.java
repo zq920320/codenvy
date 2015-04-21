@@ -102,6 +102,15 @@ public class CreateWorkspaceInterceptorTest {
         f.setAccessible(true);
         f.set(interceptor, "http://dev.box.com/api");
 
+        Field f2 = interceptor.getClass().getDeclaredField("freeGbh");
+        f2.setAccessible(true);
+        f2.set(interceptor, "10");
+
+        Field f3 = interceptor.getClass().getDeclaredField("freeLimit");
+        f3.setAccessible(true);
+        f3.set(interceptor, "4096");
+
+
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
         when(userDao.getById(anyString())).thenReturn(user);

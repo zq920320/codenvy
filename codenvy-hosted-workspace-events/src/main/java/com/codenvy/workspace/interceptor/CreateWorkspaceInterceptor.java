@@ -52,6 +52,14 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     @Named("api.endpoint")
     private String apiEndpoint;
 
+    @Inject
+    @Named("subscription.saas.usage.free.gbh")
+    private String freeGbh;
+
+    @Inject
+    @Named("subscription.saas.free.max_limit_mb")
+    private String freeLimit;
+
     private static final String MAIL_TEMPLATE = "email-templates/workspace_created.html";
 
     private static final Logger LOG = LoggerFactory.getLogger(CreateWorkspaceInterceptor.class);
@@ -67,7 +75,8 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
                 Map<String, String> props = new HashMap<>();
                 props.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
                 props.put("workspace", descriptor.getName());
-
+                props.put("free.gbh", freeGbh);
+                props.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
                 mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
                                           "Welcome To Codenvy",
                                           MediaType.TEXT_HTML,

@@ -60,6 +60,8 @@ public class SubscriptionMailSender {
     private final String           invoiceSubject;
     private final String           billingFailedSubject;
     private final String           billingAddress;
+    private final String           freeGbh;
+    private final String           freeLimit;
     private final String           apiEndpoint;
     private final AccountDao       accountDao;
     private final UserDao          userDao;
@@ -69,6 +71,8 @@ public class SubscriptionMailSender {
     public SubscriptionMailSender(@Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
                                   @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
                                   @Named("subscription.saas.mail.address") String billingAddress,
+                                  @Named("subscription.saas.usage.free.gbh") String freeGbh,
+                                  @Named("subscription.saas.free.max_limit_mb") String freeLimit,
                                   @Named("api.endpoint") String apiEndpoint,
                                   AccountDao accountDao,
                                   UserDao userDao,
@@ -76,6 +80,8 @@ public class SubscriptionMailSender {
         this.invoiceSubject = invoiceSubject;
         this.billingFailedSubject = billingFailedSubject;
         this.billingAddress = billingAddress;
+        this.freeGbh = freeGbh;
+        this.freeLimit = Long.toString(Math.round(Long.parseLong(freeLimit) / 1000));
         this.apiEndpoint = apiEndpoint;
         this.accountDao = accountDao;
         this.userDao = userDao;
@@ -130,6 +136,7 @@ public class SubscriptionMailSender {
 
     public void sendAccountLockedNotification(String accountId, String total) throws ServerException {
         List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
+        accountOwnersEmails.add("sales@codenvy.com");
         Map<String, String> properties = new HashMap<>();
         properties.put("total", total);
         LOG.debug("Send account locked notifications to {}", accountOwnersEmails);
@@ -163,6 +170,8 @@ public class SubscriptionMailSender {
             properties = new HashMap<>();
         }
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+        properties.put("free.gbh", freeGbh);
+        properties.put("free.limit",freeLimit);
         mailClient.sendMail(billingAddress,
                             Strings.join(", ", emails.toArray(new String[emails.size()])),
                             null,
