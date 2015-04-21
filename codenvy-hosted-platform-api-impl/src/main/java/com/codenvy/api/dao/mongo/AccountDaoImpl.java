@@ -32,7 +32,6 @@ import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.account.server.dao.Subscription;
-import org.eclipse.che.api.account.server.dao.SubscriptionQueryBuilder;
 import org.eclipse.che.api.account.shared.dto.BillingCycleType;
 import org.eclipse.che.api.account.shared.dto.SubscriptionState;
 import org.eclipse.che.api.core.ConflictException;
@@ -440,12 +439,15 @@ public class AccountDaoImpl implements AccountDao {
         }
     }
 
-    @Override
     public SubscriptionQueryBuilder getSubscriptionQueryBuilder() {
         return subscriptionQueryBuilder;
     }
 
-    @Override
+    /**
+     * Get all accounts which are locked after RAM runner resources was exceeded.
+     *
+     * @return all locked accounts
+     */
     public List<Account> getAccountsWithLockedResources() throws ServerException, ForbiddenException {
         DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", Constants.RESOURCES_LOCKED_PROPERTY)).get();
 

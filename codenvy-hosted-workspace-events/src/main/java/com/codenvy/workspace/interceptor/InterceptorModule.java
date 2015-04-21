@@ -35,6 +35,7 @@ public class InterceptorModule extends AbstractModule {
     @Override
     protected void configure() {
         AddWorkspaceMemberInterceptor addWorkspaceMemberInterceptor = new AddWorkspaceMemberInterceptor();
+        RemoveWorkspaceMemberInterceptor removeWorkspaceMemberInterceptor = new RemoveWorkspaceMemberInterceptor();
         CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
         FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
         FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
@@ -42,9 +43,13 @@ public class InterceptorModule extends AbstractModule {
         requestInjection(factoryWorkspaceInterceptor);
         requestInjection(createWorkspaceInterceptor);
         requestInjection(factoryResourcesInterceptor);
+        requestInjection(removeWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         Matchers.returns(Matchers.subclassesOf(Response.class)),
                         addWorkspaceMemberInterceptor, createWorkspaceInterceptor, factoryWorkspaceInterceptor);
+        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
+                        Matchers.any(),
+                        removeWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceDao.class),
                         Matchers.any(),
                         factoryResourcesInterceptor);

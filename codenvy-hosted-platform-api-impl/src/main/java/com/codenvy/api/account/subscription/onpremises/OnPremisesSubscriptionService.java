@@ -79,7 +79,6 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
         if (subscription.getProperties().get("Users") == null) {
             throw new ConflictException("Subscription property 'Users' required");
         }
-
         try {
             if (accountDao.getActiveSubscription(subscription.getAccountId(), getServiceId()) != null) {
                 throw new ConflictException(SUBSCRIPTION_LIMIT_EXHAUSTED_MESSAGE);
@@ -88,8 +87,9 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
+        subscriptionServiceHelper.checkTrial(subscription);
         subscriptionServiceHelper.checkCreditCard(subscription);
-        subscriptionServiceHelper.setDates(subscription);
+        subscriptionServiceHelper.fillDates(subscription);
     }
 
     @Override

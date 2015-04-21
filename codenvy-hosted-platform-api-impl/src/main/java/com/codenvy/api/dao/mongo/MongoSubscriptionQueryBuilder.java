@@ -25,7 +25,6 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
 import org.eclipse.che.api.account.server.dao.Subscription;
-import org.eclipse.che.api.account.server.dao.SubscriptionQueryBuilder;
 import org.eclipse.che.api.account.shared.dto.SubscriptionState;
 import org.eclipse.che.api.core.ServerException;
 

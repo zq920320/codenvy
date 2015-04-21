@@ -17,11 +17,9 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
@@ -34,10 +32,9 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.nio.charset.Charset;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -60,10 +57,6 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     @Inject
     private MemberDao memberDao;
 
-
-    @Inject
-    private UserProfileDao profileDao;
-
     @Inject
     @Named("api.endpoint")
     private String apiEndpoint;
@@ -78,33 +71,32 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
         if ("addMember".equals(invocation.getMethod().getName())) {
             MemberDescriptor descriptor = (MemberDescriptor)((Response)result).getEntity();
             EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
-            if (memberDao.getWorkspaceMembers(descriptor.getWorkspaceReference().getId()).size() > 1) {
+            // Do not send notifications on join to temporary ws.
+            if (descriptor.getWorkspaceReference().isTemporary()) {
+                return result;
+            }
+            List<Member> workspaceMembers = memberDao.getWorkspaceMembers(descriptor.getWorkspaceReference().getId());
+            if (workspaceMembers.size() > 1) {
                 try {
-
-                    // Do not send notifications on join to temporary ws.
-                    if (descriptor.getWorkspaceReference().isTemporary())
-                        return result;
+                    String adminEmail = "";
+                    for (Member one : workspaceMembers) {
+                        if (one.getRoles().contains("workspace/admin")) {
+                            adminEmail = userDao.getById(one.getUserId()).getEmail();
+                            break;
+                        }
+                    }
 
                     String recipientEmail = userDao.getById(descriptor.getUserId()).getEmail();
-
                     String senderUserid = environmentContext.getUser().getId();
-                    Profile senderProfile = profileDao.getById(senderUserid);
                     String senderEmail = userDao.getById(senderUserid).getEmail();
-                    String senderFName = senderProfile.getAttributes().get("firstName");
-                    String senderLName = senderProfile.getAttributes().get("lastName");
-                    String senderUsername = "";
-                    if (senderFName != null && !senderFName.isEmpty() && senderLName != null && !senderLName.isEmpty()) {
-                        senderUsername = String.format("%s %s", senderFName, senderLName);
-                        senderEmail = String.format("(%s)", senderEmail);
-                    }
                     Map<String, String> props = new HashMap<>();
                     props.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
                     props.put("workspace", descriptor.getWorkspaceReference().getName());
-                    props.put("username.whoInvited", senderUsername);
                     props.put("usermail.whoInvited", senderEmail);
+                    props.put("admin.email", adminEmail);
 
                     mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
-                                              senderUsername + senderEmail + " Has Added You to a Codenvy Workspace",
+                                              "Codenvy Workspace Invite",
                                               "text/html; charset=utf-8",
                                               IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
 

@@ -20,14 +20,14 @@ package com.codenvy.api.account.subscription.saas.job;
 
 import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.WorkspaceLocker;
+import com.codenvy.api.dao.mongo.AccountDaoImpl;
+import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.schedule.ScheduleCron;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,14 +47,14 @@ import java.util.Set;
 public class RefillJob implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
-    private final AccountDao      accountDao;
-    private final WorkspaceDao    workspaceDao;
-    private final AccountLocker   accountLocker;
-    private final WorkspaceLocker workspaceLocker;
+    private final AccountDaoImpl   accountDao;
+    private final WorkspaceDaoImpl workspaceDao;
+    private final AccountLocker    accountLocker;
+    private final WorkspaceLocker  workspaceLocker;
 
     @Inject
-    public RefillJob(AccountDao accountDao,
-                     WorkspaceDao workspaceDao,
+    public RefillJob(AccountDaoImpl accountDao,
+                     WorkspaceDaoImpl workspaceDao,
                      AccountLocker accountLocker,
                      WorkspaceLocker workspaceLocker) {
         this.accountDao = accountDao;

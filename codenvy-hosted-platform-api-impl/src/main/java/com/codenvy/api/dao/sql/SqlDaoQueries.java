@@ -30,7 +30,7 @@ public interface SqlDaoQueries {
     /**
      * Multiplier to transform GB/h to MB/msec back and forth.
      */
-    long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1024;
+    long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1000;
 
     String GBH_SUM = " SUM(" +
                      "     ROUND(" +

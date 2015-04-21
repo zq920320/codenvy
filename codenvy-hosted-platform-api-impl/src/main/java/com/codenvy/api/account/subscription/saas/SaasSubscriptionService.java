@@ -108,8 +108,9 @@ public class SaasSubscriptionService extends SubscriptionService {
             throw new ServerException(e.getLocalizedMessage());
         }
 
+        subscriptionServiceHelper.checkTrial(subscription);
         subscriptionServiceHelper.checkCreditCard(subscription);
-        subscriptionServiceHelper.setDates(subscription);
+        subscriptionServiceHelper.fillDates(subscription);
     }
 
     @Override
@@ -117,7 +118,7 @@ public class SaasSubscriptionService extends SubscriptionService {
         //TODO Enable payment when will be exist Saas prepaid subscriptions with non null number of GbH
         //Saas subscriptions will be paid in end of billing period
         //subscriptionServiceHelper.chargeSubscriptionIfNeed(subscription);
-        subscriptionServiceHelper.setDates(subscription);
+        subscriptionServiceHelper.fillDates(subscription);
 
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
 

@@ -59,7 +59,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("12-01-2015 10:20:56").getTime(),
                                      sdf.parse("10-01-2015 10:00:00").getTime(),
                                      "usr-123",
@@ -76,7 +76,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      sdf.parse("10-01-2015 10:20:56").getTime(),
                                      sdf.parse("31-01-2015 10:00:00").getTime(),
                                      "usr-123",
@@ -97,7 +97,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric expected =
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      billingPeriod.getCurrent().getStartDate().getTime(),
                                      billingPeriod.getCurrent().getStartDate().getTime() + 1000,
                                      "usr-123",
@@ -121,7 +121,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric usedMetric =
-                new MemoryUsedMetric(1024,
+                new MemoryUsedMetric(1000,
                                      billingPeriod.getCurrent().getStartDate().getTime(),
                                      billingPeriod.getCurrent().getStartDate().getTime() + 1000,
 
@@ -184,7 +184,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
                                                                       "ws-124",
                                                                       "run-5"));
 
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 12:20:00").getTime(),
                                                                       "usr-123",
@@ -204,8 +204,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
         Map<String, Double> result = meterBasedStorage
                 .getMemoryUsedReport("ac-46534", sdf.parse("10-01-2014 10:00:00").getTime(),
                                      sdf.parse("10-01-2014 12:10:00").getTime());
-        Assert.assertEquals(result.get("ws-124"), 0.283333);
-        Assert.assertEquals(result.get("ws-235423"), 0.216667);
+        Assert.assertEquals(result.get("ws-124"), 0.290133);
+        Assert.assertEquals(result.get("ws-235423"), 0.217867);
         Assert.assertEquals(2, result.size());
     }
 
@@ -227,7 +227,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
                                                                       "ws-235423",
                                                                       "run-2"));
 
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 12:20:00").getTime(),
                                                                       "usr-123",
@@ -245,7 +245,7 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
 
         Double result = meterBasedStorage.getUsedMemoryByWorkspace("ws-235423", sdf.parse("10-01-2014 10:00:00").getTime(),
                                                                    sdf.parse("10-01-2014 12:10:00").getTime());
-        Assert.assertEquals(result, 0.1875);
+        Assert.assertEquals(result, 0.188);
     }
 
     @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
@@ -253,14 +253,14 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
             throws ParseException, ServerException {
         //then
         //when
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("10-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("01-02-2014 12:20:00").getTime(),
                                                                       "usr-123",
                                                                       "ac-46534",
                                                                       "ws-235423",
                                                                       "run-09889797"));
-        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1024,
+        meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(1000,
                                                                       sdf.parse("08-01-2014 12:00:00").getTime(),
                                                                       sdf.parse("10-01-2014 15:20:00").getTime(),
                                                                       "usr-123",

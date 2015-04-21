@@ -30,7 +30,6 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
@@ -54,9 +53,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 @Listeners(value = {MockitoTestNGListener.class})
@@ -69,16 +66,10 @@ public class AddWorkspaceMemberInterceptorTest {
     private UserDao userDao;
 
     @Mock
-    private UserProfileDao profileDao;
-
-    @Mock
     private MemberDao memberDao;
 
     @Mock
     private User user;
-
-    @Mock
-    private Profile profile;
 
     @Mock
     private MethodInvocation invocation;
@@ -141,8 +132,6 @@ public class AddWorkspaceMemberInterceptorTest {
         when(invocation.proceed()).thenReturn(status(CREATED).entity(memberDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
         when(memberDescriptor.getUserId()).thenReturn("user1234566");
-        when(profile.getAttributes()).thenReturn(profileAttributes);
-        when(profileDao.getById(anyString())).thenReturn(profile);
         when(memberDescriptor.getWorkspaceReference())
                 .thenReturn(DtoFactory.getInstance().createDto(WorkspaceReference.class).withId("ws29301").withName("testWSName"));
         when(userDao.getById(anyString())).thenReturn(user);
@@ -175,8 +164,6 @@ public class AddWorkspaceMemberInterceptorTest {
         when(invocation.proceed()).thenReturn(status(CREATED).entity(memberDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
         when(memberDescriptor.getUserId()).thenReturn("user1234566");
-        when(profile.getAttributes()).thenReturn(profileAttributes);
-        when(profileDao.getById(anyString())).thenReturn(profile);
         when(memberDescriptor.getWorkspaceReference())
                 .thenReturn(DtoFactory.getInstance().createDto(WorkspaceReference.class).withId("ws29301").withName("testWSName"));
         when(userDao.getById(anyString())).thenReturn(user);
