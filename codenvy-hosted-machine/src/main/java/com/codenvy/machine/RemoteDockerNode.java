@@ -18,12 +18,12 @@
 package com.codenvy.machine;
 
 import com.codenvy.docker.DockerConnector;
-import com.codenvy.docker.swarm.SwarmDockerConnector;
-import com.codenvy.docker.json.ContainerInfo;
+import com.codenvy.swarm.SwarmDockerConnector;
 import com.codenvy.machine.docker.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
+import com.codenvy.swarm.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.core.ConflictException;
@@ -93,7 +93,7 @@ public class RemoteDockerNode implements DockerNode {
         String nodeLocation = "127.0.0.1";
         if (dockerConnector instanceof SwarmDockerConnector) {
             try {
-                final ContainerInfo info = ((SwarmDockerConnector)dockerConnector).inspectContainerDirectly(containerId);
+                final SwarmContainerInfo info = ((SwarmDockerConnector)dockerConnector).inspectContainerDirectly(containerId);
                 if (info != null) {
                     nodeLocation = info.getNode().getIp();
                 }

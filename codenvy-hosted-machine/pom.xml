@@ -37,6 +37,11 @@
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.plugin-hosted</groupId>
+            <artifactId>codenvy-swarm-client</artifactId>
+            <version>${codenvy.plugin.hosted.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-assistedinject</artifactId>
             <version>${com.google.code.guice.version}</version>
