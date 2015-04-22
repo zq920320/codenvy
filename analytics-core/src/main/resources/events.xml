@@ -229,6 +229,15 @@
             <param>WS-ID</param>
         </parameters>
     </event>
+    <event name="project-opened">
+        <description>Project opened</description>
+        <parameters>
+            <param>WS</param>
+            <param>USER</param>
+            <param>PROJECT</param>
+            <param>TYPE</param>
+        </parameters>
+    </event>
     <event name="project-created">
         <description>Project created</description>
         <parameters>

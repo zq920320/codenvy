@@ -1780,6 +1780,7 @@ function AnalyticsConfiguration() {
         "create_maven_module_action": "#PROJECTS",
         "quick_documentation_action": "#PROJECTS",
         "open_declaration_action": "#PROJECTS",
+        "projects_active": "#PROJECTS",
 
         /** SESSIONS */
         "factory_sessions_with_build": "#SESSIONS",

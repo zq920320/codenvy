@@ -25,6 +25,10 @@
                 <parameter key="section-name" value="Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="projects_active"/>
+                <parameter key="description" value="Active"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="created_projects"/>
                 <parameter key="description" value="Created"/>
             </row>

@@ -21,6 +21,7 @@ import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
@@ -40,8 +41,10 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Alexander Reshetnyak
@@ -236,5 +239,37 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("user"), null);
         assertEquals(m.get("ws"), null);
         assertEquals(m.get("project_id"), null);
+    }
+
+
+    @Test
+    public void testTestProjectsActiveMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_ACTIVE);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        assertEquals(value.getAsLong(), 2);
+    }
+
+    @Test
+    public void testTestProjectsActiveSetMetric() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_ACTIVE_SET);
+        SetValueData value = (SetValueData)metric.getValue(builder.build());
+        assertEquals(value.size(), 2);
+        Set<ValueData> all = value.getAll();
+
+        assertTrue(all.toArray()[0].toString().contains("user_1_"));
+        assertTrue(all.toArray()[0].toString().contains("workspace_1_"));
+        assertTrue(all.toArray()[0].toString().contains("project1"));
+
+        assertTrue(all.toArray()[1].toString().contains("user_1_"));
+        assertTrue(all.toArray()[1].toString().contains("workspace_1_"));
+        assertTrue(all.toArray()[1].toString().contains("project2"));
     }
 }

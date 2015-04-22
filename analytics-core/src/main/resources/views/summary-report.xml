@@ -75,6 +75,10 @@
                 <parameter key="description" value="Projects"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="projects_active"/>
+                <parameter key="description" value="Projects - Active"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="builds"/>
                 <parameter key="description" value="Builds"/>
             </row>            

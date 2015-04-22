@@ -47,6 +47,10 @@ n1 = filterByEvent(f, 'project-created');
 n = FOREACH n1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_creates', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE n INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
+m1 = filterByEvent(f, 'project-opened');
+m = FOREACH m1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_opened', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
+STORE m INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
+
 o1 = filterByEvent(f, 'project-destroyed');
 o = FOREACH o1 GENERATE UUID(), TOTUPLE('date', ToMilliSeconds(dt)), TOTUPLE('project_destroys', 1), TOTUPLE('user', user), TOTUPLE('ws', ws), TOTUPLE('project', project), TOTUPLE('project_type', LOWER(project_type)), TOTUPLE('project_id', CreateProjectId(user, ws, project));
 STORE o INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
