@@ -246,14 +246,6 @@
             return ownAccount;
         };
 
-/*        var getUserMemberships = function(){
-            var url = "/api/account";
-            return $.ajax({
-                url: url,
-                type: "GET",
-            });
-        };*/
-
         var ensureExistenceAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
