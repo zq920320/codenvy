@@ -24,6 +24,7 @@ import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
+import com.codenvy.analytics.metrics.accounts.RemoteResourceFetcher;
 import com.codenvy.analytics.persistent.CollectionsManagement;
 import com.codenvy.analytics.persistent.MongoDataStorage;
 import com.codenvy.analytics.pig.PigServer;
@@ -45,6 +46,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+
+import static org.mockito.Mockito.spy;
 
 /** @author <a href="mailto:abazko@exoplatform.com">Anatoliy Bazko</a> */
 public class BaseTest {
@@ -83,6 +86,7 @@ public class BaseTest {
     protected final DB                    mongoDb;
     protected final ScriptsManager        scriptsManager;
     protected final CollectionsManagement collectionsManagement;
+    protected final RemoteResourceFetcher resourceFetcher;
 
     @BeforeClass
     public void clearDatabase() {
@@ -102,6 +106,7 @@ public class BaseTest {
         this.mongoDb = mongoDataStorage.getDb();
         this.scriptsManager = Injector.getInstance(ScriptsManager.class);
         this.collectionsManagement = Injector.getInstance(CollectionsManagement.class);
+        this.resourceFetcher = spy(Injector.getInstance(RemoteResourceFetcher.class));
     }
 
     protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {

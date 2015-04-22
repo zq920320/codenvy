@@ -17,9 +17,6 @@
  */
 package com.codenvy.analytics.datamodel;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -86,9 +83,9 @@ public class MapValueData extends CollectionValueData {
             builder.append('"');
             builder.append(entry.getKey());
             builder.append('"');
-            
+
             builder.append(':');
-            
+
             builder.append('"');
             builder.append(entry.getValue().getAsString());
             builder.append('"');
@@ -155,24 +152,5 @@ public class MapValueData extends CollectionValueData {
     @Override
     public int doHashCode() {
         return value.hashCode();
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(value.size());
-        for (Entry<String, ValueData> entry : value.entrySet()) {
-            out.writeUTF(entry.getKey());
-            out.writeObject(entry.getValue());
-        }
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int size = in.readInt();
-
-        value = new HashMap<>(size);
-        for (int i = 0; i < size; i++) {
-            value.put(in.readUTF(), (ValueData)in.readObject());
-        }
     }
 }

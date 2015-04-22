@@ -33,45 +33,51 @@
     <div class="row-fluid">
         <div>
             <div class="well topFilteringPanel">
-                <div id="filter-by" class="left" targetWidgets="_all">
+                <div id="filter-by" class="left" targetWidgets="accountOverview,accountUsersStatistics">
                     <div class="collabsiblePanelTitle">Filter</div>
                     <div class="collabsiblePanelBody">
                         <table>
                             <tr>
-                               <td><label for="input-id">ID:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-id" name="account_id" class="text-box" />
-                               </div></td>
+                               <td><label for="datepicker-from-date">From Date:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="datepicker-from-date" name="from_date" class="date-box"/>
+                                   </div>
+                               </td>
                             </tr>
                             <tr>
-                               <td><label for="input-name">Name:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-name" name="account_name" class="text-box" />
-                               </div></td>
-                            </tr>
-                            <tr>
-                               <td><label for="input-user">Owner:</label></td>
-                               <td><div class="filter-item">
-                                   <input type="text" id="input-user" name="user" class="text-box" />
-                               </div></td>
+                               <td><label for="datepicker-to-date">To Date:</label></td>
+                               <td>
+                                   <div class="filter-item">
+                                       <input type="text" id="datepicker-to-date" name="to_date" class="date-box"/>
+                                   </div>
+                               </td>
                             </tr>
                             <tr>
                                <td></td>
                                <td><div class="filter-item">
-                                    <button class="btn command-btn btn-primary">Filter</button>                    
+                                    <button class="btn command-btn btn-primary">Filter</button>
                                     <button id="clearSelectionBtn" class="btn btn-small clear-btn">Clear</button>
                                </div></td>
                             </tr>
                         </table>
                     </div>
                 </div>
+                </div>
             </div>
-
             <div class="hero-unit">
+                <div class='view'>
+                    <div class='overview'>
+                        <div id="accountOverview"></div>
+                    </div>
+                </div>
+
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="accounts"></div>
+                            <div id="accountSubscriptions"></div>
+                            <div id="accountFactories"></div>
+                            <div id="accountUsersStatistics"></div>
                         </div>
                     </div>
                 </div>
@@ -81,7 +87,8 @@
 </div>
 
 <jsp:include page="/inclusions/footer.jsp">
-    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/EntryViewPresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/VerticalTablePresenter.js"/>
+    <jsp:param name="javaScriptToLoad" value="/analytics/scripts/presenters/HorizontalTablePresenter.js"/>
 </jsp:include>
 
 </body>

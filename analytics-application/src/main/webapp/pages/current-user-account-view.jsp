@@ -34,8 +34,8 @@
                 <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div class="item" id="accountOverview"></div>
-                            <div class="item" id="accountSubscriptions"></div>
+                            <div class="item" id="currentAccountOverview"></div>
+                            <div class="item" id="currentAccountSubscriptions"></div>
                             <div class="item" id="accountWorkspaces"></div>
                             <div class="item" id="accountUsers"></div>
                         </div>

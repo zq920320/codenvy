@@ -31,18 +31,24 @@ import java.util.List;
  * @author Alexander Reshetnyak
  */
 @Singleton
-public class DummyHTTPTransport implements MetricTransport {
+public class DummyHTTPTransport implements RemoteResourceFetcher {
 
     /** {@inheritDoc} */
     @Override
-    public <DTO> DTO getResource(Class<DTO> dtoInterface, String method, String path) throws IOException {
-        return getDto(dtoInterface);
+    public <DTO> DTO fetchResource(Class<DTO> dtoClass, String method, String relPath) throws IOException {
+        return getDto(dtoClass);
     }
 
     /** {@inheritDoc} */
     @Override
-    public <DTO> List<DTO> getResources(Class<DTO> dtoInterface, String method, String path) throws IOException {
-        return Arrays.asList(getDto(dtoInterface));
+    public <DTO> List<DTO> fetchResources(Class<DTO> dtoClass, String method, String relPath) throws IOException {
+        return Arrays.asList(getDto(dtoClass));
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public <DTO> List<DTO> fetchResources(Class<DTO> dtoClass, String method, String relPath, Object body) throws IOException {
+        return Arrays.asList(getDto(dtoClass));
     }
 
     private <DTO> DTO getDto(Class<DTO> dtoInterface) throws IOException {
@@ -55,8 +61,9 @@ public class DummyHTTPTransport implements MetricTransport {
         }
     }
 
-    private <DTO> DTO setEmptyValues(DTO dtoObject)
-            throws ClassNotFoundException, IllegalAccessException, InvocationTargetException {
+    private <DTO> DTO setEmptyValues(DTO dtoObject) throws ClassNotFoundException,
+                                                           IllegalAccessException,
+                                                           InvocationTargetException {
 
         Class<?> dtoClass = Class.forName(dtoObject.getClass().getName());
 
@@ -73,5 +80,4 @@ public class DummyHTTPTransport implements MetricTransport {
         }
         return dtoObject;
     }
-
 }

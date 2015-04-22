@@ -17,9 +17,6 @@
  */
 package com.codenvy.analytics.datamodel;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -102,21 +99,4 @@ public class SetValueData extends CollectionValueData {
         return value.hashCode();
     }
 
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeInt(value.size());
-        for (ValueData item : value) {
-            out.writeObject(item);
-        }
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        int size = in.readInt();
-
-        value = new HashSet<>(size);
-        for (int i = 0; i < size; i++) {
-            value.add((ValueData)in.readObject());
-        }
-    }
 }

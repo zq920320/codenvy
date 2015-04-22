@@ -1148,16 +1148,16 @@ function AnalyticsConfiguration() {
             }
         },
 
-        accountOverview: {
+        currentAccountOverview: {
             widgetLabel: "Overview",
             presenterType: "VerticalTablePresenter",
             modelViewName: "account"
         },
 
-        accountSubscriptions: {
+        currentAccountSubscriptions: {
             widgetLabel: "Subscriptions",
             presenterType: "HorizontalTablePresenter",
-            modelViewName: "current_user_subscriptions_list"
+            modelViewName: "accountSubscriptions"
         },
 
         accountWorkspaces: {
@@ -1475,14 +1475,52 @@ function AnalyticsConfiguration() {
             }
         },
 
-        /** for Organization View */
+        /** for Accounts View */
         accounts: {
             widgetLabel: "Accounts",
             presenterType: "EntryViewPresenter",
             modelViewName: "accounts",
 
             columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user"
+                "Account ID": "/analytics/pages/account-view.jsp?account_id",
+                "Owner": "/analytics/pages/user-view.jsp?user"
+            }
+        },
+
+        accountOverview: {
+            widgetLabel: "Account Overview",
+            presenterType: "VerticalTablePresenter",
+            modelViewName: "accountOverview",
+
+            columnLinkPrefixList: {
+                "Owner": "/analytics/pages/user-view.jsp?user"
+            }
+        },
+
+        accountSubscriptions: {
+            widgetLabel: "Subscriptions",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "accountSubscriptions"
+        },
+
+        accountFactories: {
+            widgetLabel: "Factories",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "accountFactories",
+
+            columnLinkPrefixList: {
+                "Factory": "/analytics/pages/factory-view.jsp?factory",
+            }
+        },
+
+        accountUsersStatistics: {
+            widgetLabel: "User Statistics",
+            presenterType: "HorizontalTablePresenter",
+            modelViewName: "accountUsersStatistics",
+
+            columnLinkPrefixList: {
+                "User": "/analytics/pages/user-view.jsp?user",
+                "Workspace": "/analytics/pages/workspace-view.jsp?ws",
             }
         },
     };
@@ -1516,6 +1554,8 @@ function AnalyticsConfiguration() {
         "parameters",
         "action",
         "account_id",
+        "account_name",
+        "subscription",
         "data_universe",
         "passed_days_count",
         "start_time",

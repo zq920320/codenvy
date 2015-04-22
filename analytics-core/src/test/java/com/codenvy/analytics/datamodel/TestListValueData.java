@@ -22,7 +22,6 @@ import com.codenvy.analytics.BaseTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,22 +49,6 @@ public class TestListValueData extends BaseTest {
         valueData = new ListValueData(Arrays.<ValueData>asList(rowValueData1, rowValueData2));
     }
 
-    @Test
-    public void testSerialization() throws Exception {
-        File file = new File(BASE_DIR, "value");
-
-        try (ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file))) {
-            valueData.writeExternal(out);
-        }
-
-        ValueData newValueData = new ListValueData();
-        try (ObjectInput in = new ObjectInputStream(new FileInputStream(file))) {
-            newValueData.readExternal(in);
-        }
-
-
-        assertEquals(valueData, newValueData);
-    }
 
     @Test
     public void testEquals() {

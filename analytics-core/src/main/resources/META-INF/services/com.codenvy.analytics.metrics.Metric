@@ -16,7 +16,10 @@ com.codenvy.analytics.metrics.sessions.CollaborativeSessionsStarted
 com.codenvy.analytics.metrics.accounts.UsersRolesList
 com.codenvy.analytics.metrics.accounts.UsersRoles
 com.codenvy.analytics.metrics.accounts.CurrentUserWorkspacesList
-com.codenvy.analytics.metrics.accounts.CurrentUserSubscriptionsList
+com.codenvy.analytics.metrics.accounts.AccountsList
+com.codenvy.analytics.metrics.accounts.AccountSubscriptionsList
+com.codenvy.analytics.metrics.accounts.AccountFactoriesList
+com.codenvy.analytics.metrics.accounts.AccountUsersStatisticsList
 com.codenvy.analytics.metrics.accounts.CurrentUserAccountsList
 
 com.codenvy.analytics.metrics.projects.ProjectsList
@@ -361,5 +364,3 @@ com.codenvy.analytics.metrics.subscription.SubscriptionRenewed
 com.codenvy.analytics.metrics.subscription.TrialStarted
 com.codenvy.analytics.metrics.subscription.TrialExpired
 
-com.codenvy.analytics.metrics.accounts.AccountsList
-com.codenvy.analytics.metrics.accounts.Accounts

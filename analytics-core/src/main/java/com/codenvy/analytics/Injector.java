@@ -19,7 +19,7 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.accounts.DummyHTTPTransport;
 import com.codenvy.analytics.metrics.accounts.HTTPTransport;
-import com.codenvy.analytics.metrics.accounts.MetricTransport;
+import com.codenvy.analytics.metrics.accounts.RemoteResourceFetcher;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 
@@ -34,9 +34,9 @@ public class Injector {
             @Override
             protected void configure() {
                 if (isLocal(parent)) {
-                    bind(MetricTransport.class).to(DummyHTTPTransport.class);
+                    bind(RemoteResourceFetcher.class).to(DummyHTTPTransport.class);
                 } else {
-                    bind(MetricTransport.class).to(HTTPTransport.class);
+                    bind(RemoteResourceFetcher.class).to(HTTPTransport.class);
                 }
             }
         });
@@ -52,7 +52,7 @@ public class Injector {
 
     private static boolean isLocal(com.google.inject.Injector parent) {
         Configurator configurator = parent.getInstance(Configurator.class);
-        return (configurator.getString(HTTPTransport.API_ENDPOINT).equals("localhost"));
+        return (configurator.getString("api.endpoint").equals("localhost"));
     }
 }
 

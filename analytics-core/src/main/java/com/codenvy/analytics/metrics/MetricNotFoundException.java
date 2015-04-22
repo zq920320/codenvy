@@ -17,7 +17,11 @@
  */
 package com.codenvy.analytics.metrics;
 
-/** To indicate that metric is not found @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a> */
+/**
+ * To indicate that metric is not found
+ *
+ * @author Dmitry Kuleshov
+ */
 public class MetricNotFoundException extends RuntimeException {
     public MetricNotFoundException(String message) {
         super(message);

@@ -27,10 +27,15 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataLoader;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+import com.google.common.collect.ImmutableList;
 
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
 import org.eclipse.che.api.account.shared.dto.SubscriptionDescriptor;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.api.project.shared.dto.ProjectReference;
 import org.eclipse.che.api.user.shared.dto.ProfileDescriptor;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
@@ -42,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.Math.min;
+import static java.lang.String.format;
 
 /**
  * @author Alexander Reshetnyak
@@ -75,10 +81,10 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PROFILE_ATTRIBUTE_EMAIL      = "email";
     public static final String ROLES                        = "roles";
 
-    public static final String SUBSCRIPTION_START_DATE = "subscription_start_date";
-    public static final String SUBSCRIPTION_END_DATE   = "subscription_end_date";
     public static final String SUBSCRIPTION_PROPERTIES = "subscription_properties";
     public static final String SUBSCRIPTION_SERVICE_ID = "subscription_service_id";
+    public static final String SUBSCRIPTION_START_DATE = "subscription_start_date";
+    public static final String SUBSCRIPTION_END_DATE   = "subscription_end_date";
 
     public static final String WORKSPACE_ID        = "workspace_id";
     public static final String WORKSPACE_NAME      = "workspace_name";
@@ -90,10 +96,10 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String ROLE_ACCOUNT_OWNER       = "account/owner";
     public static final String ROLE_ACCOUNT_MEMBER      = "account/member";
 
-    private static final MetricTransport httpMetricTransport;
+    protected static final RemoteResourceFetcher RESOURCE_FETCHER;
 
     static {
-        httpMetricTransport = Injector.getInstance(MetricTransport.class);
+        RESOURCE_FETCHER = Injector.getInstance(RemoteResourceFetcher.class);
     }
 
 
@@ -102,12 +108,18 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     protected List<MemberDescriptor> getAccountMemberships() throws IOException {
-        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", PATH_ACCOUNT);
+        return RESOURCE_FETCHER.fetchResources(MemberDescriptor.class, "GET", PATH_ACCOUNT);
     }
 
     protected AccountDescriptor getAccountDescriptorById(String accountId) throws IOException {
-        return httpMetricTransport.getResource(AccountDescriptor.class, "GET",
-                                               PATH_ACCOUNT_BY_ID.replace(PARAM_ACCOUNT_ID, accountId));
+        return RESOURCE_FETCHER.fetchResource(AccountDescriptor.class, "GET",
+                                              PATH_ACCOUNT_BY_ID.replace(PARAM_ACCOUNT_ID, accountId));
+    }
+
+    protected AccountDescriptor getAccountDescriptorByName(String accountName) throws IOException {
+        return RESOURCE_FETCHER.fetchResource(AccountDescriptor.class,
+                                              "GET",
+                                              "/account/find?name=" + accountName);
     }
 
     protected MemberDescriptor getAccountMembership(Context context) throws IOException {
@@ -123,18 +135,18 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         throw new IOException("There is no account with id " + accountId);
     }
 
-    protected List<WorkspaceDescriptor> getWorkspaces(String accountId) throws IOException {
-        return httpMetricTransport
-                .getResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
+    protected List<WorkspaceDescriptor> getWorkspacesByAccountId(String accountId) throws IOException {
+        return RESOURCE_FETCHER
+                .fetchResources(WorkspaceDescriptor.class, "GET", PATH_ACCOUNT_WORKSPACES.replace(PARAM_ACCOUNT_ID, accountId));
     }
 
     protected List<MemberDescriptor> getMembers(String workspaceId) throws IOException {
         String pathWorkspaceMembers = PATH_WORKSPACES_MEMBERS.replace(PARAM_WORKSPACE_ID, workspaceId);
-        return httpMetricTransport.getResources(MemberDescriptor.class, "GET", pathWorkspaceMembers);
+        return RESOURCE_FETCHER.fetchResources(MemberDescriptor.class, "GET", pathWorkspaceMembers);
     }
 
     protected ProfileDescriptor getProfile() throws IOException {
-        return httpMetricTransport.getResource(ProfileDescriptor.class, "GET", PATH_PROFILE);
+        return RESOURCE_FETCHER.fetchResource(ProfileDescriptor.class, "GET", PATH_PROFILE);
     }
 
     protected StringValueData getEmail(ProfileDescriptor profile) {
@@ -164,7 +176,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     }
 
     public static UserDescriptor getCurrentUser() throws IOException {
-        return httpMetricTransport.getResource(UserDescriptor.class, "GET", AbstractAccountMetric.PATH_USER);
+        return RESOURCE_FETCHER.fetchResource(UserDescriptor.class, "GET", AbstractAccountMetric.PATH_USER);
     }
 
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
@@ -179,9 +191,13 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         throw new IOException("There is no member " + userId + " in " + workspaceId);
     }
 
-    protected List<SubscriptionDescriptor> getSubscriptions(String accountId) throws IOException {
+    protected List<SubscriptionDescriptor> getSubscriptionsByAccountId(String accountId) throws IOException {
         String path = PATH_ACCOUNT_SUBSCRIPTIONS.replace(PARAM_ID, accountId);
-        return httpMetricTransport.getResources(SubscriptionDescriptor.class, "GET", path);
+        return RESOURCE_FETCHER.fetchResources(SubscriptionDescriptor.class, "GET", path);
+    }
+
+    protected List<ProjectReference> getProjects(String workspaceId) throws IOException {
+        return RESOURCE_FETCHER.fetchResources(ProjectReference.class, "GET", "/project/" + workspaceId);
     }
 
     protected List<ValueData> keepSpecificPage(List<ValueData> list, Context context) {
@@ -225,5 +241,32 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         }
 
         return list;
+    }
+
+    protected List<MemberDescriptor> getMembersByAccountId(String accountId) throws IOException {
+        return RESOURCE_FETCHER.fetchResources(MemberDescriptor.class,
+                                               "GET",
+                                               "/account/" + accountId + "/members");
+    }
+
+    protected ImmutableList<org.eclipse.che.api.workspace.shared.dto.MemberDescriptor> getMembers(List<WorkspaceDescriptor> workspaces) {
+        return FluentIterable
+                .from(workspaces)
+                .transformAndConcat(new Function<WorkspaceDescriptor, List<org.eclipse.che.api.workspace.shared.dto.MemberDescriptor>>() {
+                    @Override
+                    public List<org.eclipse.che.api.workspace.shared.dto.MemberDescriptor> apply(WorkspaceDescriptor workspace) {
+                        try {
+                            return RESOURCE_FETCHER.fetchResources(org.eclipse.che.api.workspace.shared.dto.MemberDescriptor.class,
+                                                                   "GET",
+                                                                   format("/workspace/%s/members", workspace.getId()));
+                        } catch (IOException e) {
+                            throw new IllegalStateException(e);
+                        }
+                    }
+                }).toList();
+    }
+
+    protected List<Link> getFactoriesByAccountId(String accountId) throws IOException {
+        return RESOURCE_FETCHER.fetchResources(Link.class, "GET", "/factory/find?creator.accountId=" + accountId);
     }
 }

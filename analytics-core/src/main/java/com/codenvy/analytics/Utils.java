@@ -287,6 +287,15 @@ public class Utils {
     }
 
 
+    public static List<String> filterAsList(String value) {
+        if (value.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
+        return new ArrayList<>(Arrays.asList(value.split(MongoDataLoader.SEPARATOR)));
+    }
+
+
     public static boolean isRegisteredUserName(Object userName) {
         return VALID_EMAIL_ADDRESS_RFC822.matcher(userName.toString()).matches();
     }

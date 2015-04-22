@@ -25,63 +25,51 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
 
-import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
-import org.eclipse.che.api.user.shared.dto.UserDescriptor;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.core.rest.shared.dto.Link;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /**
- * @author Alexander Reshetnyak
+ * @author Anatoliy Bazko
  */
 @RolesAllowed(value = {"system/admin", "system/manager"})
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
-public class UsersRolesList extends AbstractAccountMetric {
+public class AccountFactoriesList extends AbstractAccountMetric {
 
-    public UsersRolesList() {
-        super(MetricType.USERS_ROLES_LIST);
+    public AccountFactoriesList() {
+        super(MetricType.ACCOUNT_FACTORIES_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
-        MemberDescriptor accountById = getAccountMembership(context);
+        String accountId = context.getAsString(MetricFilter.ACCOUNT_ID);
+        List<Link> linkFactories = getFactoriesByAccountId(accountId);
 
-        UserDescriptor currentUser = getCurrentUser();
-        String currentUserId = currentUser.getId();
-
-        List<ValueData> list2Return = new ArrayList<>();
-        for (WorkspaceDescriptor workspace : getWorkspacesByAccountId(accountById.getAccountReference().getId())) {
-            String rolesCurrentUserInWorkspace = getUserRoleInWorkspace(currentUserId, workspace.getId());
-            boolean hasAdminRoles = rolesCurrentUserInWorkspace.contains(ROLE_WORKSPACE_ADMIN.toLowerCase());
-
-            for (MemberDescriptor member : getMembers(workspace.getId())) {
-                if (hasAdminRoles || member.getUserId().equals(currentUserId)) {
-                    Map<String, ValueData> m = new HashMap<>();
-                    m.put(ROLES, StringValueData.valueOf(member.getRoles().toString()));
-                    m.put(USER, StringValueData.valueOf(member.getUserId()));
-                    m.put(WS, StringValueData.valueOf(workspace.getId()));
-
-                    list2Return.add(new MapValueData(m));
-                }
+        List<ValueData> l = FluentIterable.from(linkFactories).transform(new Function<Link, ValueData>() {
+            @Override
+            public ValueData apply(Link link) {
+                Map<String, ValueData> m = new HashMap<>(2);
+                m.put("factory", StringValueData.valueOf(link.getHref()));
+                m.put("parameters", StringValueData.valueOf(link.getParameters().toString()));
+                return MapValueData.valueOf(m);
             }
-        }
+        }).toList();
 
-        list2Return = sort(list2Return, context);
-        list2Return = keepSpecificPage(list2Return, context);
-        return new ListValueData(list2Return);
+        return ListValueData.valueOf(l);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Users roles in workspaces";
+        return "Factories";
     }
 
     /** {@inheritDoc} */

@@ -21,8 +21,6 @@ import com.codenvy.analytics.BaseTest;
 
 import org.testng.annotations.Test;
 
-import java.io.*;
-
 import static org.testng.Assert.assertNotEquals;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -31,23 +29,6 @@ import static org.testng.AssertJUnit.assertEquals;
 public class TestLongValueData extends BaseTest {
 
     private final ValueData valueData = new LongValueData(10L);
-
-    @Test
-    public void testSerialization() throws Exception {
-        File file = new File(BASE_DIR, "value");
-
-        try (ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file))) {
-            valueData.writeExternal(out);
-        }
-
-        LongValueData newValueData = new LongValueData();
-        try (ObjectInput in = new ObjectInputStream(new FileInputStream(file))) {
-            newValueData.readExternal(in);
-        }
-
-
-        assertEquals(valueData, newValueData);
-    }
 
     @Test
     public void testEquals() {

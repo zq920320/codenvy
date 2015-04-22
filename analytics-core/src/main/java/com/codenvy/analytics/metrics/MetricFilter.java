@@ -62,7 +62,7 @@ public enum MetricFilter {
     AFFILIATE_ID,
     PROJECT,
     ACCOUNT_ID,
-    DATA_UNIVERSE(true),
+        DATA_UNIVERSE(true),
     PROJECT_TYPE,
     TASK_ID,
     TASK_TYPE,

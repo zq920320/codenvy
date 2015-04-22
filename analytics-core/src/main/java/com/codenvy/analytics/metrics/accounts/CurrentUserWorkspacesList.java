@@ -63,7 +63,7 @@ public class CurrentUserWorkspacesList extends AbstractAccountMetric {
         String currentUserId = user.getId();
 
         List<ValueData> list2Return = new ArrayList<>();
-        for (WorkspaceDescriptor workspace : getWorkspaces(accountById.getAccountReference().getId())) {
+        for (WorkspaceDescriptor workspace : getWorkspacesByAccountId(accountById.getAccountReference().getId())) {
             Map<String, ValueData> m = new HashMap<>();
             m.put(ACCOUNT_ID, new StringValueData(workspace.getAccountId()));
             m.put(WORKSPACE_ID, new StringValueData(workspace.getId()));

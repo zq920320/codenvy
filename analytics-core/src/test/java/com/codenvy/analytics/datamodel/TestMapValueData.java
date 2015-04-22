@@ -22,7 +22,6 @@ import com.codenvy.analytics.BaseTest;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
-import java.io.*;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -44,23 +43,6 @@ public class TestMapValueData extends BaseTest {
         value.put("key3", new LongValueData(10));
 
         valueData = new MapValueData(value);
-    }
-
-    @Test
-    public void testSerialization() throws Exception {
-        File file = new File(BASE_DIR, "value");
-
-        try (ObjectOutput out = new ObjectOutputStream(new FileOutputStream(file))) {
-            valueData.writeExternal(out);
-        }
-
-        MapValueData newValueData = new MapValueData();
-        try (ObjectInput in = new ObjectInputStream(new FileInputStream(file))) {
-            newValueData.readExternal(in);
-        }
-
-
-        assertEquals(valueData, newValueData);
     }
 
     @Test

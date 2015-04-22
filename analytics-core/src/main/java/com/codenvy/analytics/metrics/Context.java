@@ -99,12 +99,15 @@ public class Context {
     }
 
     public String getAsString(Parameters key) {
-        Object object = params.get(key.toString());
-        return object == null ? null : (String)object;
+        return getAsString(key.toString());
     }
 
     public String getAsString(MetricFilter key) {
-        Object object = params.get(key.toString());
+        return getAsString(key.toString());
+    }
+
+    public String getAsString(String key) {
+        Object object = params.get(key);
         if (object == null) {
             return null;
         } else if (object.getClass().isArray()) {

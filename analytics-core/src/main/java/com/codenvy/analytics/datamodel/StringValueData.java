@@ -17,10 +17,6 @@
  */
 package com.codenvy.analytics.datamodel;
 
-import java.io.IOException;
-import java.io.ObjectInput;
-import java.io.ObjectOutput;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class StringValueData extends AbstractValueData {
 
@@ -75,15 +71,5 @@ public class StringValueData extends AbstractValueData {
     @Override
     protected ValueData doAdd(ValueData valueData) {
         return new StringValueData(value + "\n" + valueData.getAsString());
-    }
-
-    @Override
-    public void writeExternal(ObjectOutput out) throws IOException {
-        out.writeUTF(value);
-    }
-
-    @Override
-    public void readExternal(ObjectInput in) throws IOException, ClassNotFoundException {
-        value = in.readUTF();
     }
 }

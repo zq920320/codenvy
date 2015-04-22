@@ -17,11 +17,10 @@
  */
 package com.codenvy.analytics.datamodel;
 
-import java.io.Externalizable;
-
-
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public interface ValueData extends Externalizable {
+/**
+ * @author Anatoliy Bazko
+ */
+public interface ValueData {
 
     /**
      * Combines two {@link com.codenvy.analytics.datamodel.ValueData} into one single. The passed and the current

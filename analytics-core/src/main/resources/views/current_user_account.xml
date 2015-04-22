@@ -66,16 +66,4 @@
             </row>
         </section>
     </view>
-
-    <view name="current_user_subscriptions_list" on-demand="true">
-        <section name="current_user_subscriptions_list">
-            <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Subscription,Properties"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="current_user_subscriptions_list"/>
-                <parameter key="fields" value="subscription_service_id,subscription_properties"/>
-            </row>
-        </section>
-    </view>
 </display>

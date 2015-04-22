@@ -97,7 +97,7 @@ public class View {
     private final Utils         utils;
 
     private final Set<String> workspaceColumnNames = new HashSet<>(Arrays.asList("Workspace"));
-    private final Set<String> userColumnNames      = new HashSet<>(Arrays.asList("User", "Created By", "Email"));
+    private final Set<String> userColumnNames = new HashSet<>(Arrays.asList("User", "Created By", "Email", "Owner"));
 
     @Inject
     public View(ViewBuilder viewBuilder, CSVFileHolder csvFileCleanerHolder, Utils utils) {

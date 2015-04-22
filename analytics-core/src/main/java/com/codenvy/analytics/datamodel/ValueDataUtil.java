@@ -90,4 +90,14 @@ public class ValueDataUtil {
     public static boolean isDefault(ValueData valueData) {
         return valueData.equals(ValueDataFactory.createDefaultValue(valueData.getClass()));
     }
+
+    /** @return the first occurred field value */
+    public static ValueData getFirstValue(ListValueData valueData, String field, ValueData defaultValue) {
+        if (valueData.isEmpty()) {
+            return defaultValue;
+        } else {
+            Map<String, ValueData> m = treatAsMap(valueData.getAll().get(0));
+            return m.get(field);
+        }
+    }
 }
