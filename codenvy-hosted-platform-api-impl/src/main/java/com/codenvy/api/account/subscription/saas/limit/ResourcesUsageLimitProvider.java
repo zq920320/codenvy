@@ -47,6 +47,7 @@ public class ResourcesUsageLimitProvider implements Runnable {
         try {
             for (ResourcesWatchdog resourcesWatchdog : activeTasksHolder.getActiveWatchdogs()) {
                 if (resourcesWatchdog.isLimitedReached()) {
+                    resourcesWatchdog.lock();
                     for (MeteredTask meteredTask : activeTasksHolder.getActiveTasks(resourcesWatchdog.getId())) {
                         try {
                             meteredTask.interrupt();
@@ -54,7 +55,6 @@ public class ResourcesUsageLimitProvider implements Runnable {
                             LOG.error("Can't interrupt task with id " + meteredTask.getId(), e);
                         }
                     }
-                    resourcesWatchdog.lock();
                 }
             }
         } catch (Exception e) {

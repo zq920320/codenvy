@@ -165,12 +165,12 @@ public class ActiveTasksHolder {
             lock.writeLock().lock();
             try {
                 activeTasks.remove(accountId, meteredTask);
-                if (activeTasks.containsKey(accountId)) {
+                if (!activeTasks.containsKey(accountId)) {
                     activeWatchdogs.remove(accountId);
                 }
 
                 activeTasks.remove(workspaceId, meteredTask);
-                if (activeWatchdogs.containsKey(workspaceId)) {
+                if (!activeTasks.containsKey(workspaceId)) {
                     activeWatchdogs.remove(workspaceId);
                 }
             } finally {

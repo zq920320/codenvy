@@ -112,7 +112,7 @@ public class ActiveTasksHolderTest {
     }
 
     @Test
-    public void shouldRemoveAccountIfNoMoreTasks() throws Exception {
+    public void shouldRemoveWatchdogIfNoMoreTasks() throws Exception {
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
@@ -123,6 +123,22 @@ public class ActiveTasksHolderTest {
 
         assertTrue(activeTasksHolder.getActiveWatchdogs().isEmpty());
         assertTrue(activeTasksHolder.getActiveTasks(ACC_ID).isEmpty());
+    }
+
+    @Test
+    public void shouldNotRemoveWatchdogIfAnyTaskLeft() throws Exception {
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(2L, WS_ID, "project1"));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project1"));
+
+        assertEquals(activeTasksHolder.getActiveWatchdogs().size(), 2);
+        assertEquals(activeTasksHolder.getActiveTasks(ACC_ID).size(), 2);
     }
 
     @Test
