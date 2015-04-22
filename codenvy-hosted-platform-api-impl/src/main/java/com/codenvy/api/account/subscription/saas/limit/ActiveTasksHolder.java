@@ -239,10 +239,11 @@ public class ActiveTasksHolder {
         @Override
         public void onMeteredBuildEvent(BuilderEvent event) {
             switch (event.getType()) {
-                case BEGIN:
+                case BUILD_TASK_ADDED_IN_QUEUE:
                     addMeteredTask(event.getWorkspace(), new MeteredTaskBuild(event));
                     break;
                 case DONE:
+                case CANCELED:
                     removeMeteredTask(event.getWorkspace(), new MeteredTaskBuild(event));
                     break;
             }
@@ -253,10 +254,11 @@ public class ActiveTasksHolder {
         @Override
         public void onEvent(RunnerEvent event) {
             switch (event.getType()) {
-                case STARTED:
+                case RUN_TASK_ADDED_IN_QUEUE:
                     addMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
                     break;
                 case STOPPED:
+                case CANCELED:
                     removeMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
                     break;
             }

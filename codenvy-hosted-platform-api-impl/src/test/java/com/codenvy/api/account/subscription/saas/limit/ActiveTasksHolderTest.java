@@ -89,13 +89,17 @@ public class ActiveTasksHolderTest {
     public void shouldAddAndRemoveMeteredBuildAndRunTasks() throws Exception {
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(2L, WS_ID, "project2"));
-        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(1L, WS_ID, "project1"));
-        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(2L, WS_ID, "project2"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(3L, WS_ID, "project2"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(3L, WS_ID, "project1"));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.canceledEvent(2L, WS_ID, "project1"));
         activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.canceledEvent(2L, WS_ID, "project1"));
 
         assertEquals(activeTasksHolder.getActiveTasks(ACC_ID).size(), 2);
     }
@@ -129,13 +133,17 @@ public class ActiveTasksHolderTest {
     public void shouldNotRemoveWatchdogIfAnyTaskLeft() throws Exception {
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(2L, WS_ID, "project1"));
-        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(1L, WS_ID, "project1"));
-        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.startedEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(3L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(3L, WS_ID, "project1"));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.canceledEvent(2L, WS_ID, "project1"));
         activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.canceledEvent(2L, WS_ID, "project1"));
 
         assertEquals(activeTasksHolder.getActiveWatchdogs().size(), 2);
         assertEquals(activeTasksHolder.getActiveTasks(ACC_ID).size(), 2);
@@ -146,7 +154,7 @@ public class ActiveTasksHolderTest {
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
         when(watchdogFactory.createAccountWatchdog(eq(ACC_ID))).thenReturn(resourcesWatchdog);
 
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
         activeTasksHolder.changeSubscriptionSubscriber.onEvent(SubscriptionEvent.subscriptionAddedEvent(new Subscription()
                                                                                                                 .withServiceId(
                                                                                                                         ServiceId.SAAS)
@@ -160,7 +168,7 @@ public class ActiveTasksHolderTest {
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
         when(watchdogFactory.createWorkspaceWatchdog(eq(WS_ID))).thenReturn(resourcesWatchdog);
 
-        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
         activeTasksHolder.changeResourceUsageLimitSubscriber.onEvent(new WorkspaceResourcesUsageLimitChangedEvent(WS_ID));
 
         verify(resourcesWatchdog).checkLimit();
