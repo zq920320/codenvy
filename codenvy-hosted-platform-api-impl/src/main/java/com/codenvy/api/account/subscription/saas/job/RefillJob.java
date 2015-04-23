@@ -71,7 +71,7 @@ public class RefillJob implements Runnable {
             Set<String> accountIdsWithPaymentLock = new HashSet<>();
             for (Account account : accountDao.getAccountsWithLockedResources()) {
                 if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
-                    accountLocker.unlockResources(account.getId());
+                    accountLocker.unlockResources(account.getId(), true);
                 } else {
                     accountIdsWithPaymentLock.add(account.getId());
                 }

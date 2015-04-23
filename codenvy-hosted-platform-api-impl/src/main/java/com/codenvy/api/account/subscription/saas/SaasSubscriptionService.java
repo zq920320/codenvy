@@ -122,7 +122,7 @@ public class SaasSubscriptionService extends SubscriptionService {
 
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
 
-        accountLocker.unlockResources(subscription.getAccountId());
+        accountLocker.unlockResources(subscription.getAccountId(), false);
 
         final String prepaidGbH = subscription.getProperties().get("PrepaidGbH");
         billingService.addSubscription(subscription.getAccountId(),
