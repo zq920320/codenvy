@@ -53,7 +53,7 @@ public class AccountLocker {
         this.workspaceLocker = workspaceLocker;
     }
 
-    public void unlockResources(String accountId) {
+    public void unlockResources(String accountId, boolean unlockWorkspaces) {
         try {
             final Account account;
             account = accountDao.getById(accountId);
@@ -62,13 +62,14 @@ public class AccountLocker {
         } catch (NotFoundException | ServerException e) {
             LOG.error(format("Error removing lock property from account %s .", accountId), e);
         }
-
-        try {
-            for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
-                workspaceLocker.unlockResources(workspace.getId());
+        if (unlockWorkspaces) {
+            try {
+                for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
+                    workspaceLocker.unlockResources(workspace.getId());
+                }
+            } catch (ServerException e) {
+                LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
             }
-        } catch (ServerException e) {
-            LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
         }
         eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
     }

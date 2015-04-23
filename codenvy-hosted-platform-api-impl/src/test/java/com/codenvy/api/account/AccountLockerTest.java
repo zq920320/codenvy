@@ -40,6 +40,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -97,7 +98,7 @@ public class AccountLockerTest {
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", true),
                                                                               createWorkspace("accountId", "ws_2", true)));
-        accountLocker.unlockResources("accountId");
+        accountLocker.unlockResources("accountId", true);
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
@@ -109,6 +110,33 @@ public class AccountLockerTest {
         }));
         verify(workspaceLocker).unlockResources(eq("ws_1"));
         verify(workspaceLocker).unlockResources(eq("ws_2"));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                return AccountLockEvent.EventType.ACCOUNT_UNLOCKED.equals(((AccountLockEvent)o).getType());
+            }
+        }));
+    }
+
+    @Test
+    public void shouldUnlockResourcesOnlyForAccountAndNotWorkspaces() throws NotFoundException, ServerException, ConflictException {
+        Account account = new Account().withId("accountId");
+        account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(anyString())).thenReturn(account);
+
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", true),
+                                                                              createWorkspace("accountId", "ws_2", true)));
+        accountLocker.unlockResources("accountId", false);
+
+        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
+            @Override
+            public boolean matches(Object o) {
+                final Account account = (Account)o;
+                return "accountId".equals(account.getId())
+                       && !account.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verifyZeroInteractions(workspaceLocker);
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
