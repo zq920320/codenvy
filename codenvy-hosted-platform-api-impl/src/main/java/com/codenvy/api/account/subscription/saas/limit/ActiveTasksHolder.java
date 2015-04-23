@@ -21,6 +21,9 @@ import com.codenvy.api.account.metrics.MeteredBuildEventSubscriber;
 import com.codenvy.api.account.server.WorkspaceResourcesUsageLimitChangedEvent;
 import com.codenvy.api.account.subscription.ServiceId;
 import com.codenvy.api.account.subscription.SubscriptionEvent;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.google.common.collect.ArrayListMultimap;
 import com.google.common.collect.Multimap;
 
@@ -37,7 +40,6 @@ import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
@@ -47,10 +49,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
-import static java.lang.String.format;
 
 /**
  * Holder for active metered builds and runs.
@@ -63,6 +65,7 @@ public class ActiveTasksHolder {
 
     private final Multimap<String, MeteredTask>  activeTasks;
     private final Map<String, ResourcesWatchdog> activeWatchdogs;
+    private final LoadingCache<String, String>   accountIdsCache;
     private final ReadWriteLock                  lock;
     private final WorkspaceDao                   workspaceDao;
     private final EventService                   eventService;
@@ -76,7 +79,7 @@ public class ActiveTasksHolder {
     final ChangeResourceUsageLimitSubscriber changeResourceUsageLimitSubscriber;
 
     @Inject
-    public ActiveTasksHolder(WorkspaceDao workspaceDao,
+    public ActiveTasksHolder(final WorkspaceDao workspaceDao,
                              EventService eventService,
                              BuildQueue buildQueue,
                              RunQueue runQueue,
@@ -94,6 +97,15 @@ public class ActiveTasksHolder {
 
         this.activeTasks = ArrayListMultimap.create();
         this.activeWatchdogs = new HashMap<>();
+        this.accountIdsCache = CacheBuilder.newBuilder()
+                                           .maximumSize(1000)
+                                           .expireAfterWrite(10, TimeUnit.MINUTES)
+                                           .build(
+                                                   new CacheLoader<String, String>() {
+                                                       public String load(String key) throws NotFoundException, ServerException {
+                                                           return workspaceDao.getById(key).getAccountId();
+                                                       }
+                                                   });
         this.lock = new ReentrantReadWriteLock();
     }
 
@@ -140,55 +152,56 @@ public class ActiveTasksHolder {
     }
 
     private void addMeteredTask(String workspaceId, MeteredTask meteredTask) {
-        String accountId = getAccountId(workspaceId);
-        if (accountId != null) {
-            lock.writeLock().lock();
-            try {
+        String accountId = null;
+        try {
+            accountId = accountIdsCache.get(workspaceId);
+        } catch (ExecutionException e) {
+            LOG.error("Error calculate accountId  in workspace " + workspaceId, e);//TODO FIx It
+        }
+
+        lock.writeLock().lock();
+        try {
+            if (accountId != null) {
                 if (!activeWatchdogs.containsKey(accountId)) {
                     activeWatchdogs.put(accountId, resourcesWatchdogFactory.createAccountWatchdog(accountId));
                 }
                 activeTasks.put(accountId, meteredTask);
-
-                if (!activeWatchdogs.containsKey(workspaceId)) {
-                    activeWatchdogs.put(workspaceId, resourcesWatchdogFactory.createWorkspaceWatchdog(workspaceId));
-                }
-                activeTasks.put(workspaceId, meteredTask);
-            } finally {
-                lock.writeLock().unlock();
             }
+
+            if (!activeWatchdogs.containsKey(workspaceId)) {
+                activeWatchdogs.put(workspaceId, resourcesWatchdogFactory.createWorkspaceWatchdog(workspaceId));
+            }
+            activeTasks.put(workspaceId, meteredTask);
+        } finally {
+            lock.writeLock().unlock();
         }
     }
 
     private void removeMeteredTask(String workspaceId, MeteredTask meteredTask) {
-        String accountId = getAccountId(workspaceId);
-        if (accountId != null) {
-            lock.writeLock().lock();
-            try {
+        String accountId = null;
+        try {
+            accountId = accountIdsCache.get(workspaceId);
+        } catch (ExecutionException e) {
+            LOG.error("Error calculate accountId  in workspace " + workspaceId, e);
+        }
+
+        lock.writeLock().lock();
+        try {
+            if (accountId != null) {
                 activeTasks.remove(accountId, meteredTask);
                 if (!activeTasks.containsKey(accountId)) {
                     activeWatchdogs.remove(accountId);
                 }
-
-                activeTasks.remove(workspaceId, meteredTask);
-                if (!activeTasks.containsKey(workspaceId)) {
-                    activeWatchdogs.remove(workspaceId);
-                }
-            } finally {
-                lock.writeLock().unlock();
             }
+
+            activeTasks.remove(workspaceId, meteredTask);
+            if (!activeTasks.containsKey(workspaceId)) {
+                activeWatchdogs.remove(workspaceId);
+            }
+        } finally {
+            lock.writeLock().unlock();
         }
     }
-
-    @Nullable
-    private String getAccountId(String workspaceId) {
-        try {
-            return workspaceDao.getById(workspaceId).getAccountId();
-        } catch (NotFoundException | ServerException e) {
-            LOG.error(format("Error calculate accountId  in workspace %s .", workspaceId), e);
-        }
-        return null;
-    }
-
 
     class ChangeSubscriptionSubscriber implements EventSubscriber<SubscriptionEvent> {
         @Override
@@ -257,6 +270,7 @@ public class ActiveTasksHolder {
                 case RUN_TASK_ADDED_IN_QUEUE:
                     addMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
                     break;
+                case ERROR:
                 case STOPPED:
                 case CANCELED:
                     removeMeteredTask(event.getWorkspace(), new MeteredTaskRun(event));
