@@ -56,20 +56,21 @@ public class FactoryResourcesInterceptor implements MethodInterceptor {
                 Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
                 Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
                 org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
+                if (factoryWorkspace ==  null || factoryWorkspace.getResources() == null) {
+                    return invocation.proceed();
+                }
                 WorkspaceResources resources = factoryWorkspace.getResources();
-                if (resources != null) {
-                    if (resources.getRunnerRam() != null) {
-                        inbound.getAttributes()
-                               .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resources.getRunnerRam()));
-                    }
-                    if (resources.getRunnerTimeout() != null) {
-                        inbound.getAttributes()
-                               .put(Constants.RUNNER_LIFETIME, Integer.toString(resources.getRunnerTimeout()));
-                    }
-                    if (resources.getBuilderTimeout() != null) {
-                        inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
-                                                    Integer.toString(resources.getBuilderTimeout()));
-                    }
+                if (resources.getRunnerRam() != null) {
+                    inbound.getAttributes()
+                           .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resources.getRunnerRam()));
+                }
+                if (resources.getRunnerTimeout() != null) {
+                    inbound.getAttributes()
+                           .put(Constants.RUNNER_LIFETIME, Integer.toString(resources.getRunnerTimeout()));
+                }
+                if (resources.getBuilderTimeout() != null) {
+                    inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
+                                                Integer.toString(resources.getBuilderTimeout()));
                 }
             }
         }
