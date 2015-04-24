@@ -39,9 +39,9 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -262,14 +262,17 @@ public class TestProjectsStatistics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_ACTIVE_SET);
         SetValueData value = (SetValueData)metric.getValue(builder.build());
         assertEquals(value.size(), 2);
-        Set<ValueData> all = value.getAll();
+        String[] set = new String[value.getAll().size()];
+        set[0] = value.getAll().toArray()[0].toString();
+        set[1] = value.getAll().toArray()[1].toString();
+        Arrays.sort(set);
 
-        assertTrue(all.toArray()[0].toString().contains("user_1_"));
-        assertTrue(all.toArray()[0].toString().contains("workspace_1_"));
-        assertTrue(all.toArray()[0].toString().contains("project1"));
+        assertTrue(set[0].contains("user_1_"));
+        assertTrue(set[0].contains("workspace_1_"));
+        assertTrue(set[0].contains("project1"));
 
-        assertTrue(all.toArray()[1].toString().contains("user_1_"));
-        assertTrue(all.toArray()[1].toString().contains("workspace_1_"));
-        assertTrue(all.toArray()[1].toString().contains("project2"));
+        assertTrue(set[1].contains("user_1_"));
+        assertTrue(set[1].contains("workspace_1_"));
+        assertTrue(set[1].contains("project2"));
     }
 }
