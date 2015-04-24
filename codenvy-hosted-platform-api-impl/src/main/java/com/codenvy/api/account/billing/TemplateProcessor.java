@@ -29,6 +29,7 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -95,6 +96,7 @@ public class TemplateProcessor {
             case NOT_REQUIRED:
                 return paymentNotRequiredTemplateName;
             case PAYMENT_FAIL:
+            case CREDIT_CARD_MISSING:
                 return paymentFailTemplateName;
             case PAID_SUCCESSFULLY:
                 return paidSuccessfullyTemplateName;
@@ -141,6 +143,11 @@ public class TemplateProcessor {
                     break;
                 }
             }
+        }
+        else if (state.equals(PaymentState.CREDIT_CARD_MISSING)) {
+            context.setVariable("creditCard",
+                                DtoFactory.getInstance().createDto(CreditCard.class).withType("MISSING").withNumber("xxxxxxxxxxxxxxxx")
+                                          .withCardholder("UNKNOWN").withStreetAddress("").withCity("").withState("").withCountry(""));
         }
         String templateName = getTemplateName(state);
         templateEngine.process(templateName, context, w);

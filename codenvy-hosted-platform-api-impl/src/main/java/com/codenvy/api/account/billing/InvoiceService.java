@@ -104,7 +104,11 @@ public class InvoiceService extends Service {
                                                    @PathParam("accountId") String accountId,
                                                    @ApiParam(value = "Invoice ID", required = true)
                                                    @PathParam("invoiceId") long invoiceId) throws NotFoundException, ServerException {
-        return toDescriptor(billingService.getInvoice(invoiceId));
+        List<Invoice> invoices = billingService.getInvoices(InvoiceFilter.builder().withAccountId(accountId).withId(invoiceId).build());
+        if (invoices.isEmpty()) {
+            throw new NotFoundException("Invoice with given id not found in this account.");
+        }
+        return toDescriptor(invoices.get(0));
     }
 
     @GET
@@ -115,16 +119,24 @@ public class InvoiceService extends Service {
                                           @PathParam("accountId") final String accountId,
                                           @ApiParam(value = "Invoice ID", required = true)
                                           @PathParam("invoiceId") final long invoiceId) throws NotFoundException, ServerException {
-        final Invoice invoice = billingService.getInvoice(invoiceId);
+        List<Invoice> invoices = billingService.getInvoices(InvoiceFilter.builder().withAccountId(accountId).withId(invoiceId).build());
+        if (invoices.isEmpty()) {
+            throw new NotFoundException("Invoice with given id not found in this account.");
+        }
+        final Invoice invoice = invoices.get(0);
         StreamingOutput response = new StreamingOutput() {
             @Override
             public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                try (PrintWriter w = new PrintWriter(outputStream)) {
+                PrintWriter w = new PrintWriter(outputStream);
+                try {
                     templateProcessor.processTemplate(invoice, w);
-                    w.flush();
                 } catch (ServerException | ForbiddenException | NotFoundException e) {
-                    throw new WebApplicationException(e);
+                    w.write(e.getLocalizedMessage());
+                } finally {
+                    w.flush();
+                    w.close();
                 }
+
             }
         };
         return Response.ok(response).build();
