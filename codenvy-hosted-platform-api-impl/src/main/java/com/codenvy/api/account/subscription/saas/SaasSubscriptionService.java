@@ -179,14 +179,19 @@ public class SaasSubscriptionService extends SubscriptionService {
                                                                                            billingPeriod.getCurrent().getStartDate()
                                                                                                         .getTime(),
                                                                                            System.currentTimeMillis());
-        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-        List<WorkspaceResources> result = new ArrayList<>();
 
+        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
         for (Workspace workspace : workspaces) {
-            Double usedMemory = memoryUsedReport.get(workspace.getId());
+            if (!memoryUsedReport.containsKey(workspace.getId())) {
+                memoryUsedReport.put(workspace.getId(), 0D);
+            }
+        }
+
+        List<WorkspaceResources> result = new ArrayList<>();
+        for (Map.Entry<String, Double> usedMemory : memoryUsedReport.entrySet()) {
             result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
-                                 .withWorkspaceId(workspace.getId())
-                                 .withMemory(usedMemory != null ? usedMemory : 0.0));
+                                 .withWorkspaceId(usedMemory.getKey())
+                                 .withMemory(usedMemory.getValue()));
         }
 
         return DtoFactory.getInstance().createDto(UsedAccountResources.class)
