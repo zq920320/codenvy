@@ -611,24 +611,35 @@ public class AccountDaoImpl implements AccountDao {
         final BasicDBObject basicSubscriptionObj = (BasicDBObject)dbObject;
         @SuppressWarnings("unchecked") //properties is always Map of Strings
         final Map<String, String> properties = (Map<String, String>)basicSubscriptionObj.get("properties");
-        return new Subscription().withId(basicSubscriptionObj.getString("id"))
-                                 .withAccountId(basicSubscriptionObj.getString("accountId"))
-                                 .withServiceId(basicSubscriptionObj.getString("serviceId"))
-                                 .withPlanId(basicSubscriptionObj.getString("planId"))
-                                 .withProperties(properties)
-                                 .withTrialStartDate(basicSubscriptionObj.getDate("trialStartDate"))
-                                 .withTrialEndDate(basicSubscriptionObj.getDate("trialEndDate"))
-                                 .withStartDate(basicSubscriptionObj.getDate("startDate"))
-                                 .withEndDate(basicSubscriptionObj.getDate("endDate"))
-                                 .withBillingStartDate(basicSubscriptionObj.getDate("billingStartDate"))
-                                 .withBillingEndDate(basicSubscriptionObj.getDate("billingEndDate"))
-                                 .withNextBillingDate(basicSubscriptionObj.getDate("nextBillingDate"))
-                                 .withState(SubscriptionState.valueOf(basicSubscriptionObj.getString("state")))
-                                 .withBillingContractTerm(basicSubscriptionObj.getInt("billingContractTerm"))
-                                 .withBillingCycle(basicSubscriptionObj.getInt("billingCycle"))
-                                 .withBillingCycleType(BillingCycleType.valueOf(basicSubscriptionObj.getString("billingCycleType")))
-                                 .withDescription(basicSubscriptionObj.getString("description"))
-                                 .withUsePaymentSystem(basicSubscriptionObj.getBoolean("usePaymentSystem"));
+
+        final Subscription subscription = new Subscription().withId(basicSubscriptionObj.getString("id"))
+                                                            .withAccountId(basicSubscriptionObj.getString("accountId"))
+                                                            .withServiceId(basicSubscriptionObj.getString("serviceId"))
+                                                            .withPlanId(basicSubscriptionObj.getString("planId"))
+                                                            .withProperties(properties)
+                                                            .withTrialStartDate(basicSubscriptionObj.getDate("trialStartDate"))
+                                                            .withTrialEndDate(basicSubscriptionObj.getDate("trialEndDate"))
+                                                            .withStartDate(basicSubscriptionObj.getDate("startDate"))
+                                                            .withEndDate(basicSubscriptionObj.getDate("endDate"))
+                                                            .withBillingStartDate(basicSubscriptionObj.getDate("billingStartDate"))
+                                                            .withBillingEndDate(basicSubscriptionObj.getDate("billingEndDate"))
+                                                            .withNextBillingDate(basicSubscriptionObj.getDate("nextBillingDate"))
+                                                            .withBillingContractTerm(basicSubscriptionObj.getInt("billingContractTerm"))
+                                                            .withBillingCycle(basicSubscriptionObj.getInt("billingCycle"))
+                                                            .withDescription(basicSubscriptionObj.getString("description"))
+                                                            .withUsePaymentSystem(basicSubscriptionObj.getBoolean("usePaymentSystem"));
+
+        final String state = basicSubscriptionObj.getString("state");
+        if (state != null) {
+            subscription.setState(SubscriptionState.valueOf(state));
+        }
+
+        final String billingCycleType = basicSubscriptionObj.getString("billingCycleType");
+        if (billingCycleType != null) {
+            subscription.setBillingCycleType(BillingCycleType.valueOf(billingCycleType));
+        }
+
+        return subscription;
     }
 
     /**
