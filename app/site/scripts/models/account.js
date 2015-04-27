@@ -414,7 +414,7 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
-                var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1) + window.location.hash;
                 var workspaceId;
                 //TODO login refactoring
                 login(email, password)
