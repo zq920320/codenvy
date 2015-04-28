@@ -27,6 +27,7 @@ import org.eclipse.che.api.builder.BuildQueueTask;
 import org.eclipse.che.api.builder.dto.BuildRequest;
 import org.eclipse.che.api.builder.dto.DependencyRequest;
 import org.eclipse.che.api.builder.internal.BuilderEvent;
+import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.internal.RunnerEvent;
@@ -77,8 +78,6 @@ public class ActiveTasksHolderTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
-                                                                          .withAccountId(ACC_ID));
         when(buildQueue.getTask(anyLong())).thenReturn(buildQueueTask);
 
         //create instance manually without @InjectMocks because it is to necessary have new instance in each test
@@ -87,6 +86,8 @@ public class ActiveTasksHolderTest {
 
     @Test
     public void shouldAddAndRemoveMeteredBuildAndRunTasks() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
@@ -105,7 +106,53 @@ public class ActiveTasksHolderTest {
     }
 
     @Test
+    public void shouldRemoveMeteredBuildAndRunTasksAfterRemovingOfWorkspaces() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(2L, WS_ID, "project2"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(2L, WS_ID, "project1"));
+
+        when(workspaceDao.getById(anyString())).thenThrow(new NotFoundException("Workspace not found"));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.canceledEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.canceledEvent(2L, WS_ID, "project1"));
+
+        assertTrue(activeTasksHolder.getActiveTasks(ACC_ID).isEmpty());
+    }
+
+    @Test
+    public void shouldRemoveMeteredBuildAndRunTasksAfterRemovingOfWorkspacesAndItsAccountIds() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
+        when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(2L, WS_ID, "project2"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.queueStartedEvent(2L, WS_ID, "project1"));
+
+        activeTasksHolder.accountIdsCache.invalidateAll();
+
+        when(workspaceDao.getById(anyString())).thenThrow(new NotFoundException("Workspace not found"));
+
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.doneEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.canceledEvent(2L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.stoppedEvent(1L, WS_ID, "project1"));
+        activeTasksHolder.runEventSubscriber.onEvent(RunnerEvent.canceledEvent(2L, WS_ID, "project1"));
+
+        assertTrue(activeTasksHolder.getActiveTasks(ACC_ID).isEmpty());
+    }
+
+    @Test
     public void shouldNotAddNotMeteredBuildTask() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(DependencyRequest.class));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
@@ -117,6 +164,8 @@ public class ActiveTasksHolderTest {
 
     @Test
     public void shouldRemoveWatchdogIfNoMoreTasks() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.beginEvent(1L, WS_ID, "project1"));
@@ -131,6 +180,8 @@ public class ActiveTasksHolderTest {
 
     @Test
     public void shouldNotRemoveWatchdogIfAnyTaskLeft() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
 
         activeTasksHolder.buildEventSubscriber.onEvent(BuilderEvent.queueStartedEvent(1L, WS_ID, "project1"));
@@ -151,6 +202,8 @@ public class ActiveTasksHolderTest {
 
     @Test
     public void shouldRecheckWatchdogLimitWhenSaasSubscriptionRemovedAndExistActiveTask() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
         when(watchdogFactory.createAccountWatchdog(eq(ACC_ID))).thenReturn(resourcesWatchdog);
 
@@ -165,6 +218,8 @@ public class ActiveTasksHolderTest {
 
     @Test
     public void shouldRecheckWatchdogLimitWhenWorkspaceResourcesUsageLimitChanged() throws Exception {
+        when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withId(WS_ID)
+                                                                          .withAccountId(ACC_ID));
         when(buildQueueTask.getRequest()).thenReturn(DtoFactory.getInstance().createDto(BuildRequest.class));
         when(watchdogFactory.createWorkspaceWatchdog(eq(WS_ID))).thenReturn(resourcesWatchdog);
 

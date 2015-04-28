@@ -47,10 +47,10 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
@@ -65,9 +65,8 @@ public class ActiveTasksHolder {
 
     private final Multimap<String, MeteredTask>  activeTasks;
     private final Map<String, ResourcesWatchdog> activeWatchdogs;
-    private final LoadingCache<String, String>   accountIdsCache;
+    final         LoadingCache<String, String>   accountIdsCache;
     private final ReadWriteLock                  lock;
-    private final WorkspaceDao                   workspaceDao;
     private final EventService                   eventService;
     private final RunQueue                       runQueue;
     private final BuildQueue                     buildQueue;
@@ -84,7 +83,6 @@ public class ActiveTasksHolder {
                              BuildQueue buildQueue,
                              RunQueue runQueue,
                              ResourcesWatchdogFactory resourcesWatchdogFactory) {
-        this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.runQueue = runQueue;
         this.buildQueue = buildQueue;
@@ -98,8 +96,6 @@ public class ActiveTasksHolder {
         this.activeTasks = ArrayListMultimap.create();
         this.activeWatchdogs = new HashMap<>();
         this.accountIdsCache = CacheBuilder.newBuilder()
-                                           .maximumSize(1000)
-                                           .expireAfterWrite(10, TimeUnit.MINUTES)
                                            .build(
                                                    new CacheLoader<String, String>() {
                                                        public String load(String key) throws NotFoundException, ServerException {
@@ -156,7 +152,7 @@ public class ActiveTasksHolder {
         try {
             accountId = accountIdsCache.get(workspaceId);
         } catch (ExecutionException e) {
-            LOG.error("Error calculate accountId  in workspace " + workspaceId, e);//TODO FIx It
+            LOG.error("Error calculate accountId  in workspace " + workspaceId, e);
         }
 
         lock.writeLock().lock();
@@ -166,6 +162,8 @@ public class ActiveTasksHolder {
                     activeWatchdogs.put(accountId, resourcesWatchdogFactory.createAccountWatchdog(accountId));
                 }
                 activeTasks.put(accountId, meteredTask);
+            } else {
+                LOG.error("Error tracking of metered task " + meteredTask.getId() + ". Can't calculate account id.");
             }
 
             if (!activeWatchdogs.containsKey(workspaceId)) {
@@ -187,16 +185,25 @@ public class ActiveTasksHolder {
 
         lock.writeLock().lock();
         try {
+            activeTasks.remove(workspaceId, meteredTask);
+            if (!activeTasks.containsKey(workspaceId)) {
+                activeWatchdogs.remove(workspaceId);
+            }
+
             if (accountId != null) {
                 activeTasks.remove(accountId, meteredTask);
                 if (!activeTasks.containsKey(accountId)) {
                     activeWatchdogs.remove(accountId);
+                    accountIdsCache.invalidate(workspaceId);
                 }
-            }
-
-            activeTasks.remove(workspaceId, meteredTask);
-            if (!activeTasks.containsKey(workspaceId)) {
-                activeWatchdogs.remove(workspaceId);
+            } else {
+                //Should not happen. But next code block provides assurance that the inactive tasks will not be kept
+                Iterator<Map.Entry<String, MeteredTask>> iterator = activeTasks.entries().iterator();
+                while (iterator.hasNext()) {
+                    if (iterator.next().getValue().equals(meteredTask)) {
+                        iterator.remove();
+                    }
+                }
             }
         } finally {
             lock.writeLock().unlock();
