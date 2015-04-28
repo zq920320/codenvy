@@ -441,7 +441,6 @@
         <parameters>
             <param>USER</param>
             <param>PLAN</param>
-            <param type="long">STOP-TIME</param>
         </parameters>
     </event>
     <event name="build-usage">
