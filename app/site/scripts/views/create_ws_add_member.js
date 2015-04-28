@@ -22,15 +22,15 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
         var CreateWsAddMember = Backbone.View.extend({
             
             initialize : function(){
-                var username = Account.getQueryParameterByName("username");
-                var bearertoken = Account.getQueryParameterByName("bearertoken");
-                var workspace = Account.getQueryParameterByName("workspace");
-                var redirect_url = Account.getQueryParameterByName("redirect_url");
+                var username = Account.getQueryParameterByName("username"),
+                    bearertoken = Account.getQueryParameterByName("bearertoken"),
+                    workspaceName = Account.getQueryParameterByName("workspace"),
+                    redirect_url = Account.getQueryParameterByName("redirect_url");
                 if (username && bearertoken) {
                     Account.processCreate(
                         username,
                         bearertoken,
-                        workspace,
+                        workspaceName,
                         redirect_url,
                         _.bind(function(errors){
 
@@ -47,25 +47,6 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                     Account.redirectToUrl("/");
                 }
 
-/*                Account.createWorkspace(
-                    Account.getQueryParameterByName('username'),
-                    Account.getQueryParameterByName('bearertoken'),
-                    Account.getQueryParameterByName('workspace'),
-                    Account.getQueryParameterByName('redirect_url'),
-                    _.bind(function(d){
-                        this.trigger("success",d);
-                    },this),
-                    _.bind(function(errors){
-
-                        if(errors.length !== 0){
-                            this.trigger(
-                                "invalid",
-                                errors[0].getFieldName(),
-                                errors[0].getErrorDescription()
-                            );
-                        }
-                    },this)
-                );*/
             }
         });
 
