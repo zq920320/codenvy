@@ -126,7 +126,7 @@ public class SaasSubscriptionService extends SubscriptionService {
 
         final String prepaidGbH = subscription.getProperties().get("PrepaidGbH");
         billingService.addSubscription(subscription.getAccountId(),
-                                       Double.parseDouble(prepaidGbH),
+                                       prepaidGbH == null ? 0D : Double.parseDouble(prepaidGbH),
                                        subscription.getStartDate().getTime(),
                                        subscription.getEndDate().getTime());
 
