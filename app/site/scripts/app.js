@@ -27,7 +27,6 @@ define(["jquery","config",
         "views/errorresponse",
         "views/ws_createform",
         "views/create_ws",
-        "views/join_ws",
         "views/adminform",
         "views/create_ws_add_member",
         "views/onpremises-login",
@@ -45,7 +44,6 @@ define(["jquery","config",
         ErrorResponse,
         WSCreateForm,
         CreatingWorkspace,
-        JoiningWorkspace,
         AdminForm,
         CreateWsAdd_Member,
         OnPremisesLogin,
@@ -78,11 +76,9 @@ define(["jquery","config",
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
                         loader = $(".wait-for-tenant"),
-                        inviteOrganization = $(".organization"),
                         errorResponse = $(".ErrorIcon"),
                         wsCreateForm = $(".create-form"),
                         creatingWorkspace = $(".creating-ws"),
-                        joiningWorkspace = $(".invite"),
                         adminForm = $(".admin-form"),
                         creatWsAddMember = $(".create-ws-add-memeber"),
                         onpremloginForm = $(".onpremloginForm"),
@@ -154,22 +150,6 @@ define(["jquery","config",
                     if(creatingWorkspace.length !== 0){
                         (function(){
                             var page = CreatingWorkspace.get(creatingWorkspace),
-                            errorReport = ErrorReport.get(errorContainer);
-
-                            page.on("success", function(d){
-                                window.location.href = d.url;
-                            });
-
-                            page.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-                            
-                        }());
-                    }
-
-                    if(joiningWorkspace.length !== 0){
-                        (function(){
-                            var page = JoiningWorkspace.get(joiningWorkspace),
                             errorReport = ErrorReport.get(errorContainer);
 
                             page.on("success", function(d){
@@ -290,14 +270,6 @@ define(["jquery","config",
                                 errorReport.show(message);
                             });
                         
-                    }
-
-                    // success invite organization
-                    if(inviteOrganization.length !== 0){
-                        (function(){
-                            var element = InviteOrganization.get(inviteOrganization);
-                            element.setOrganization();
-                        }());
                     }
 
                     // put error to page from response

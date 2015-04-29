@@ -26,7 +26,6 @@
                 initialize : function(attributes){
                     Account.redirectIfUserHasLoginCookie();
                     AccountFormBase.prototype.initialize.apply(this,attributes);
-                    Account.supportTab();
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Create WS page", function(url){

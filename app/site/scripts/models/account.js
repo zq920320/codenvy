@@ -484,31 +484,7 @@
 
             },
 
-            joinWorkspace: function(username, bearertoken, workspace, success, error) {
-                var data = {
-                    username: username.toLowerCase(),
-                    token: bearertoken
-                };
-                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace;
-                var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
-                //var workspaceName = {name: workspace};
-                var authenticateUrl = "/api/internal/token/authenticate";
-                $.ajax({
-                    url: authenticateUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success: function() {
-                        success({
-                            url: waitUrl
-                        });
-                    } else if (redirect_url) {
-                        redirectToUrl(redirect_url);
-                    } else {
-                        redirectToUrl("/dashboard/");
-                    }
-                });
-            },
+
             //--------------------------------- Recover password module
             // Send recover password request
             recoverPassword: function(email, success, error) {
