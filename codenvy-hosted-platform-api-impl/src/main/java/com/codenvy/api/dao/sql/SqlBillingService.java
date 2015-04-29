@@ -446,14 +446,16 @@ public class SqlBillingService implements BillingService {
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
                     if (usageResultSet.next()) {
                         return !(usageResultSet.getDouble("FPAID_AMOUNT") > 0.0);
+                    } else {
+                        // Account doesn't have any metrics records in given period.
+                        // That means that available resources has not been used at all
+                        return true;
                     }
                 }
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
-
-        return false;
     }
 
     private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)

@@ -1011,7 +1011,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //then
         assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
-        assertEquals(resources.getFreeAmount(), 0.383333);
+        assertEquals(resources.getFreeAmount(), 0.384533);
     }
 
     @Test(dataProvider = "storage")
@@ -1077,7 +1077,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         //then
         assertEquals(usage.size(), 1);
         AccountResources resources = get(usage, 0);
-        assertEquals(resources.getFreeAmount(), 0.216667);
+        assertEquals(resources.getFreeAmount(), 0.217867);
     }
 
     @Test(dataProvider = "storage")
@@ -1319,6 +1319,15 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
         Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertFalse(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
+    }
+
+    @Test(dataProvider = "storage")
+    public void testCheckingAvailableResourcesWhenAccountDidNotUseResources(MeterBasedStorage meterBasedStorage,
+                                                                            BillingService billingService) throws Exception {
+        //when
+        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+
+        assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
     }
 
     @Test(dataProvider = "storage")
