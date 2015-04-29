@@ -79,11 +79,9 @@ public class TestIMOnPremIssued extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(l, "user");
         Map<String, ValueData> data = m.get("user1");
         assertEquals(data.get("plan"), StringValueData.valueOf("p1"));
-        assertEquals(data.get("stop_time"), LongValueData.valueOf(1406865600000L));
 
         data = m.get("user2");
         assertEquals(data.get("plan"), StringValueData.valueOf("p2"));
-        assertEquals(data.get("stop_time"), LongValueData.valueOf(1406865600000L));
     }
 
     @Test
