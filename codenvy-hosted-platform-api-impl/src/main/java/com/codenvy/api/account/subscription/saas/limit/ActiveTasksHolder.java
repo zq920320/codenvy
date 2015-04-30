@@ -300,7 +300,12 @@ public class ActiveTasksHolder {
 
         @Override
         public void interrupt() throws Exception {
-            buildQueue.getTask(builderEvent.getTaskId()).cancel();
+            try {
+                buildQueue.getTask(builderEvent.getTaskId()).cancel();
+            } catch (NotFoundException nfe) {
+                LOG.warn("Can't interrupt build. " + nfe.getLocalizedMessage());
+                removeMeteredTask(builderEvent.getWorkspace(), this);
+            }
         }
 
         @Override
@@ -335,7 +340,12 @@ public class ActiveTasksHolder {
 
         @Override
         public void interrupt() throws Exception {
-            runQueue.getTask(runnerEvent.getProcessId()).stop();
+            try {
+                runQueue.getTask(runnerEvent.getProcessId()).stop();
+            } catch (NotFoundException nfe) {
+                LOG.warn("Can't interrupt build. " + nfe.getLocalizedMessage());
+                removeMeteredTask(runnerEvent.getWorkspace(), this);
+            }
         }
 
         @Override
