@@ -54,6 +54,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import static java.lang.String.*;
+
 /**
  * Holder for active metered builds and runs.
  *
@@ -303,7 +305,7 @@ public class ActiveTasksHolder {
             try {
                 buildQueue.getTask(builderEvent.getTaskId()).cancel();
             } catch (NotFoundException nfe) {
-                LOG.warn("Can't interrupt build. " + nfe.getLocalizedMessage());
+                LOG.error(format("Can't interrupt build %s. %s", builderEvent.getTaskId(), nfe.getLocalizedMessage()), nfe);
                 removeMeteredTask(builderEvent.getWorkspace(), this);
             }
         }
@@ -343,7 +345,7 @@ public class ActiveTasksHolder {
             try {
                 runQueue.getTask(runnerEvent.getProcessId()).stop();
             } catch (NotFoundException nfe) {
-                LOG.warn("Can't interrupt build. " + nfe.getLocalizedMessage());
+                LOG.error(format("Can't interrupt run %s. %s", runnerEvent.getProject(), nfe.getLocalizedMessage()), nfe);
                 removeMeteredTask(runnerEvent.getWorkspace(), this);
             }
         }
