@@ -413,6 +413,7 @@ public class SqlBillingService implements BillingService {
                                             .withFreeAmount(usageResultSet.getDouble("FFREE_AMOUNT"))
                                             .withPaidAmount(usageResultSet.getDouble("FPAID_AMOUNT"))
                                             .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
+                                            .withPaidSum(usageResultSet.getDouble("FPAID_AMOUNT") * saasChargeableGbHPrice)
                                  );
                     }
                     return usage;

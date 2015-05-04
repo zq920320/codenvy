@@ -173,7 +173,7 @@ public class BraintreePaymentService implements PaymentService {
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        Long.toString(invoice.getId()), price));
                 accountLocker.lock(accountId);
-                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(price));
+                subscriptionMailSender.sendAccountLockedNotification(accountId, String.format("%.2f", price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
