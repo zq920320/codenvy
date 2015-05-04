@@ -40,9 +40,10 @@ public interface BillingService {
      *         beginning of period.
      * @param till
      *         end of period.
+     * @return number of generated invoices
      * @throws ServerException
      */
-    void generateInvoices(long from, long till) throws ServerException;
+    int generateInvoices(long from, long till) throws ServerException;
 
     /**
      * Get list of invoices with given Payment state.

@@ -91,7 +91,7 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public void generateInvoices(long from, long till) throws ServerException {
+    public int generateInvoices(long from, long till) throws ServerException {
         String calculationId = UUID.randomUUID().toString();
 
         try (Connection connection = connectionFactory.getConnection()) {
@@ -125,15 +125,19 @@ public class SqlBillingService implements BillingService {
                     saasCharges.execute();
                 }
 
+                int generatedInvoices;
                 try (PreparedStatement invoices = connection.prepareStatement(INVOICES_INSERT)) {
                     invoices.setLong(1, System.currentTimeMillis());
                     invoices.setObject(2, range);
                     invoices.setString(3, calculationId);
                     invoices.setString(4, calculationId);
                     invoices.execute();
+                    generatedInvoices = invoices.getUpdateCount();
                 }
 
                 connection.commit();
+
+                return generatedInvoices;
             } catch (SQLException e) {
                 connection.rollback();
                 if (e.getLocalizedMessage().contains("conflicts with existing key (faccount_id, fperiod)")) {
@@ -144,7 +148,6 @@ public class SqlBillingService implements BillingService {
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
-
     }
 
 
