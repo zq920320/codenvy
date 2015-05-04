@@ -27,6 +27,7 @@ import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
@@ -101,5 +102,22 @@ public class BillingRestService extends Service {
         }
 
         return billingService.getEstimatedUsageByAccount(builder.build());
+    }
+
+    @POST
+    @Path("/invoices/generate")
+    @Produces({MediaType.TEXT_PLAIN})
+    @RolesAllowed({"system/admin", "system/manager"})
+    public String generateInvoices(@QueryParam("startPeriod") Long startPeriod,
+                                   @QueryParam("endPeriod") Long endPeriod) throws ServerException {
+        if (startPeriod == null) {
+            startPeriod = billingPeriod.getCurrent().getPreviousPeriod().getStartDate().getTime();
+        }
+
+        if (endPeriod == null) {
+            endPeriod = billingPeriod.getCurrent().getPreviousPeriod().getEndDate().getTime();
+        }
+
+        return Integer.toString(billingService.generateInvoices(startPeriod, endPeriod));
     }
 }
