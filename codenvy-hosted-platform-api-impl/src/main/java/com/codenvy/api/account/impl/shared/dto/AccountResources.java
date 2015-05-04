@@ -30,6 +30,12 @@ public interface AccountResources extends Resources {
 
     AccountResources withAccountId(String accountId);
 
+    Double getPaidSum();
+
+    void  setPaidSum(Double paidSum);
+
+    AccountResources withPaidSum(Double paidSum);
+
     @Override
     AccountResources withPaidAmount(Double amount);
 
