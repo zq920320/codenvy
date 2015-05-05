@@ -202,7 +202,10 @@ public class BraintreeCreditCardDaoImplTest {
         when(cardResult.isSuccess()).thenReturn(true);
         when(cardResult.getTarget()).thenReturn(creditCard);
         when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
-                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class).withAccountId(ACCOUNT_ID).withPaidAmount(255D)));
+                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)
+                                        .withAccountId(ACCOUNT_ID)
+                                        .withPaidAmount(255D)
+                                        .withPaidSum(599D)));
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
         verify(accountLocker).lock(eq(ACCOUNT_ID));
@@ -216,7 +219,10 @@ public class BraintreeCreditCardDaoImplTest {
         when(cardResult.isSuccess()).thenReturn(true);
         when(cardResult.getTarget()).thenReturn(creditCard);
         when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
-                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class).withAccountId(ACCOUNT_ID).withPaidAmount(255D)));
+                Arrays.asList(DtoFactory.getInstance().createDto(AccountResources.class)
+                                        .withAccountId(ACCOUNT_ID)
+                                        .withPaidAmount(255D)
+                                        .withPaidSum(600D)));
         when(accountDao.getActiveSubscription(eq(ACCOUNT_ID), eq(ServiceId.SAAS)))
                 .thenReturn(new Subscription().withId(sId).withPlanId("saas"));
         dao.deleteCard(ACCOUNT_ID, TOKEN);
