@@ -26,7 +26,7 @@
         <version>4.0.0-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-machine</artifactId>
-    <name>Codenvy Hosted :: Machine</name>
+    <name>Codenvy :: Hosted :: Machine</name>
     <properties>
         <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
     </properties>
