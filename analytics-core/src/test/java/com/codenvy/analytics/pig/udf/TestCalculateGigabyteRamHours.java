@@ -55,7 +55,7 @@ public class TestCalculateGigabyteRamHours extends BaseTest {
             {null, null, null},
             {new Long(1536), null, null},
             {new Long(1536), new Long(0), new Double(0.0)},
-            {new Long(1536), new Long(120000), new Double(0.05)},
+            {new Long(1536), new Long(120000), new Double(0.0512)},
         };
     }
 }

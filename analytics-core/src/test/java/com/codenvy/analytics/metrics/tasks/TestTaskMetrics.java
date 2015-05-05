@@ -92,7 +92,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.05, "
+                                                + "gigabyte_ram_hours=0.0512, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=normal, "
@@ -113,7 +113,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=60000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004069010416666667, "
+                                                + "gigabyte_ram_hours=0.004166666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
                                                 + "shutdown_type=normal"
@@ -133,7 +133,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.05, "
+                                                + "gigabyte_ram_hours=0.0512, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=timeout"
@@ -153,7 +153,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=user"
@@ -173,7 +173,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
                                                 + "shutdown_type=user"
@@ -193,7 +193,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=60000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                + "gigabyte_ram_hours=0.0021333333333333334, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=timeout"
@@ -228,7 +228,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 13:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 13:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=user"
@@ -248,7 +248,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=60000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 14:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 14:01:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                + "gigabyte_ram_hours=0.0021333333333333334, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
                                                 + "shutdown_type=user"
@@ -268,7 +268,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 15:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 15:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=timeout"
@@ -285,7 +285,7 @@ public class TestTaskMetrics extends BaseTest {
                                                    + "usage_time=180000, "
                                                    + "start_time=" + fullDateFormat.parse("2013-10-20 16:20:00").getTime() + ", "
                                                    + "stop_time=" + fullDateFormat.parse("2013-10-20 16:23:00").getTime() + ", "
-                                                   + "gigabyte_ram_hours=0.001220703125, "
+                                                   + "gigabyte_ram_hours=0.00125, "
                                                    + "is_factory=0, "
                                                    + "launch_type=always-on, "
                                                    + "shutdown_type=normal"
@@ -302,7 +302,7 @@ public class TestTaskMetrics extends BaseTest {
                                                    + "usage_time=180000, "
                                                    + "start_time=" + fullDateFormat.parse("2013-10-20 16:00:00").getTime() + ", "
                                                    + "stop_time=" + fullDateFormat.parse("2013-10-20 16:03:00").getTime() + ", "
-                                                   + "gigabyte_ram_hours=0.001220703125, "
+                                                   + "gigabyte_ram_hours=0.00125, "
                                                    + "is_factory=1, "
                                                    + "launch_type=always-on, "
                                                    + "shutdown_type=normal, "
@@ -336,7 +336,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 10:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 10:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=user"
@@ -356,7 +356,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=120000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:02:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.004166666666666667, "
+                                                + "gigabyte_ram_hours=0.004266666666666667, "
                                                 + "is_factory=1, "
                                                 + "launch_type=always-on, "
                                                 + "shutdown_type=user"
@@ -376,7 +376,7 @@ public class TestTaskMetrics extends BaseTest {
                                                 + "usage_time=60000, "
                                                 + "start_time=" + fullDateFormat.parse("2013-10-20 11:00:00").getTime() + ", "
                                                 + "stop_time=" + fullDateFormat.parse("2013-10-20 11:01:00").getTime() + ", "
-                                                + "gigabyte_ram_hours=0.0020833333333333333, "
+                                                + "gigabyte_ram_hours=0.0021333333333333334, "
                                                 + "is_factory=1, "
                                                 + "launch_type=timeout, "
                                                 + "shutdown_type=timeout"
@@ -405,7 +405,7 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
         assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
-        assertEquals(m.toString(), "{usage_time=1260000, gigabyte_ram_hours=0.1273}");
+        assertEquals(m.toString(), "{usage_time=1260000, gigabyte_ram_hours=0.1304}");
     }
 
     @Test
@@ -504,7 +504,7 @@ public class TestTaskMetrics extends BaseTest {
     public void testTasksGigabyteRamHours() throws Exception {
         Metric metric = MetricFactory.getMetric(MetricType.TASKS_GIGABYTE_RAM_HOURS);
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-        assertEquals(round(d.getAsDouble() * 10000), 1273);
+        assertEquals(round(d.getAsDouble() * 10000), 1304);
     }
 
     @Test

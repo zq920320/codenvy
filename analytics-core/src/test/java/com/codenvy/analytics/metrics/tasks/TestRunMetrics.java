@@ -92,7 +92,7 @@ public class TestRunMetrics extends BaseTest {
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
 
-        assertEquals(round(d.getAsDouble() * 10000), 250);
+        assertEquals(round(d.getAsDouble() * 10000), 256);
     }
 
     @Test

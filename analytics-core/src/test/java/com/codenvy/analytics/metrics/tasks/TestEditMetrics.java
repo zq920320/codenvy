@@ -72,7 +72,7 @@ public class TestEditMetrics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.EDITS_GIGABYTE_RAM_HOURS);
 
         DoubleValueData d = getAsDouble(metric, Context.EMPTY);
-        assertEquals(round(d.getAsDouble() * 10000), 24);
+        assertEquals(round(d.getAsDouble() * 10000), 25);
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);

@@ -384,10 +384,10 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.075");
-        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
-        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
-        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0767");
+        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0085");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0064");
+        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
 
         // verify the same summary data on metric FACTORY_STATISTICS_LIST
         Context.Builder builder = new Context.Builder();
@@ -401,9 +401,9 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
-        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.075");
-        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0083");
-        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
-        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0061");
+        assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0768");
+        assertEquals(summary.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0085");
+        assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0064");
+        assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
     }
 }

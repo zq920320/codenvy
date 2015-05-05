@@ -94,39 +94,39 @@ public class TasksIntegrityTest extends BaseTest {
 
         assertEquals(m.get("id2b-2013-10-20").get("shutdown_type"), StringValueData.valueOf("normal"));
         assertEquals(m.get("id2b-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id2b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id2b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         assertEquals(m.get("id2r-2013-10-20").get("shutdown_type"), StringValueData.valueOf("user"));
         assertEquals(m.get("id2r-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id2r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id2r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         assertEquals(m.get("id2d-2013-10-20").get("shutdown_type"), StringValueData.valueOf("user"));
         assertEquals(m.get("id2d-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id2d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id2d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         assertEquals(m.get("id3b-2013-10-20").get("shutdown_type"), StringValueData.valueOf("timeout"));
         assertEquals(m.get("id3b-2013-10-20").get("usage_time"), LongValueData.valueOf(120000));
-        assertEquals(m.get("id3b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.05));
+        assertEquals(m.get("id3b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0512));
 
         assertEquals(m.get("id3r-2013-10-20").get("shutdown_type"), StringValueData.valueOf("timeout"));
         assertEquals(m.get("id3r-2013-10-20").get("usage_time"), LongValueData.valueOf(120000));
-        assertEquals(m.get("id3r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.05));
+        assertEquals(m.get("id3r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0512));
 
         assertEquals(m.get("id3d-2013-10-20").get("shutdown_type"), StringValueData.valueOf("timeout"));
         assertEquals(m.get("id3d-2013-10-20").get("usage_time"), LongValueData.valueOf(120000));
-        assertEquals(m.get("id3d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.05));
+        assertEquals(m.get("id3d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0512));
 
         assertEquals(m.get("id4b-2013-10-20").get("shutdown_type"), StringValueData.valueOf("normal"));
         assertEquals(m.get("id4b-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id4b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id4b-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         assertEquals(m.get("id4r-2013-10-20").get("shutdown_type"), StringValueData.valueOf("user"));
         assertEquals(m.get("id4r-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id4r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id4r-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         assertEquals(m.get("id4d-2013-10-20").get("shutdown_type"), StringValueData.valueOf("user"));
         assertEquals(m.get("id4d-2013-10-20").get("usage_time"), LongValueData.valueOf(60000));
-        assertEquals(m.get("id4d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.025));
+        assertEquals(m.get("id4d-2013-10-20").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.0256));
 
         metric = MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST);
         l = getAsList(metric, context);

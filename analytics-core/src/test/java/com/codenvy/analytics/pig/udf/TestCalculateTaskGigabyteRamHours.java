@@ -67,7 +67,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
             {null, null},
             {"", null},
             {"non-exists", 0.0},
-            {"factory1", 0.0541},
+            {"factory1", 0.0554},
         };
     }
 
@@ -85,7 +85,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
             {null, null},
             {"", null},
             {"non-exists", 0.0},
-            {"factory1", 0.0083},
+            {"factory1", 0.0085},
         };
     }
 
@@ -103,7 +103,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
             {null, null},
             {"", null},
             {"non-exists", 0.0},
-            {"factory1", 0.0063},
+            {"factory1", 0.0064},
         };
     }
 
@@ -129,7 +129,7 @@ public class TestCalculateTaskGigabyteRamHours extends BaseTest {
             {null, null},
             {"", null},
             {"non-exists", 0.0},
-            {"factory1", 0.0012},
+            {"factory1", 0.0013},
         };
     }
 

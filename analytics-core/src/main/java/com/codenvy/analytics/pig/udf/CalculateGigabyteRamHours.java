@@ -27,7 +27,7 @@ import java.io.IOException;
 /** @author Dmytro Nochevnov */
 public class CalculateGigabyteRamHours extends EvalFunc<Double> {
 
-    public static final long GRH_DEVIDER = 3686400000L;  // (number of milliseconds in 1 hour) * (number of MBs in 1 GB)
+    public static final long GRH_DEVIDER = 3600000000L;  // (number of milliseconds in 1 hour) * (number of MBs in 1 GB)
 
     /** {@inheritDoc} */
     @Override
