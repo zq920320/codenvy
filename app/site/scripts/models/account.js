@@ -267,6 +267,17 @@
             window.location = url;
         };
 
+        var getResponseMessage = function(response){
+            var responseErr;
+            try{
+                responseErr = JSON.parse(response.responseText).message;
+            }catch(e){
+                console.log(e);
+                responseErr = "Something went wrong. Please try again or contact support";
+            }
+            return responseErr;
+        };
+
         var appendQuery = function(url) {
             return url  +  window.location.search;
         };
@@ -307,16 +318,9 @@
                     success({url: redirect_url});
                 })
                 .fail(function(response /*, status , err*/ ) {
-                    var responseErr;
-                    try{
-                        responseErr = JSON.parse(response.responseText).message;
-                    }catch(e){
-                        console.log(e);
-                        responseErr = "Something went wrong. Please try again or contact support";
-                    }
-                    error([
-                        new AccountError(null, responseErr)
-                    ]);
+                        error([
+                            new AccountError(null, getResponseMessage(response))
+                        ]);
                     }
                 );
 
@@ -347,16 +351,8 @@
                             }
                         },
                         error: function(response /*, status , err*/ ) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
-                            }
-
-
                             error([
-                                new AccountError(null, responseErr)
+                                new AccountError(null, getResponseMessage(response))
                             ]);
                         }
                     });
@@ -389,16 +385,8 @@
                             }
                         },
                         error: function(response /*, status , err*/ ) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
-                            }
-
-
                             error([
-                                new AccountError(null, responseErr)
+                                new AccountError(null, getResponseMessage(response))
                             ]);
                         }
                     });
@@ -438,16 +426,8 @@
                 }
                 authenticate(username, bearertoken)
                 .fail(function(response) {
-                    var responseErr;
-                    try{
-                        responseErr = JSON.parse(response.responseText).message;
-                    }catch(e){
-                        responseErr = "Something went wrong. Please try again or contact support";
-                    }
-
-
                     error([
-                        new AccountError(null, responseErr)
+                        new AccountError(null, getResponseMessage(response))
                     ]);
                 })
                 .then(function(){
@@ -468,16 +448,8 @@
                         redirectToUrl(redirect_url);
                     })
                     .fail(function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Something went wrong. Please try again or contact support";
-                        }
-
-
                         error([
-                            new AccountError(null, responseErr)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     });
                 });
@@ -499,15 +471,8 @@
                         });
                     },
                     error: function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Recover passowrd: Something went wrong. Please try again or contact support";
-                        }
-
                         error([
-                            new AccountError(null, responseErr)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     }
                 });
@@ -561,15 +526,8 @@
                         });
                     },
                     error: function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Setup passowrd: Something went wrong. Please try again or contact support";
-                        }
-
                         error([
-                            new AccountError(null, responseErr)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     }
                 });
