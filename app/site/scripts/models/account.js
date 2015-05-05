@@ -139,6 +139,25 @@
             return ownAccount;
         };
 
+        var getLastProject = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api/profile/prefs";
+            $.ajax({
+                url: url,
+                type: "GET",
+                complete: function(response){
+                    var lastProjectPath;
+                    try{
+                        lastProjectPath = JSON.parse(response.responseText).lastProjectPath;
+                    }catch(err){
+                        //if response does not contain JSON object
+                    }
+                    deferredResult.resolve(lastProjectPath);
+                }
+            });
+            return deferredResult;
+        };
+
         var ensureExistenceAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
@@ -310,12 +329,24 @@
 
             processLogin: function(email, password, redirect_url, success, error){
                 //var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                if (!redirect_url){
-                    redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                }
                 login(email, password)
-                .then(function() {
-                    success({url: redirect_url});
+                .then(function(){
+                    getLastProject()
+                    .then(function(lastProject) {
+                        if (lastProject) {
+                            redirect_url = lastProject;
+                        }
+                        if (!redirect_url){
+                            redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                        }
+                        success({url: redirect_url});
+                    })
+                    .fail(function(response /*, status , err*/ ) {
+                            error([
+                                new AccountError(null, getResponseMessage(response))
+                            ]);
+                        }
+                    );
                 })
                 .fail(function(response /*, status , err*/ ) {
                         error([
