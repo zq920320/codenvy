@@ -24,6 +24,7 @@ import com.codenvy.api.account.subscription.ServiceId;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -63,16 +64,19 @@ public class TemplateProcessor {
     private final String paymentNotRequiredTemplateName;
     private final String paymentFailTemplateName;
     private final String paidSuccessfullyTemplateName;
+    private final String freeLimit;
 
 
     @Inject
     public TemplateProcessor(@Named("subscription.saas.mail.template.success") String successTemplate,
                              @Named("subscription.saas.mail.template.fail") String failTemplate,
                              @Named("subscription.saas.mail.template.success.no_payment") String noPaymentRequiredTemplate,
+                             @Named("subscription.saas.usage.free.gbh") String freeLimit,
                              WorkspaceDao workspaceDao, AccountDao accountDao, UserDao userDao, CreditCardDao cardDao) {
         this.paidSuccessfullyTemplateName = successTemplate;
         this.paymentFailTemplateName = failTemplate;
         this.paymentNotRequiredTemplateName = noPaymentRequiredTemplate;
+        this.freeLimit = freeLimit;
         this.workspaceDao = workspaceDao;
         this.accountDao = accountDao;
         this.cardDao = cardDao;
@@ -108,10 +112,14 @@ public class TemplateProcessor {
 
     public void processTemplate(Invoice invoice, Writer w) throws ServerException, NotFoundException, ForbiddenException {
         TemplateContext context = new TemplateContext();
+        Subscription ss = accountDao.getActiveSubscription(invoice.getAccountId(), ServiceId.SAAS);
+        String prepaidAvailable =  ss.getProperties().get("PrepaidGbH");
         context.setVariable("invoice", invoice);
         context.setVariable("creationDate", new Date(invoice.getCreationDate()));
         context.setVariable("fromDate", new Date(invoice.getFromDate()));
         context.setVariable("tillDate", new Date(invoice.getTillDate()));
+        context.setVariable("freeLimit", freeLimit);
+        context.setVariable("prepaidAvailable", prepaidAvailable);
 
         context.setVariable("sendDate", invoice.getMailingDate() == 0 ? new Date() : new Date(invoice.getMailingDate()));
         for (Member member : accountDao.getMembers(invoice.getAccountId())) {
