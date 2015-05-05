@@ -49,6 +49,7 @@
     <include file="${codenvy.local.conf.dir}/logback/logback-additional-appenders.xml"/>
     <logger name="org.apache.catalina.loader" level="OFF"/>
     <logger name="org.apache.catalina.session.PersistentManagerBase" level="OFF"/>
+    <logger name="org.eclipse.che.commons.schedule.executor" level="DEBUG"/>
 
     <root level="INFO">
         <appender-ref ref="stdout"/>

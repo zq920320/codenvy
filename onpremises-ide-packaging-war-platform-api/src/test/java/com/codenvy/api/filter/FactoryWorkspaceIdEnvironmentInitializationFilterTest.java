@@ -23,11 +23,11 @@ import static org.mockito.Mockito.stubVoid;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.codenvy.api.core.NotFoundException;
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import com.codenvy.auth.sso.client.filter.RequestFilter;
-import com.codenvy.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.env.EnvironmentContext;
 import com.codenvy.service.http.WorkspaceInfoCache;
 
 import org.everrest.test.mock.MockHttpServletRequest;

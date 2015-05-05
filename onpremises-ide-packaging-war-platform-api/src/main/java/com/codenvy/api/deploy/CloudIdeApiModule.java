@@ -17,41 +17,16 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.account.ResourcesManagerImpl;
-import com.codenvy.api.account.server.AccountService;
-import com.codenvy.api.account.server.ResourcesManager;
-import com.codenvy.api.account.server.dao.AccountDao;
-import com.codenvy.api.auth.AuthenticationService;
-import com.codenvy.api.builder.BuilderAdminService;
-import com.codenvy.api.builder.BuilderSelectionStrategy;
-import com.codenvy.api.builder.BuilderService;
-import com.codenvy.api.builder.LastInUseBuilderSelectionStrategy;
-import com.codenvy.api.core.notification.WSocketEventBusServer;
-import com.codenvy.api.core.rest.ApiInfoService;
+import com.codenvy.api.account.billing.BillingModule;
+import com.codenvy.api.account.metrics.MetricModule;
+import com.codenvy.api.account.server.ResourcesManagerImpl;
+import com.codenvy.api.account.subscription.SubscriptionModule;
+import com.codenvy.api.analytics.AnalyticsModule;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
-import com.codenvy.api.factory.FactoryAcceptValidator;
-import com.codenvy.api.factory.FactoryAcceptValidatorImpl;
-import com.codenvy.api.factory.FactoryCreateValidator;
-import com.codenvy.api.factory.FactoryCreateValidatorImpl;
-import com.codenvy.api.factory.FactoryService;
-import com.codenvy.api.runner.RandomRunnerSelectionStrategy;
-import com.codenvy.api.runner.RunnerAdminService;
-import com.codenvy.api.runner.RunnerSelectionStrategy;
-import com.codenvy.api.runner.RunnerService;
-import com.codenvy.api.user.server.TokenValidator;
-import com.codenvy.api.user.server.UserProfileService;
-import com.codenvy.api.user.server.UserService;
-import com.codenvy.api.user.server.dao.PreferenceDao;
-import com.codenvy.api.user.server.dao.UserDao;
-import com.codenvy.api.user.server.dao.UserProfileDao;
-import com.codenvy.api.vfs.server.VirtualFile;
-import com.codenvy.api.vfs.server.VirtualFileFilter;
-import com.codenvy.api.vfs.server.VirtualFileSystemRegistry;
-import com.codenvy.api.vfs.server.search.SearcherProvider;
-import com.codenvy.api.workspace.server.WorkspaceService;
-import com.codenvy.api.workspace.server.dao.MemberDao;
-import com.codenvy.api.workspace.server.dao.WorkspaceDao;
+import com.codenvy.api.dao.mongo.SubscriptionQueryBuilder;
+import com.codenvy.api.dao.sql.SQLModule;
+import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -67,29 +42,63 @@ import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
-import com.codenvy.everrest.CodenvyAsynchronousJobPool;
-import com.codenvy.everrest.ETagResponseFilter;
-import com.codenvy.ide.ext.java.jdi.server.DebuggerService;
-import com.codenvy.ide.ext.java.server.format.FormatService;
-import com.codenvy.ide.ext.ssh.server.KeyService;
-import com.codenvy.ide.ext.ssh.server.SshKeyStore;
-import com.codenvy.ide.ext.ssh.server.UserProfileSshKeyStore;
-import com.codenvy.inject.DynaModule;
-import com.codenvy.security.oauth.OAuthAuthenticatorProvider;
-import com.codenvy.security.oauth.OAuthAuthenticatorProviderImpl;
-import com.codenvy.subscription.service.saas.SaasResourcesCleaner;
-import com.codenvy.subscription.service.saas.SaasWorkspaceResourcesProvider;
-import com.codenvy.vfs.impl.fs.AutoMountVirtualFileSystemRegistry;
-import com.codenvy.vfs.impl.fs.CleanableSearcherProvider;
-import com.codenvy.vfs.impl.fs.LocalFSMountStrategy;
 import com.codenvy.vfs.impl.fs.MigrationLocalFSMountStrategy;
-import com.codenvy.vfs.impl.fs.MountPointCacheCleaner;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mongodb.DB;
 import com.palominolabs.metrics.guice.InstrumentationModule;
 
+import org.eclipse.che.api.account.server.AccountService;
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.auth.AuthenticationService;
+import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
+import org.eclipse.che.api.builder.BuilderAdminService;
+import org.eclipse.che.api.builder.BuilderSelectionStrategy;
+import org.eclipse.che.api.builder.BuilderService;
+import org.eclipse.che.api.builder.LastInUseBuilderSelectionStrategy;
+import org.eclipse.che.api.core.notification.WSocketEventBusServer;
+import org.eclipse.che.api.core.rest.ApiInfoService;
+import org.eclipse.che.api.factory.FactoryAcceptValidator;
+import org.eclipse.che.api.factory.FactoryAcceptValidatorImpl;
+import org.eclipse.che.api.factory.FactoryCreateValidator;
+import org.eclipse.che.api.factory.FactoryCreateValidatorImpl;
+import org.eclipse.che.api.factory.FactoryService;
+import org.eclipse.che.api.runner.RandomRunnerSelectionStrategy;
+import org.eclipse.che.api.runner.RunnerAdminService;
+import org.eclipse.che.api.runner.RunnerSelectionStrategy;
+import org.eclipse.che.api.runner.RunnerService;
+import org.eclipse.che.api.user.server.TokenValidator;
+import org.eclipse.che.api.user.server.UserProfileService;
+import org.eclipse.che.api.user.server.UserService;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.user.server.dao.UserProfileDao;
+import org.eclipse.che.api.vfs.server.VirtualFile;
+import org.eclipse.che.api.vfs.server.VirtualFileFilter;
+import org.eclipse.che.api.vfs.server.VirtualFileSystemRegistry;
+import org.eclipse.che.api.vfs.server.search.SearcherProvider;
+import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.commons.schedule.executor.ScheduleModule;
+import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
+import org.eclipse.che.everrest.ETagResponseFilter;
+import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
+import org.eclipse.che.ide.ext.java.server.format.FormatService;
+import org.eclipse.che.ide.ext.ssh.server.KeyService;
+import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
+import org.eclipse.che.ide.ext.ssh.server.UserProfileSshKeyStore;
+import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
+import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
+import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
+import org.eclipse.che.security.oauth1.OAuthAuthenticatorAuthorizationHeaderProvider;
+import org.eclipse.che.vfs.impl.fs.AutoMountVirtualFileSystemRegistry;
+import org.eclipse.che.vfs.impl.fs.CleanableSearcherProvider;
+import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
+import org.eclipse.che.vfs.impl.fs.MountPointCacheCleaner;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.PathKey;
@@ -134,15 +143,15 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(ETagResponseFilter.class);
         bind(WSocketEventBusServer.class);
 
-        install(new com.codenvy.api.core.rest.CoreRestModule());
-        install(new com.codenvy.api.analytics.AnalyticsModule());
-        install(new com.codenvy.api.project.server.BaseProjectModule());
-        install(new com.codenvy.api.builder.internal.BuilderModule());
-        install(new com.codenvy.api.runner.internal.RunnerModule());
-        install(new com.codenvy.api.vfs.server.VirtualFileSystemModule());
-        //install(new com.codenvy.vfs.impl.fs.VirtualFileSystemFSModule());
-        install(new com.codenvy.api.factory.FactoryModule());
-        install(new com.codenvy.docs.DocsModule());
+        install(new org.eclipse.che.api.core.rest.CoreRestModule());
+        install(new org.eclipse.che.api.analytics.AnalyticsModule());
+        install(new org.eclipse.che.api.project.server.BaseProjectModule());
+        install(new org.eclipse.che.api.builder.internal.BuilderModule());
+        install(new org.eclipse.che.api.runner.internal.RunnerModule());
+        install(new org.eclipse.che.api.vfs.server.VirtualFileSystemModule());
+        //install(new VirtualFileSystemFSModule());
+        install(new org.eclipse.che.api.factory.FactoryModule());
+        install(new org.eclipse.che.docs.DocsModule());
 
         // Copied from IDE3 api war >
 
@@ -159,12 +168,16 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(SearcherProvider.class).to(CleanableSearcherProvider.class);
         bind(MountPointCacheCleaner.Finalizer.class).asEagerSingleton();
 
+        //oauth 1
+        bind(org.eclipse.che.security.oauth1.OAuthAuthenticatorProvider.class);
+        bind(OAuthAuthorizationHeaderProvider.class).to(OAuthAuthenticatorAuthorizationHeaderProvider.class);
 
-        //oauth
+        //oauth 2
         bind(OAuthAuthenticatorProvider.class).to(OAuthAuthenticatorProviderImpl.class);
-        bind(com.codenvy.api.auth.oauth.OAuthTokenProvider.class).to(com.codenvy.security.oauth.OAuthAuthenticatorTokenProvider.class);
+        bind(org.eclipse.che.api.auth.oauth.OAuthTokenProvider.class).to(OAuthAuthenticatorTokenProvider.class);
+
         //factory
-        bind(com.codenvy.api.factory.FactoryStore.class).to(com.codenvy.factory.storage.mongo.MongoDBFactoryStore.class);
+        bind(org.eclipse.che.api.factory.FactoryStore.class).to(com.codenvy.factory.storage.mongo.MongoDBFactoryStore.class);
         bind(FactoryAcceptValidator.class).to(FactoryAcceptValidatorImpl.class);
         bind(FactoryCreateValidator.class).to(FactoryCreateValidatorImpl.class);
         bind(FactoryService.class);
@@ -175,7 +188,7 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(DB.class).toProvider(com.codenvy.api.dao.mongo.MongoDatabaseProvider.class);
         bind(UserDao.class).to(com.codenvy.api.dao.ldap.UserDaoImpl.class);
         bind(WorkspaceDao.class).to(com.codenvy.api.dao.mongo.WorkspaceDaoImpl.class);
-        bind(UserProfileDao.class).to(com.codenvy.api.dao.mongo.UserProfileDaoImpl.class);
+        bind(UserProfileDao.class).to(com.codenvy.api.dao.ldap.UserProfileDaoImpl.class);
         bind(MemberDao.class).to(com.codenvy.api.dao.mongo.MemberDaoImpl.class);
         bind(AccountDao.class).to(com.codenvy.api.dao.mongo.AccountDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
@@ -190,24 +203,18 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(VirtualFileSystemRegistry.class).to(AutoMountVirtualFileSystemRegistry.class);
 
-        Multibinder<com.codenvy.api.account.server.SubscriptionService> subscriptionServiceBinder =
-                Multibinder.newSetBinder(binder(), com.codenvy.api.account.server.SubscriptionService.class);
-        subscriptionServiceBinder.addBinding().to(com.codenvy.subscription.service.SaasSubscriptionService.class);
-        subscriptionServiceBinder.addBinding().to(com.codenvy.subscription.service.FactorySubscriptionService.class);
-        subscriptionServiceBinder.addBinding().to(com.codenvy.subscription.service.OnPremisesSubscriptionService.class);
-
-
         //authentication
-        bind(com.codenvy.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
+        bind(org.eclipse.che.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
         bind(TokenValidator.class).to(com.codenvy.auth.sso.server.BearerTokenValidator.class);
         bind(com.codenvy.auth.sso.oauth.SsoOAuthAuthenticationService.class);
+        bind(org.eclipse.che.security.oauth1.OAuthAuthenticationService.class);
 
 
         //SSO
         Multibinder<com.codenvy.api.dao.authentication.AuthenticationHandler> handlerBinder =
                 Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
         handlerBinder.addBinding().to(com.codenvy.auth.sso.server.ldap.LdapAuthenticationHandler.class);
-        handlerBinder.addBinding().to(com.codenvy.auth.sso.server.RestrictedAccessAuthenticationHandler.class);
+        handlerBinder.addBinding().to(com.codenvy.auth.sso.server.OrgServiceAuthenticationHandler.class);
 
 
         Multibinder<RolesExtractor> rolesExtractorBinder = Multibinder.newSetBinder(binder(), RolesExtractor.class);
@@ -269,27 +276,24 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(com.codenvy.workspace.CreateWsRootDirSubscriber.class).asEagerSingleton();
 
+        bind(org.eclipse.che.api.account.server.dao.PlanDao.class).to(com.codenvy.api.dao.mongo.PlanDaoImpl.class);
 
-        bind(com.braintreegateway.BraintreeGateway.class).to(com.codenvy.braintree.GuiceBraintreeGateway.class);
-        bind(com.codenvy.api.account.server.PaymentService.class).to(com.codenvy.api.payment.BraintreePaymentService.class);
-
-        bind(com.codenvy.api.account.server.dao.PlanDao.class).to(com.codenvy.api.dao.mongo.PlanDaoImpl.class);
-        bind(com.codenvy.factory.workspace.FactoryWorkspaceResourceProvider.class).asEagerSingleton();
-        bind(SaasWorkspaceResourcesProvider.class).asEagerSingleton();
-        bind(SaasResourcesCleaner.class).asEagerSingleton();
-        bind(com.codenvy.plan.PlanService.class);
-
-        bind(com.codenvy.braintree.BraintreeWebhookService.class);
-        bind(com.codenvy.api.account.server.SubscriptionAttributesValidator.class)
-                .to(com.codenvy.subscription.SubscriptionAttributesValidatorImpl.class);
-
+        bind(ProfileMigrator.class).asEagerSingleton();
 
         install(new com.codenvy.workspace.interceptor.InterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerInterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
         install(new InstrumentationModule());
+        install(new SQLModule());
+
+        install(new BillingModule());
+        install(new MetricModule());
+        install(new SubscriptionModule());
+        install(new AnalyticsModule());
+        install(new ScheduleModule());
 
 
+        bind(com.codenvy.api.dao.mongo.SubscriptionQueryBuilder.class).to(com.codenvy.api.dao.mongo.MongoSubscriptionQueryBuilder.class);
     }
 }

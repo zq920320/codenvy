@@ -19,7 +19,7 @@ package com.codenvy.deploy;
 
 import com.codenvy.auth.sso.client.CacheDisablingFilter;
 import com.codenvy.auth.sso.client.CacheForcingFilter;
-import com.codenvy.inject.DynaModule;
+import org.eclipse.che.inject.DynaModule;
 import com.google.inject.servlet.ServletModule;
 
 /**

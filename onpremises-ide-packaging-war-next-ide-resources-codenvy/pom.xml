@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.7.0-SNAPSHOT</version>
+        <version>3.9.2</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-next-ide-resources-codenvy</artifactId>
     <packaging>war</packaging>
@@ -45,8 +45,8 @@
                     <groupId>com.codenvy.hosted-infrastructure</groupId>
                 </exclusion>
                 <exclusion>
-                    <artifactId>codenvy-api-core</artifactId>
-                    <groupId>com.codenvy.platform-api</groupId>
+                    <artifactId>che-core-api-core</artifactId>
+                    <groupId>org.eclipse.che.core</groupId>
                 </exclusion>
                 <exclusion>
                     <artifactId>codenvy-hosted-sso-client</artifactId>
@@ -55,14 +55,14 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-inject</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>${com.googlecode.gson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-inject</artifactId>
+            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

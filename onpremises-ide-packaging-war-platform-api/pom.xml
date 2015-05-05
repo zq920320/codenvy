@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.7.0-SNAPSHOT</version>
+        <version>3.9.2</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
     <packaging>war</packaging>
@@ -45,11 +45,6 @@
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.commons</groupId>
-            <artifactId>codenvy-commons-inject</artifactId>
-            <version>${codenvy.commons.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-services</artifactId>
             <version>${codenvy.factory.version}</version>
@@ -57,11 +52,6 @@
         <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-storage-mongo</artifactId>
-            <version>${codenvy.factory.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-subscription</artifactId>
             <version>${codenvy.factory.version}</version>
         </dependency>
         <dependency>
@@ -111,129 +101,58 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-workspace-events</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-datasource-server</artifactId>
-            <version>${codenvy.plugin.datasource.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-git-provider-codenvy</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-bitbucket-git-provider</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-git-provider-github</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-git-provider-projectlocker</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-google-oauth2</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-git-provider-wso2</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-projectlocker-git-provider</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-ext-github</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-projectlocker-oauth2</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-analytics</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-wso2-git-provider</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-auth</artifactId>
-            <version>${codenvy.platform-api.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-builder</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-core</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-docs</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-factory</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-project</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-runner</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-user</artifactId>
-            <version>${codenvy.platform-api.version}</version>
-        </dependency>
-        <!-- AngularJS Server Side Dependency -->
-        <dependency>
-            <groupId>com.codenvy.plugin-angularjs</groupId>
-            <artifactId>angularjs-api-server</artifactId>
-            <version>${codenvy.plugin.angularjs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-angularjs</groupId>
-            <artifactId>angularjs-core-server</artifactId>
-            <version>${codenvy.plugin.angularjs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-angularjs</groupId>
-            <artifactId>angularjs-template-angular-seed</artifactId>
-            <version>${codenvy.plugin.angularjs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-angularjs</groupId>
-            <artifactId>angularjs-template-gulp-angularjs-starter</artifactId>
-            <version>${codenvy.plugin.angularjs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-angularjs</groupId>
-            <artifactId>angularjs-template-yeoman</artifactId>
-            <version>${codenvy.plugin.angularjs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-cpp</groupId>
-            <artifactId>codenvy-ext-cpp</artifactId>
-            <version>${codenvy.plugin-cpp.version}</version>
+            <groupId>com.codenvy.plugin-contribution</groupId>
+            <artifactId>codenvy-contribution-projecttype</artifactId>
+            <version>${codenvy.plugin-contribution.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-gae</groupId>
             <artifactId>codenvy-plugin-gae</artifactId>
             <version>${codenvy.plugin.gae.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-go</groupId>
-            <artifactId>codenvy-ext-go</artifactId>
-            <version>${codenvy.plugin-go.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
@@ -246,14 +165,140 @@
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-java</groupId>
-            <artifactId>codenvy-ext-ant</artifactId>
-            <version>${codenvy.plugin-java.version}</version>
+            <groupId>com.palominolabs.metrics</groupId>
+            <artifactId>metrics-guice</artifactId>
+            <version>${com.codahale.metrics.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-java</groupId>
-            <artifactId>codenvy-ext-debugger-java</artifactId>
-            <version>${codenvy.plugin-java.version}</version>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-analytics</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-auth</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-builder</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-core</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-docs</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-factory</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-project</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-runner</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-user</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-inject</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-schedule</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-vfs-impl</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <!-- AngularJS Server Side Dependency -->
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>angularjs-api-server</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>angularjs-core-server</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>angularjs-template-angular-seed</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>angularjs-template-gulp-angularjs-starter</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>angularjs-template-yeoman</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-cpp-ext-cpp</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-datasource-server</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-git-provider-che</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-github-ext-github</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-github-oauth2</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-github-provider-github</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-go-ext-go</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-java-ext-ant</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-java-ext-debugger-java</artifactId>
+            <version>${che.plugins.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>tools</artifactId>
@@ -262,9 +307,9 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-java</groupId>
-            <artifactId>codenvy-ext-java</artifactId>
-            <version>${codenvy.plugin-java.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-java-ext-java</artifactId>
+            <version>${che.plugins.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>org.eclipse.jdt.core</artifactId>
@@ -273,59 +318,34 @@
             </exclusions>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-java</groupId>
-            <artifactId>codenvy-ext-maven</artifactId>
-            <version>${codenvy.plugin-java.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-java-ext-maven</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-php</groupId>
-            <artifactId>codenvy-ext-php</artifactId>
-            <version>${codenvy.plugin-php.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-php-ext-php</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-python</groupId>
-            <artifactId>codenvy-ext-python</artifactId>
-            <version>${codenvy.plugin-python.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-python-ext-python</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-ruby</groupId>
-            <artifactId>codenvy-ext-ruby</artifactId>
-            <version>${codenvy.plugin-ruby.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-ruby-ext-ruby</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2</artifactId>
-            <version>${codenvy.security.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-svn-ext-subversion</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2-github</artifactId>
-            <version>${codenvy.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2-google</artifactId>
-            <version>${codenvy.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2-projectlocker</artifactId>
-            <version>${codenvy.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.security</groupId>
-            <artifactId>codenvy-security-oauth2-wso2</artifactId>
-            <version>${codenvy.security.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.vfs</groupId>
-            <artifactId>codenvy-vfs-impl</artifactId>
-            <version>${codenvy.vfs.impl.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.palominolabs.metrics</groupId>
-            <artifactId>metrics-guice</artifactId>
-            <version>${com.codahale.metrics.version}</version>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-tour-server</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.tycho</groupId>
@@ -341,6 +361,11 @@
             <groupId>org.everrest</groupId>
             <artifactId>everrest-websockets</artifactId>
             <version>${org.everrest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${jdbc.postgresql-driver.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>

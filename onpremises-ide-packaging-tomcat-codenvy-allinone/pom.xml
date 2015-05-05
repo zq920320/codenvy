@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.7.0-SNAPSHOT</version>
+        <version>3.9.2</version>
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-codenvy-allinone</artifactId>
     <packaging>pom</packaging>
@@ -79,15 +79,15 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-git-server</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.platform-api</groupId>
             <artifactId>codenvy-api-docs-ui</artifactId>
             <version>${codenvy.api-docs-ui.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-git-server</artifactId>
+            <version>${che.plugins.version}</version>
             <type>war</type>
         </dependency>
     </dependencies>
@@ -110,7 +110,7 @@
                                 </copy>
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-aio/webapps/api.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/mail.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/codenvy-git-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/git.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/che-plugin-git-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/git.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" overwrite="true" tofile="${project.build.directory}/tomcat-aio/webapps/factory.war" />
                                 <echo message="Deploying builder application...." />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-builder.war" tofile="${project.build.directory}/tomcat-aio/webapps/builder3.war" />
@@ -201,9 +201,9 @@
                         <configuration>
                             <artifactItems>
                                 <artifactItem>
-                                    <groupId>com.codenvy.ide</groupId>
-                                    <artifactId>codenvy-ssl-socket-factory</artifactId>
-                                    <version>${codenvy.plugin.datasource.version}</version>
+                                    <groupId>org.eclipse.che.plugin</groupId>
+                                    <artifactId>che-plugin-datasource-ssl-socket-factory</artifactId>
+                                    <version>${che.plugins.version}</version>
                                     <outputDirectory>${project.build.directory}/tomcat-aio/lib</outputDirectory>
                                     <destFileName>codenvy-ssl-socket-factory.jar</destFileName>
                                 </artifactItem>

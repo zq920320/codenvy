@@ -17,9 +17,9 @@
  */
 package com.codenvy.workspace;
 
-import com.codenvy.api.core.ServerException;
-import com.codenvy.api.vfs.server.VirtualFileSystemRegistry;
-import com.codenvy.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.vfs.server.VirtualFileSystemRegistry;
+import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
 import com.codenvy.workspace.listener.VfsCleanupPerformer;
 
 import org.slf4j.Logger;
@@ -30,7 +30,7 @@ import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 
-import static com.codenvy.commons.lang.IoUtil.removeDirectory;
+import static org.eclipse.che.commons.lang.IoUtil.removeDirectory;
 
 /**
  * @author Alexander Garagatyi

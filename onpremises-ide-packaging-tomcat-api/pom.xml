@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.7.0-SNAPSHOT</version>
+        <version>3.9.2</version>
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-api</artifactId>
     <packaging>pom</packaging>
@@ -58,12 +58,6 @@
             <version>${codenvy.hosted-infrastructure.version}</version>
             <type>war</type>
         </dependency>
-        <dependency>
-            <groupId>com.codenvy.ide</groupId>
-            <artifactId>codenvy-git-server</artifactId>
-            <version>${codenvy.plugin.git.version}</version>
-            <type>war</type>
-        </dependency>
         <!-- Dependency for SMTPAppender -->
         <dependency>
             <groupId>javax.mail</groupId>
@@ -89,6 +83,12 @@
                     <groupId>org.apache.tomcat</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-git-server</artifactId>
+            <version>${che.plugins.version}</version>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -137,24 +137,18 @@
                                 <move todir="${project.build.directory}/tomcat-api">
                                     <fileset dir="${project.build.directory}/apache-tomcat-${org.apache.tomcat.version}" />
                                 </move>
-
                                 <echo message="Copy configuration for api tomcat" />
                                 <copy overwrite="true" todir="${project.build.directory}/tomcat-api/">
                                     <fileset dir="${basedir}/src/main/resources/tomcat/" />
                                 </copy>
-
                                 <echo message="Deploy platform api services to api.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-api/webapps/api.war" />
-
                                 <echo message="Deploy mail.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-api/webapps/mail.war" />
-
                                 <echo message="Deploy factory.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" tofile="${project.build.directory}/tomcat-api/webapps/factory.war" />
-
                                 <echo message="Deploy git.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/codenvy-git-server.war" tofile="${project.build.directory}/tomcat-api/webapps/git.war" />
-
+                                <copy file="${project.build.directory}/packager-conf/war/che-plugin-git-server.war" tofile="${project.build.directory}/tomcat-api/webapps/git.war" />
                                 <chmod file="${project.build.directory}/tomcat-api/bin/*.sh" perm="+x" />
                                 <echo message="Copy tomcat-catalina-jmx-remote.jar" />
                                 <copy file="${project.build.directory}/packager-conf/tomcat-jar/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/tomcat-api/lib/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" />

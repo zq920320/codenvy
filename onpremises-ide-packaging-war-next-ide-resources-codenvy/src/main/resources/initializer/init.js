@@ -901,11 +901,12 @@ var Initializer = new function () {
             var redirect_url = window.location.protocol + "//"
                 + window.location.host + window.IDE.config.context + "/"
                 + window.IDE.config.workspaceName + "/" + window.IDE.config.projectName;
+
             request.onload = function () {
                 if (request.status == 200) {
-                    var profile = JSON.parse(request.responseText);
+                    var prefs = JSON.parse(request.responseText);
 
-                    var temporary = profile.attributes.temporary == "true";
+                    var temporary = prefs.temporary == "true";
 
                     if (temporary) {
                         Page.redirect("/site/login?redirect_url=" + encodeURIComponent(redirect_url));
@@ -921,7 +922,7 @@ var Initializer = new function () {
                 Initializer.setError("Unable to access user info. Connection error.");
             };
 
-            var url = "/api/profile/";
+            var url = "/api/profile/prefs";
             request.open("GET", url, true);
             request.send();
         } catch (e) {

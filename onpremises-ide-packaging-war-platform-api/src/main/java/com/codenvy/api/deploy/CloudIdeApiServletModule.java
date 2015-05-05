@@ -18,11 +18,10 @@
 package com.codenvy.api.deploy;
 
 import com.codenvy.api.filter.FactoryWorkspaceIdEnvironmentInitializationFilter;
-import com.codenvy.inject.DynaModule;
 import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
-import com.codenvy.service.http.IdeVersionInitializationFilter;
 import com.google.inject.servlet.ServletModule;
 
+import org.eclipse.che.inject.DynaModule;
 import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
@@ -54,6 +53,7 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/debug-java/*",
                "/async/*",
                "/git/*",
+               "/svn/*",
                "/invite/*",
                "/ssh-keys/*",
                "/appengine/*",
@@ -67,7 +67,7 @@ public class CloudIdeApiServletModule extends ServletModule {
         filter("/factory/*")
                 .through(FactoryWorkspaceIdEnvironmentInitializationFilter.class);
 
-        filterRegex("^/account/(?!find|list|subscriptions|credit-card).+").through(AccountIdEnvironmentInitializationFilter.class);
+        filterRegex("^/(account|creditcard|invoice)/(?!find|list|subscriptions).+").through(AccountIdEnvironmentInitializationFilter.class);
 
         filter("/factory/*",
                "/workspace/*",
@@ -81,7 +81,9 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/account",
                "/user",
                "/git/*",
+               "/svn/*",
                "/github/*",
+               "/bitbucket/*",
                "/ssh-keys/*",
                "/async/*",
                "/internal/convert/*",
@@ -102,13 +104,12 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/appengine/*",
                "/gae-validator/*",
-               "/gae-parameters/*")
+               "/gae-parameters/*",
+               "/billing/*",
+               "/creditcard/*",
+               "/invoice/*",
+               "/billing/*")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filter("/auth/*",
-               "/oauth/*",
-               "/oauth",
-               "/internal/token/validate")
-                .through(IdeVersionInitializationFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
         filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);
         filter("/resources/*").through(ResourceFilter.class);
@@ -119,8 +120,8 @@ public class CloudIdeApiServletModule extends ServletModule {
         serve("/metrics/threaddump").with(com.codahale.metrics.servlets.ThreadDumpServlet.class);
 
         serve("/oauth").with(com.codenvy.auth.sso.oauth.OAuthLoginServlet.class);
-        serve("/ws/*").with(com.codenvy.everrest.CodenvyEverrestWebSocketServlet.class);
-        serve("/eventbus/*").with(com.codenvy.everrest.CodenvyEverrestWebSocketServlet.class);
+        serve("/ws/*").with(org.eclipse.che.everrest.CodenvyEverrestWebSocketServlet.class);
+        serve("/eventbus/*").with(org.eclipse.che.everrest.CodenvyEverrestWebSocketServlet.class);
         serve("/*").with(org.everrest.guice.servlet.GuiceEverrestServlet.class);
 
         getServletContext().addListener(new WSConnectionTracker());

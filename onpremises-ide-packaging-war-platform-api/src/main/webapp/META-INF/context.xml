@@ -18,4 +18,5 @@
 
 -->
 <Context path="/api" docBase="api" reloadable="true" crossContext="false">
+    <ResourceLink global="jdbc/codenvy" name="jdbc/codenvy" type="javax.sql.DataSource"/>
 </Context>
