@@ -19,13 +19,20 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
+/**
+ * @author Anatoliy Bazko
+ */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class UsersProfilesList extends AbstractUsersProfile {
@@ -34,16 +41,19 @@ public class UsersProfilesList extends AbstractUsersProfile {
         super(MetricType.USERS_PROFILES_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' profiles";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.USERS_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{ID,
@@ -57,8 +67,28 @@ public class UsersProfilesList extends AbstractUsersProfile {
                             REGISTERED_USER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
+    }
+
+    /** Utility method. */
+    public static ListValueData getByAlias(Object aliases) throws IOException {
+        return getByFilter(MetricFilter.ALIASES, aliases);
+    }
+
+    /** Utility method. */
+    public static ListValueData getByID(Object id) throws IOException {
+        return getByFilter(MetricFilter._ID, id);
+    }
+
+    private static ListValueData getByFilter(MetricFilter filter, Object valueFilter) throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(filter, valueFilter);
+        Context context = builder.build();
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        return ValueDataUtil.getAsList(metric, context);
     }
 }

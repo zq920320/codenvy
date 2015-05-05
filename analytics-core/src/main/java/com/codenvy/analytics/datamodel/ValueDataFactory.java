@@ -18,8 +18,14 @@
 package com.codenvy.analytics.datamodel;
 
 import com.mongodb.BasicDBList;
+import com.mongodb.DBObject;
 
 import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.Set;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class ValueDataFactory {
@@ -67,5 +73,157 @@ public class ValueDataFactory {
         }
 
         throw new IllegalArgumentException("Unknown class " + clazz.getName());
+    }
+
+    /**
+     * Creates appropriate {@link com.codenvy.analytics.datamodel.ValueData}.
+     */
+    public static ValueData createdValueData(Iterator<DBObject> iterator,
+                                             Class<? extends ValueData> clazz,
+                                             String[] trackedFields) {
+
+        if (clazz == LongValueData.class) {
+            return createLongValueData(iterator, trackedFields);
+
+        } else if (clazz == DoubleValueData.class) {
+            return createDoubleValueData(iterator, trackedFields);
+
+        } else if (clazz == SetValueData.class) {
+            return createSetValueData(iterator, trackedFields);
+
+        } else if (clazz == ListValueData.class) {
+            return createListValueData(iterator, trackedFields);
+        }
+
+        throw new IllegalArgumentException("Unknown class " + clazz.getName());
+    }
+
+    private static ValueData createListValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, ListValueData.class, new CreateValueAction() {
+            Map<String, ValueData> values = new LinkedHashMap<>();
+
+            @Override
+            public void accumulate(String key, Object value) {
+                this.values.put(key, ValueDataFactory.createValueData(value));
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new ListValueData(Arrays.asList(new ValueData[]{new MapValueData(values)}));
+                } finally {
+                    values.clear();
+                }
+            }
+        });
+    }
+
+    private static ValueData createSetValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, SetValueData.class, new CreateValueAction() {
+            Set<ValueData> values = new HashSet<>();
+
+            @Override
+            public void accumulate(String key, Object value) {
+                this.values.add(ValueDataFactory.createValueData(value));
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new SetValueData(values);
+                } finally {
+                    values.clear();
+                }
+            }
+        });
+    }
+
+    private static ValueData createLongValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, LongValueData.class, new CreateValueAction() {
+            long value = 0;
+
+            @Override
+            public void accumulate(String key, Object value) {
+                this.value += ((Number)value).longValue();
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new LongValueData(value);
+                } finally {
+                    value = 0;
+                }
+            }
+        });
+    }
+
+    private static ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] trackedFields) {
+        return doCreateValueData(iterator, trackedFields, DoubleValueData.class, new CreateValueAction() {
+            double value = 0;
+
+            @Override
+            public void accumulate(String key, Object value) {
+                this.value += ((Number)value).doubleValue();
+            }
+
+            @Override
+            public ValueData pull() {
+                try {
+                    return new DoubleValueData(value);
+                } finally {
+                    value = 0;
+                }
+            }
+        });
+    }
+
+    /**
+     * @param iterator
+     *         the iterator over result set
+     * @param trackedFields
+     *         the list of trackedFields indicate which data to read from resulted items
+     * @param clazz
+     *         the resulted class of {@link ValueData}
+     * @param action
+     *         the delegated action, contains behavior how to created needed result depending on given clazz
+     */
+    private static ValueData doCreateValueData(Iterator<DBObject> iterator,
+                                               String[] trackedFields,
+                                               Class<? extends ValueData> clazz,
+                                               CreateValueAction action) {
+
+        ValueData result = ValueDataFactory.createDefaultValue(clazz);
+
+        while (iterator.hasNext()) {
+            DBObject dbObject = iterator.next();
+
+            for (String key : trackedFields) {
+                if (dbObject.containsField(key) && dbObject.get(key) != null) {
+                    action.accumulate(key, dbObject.get(key));
+                }
+            }
+
+            result = result.add(action.pull());
+        }
+
+        return result;
+    }
+
+
+    /**
+     * Create value action.
+     */
+    private interface CreateValueAction {
+
+        /**
+         * Accumulates every key-value pair over every entry for single resulted item
+         */
+        void accumulate(String key, Object value);
+
+        /**
+         * Creates a {@link ValueData}.
+         */
+        ValueData pull();
     }
 }

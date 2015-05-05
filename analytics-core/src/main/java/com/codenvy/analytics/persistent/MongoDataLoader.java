@@ -18,11 +18,8 @@
 package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Utils;
-import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
-import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.metrics.AbstractCount;
@@ -41,6 +38,7 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.codenvy.analytics.metrics.WithoutFromDateParam;
 import com.codenvy.analytics.metrics.users.AbstractUsersProfile;
 import com.codenvy.analytics.metrics.users.NonActiveUsers;
+import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.metrics.workspaces.AbstractWorkspacesProfile;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.mongodb.AggregationOutput;
@@ -56,7 +54,6 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -87,38 +84,25 @@ public class MongoDataLoader implements DataLoader {
         this.db = db;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData loadValue(ReadBasedMetric metric, Context clauses) throws IOException {
-        if (clauses.exists(Parameters.FROM_DATE) && clauses.isDefaultValue(Parameters.FROM_DATE)) {
-            clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
-        }
-        if (clauses.exists(Parameters.TO_DATE) && clauses.isDefaultValue(Parameters.TO_DATE)) {
-            clauses = clauses.cloneAndRemove(Parameters.TO_DATE);
-        }
+        clauses = removeDefaultDateParameters(clauses);
 
         if (metric instanceof AbstractCount) {
-            return doLoadValue(metric, clauses, new LoadValueAction() {
-                @Override
-                public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-                    return MongoDataLoader.this.createdValueData(metric, iterator);
-                }
-
-                @Override
-                public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
-                    long count = dbCollection.count((DBObject)filter.get("$match"));
-
-                    DBObject result = new BasicDBObject();
-                    result.put(metric.getTrackedFields()[0], count);
-
-                    return Arrays.asList(result).iterator();
-                }
-            });
+            return doCount(metric, clauses);
         }
 
+        return doAggregate(metric, clauses);
+    }
+
+    protected ValueData doAggregate(ReadBasedMetric metric, Context clauses) throws IOException {
         return doLoadValue(metric, clauses, new LoadValueAction() {
             @Override
             public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-                return MongoDataLoader.this.createdValueData(metric, iterator);
+                String[] trackedFields = metric.getTrackedFields();
+                Class<? extends ValueData> clazz = metric.getValueDataClass();
+                return ValueDataFactory.createdValueData(iterator, clazz, trackedFields);
             }
 
             @Override
@@ -130,12 +114,45 @@ public class MongoDataLoader implements DataLoader {
         });
     }
 
+    protected ValueData doCount(ReadBasedMetric metric, Context clauses) throws IOException {
+        return doLoadValue(metric, clauses, new LoadValueAction() {
+            @Override
+            public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
+                String[] trackedFields = metric.getTrackedFields();
+                Class<? extends ValueData> clazz = metric.getValueDataClass();
+                return ValueDataFactory.createdValueData(iterator, clazz, trackedFields);
+            }
+
+            @Override
+            public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                long count = dbCollection.count((DBObject)filter.get("$match"));
+                DBObject result = new BasicDBObject(metric.getTrackedFields()[0], count);
+                return Arrays.asList(result).iterator();
+            }
+        });
+    }
+
+    /** Removes redundant FROM_DATE and TO_DATE parameters if they are default. */
+    private Context removeDefaultDateParameters(Context clauses) {
+        if (clauses.exists(Parameters.FROM_DATE) && clauses.isDefaultValue(Parameters.FROM_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.FROM_DATE);
+        }
+
+        if (clauses.exists(Parameters.TO_DATE) && clauses.isDefaultValue(Parameters.TO_DATE)) {
+            clauses = clauses.cloneAndRemove(Parameters.TO_DATE);
+        }
+
+        return clauses;
+    }
+
+    /** {@inheritDoc} */
     @Override
     public ValueData loadExpandedValue(ReadBasedMetric metric, Context clauses) throws IOException {
         return doLoadValue(metric, clauses, new LoadValueAction() {
             @Override
             public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-                return createListValueData(iterator, new String[]{((ReadBasedExpandable)metric).getExpandedField()});
+                String[] trackedFields = {((ReadBasedExpandable)metric).getExpandedField()};
+                return ValueDataFactory.createdValueData(iterator, ListValueData.class, trackedFields);
             }
 
             @Override
@@ -144,16 +161,18 @@ public class MongoDataLoader implements DataLoader {
                 AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
                 return aggregation.results().iterator();
             }
-
         });
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData loadSummarizedValue(ReadBasedMetric metric, Context clauses) throws IOException {
         return doLoadValue(metric, clauses, new LoadValueAction() {
             @Override
             public ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-                return MongoDataLoader.this.createdValueData(metric, iterator);
+                String[] trackedFields = metric.getTrackedFields();
+                Class<? extends ValueData> clazz = metric.getValueDataClass();
+                return ValueDataFactory.createdValueData(iterator, clazz, trackedFields);
             }
 
             @Override
@@ -162,7 +181,6 @@ public class MongoDataLoader implements DataLoader {
                 AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
                 return aggregation.results().iterator();
             }
-
         });
     }
 
@@ -559,14 +577,38 @@ public class MongoDataLoader implements DataLoader {
     }
 
     private String[] getUsersIDs(Object aliases) throws IOException {
-        return getIDsByNames(MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST), aliases, MetricFilter.USER_ID, MetricFilter.ALIASES);
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_PROFILES_LIST);
+        return getIDsByNames(metric,
+                             new RecognizeIdAction() {
+                                 @Override
+                                 public boolean isID(String value) throws IOException {
+                                     return isUserID(value) || !UsersProfilesList.getByID(value).isEmpty();
+                                 }
+                             },
+                             aliases,
+                             MetricFilter.USER_ID,
+                             MetricFilter.ALIASES);
     }
 
     private String[] getWorkspaceIDs(Object names) throws IOException {
-        return getIDsByNames(MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST), names, MetricFilter.WS_ID, MetricFilter.WS_NAME);
+        Metric metric = MetricFactory.getMetric(MetricType.WORKSPACES_PROFILES_LIST);
+        return getIDsByNames(metric,
+                             new RecognizeIdAction() {
+                                 @Override
+                                 public boolean isID(String value) {
+                                     return isWorkspaceID(value);
+                                 }
+                             },
+                             names,
+                             MetricFilter.WS_ID,
+                             MetricFilter.WS_NAME);
     }
 
-    private String[] getIDsByNames(Metric metric, Object filterValue, MetricFilter idFilter, MetricFilter nameFilter) throws IOException {
+    private String[] getIDsByNames(Metric metric,
+                                   RecognizeIdAction recognizeIdAction,
+                                   Object filterValue,
+                                   MetricFilter idFilter,
+                                   MetricFilter nameFilter) throws IOException {
         if (!(filterValue instanceof String)) {
             throw new IllegalStateException("Only string filter is supported");
         }
@@ -585,7 +627,7 @@ public class MongoDataLoader implements DataLoader {
         while (iter.hasNext()) {
             String next = iter.next();
 
-            if (!isWorkspaceID(next) && !isUserID(next)) {
+            if (!recognizeIdAction.isID(next)) {
                 entityNames.add(next);
                 iter.remove();
             }
@@ -619,152 +661,6 @@ public class MongoDataLoader implements DataLoader {
         return ids;
     }
 
-    private ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator) {
-        Class<? extends ValueData> clazz = metric.getValueDataClass();
-
-        if (clazz == LongValueData.class) {
-            return createLongValueData(iterator, metric.getTrackedFields());
-
-        } else if (clazz == DoubleValueData.class) {
-            return createDoubleValueData(iterator, metric.getTrackedFields());
-
-        } else if (clazz == SetValueData.class) {
-            return createSetValueData(iterator, metric.getTrackedFields());
-
-        } else if (clazz == ListValueData.class) {
-            return createListValueData(iterator, metric.getTrackedFields());
-        }
-
-        throw new IllegalArgumentException("Unknown class " + clazz.getName());
-    }
-
-    private ValueData createListValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, ListValueData.class, new CreateValueAction() {
-            Map<String, ValueData> values = new LinkedHashMap<>();
-
-            @Override
-            public void accumulate(String key, Object value) {
-                this.values.put(key, ValueDataFactory.createValueData(value));
-            }
-
-            @Override
-            public ValueData pull() {
-                try {
-                    return new ListValueData(Arrays.asList(new ValueData[]{new MapValueData(values)}));
-                } finally {
-                    values.clear();
-                }
-            }
-        });
-    }
-
-    private ValueData createSetValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, SetValueData.class, new CreateValueAction() {
-            Set<ValueData> values = new HashSet<>();
-
-            @Override
-            public void accumulate(String key, Object value) {
-                this.values.add(ValueDataFactory.createValueData(value));
-            }
-
-            @Override
-            public ValueData pull() {
-                try {
-                    return new SetValueData(values);
-                } finally {
-                    values.clear();
-                }
-            }
-        });
-    }
-
-    private ValueData createLongValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, LongValueData.class, new CreateValueAction() {
-            long value = 0;
-
-            @Override
-            public void accumulate(String key, Object value) {
-                this.value += ((Number)value).longValue();
-            }
-
-            @Override
-            public ValueData pull() {
-                try {
-                    return new LongValueData(value);
-                } finally {
-                    value = 0;
-                }
-            }
-        });
-    }
-
-    private ValueData createDoubleValueData(Iterator<DBObject> iterator, String[] trackedFields) {
-        return doCreateValueData(iterator, trackedFields, DoubleValueData.class, new CreateValueAction() {
-            double value = 0;
-
-            @Override
-            public void accumulate(String key, Object value) {
-                this.value += ((Number)value).doubleValue();
-            }
-
-            @Override
-            public ValueData pull() {
-                try {
-                    return new DoubleValueData(value);
-                } finally {
-                    value = 0;
-                }
-            }
-        });
-    }
-
-    /**
-     * @param iterator
-     *         the iterator over result set
-     * @param trackedFields
-     *         the list of trackedFields indicate which data to read from resulted items
-     * @param clazz
-     *         the resulted class of {@link ValueData}
-     * @param action
-     *         the delegated action, contains behavior how to created needed result depending on given clazz
-     */
-    private ValueData doCreateValueData(Iterator<DBObject> iterator,
-                                        String[] trackedFields,
-                                        Class<? extends ValueData> clazz,
-                                        CreateValueAction action) {
-
-        ValueData result = ValueDataFactory.createDefaultValue(clazz);
-
-        while (iterator.hasNext()) {
-            DBObject dbObject = iterator.next();
-
-            for (String key : trackedFields) {
-                if (dbObject.containsField(key) && dbObject.get(key) != null) {
-                    action.accumulate(key, dbObject.get(key));
-                }
-            }
-
-            result = result.add(action.pull());
-        }
-
-        return result;
-    }
-
-    /**
-     * Create value action.
-     */
-    private interface CreateValueAction {
-
-        /**
-         * Accumulates every key-value pair over every entry for single resulted item
-         */
-        void accumulate(String key, Object value);
-
-        /**
-         * Creates a {@link ValueData}.
-         */
-        ValueData pull();
-    }
 
     /**
      * Load value from storage action.
@@ -773,5 +669,9 @@ public class MongoDataLoader implements DataLoader {
         ValueData createdValueData(ReadBasedMetric metric, Iterator<DBObject> iterator);
 
         Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter);
+    }
+
+    private interface RecognizeIdAction {
+        boolean isID(String value) throws IOException;
     }
 }
