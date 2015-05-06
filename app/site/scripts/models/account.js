@@ -138,6 +138,26 @@
             }
             return ownAccount;
         };
+        // Verify api response. Returns false if response does not contain "implementationVendor" field 
+        var isApiAvailable = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api";
+            $.ajax({
+                url: url,
+                type: "OPTIONS",
+                success: function(response){
+                    if (response.implementationVendor) {//response.implementationVendor == "Codenvy, S.A."
+                        deferredResult.resolve(true);
+                    }else{
+                        deferredResult.resolve(false);
+                    }
+                },
+                error: function(){
+                    deferredResult.resolve(false);
+                }
+            });
+            return deferredResult;
+        };
 
         var getLastProject = function(){
             var deferredResult = $.Deferred();
@@ -309,6 +329,7 @@
             authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
             getOwnAccount: getOwnAccount,
+            isApiAvailable: isApiAvailable,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
@@ -328,7 +349,6 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
-                //var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                 login(email, password)
                 .then(function(){
                     getLastProject()
