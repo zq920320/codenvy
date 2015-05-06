@@ -357,7 +357,7 @@
                             redirect_url = lastProject;
                         }
                         if (!redirect_url){
-                            redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                            redirect_url = "/site/private/select-tenant?" + window.location.search.substring(1);
                         }
                         success({url: redirect_url});
                     })
@@ -380,7 +380,7 @@
             onpremLogin: function(username, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var selectWsUrl = "/site/private/select-tenant?" + window.location.search.substring(1);
                     var data = {
                         username: username,
                         password: password
@@ -413,7 +413,7 @@
             adminLogin: function(email, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                    var selectWsUrl = "/site/private/select-tenant?" + window.location.search.substring(1);
                     var data = {
                         username: email,
                         password: password,
