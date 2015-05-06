@@ -138,6 +138,45 @@
             }
             return ownAccount;
         };
+        // Verify api response. Returns false if response does not contain "implementationVendor" field 
+        var isApiAvailable = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api";
+            $.ajax({
+                url: url,
+                type: "OPTIONS",
+                success: function(response){
+                    if (response.implementationVendor) {//response.implementationVendor == "Codenvy, S.A."
+                        deferredResult.resolve(true);
+                    }else{
+                        deferredResult.resolve(false);
+                    }
+                },
+                error: function(){
+                    deferredResult.resolve(false);
+                }
+            });
+            return deferredResult;
+        };
+
+        var getLastProject = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api/profile/prefs";
+            $.ajax({
+                url: url,
+                type: "GET",
+                complete: function(response){
+                    var lastProjectPath;
+                    try{
+                        lastProjectPath = JSON.parse(response.responseText).lastProjectPath;
+                    }catch(err){
+                        //if response does not contain JSON object
+                    }
+                    deferredResult.resolve(lastProjectPath);
+                }
+            });
+            return deferredResult;
+        };
 
         var ensureExistenceAccount = function(accountName) {
             var deferredResult = $.Deferred();
@@ -290,6 +329,7 @@
             authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
             getOwnAccount: getOwnAccount,
+            isApiAvailable: isApiAvailable,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
@@ -309,13 +349,24 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
-                //var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                if (!redirect_url){
-                    redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                }
                 login(email, password)
-                .then(function() {
-                    success({url: redirect_url});
+                .then(function(){
+                    getLastProject()
+                    .then(function(lastProject) {
+                        if (lastProject) {
+                            redirect_url = lastProject;
+                        }
+                        if (!redirect_url){
+                            redirect_url = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
+                        }
+                        success({url: redirect_url});
+                    })
+                    .fail(function(response /*, status , err*/ ) {
+                            error([
+                                new AccountError(null, getResponseMessage(response))
+                            ]);
+                        }
+                    );
                 })
                 .fail(function(response /*, status , err*/ ) {
                         error([

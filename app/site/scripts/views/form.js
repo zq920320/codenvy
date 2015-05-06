@@ -16,12 +16,18 @@
  * from Codenvy S.A..
  */
  
-define(["jquery", "underscore", "backbone", "validation"],
+define(["jquery", "underscore", "backbone", "models/account", "validation"],
 
-    function($,_,Backbone){
+    function($,_,Backbone,Account){
 
         var Form = Backbone.View.extend({
             initialize : function(){
+                Account.isApiAvailable()
+                .then(function(apiAvailable){
+                    if (!apiAvailable){
+                        window.location = "/site/maintenance";
+                    }
+                });
                 $(this.el).on('submit', function(e){
                     e.preventDefault();
                 });
