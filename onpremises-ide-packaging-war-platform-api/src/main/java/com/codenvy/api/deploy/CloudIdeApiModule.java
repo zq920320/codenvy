@@ -288,7 +288,8 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new SQLModule());
 
         install(new BillingModule());
-        install(new MetricModule());
+        //turned off Metric Module to not to count resources
+        //install(new MetricModule());
         install(new SubscriptionModule());
         install(new AnalyticsModule());
         install(new ScheduleModule());

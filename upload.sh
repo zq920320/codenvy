@@ -47,7 +47,7 @@ echo 'Uploading:'
 selectTomcatToUpload() {
    case "$SCOPE" in
       "aio")
-         AIO=`ls cloud-ide-packaging-tomcat-codenvy-allinone/target/cloud-ide-packaging-tomcat-codenvy-allinone-*.zip`
+         AIO=`ls onpremises-ide-packaging-tomcat-codenvy-allinone/target/cloud-ide-packaging-tomcat-codenvy-allinone-*.zip`
          doUploadTomcat ${AIO} ${SERVER}/${SCOPE}
       ;;
      "api")
