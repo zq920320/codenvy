@@ -64,14 +64,14 @@ public class TemplateProcessor {
     private final String paymentNotRequiredTemplateName;
     private final String paymentFailTemplateName;
     private final String paidSuccessfullyTemplateName;
-    private final String freeLimit;
+    private final Double freeLimit;
 
 
     @Inject
     public TemplateProcessor(@Named("subscription.saas.mail.template.success") String successTemplate,
                              @Named("subscription.saas.mail.template.fail") String failTemplate,
                              @Named("subscription.saas.mail.template.success.no_payment") String noPaymentRequiredTemplate,
-                             @Named("subscription.saas.usage.free.gbh") String freeLimit,
+                             @Named("subscription.saas.usage.free.gbh") Double freeLimit,
                              WorkspaceDao workspaceDao, AccountDao accountDao, UserDao userDao, CreditCardDao cardDao) {
         this.paidSuccessfullyTemplateName = successTemplate;
         this.paymentFailTemplateName = failTemplate;
