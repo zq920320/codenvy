@@ -61,7 +61,7 @@
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <odyssey.classifier>prod</odyssey.classifier>
+        <odyssey.classifier>enterprise</odyssey.classifier>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
 </project>
