@@ -47,15 +47,15 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-platform-api</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <!-- Dependency for SMTPAppender -->
@@ -142,7 +142,7 @@
                                     <fileset dir="${basedir}/src/main/resources/tomcat/" />
                                 </copy>
                                 <echo message="Deploy platform api services to api.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-api/webapps/api.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-api/webapps/api.war" />
                                 <echo message="Deploy mail.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-api/webapps/mail.war" />
                                 <echo message="Deploy factory.war" />

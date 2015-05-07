@@ -67,15 +67,15 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-platform-api</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
@@ -108,7 +108,7 @@
                                 <copy overwrite="true" todir="${project.build.directory}/tomcat-aio/">
                                     <fileset dir="${basedir}/src/main/resources/tomcat/" />
                                 </copy>
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-aio/webapps/api.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-aio/webapps/api.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/mail.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/che-plugin-git-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/git.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" overwrite="true" tofile="${project.build.directory}/tomcat-aio/webapps/factory.war" />
