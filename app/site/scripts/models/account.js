@@ -141,7 +141,7 @@
         // Verify api response. Returns false if response does not contain "implementationVendor" field 
         var isApiAvailable = function(){
             var deferredResult = $.Deferred();
-            var url = "/api";
+            var url = "/api/";
             $.ajax({
                 url: url,
                 type: "OPTIONS",
