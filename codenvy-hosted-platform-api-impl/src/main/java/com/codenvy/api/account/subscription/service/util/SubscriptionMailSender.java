@@ -41,7 +41,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.api.account.billing.PaymentState.PAID_SUCCESSFULLY;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 
@@ -57,8 +56,9 @@ public class SubscriptionMailSender {
     private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
     private static final String TEMPLATE_CC_DELETE      = "/email-templates/saas-remove-credit-card.html";
 
-    private final String           invoiceSubject;
-    private final String           billingFailedSubject;
+    private final String           invoiceChargedSubject;
+    private final String           invoiceNoChargesSubject;
+    private final String           invoiceFailedSubject;
     private final String           billingAddress;
     private final String           freeGbh;
     private final String           freeLimit;
@@ -68,8 +68,9 @@ public class SubscriptionMailSender {
     private final MailSenderClient mailClient;
 
     @Inject
-    public SubscriptionMailSender(@Named("subscription.saas.mail.invoice.subject") String invoiceSubject,
-                                  @Named("subscription.saas.mail.billing.failed.subject") String billingFailedSubject,
+    public SubscriptionMailSender(@Named("subscription.saas.mail.invoice.charged.subject") String invoiceChargedSubject,
+                                  @Named("subscription.saas.mail.invoice.nocharges.subject") String invoiceNoChargesSubject,
+                                  @Named("subscription.saas.mail.invoice.failed.subject") String invoiceFailedSubject,
                                   @Named("subscription.saas.mail.address") String billingAddress,
                                   @Named("subscription.saas.usage.free.gbh") String freeGbh,
                                   @Named("subscription.saas.free.max_limit_mb") String freeLimit,
@@ -77,8 +78,9 @@ public class SubscriptionMailSender {
                                   AccountDao accountDao,
                                   UserDao userDao,
                                   MailSenderClient mailClient) {
-        this.invoiceSubject = invoiceSubject;
-        this.billingFailedSubject = billingFailedSubject;
+        this.invoiceChargedSubject = invoiceChargedSubject;
+        this.invoiceNoChargesSubject = invoiceNoChargesSubject;
+        this.invoiceFailedSubject = invoiceFailedSubject;
         this.billingAddress = billingAddress;
         this.freeGbh = freeGbh;
         this.freeLimit = Long.toString(Math.round(Long.parseLong(freeLimit) / 1000));
@@ -96,12 +98,20 @@ public class SubscriptionMailSender {
             return;
         }
 
-        if (PAID_SUCCESSFULLY.getState().equals(invoice.getPaymentState())
-            || PaymentState.NOT_REQUIRED.getState().equals(invoice.getPaymentState())) {
-            subject = invoiceSubject;
-        } else {
-            subject = billingFailedSubject;
+        switch (PaymentState.fromState(invoice.getPaymentState())) {
+            case PAID_SUCCESSFULLY: {
+                subject = invoiceChargedSubject;
+                break;
+            }
+            case NOT_REQUIRED: {
+                subject = invoiceNoChargesSubject;
+                break;
+            }
+            default: {
+                subject = invoiceFailedSubject;
+            }
         }
+        subject = String.format(subject, Long.toString(invoice.getId()));
         LOG.debug("Send invoice to {}", accountOwnersEmails);
         sendEmail(text, subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
     }
