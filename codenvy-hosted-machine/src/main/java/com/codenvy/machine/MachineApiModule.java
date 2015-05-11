@@ -17,8 +17,8 @@
  */
 package com.codenvy.machine;
 
-import com.codenvy.machine.docker.DockerNode;
-import com.codenvy.machine.docker.DockerNodeFactory;
+import org.eclipse.che.plugin.docker.machine.DockerNode;
+import org.eclipse.che.plugin.docker.machine.DockerNodeFactory;
 import com.google.inject.AbstractModule;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 

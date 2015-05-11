@@ -17,9 +17,9 @@
  */
 package com.codenvy.machine;
 
-import com.codenvy.docker.DockerConnector;
+import org.eclipse.che.plugin.docker.client.DockerConnector;
 import com.codenvy.swarm.SwarmDockerConnector;
-import com.codenvy.machine.docker.DockerNode;
+import org.eclipse.che.plugin.docker.machine.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
