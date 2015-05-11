@@ -51,7 +51,8 @@
  
         var loginWithGoogle = function(page, callback) {
             if (isWebsocketEnabled()) {
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + window.location.hash);
+                var pageUrl = "&page_url=" + window.location.pathname;
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + pageUrl + window.location.hash);
                 _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
@@ -61,8 +62,9 @@
         };
         var loginWithGithub = function(page, callback) {
             if (isWebsocketEnabled()) {
+                var pageUrl = "&page_url=" + window.location.pathname;
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + window.location.hash);
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + pageUrl + window.location.hash);
                 var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
@@ -168,7 +170,7 @@
                 complete: function(response){
                     var lastProjectPath;
                     try{
-                        lastProjectPath = JSON.parse(response.responseText).lastProjectPath;
+                        lastProjectPath = "/ws" + JSON.parse(JSON.parse(response.responseText).CodenvyAppState).lastProjectPath;
                     }catch(err){
                         //if response does not contain JSON object
                     }
@@ -312,7 +314,7 @@
                 responseErr = JSON.parse(response.responseText).message;
             }catch(e){
                 console.log(e);
-                responseErr = "Something went wrong. Please try again or contact support";
+                responseErr = "Something went wrong. Please try again or contact support. Check <a href='http://status.codenvy.com/'>http://status.codenvy.com</a>";
             }
             return responseErr;
         };
@@ -349,6 +351,9 @@
             },
 
             processLogin: function(email, password, redirect_url, success, error){
+                if (!redirect_url){
+                    redirect_url = "/dashboard/";
+                }
                 login(email, password)
                 .then(function(){
                     getLastProject()
@@ -356,19 +361,16 @@
                         if (lastProject) {
                             redirect_url = lastProject;
                         }
-                        if (!redirect_url){
-                            redirect_url = "/site/private/select-tenant?" + window.location.search.substring(1);
-                        }
                         success({url: redirect_url});
                     })
-                    .fail(function(response /*, status , err*/ ) {
+                    .fail(function(response) {
                             error([
                                 new AccountError(null, getResponseMessage(response))
                             ]);
                         }
                     );
                 })
-                .fail(function(response /*, status , err*/ ) {
+                .fail(function(response) {
                         error([
                             new AccountError(null, getResponseMessage(response))
                         ]);
@@ -476,37 +478,40 @@
                     redirect_url = "/dashboard/";
                 }
                 authenticate(username, bearertoken)
+                .then(function(){
+                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
+                        ensureExistenceAccount(accountName) // get existence or create a new account
+                        .then(function(account, created){
+                            if (created) {
+                                return createWorkspace(workspaceName, account.id)
+                                    .then(function(workspace){
+                                        workspaceID = workspace.id; // store workspace id
+                                        return getUserInfo();
+                                    })
+                                    .then(function(user){
+                                        return addMemberToWorkspace(workspaceID,user.id);
+                                    });
+                            }
+                        });
+                    } else {
+                        return  getLastProject()
+                            .then(function(lastProject) {
+                                if (lastProject) {
+                                    redirect_url = lastProject; // Redirect to recent project
+                                }
+                            });
+                    }
+                })
+                .done(function() {
+                    redirectToUrl(redirect_url);
+                })
                 .fail(function(response) {
                     error([
                         new AccountError(null, getResponseMessage(response))
                     ]);
-                })
-                .then(function(){
-                    ensureExistenceAccount(accountName) // get/create account
-                    .then(function(account, created){
-                        if (created) {
-                        return createWorkspace(workspaceName, account.id)
-                                .then(function(workspace){
-                                    workspaceID = workspace.id; // store workspace id
-                                    return getUserInfo();
-                                })
-                                .then(function(user){
-                                    return addMemberToWorkspace(workspaceID,user.id);
-                                });
-                        }
-                    })
-                    .done(function() {
-                        redirectToUrl(redirect_url);
-                    })
-                    .fail(function(response) {
-                        error([
-                            new AccountError(null, getResponseMessage(response))
-                        ]);
-                    });
                 });
 
             },
-
 
             //--------------------------------- Recover password module
             // Send recover password request

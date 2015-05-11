@@ -99,14 +99,14 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 
 /*SignUp Page*/
-.signup-page{
+.signup-page, .error-page{
 	height:100vh;
 	background:url(../images/bg-signup-top@1x.png) repeat-x,url(../images/bg-signup-bottom@1x.png) repeat-x;
 	background-position:top center,bottom center;
 	background-color:#01496E;
 	color:#fff;
 }
-.signup-page{
+.signup-page, .error-page{
 	display:table;
 	width:100%;
 }
@@ -114,12 +114,12 @@ body,h1,h2,h3,h4,h5,h6,a{
 	display: table-cell;
     vertical-align: middle;
 }
-.signup-page .logo{
+.signup-page .logo, .error-page .logo{
 	height:41px;
 	width:246px;
 	margin-bottom:21px;
 }
-.signup-page h2{
+.signup-page h2, .error-page h2{
 	font-size:24px;
 	line-height:30px;
 	font-weight:400;
@@ -205,6 +205,7 @@ body,h1,h2,h3,h4,h5,h6,a{
    color: #fff; 
    opacity:1; 
 }
+
 .signup-page input[type="submit"]{
 	width:150px;
 	border-radius:5px;
@@ -217,9 +218,11 @@ body,h1,h2,h3,h4,h5,h6,a{
 	-moz-transition:all .5s ease;
 	transition:all .5s ease;
 }
+
 .signup-page input[type="submit"]:hover{
 	background:#ED592B;
 }
+
 .signup-page li p a{
 	margin: 0px;
 	font-size: 14px;
@@ -227,34 +230,47 @@ body,h1,h2,h3,h4,h5,h6,a{
 	font-weight: 300;
 	color: #BAC8DA;
 }
+
 .signup-page li a{
 	display:inline-block;
 	color:#fff;
 }
+
 .signup-page ul li a:hover{
 	color: #F37943;
 }
+
 .signup-page ul li a img{
 	height:40px;
 	width:40px;
 }
-.signup-page p{
+
+.signup-page p, .error-page p{
 	font-size:14px;
 	line-height:24px;
 	font-weight:300;
 	padding:0 10px;
 	color:#BAC8DA;
 }
+
 .signup-page p a:hover{
 	color:#fff;
 }
+
+.error-page p a:hover{
+	text-decoration: underline;
+	color: #337ab7;
+}
+
 .signup-page p span{
 	display:block;
 }
+
 .relative{
 	position:relative;
 	display:inline-block;
 }
+
 .icon-over{
 	position:absolute;
 	top:2px;
@@ -263,6 +279,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	-moz-transition:all .5s ease;
 	transition:all .5s ease;
 }
+
 .relative:hover .icon-over{
 	opacity:0;
 }
@@ -317,13 +334,13 @@ body,h1,h2,h3,h4,h5,h6,a{
 		display:none;
 	}
 	
-	.signup-page {
+	.signup-page, .error-page {
 	  background:#01496e;
 	}
-	.signup-page .logo {
+	.signup-page .logo, .error-page {
 	  margin-bottom: 24px;
 	}
-	.signup-page h2 {
+	.signup-page h2, .error-page h2 {
 	  font-size: 22px;
 	  line-height: 26px;
 	  margin-bottom: 16px;
@@ -344,7 +361,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 		margin: 0;
 		width: 100%;
 	}
-	.signup-page p a{
+	.signup-page p a, .error-page p a {
 		display:block;
 	}
 	.input-con{
