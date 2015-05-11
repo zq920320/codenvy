@@ -53,7 +53,6 @@ public class SubscriptionMailSender {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
     private static final String TEMPLATE_CC_ADDED       = "/email-templates/saas-add-credit-card.html";
-    private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
     private static final String TEMPLATE_CC_DELETE      = "/email-templates/saas-remove-credit-card.html";
 
     private final String           invoiceChargedSubject;
@@ -141,20 +140,6 @@ public class SubscriptionMailSender {
                       accountOwnersEmails, MediaType.TEXT_HTML, properties);
         } catch (IOException | MessagingException e) {
             LOG.warn("Unable to send credit card removed notifications, account: {}", accountId);
-        }
-    }
-
-    public void sendAccountLockedNotification(String accountId, String total) throws ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        accountOwnersEmails.add("sales@codenvy.com");
-        Map<String, String> properties = new HashMap<>();
-        properties.put("total", total);
-        LOG.debug("Send account locked notifications to {}", accountOwnersEmails);
-        try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
-                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
-        } catch (IOException | MessagingException e) {
-            LOG.warn("Unable to send account locked notifications, account: {}", accountId);
         }
     }
 

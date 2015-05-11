@@ -26,7 +26,6 @@ import com.codenvy.api.account.AccountLocker;
 import com.codenvy.api.account.PaymentService;
 import com.codenvy.api.account.impl.shared.dto.CreditCard;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
-import com.codenvy.api.account.subscription.service.util.SubscriptionMailSender;
 
 import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.core.ApiException;
@@ -61,18 +60,16 @@ public class BraintreePaymentService implements PaymentService {
     private final BraintreeGateway       gateway;
     private final EventService           eventService;
     private final AccountLocker          accountLocker;
-    private final SubscriptionMailSender subscriptionMailSender;
     private       Map<String, Double>    prices;
 
     @Inject
     public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, AccountLocker accountLocker,
-                                   EventService eventService, SubscriptionMailSender subscriptionMailSender) {
+                                   EventService eventService) {
         this.creditCardDao = creditCardDao;
         this.gateway = gateway;
         this.eventService = eventService;
         this.accountLocker = accountLocker;
         this.prices = Collections.emptyMap();
-        this.subscriptionMailSender = subscriptionMailSender;
     }
 
     @Override
@@ -124,7 +121,6 @@ public class BraintreePaymentService implements PaymentService {
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        subscription.getId(), price));
                 accountLocker.lock(accountId);
-                subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
@@ -173,7 +169,6 @@ public class BraintreePaymentService implements PaymentService {
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        Long.toString(invoice.getId()), price));
                 accountLocker.lock(accountId);
-                subscriptionMailSender.sendAccountLockedNotification(accountId, String.format("%.2f", price));
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
