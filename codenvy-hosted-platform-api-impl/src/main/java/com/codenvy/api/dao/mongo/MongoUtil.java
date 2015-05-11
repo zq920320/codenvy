@@ -20,7 +20,9 @@ package com.codenvy.api.dao.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -56,5 +58,23 @@ public final class MongoUtil {
         return map;
     }
 
-    private MongoUtil() {}
+    public static List<String> asStringList(Object src) {
+        if (!(src instanceof BasicDBList)) {
+            throw new IllegalArgumentException("BasicDBList was expected");
+        }
+        final BasicDBList basicList = (BasicDBList)src;
+        final List<String> result = new ArrayList<>(basicList.size());
+        for (Object obj : basicList) {
+            result.add(obj.toString());
+        }
+        return result;
+    }
+
+    public static BasicDBList asDBList(List<?> list) {
+        final BasicDBList dbList = new BasicDBList();
+        dbList.addAll(list);
+        return dbList;
+    }
+
+    private MongoUtil() { }
 }
