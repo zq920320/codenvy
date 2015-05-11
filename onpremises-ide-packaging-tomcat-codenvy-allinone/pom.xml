@@ -29,6 +29,7 @@
     <packaging>pom</packaging>
     <name>Onpremises IDE :: Tomcat :: IDE3 :: All-in-One</name>
     <dependencies>
+        <!-- Cloud IDE dependency -->
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-datasource-plugin</artifactId>
@@ -65,7 +66,6 @@
             <version>${codenvy.hosted-infrastructure.version}</version>
             <type>war</type>
         </dependency>
-        <!-- Cloud IDE dependency -->
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-tomcat-site</artifactId>

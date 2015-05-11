@@ -47,12 +47,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-next-ide-resources-codenvy</artifactId>
-            <version>${project.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-user-dashboard</artifactId>
             <version>${project.version}</version>
             <type>war</type>
@@ -60,6 +54,12 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-webroot-codenvy</artifactId>
+            <version>${project.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-next-ide-resources-codenvy</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -157,7 +157,7 @@
                                 <echo message="Deploy cloud-ide site root to ROOT.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-webroot-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ROOT.war" />
                                 <echo message="Deploy IDE resources wars" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-ide-resources-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ide-resources.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-next-ide-resources-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ide-resources.war" />
                                 <echo message="Deploy NEXT IDE war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-ide-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ws.war" />
                                 <echo message="Deploy dashboadrd war" />
