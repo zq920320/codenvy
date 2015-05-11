@@ -111,7 +111,7 @@ public class SubscriptionMailSender {
                 subject = invoiceFailedSubject;
             }
         }
-        subject = String.format(subject, Long.toString(invoice.getId()));
+        subject = String.format(subject, invoice.getId());
         LOG.debug("Send invoice to {}", accountOwnersEmails);
         sendEmail(text, subject, accountOwnersEmails, MediaType.TEXT_HTML, null);
     }
