@@ -47,6 +47,7 @@ define(["jquery","underscore","views/accountformbase","models/account"],
             },
 
             __showResultMessage : function(){
+                $(".notice").addClass("hide");
 				$(".forgotpassword-form").addClass("hide");
 				$(".forgotpassword-result").removeClass("hide");
             }

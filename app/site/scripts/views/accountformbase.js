@@ -42,7 +42,7 @@ define(["jquery","models/account","views/form","validation"],
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
                 invalidEmailErrorMessage : "Emails with '+' and '/' are not allowed",
                 invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name",
-                notSecuredPassword : "Use at least 8 characters. Password should contain both letters and digits"
+                notSecuredPassword : "Password should contain between 8-100 characters, both letters and digits"
             },
 
             __validationRules : function(){
