@@ -480,7 +480,7 @@
                 authenticate(username, bearertoken)
                 .then(function(){
                     if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
-                        ensureExistenceAccount(accountName) // get existence or create a new account
+                        return ensureExistenceAccount(accountName) // get existence or create a new account
                         .then(function(account, created){
                             if (created) {
                                 return createWorkspace(workspaceName, account.id)
@@ -493,16 +493,17 @@
                                     });
                             }
                         });
-                    } else {
-                        return  getLastProject()
-                            .then(function(lastProject) {
-                                if (lastProject) {
-                                    redirect_url = lastProject; // Redirect to recent project
-                                }
-                            });
                     }
                 })
-                .done(function() {
+                .then(function(){
+                    return  getLastProject()
+                        .then(function(lastProject) {
+                            if (lastProject) {
+                                redirect_url = lastProject; // Redirect to recent project
+                            }
+                        });                   
+                })
+                .then(function() {
                     redirectToUrl(redirect_url);
                 })
                 .fail(function(response) {
