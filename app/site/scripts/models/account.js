@@ -338,9 +338,9 @@
             isValidEmail: function(email) {
                 return (/^[^\+\/]+$/).test(email);
             },
-            //Password must contain at least one letter, at least one number, and be longer than 8 charaters.
+            //Password must contain at least one letter, at least one number, and be longer than 8 charaters, and shorter than 100.
             isValidPassword: function(value) {
-                return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,}$/).test(value);
+                return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*).{8,100}$/).test(value);
             },
 
             // redirect to login page if user has 'logged_in' cookie
@@ -480,7 +480,7 @@
                 authenticate(username, bearertoken)
                 .then(function(){
                     if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
-                        ensureExistenceAccount(accountName) // get existence or create a new account
+                        return ensureExistenceAccount(accountName) // get existence or create a new account
                         .then(function(account, created){
                             if (created) {
                                 return createWorkspace(workspaceName, account.id)
@@ -493,16 +493,17 @@
                                     });
                             }
                         });
-                    } else {
-                        return  getLastProject()
-                            .then(function(lastProject) {
-                                if (lastProject) {
-                                    redirect_url = lastProject; // Redirect to recent project
-                                }
-                            });
                     }
                 })
-                .done(function() {
+                .then(function(){
+                    return  getLastProject()
+                        .then(function(lastProject) {
+                            if (lastProject) {
+                                redirect_url = lastProject; // Redirect to recent project
+                            }
+                        });                   
+                })
+                .then(function() {
                     redirectToUrl(redirect_url);
                 })
                 .fail(function(response) {
