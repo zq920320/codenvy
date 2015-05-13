@@ -17,21 +17,34 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class UsersLoggedInWithSysldap extends AbstractLoggedInType {
+public class UsersLoggedInWithSysldap extends AbstractActiveEntities {
+    public static final String SYSLDAP = "sysldap";
 
     public UsersLoggedInWithSysldap() {
-        super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP, new String[]{SYSLDAP});
+        super(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP, MetricType.USERS_LOGGED_IN_TYPES, USER);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        builder.put(MetricFilter.EXISTS, new String[]{SYSLDAP});
+        return builder.build();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of authentication using system LDAP";

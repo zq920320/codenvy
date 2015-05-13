@@ -50,6 +50,8 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
                                 .withDate("2013-01-02", "10:00:01").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "jaas")
                                 .withDate("2013-01-02", "10:00:02").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent("user1@gmail.com", "google")
+                                .withDate("2013-01-02", "11:00:00").build());
         File log = LogGenerator.generateLog(events);
 
 
@@ -101,5 +103,35 @@ public class TestNumberOfUsersByTypes_UsersLoggedInTypes extends BaseTest {
 
         Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GOOGLE);
         assertEquals(metric.getValue(builder.build()).getAsString(), "1");
+    }
+
+    @Test
+    public void testForm() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_FORM);
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
+    }
+
+    @Test
+    public void testGitHub() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_GITHUB);
+        assertEquals(metric.getValue(builder.build()).getAsString(), "0");
+    }
+
+    @Test
+    public void testSysLdap() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130102");
+        builder.put(Parameters.TO_DATE, "20130102");
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_LOGGED_IN_WITH_SYSLDAP);
+        assertEquals(metric.getValue(builder.build()).getAsString(), "0");
     }
 }

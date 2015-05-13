@@ -42,6 +42,7 @@ import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.metrics.workspaces.AbstractWorkspacesProfile;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
 import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -351,6 +352,13 @@ public class MongoDataLoader implements DataLoader {
             } else if (filter == MetricFilter.PARAMETERS) {
                 match.putAll(Utils.fetchEncodedPairs(clauses.getAsString(filter), true));
 
+            } else if (filter == MetricFilter.EXISTS) {
+                BasicDBList orArgs = new BasicDBList();
+                String[] fields = (String[])value;
+                for (int i=0; i<fields.length; i++) {
+                    orArgs.add(new BasicDBObject(fields[i], new BasicDBObject("$exists", true)));
+                }
+                match.put("$or", processFilter(orArgs, filter.isNumericType()));
             } else {
                 match.put(field, processFilter(value, filter.isNumericType()));
             }

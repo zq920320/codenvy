@@ -177,6 +177,7 @@ com.codenvy.analytics.metrics.users.UsersWhoInvited
 com.codenvy.analytics.metrics.users.UsageTimeByUsersList
 com.codenvy.analytics.metrics.users.UsageTimeByUsers
 
+com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGoogle
 com.codenvy.analytics.metrics.users.UsersLoggedInWithForm

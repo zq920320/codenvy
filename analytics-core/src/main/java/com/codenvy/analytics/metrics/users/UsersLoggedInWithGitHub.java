@@ -17,21 +17,34 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class UsersLoggedInWithGitHub extends AbstractLoggedInType {
+public class UsersLoggedInWithGitHub extends AbstractActiveEntities {
+    public static final String GITHUB = "github";
 
     public UsersLoggedInWithGitHub() {
-        super(MetricType.USERS_LOGGED_IN_WITH_GITHUB, new String[]{GITHUB});
+        super(MetricType.USERS_LOGGED_IN_WITH_GITHUB, MetricType.USERS_LOGGED_IN_TYPES, USER);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        builder.put(MetricFilter.EXISTS, new String[]{GITHUB});
+        return builder.build();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of authentication with GitHub account";

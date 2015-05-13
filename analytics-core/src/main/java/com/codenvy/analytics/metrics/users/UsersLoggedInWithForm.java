@@ -17,21 +17,36 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class UsersLoggedInWithForm extends AbstractLoggedInType {
+public class UsersLoggedInWithForm extends AbstractActiveEntities {
+    public static final String JAAS  = "jaas";
+    public static final String ORG   = "org";
+    public static final String EMAIL = "email";
 
     public UsersLoggedInWithForm() {
-        super(MetricType.USERS_LOGGED_IN_WITH_FORM, new String[]{JAAS, ORG, EMAIL});
+        super(MetricType.USERS_LOGGED_IN_WITH_FORM, MetricType.USERS_LOGGED_IN_TYPES, USER);
     }
 
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        Context.Builder builder = new Context.Builder(clauses);
+        builder.put(MetricFilter.EXISTS, new String[]{JAAS, ORG, EMAIL});
+        return builder.build();
+    }
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of Form authentication";
