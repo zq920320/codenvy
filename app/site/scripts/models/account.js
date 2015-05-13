@@ -161,7 +161,7 @@
             return deferredResult;
         };
 
-        var getLastProject = function(){
+        var getLastProject = function(workspaceId){
             var deferredResult = $.Deferred();
             var url = "/api/profile/prefs";
             $.ajax({
@@ -170,14 +170,55 @@
                 complete: function(response){
                     var lastProjectPath;
                     try{
-                        lastProjectPath = "/ws" + JSON.parse(JSON.parse(response.responseText).CodenvyAppState).lastProjectPath;
+                        lastProjectPath = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).lastProjectPath;
+                        testProjectPath(lastProjectPath, workspaceId)
+                        .then(function(){
+                            return deferredResult.resolve("/ws" + lastProjectPath);
+                        })
+                        .fail(function(){
+                            return deferredResult.resolve("");
+                        });
                     }catch(err){
                         //if response does not contain JSON object
+                        deferredResult.resolve("");
                     }
-                    deferredResult.resolve(lastProjectPath);
                 }
             });
             return deferredResult;
+        };
+
+        var testProjectPath = function(path, workspaceId){
+            var deferredResult = $.Deferred();
+            var projectName = path.substr(path.indexOf("/",1));
+            var url = "/api/project/" + workspaceId + projectName;
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(project) {
+                        deferredResult.resolve(project);
+                },
+                error: function() {
+                    deferredResult.reject();
+                }
+            });
+            return deferredResult;
+        };
+
+        var getWorkspaces = function() {
+            var deferredResult = $.Deferred();
+            var url = "/api/workspace/all";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(workspaces) {
+                        deferredResult.resolve(workspaces[0]); //returns first available workspace
+                },
+                error: function() {
+                    deferredResult.resolve(false);
+                }
+            });
+            return deferredResult;
+
         };
 
         var ensureExistenceAccount = function(accountName) {
@@ -203,6 +244,36 @@
                 },
                 error: function(error){
                     deferredResult.reject(error);
+                }
+            });
+            return deferredResult;
+        };
+
+        var ensureExistenceWorkspace = function(workspaceName, accountId) {
+            var deferredResult = $.Deferred();
+            var url = "/api/workspace/all";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(workspace) {
+                    if (!workspace.length){
+                        // user has no workspace
+                        var workspaceID;
+                        createWorkspace(workspaceName,accountId)
+                        .then(function(workspace){
+                           workspaceID = workspace.id; // store workspace id
+                            return getUserInfo();
+                        })
+                        .then(function(user){
+                            return addMemberToWorkspace(workspaceID,user.id)
+                            .then(function(){
+                                deferredResult.resolve();
+                            });
+                        });
+                    } else{
+                        deferredResult.resolve();
+                    }
+
                 }
             });
             return deferredResult;
@@ -345,37 +416,96 @@
 
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
-                if ($.cookie('logged_in')) {
+                if ($.cookie('logged_in') && (getQueryParameterByName('account') !== "new")) {
                     window.location = '/site/login' + window.location.search;
                 }
             },
-
+            // Login with email and password
             processLogin: function(email, password, redirect_url, success, error){
                 if (!redirect_url){
                     redirect_url = "/dashboard/";
                 }
                 login(email, password)
                 .then(function(){
-                    getLastProject()
-                    .then(function(lastProject) {
+                    return getWorkspaces();
+                })
+                .then(function(workspace){
+                    if (!workspace){
+                        redirectToUrl("/site/error/no-workspaces-found");
+                        return $.Deferred().reject();
+                    } else {
+                        return $.Deferred().resolve(workspace.workspaceReference.id);
+                    }
+                })
+                .then(function(workspaceId){
+                    return getLastProject(workspaceId);
+                })
+                .then(function(lastProject) {
                         if (lastProject) {
                             redirect_url = lastProject;
                         }
                         success({url: redirect_url});
-                    })
-                    .fail(function(response) {
+                })
+                .fail(function(response) {
+                        if (response){
                             error([
                                 new AccountError(null, getResponseMessage(response))
                             ]);
                         }
-                    );
+                    }
+                );
+
+            },
+            // signup, oAuth login,
+            processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
+                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
+                if (!redirect_url){
+                    redirect_url = "/dashboard/";
+                }
+                authenticate(username, bearertoken)
+                .then(function(){
+                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
+                        return ensureExistenceAccount(accountName) // get existence or create a new account
+                        .then(function(account){
+                                return ensureExistenceWorkspace(workspaceName, account.id);
+                        })
+                        .fail(function(error) {
+                            return $.Deferred().reject(error);
+                        });
+                    }else{
+                        return $.Deferred().resolve();
+                    }
+
+                })
+                .then(function(){
+                    return getWorkspaces();
+                })
+                .then(function(workspace){
+                    if (!workspace){
+                        redirectToUrl("/site/error/no-workspaces-found");
+                        return $.Deferred().reject();
+                    } else {
+                        return $.Deferred().resolve(workspace.workspaceReference.id);
+                    }
+                })
+                .then(function(workspaceId){
+                    return  getLastProject(workspaceId);
+                })
+                .then(function(lastProject) {
+                    if (lastProject) {
+                        redirect_url = lastProject; // Redirect to recent project
+                    }
+                })
+                .then(function() {
+                    redirectToUrl(redirect_url);
                 })
                 .fail(function(response) {
+                    if (response){
                         error([
                             new AccountError(null, getResponseMessage(response))
                         ]);
                     }
-                );
+                });
 
             },
 
@@ -469,49 +599,6 @@
                         ]);
                     }
                 });
-            },
-
-            processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
-                var workspaceID;
-                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
-                if (!redirect_url){
-                    redirect_url = "/dashboard/";
-                }
-                authenticate(username, bearertoken)
-                .then(function(){
-                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
-                        return ensureExistenceAccount(accountName) // get existence or create a new account
-                        .then(function(account, created){
-                            if (created) {
-                                return createWorkspace(workspaceName, account.id)
-                                    .then(function(workspace){
-                                        workspaceID = workspace.id; // store workspace id
-                                        return getUserInfo();
-                                    })
-                                    .then(function(user){
-                                        return addMemberToWorkspace(workspaceID,user.id);
-                                    });
-                            }
-                        });
-                    }
-                })
-                .then(function(){
-                    return  getLastProject()
-                        .then(function(lastProject) {
-                            if (lastProject) {
-                                redirect_url = lastProject; // Redirect to recent project
-                            }
-                        });                   
-                })
-                .then(function() {
-                    redirectToUrl(redirect_url);
-                })
-                .fail(function(response) {
-                    error([
-                        new AccountError(null, getResponseMessage(response))
-                    ]);
-                });
-
             },
 
             //--------------------------------- Recover password module
