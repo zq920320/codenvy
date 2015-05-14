@@ -157,6 +157,8 @@ gulp.task('rmbuild', ['copy_src','prod_cfg','css','rjs','jekyll','myrev','replac
 
 gulp.task('copy_prod',['copy_src','duplicate_html','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild'], function(){
   gulp.src([paths.prod+'/**/*.html', // all HTML
+    '!'+paths.prod+'site/onpremises_pages/*.html',
+    '!'+paths.prod+'site/email-templates_onpremises/*.html',
     paths.prod+'**/amd-app-*.js', // minified JS
     paths.prod+'**/*-*.css', // minified CSS
     paths.prod+'**/*.jpg',
@@ -240,6 +242,8 @@ gulp.task('jekyll_stage',['copy_src','stage_cfg'], function () {
 
 gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], function(){
   gulp.src([paths.stage+'/**/*.html', // all HTML
+    '!'+paths.stage+'site/onpremises_pages/*.html',
+    '!'+paths.stage+'site/email-templates_onpremises/*.html',
     paths.stage+'**/*.js',
     paths.stage+'**/*.css',
     paths.stage+'**/*.jpg',
@@ -255,7 +259,7 @@ gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], func
 // --------------------------- Building On-premises ----------------------------- 
 //----------------
 //----------
-gulp.task('enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise','onprem_login_page'], function(){
+gulp.task('enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise','onprem_login_page','copy_email_templates'], function(){
 
 })
 
@@ -293,6 +297,8 @@ gulp.task('jekyll_enterprise',['copy_src','enterprise_cfg'], function () {
 gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise'], function(){
   gulp.src([paths.enterprise+'**/*.html', // all HTML
     '!'+paths.enterprise+'site/onpremises_pages/*.html',
+    '!'+paths.enterprise+'site/email-templates_onpremises/*.html',
+    '!'+paths.enterprise+'site/email-templates/*.html',
     '!'+paths.enterprise+'site/login.html',
     '!'+paths.enterprise+'site/create-account.html',
     '!'+paths.enterprise+'site/recover-password.html',
@@ -312,17 +318,16 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
 // Copy omprem login page to as index.html and /site/login.html
 gulp.task('onprem_login_page', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
   return   gulp.src(paths.enterprise + 'site/onpremises_pages/onpremises-login.html')
-  //.pipe(print())
-  .pipe(rename('index.html'))
-  /*.pipe(print(function(filepath) {
-    return "renamed to: " + filepath;
-    }))*/
-  .pipe(gulp.dest(paths.dist+'enterprise'))
-/*  .pipe(print(function(filepath) {
-    return "Copied to: " + filepath;
-    }))*/
-  .pipe(rename('login.html'))
-  .pipe(gulp.dest(paths.dist+'enterprise/site'));
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest(paths.dist+'enterprise'))
+    .pipe(rename('login.html'))
+    .pipe(gulp.dest(paths.dist+'enterprise/site'));
+});
+
+// Copy omprem email templates page
+gulp.task('copy_email_templates', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
+  return   gulp.src(paths.enterprise+'site/email-templates_onpremises/*.html')
+    .pipe(gulp.dest(paths.dist+'enterprise/site/email-templates'))
 });
 
 //***************************************************************** enterprise
