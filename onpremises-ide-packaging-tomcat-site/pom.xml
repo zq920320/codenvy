@@ -52,14 +52,14 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-webroot-codenvy</artifactId>
-            <version>${cloud-ide.version}</version>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-next-ide-resources-codenvy</artifactId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-war-next-ide-resources-codenvy</artifactId>
+            <artifactId>onpremises-ide-packaging-war-webroot-codenvy</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -155,7 +155,7 @@
                                 <echo message="Deploy cloud-ide site to site.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-website-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/site.war" />
                                 <echo message="Deploy cloud-ide site root to ROOT.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-webroot-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ROOT.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-webroot-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ROOT.war" />
                                 <echo message="Deploy IDE resources wars" />
                                 <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-next-ide-resources-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ide-resources.war" />
                                 <echo message="Deploy NEXT IDE war" />
