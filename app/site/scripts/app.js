@@ -17,16 +17,11 @@
  */
  
 define(["jquery","config",
-        "views/signupform",
         "views/signinform",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
-        "views/ideloader",
-        "views/inviteorganization",
-        "views/errorresponse",
         "views/ws_createform",
-        "views/create_ws",
         "views/adminform",
         "views/create_ws_add_member",
         "views/onpremises-login",
@@ -34,16 +29,11 @@ define(["jquery","config",
         ],
 
     function($,Config,
-        SignupForm,
         SigninForm,
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
-        IDELoader,
-        InviteOrganization,
-        ErrorResponse,
         WSCreateForm,
-        CreatingWorkspace,
         AdminForm,
         CreateWsAdd_Member,
         OnPremisesLogin,
@@ -70,15 +60,11 @@ define(["jquery","config",
                     var uvOptions = {}; //UserVoice object
                     
                     if (uvOptions){}
-                    var signupForm = $(".signup-form"),
-                        signinForm = $(".login-form"),
+                    var signinForm = $(".login-form"),
                         forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
-                        loader = $(".wait-for-tenant"),
-                        errorResponse = $(".ErrorIcon"),
                         wsCreateForm = $(".create-form"),
-                        creatingWorkspace = $(".creating-ws"),
                         adminForm = $(".admin-form"),
                         creatWsAddMember = $(".create-ws-add-memeber"),
                         onpremloginForm = $(".onpremloginForm"),
@@ -100,10 +86,6 @@ define(["jquery","config",
                                 errorReport.hide();
                             });
 
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
-
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
@@ -115,10 +97,6 @@ define(["jquery","config",
                         (function(){
                             var form = CreateWsAdd_Member.get(creatWsAddMember),
                             errorReport = ErrorReport.get(errorContainer);
-
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
 
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
@@ -136,46 +114,6 @@ define(["jquery","config",
                                 errorReport.hide();
                             });
 
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-                            
-                        }());
-                    }
-
-                    if(creatingWorkspace.length !== 0){
-                        (function(){
-                            var page = CreatingWorkspace.get(creatingWorkspace),
-                            errorReport = ErrorReport.get(errorContainer);
-
-                            page.on("success", function(d){
-                                window.location.href = d.url;
-                            });
-
-                            page.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-                            
-                        }());
-                    }
-
-                    if(signupForm.length !== 0){
-                        (function(){
-                            var form = SignupForm.get(signupForm),
-                            errorReport = ErrorReport.get(errorContainer);
-
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
-
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
                             });
@@ -190,9 +128,6 @@ define(["jquery","config",
                             if ($(".error-container").html()){
                                 $(".error-container").addClass("expanded");
                             }
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
 
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
@@ -207,9 +142,6 @@ define(["jquery","config",
                             if ($(".error-container").html()){
                                 $(".error-container").addClass("expanded");
                             }
-                            form.on("success", function(d){
-                                window.location.href = d.url;
-                            });
 
                             form.on("invalid", function(field,message){
                                 errorReport.show(message);
@@ -254,29 +186,6 @@ define(["jquery","config",
 
                             form.resolveUserEmail();
 
-                        }());
-                    }
-
-                    if(loader.length !== 0){
-
-                            var ideloader = new IDELoader.IDELoader(),
-                                errorReport = ErrorReport.get(errorContainer);
-                            ideloader.setLoaderMessage();
-                            ideloader.on("ready",function(d){
-                                window.location.href = d.url;
-                            });
-
-                            ideloader.on("error",function(message){
-                                errorReport.show(message);
-                            });
-                        
-                    }
-
-                    // put error to page from response
-                    if(errorResponse.length !== 0){
-                        (function(){
-                            var element = ErrorResponse.get(errorResponse);
-                            element.setError();
                         }());
                     }
                     

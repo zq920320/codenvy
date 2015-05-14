@@ -379,6 +379,30 @@
             window.location = url;
         };
 
+        var navigateToLocation = function(redirect_url){
+            if (!redirect_url){
+                redirect_url = "/dashboard/";
+            }
+            return getWorkspaces()
+            .then(function(workspace){
+                if (!workspace){
+                    redirectToUrl("/site/error/no-workspaces-found");
+                    return $.Deferred().reject();
+                } else {
+                    return $.Deferred().resolve(workspace.workspaceReference.id);
+                }
+            })
+            .then(function(workspaceId){
+                return getLastProject(workspaceId);
+            })
+            .then(function(lastProject) {
+                if (lastProject) {
+                    redirect_url = lastProject;
+                }
+                redirectToUrl(redirect_url);
+            });
+        };
+
         var getResponseMessage = function(response){
             var responseErr;
             try{
@@ -422,29 +446,9 @@
             },
             // Login with email and password
             processLogin: function(email, password, redirect_url, success, error){
-                if (!redirect_url){
-                    redirect_url = "/dashboard/";
-                }
                 login(email, password)
                 .then(function(){
-                    return getWorkspaces();
-                })
-                .then(function(workspace){
-                    if (!workspace){
-                        redirectToUrl("/site/error/no-workspaces-found");
-                        return $.Deferred().reject();
-                    } else {
-                        return $.Deferred().resolve(workspace.workspaceReference.id);
-                    }
-                })
-                .then(function(workspaceId){
-                    return getLastProject(workspaceId);
-                })
-                .then(function(lastProject) {
-                        if (lastProject) {
-                            redirect_url = lastProject;
-                        }
-                        success({url: redirect_url});
+                    navigateToLocation(redirect_url);
                 })
                 .fail(function(response) {
                         if (response){
@@ -454,14 +458,11 @@
                         }
                     }
                 );
-
             },
+
             // signup, oAuth login,
             processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
                 var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
-                if (!redirect_url){
-                    redirect_url = "/dashboard/";
-                }
                 authenticate(username, bearertoken)
                 .then(function(){
                     if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
@@ -475,29 +476,9 @@
                     }else{
                         return $.Deferred().resolve();
                     }
-
                 })
                 .then(function(){
-                    return getWorkspaces();
-                })
-                .then(function(workspace){
-                    if (!workspace){
-                        redirectToUrl("/site/error/no-workspaces-found");
-                        return $.Deferred().reject();
-                    } else {
-                        return $.Deferred().resolve(workspace.workspaceReference.id);
-                    }
-                })
-                .then(function(workspaceId){
-                    return  getLastProject(workspaceId);
-                })
-                .then(function(lastProject) {
-                    if (lastProject) {
-                        redirect_url = lastProject; // Redirect to recent project
-                    }
-                })
-                .then(function() {
-                    redirectToUrl(redirect_url);
+                    navigateToLocation(redirect_url);
                 })
                 .fail(function(response) {
                     if (response){
@@ -506,66 +487,26 @@
                         ]);
                     }
                 });
-
-            },
-
-            onpremLogin: function(username, password, redirect_url, success, error) {
-                if (isWebsocketEnabled()) {
-                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?" + window.location.search.substring(1);
-                    var data = {
-                        username: username,
-                        password: password
-                    };
-                    $.ajax({
-                        url: loginUrl,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        success: function() {
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
-                        },
-                        error: function(response /*, status , err*/ ) {
-                            error([
-                                new AccountError(null, getResponseMessage(response))
-                            ]);
-                        }
-                    });
-                }
             },
 
             adminLogin: function(email, password, redirect_url, success, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?" + window.location.search.substring(1);
                     var data = {
                         username: email,
                         password: password,
                         realm: "sysldap"
                     };
+                    if (!redirect_url){
+                        redirect_url = "/site/private/select-tenant?" + window.location.search.substring(1);
+                    }
                     $.ajax({
                         url: loginUrl,
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(data),
                         success: function() {
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
+                            redirectToUrl(redirect_url);
                         },
                         error: function(response /*, status , err*/ ) {
                             error([
