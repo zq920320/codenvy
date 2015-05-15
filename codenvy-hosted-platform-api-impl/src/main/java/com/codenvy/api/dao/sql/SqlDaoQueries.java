@@ -82,7 +82,7 @@ public interface SqlDaoQueries {
     String PREPAID_AMOUNT  = " SUM(P.FAMOUNT*(upper(P.FPERIOD * ?)-lower(P.FPERIOD * ?))/?) ";
     String FFREE_AMOUNT    = "ROUND(" +
                              "      CAST(" +
-                             "           LEAST(" + GBH_SUM + ", ?) " +
+                             "           LEAST(" + GBH_SUM + ", ? + CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END) " +
                              "           as numeric), " +
                              "      6) ";
     String FPREPAID_AMOUNT = "ROUND( " +
@@ -103,24 +103,37 @@ public interface SqlDaoQueries {
                              "          6)" +
                              "END";
 
+    String BONUSES_SELECT = "SELECT " +
+                            "  SUM(FAMOUNT) as FAMOUNT, " +
+                            "  FACCOUNT_ID " +
+                            "FROM BONUSES " +
+                            "WHERE FPERIOD && ? " +
+                            "GROUP BY FACCOUNT_ID";
+
+    String ACCOUNT_BONUSES_SELECT = "SELECT " +
+                                    "  SUM(FAMOUNT) as FAMOUNT, " +
+                                    "  FACCOUNT_ID " +
+                                    "FROM BONUSES " +
+                                    "WHERE FACCOUNT_ID = ? " +
+                                    "  AND FPERIOD && ? " +
+                                    "GROUP BY FACCOUNT_ID";
+
     String EXCESSIVE_ACCOUNT_USAGE_SELECT = "SELECT " +
-                                            "  CASE WHEN P.FAMOUNT IS NULL " +
-                                            "    THEN ROUND(CAST(GREATEST(" + GBH_SUM + " - ?, 0) as numeric), 6) " +
-                                            "    ELSE " +
-                                            "      CASE WHEN A.FPERIOD IS NULL " +
-                                            "        THEN ROUND( " +
-                                            "                   CAST( " +
-                                            "                       GREATEST(" +
-                                            "                           " + GBH_SUM + " - ? -  P.FAMOUNT, " +
-                                            "                               0) " +
-                                            "                       as numeric), " +
-                                            "                   6) " +
-                                            "        ELSE 0.0" +
-                                            "        END " +
-                                            "    END " +
+                                            "  CASE WHEN A.FPERIOD IS NULL " +
+                                            "    THEN ROUND( " +
+                                            "               CAST( " +
+                                            "                   GREATEST(" +
+                                            "                       " + GBH_SUM + " - ? " +
+                                            "                             - CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END " +
+                                            "                             - CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END, " +
+                                            "                           0) " +
+                                            "                   as numeric), " +
+                                            "               6) " +
+                                            "    ELSE 0.0" +
+                                            "  END " +
                                             "  AS FPAID_AMOUNT " +
                                             "FROM " +
-                                            "    METRICS  AS M " +
+                                            "    METRICS AS M " +
                                             "LEFT JOIN ( " +
                                             "        SELECT " +
                                             "        " + PREPAID_AMOUNT + " AS FAMOUNT, " +
@@ -140,38 +153,43 @@ public interface SqlDaoQueries {
                                             "                     FPERIOD " +
                                             "            LIMIT 1) AS A " +
                                             "      ON A.FACCOUNT_ID = M.FACCOUNT_ID " +
+                                            "LEFT JOIN  ( " + ACCOUNT_BONUSES_SELECT + " ) " +
+                                            "      AS B ON M.FACCOUNT_ID = B.FACCOUNT_ID " +
                                             "WHERE M.FDURING && ? " +
-                                            "  AND M.FACCOUNT_ID = ?" +
+                                            "  AND M.FACCOUNT_ID = ? " +
                                             "GROUP BY M.FACCOUNT_ID, " +
                                             "         P.FAMOUNT," +
-                                            "         A.FPERIOD";
+                                            "         A.FPERIOD," +
+                                            "         B.FAMOUNT";
 
-    String ACCOUNT_USAGE_SELECT = "SELECT " +
-                                  "   M.FACCOUNT_ID           AS FACCOUNT_ID, " +
-                                  "   " + FFREE_AMOUNT + "    AS FFREE_AMOUNT, " +
-                                  "   " + FPREPAID_AMOUNT + " AS FPREPAID_AMOUNT, " +
-                                  "   " + FPAID_AMOUNT + "    AS FPAID_AMOUNT " +
-                                  "FROM " +
-                                  "   METRICS  AS M " +
-                                  "  LEFT JOIN ( " +
-                                  "      SELECT " +
-                                  "    " + PREPAID_AMOUNT + " AS FAMOUNT, " +
-                                  "        FACCOUNT_ID " +
-                                  "      FROM  " +
-                                  "        PREPAID AS P" +
-                                  "      WHERE  " +
-                                  "        P.FPERIOD && ? " +
-                                  "      GROUP BY P.FACCOUNT_ID " +
-                                  "             ) " +
-                                  "       AS P  " +
-                                  "       ON M.FACCOUNT_ID = P.FACCOUNT_ID ";
-
+    String ACCOUNTS_USAGE_SELECT = "SELECT " +
+                                   "   M.FACCOUNT_ID           AS FACCOUNT_ID, " +
+                                   "   " + FFREE_AMOUNT + "    AS FFREE_AMOUNT, " +
+                                   "   " + FPREPAID_AMOUNT + " AS FPREPAID_AMOUNT, " +
+                                   "   " + FPAID_AMOUNT + "    AS FPAID_AMOUNT " +
+                                   "FROM " +
+                                   "  METRICS  AS M " +
+                                   "LEFT JOIN ( " +
+                                   "            SELECT " +
+                                   "           " + PREPAID_AMOUNT + " AS FAMOUNT, " +
+                                   "               FACCOUNT_ID " +
+                                   "            FROM  " +
+                                   "               PREPAID AS P" +
+                                   "            WHERE  " +
+                                   "               P.FPERIOD && ? " +
+                                   "            GROUP BY P.FACCOUNT_ID " +
+                                   "           ) " +
+                                   "    AS P ON M.FACCOUNT_ID = P.FACCOUNT_ID " +
+                                   "LEFT JOIN ( " + BONUSES_SELECT + " )" +
+                                   "    AS B ON M.FACCOUNT_ID = B.FACCOUNT_ID ";
 
     String CHARGES_MEMORY_INSERT =
             "INSERT INTO " +
             "   CHARGES (" +
             "                   FACCOUNT_ID, " +
             "                   FSERVICE_ID, " +
+            "                   FPROVIDED_FREE_AMOUNT, " +
+            "                   FPROVIDED_PREPAID_AMOUNT, " +
             "                   FFREE_AMOUNT, " +
             "                   FPREPAID_AMOUNT, " +
             "                   FPAID_AMOUNT, " +
@@ -181,9 +199,11 @@ public interface SqlDaoQueries {
             "SELECT " +
             "   M.FACCOUNT_ID AS FACCOUNT_ID, " +
             "   ? AS FSERVICE_ID, " +
-            "   LEAST(SUM(M.FAMOUNT), ?) AS FFREE_AMOUNT, " +
-            "   LEAST(GREATEST(SUM(M.FAMOUNT) -?, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
-            "   GREATEST(SUM(M.FAMOUNT) - ? -  CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT, " +
+            "   ? + CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END AS FPROVIDED_FREE_AMOUNT, " +
+            "   CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END AS FPROVIDED_PREPAID_AMOUNT, " +
+            "   LEAST(SUM(M.FAMOUNT), ? + CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END) AS FFREE_AMOUNT, " +
+            "   LEAST(GREATEST(SUM(M.FAMOUNT) - ? - CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END, 0), CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END) AS FPREPAID_AMOUNT, " +
+            "   GREATEST(SUM(M.FAMOUNT) - ? - CASE WHEN B.FAMOUNT IS NULL THEN 0.0 ELSE B.FAMOUNT END - CASE WHEN P.FAMOUNT IS NULL THEN 0.0 ELSE P.FAMOUNT END , 0) AS FPAID_AMOUNT, " +
             "   ? AS FPAID_PRICE, " +
             "   ? as FCALC_ID " +
             "FROM " +
@@ -200,12 +220,14 @@ public interface SqlDaoQueries {
             "             ) " +
             "       AS P  " +
             "       ON M.FACCOUNT_ID = P.FACCOUNT_ID " +
+            "  LEFT JOIN ( " + BONUSES_SELECT + " ) " +
+            "      AS B ON M.FACCOUNT_ID = B.FACCOUNT_ID " +
             "WHERE " +
             "  M.FCALC_ID = ? " +
             "GROUP BY " +
             "  M.FACCOUNT_ID, " +
-            "  P.FAMOUNT ";
-
+            "  P.FAMOUNT, " +
+            "  B.FAMOUNT ";
 
     /**
      * Generate invoices from charges.
@@ -263,6 +285,8 @@ public interface SqlDaoQueries {
     String CHARGES_SELECT        =
             "SELECT " +
             "                   FSERVICE_ID, " +
+            "                   FPROVIDED_FREE_AMOUNT, " +
+            "                   FPROVIDED_PREPAID_AMOUNT, " +
             "                   FFREE_AMOUNT, " +
             "                   FPREPAID_AMOUNT, " +
             "                   FPAID_AMOUNT, " +

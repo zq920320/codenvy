@@ -140,4 +140,18 @@ public interface BillingService {
      */
     boolean hasAvailableResources(String accountId, Long from, Long till) throws ServerException;
 
+    /**
+     * Get provided free resources for account by given period.
+     *
+     * @param accountId
+     *         id of account
+     * @param from
+     *         begin of period
+     * @param till
+     *         end of period
+     * @return number of provided free resources
+     * @throws ServerException
+     */
+    double getProvidedFreeResources(String accountId, Long from, Long till) throws ServerException;
+
 }

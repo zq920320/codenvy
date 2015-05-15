@@ -32,6 +32,17 @@ public interface Charge {
 
     Charge withServiceId(String serviceId);
 
+    Double getProvidedFreeAmount();
+
+    void setProvidedFreeAmount(Double providedFreeAmount);
+
+    Charge withProvidedFreeAmount(Double providedFreeAmount);
+
+    Double getProvidedPrepaidAmount();
+
+    void setProvidedPrepaidAmount(Double providedPrepaidAmount);
+
+    Charge withProvidedPrepaidAmount(Double providedPrepaidAmount);
 
     Double getPaidAmount();
 

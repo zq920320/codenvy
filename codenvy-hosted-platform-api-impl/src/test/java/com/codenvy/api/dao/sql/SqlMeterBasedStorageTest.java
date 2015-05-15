@@ -24,7 +24,7 @@ import com.codenvy.api.account.metrics.UsageInformer;
 
 import org.eclipse.che.api.core.ServerException;
 import org.testng.Assert;
-import org.testng.annotations.DataProvider;
+import org.testng.annotations.BeforeTest;
 import org.testng.annotations.Test;
 
 import java.sql.SQLException;
@@ -39,23 +39,18 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
 
 
     private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
+    private SqlMeterBasedStorage meterBasedStorage;
 
-
-    @DataProvider(name = "storage")
-    public Object[][] createDS() throws SQLException {
-
-        Object[][] result = new Object[sources.length][];
-        for (int i = 0; i < sources.length; i++) {
-            result[i] = new Object[]{
-                    new SqlMeterBasedStorage(new DataSourceConnectionFactory(sources[i]))};
-        }
-        return result;
+    @BeforeTest
+    public void initT() throws SQLException {
+        DataSourceConnectionFactory connectionFactory = new DataSourceConnectionFactory(source);
+        meterBasedStorage = new SqlMeterBasedStorage(connectionFactory);
     }
 
 
-    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp =
             "ERROR: range lower bound must be less than or equal to range upper bound")
-    public void shouldCheckIfStartTimeLessThenStop(SqlMeterBasedStorage meterBasedStorage)
+    public void shouldCheckIfStartTimeLessThenStop()
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
@@ -71,8 +66,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
 
     }
 
-    @Test(dataProvider = "storage")
-    public void shouldBeAbleToStoreMetric(SqlMeterBasedStorage meterBasedStorage)
+    @Test
+    public void shouldBeAbleToStoreMetric()
             throws ParseException, ServerException {
         //given
         MemoryUsedMetric expected =
@@ -92,8 +87,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
                 expected);
     }
 
-    @Test(dataProvider = "storage")
-    public void shouldBeAbleToUpdateEndTime(SqlMeterBasedStorage meterBasedStorage)
+    @Test
+    public void shouldBeAbleToUpdateEndTime()
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric expected =
@@ -116,8 +111,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
 
     }
 
-    @Test(dataProvider = "storage")
-    public void shouldNotUpdateAfterStop(SqlMeterBasedStorage meterBasedStorage)
+    @Test
+    public void shouldNotUpdateAfterStop()
             throws ServerException, ParseException {
         //given
         MemoryUsedMetric usedMetric =
@@ -140,8 +135,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
     }
 
 
-    @Test(dataProvider = "storage")
-    public void shouldGetSumByDifferentWs(SqlMeterBasedStorage meterBasedStorage)
+    @Test
+    public void shouldGetSumByDifferentWs()
             throws ServerException, ParseException {
         //given
         //when
@@ -209,8 +204,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
         Assert.assertEquals(2, result.size());
     }
 
-    @Test(dataProvider = "storage")
-    public void shouldGetSumForGivenWorkspace(SqlMeterBasedStorage meterBasedStorage) throws Exception {
+    @Test
+    public void shouldGetSumForGivenWorkspace() throws Exception {
         meterBasedStorage.createMemoryUsedRecord(new MemoryUsedMetric(256,
                                                                       sdf.parse("10-01-2013 10:00:00").getTime(),
                                                                       sdf.parse("10-01-2013 10:05:00").getTime(),
@@ -248,8 +243,8 @@ public class SqlMeterBasedStorageTest extends AbstractSQLTest {
         Assert.assertEquals(result, 0.188);
     }
 
-    @Test(dataProvider = "storage", expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
-    public void shouldFailToAddRunWithOverlappingPeriodAdd2Records(SqlMeterBasedStorage meterBasedStorage)
+    @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Metric with given id and period already exist")
+    public void shouldFailToAddRunWithOverlappingPeriodAdd2Records()
             throws ParseException, ServerException {
         //then
         //when

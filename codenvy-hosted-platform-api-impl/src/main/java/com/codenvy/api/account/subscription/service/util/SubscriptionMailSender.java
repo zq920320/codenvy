@@ -17,7 +17,11 @@
  */
 package com.codenvy.api.account.subscription.service.util;
 
+import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.billing.BillingService;
+import com.codenvy.api.account.billing.Bonus;
 import com.codenvy.api.account.billing.PaymentState;
+import com.codenvy.api.account.billing.Period;
 import com.codenvy.api.account.impl.shared.dto.Invoice;
 
 import org.codenvy.mail.MailSenderClient;
@@ -37,6 +41,7 @@ import javax.mail.MessagingException;
 import javax.ws.rs.core.MediaType;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,56 +50,64 @@ import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 
 /**
- * Sends emails and retrieve list of emails of account owners
+ * Sends saas and billing related emails.
  *
- * @author Alexander Garagatyi
+ * @author Max Shaposhnik
  */
 public class SubscriptionMailSender {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionMailSender.class);
 
-    private static final String TEMPLATE_CC_ADDED       = "/email-templates/saas-add-credit-card.html";
-    private static final String TEMPLATE_CC_OUTSTANDING = "/email-templates/saas-outstanding-balance.html";
-    private static final String TEMPLATE_CC_DELETE      = "/email-templates/saas-remove-credit-card.html";
+    private static final String TEMPLATE_CC_ADDED  = "/email-templates/saas-add-credit-card.html";
+    private static final String TEMPLATE_CC_DELETE = "/email-templates/saas-remove-credit-card.html";
+
+    private static final String TEMPLATE_TEMPORARY_BONUS = "/email-templates/temporary_bonus_notification.html";
+    private static final String TEMPLATE_PERMANENT_BONUS = "/email-templates/permanent_bonus_notification.html";
+
+    private static final String TEMPLATE_REFERRING_BONUS = "/email-templates/referring_user_notification.html";
+    private static final String TEMPLATE_REFERRED_BONUS  = "/email-templates/referred_user_notification.html";
 
     private final String           invoiceChargedSubject;
     private final String           invoiceNoChargesSubject;
     private final String           invoiceFailedSubject;
     private final String           billingAddress;
-    private final String           freeGbh;
     private final String           freeLimit;
     private final String           apiEndpoint;
     private final AccountDao       accountDao;
     private final UserDao          userDao;
     private final MailSenderClient mailClient;
+    private final BillingService   billingService;
+    private final Period           billingPeriod;
 
     @Inject
     public SubscriptionMailSender(@Named("subscription.saas.mail.invoice.charged.subject") String invoiceChargedSubject,
                                   @Named("subscription.saas.mail.invoice.nocharges.subject") String invoiceNoChargesSubject,
                                   @Named("subscription.saas.mail.invoice.failed.subject") String invoiceFailedSubject,
                                   @Named("subscription.saas.mail.address") String billingAddress,
-                                  @Named("subscription.saas.usage.free.gbh") String freeGbh,
-                                  @Named("subscription.saas.free.max_limit_mb") String freeLimit,
+                                  @Named("subscription.saas.free.max_limit_mb") Long freeLimit,
                                   @Named("api.endpoint") String apiEndpoint,
                                   AccountDao accountDao,
                                   UserDao userDao,
-                                  MailSenderClient mailClient) {
+                                  MailSenderClient mailClient,
+                                  BillingService billingService,
+                                  BillingPeriod billingPeriod) {
         this.invoiceChargedSubject = invoiceChargedSubject;
         this.invoiceNoChargesSubject = invoiceNoChargesSubject;
         this.invoiceFailedSubject = invoiceFailedSubject;
         this.billingAddress = billingAddress;
-        this.freeGbh = freeGbh;
-        this.freeLimit = Long.toString(Math.round(Long.parseLong(freeLimit) / 1000));
+        this.freeLimit = Long.toString(Math.round(freeLimit / 1000));
         this.apiEndpoint = apiEndpoint;
         this.accountDao = accountDao;
         this.userDao = userDao;
         this.mailClient = mailClient;
+        this.billingService = billingService;
+        this.billingPeriod = billingPeriod.getCurrent();
     }
 
     public void sendInvoice(Invoice invoice, String text) throws IOException, MessagingException, ServerException {
         String subject;
         List<String> accountOwnersEmails = getAccountOwnersEmails(invoice.getAccountId());
         if (accountOwnersEmails.isEmpty()) {
-            LOG.error("Can't send invoice " + invoice.getId() + " because account " + invoice.getAccountId() + " hasn't owner");
+            LOG.error("Can't send invoice {} because account {} hasn't owner", invoice.getId(), invoice.getAccountId());
             return;
         }
 
@@ -121,6 +134,10 @@ public class SubscriptionMailSender {
         Map<String, String> properties = new HashMap<>();
         properties.put("type", ccType);
         properties.put("number", ccNumber);
+        properties.put("free.gbh", format(billingService
+                                                  .getProvidedFreeResources(accountId,
+                                                                            billingPeriod.getStartDate().getTime(),
+                                                                            System.currentTimeMillis())));
         LOG.debug("Send credit card added notifications to {}", accountOwnersEmails);
         try {
             sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_ADDED)), "Codenvy Pay-as-you-Go Subscription",
@@ -135,6 +152,10 @@ public class SubscriptionMailSender {
         Map<String, String> properties = new HashMap<>();
         properties.put("type", ccType);
         properties.put("number", ccNumber);
+        properties.put("free.gbh", format(billingService
+                                                  .getProvidedFreeResources(accountId,
+                                                                            billingPeriod.getStartDate().getTime(),
+                                                                            System.currentTimeMillis())));
         LOG.debug("Send credit card removed notifications to {}", accountOwnersEmails);
         try {
             sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_DELETE)), "Credit Card Removed from Codenvy",
@@ -144,34 +165,62 @@ public class SubscriptionMailSender {
         }
     }
 
-    public void sendAccountLockedNotification(String accountId, String total) throws ServerException {
-        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-        accountOwnersEmails.add("sales@codenvy.com");
+    public void sendBonusNotification(Bonus bonus) throws ServerException {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(bonus.getAccountId());
         Map<String, String> properties = new HashMap<>();
-        properties.put("total", total);
-        LOG.debug("Send account locked notifications to {}", accountOwnersEmails);
+        properties.put("bonus.amount", format(bonus.getResources()));
+        properties.put("free.gbh", format(billingService
+                                                  .getProvidedFreeResources(bonus.getAccountId(),
+                                                                            bonus.getFromDate(),
+                                                                            bonus.getTillDate())));
+        Calendar calendar = Calendar.getInstance();
+        calendar.set(2100, Calendar.JANUARY, 1);
+        LOG.debug("Send bonus notifications to {}", accountOwnersEmails);
         try {
-            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_CC_OUTSTANDING)), "Outstanding Balance with Codenvy",
-                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+            if (bonus.getTillDate() > calendar.getTimeInMillis()) {
+                sendEmail(readAndCloseQuietly(getResource(TEMPLATE_PERMANENT_BONUS)), "Free Monthly Codenvy Gigabyte Hours for You",
+                          accountOwnersEmails, MediaType.TEXT_HTML, properties);
+            } else {
+                sendEmail(readAndCloseQuietly(getResource(TEMPLATE_TEMPORARY_BONUS)), "Free Codenvy Gigabyte Hours for You",
+                          accountOwnersEmails, MediaType.TEXT_HTML, properties);
+            }
         } catch (IOException | MessagingException e) {
-            LOG.warn("Unable to send account locked notifications, account: {}", accountId);
+            LOG.warn("Unable to send bonus notifications to, account: {}", bonus.getAccountId());
         }
     }
 
-    private List<String> getAccountOwnersEmails(String accountId) throws ServerException {
-        List<String> emails = new ArrayList<>();
-        for (Member member : accountDao.getMembers(accountId)) {
-            if (member.getRoles().contains("account/owner")) {
-                try {
-                    User user = userDao.getById(member.getUserId());
-
-                    emails.add(user.getEmail());
-                } catch (ServerException | NotFoundException e) {
-                    LOG.error(e.getLocalizedMessage(), e);
-                }
-            }
+    public void sendReferringBonusNotification(Bonus bonus) throws ServerException {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(bonus.getAccountId());
+        Map<String, String> properties = new HashMap<>();
+        properties.put("bonus.amount", format(bonus.getResources()));
+        properties.put("free.gbh", format(billingService
+                                                  .getProvidedFreeResources(bonus.getAccountId(),
+                                                                            billingPeriod.getStartDate().getTime(),
+                                                                            System.currentTimeMillis())));
+        LOG.debug("Send referring bonus notifications to {}", accountOwnersEmails);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_REFERRING_BONUS)), "Codenvy Bonus for Referring",
+                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send referring bonus notifications to, account: {}", bonus.getAccountId());
         }
-        return emails;
+    }
+
+
+    public void sendReferredBonusNotification(Bonus bonus) throws ServerException {
+        List<String> accountOwnersEmails = getAccountOwnersEmails(bonus.getAccountId());
+        Map<String, String> properties = new HashMap<>();
+        properties.put("bonus.amount", format(bonus.getResources()));
+        properties.put("free.gbh", format(billingService
+                                                  .getProvidedFreeResources(bonus.getAccountId(), billingPeriod.getStartDate().getTime(),
+                                                                            System.currentTimeMillis())));
+        LOG.debug("Send referred bonus notifications to {}", accountOwnersEmails);
+        try {
+            sendEmail(readAndCloseQuietly(getResource(TEMPLATE_REFERRED_BONUS)), "Codenvy Bonus for You",
+                      accountOwnersEmails, MediaType.TEXT_HTML, properties);
+        } catch (IOException | MessagingException e) {
+            LOG.warn("Unable to send referred bonus notifications to, account: {}", bonus.getAccountId());
+        }
     }
 
     private void sendEmail(String text, String subject, List<String> emails, String mediaType, Map<String, String> properties)
@@ -180,8 +229,7 @@ public class SubscriptionMailSender {
             properties = new HashMap<>();
         }
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
-        properties.put("free.gbh", freeGbh);
-        properties.put("free.limit",freeLimit);
+        properties.put("free.limit", freeLimit);
         mailClient.sendMail(billingAddress,
                             Strings.join(", ", emails.toArray(new String[emails.size()])),
                             null,
@@ -191,46 +239,27 @@ public class SubscriptionMailSender {
                             properties);
     }
 
-//        public void sendTrialExpiredNotification(String accountId) throws ServerException {
-//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-//        LOG.debug("Send email about trial removing to {}", accountOwnersEmails);
-//        // TODO: replace text with template && check title
-//        try {
-//            sendEmail("Send email about trial removing", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-//         } catch (IOException | MessagingException e) {
-//         }
+    private List<String> getAccountOwnersEmails(String accountId) throws ServerException {
+        List<String> emails = new ArrayList<>();
+        for (Member member : accountDao.getMembers(accountId)) {
+            if (member.getRoles().contains("account/owner")) {
+                try {
+                    User user = userDao.getById(member.getUserId());
+                    emails.add(user.getEmail());
+                } catch (ServerException | NotFoundException e) {
+                    LOG.error(e.getLocalizedMessage(), e);
+                }
+            }
+        }
+        return emails;
+    }
 
-//    }
-//
-//    public void sendSubscriptionChargedNotification(String accountId) throws ServerException {
-//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-//        LOG.debug("Send email about subscription charging to {}", accountOwnersEmails);
-//        // TODO: replace text with template && check title
-//        try {
-//            sendEmail("Send email about subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-//         } catch (IOException | MessagingException e) {
-//         }
 
-//    }
-//
-//    public void sendSubscriptionChargeFailNotification(String accountId) throws ServerException {
-//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-//        LOG.debug("Send email about unsuccessful subscription charging to {}", accountOwnersEmails);
-//        // TODO: replace text with template && check title
-//        try {
-//            sendEmail("Send email about unsuccessful subscription charging", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-//         } catch (IOException | MessagingException e) {
-//         }
-
-//    }
-//
-//    public void sendSubscriptionExpiredNotification(String accountId, Integer days) throws ServerException {
-//        List<String> accountOwnersEmails = getAccountOwnersEmails(accountId);
-//        LOG.debug("Send email about trial removing in {} days to {}", days, accountOwnersEmails);
-//        // TODO: replace text with template && check title
-//        try {
-//            sendEmail("Send email about trial removing in " + days + " days", "Subscription notification", accountOwnersEmails, MediaType.TEXT_PLAIN, null);
-//         } catch (IOException | MessagingException e) {
-//         }
-//    }
+    private String format(double d)
+    {
+        if(d == (long) d)
+            return String.format("%d",(long)d);
+        else
+            return String.format("%s",d);
+    }
 }
