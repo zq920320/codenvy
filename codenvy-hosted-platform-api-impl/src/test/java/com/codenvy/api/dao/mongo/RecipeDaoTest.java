@@ -26,10 +26,9 @@ import com.mongodb.DBObject;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.machine.server.GroupImpl;
-import org.eclipse.che.api.machine.server.PermissionsImpl;
-import org.eclipse.che.api.machine.server.RecipeImpl;
+import org.eclipse.che.api.machine.server.recipe.GroupImpl;
+import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
+import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.shared.Group;
 import org.eclipse.che.api.machine.shared.Recipe;
 import org.testng.annotations.BeforeMethod;
