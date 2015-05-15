@@ -445,7 +445,7 @@
                 }
             },
             // Login with email and password
-            processLogin: function(email, password, redirect_url, success, error){
+            processLogin: function(email, password, redirect_url, error){
                 login(email, password)
                 .then(function(){
                     navigateToLocation(redirect_url);
@@ -489,7 +489,7 @@
                 });
             },
 
-            adminLogin: function(email, password, redirect_url, success, error) {
+            adminLogin: function(email, password, redirect_url, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
                     var data = {
@@ -518,7 +518,7 @@
             },
             loginWithGoogle: loginWithGoogle,
             loginWithGithub: loginWithGithub,
-            createTenant: function(email, domain, success, error) {
+            createTenant: function(email, domain, error) {
                 var data = {
                     email: email.toLowerCase(),
                     workspacename: domain.toLowerCase()
@@ -530,9 +530,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     success: function() {
-                        success({
-                            url: '../site/thank-you'
-                        });
+                        redirectToUrl('../site/thank-you');
                     },
                     error: function(xhr /*, status , err*/ ) {
                         error([
@@ -550,10 +548,8 @@
                     url: passwordRecoveryUrl,
                     type: "POST",
                     data: {},
-                    success: function(output, status, xhr) {
-                        success({
-                            message: xhr.responseText
-                        });
+                    success: function() {
+                        success();
                     },
                     error: function(response) {
                         error([
@@ -606,9 +602,7 @@
                         password: password
                     },
                     success: function() {
-                        success({
-                            url: "/site/login"
-                        });
+                        redirectToUrl("/site/login");
                     },
                     error: function(response) {
                         error([

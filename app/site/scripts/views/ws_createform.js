@@ -68,9 +68,6 @@
                 Account.createTenant(
                     $(form).find("input[name='email']").val(),
                     $(form).find("input[name='domain']").val(),
-                    _.bind(function(d){
-                        this.trigger("success",d);
-                    },this),
                     _.bind(function(errors){
 
                         this.__restoreForm();
