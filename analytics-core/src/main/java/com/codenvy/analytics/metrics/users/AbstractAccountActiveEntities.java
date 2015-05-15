@@ -15,27 +15,32 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.subscription;
+package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
-import com.codenvy.analytics.metrics.users.AbstractAccountActiveEntities;
 
-import javax.annotation.security.RolesAllowed;
+import java.io.IOException;
 
-/** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER, MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class CreditCardRemoved extends AbstractAccountActiveEntities {
-
-    public CreditCardRemoved() {
-        super(MetricType.CREDIT_CARD_REMOVED, ACOUNT);
+/**
+ * @author Alexander Reshetnyak
+ */
+public abstract class AbstractAccountActiveEntities extends AbstractActiveEntities {
+    public AbstractAccountActiveEntities(MetricType metricType, String valueField) {
+        super(metricType.toString(), (Metric)null, valueField);
     }
 
     /** {@inheritDoc} */
     @Override
-    public String getDescription() {
-        return "The number of removed credit cards";
+    public Context applySpecificFilter(Context clauses) throws IOException {
+        return clauses;
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public String getStorageCollectionName() {
+        return getName().toLowerCase();
     }
 }

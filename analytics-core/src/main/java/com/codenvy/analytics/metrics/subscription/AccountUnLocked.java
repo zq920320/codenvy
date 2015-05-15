@@ -18,17 +18,17 @@
 
 package com.codenvy.analytics.metrics.subscription;
 
-import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.users.AbstractAccountActiveEntities;
 
 import javax.annotation.security.RolesAllowed;
 
 /** @author Anatoliy Bazko */
 @RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER, MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
-public class AccountUnLocked extends AbstractLongValueResulted {
+public class AccountUnLocked extends AbstractAccountActiveEntities {
 
     public AccountUnLocked() {
         super(MetricType.ACCOUNT_UNLOCKED, ACOUNT);
