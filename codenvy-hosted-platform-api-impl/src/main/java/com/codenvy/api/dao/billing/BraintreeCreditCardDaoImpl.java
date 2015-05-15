@@ -268,7 +268,7 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
         // Check is paid resources used, lock and send notify emails.
         if (!resources.isEmpty()) {
-            accountLocker.lock(accountId);
+            accountLocker.setPaymentLock(accountId);
         }
         subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
     }

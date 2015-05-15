@@ -65,7 +65,7 @@ public class RefillJobTest {
 
         refillJob.run();
 
-        verify(accountLocker).unlockResources(eq("lockedAccountId"), eq(true));
+        verify(accountLocker).removeResourcesLock(eq("lockedAccountId"));
         verifyZeroInteractions(workspaceLocker);
     }
 

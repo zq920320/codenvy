@@ -208,7 +208,7 @@ public class BraintreeCreditCardDaoImplTest {
                                         .withPaidSum(599D)));
         dao.deleteCard(ACCOUNT_ID, TOKEN);
         verify(cardGateway).delete(anyString());
-        verify(accountLocker).lock(eq(ACCOUNT_ID));
+        verify(accountLocker).setPaymentLock(eq(ACCOUNT_ID));
     }
 
     @Test

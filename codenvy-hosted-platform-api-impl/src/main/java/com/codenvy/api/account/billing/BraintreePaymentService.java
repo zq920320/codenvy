@@ -56,11 +56,11 @@ import java.util.concurrent.TimeUnit;
 public class BraintreePaymentService implements PaymentService {
     private static final Logger LOG = LoggerFactory.getLogger(BraintreePaymentService.class);
 
-    private final CreditCardDao          creditCardDao;
-    private final BraintreeGateway       gateway;
-    private final EventService           eventService;
-    private final AccountLocker          accountLocker;
-    private       Map<String, Double>    prices;
+    private final CreditCardDao       creditCardDao;
+    private final BraintreeGateway    gateway;
+    private final EventService        eventService;
+    private final AccountLocker       accountLocker;
+    private       Map<String, Double> prices;
 
     @Inject
     public BraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, AccountLocker accountLocker,
@@ -120,7 +120,7 @@ public class BraintreePaymentService implements PaymentService {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        subscription.getId(), price));
-                accountLocker.lock(accountId);
+                accountLocker.setPaymentLock(accountId);
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
@@ -168,7 +168,7 @@ public class BraintreePaymentService implements PaymentService {
                           result.getMessage());
                 eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
                                                                                        Long.toString(invoice.getId()), price));
-                accountLocker.lock(accountId);
+                accountLocker.setPaymentLock(accountId);
                 throw new ForbiddenException(result.getMessage());
             }
         } catch (ApiException e) {
