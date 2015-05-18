@@ -75,12 +75,12 @@ selectTomcatToUpload() {
          doUploadTomcat ${CODEASSISTANT} ${SERVER}/${SCOPE}
       ;;
      "all")
-         API=`ls cloud-ide-packaging-tomcat-api/target/cloud-ide-packaging-tomcat-api-*.zip`
-         SITE=`ls cloud-ide-packaging-tomcat-site/target/cloud-ide-packaging-tomcat-site-*.zip`
-         RUNNER=`ls cloud-ide-packaging-tomcat-next-runner/target/cloud-ide-packaging-tomcat-next-runner-*.zip`
-         BUILDER=`ls cloud-ide-packaging-tomcat-next-builder/target/cloud-ide-packaging-tomcat-next-builder-*.zip`
-         DATASOURCE=`ls cloud-ide-packaging-tomcat-datasource-plugin/target/cloud-ide-packaging-tomcat-datasource-plugin-*.zip`
-         CODEASSISTANT=`ls cloud-ide-packaging-tomcat-next-codeassistant/target/cloud-ide-packaging-tomcat-next-codeassistant-*.zip`
+         API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
+         SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
+         RUNNER=`ls onpremises-ide-packaging-tomcat-next-runner/target/onpremises-ide-packaging-tomcat-next-runner-*.zip`
+         BUILDER=`ls onpremises-ide-packaging-tomcat-next-builder/target/onpremises-ide-packaging-tomcat-next-builder-*.zip`
+         DATASOURCE=`ls onpremises-ide-packaging-tomcat-datasource-plugin/target/onpremises-ide-packaging-tomcat-datasource-plugin-*.zip`
+         CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-next-codeassistant/target/onpremises-ide-packaging-tomcat-next-codeassistant-*.zip`
          doUploadTomcat ${API} ${SERVER}/api
          doUploadTomcat ${SITE} ${SERVER}/site
          doUploadTomcat ${RUNNER} ${SERVER}/runner
