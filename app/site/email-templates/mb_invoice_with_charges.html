@@ -83,14 +83,14 @@
     </tr>
     <tr th:if="${saasCharge.prePaidAmount != 0}">
         <td colspan="1" style="text-align: left; border: 1px solid grey; padding: 10px;">Pre-Paid Usage</td>
-        <td th:text="${prepaidAvailable != null} ? ${#numbers.formatDecimal(prepaidAvailable, 1, 2)} : '0.00'" style="text-align: right; border: 1px solid grey; padding: 10px;">8000.00</td>
+        <td th:text="${#numbers.formatDecimal(saasCharge.providedPrepaidAmount, 1, 2)}" style="text-align: right; border: 1px solid grey; padding: 10px;">8000.00</td>
         <td th:text="${#numbers.formatDecimal(saasCharge.prePaidAmount, 1, 6)}" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">6000.00</td>
         <!-- td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">&nbsp;</td -->
         <td colspan="2" style="text-align: right; border: 1px solid grey; padding: 10px;">Pre-paid</td>
     </tr>
     <tr>
         <td colspan="1" style="text-align: left; border: 1px solid grey; padding: 10px;">Free Usage</td>
-        <td th:text="${#numbers.formatDecimal(freeLimit, 1, 2)}" style="text-align: right; border: 1px solid grey; padding: 10px;">10.00</td>
+        <td th:text="${#numbers.formatDecimal(saasCharge.providedFreeAmount, 1, 2)}" style="text-align: right; border: 1px solid grey; padding: 10px;">10.00</td>
         <td th:text="${saasCharge != null} ? ${#numbers.formatDecimal(saasCharge.freeAmount, 1, 6)} : '0.000000'" colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">10.00</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">Free</td>
         <td colspan="1" style="text-align: right; border: 1px solid grey; padding: 10px;">$ 0.00</td>
