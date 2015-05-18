@@ -93,7 +93,7 @@ public class MeterBasedCharger {
         final String ccToken = getCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
-            accountLocker.lock(invoice.getAccountId());
+            accountLocker.setPaymentLock(invoice.getAccountId());
             return;
         }
 
@@ -104,7 +104,7 @@ public class MeterBasedCharger {
         } catch (ApiException e) {
             LOG.error("Can't pay invoice " + invoice.getId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
-            accountLocker.lock(invoice.getAccountId());
+            accountLocker.setPaymentLock(invoice.getAccountId());
         }
     }
 

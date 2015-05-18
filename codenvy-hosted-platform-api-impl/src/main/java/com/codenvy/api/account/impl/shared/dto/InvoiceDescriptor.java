@@ -49,25 +49,25 @@ public interface InvoiceDescriptor extends Hyperlinks {
     InvoiceDescriptor withTotal(Double total);
 
 
-    long getCreationDate();
+    Long getCreationDate();
 
-    void setCreationDate(long creationDate);
+    void setCreationDate(Long creationDate);
 
-    InvoiceDescriptor withCreationDate(long creationDate);
-
-
-    long getFromDate();
-
-    void setFromDate(long fromDate);
-
-    InvoiceDescriptor withFromDate(long fromDate);
+    InvoiceDescriptor withCreationDate(Long creationDate);
 
 
-    long getTillDate();
+    Long getFromDate();
 
-    void setTillDate(long tillDate);
+    void setFromDate(Long fromDate);
 
-    InvoiceDescriptor withTillDate(long tillDate);
+    InvoiceDescriptor withFromDate(Long fromDate);
+
+
+    Long getTillDate();
+
+    void setTillDate(Long tillDate);
+
+    InvoiceDescriptor withTillDate(Long tillDate);
 
 
     String getCreditCardId();

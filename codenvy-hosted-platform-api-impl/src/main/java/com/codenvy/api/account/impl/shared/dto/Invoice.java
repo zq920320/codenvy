@@ -49,25 +49,25 @@ public interface Invoice {
     Invoice withTotal(Double total);
 
 
-    long getCreationDate();
+    Long getCreationDate();
 
-    void setCreationDate(long creationDate);
+    void setCreationDate(Long creationDate);
 
-    Invoice withCreationDate(long creationDate);
-
-
-    long getFromDate();
-
-    void setFromDate(long fromDate);
-
-    Invoice withFromDate(long fromDate);
+    Invoice withCreationDate(Long creationDate);
 
 
-    long getTillDate();
+    Long getFromDate();
 
-    void setTillDate(long tillDate);
+    void setFromDate(Long fromDate);
 
-    Invoice withTillDate(long tillDate);
+    Invoice withFromDate(Long fromDate);
+
+
+    Long getTillDate();
+
+    void setTillDate(Long tillDate);
+
+    Invoice withTillDate(Long tillDate);
 
 
     String getCreditCardId();

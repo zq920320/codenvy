@@ -64,7 +64,6 @@ public class TemplateProcessor {
     private final String paymentFailTemplateName;
     private final String paidSuccessfullyTemplateName;
 
-
     @Inject
     public TemplateProcessor(@Named("subscription.saas.mail.template.success") String successTemplate,
                              @Named("subscription.saas.mail.template.fail") String failTemplate,

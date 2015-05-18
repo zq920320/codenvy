@@ -26,6 +26,8 @@ import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+
 /**
  * Base class for subscribing only on metered build events
  *
@@ -54,7 +56,7 @@ public abstract class MeteredBuildEventSubscriber implements EventSubscriber<Bui
                 onMeteredBuildEvent(event);
             }
         } catch (NotFoundException e) {
-            LOG.error("Unable to determine request type for request {}", event.getTaskId());
+            LOG.warn(format("Unable to determine request type for request %s", event.getTaskId()), e);
         }
     }
 }
