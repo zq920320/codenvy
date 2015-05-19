@@ -190,7 +190,7 @@ public class ResourcesWatchdogFactory {
 
         @Override
         public void lock() {
-            workspaceLocker.lockResources(workspaceId);
+            workspaceLocker.setResourcesLock(workspaceId);
         }
     }
 }

@@ -90,7 +90,7 @@ public class RefillJobTest {
 
         refillJob.run();
 
-        verify(workspaceLocker).unlockResources(eq("workspaceId"));
+        verify(workspaceLocker).removeResourcesLock(eq("workspaceId"));
         verifyZeroInteractions(accountLocker);
     }
 

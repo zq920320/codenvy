@@ -17,7 +17,9 @@
  */
 package com.codenvy.api.account;
 
-import org.eclipse.che.api.account.server.Constants;
+import com.codenvy.api.account.billing.BillingPeriod;
+import com.codenvy.api.account.metrics.MeterBasedStorage;
+
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -30,6 +32,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 
 import static java.lang.String.format;
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
+import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
 
 /**
  * Locks and unlocks resources usage in workspace
@@ -38,35 +42,57 @@ import static java.lang.String.format;
  */
 public class WorkspaceLocker {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceLocker.class);
-    private final WorkspaceDao workspaceDao;
-    private final EventService eventService;
+    private final WorkspaceDao      workspaceDao;
+    private final EventService      eventService;
+    private final BillingPeriod     billingPeriod;
+    private final MeterBasedStorage meterBasedStorage;
 
     @Inject
-    public WorkspaceLocker(WorkspaceDao workspaceDao, EventService eventService) {
+    public WorkspaceLocker(WorkspaceDao workspaceDao,
+                           EventService eventService,
+                           BillingPeriod billingPeriod,
+                           MeterBasedStorage meterBasedStorage) {
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
+        this.billingPeriod = billingPeriod;
+        this.meterBasedStorage = meterBasedStorage;
     }
 
-    public void lockResources(String workspaceId) {
+    /**
+     * Sets resources lock for workspace with given id.
+     * Workspace won't be locked second time if it already has resources lock
+     */
+    public void setResourcesLock(String workspaceId) {
         try {
             Workspace workspace = workspaceDao.getById(workspaceId);
-            workspace.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
-            try {
-                workspaceDao.update(workspace);
-                eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspaceId));
-            } catch (NotFoundException | ServerException | ConflictException e) {
-                LOG.error(format("Error writing lock property into workspace %s .", workspace.getId()), e);
+            if (!workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                workspace.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+                try {
+                    workspaceDao.update(workspace);
+                    eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspaceId));
+                } catch (NotFoundException | ServerException | ConflictException e) {
+                    LOG.error(format("Error writing lock property into workspace %s .", workspace.getId()), e);
+                }
             }
         } catch (NotFoundException | ServerException e) {
             LOG.error(format("Can't get workspace %s for writing resources lock property", workspaceId), e);
         }
     }
 
-    public void unlockResources(String workspaceId) {
+    /**
+     * Removes resources lock for workspace with given id.
+     * Workspace's resources won't be unlocked if workspace hasn't resources lock.
+     * Workspace won't be unlocked if resources usage reached workspace's limit
+     */
+    public void removeResourcesLock(String workspaceId) {
         try {
             Workspace workspace = workspaceDao.getById(workspaceId);
-            if (workspace.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
-                workspace.getAttributes().remove(Constants.RESOURCES_LOCKED_PROPERTY);
+            if (workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                if (isReachedResourcesUsageLimit(workspace)) {
+                    // Reached resources usage limit in workspace. Do not unlock it
+                    return;
+                }
+                workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
                 try {
                     workspaceDao.update(workspace);
                     eventService.publish(WorkspaceLockEvent.workspaceUnlockedEvent(workspaceId));
@@ -77,5 +103,17 @@ public class WorkspaceLocker {
         } catch (NotFoundException | ServerException e) {
             LOG.error(format("Can't get workspace %s for writing resources lock property", workspaceId), e);
         }
+    }
+
+    private boolean isReachedResourcesUsageLimit(Workspace workspace) throws ServerException {
+        if (workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)) {
+            long billingPeriodStart = billingPeriod.getCurrent().getStartDate().getTime();
+            Double usedMemory = meterBasedStorage.getUsedMemoryByWorkspace(workspace.getId(),
+                                                                           billingPeriodStart,
+                                                                           System.currentTimeMillis());
+            Double allowedMemoryUsage = Double.parseDouble(workspace.getAttributes().get(RESOURCES_USAGE_LIMIT_PROPERTY));
+            return usedMemory >= allowedMemoryUsage;
+        }
+        return false;
     }
 }

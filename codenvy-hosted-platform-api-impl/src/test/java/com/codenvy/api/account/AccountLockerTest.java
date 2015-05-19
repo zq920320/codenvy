@@ -42,7 +42,6 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 
@@ -82,8 +81,8 @@ public class AccountLockerTest {
                        && account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceLocker).lockResources(eq("ws_1"));
-        verify(workspaceLocker).lockResources(eq("ws_2"));
+        verify(workspaceLocker).setResourcesLock(eq("ws_1"));
+        verify(workspaceLocker).setResourcesLock(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
@@ -122,8 +121,8 @@ public class AccountLockerTest {
                        && !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceLocker).unlockResources(eq("ws_1"));
-        verify(workspaceLocker).unlockResources(eq("ws_2"));
+        verify(workspaceLocker).removeResourcesLock(eq("ws_1"));
+        verify(workspaceLocker).removeResourcesLock(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
@@ -142,7 +141,7 @@ public class AccountLockerTest {
         accountLocker.removeResourcesLock("accountId");
 
         verify(accountDao, never()).update((Account)anyObject());
-        verify(workspaceLocker, never()).unlockResources(anyString());
+        verify(workspaceLocker, never()).removeResourcesLock(anyString());
         verify(eventService, never()).publish(account);
     }
 

@@ -73,7 +73,7 @@ public class AccountLocker {
     }
 
     /**
-     * Removes payment lock for account with given id.
+     * Removes resources lock for account with given id.
      * Account's resources won't be unlocked if account hasn't resources lock.
      * Account's resources won't be unlocked if it has payment lock.
      */
@@ -116,7 +116,7 @@ public class AccountLocker {
                 eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
                 try {
                     for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
-                        workspaceLocker.lockResources(workspace.getId());
+                        workspaceLocker.setResourcesLock(workspace.getId());
                     }
                 } catch (ServerException e) {
                     LOG.error(format("Can't get account's workspaces %s for writing lock property", accountId), e);
@@ -150,7 +150,7 @@ public class AccountLocker {
 
                 try {
                     for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
-                        workspaceLocker.unlockResources(workspace.getId());
+                        workspaceLocker.removeResourcesLock(workspace.getId());
                     }
                 } catch (ServerException e) {
                     LOG.error(format("Error removing lock property from workspace %s .", accountId), e);

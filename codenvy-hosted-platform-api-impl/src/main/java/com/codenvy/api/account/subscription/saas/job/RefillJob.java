@@ -79,7 +79,7 @@ public class RefillJob implements Runnable {
 
             for (Workspace workspace : workspaceDao.getWorkspacesWithLockedResources()) {
                 if (!accountIdsWithPaymentLock.contains(workspace.getAccountId())) {
-                    workspaceLocker.unlockResources(workspace.getId());
+                    workspaceLocker.removeResourcesLock(workspace.getId());
                 }
             }
         } catch (ServerException | ForbiddenException e) {
