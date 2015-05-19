@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.activity.websocket;
 
-import com.codenvy.workspace.activity.WsActivitySender;
+import com.codenvy.workspace.activity.WsActivityEventSender;
 
 import org.everrest.websockets.WSMessageReceiver;
 import org.everrest.websockets.message.InputMessage;
@@ -27,23 +27,23 @@ import org.everrest.websockets.message.InputMessage;
  */
 public class WorkspaceWebsocketMessageReceiver implements WSMessageReceiver {
 
-    private final String           currentWs;
-    private final boolean          isTemporary;
-    private final WsActivitySender wsActivitySender;
+    private final String                currentWs;
+    private final boolean               isTemporary;
+    private final WsActivityEventSender wsActivityEventSender;
 
-    public WorkspaceWebsocketMessageReceiver(WsActivitySender wsActivitySender, String currentWs, boolean isTemporary) {
-        this.wsActivitySender = wsActivitySender;
+    public WorkspaceWebsocketMessageReceiver(WsActivityEventSender wsActivityEventSender, String currentWs, boolean isTemporary) {
+        this.wsActivityEventSender = wsActivityEventSender;
         this.isTemporary = isTemporary;
         this.currentWs = currentWs;
     }
 
     @Override
     public void onMessage(InputMessage input) {
-        wsActivitySender.onMessage(currentWs, isTemporary);
+        wsActivityEventSender.onActivity(currentWs, isTemporary);
     }
 
     @Override
     public void onError(Exception error) {
-        wsActivitySender.onMessage(currentWs, isTemporary);
+        wsActivityEventSender.onActivity(currentWs, isTemporary);
     }
 }

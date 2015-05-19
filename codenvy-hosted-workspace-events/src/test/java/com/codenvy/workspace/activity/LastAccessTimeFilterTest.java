@@ -43,7 +43,7 @@ public class LastAccessTimeFilterTest {
     private FilterChain filterChain;
 
     @Mock
-    private WsActivitySender activitySender;
+    private WsActivityEventSender activitySender;
 
     @Mock
     private ServletRequest request;
@@ -65,7 +65,7 @@ public class LastAccessTimeFilterTest {
 
         filter.doFilter(request, response, filterChain);
 
-        verify(activitySender).onMessage(anyString(), anyBoolean());
+        verify(activitySender).onActivity(anyString(), anyBoolean());
         verify(filterChain).doFilter(request, response);
     }
 

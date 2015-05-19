@@ -18,15 +18,13 @@
 package com.codenvy.workspace.activity.websocket;
 
 import org.eclipse.che.commons.env.EnvironmentContext;
-import com.codenvy.workspace.activity.WsActivitySender;
+import com.codenvy.workspace.activity.WsActivityEventSender;
 
 import org.everrest.websockets.WSConnection;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
-
-import javax.servlet.http.HttpSession;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
@@ -46,7 +44,7 @@ public class WorkspaceWebsocketConnectioListenerTest {
     private WSConnection wsConnection;
 
     @Mock
-    private WsActivitySender wsActivitySender;
+    private WsActivityEventSender wsActivityEventSender;
 
     @Mock
     private EnvironmentContext environmentContext;
@@ -56,7 +54,7 @@ public class WorkspaceWebsocketConnectioListenerTest {
     @Test
     public void shouldRegisterListener() {
 
-        WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivitySender);
+        WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivityEventSender);
         when(wsConnection.getAttribute(anyString())).thenReturn(environmentContext);
         when(environmentContext.getWorkspaceId()).thenReturn(wsId);
 
@@ -67,7 +65,7 @@ public class WorkspaceWebsocketConnectioListenerTest {
     @Test
     public void shouldNotRegisterListenerWhenNoEnvContext() {
 
-        WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivitySender);
+        WorkspaceWebsocketConnectionListener listener = new WorkspaceWebsocketConnectionListener(wsActivityEventSender);
         when(wsConnection.getAttribute(anyString())).thenReturn(null);
 
         listener.onOpen(wsConnection);

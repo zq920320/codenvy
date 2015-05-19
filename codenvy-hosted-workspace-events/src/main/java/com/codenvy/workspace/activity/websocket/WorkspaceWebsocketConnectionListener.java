@@ -18,7 +18,7 @@
 package com.codenvy.workspace.activity.websocket;
 
 import org.eclipse.che.commons.env.EnvironmentContext;
-import com.codenvy.workspace.activity.WsActivitySender;
+import com.codenvy.workspace.activity.WsActivityEventSender;
 
 import org.everrest.websockets.WSConnection;
 import org.everrest.websockets.WSConnectionListener;
@@ -34,11 +34,11 @@ public class WorkspaceWebsocketConnectionListener implements WSConnectionListene
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceWebsocketConnectionListener.class);
 
-    private final WsActivitySender wsActivitySender;
+    private final WsActivityEventSender wsActivityEventSender;
 
     @Inject
-    public WorkspaceWebsocketConnectionListener(WsActivitySender wsActivitySender) {
-        this.wsActivitySender = wsActivitySender;
+    public WorkspaceWebsocketConnectionListener(WsActivityEventSender wsActivityEventSender) {
+        this.wsActivityEventSender = wsActivityEventSender;
     }
 
     @Override
@@ -46,7 +46,7 @@ public class WorkspaceWebsocketConnectionListener implements WSConnectionListene
         EnvironmentContext context = (EnvironmentContext)connection.getAttribute("ide.websocket." + EnvironmentContext.class.getName());
         if (null != context && null != context.getWorkspaceId()) {
             connection.registerMessageReceiver(
-                    new WorkspaceWebsocketMessageReceiver(wsActivitySender, context.getWorkspaceId(), context.isWorkspaceTemporary()));
+                    new WorkspaceWebsocketMessageReceiver(wsActivityEventSender, context.getWorkspaceId(), context.isWorkspaceTemporary()));
         } else {
             LOG.warn("Workspace id is not set in environment context of WS connection, last access time will not be updated.");
         }
