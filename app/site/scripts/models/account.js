@@ -386,7 +386,7 @@
             return getWorkspaces()
             .then(function(workspace){
                 if (!workspace){
-                    redirectToUrl("/site/error/no-workspaces-found");
+                    redirectToUrl("/site/auth/no-workspaces-found");
                     return $.Deferred().reject();
                 } else {
                     return $.Deferred().resolve(workspace.workspaceReference.id);

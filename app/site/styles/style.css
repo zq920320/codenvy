@@ -257,9 +257,19 @@ body,h1,h2,h3,h4,h5,h6,a{
 	color:#fff;
 }
 
-.error-page p a:hover{
-	text-decoration: underline;
-	color: #337ab7;
+.error-page-btn{
+  	font-size: 16px;
+	background: #F37943;
+	padding: 12px 10px;
+	border-radius: 5px;
+	color: #fff;
+	display: inline-block;
+	margin: 0px 5px;
+}
+
+.error-page-btn:hover{
+	background: #ED592B;
+	color: #fff;
 }
 
 .signup-page p span{
