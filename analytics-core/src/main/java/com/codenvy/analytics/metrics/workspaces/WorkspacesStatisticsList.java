@@ -139,6 +139,20 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
             putNotNull(newItems, profile, WS_NAME);
 
             value.add(new MapValueData(newItems));
+
+            /*//add projects in account
+            if (clauses.exists(MetricFilter.WS) && Utils.getFilterAsSet(MetricFilter.WS.toString()).size() == 1) {
+                if (clauses.exists(MetricFilter.USER)) {
+                    Context.Builder builder = new Context.Builder();
+                    builder.put(Parameters.USER, newItems.get(USER));
+
+                    Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
+                    ValueData vd = metric.getValue(builder.build());
+
+
+                    newItems.put(PROJECTS, vd);
+                }
+            }*/
         }
 
         return new ListValueData(value);

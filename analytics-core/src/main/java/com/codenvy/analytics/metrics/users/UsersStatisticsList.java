@@ -17,6 +17,7 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -145,6 +146,19 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
             putNotNull(newItems, profile, ALIASES);
 
             value.add(new MapValueData(newItems));
+
+
+            if (!Injector.isLocal()) {
+                if (clauses.exists(MetricFilter.USER)) {
+                    Context.Builder builder = new Context.Builder();
+                    builder.put(Parameters.USER, newItems.get(USER).getAsString());
+
+                    Metric metric = MetricFactory.getMetric(MetricType.ACCOUNT_PROJECTS);
+                    ValueData vd = metric.getValue(builder.build());
+
+                    newItems.put(PROJECTS, vd);
+                }
+            }
         }
 
         return new ListValueData(value);

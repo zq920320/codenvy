@@ -31,9 +31,7 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
 import com.google.common.collect.FluentIterable;
-import com.google.common.collect.ImmutableList;
 
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
@@ -42,17 +40,13 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
-import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.filterAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
@@ -98,12 +92,14 @@ public class AccountsList extends AbstractAccountMetric {
 
             int projects = 0;
 
+
             List<WorkspaceDescriptor> workspacesDesc = getWorkspacesByAccountId(accountDesc.getId());
             m.put("workspaces", LongValueData.valueOf(workspacesDesc.size()));
             for (WorkspaceDescriptor workspace : workspacesDesc) {
                 projects += getProjects(workspace.getId()).size();
             }
             m.put("projects", LongValueData.valueOf(projects));
+
 
             List<SubscriptionDescriptor> subscriptionsDesc = getSubscriptionsByAccountId(accountDesc.getId());
             List<String> servicesIds = FluentIterable.from(subscriptionsDesc).transform(new Function<SubscriptionDescriptor, String>() {
@@ -171,116 +167,5 @@ public class AccountsList extends AbstractAccountMetric {
         return RESOURCE_FETCHER.fetchResource(UserDescriptor.class,
                                               "GET",
                                               "/user/" + memberDescriptor.getUserId());
-    }
-
-    protected List<AccountDescriptor> getAccountDescriptors(Context context) throws IOException {
-        List<AccountDescriptor> result = null;
-        String accountIdFilter = context.getAsString("ACCOUNT_ID");
-        if (accountIdFilter != null) {
-            ImmutableList<AccountDescriptor> byIds =
-                    FluentIterable.from(filterAsList(accountIdFilter)).transform(new Function<String, AccountDescriptor>() {
-                        @Nullable
-                        @Override
-                        public AccountDescriptor apply(String accountId) {
-                            try {
-                                return getAccountDescriptorById(accountId);
-                            } catch (IOException e) {
-                                return null;
-                            }
-                        }
-                    }).filter(Predicates.notNull()).toList();
-
-            result = merge(result, byIds);
-            if (result.isEmpty()) {
-                return Collections.emptyList();
-            }
-        }
-
-        String accountNameFilter = context.getAsString("ACCOUNT_NAME");
-        if (accountNameFilter != null) {
-            ImmutableList<AccountDescriptor> byNames =
-                    FluentIterable.from(filterAsList(accountNameFilter)).transform(new Function<String, AccountDescriptor>() {
-                        @Nullable
-                        @Override
-                        public AccountDescriptor apply(String accountName) {
-                            try {
-                                return getAccountDescriptorByName(accountName);
-                            } catch (IOException e) {
-                                return null;
-                            }
-                        }
-                    }).filter(Predicates.notNull()).toList();
-
-            result = merge(result, byNames);
-            if (result.isEmpty()) {
-                return Collections.emptyList();
-            }
-        }
-
-        String ownerEmailsFilter = context.getAsString("USER");
-        if (ownerEmailsFilter != null) {
-            ImmutableList<AccountDescriptor> byEmails =
-                    FluentIterable.from(filterAsList(ownerEmailsFilter)).transform(new Function<String, UserDescriptor>() {
-                        @Nullable
-                        @Override
-                        public UserDescriptor apply(String ownerEmail) {
-                            try {
-                                return RESOURCE_FETCHER.fetchResource(UserDescriptor.class,
-                                                                      "GET",
-                                                                      "/user/find?email=" + ownerEmail);
-                            } catch (IOException e) {
-                                return null;
-                            }
-                        }
-                    }).filter(Predicates.notNull()).transformAndConcat(new Function<UserDescriptor, List<MemberDescriptor>>() {
-                        @Nullable
-                        @Override
-                        public List<MemberDescriptor> apply(UserDescriptor userDescriptor) {
-                            try {
-                                List<MemberDescriptor> memberDescriptors = RESOURCE_FETCHER.fetchResources(MemberDescriptor.class,
-                                                                                                           "GET",
-                                                                                                           "/account/memberships?userid=" +
-                                                                                                           userDescriptor.getId());
-                                Iterator<MemberDescriptor> iter = memberDescriptors.iterator();
-                                while (iter.hasNext()) {
-                                    MemberDescriptor memberDescriptor = iter.next();
-                                    if (!memberDescriptor.getRoles().contains("account/owner")) {
-                                        iter.remove();
-                                    }
-                                }
-
-                                return memberDescriptors;
-                            } catch (IOException e) {
-                                return null;
-                            }
-                        }
-                    }).filter(Predicates.notNull()).transform(new Function<MemberDescriptor, AccountDescriptor>() {
-                        @Nullable
-                        @Override
-                        public AccountDescriptor apply(MemberDescriptor memberDescriptor) {
-                            try {
-                                return getAccountDescriptorById(memberDescriptor.getAccountReference().getId());
-                            } catch (IOException e) {
-                                return null;
-                            }
-                        }
-                    }).filter(Predicates.notNull()).toList();
-
-            result = merge(result, byEmails);
-            if (result.isEmpty()) {
-                return Collections.emptyList();
-            }
-        }
-
-        return result == null ? Collections.<AccountDescriptor>emptyList() : result;
-    }
-
-    private List<AccountDescriptor> merge(@Nullable List<AccountDescriptor> result, ImmutableList<AccountDescriptor> search) {
-        if (result == null) {
-            return new ArrayList<>(search);
-        } else {
-            result.retainAll(search);
-            return result;
-        }
     }
 }

@@ -355,7 +355,7 @@ public class MongoDataLoader implements DataLoader {
             } else if (filter == MetricFilter.EXISTS) {
                 BasicDBList orArgs = new BasicDBList();
                 String[] fields = (String[])value;
-                for (int i=0; i<fields.length; i++) {
+                for (int i = 0; i < fields.length; i++) {
                     orArgs.add(new BasicDBObject(fields[i], new BasicDBObject("$exists", true)));
                 }
                 match.put("$or", processFilter(orArgs, filter.isNumericType()));
