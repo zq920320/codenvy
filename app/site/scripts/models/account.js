@@ -379,10 +379,8 @@
             window.location = url;
         };
 
-        var navigateToLocation = function(redirect_url){
-            if (!redirect_url){
-                redirect_url = "/dashboard/";
-            }
+        var navigateToLocation = function(){
+            var redirect_url = "/dashboard/";
             return getWorkspaces()
             .then(function(workspace){
                 if (!workspace){
@@ -448,7 +446,11 @@
             processLogin: function(email, password, redirect_url, error){
                 login(email, password)
                 .then(function(){
-                    navigateToLocation(redirect_url);
+                    if (!redirect_url){
+                        navigateToLocation();    
+                    } else {
+                        redirectToUrl(redirect_url);
+                    }
                 })
                 .fail(function(response) {
                         if (response){
@@ -478,7 +480,11 @@
                     }
                 })
                 .then(function(){
-                    navigateToLocation(redirect_url);
+                    if (!redirect_url){
+                        navigateToLocation();    
+                    } else {
+                        redirectToUrl(redirect_url);
+                    }
                 })
                 .fail(function(response) {
                     if (response){
