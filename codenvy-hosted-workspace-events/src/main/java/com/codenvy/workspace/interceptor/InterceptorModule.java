@@ -17,13 +17,13 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import org.eclipse.che.api.workspace.server.WorkspaceService;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 
-import javax.ws.rs.core.Response;
+import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+
+import static org.eclipse.che.inject.Matchers.names;
 
 /**
  * Package api interceptors in guice container.
@@ -44,15 +44,20 @@ public class InterceptorModule extends AbstractModule {
         requestInjection(createWorkspaceInterceptor);
         requestInjection(factoryResourcesInterceptor);
         requestInjection(removeWorkspaceMemberInterceptor);
+
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        Matchers.returns(Matchers.subclassesOf(Response.class)),
-                        addWorkspaceMemberInterceptor, createWorkspaceInterceptor, factoryWorkspaceInterceptor);
+                        names("addMember"),
+                        addWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        Matchers.any(),
-                        removeWorkspaceMemberInterceptor);
+                        names("create"),
+                        createWorkspaceInterceptor, factoryWorkspaceInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceDao.class),
-                        Matchers.any(),
+                        names("createTemporary").or(names("create")),
                         factoryResourcesInterceptor);
+        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
+                        names("removeMember"),
+                        removeWorkspaceMemberInterceptor);
+
         bind(com.codenvy.workspace.listener.StopAppOnRemoveWsListener.class).asEagerSingleton();
     }
 }

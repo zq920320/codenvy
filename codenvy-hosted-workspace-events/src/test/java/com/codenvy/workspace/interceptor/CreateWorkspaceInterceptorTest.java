@@ -119,7 +119,5 @@ public class CreateWorkspaceInterceptorTest {
         verify(mailSenderClient)
                 .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html"),
                           anyString(), anyMapOf(String.class, String.class));
-
     }
-
 }

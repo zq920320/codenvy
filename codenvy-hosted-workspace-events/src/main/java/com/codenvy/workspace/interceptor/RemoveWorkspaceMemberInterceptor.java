@@ -17,15 +17,14 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
-
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,9 @@ import java.util.Map;
  * @author Max Shaposhnik
  */
 public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(AddWorkspaceMemberInterceptor.class);
 
+    private static final String MAIL_TEMPLATE = "email-templates/user_removed_from_workspace.html";
 
     @Inject
     private MailSenderClient mailSenderClient;
@@ -58,37 +59,30 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
     @Named("api.endpoint")
     private String apiEndpoint;
 
-    private static final String MAIL_TEMPLATE = "email-templates/user_removed_from_workspace.html";
-
-    private static final Logger LOG = LoggerFactory.getLogger(AddWorkspaceMemberInterceptor.class);
-
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
         EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
-        if ("removeMember".equals(invocation.getMethod().getName())) {
-            String workspaceId = (String)invocation.getArguments()[0];
-            Workspace ws = workspaceDao.getById(workspaceId);
-            if (ws.isTemporary()) {
-                return result;
-            }
-            String userId = (String)invocation.getArguments()[1];
-            String recipientEmail = userDao.getById(userId).getEmail();
-            String senderEmail = environmentContext.getUser().getName();
-
-            Map<String, String> props = new HashMap<>();
-            props.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
-            props.put("workspace", ws.getName());
-            props.put("admin.email", senderEmail);
-
-            mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
-                                      "Codenvy Workspace Access Removed",
-                                      "text/html; charset=utf-8",
-                                      IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
-
-            LOG.info("User added into ws message send to {}", recipientEmail);
+        String workspaceId = (String)invocation.getArguments()[0];
+        Workspace ws = workspaceDao.getById(workspaceId);
+        if (ws.isTemporary()) {
+            return result;
         }
+        String userId = (String)invocation.getArguments()[1];
+        String recipientEmail = userDao.getById(userId).getEmail();
+        String senderEmail = environmentContext.getUser().getName();
+
+        Map<String, String> properties = new HashMap<>();
+        properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+        properties.put("workspace", ws.getName());
+        properties.put("admin.email", senderEmail);
+
+        mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
+                                  "Codenvy Workspace Access Removed",
+                                  "text/html; charset=utf-8",
+                                  IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), properties);
+
+        LOG.info("User added into ws message send to {}", recipientEmail);
         return result;
     }
-
 }

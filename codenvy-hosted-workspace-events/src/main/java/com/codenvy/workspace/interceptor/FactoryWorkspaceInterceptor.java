@@ -39,7 +39,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-
 import java.security.Principal;
 import java.util.Arrays;
 
@@ -47,6 +46,7 @@ import static javax.ws.rs.core.UriBuilder.fromUri;
 
 /**
  * Allows to create one factory workspace into other's account.
+ *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com)
  */
 public class FactoryWorkspaceInterceptor implements MethodInterceptor {
@@ -63,88 +63,82 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
-            NewWorkspace inbound = (NewWorkspace)invocation.getArguments()[0];
-            final SecurityContext oldContext = (SecurityContext)invocation.getArguments()[1];
-            User currentUser = EnvironmentContext.getCurrent().getUser();
+        NewWorkspace inbound = (NewWorkspace)invocation.getArguments()[0];
+        if (!inbound.getAttributes().containsKey("sourceFactoryId")) {
+            return invocation.proceed();
+        }
 
-            if (inbound.getAttributes().containsKey("sourceFactoryId")) {
-                String sourceFactoryId = inbound.getAttributes().get("sourceFactoryId");
-                String getFactoryUrl =  fromUri(apiEndPoint).path(FactoryService.class)
-                                                            .path(FactoryService.class, "getFactory")
-                                                            .build(inbound.getAttributes().get("sourceFactoryId"))
-                                                            .toString();
-                Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
-                final Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
-                final org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
-                WorkspaceDescriptor descriptor;
-                boolean needAddOwner = false;
+        final SecurityContext oldContext = (SecurityContext)invocation.getArguments()[1];
+        User currentUser = EnvironmentContext.getCurrent().getUser();
+        String sourceFactoryId = inbound.getAttributes().get("sourceFactoryId");
+        String getFactoryUrl = fromUri(apiEndPoint).path(FactoryService.class)
+                                                   .path(FactoryService.class, "getFactory")
+                                                   .build(sourceFactoryId)
+                                                   .toString();
+        Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
+        final Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
+        final org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
 
-                if (factoryWorkspace != null && factoryWorkspace.getType() != null && factoryWorkspace.getType().equals("named")) {
-                    String ownerAccountId =
-                            (factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) ? factory
-                                    .getCreator().getAccountId()
-                                                                                                                       : inbound
-                                    .getAccountId();
-                    for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
-                        if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
-                            ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
-                            try {
-                                memberDao.getWorkspaceMember(ws.getId(), currentUser.getId());
-                                return Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withId(ws.getId())
-                                                             .withAccountId(ws.getAccountId())
-                                                             .withTemporary(ws.isTemporary())
-                                                             .withName(ws.getName())
-                                                             .withAttributes(ws.getAttributes())).build();
-                            } catch (NotFoundException nfe) {
-                                //ok
-                            }
-                        }
+        if (factoryWorkspace != null && factoryWorkspace.getType() != null && factoryWorkspace.getType().equals("named")) {
+            String ownerAccountId = (factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) ?
+                                    factory.getCreator().getAccountId() : inbound.getAccountId();
+            for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
+                if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
+                    ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
+                    try {
+                        memberDao.getWorkspaceMember(ws.getId(), currentUser.getId());
+                        return Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withId(ws.getId())
+                                                     .withAccountId(ws.getAccountId())
+                                                     .withTemporary(ws.isTemporary())
+                                                     .withName(ws.getName())
+                                                     .withAttributes(ws.getAttributes())).build();
+                    } catch (NotFoundException nfe) {
+                        //ok
                     }
                 }
-
-                if (factoryWorkspace == null || factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) {
-                    // no need to add role if creator and user are the same (will throw role already exists exc).
-                    needAddOwner = !factory.getCreator().getUserId().equals(currentUser.getId());
-                    invocation.getArguments()[1] = new SecurityContext() {
-                        @Override
-                        public Principal getUserPrincipal() {
-                            return oldContext.getUserPrincipal();
-                        }
-
-                        @Override
-                        public boolean isUserInRole(String role) {
-                            return role.equals("system/admin") || oldContext.isUserInRole(role);
-                        }
-
-                        @Override
-                        public boolean isSecure() {
-                            return oldContext.isSecure();
-                        }
-
-                        @Override
-                        public String getAuthenticationScheme() {
-                            return oldContext.getAuthenticationScheme();
-                        }
-                    };
-                }
-                Object result = invocation.proceed();
-                descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
-
-                if (needAddOwner) {
-                    memberDao.create(new Member().withWorkspaceId(descriptor.getId())
-                                                 .withUserId(factory.getCreator().getUserId())
-                                                 .withRoles(Arrays.asList("workspace/admin")));
-                }
-
-                if (!descriptor.isTemporary()) {
-                    memberDao.create(new Member().withWorkspaceId(descriptor.getId())
-                                                 .withUserId(currentUser.getId())
-                                                 .withRoles(Arrays.asList("workspace/developer")));
-                }
-                return result;
             }
         }
-        return invocation.proceed();
+
+        boolean needAddOwner = false;
+        if (factoryWorkspace == null || factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) {
+            // no need to add role if creator and user are the same (will throw role already exists exc).
+            needAddOwner = !factory.getCreator().getUserId().equals(currentUser.getId());
+            invocation.getArguments()[1] = new SecurityContext() {
+                @Override
+                public Principal getUserPrincipal() {
+                    return oldContext.getUserPrincipal();
+                }
+
+                @Override
+                public boolean isUserInRole(String role) {
+                    return role.equals("system/admin") || oldContext.isUserInRole(role);
+                }
+
+                @Override
+                public boolean isSecure() {
+                    return oldContext.isSecure();
+                }
+
+                @Override
+                public String getAuthenticationScheme() {
+                    return oldContext.getAuthenticationScheme();
+                }
+            };
+        }
+        Object result = invocation.proceed();
+        WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+
+        if (needAddOwner) {
+            memberDao.create(new Member().withWorkspaceId(descriptor.getId())
+                                         .withUserId(factory.getCreator().getUserId())
+                                         .withRoles(Arrays.asList("workspace/admin")));
+        }
+
+        if (!descriptor.isTemporary()) {
+            memberDao.create(new Member().withWorkspaceId(descriptor.getId())
+                                         .withUserId(currentUser.getId())
+                                         .withRoles(Arrays.asList("workspace/developer")));
+        }
+        return result;
     }
 }

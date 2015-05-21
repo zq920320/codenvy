@@ -60,7 +60,6 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class FactoryWorkspaceInterceptorTest {
-
     @Mock
     private WorkspaceDao workspaceDao;
 
