@@ -22,7 +22,7 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.machine.server.ProjectBindingImpl;
 import org.eclipse.che.api.machine.server.SnapshotImpl;
 import org.eclipse.che.api.machine.server.SnapshotStorage;
-import org.eclipse.che.api.machine.server.spi.ImageKey;
+import org.eclipse.che.api.machine.server.spi.InstanceKey;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
@@ -131,14 +131,15 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         }
 
         return new SnapshotImpl(snapshotObject.getString("_id"),
-                            snapshotObject.getString("imageType"),
-                            new ImageKeyImpl(MongoUtil.asMap(snapshotObject.get("imageKey"))),
+                            snapshotObject.getString("instanceType"),
+                            new InstanceKeyImpl(MongoUtil.asMap(snapshotObject.get("instanceKey"))),
                             snapshotObject.getString("owner"),
                             snapshotObject.getLong("creationDate"),
                             snapshotObject.getString("workspaceId"),
                             projectBindings,
                             snapshotObject.getString("description"),
-                            snapshotObject.getString("label"));
+                            snapshotObject.getString("label"),
+                            snapshotObject.getBoolean("isWorkspaceBound"));
     }
 
     private DBObject toDBObject(SnapshotImpl snapshot) {
@@ -148,20 +149,21 @@ public class MongoSnapshotStorageImpl implements SnapshotStorage {
         }
 
         return new BasicDBObject().append("_id", snapshot.getId())
-                                  .append("imageType", snapshot.getImageType())
-                                  .append("imageKey", MongoUtil.asDBList(snapshot.getImageKey().getFields()))
+                                  .append("instanceType", snapshot.getType())
+                                  .append("instanceKey", MongoUtil.asDBList(snapshot.getInstanceKey().getFields()))
                                   .append("owner", snapshot.getOwner())
                                   .append("workspaceId", snapshot.getWorkspaceId())
                                   .append("projectBindings", projectBindings)
                                   .append("creationDate", snapshot.getCreationDate())
                                   .append("description", snapshot.getDescription())
-                                  .append("label", snapshot.getLabel());
+                                  .append("label", snapshot.getLabel())
+                                  .append("isWorkspaceBound", snapshot.isWorkspaceBound());
     }
 
-    private static class ImageKeyImpl implements ImageKey {
+    private static class InstanceKeyImpl implements InstanceKey {
         private final Map<String, String> fields;
 
-        public ImageKeyImpl(Map<String, String> fields) {
+        public InstanceKeyImpl(Map<String, String> fields) {
             this.fields = new LinkedHashMap<>(fields);
         }
 
