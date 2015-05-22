@@ -24,23 +24,13 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <!-- Default files -->
-        <fileSet>
-            <directory>target/tomcat-builder</directory>
-            <outputDirectory></outputDirectory>
-            <excludes>
-                <exclude>**/*.sh</exclude>
-            </excludes>
-        </fileSet>
-        <!-- Executable files-->
-        <fileSet>
-            <directory>target/tomcat-builder</directory>
+    <dependencySets>
+        <dependencySet>
+            <unpack>true</unpack>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>**/*.sh</include>
+                <include>com.codenvy.cloud-ide:cloud-ide-packaging-tomcat-next-runner</include>
             </includes>
-            <fileMode>755</fileMode>
-        </fileSet>
-    </fileSets>
+        </dependencySet>
+    </dependencySets>
 </assembly>
