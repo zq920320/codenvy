@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.9.2-SNAPSHOT</version>
+        <version>3.9.6-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-next-codeassistant</artifactId>
     <packaging>pom</packaging>

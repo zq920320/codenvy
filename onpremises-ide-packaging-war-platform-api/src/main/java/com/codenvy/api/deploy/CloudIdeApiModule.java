@@ -17,14 +17,15 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.account.billing.BillingModule;
+//imported own BillingModule
+//import com.codenvy.api.account.billing.BillingModule;
 import com.codenvy.api.account.metrics.MetricModule;
 import com.codenvy.api.account.server.ResourcesManagerImpl;
-import com.codenvy.api.account.subscription.SubscriptionModule;
+//imported own SubscriptionModule
+//import com.codenvy.api.account.subscription.SubscriptionModule;
 import com.codenvy.api.analytics.AnalyticsModule;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
-import com.codenvy.api.dao.mongo.SubscriptionQueryBuilder;
 import com.codenvy.api.dao.sql.SQLModule;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
@@ -287,12 +288,12 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new InstrumentationModule());
         install(new SQLModule());
 
+        //turned off Modules to not to count resources
         install(new BillingModule());
-        //turned off Metric Module to not to count resources
         //install(new MetricModule());
         install(new SubscriptionModule());
-        install(new AnalyticsModule());
-        install(new ScheduleModule());
+        //install(new AnalyticsModule());
+        //install(new ScheduleModule());
 
 
         bind(com.codenvy.api.dao.mongo.SubscriptionQueryBuilder.class).to(com.codenvy.api.dao.mongo.MongoSubscriptionQueryBuilder.class);

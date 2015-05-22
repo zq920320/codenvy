@@ -23,11 +23,11 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>org.eclipse.che.depmgt</groupId>
-        <version>1.20.2</version>
+        <version>1.20.6</version>
     </parent>
     <groupId>com.codenvy.onpremises</groupId>
     <artifactId>onpremises-ide-parent</artifactId>
-    <version>3.9.2-SNAPSHOT</version>
+    <version>3.9.6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Onpremises IDE :: Parent</name>
     <modules>
@@ -59,7 +59,7 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
-        <cloud-ide.version>3.9.2</cloud-ide.version>
+        <cloud-ide.version>3.9.6</cloud-ide.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <odyssey.classifier>prod</odyssey.classifier>
