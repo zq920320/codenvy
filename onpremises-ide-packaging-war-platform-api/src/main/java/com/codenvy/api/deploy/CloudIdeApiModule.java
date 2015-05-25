@@ -276,7 +276,8 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(ProfileMigrator.class).asEagerSingleton();
 
-        install(new com.codenvy.workspace.interceptor.InterceptorModule());
+        // used own InterceptorModule
+        install(new InterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerInterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
@@ -287,6 +288,7 @@ public class CloudIdeApiModule extends AbstractModule {
         //install(new BillingModule());
         //install(new MetricModule());
         //install(new SubscriptionModule());
+        // used Multibinder to get alive SubscriptionService
         Multibinder.newSetBinder(binder(), org.eclipse.che.api.account.server.SubscriptionService.class);
         //install(new AnalyticsModule());
         //install(new ScheduleModule());

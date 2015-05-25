@@ -28,6 +28,8 @@ import java.util.List;
 
 /**
  * @author Igor Vinokur
+ *
+ * Dummy Implementation for ResourcesManager
  */
 public class ResourcesManagerImpl implements ResourcesManager{
     @Override
