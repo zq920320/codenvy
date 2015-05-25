@@ -25,7 +25,7 @@
         <groupId>com.codenvy.onpremises</groupId>
         <version>3.9.6-SNAPSHOT</version>
     </parent>
-    <artifactId>onpremises-ide-packaging-tomcat-builder</artifactId>
+    <artifactId>onpremises-ide-packaging-tomcat-next-builder</artifactId>
     <packaging>pom</packaging>
     <name>Onpremises IDE :: Tomcat :: IDE3 :: Builder</name>
     <dependencies>
