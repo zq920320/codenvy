@@ -50,10 +50,10 @@ public class InterceptorModule extends AbstractModule {
                         addWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         names("create"),
-                        createWorkspaceInterceptor, factoryResourcesInterceptor );
+                        createWorkspaceInterceptor, factoryWorkspaceInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceDao.class),
                         names("createTemporary").or(names("create")),
-                        factoryWorkspaceInterceptor);
+                        factoryResourcesInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         names("removeMember"),
                         removeWorkspaceMemberInterceptor);
