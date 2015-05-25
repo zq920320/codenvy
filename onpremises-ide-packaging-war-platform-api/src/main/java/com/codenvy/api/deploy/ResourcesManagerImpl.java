@@ -17,16 +17,22 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.account.billing.MonthlyBillingPeriod;
-import com.google.inject.AbstractModule;
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+
+import java.util.List;
 
 /**
  * @author Igor Vinokur
  */
-public class BillingModule extends AbstractModule {
+public class ResourcesManagerImpl implements ResourcesManager{
     @Override
-    protected void configure() {
-        bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
+    public void redistributeResources(String accountId, List<UpdateResourcesDescriptor> updateResourcesDescriptors)
+            throws NotFoundException, ServerException, ConflictException, ForbiddenException {
+
     }
 }

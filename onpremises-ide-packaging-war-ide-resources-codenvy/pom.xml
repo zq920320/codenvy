@@ -25,7 +25,7 @@
         <groupId>com.codenvy.onpremises</groupId>
         <version>3.9.6-SNAPSHOT</version>
     </parent>
-    <artifactId>onpremises-ide-packaging-war-next-ide-resources-codenvy</artifactId>
+    <artifactId>onpremises-ide-packaging-war-ide-resources-codenvy</artifactId>
     <packaging>war</packaging>
     <name>Onpremises IDE :: WAR    :: IDE3 :: Resources</name>
     <dependencies>

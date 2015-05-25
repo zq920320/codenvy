@@ -17,13 +17,6 @@
  */
 package com.codenvy.api.deploy;
 
-//imported own BillingModule
-//import com.codenvy.api.account.billing.BillingModule;
-import com.codenvy.api.account.metrics.MetricModule;
-import com.codenvy.api.account.server.ResourcesManagerImpl;
-//imported own SubscriptionModule
-//import com.codenvy.api.account.subscription.SubscriptionModule;
-import com.codenvy.api.analytics.AnalyticsModule;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.sql.SQLModule;
@@ -103,6 +96,8 @@ import org.eclipse.che.vfs.impl.fs.MountPointCacheCleaner;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.PathKey;
+
+import javax.naming.Binding;
 
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
@@ -289,9 +284,10 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new SQLModule());
 
         //turned off Modules to not to count resources
-        install(new BillingModule());
+        //install(new BillingModule());
         //install(new MetricModule());
-        install(new SubscriptionModule());
+        //install(new SubscriptionModule());
+        Multibinder.newSetBinder(binder(), org.eclipse.che.api.account.server.SubscriptionService.class);
         //install(new AnalyticsModule());
         //install(new ScheduleModule());
 

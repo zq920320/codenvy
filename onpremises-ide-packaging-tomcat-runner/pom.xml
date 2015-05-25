@@ -25,13 +25,13 @@
         <groupId>com.codenvy.onpremises</groupId>
         <version>3.9.6-SNAPSHOT</version>
     </parent>
-    <artifactId>onpremises-ide-packaging-tomcat-next-builder</artifactId>
+    <artifactId>onpremises-ide-packaging-tomcat-runner</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: Builder</name>
+    <name>Onpremises IDE :: Tomcat :: IDE3 :: Runner</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-tomcat-next-builder</artifactId>
+            <artifactId>cloud-ide-packaging-tomcat-next-runner</artifactId>
             <version>${cloud-ide.version}</version>
             <type>zip</type>
         </dependency>
