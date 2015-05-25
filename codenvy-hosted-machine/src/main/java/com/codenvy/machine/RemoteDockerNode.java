@@ -151,7 +151,7 @@ public class RemoteDockerNode implements DockerNode {
     }
 
     @Override
-    public void bindWorkspace(String workspaceId) throws MachineException {
+    public void bindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
 
     }
 
