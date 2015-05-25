@@ -17,12 +17,10 @@
  */
 package com.codenvy.machine;
 
-import org.eclipse.che.plugin.docker.client.DockerConnector;
-import com.codenvy.swarm.SwarmDockerConnector;
-import org.eclipse.che.plugin.docker.machine.DockerNode;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
+import com.codenvy.swarm.SwarmDockerConnector;
 import com.codenvy.swarm.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
@@ -32,14 +30,19 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.eclipse.che.api.core.util.CancellableProcessWrapper;
 import org.eclipse.che.api.core.util.CustomPortService;
+import org.eclipse.che.api.core.util.LineConsumer;
+import org.eclipse.che.api.core.util.ProcessUtil;
+import org.eclipse.che.api.core.util.Watchdog;
 import org.eclipse.che.api.machine.server.MachineException;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.plugin.docker.client.DockerConnector;
+import org.eclipse.che.plugin.docker.machine.DockerNode;
 import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -47,6 +50,9 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.File;
 import java.io.IOException;
 import java.net.URI;
+import java.util.concurrent.TimeUnit;
+
+import static org.slf4j.LoggerFactory.getLogger;
 
 /**
  * REST client for remote machine node
@@ -54,7 +60,7 @@ import java.net.URI;
  * @author Alexander Garagatyi
  */
 public class RemoteDockerNode implements DockerNode {
-    private static final Logger LOG = LoggerFactory.getLogger(RemoteDockerNode.class);
+    private static final Logger LOG = getLogger(RemoteDockerNode.class);
 
     private final String                            vfsSyncTaskExecutable;
     private final String                            vfsSyncTaskConfTemplate;
@@ -64,6 +70,8 @@ public class RemoteDockerNode implements DockerNode {
     private final SyncthingSynchronizeEventListener syncthingSynchronizeEventListener;
     private final CustomPortService                 portService;
     private final SyncTasks                         syncTasks;
+    private final String                            machineWorkspaceBindHook;
+    private final String                            machineWorkspaceUnbindHook;
 
     private final String hostProjectsFolder;
     private final String nodeLocation;
@@ -79,7 +87,9 @@ public class RemoteDockerNode implements DockerNode {
                             CustomPortService portService,
                             DockerConnector dockerConnector,
                             SyncTasks syncTasks,
-                            @Assisted String containerId) throws MachineException {
+                            @Assisted String containerId,
+                            @Named("machine.hook.workspace_bind") String machineWorkspaceBindHook,
+                            @Named("machine.hook.workspace_unbind") String machineWorkspaceUnbindHook) throws MachineException {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
         this.vfsGuiToken = vfsGuiToken;
@@ -88,6 +98,8 @@ public class RemoteDockerNode implements DockerNode {
         this.syncthingSynchronizeEventListener = syncthingSynchronizeEventListener;
         this.portService = portService;
         this.syncTasks = syncTasks;
+        this.machineWorkspaceBindHook = machineWorkspaceBindHook;
+        this.machineWorkspaceUnbindHook = machineWorkspaceUnbindHook;
         this.hostProjectsFolder = new File(machineProjectsDir, containerId).toString();
 
         String nodeLocation = "127.0.0.1";
@@ -152,7 +164,38 @@ public class RemoteDockerNode implements DockerNode {
 
     @Override
     public void bindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
+        execSystemHook(machineWorkspaceBindHook, workspaceId, hostProjectsFolder);
+    }
 
+    @Override
+    public void unbindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
+        execSystemHook(machineWorkspaceUnbindHook, workspaceId, hostProjectsFolder);
+    }
+
+    private void execSystemHook(String hookExecutable, String workspaceId, String hostProjectsFolder) {
+        final ProcessBuilder pb = new ProcessBuilder(hookExecutable, workspaceId, nodeLocation, hostProjectsFolder);
+
+        LineConsumer lineConsumer = new LogLineConsumer();
+
+        Process process;
+        try {
+            process = ProcessUtil.execute(pb, lineConsumer);
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            return;
+        }
+
+        // process will be stopped after timeout
+        Watchdog watcher = new Watchdog(3, TimeUnit.SECONDS);
+        watcher.start(new CancellableProcessWrapper(process));
+
+        try {
+            process.waitFor();
+        } catch (InterruptedException e) {
+            Thread.interrupted();
+        } finally {
+            watcher.stop();
+        }
     }
 
     @Override
@@ -307,6 +350,19 @@ public class RemoteDockerNode implements DockerNode {
         } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException("Machine synchronization failed");
+        }
+    }
+
+    private static class LogLineConsumer implements LineConsumer {
+        private static final Logger LOG = getLogger(LogLineConsumer.class);
+
+        @Override
+        public void writeLine(String line) throws IOException {
+            LOG.info(line);
+        }
+
+        @Override
+        public void close() throws IOException {
         }
     }
 }
