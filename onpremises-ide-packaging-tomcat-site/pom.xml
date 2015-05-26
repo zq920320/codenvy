@@ -46,14 +46,14 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-user-dashboard</artifactId>
-            <version>${cloud-ide.version}</version>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-ide-resources-codenvy</artifactId>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-war-ide-resources-codenvy</artifactId>
+            <artifactId>onpremises-ide-packaging-war-user-dashboard</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
@@ -161,7 +161,7 @@
                                 <echo message="Deploy NEXT IDE war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-ide-codenvy.war" tofile="${project.build.directory}/tomcat-site/webapps/ws.war" />
                                 <echo message="Deploy dashboadrd war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-user-dashboard.war" tofile="${project.build.directory}/tomcat-site/webapps/dashboard.war" />
+                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-user-dashboard.war" tofile="${project.build.directory}/tomcat-site/webapps/dashboard.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-api-docs-ui.war" tofile="${project.build.directory}/tomcat-site/webapps/api-docs-ui.war" />
                                 <chmod file="${project.build.directory}/tomcat-site/bin/*.sh" perm="+x" />
                                 <echo message="Copy tomcat-catalina-jmx-remote.jar" />
