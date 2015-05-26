@@ -51,36 +51,36 @@ selectTomcatToUpload() {
          doUploadTomcat ${AIO} ${SERVER}/${SCOPE}
       ;;
      "api")
-         API=`ls cloud-ide-packaging-tomcat-api/target/cloud-ide-packaging-tomcat-api-*.zip`
+         API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
          doUploadTomcat ${API} ${SERVER}/${SCOPE}
       ;;
      "runner")
-         RUNNER=`ls cloud-ide-packaging-tomcat-next-runner/target/cloud-ide-packaging-tomcat-next-runner-*.zip`
+         RUNNER=`ls onpremises-ide-packaging-tomcat-runner/target/onpremises-ide-packaging-tomcat-runner-*.zip`
          doUploadTomcat ${RUNNER} ${SERVER}/${SCOPE}
       ;;
      "builder")
-         BUILDER=`ls cloud-ide-packaging-tomcat-next-builder/target/cloud-ide-packaging-tomcat-next-builder-*.zip`
+         BUILDER=`ls onpremises-ide-packaging-tomcat-builder/target/onpremises-ide-packaging-tomcat-builder-*.zip`
          doUploadTomcat ${BUILDER} ${SERVER}/${SCOPE}
       ;;
      "site")
-         SITE=`ls cloud-ide-packaging-tomcat-site/target/cloud-ide-packaging-tomcat-site-*.zip`
+         SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
          doUploadTomcat ${SITE} ${SERVER}/${SCOPE}
       ;;
      "datasource")
-         DATASOURCE=`ls cloud-ide-packaging-tomcat-datasource-plugin/target/cloud-ide-packaging-tomcat-datasource-plugin-*.zip`
+         DATASOURCE=`ls onpremises-ide-packaging-tomcat-datasource-plugin/target/onpremises-ide-packaging-tomcat-datasource-plugin-*.zip`
          doUploadTomcat ${DATASOURCE} ${SERVER}/${SCOPE}
       ;;
      "codeassistant")
-         CODEASSISTANT=`ls cloud-ide-packaging-tomcat-next-codeassistant/target/cloud-ide-packaging-tomcat-next-codeassistant-*.zip`
+         CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-codeassistant/target/onpremises-ide-packaging-tomcat-codeassistant-*.zip`
          doUploadTomcat ${CODEASSISTANT} ${SERVER}/${SCOPE}
       ;;
      "all")
          API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
          SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
-         RUNNER=`ls onpremises-ide-packaging-tomcat-next-runner/target/onpremises-ide-packaging-tomcat-next-runner-*.zip`
-         BUILDER=`ls onpremises-ide-packaging-tomcat-next-builder/target/onpremises-ide-packaging-tomcat-next-builder-*.zip`
+         RUNNER=`ls onpremises-ide-packaging-tomcat-runner/target/onpremises-ide-packaging-tomcat-runner-*.zip`
+         BUILDER=`ls onpremises-ide-packaging-tomcat-builder/target/onpremises-ide-packaging-tomcat-builder-*.zip`
          DATASOURCE=`ls onpremises-ide-packaging-tomcat-datasource-plugin/target/onpremises-ide-packaging-tomcat-datasource-plugin-*.zip`
-         CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-next-codeassistant/target/onpremises-ide-packaging-tomcat-next-codeassistant-*.zip`
+         CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-codeassistant/target/onpremises-ide-packaging-tomcat-codeassistant-*.zip`
          doUploadTomcat ${API} ${SERVER}/api
          doUploadTomcat ${SITE} ${SERVER}/site
          doUploadTomcat ${RUNNER} ${SERVER}/runner
@@ -95,7 +95,7 @@ doBuild() {
     if [ "${NO_BUILD}" == false ]; then
         if [ "${TOMCATS_ONLY}" == true ]; then
             if [ "${SCOPE}" == "aio" ]; then
-                cd cloud-ide-packaging-tomcat-codenvy-allinone
+                cd onpremises-ide-packaging-tomcat-codenvy-allinone
                 mvn clean install ${MAVEN_PARAMS}
                 cd ..
             else

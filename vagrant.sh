@@ -116,7 +116,7 @@ parseParameters() {
         if [[ ${mvn_version} < "3.2.1" ]]; then
           echo "'--nogwt' is supported for maven 3.2.1 or later"
         else
-          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!onpremises-ide-compiling-war-next-ide-codenvy\""
+          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!onpremises-ide-compiling-war-ide-codenvy\""
         fi
         ;;
       *)
@@ -221,12 +221,12 @@ if [ ${MULTI_SERVER} == false ]; then
   cd ../deployment/puppet
 else
   # Copy tomcats for multi-server environment
-  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-api.zip
-  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-site.zip
-  cp -f cloud-ide-packaging-tomcat-next-runner/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-next-runner.zip
-  cp -f cloud-ide-packaging-tomcat-next-builder/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-next-builder.zip
-  cp -f cloud-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-datasource-plugin.zip
-  cp -f cloud-ide-packaging-tomcat-next-codeassistant/target/*.zip ../deployment/puppet/modules/multi_server/files/cloud-ide-packaging-tomcat-next-codeassistant.zip
+  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
+  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
+  cp -f onpremises-ide-packaging-tomcat-runner/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-runner.zip
+  cp -f onpremises-ide-packaging-tomcat-builder/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-builder.zip
+  cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
+  cp -f onpremises-ide-packaging-tomcat-codeassistant/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-codeassistant.zip
   cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment/puppet/modules/multi_server/files/analytics-tomcat.zip
 
   # Open folder for multi server env
