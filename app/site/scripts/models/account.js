@@ -269,11 +269,17 @@
                             .then(function(){
                                 deferredResult.resolve();
                             });
+                        })
+                        .fail(function(error){
+                            deferredResult.reject(error);
                         });
                     } else{
                         deferredResult.resolve();
                     }
 
+                },
+                error: function(error) {
+                    deferredResult.reject(error);
                 }
             });
             return deferredResult;
