@@ -50,7 +50,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-compiling-war-next-ide-codenvy</artifactId>
+            <artifactId>onpremises-ide-compiling-war-ide-codenvy</artifactId>
             <version>${project.version}</version>
             <type>war</type>
         </dependency>
