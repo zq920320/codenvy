@@ -21,10 +21,12 @@ import com.codenvy.workspace.interceptor.AddWorkspaceMemberInterceptor;
 import com.codenvy.workspace.interceptor.CreateWorkspaceInterceptor;
 import com.codenvy.workspace.interceptor.FactoryResourcesInterceptor;
 import com.codenvy.workspace.interceptor.FactoryWorkspaceInterceptor;
+import com.codenvy.workspace.interceptor.RemoveUserInterceptor;
 import com.codenvy.workspace.interceptor.RemoveWorkspaceMemberInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 
+import org.eclipse.che.api.user.server.UserService;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
@@ -36,7 +38,7 @@ import static org.eclipse.che.inject.Matchers.names;
  * @author Sergii Kabashniuk
  * @author Igor Vinokur
  *
- * moved from hosted-infrastructure
+ * copied from hosted-infrastructure
  */
 public class InterceptorModule extends AbstractModule {
 
@@ -47,14 +49,13 @@ public class InterceptorModule extends AbstractModule {
         CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
         FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
         FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
-        //TODO uncomment when interceptor will be in use
-        //RemoveUserInterceptor removeUserInterceptor = new RemoveUserInterceptor();
+        RemoveUserInterceptor removeUserInterceptor = new RemoveUserInterceptor();
         requestInjection(addWorkspaceMemberInterceptor);
         requestInjection(factoryWorkspaceInterceptor);
         requestInjection(createWorkspaceInterceptor);
         requestInjection(factoryResourcesInterceptor);
         requestInjection(removeWorkspaceMemberInterceptor);
-        //requestInjection(removeUserInterceptor);
+        requestInjection(removeUserInterceptor);
 
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         names("addMember"),
@@ -68,9 +69,9 @@ public class InterceptorModule extends AbstractModule {
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         names("removeMember"),
                         removeWorkspaceMemberInterceptor);
-//        bindInterceptor(Matchers.subclassesOf(UserService.class),
-//                        names("remove"),
-//                        removeUserInterceptor);
+        bindInterceptor(Matchers.subclassesOf(UserService.class),
+                        names("remove"),
+                        removeUserInterceptor);
         bind(com.codenvy.workspace.listener.StopAppOnRemoveWsListener.class).asEagerSingleton();
     }
 }
