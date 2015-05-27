@@ -86,8 +86,11 @@ public class MachineNodeService {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void createProjectsFolderForMachine(@PathParam("path") String path) throws ServerException {
-        if (!new File("/" + path).mkdir()) {
-            throw new ServerException("Can't create folder " + path);
+        final File projectsFolder = new File("/" + path);
+        if (!projectsFolder.exists()) {
+            if (!projectsFolder.mkdir()) {
+                throw new ServerException("Can't create folder " + path);
+            }
         }
     }
 
