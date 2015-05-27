@@ -69,12 +69,13 @@ public class CloudIdeApiServletModule extends ServletModule {
 
         filterRegex("^/(account|creditcard|invoice)/(?!find|list|subscriptions).+").through(AccountIdEnvironmentInitializationFilter.class);
 
+        // turned of unnecessary
         filter("/factory/*",
                "/workspace/*",
                "/account/*",
                "/java-name-environment/*",
                "/user/*",
-               "/analytics/*",
+               //"/analytics/*",
                "/invite/*",
                "/factory",
                "/workspace",
@@ -89,7 +90,7 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/internal/convert/*",
                "/profile",
                "/profile/*",
-               "/analytics",
+               //"/analytics",
                "/oauth/token/*",
                "/oauth1/token/*",
                "/password/change",
@@ -104,11 +105,11 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/appengine/*",
                "/gae-validator/*",
-               "/gae-parameters/*",
-               "/billing/*",
-               "/creditcard/*",
-               "/invoice/*",
-               "/billing/*")
+               "/gae-parameters/*")
+//               "/billing/*",
+//               "/creditcard/*",
+//               "/invoice/*",
+//               "/billing/*")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
         filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);
