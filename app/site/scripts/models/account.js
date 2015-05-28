@@ -161,36 +161,36 @@
             return deferredResult;
         };
 
-        var getLastProject = function(workspaceId){
+        var getLastProject = function(){
             var deferredResult = $.Deferred();
             var url = "/api/profile/prefs";
             $.ajax({
                 url: url,
                 type: "GET",
                 complete: function(response){
-                    var lastProjectPath;
+                    var recentlyProject;
                     try{
-                        lastProjectPath = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).lastProjectPath;
-                        testProjectPath(lastProjectPath, workspaceId)
-                        .then(function(){
-                            return deferredResult.resolve("/ws" + lastProjectPath);
-                        })
-                        .fail(function(){
-                            return deferredResult.resolve("");
-                        });
+                        recentlyProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentlyProject;
                     }catch(err){
                         //if response does not contain JSON object
                         deferredResult.resolve("");
                     }
+                    testProjectPath(recentlyProject)
+                    .then(function(){
+                        return deferredResult.resolve("/ws" + recentlyProject.path);
+                    })
+                    .fail(function(){
+                        return deferredResult.resolve("");
+                    });
                 }
             });
             return deferredResult;
         };
 
-        var testProjectPath = function(path, workspaceId){
+        var testProjectPath = function(recentlyProject){
             var deferredResult = $.Deferred();
-            var projectName = path.substr(path.indexOf("/",1));
-            var url = "/api/project/" + workspaceId + projectName;
+            var projectName = recentlyProject.path.substr(recentlyProject.path.indexOf("/",1));
+            var url = "/api/project/" + recentlyProject.workspaceId + projectName;
             $.ajax({
                 url: url,
                 type: "GET",
@@ -396,8 +396,8 @@
                     return $.Deferred().resolve(workspace.workspaceReference.id);
                 }
             })
-            .then(function(workspaceId){
-                return getLastProject(workspaceId);
+            .then(function(){
+                return getLastProject();
             })
             .then(function(lastProject) {
                 if (lastProject) {
