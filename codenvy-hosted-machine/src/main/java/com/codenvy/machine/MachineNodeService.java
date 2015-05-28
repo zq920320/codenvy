@@ -48,6 +48,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 /**
+ * Provides additional services for docker machines
+ *
  * @author Alexander Garagatyi
  */
 @Path("/internal/machine")
@@ -82,14 +84,18 @@ public class MachineNodeService {
                 Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("MachineSlaveService-%d").setDaemon(true).build());
     }
 
+    /**
+     * Docker creates bound folder as root user. <b>
+     * So we use this method to prevent folder creation by docker daemon.
+     */
     @Path("/folder/{path:.*}")
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     public void createProjectsFolderForMachine(@PathParam("path") String path) throws ServerException {
         final File projectsFolder = new File("/" + path);
-        if (!projectsFolder.exists()) {
-            if (!projectsFolder.mkdir()) {
-                throw new ServerException("Can't create folder " + path);
+        if (!projectsFolder.mkdir()) {
+            if (!projectsFolder.exists() || (!projectsFolder.canWrite() || !projectsFolder.canRead())) {
+                throw new ServerException("Projects folder creation error " + path);
             }
         }
     }
@@ -146,7 +152,7 @@ public class MachineNodeService {
                                                           synchronizationConf.getSyncPath(),
                                                           machineSyncListenPort,
                                                           machineSyncApiPort,
-                                                          synchronizationConf.getSyncAddress()+ ":" + synchronizationConf.getSyncPort(),
+                                                          synchronizationConf.getSyncAddress() + ":" + synchronizationConf.getSyncPort(),
                                                           machineSyncApiToken);
 
             syncTasks.put(synchronizationConf.getSyncPath(), runnerSyncTask);
