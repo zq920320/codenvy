@@ -168,29 +168,29 @@
                 url: url,
                 type: "GET",
                 complete: function(response){
-                    var recentlyProject;
+                    var recentProject;
                     try{
-                        recentlyProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentlyProject;
+                        recentProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentProject;
+                        testProjectPath(recentProject)
+                        .then(function(){
+                            return deferredResult.resolve("/ws" + recentProject.path);
+                        })
+                        .fail(function(){
+                            return deferredResult.resolve("");
+                        });
                     }catch(err){
                         //if response does not contain JSON object
                         deferredResult.resolve("");
                     }
-                    testProjectPath(recentlyProject)
-                    .then(function(){
-                        return deferredResult.resolve("/ws" + recentlyProject.path);
-                    })
-                    .fail(function(){
-                        return deferredResult.resolve("");
-                    });
                 }
             });
             return deferredResult;
         };
 
-        var testProjectPath = function(recentlyProject){
+        var testProjectPath = function(recentProject){
             var deferredResult = $.Deferred();
-            var projectName = recentlyProject.path.substr(recentlyProject.path.indexOf("/",1));
-            var url = "/api/project/" + recentlyProject.workspaceId + projectName;
+            var projectName = recentProject.path.substr(recentProject.path.indexOf("/",1));
+            var url = "/api/project/" + recentProject.workspaceId + projectName;
             $.ajax({
                 url: url,
                 type: "GET",
@@ -440,6 +440,10 @@
             //Password must contain at least one letter, at least one number, and be longer than 8 charaters, and shorter than 100.
             isValidPassword: function(value) {
                 return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*).{8,100}$/).test(value);
+            },
+
+            isLoginCookiePresent: function() {
+                return $.cookie('logged_in')?true:false;
             },
 
             // redirect to login page if user has 'logged_in' cookie

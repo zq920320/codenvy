@@ -24,16 +24,18 @@
             var SignInForm = AccountFormBase.extend({
 
                 initialize : function(attributes){
+                    if (!Account.isLoginCookiePresent()){
+                        window.location = '/site/create-account' + window.location.search;
+                    }
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     if (Account.isAuthtypeLdap()){
                         $(".email").attr("placeholder", "Type your login here").removeClass("email");
                     }
                      // remove cookie to be able to sign up
-                    $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/"});});
-                    $("#signUp").click(function(){$.removeCookie('logged_in',{path: "/site"});});
                     $("#signUp").click(function(){
-                      var url =  Account.appendQuery("create-account");
-                       window.location = url;
+                        $.removeCookie('logged_in',{path: "/"});
+                        var url =  Account.appendQuery("create-account");
+                        window.location = url;
                     });
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){

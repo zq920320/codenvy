@@ -24,7 +24,10 @@
             var WSCreateForm = AccountFormBase.extend({
 
                 initialize : function(attributes){
-                    Account.redirectIfUserHasLoginCookie();
+                    //Account.redirectIfUserHasLoginCookie();
+                    if (Account.isLoginCookiePresent() && (Account.getQueryParameterByName('account') !== "new")){
+                        window.location = '/site/login' + window.location.search;
+                    }
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
@@ -39,9 +42,9 @@
                         });
                     });
 
-                    $(".sign-in").click(function(){
-                        var url = "/site/login" + window.location.search;
-                        window.location = url;
+                    $("#signIn").click(function(){
+                        $.cookie('logged_in', true, {path: "/"});
+                        window.location = "/site/login" + window.location.search;
                     });
 
                 },
