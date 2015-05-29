@@ -60,6 +60,7 @@
     </scm>
     <properties>
         <cloud-ide.version>3.9.6</cloud-ide.version>
+        <dashboard.classifier>onprem</dashboard.classifier>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <odyssey.classifier>prod</odyssey.classifier>

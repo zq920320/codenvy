@@ -54,12 +54,6 @@
             <version>${cloud-ide.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.dashboard</groupId>
-            <artifactId>user-dashboard-war</artifactId>
-            <version>${codenvy.dashboard.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-client</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
@@ -102,7 +96,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <unwar dest="${project.build.directory}/packager-conf/unwar/user-dashboard-war" src="${project.build.directory}/dependency/user-dashboard-war.war" />
+                                <unwar dest="${project.build.directory}/packager-conf/unwar/user-dashboard-war-${dashboard.classifier}" src="${project.build.directory}/dependency/user-dashboard-war-${dashboard.classifier}.war" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -124,7 +118,9 @@
                                 <dependency>
                                     <groupId>com.codenvy.dashboard</groupId>
                                     <artifactId>user-dashboard-war</artifactId>
-                                    <version>${codenvy.dashboard.version}</version>
+                                    <!-- TODO: get version from che-depmgt when the onprem will be in related dashboard version -->
+                                    <version>0.16.1-SNAPSHOT</version>
+                                    <classifier>${dashboard.classifier}</classifier>
                                     <type>war</type>
                                 </dependency>
                             </artifactItems>
@@ -139,7 +135,7 @@
                     <webXml>src/main/webapp/WEB-INF/web.xml</webXml>
                     <webResources>
                         <resource>
-                            <directory>${project.build.directory}/packager-conf/unwar/user-dashboard-war</directory>
+                            <directory>${project.build.directory}/packager-conf/unwar/user-dashboard-war-${dashboard.classifier}</directory>
                             <targetPath>/</targetPath>
                         </resource>
                     </webResources>
