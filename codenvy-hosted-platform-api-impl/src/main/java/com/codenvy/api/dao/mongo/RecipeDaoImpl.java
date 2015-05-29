@@ -36,9 +36,9 @@ import org.eclipse.che.api.machine.server.recipe.GroupImpl;
 import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
-import org.eclipse.che.api.machine.shared.Group;
-import org.eclipse.che.api.machine.shared.Permissions;
-import org.eclipse.che.api.machine.shared.Recipe;
+import org.eclipse.che.api.machine.shared.recipe.Group;
+import org.eclipse.che.api.machine.shared.recipe.Permissions;
+import org.eclipse.che.api.machine.shared.recipe.Recipe;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;

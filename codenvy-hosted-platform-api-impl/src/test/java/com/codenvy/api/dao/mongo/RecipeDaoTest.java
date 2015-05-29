@@ -29,8 +29,8 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.machine.server.recipe.GroupImpl;
 import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
-import org.eclipse.che.api.machine.shared.Group;
-import org.eclipse.che.api.machine.shared.Recipe;
+import org.eclipse.che.api.machine.shared.recipe.Group;
+import org.eclipse.che.api.machine.shared.recipe.Recipe;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 

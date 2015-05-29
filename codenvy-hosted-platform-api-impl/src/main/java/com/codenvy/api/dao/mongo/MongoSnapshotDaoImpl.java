@@ -19,9 +19,9 @@ package com.codenvy.api.dao.mongo;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.machine.server.ProjectBindingImpl;
-import org.eclipse.che.api.machine.server.SnapshotImpl;
-import org.eclipse.che.api.machine.server.SnapshotStorage;
+import org.eclipse.che.api.machine.server.impl.ProjectBindingImpl;
+import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
+import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.machine.server.spi.InstanceKey;
 import org.eclipse.che.api.machine.shared.ProjectBinding;
 import com.mongodb.BasicDBList;
@@ -49,14 +49,14 @@ import static java.lang.String.format;
 /**
  * @author Alexander Garagatyi
  */
-public class MongoSnapshotStorageImpl implements SnapshotStorage {
-    private static final Logger LOG                = LoggerFactory.getLogger(MongoSnapshotStorageImpl.class);
+public class MongoSnapshotDaoImpl implements SnapshotDao {
+    private static final Logger LOG                = LoggerFactory.getLogger(MongoSnapshotDaoImpl.class);
     private static final String MACHINE_COLLECTION = "storage.machine.db.collection";
 
     private final DBCollection machineCollection;
 
     @Inject
-    public MongoSnapshotStorageImpl(@Named("mongo.db.machine") DB db, @Named(MACHINE_COLLECTION) String machineCollectionName) {
+    public MongoSnapshotDaoImpl(@Named("mongo.db.machine") DB db, @Named(MACHINE_COLLECTION) String machineCollectionName) {
         machineCollection = db.getCollection(machineCollectionName);
         machineCollection.ensureIndex(new BasicDBObject("workspaceId", 1));
         machineCollection.ensureIndex(new BasicDBObject("owner", 1));
