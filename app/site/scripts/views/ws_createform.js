@@ -44,7 +44,7 @@
 
                     $("#signIn").click(function(){
                         $.cookie('logged_in', true, {path: "/"});
-                        window.location = "/site/login" + window.location.search;
+                        window.location = Account.appendQuery("/site/login");
                     });
 
                 },

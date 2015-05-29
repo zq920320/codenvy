@@ -419,7 +419,7 @@
         };
 
         var appendQuery = function(url) {
-            return url  +  window.location.search;
+            return url  +  window.location.search + window.location.hash;
         };
         return {
             removeCookie: removeCookie,

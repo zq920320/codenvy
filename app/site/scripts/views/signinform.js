@@ -34,8 +34,7 @@
                      // remove cookie to be able to sign up
                     $("#signUp").click(function(){
                         $.removeCookie('logged_in',{path: "/"});
-                        var url =  Account.appendQuery("create-account");
-                        window.location = url;
+                        window.location = Account.appendQuery("/site/create-account");
                     });
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
