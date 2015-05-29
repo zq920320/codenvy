@@ -128,7 +128,7 @@ public class RemoteDockerNode implements DockerNode {
             HttpJsonHelper.request(null, uri.toString(), "POST", null);
         } catch (IOException | UnauthorizedException | ConflictException | ForbiddenException | NotFoundException | ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            throw new MachineException("Internal server error occurs. Please contact support");
+            throw new MachineException(e.getLocalizedMessage());
         }
     }
 

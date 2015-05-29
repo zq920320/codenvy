@@ -95,7 +95,8 @@ public class MachineNodeService {
         final File projectsFolder = new File("/" + path);
         if (!projectsFolder.mkdir()) {
             if (!projectsFolder.exists() || (!projectsFolder.canWrite() || !projectsFolder.canRead())) {
-                throw new ServerException("Projects folder creation error " + path);
+                LOG.error("Can't create projects folder " + path + " for machine.");
+                throw new ServerException("Can't create projects folder " + path + " for machine.");
             }
         }
     }
