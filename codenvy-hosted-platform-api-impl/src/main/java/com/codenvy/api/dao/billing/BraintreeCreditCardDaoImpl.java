@@ -196,16 +196,21 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             Customer customer = gateway.customer().find(accountId);
             for (com.braintreegateway.CreditCard card : customer.getCreditCards()) {
-                result.add(DtoFactory.getInstance().createDto(CreditCard.class).withAccountId(accountId)
-                                     .withToken(card.getToken())
-                                     .withType(card.getCardType())
-                                     .withNumber(card.getMaskedNumber())
-                                     .withCardholder(card.getCardholderName())
-                                     .withStreetAddress(card.getBillingAddress().getStreetAddress())
-                                     .withCity(card.getBillingAddress().getLocality())
-                                     .withState(card.getBillingAddress().getRegion())
-                                     .withCountry(card.getBillingAddress().getCountryName())
-                                     .withExpiration(card.getExpirationDate()));
+                CreditCard creditCard =
+                        DtoFactory.getInstance().createDto(CreditCard.class).withAccountId(accountId)
+                                  .withToken(card.getToken())
+                                  .withType(card.getCardType())
+                                  .withNumber(card.getMaskedNumber())
+                                  .withCardholder(card.getCardholderName())
+                                  .withExpiration(card.getExpirationDate());
+
+                if (card.getBillingAddress() != null) {
+                    creditCard.withStreetAddress(card.getBillingAddress().getStreetAddress())
+                              .withCity(card.getBillingAddress().getLocality())
+                              .withState(card.getBillingAddress().getRegion())
+                              .withCountry(card.getBillingAddress().getCountryName());
+                }
+                result.add(creditCard);
             }
         } catch (NotFoundException nf) {
             // nothing found - empty list
