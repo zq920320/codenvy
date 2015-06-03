@@ -86,26 +86,40 @@ public class Utils {
         if (page != null && perPage != null) {
             putPaginationParameters(page, perPage, context);
         }
-        if (securityContext != null && !isSystemUser(securityContext)) {
-            putPossibleUsersAsFilter(context, securityContext);
-            putPossibleWorkspacesAsFilter(context, securityContext);
+        if (securityContext != null ) {
+            putUserPrincipalRoleAsParameter(securityContext, context);
 
-            Principal principal = securityContext.getUserPrincipal();
-            if (cache.exist(principal)) {
-                cache.updateAccessTime(principal);
-            } else {
-                Set<String> allowedUsers = getFilterAsSet(context.get(Parameters.ORIGINAL_USER.toString()));
-                Set<String> allowedWorkspaces = getFilterAsSet(context.get(Parameters.ORIGINAL_WS.toString()));
+            if (!isSystemUser(securityContext)) {
+                 putPossibleUsersAsFilter(context, securityContext);
+                 putPossibleWorkspacesAsFilter(context, securityContext);
 
-                String dataUniverse = context.get(MetricFilter.DATA_UNIVERSE.toString());
-                UserPrincipalCache.UserContext userContext = new UserPrincipalCache.UserContext(dataUniverse, allowedUsers, allowedWorkspaces);
-                cache.put(principal, userContext);
-            }
+                 Principal principal = securityContext.getUserPrincipal();
+                 if (cache.exist(principal)) {
+                     cache.updateAccessTime(principal);
+                 } else {
+                     Set<String> allowedUsers = getFilterAsSet(context.get(Parameters.ORIGINAL_USER.toString()));
+                     Set<String> allowedWorkspaces = getFilterAsSet(context.get(Parameters.ORIGINAL_WS.toString()));
+
+                     String dataUniverse = context.get(MetricFilter.DATA_UNIVERSE.toString());
+                     UserPrincipalCache.UserContext userContext = new UserPrincipalCache.UserContext(dataUniverse, allowedUsers, allowedWorkspaces);
+                     cache.put(principal, userContext);
+                 }
+             }
         }
         validateFormDateToDate(context);
         context.remove(MetricFilter.DATA_UNIVERSE.toString());
 
         return context;
+    }
+
+    private void putUserPrincipalRoleAsParameter(SecurityContext securityContext, Map<String, String> context) {
+        if (securityContext.isUserInRole("system/admin")) {
+            context.put(Parameters.USER_PRINCIPAL_ROLE.toString(), "system/admin");
+        } else if (securityContext.isUserInRole("system/manager")) {
+            context.put(Parameters.USER_PRINCIPAL_ROLE.toString(), "system/manager");
+        } else if (securityContext.isUserInRole("user")) {
+            context.put(Parameters.USER_PRINCIPAL_ROLE.toString(), "user");
+        }
     }
 
     public Map<String, String> extractParams(UriInfo info, SecurityContext securityContext) throws ParseException {

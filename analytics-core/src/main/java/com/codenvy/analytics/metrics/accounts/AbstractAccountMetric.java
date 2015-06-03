@@ -184,6 +184,11 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         return RESOURCE_FETCHER.fetchResource(UserDescriptor.class, "GET", AbstractAccountMetric.PATH_USER);
     }
 
+    public static UserDescriptor getUser(String userId) throws IOException {
+        String path = AbstractAccountMetric.PATH_USER.replace(PARAM_ID, userId);
+        return RESOURCE_FETCHER.fetchResource(UserDescriptor.class, "GET", AbstractAccountMetric.PATH_USER);
+    }
+
     protected String getUserRoleInWorkspace(String userId, String workspaceId) throws IOException {
         List<MemberDescriptor> members = getMembers(workspaceId);
 
@@ -339,10 +344,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
                         @Override
                         public List<MemberDescriptor> apply(UserDescriptor userDescriptor) {
                             try {
-                                List<MemberDescriptor> memberDescriptors = RESOURCE_FETCHER.fetchResources(MemberDescriptor.class,
-                                                                                                           "GET",
-                                                                                                           "/account/memberships?userid=" +
-                                                                                                           userDescriptor.getId());
+                                List<MemberDescriptor> memberDescriptors = getMemberDescriptorsByUserId(userDescriptor.getId());
                                 Iterator<MemberDescriptor> iter = memberDescriptors.iterator();
                                 while (iter.hasNext()) {
                                     MemberDescriptor memberDescriptor = iter.next();
@@ -375,6 +377,19 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
         }
 
         return result == null ? Collections.<AccountDescriptor>emptyList() : result;
+    }
+
+    protected List<MemberDescriptor> getMemberDescriptorsByUserId(String userId) throws IOException {
+        return AbstractAccountMetric.RESOURCE_FETCHER.fetchResources(MemberDescriptor.class,
+                                                                     "GET",
+                                                                     "/account/memberships?userid=" +
+                                                                     userId);
+    }
+
+    protected List<MemberDescriptor> getMemberDescriptorsCurrentUser() throws IOException {
+        return AbstractAccountMetric.RESOURCE_FETCHER.fetchResources(MemberDescriptor.class,
+                                                                     "GET",
+                                                                     "/account");
     }
 
     private List<AccountDescriptor> merge(@Nullable List<AccountDescriptor> result, ImmutableList<AccountDescriptor> search) {

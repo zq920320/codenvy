@@ -22,11 +22,11 @@
     <view name="workspaces" on-demand="true">
         <section name="workspaces">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Workspace,Projects,Sessions,Time,Builds,Build Waiting Time,Build Time,Runs,Run Waiting Time,Run Time,Debugs,Debug Time,Deploys"/>
+                <parameter key="titles" value="Workspace,Sessions,Time,Builds,Build Waiting Time,Build Time,Runs,Run Waiting Time,Run Time,Debugs,Debug Time,Deploys"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="workspaces_statistics_list"/>
-                <parameter key="fields" value="ws,projects,sessions,time,builds,build_waiting_time,build_time,runs,run_waiting_time,run_time,debugs,debug_time,deploys"/>
+                <parameter key="fields" value="ws,sessions,time,builds,build_waiting_time,build_time,runs,run_waiting_time,run_time,debugs,debug_time,deploys"/>
                 <parameter key="time-fields" value="time,build_waiting_time,build_time,run_waiting_time,run_time,debug_time"/>
             </row>
         </section>

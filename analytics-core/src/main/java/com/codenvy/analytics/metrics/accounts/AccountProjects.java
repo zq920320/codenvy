@@ -18,18 +18,17 @@
 package com.codenvy.analytics.metrics.accounts;
 
 import com.codenvy.analytics.datamodel.LongValueData;
-import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
-import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
+import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
 import java.io.IOException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * @author Alexander Reshetnyak
@@ -41,28 +40,23 @@ public class AccountProjects extends AbstractAccountMetric {
 
     @Override
     public ValueData getValue(Context context) throws IOException {
-        List<AccountDescriptor> accountsDesc = getAccountDescriptors(context);
-        return toValueData(context, accountsDesc);
-    }
-
-    protected ValueData toValueData(Context context, List<AccountDescriptor> accountsDesc) throws IOException {
         long projects = 0;
 
-        for (AccountDescriptor accountDesc : accountsDesc) {
-            Map<String, ValueData> m = new HashMap<>();
-
-            m.put("account_id", StringValueData.valueOf(accountDesc.getId()));
-            m.put("name", StringValueData.valueOf(accountDesc.getName()));
-
-            List<WorkspaceDescriptor> workspacesDesc = getWorkspacesByAccountId(accountDesc.getId());
-            m.put("workspaces", LongValueData.valueOf(workspacesDesc.size()));
+        for (MemberDescriptor accountDesc : getMemberDescriptors(context)) {
+            List<WorkspaceDescriptor> workspacesDesc = getWorkspacesByAccountId(accountDesc.getAccountReference().getId());
             for (WorkspaceDescriptor workspace : workspacesDesc) {
                 projects += getProjects(workspace.getId()).size();
             }
-            m.put("projects", LongValueData.valueOf(projects));
         }
 
         return LongValueData.valueOf(projects);
+    }
+
+    private List<MemberDescriptor> getMemberDescriptors(Context context) throws IOException {
+        if (context.exists(Parameters.USER_PRINCIPAL_ROLE) && context.getAsString(Parameters.USER_PRINCIPAL_ROLE).startsWith("system")) {
+            return getMemberDescriptorsByUserId((String)context.get(MetricFilter.USER));
+        }
+        return getMemberDescriptorsCurrentUser();
     }
 
     @Override

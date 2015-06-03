@@ -17,7 +17,6 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.Injector;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
@@ -124,6 +123,7 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         ((DBObject)(dbOperations[1].get("$project"))).removeField(USER);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(INVITES);
         ((DBObject)(dbOperations[1].get("$project"))).removeField(LOGINS);
+        ((DBObject)(dbOperations[1].get("$project"))).removeField(PROJECTS);
 
         return dbOperations;
     }
@@ -148,17 +148,19 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
             value.add(new MapValueData(newItems));
 
 
-            if (!Injector.isLocal()) {
+            //get projects from API //TODO FOR ISSUE DASHB-666
+            /*if (!Injector.isLocal() ) {
                 if (clauses.exists(MetricFilter.USER)) {
                     Context.Builder builder = new Context.Builder();
                     builder.put(Parameters.USER, newItems.get(USER).getAsString());
+                    builder.put(Parameters.USER_PRINCIPAL_ROLE, clauses.getAsString(Parameters.USER_PRINCIPAL_ROLE));
 
                     Metric metric = MetricFactory.getMetric(MetricType.ACCOUNT_PROJECTS);
                     ValueData vd = metric.getValue(builder.build());
 
                     newItems.put(PROJECTS, vd);
                 }
-            }
+            }*/
         }
 
         return new ListValueData(value);

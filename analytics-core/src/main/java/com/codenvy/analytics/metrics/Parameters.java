@@ -32,6 +32,7 @@ public enum Parameters {
     PER_PAGE,
 
     USER_PRINCIPAL,
+    USER_PRINCIPAL_ROLE,
 
     LOG,
     PARAM,

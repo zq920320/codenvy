@@ -140,15 +140,15 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
 
             value.add(new MapValueData(newItems));
 
-            /*//add projects in account
-            if (clauses.exists(MetricFilter.WS) && Utils.getFilterAsSet(MetricFilter.WS.toString()).size() == 1) {
-                if (clauses.exists(MetricFilter.USER)) {
+            //get projects from API //TODO FOR ISSUE DASHB-666
+            /*if (!Injector.isLocal()) {
+                if (clauses.exists(MetricFilter.WS) && Utils.getFilterAsSet(MetricFilter.WS.toString()).size() == 1) {
                     Context.Builder builder = new Context.Builder();
-                    builder.put(Parameters.USER, newItems.get(USER));
+                    builder.put(Parameters.USER, newItems.get(USER).getAsString());
+                    builder.put(Parameters.USER_PRINCIPAL_ROLE, clauses.getAsString(Parameters.USER_PRINCIPAL_ROLE));
 
-                    Metric metric = MetricFactory.getMetric(MetricType.ACTIVE_WORKSPACES_SET);
+                    Metric metric = MetricFactory.getMetric(MetricType.ACCOUNT_PROJECTS);
                     ValueData vd = metric.getValue(builder.build());
-
 
                     newItems.put(PROJECTS, vd);
                 }
@@ -187,6 +187,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         project.removeField(JOINED_USERS);
         project.removeField(INVITES);
         project.removeField(FACTORIES);
+        project.removeField(PROJECTS);
 
         return dbOperations;
     }

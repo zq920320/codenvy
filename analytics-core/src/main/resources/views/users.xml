@@ -22,11 +22,11 @@
     <view name="users" on-demand="true">
         <section name="users">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="User,First Name,Last Name,Company,Projects,Sessions,Time"/>
+                <parameter key="titles" value="User,First Name,Last Name,Company,Sessions,Time"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_statistics_list"/>
-                <parameter key="fields" value="user,user_first_name,user_last_name,user_company,projects,sessions,time"/>
+                <parameter key="fields" value="user,user_first_name,user_last_name,user_company,sessions,time"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
