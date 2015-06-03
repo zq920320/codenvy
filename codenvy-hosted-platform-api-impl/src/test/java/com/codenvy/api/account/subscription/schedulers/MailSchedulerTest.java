@@ -41,6 +41,7 @@ import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -71,67 +72,51 @@ public class MailSchedulerTest {
         mailScheduler = new MailScheduler(subscriptionMailSender, billingService, templateProcessor, INVOICES_LIMIT);
     }
 
+
     @Test
-    public void shouldSendEmailForInvoiceWithStatePaymentSuccessfully() throws Exception {
-        final Invoice invoice = dto.createDto(Invoice.class)
+    public void shouldMakeCorrectQueryToBillingService() throws Exception {
+        mailScheduler.sendEmails();
+
+        verify(billingService).getInvoices(argThat(new ArgumentMatcher<InvoiceFilter>() {
+            @Override
+            public boolean matches(Object o) {
+                final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
+
+                final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
+                return states.size() == 2
+                       && states.contains(PaymentState.PAYMENT_FAIL.getState())
+                       && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
+                       && invoiceFilter.getIsMailNotSend()
+                       && INVOICES_LIMIT == invoiceFilter.getMaxItems()
+                       && invoiceFilter.getSkipCount() == null;
+            }
+        }));
+    }
+
+
+
+    @Test
+    public void shouldSendEmailsForEachInvoice() throws Exception {
+        final Invoice invoice1 = dto.createDto(Invoice.class)
                                    .withAccountId(ACCOUNT_ID)
                                    .withTotal(0D)
                                    .withId(1L)
                                    .withPaymentState(PaymentState.PAID_SUCCESSFULLY.getState());
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Arrays.asList(invoice));
 
-        mailScheduler.sendEmails();
-
-        verify(billingService).getInvoices(argThat(new ArgumentMatcher<InvoiceFilter>() {
-            @Override
-            public boolean matches(Object o) {
-                final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
-
-                final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 3
-                       && states.contains(PaymentState.PAYMENT_FAIL.getState())
-                       && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
-                       && states.contains(PaymentState.NOT_REQUIRED.getState())
-                       && invoiceFilter.getIsMailNotSend()
-                       && INVOICES_LIMIT == invoiceFilter.getMaxItems()
-                       && invoiceFilter.getSkipCount() == null;
-            }
-        }));
-
-        verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(subscriptionMailSender).sendInvoice((Invoice)anyObject(), anyString());
-        verify(billingService).markInvoiceAsSent(eq(1L));
-    }
-
-    @Test
-    public void shouldSendEmailForInvoiceWithStatePaymentFailed() throws Exception {
-        final Invoice invoice = dto.createDto(Invoice.class)
+        final Invoice invoice2 = dto.createDto(Invoice.class)
                                    .withAccountId(ACCOUNT_ID)
                                    .withTotal(0D)
                                    .withId(1L)
                                    .withPaymentState(PaymentState.PAYMENT_FAIL.getState());
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Arrays.asList(invoice));
+
+
+        List<Invoice> invoices = Arrays.asList(invoice1, invoice2, invoice1);
+        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(invoices);
 
         mailScheduler.sendEmails();
 
-        verify(billingService).getInvoices(argThat(new ArgumentMatcher<InvoiceFilter>() {
-            @Override
-            public boolean matches(Object o) {
-                final InvoiceFilter invoiceFilter = (InvoiceFilter)o;
-
-                final List<String> states = new ArrayList<>(Arrays.asList(invoiceFilter.getStates()));
-                return states.size() == 3
-                       && states.contains(PaymentState.PAYMENT_FAIL.getState())
-                       && states.contains(PaymentState.PAID_SUCCESSFULLY.getState())
-                       && states.contains(PaymentState.NOT_REQUIRED.getState())
-                       && invoiceFilter.getIsMailNotSend()
-                       && INVOICES_LIMIT == invoiceFilter.getMaxItems()
-                       && invoiceFilter.getSkipCount() == null;
-            }
-        }));
-
-        verify(templateProcessor).processTemplate((Invoice)anyObject(), (Writer)anyObject());
-        verify(subscriptionMailSender).sendInvoice((Invoice)anyObject(), anyString());
-        verify(billingService).markInvoiceAsSent(eq(1L));
+        verify(templateProcessor, times(invoices.size())).processTemplate((Invoice)anyObject(), (Writer)anyObject());
+        verify(subscriptionMailSender, times(invoices.size())).sendInvoice((Invoice)anyObject(), anyString());
+        verify(billingService, times(invoices.size())).markInvoiceAsSent(eq(1L));
     }
 }
