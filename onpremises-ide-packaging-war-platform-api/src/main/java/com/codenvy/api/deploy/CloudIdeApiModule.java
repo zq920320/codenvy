@@ -76,7 +76,6 @@ import org.eclipse.che.api.vfs.server.search.SearcherProvider;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.commons.schedule.executor.ScheduleModule;
 import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
 import org.eclipse.che.everrest.ETagResponseFilter;
 import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
@@ -96,8 +95,6 @@ import org.eclipse.che.vfs.impl.fs.MountPointCacheCleaner;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.PathKey;
-
-import javax.naming.Binding;
 
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
@@ -267,6 +264,7 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(com.codenvy.workspace.listener.VfsCleanupPerformer.class).to(com.codenvy.workspace.IdexVfsHelper.class);
         bind(com.codenvy.workspace.activity.websocket.WebsocketListenerInitializer.class);
+        bind(com.codenvy.workspace.activity.RunActivityChecker.class).asEagerSingleton();
         bind(com.codenvy.workspace.activity.WsActivityListener.class).asEagerSingleton();
         bind(com.codenvy.workspace.listener.VfsStopSubscriber.class).asEagerSingleton();
 

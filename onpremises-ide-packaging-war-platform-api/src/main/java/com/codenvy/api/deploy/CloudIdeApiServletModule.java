@@ -109,7 +109,8 @@ public class CloudIdeApiServletModule extends ServletModule {
 //               "/billing/*",
 //               "/creditcard/*",
 //               "/invoice/*",
-//               "/billing/*")
+//               "/billing/*",
+//               "/promotion/*")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
         filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);

@@ -18,7 +18,7 @@
 #
 detect_user_for_upload() {
     case "${SERVER}" in
-      "a1" | "a2" | "a3" | "a4" | "a5" | "a7" | "dev" | "stg" | "t1" | "t2" | "t3" | "cf" | "demo" | "nightly" )
+      "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "dev" | "stg" | "t1" | "t2" | "t3" | "cf" | "demo" | "nightly" )
           SSH_KEY_NAME=upl-dev
           SSH_USER_NAME=upl-dev
       ;;
@@ -119,7 +119,7 @@ SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible
 SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod\e[0m"
 #checking possible scope values
 case "$1" in
-   "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a7" | "demo" | "nightly" | "dev" )
+   "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "demo" | "nightly" | "dev" )
       echo "Selected '$1' as cloud for update"
       SERVER=$1
    ;;

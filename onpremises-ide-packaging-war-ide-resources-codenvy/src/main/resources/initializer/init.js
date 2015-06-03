@@ -318,6 +318,7 @@ var Initializer = new function () {
      * Initial configuration
      */
     window.IDE.config = {
+        "restContext" : "/api",
         "context": "/ws",
         "workspaceName": null,
         "workspaceId": null,

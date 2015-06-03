@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.9.6-SNAPSHOT</version>
+        <version>3.10.1-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-codenvy-allinone</artifactId>
     <packaging>pom</packaging>
@@ -33,31 +33,31 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-datasource-plugin</artifactId>
-            <version>${cloud-ide.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <version>${cloud-ide.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-builder</artifactId>
-            <version>${cloud-ide.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-codeassistant</artifactId>
-            <version>${cloud-ide.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-runner</artifactId>
-            <version>${cloud-ide.version}</version>
+            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
