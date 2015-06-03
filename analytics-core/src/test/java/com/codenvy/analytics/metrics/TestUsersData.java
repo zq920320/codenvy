@@ -76,7 +76,6 @@ public class TestUsersData extends BaseTest {
             String user = all.get(UsersStatisticsList.USER).getAsString();
             switch (user) {
                 case "user1_12345678901234":
-                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
@@ -94,7 +93,6 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "user2_12345678901234":
-                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
@@ -112,7 +110,6 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "user3_12345678901234":
-                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "1");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
@@ -130,7 +127,6 @@ public class TestUsersData extends BaseTest {
                     break;
 
                 case "user4_12345678901234":
-                    assertEquals(all.get(UsersStatisticsList.PROJECTS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.BUILDS).getAsString(), "0");
                     assertEquals(all.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
@@ -155,7 +151,6 @@ public class TestUsersData extends BaseTest {
         assertEquals(summaryValue.size(), 1);
 
         Map<String, ValueData> m = treatAsMap(summaryValue.get(0));
-        assertEquals(m.get(UsersStatisticsList.PROJECTS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.DEPLOYS), LongValueData.valueOf(2));
         assertEquals(m.get(UsersStatisticsList.BUILDS), LongValueData.valueOf(1));
         assertEquals(m.get(UsersStatisticsList.DEBUGS), LongValueData.valueOf(1));
@@ -232,7 +227,6 @@ public class TestUsersData extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "2");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "1");
-        assertEquals(summary.get(UsersStatisticsList.PROJECTS).getAsString(), "1");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "420000");
         assertEquals(summary.get(UsersStatisticsList.BUILD_TIME).getAsString(), "120000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "2");
