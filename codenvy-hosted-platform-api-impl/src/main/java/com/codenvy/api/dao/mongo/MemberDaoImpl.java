@@ -179,7 +179,7 @@ public class MemberDaoImpl implements MemberDao {
     }
 
     @Override
-    public void remove(Member member) throws ServerException, NotFoundException, ConflictException {
+    public synchronized void remove(Member member) throws ServerException, NotFoundException, ConflictException {
         final DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
             final DBObject membersDocument = collection.findOne(query);
