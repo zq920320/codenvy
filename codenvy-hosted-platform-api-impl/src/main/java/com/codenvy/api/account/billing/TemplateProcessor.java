@@ -126,7 +126,7 @@ public class TemplateProcessor {
                     try {
                         newDetails.put(workspaceDao.getById(entry.getKey()).getName(), entry.getValue());
                     } catch (NotFoundException e) {
-                        newDetails.put(String.format("not_existing_workspace_%d", ++i), entry.getValue());
+                        newDetails.put(String.format("Temp Workspace %d", ++i), entry.getValue());
                     }
                 }
                 charge.setDetails(newDetails);
