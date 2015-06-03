@@ -112,11 +112,11 @@ public class PromotionService extends Service {
                                        .withFromDate(System.currentTimeMillis())
                                        .withTillDate(calendar.getTimeInMillis())
                                        .withResources(bonusSize)
-                                       .withCause("Email invites");
+                                       .withCause("Promotion bonus as inviter.");
         Bonus recipientBonus = new Bonus().withAccountId(accountDao.getByOwner(recipientId).get(0).getId())
                                               .withFromDate(System.currentTimeMillis())
                                               .withTillDate(calendar.getTimeInMillis())
-                                              .withCause("Email invites")
+                                              .withCause("promotion bonus as invited")
                                               .withResources(bonusSize);
         bonusDao.create(senderBonus);
         mailSender.sendReferringBonusNotification(senderBonus);
