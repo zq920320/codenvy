@@ -213,7 +213,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         recipeDao.update(new RecipeImpl().withId("fake"));
     }
 
-    @Test(enabled = false)//test mognodb server doesn't support $elemMatch
+    @Test
     public void shouldBeAbleToSearchRecipesByTagsAndType() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
         final Recipe example = new RecipeImpl().withId("recipe123")
@@ -239,7 +239,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         assertEquals(new HashSet<>(recipes), new HashSet<>(asList(example, example2)));
     }
 
-    @Test(enabled = false)//test mognodb server doesn't support $elemMatch
+    @Test
     public void shouldBeAbleToSearchRecipesByTags() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
         final Recipe example = new RecipeImpl().withId("recipe123")

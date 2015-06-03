@@ -89,7 +89,7 @@ public class MemberDaoImpl implements MemberDao {
         this.userDao = userDao;
         this.workspaceDao = workspaceDao;
         collection = db.getCollection(collectionName);
-        collection.ensureIndex("members.workspaceId");
+        collection.createIndex("members.workspaceId");
     }
 
     @Override

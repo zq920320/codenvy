@@ -25,7 +25,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -59,11 +58,6 @@ public class PreferenceDaoTest extends BaseDaoTest {
         setUp(collectionName);
         userDao = mock(UserDao.class);
         preferenceDao = new PreferenceDaoImpl(db, userDao, collectionName);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

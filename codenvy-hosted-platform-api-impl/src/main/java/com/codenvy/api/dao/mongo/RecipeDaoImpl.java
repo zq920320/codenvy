@@ -89,7 +89,7 @@ public class RecipeDaoImpl implements RecipeDao {
     @Inject
     public RecipeDaoImpl(@Named("mongo.db.organization") DB db, @Named("organization.storage.db.recipes.collection") String collectionName) {
         recipes = db.getCollection(collectionName);
-        recipes.ensureIndex(new BasicDBObject("creator", 1));
+        recipes.createIndex(new BasicDBObject("creator", 1));
         //TODO consider adding index on 'type' field
         //why NOT - for now we have the only type of recipe
         //why YES - if we got different recipe types it will improve search performance

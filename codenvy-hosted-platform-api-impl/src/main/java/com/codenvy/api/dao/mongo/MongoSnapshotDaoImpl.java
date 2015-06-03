@@ -58,8 +58,8 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
     @Inject
     public MongoSnapshotDaoImpl(@Named("mongo.db.machine") DB db, @Named(MACHINE_COLLECTION) String machineCollectionName) {
         machineCollection = db.getCollection(machineCollectionName);
-        machineCollection.ensureIndex(new BasicDBObject("workspaceId", 1));
-        machineCollection.ensureIndex(new BasicDBObject("owner", 1));
+        machineCollection.createIndex(new BasicDBObject("workspaceId", 1));
+        machineCollection.createIndex(new BasicDBObject("owner", 1));
         // TODO add index for path
     }
 

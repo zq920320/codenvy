@@ -24,12 +24,12 @@ import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
+
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
@@ -47,7 +47,6 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-import static org.testng.Assert.fail;
 
 /**
  * Tests for {@link WorkspaceDaoImpl}
@@ -72,11 +71,6 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
         workspaceDao = new WorkspaceDaoImpl(db, memberDao, new EventService(), COLL_NAME);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test
@@ -139,22 +133,15 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         assertEquals(actual.getAttributes(), update.getAttributes());
     }
 
-    @Test
+    @Test(expectedExceptions = ConflictException.class)
     public void shouldThrowConflictExceptionIfWorkspaceWithUpdateNameAlreadyExists() throws Exception {
         final Workspace testWorkspace = createWorkspace();
-        //persist workspace
+        //persist first workspace
         collection.insert(workspaceDao.toDBObject(testWorkspace));
-        //prepare update
-        final Workspace update = new Workspace().withId(testWorkspace.getId())
-                                                .withName(testWorkspace.getName());
-        //persist workspace with same name as update name
-        collection.insert(new BasicDBObject("id", "test_id2").append("name", update.getName()));
-        try {
-            workspaceDao.create(update);
-            fail();
-        } catch (ConflictException ex) {
-            assertEquals(ex.getMessage(), "Workspace with name '" + testWorkspace.getName() + "' already exists");
-        }
+        //prepare second workspace
+        collection.insert(workspaceDao.toDBObject(createWorkspace().withId("other").withName("other")));
+
+        workspaceDao.update(new Workspace().withId(testWorkspace.getId()).withName("other"));
     }
 
     @Test
@@ -180,7 +167,7 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetWorkspacesByAccount() throws Exception {
         final Workspace testWorkspace1 = createWorkspace();
-        final Workspace testWorkspace2 = createWorkspace().withId("test_id2");
+        final Workspace testWorkspace2 = createWorkspace().withId("test_id2").withName("new name");
         collection.insert(workspaceDao.toDBObject(testWorkspace1));
         collection.insert(workspaceDao.toDBObject(testWorkspace2));
 

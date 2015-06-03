@@ -29,7 +29,6 @@ import com.mongodb.QueryBuilder;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
@@ -92,9 +91,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                             EventService eventService,
                             @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
-        collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        collection.ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-        collection.ensureIndex(new BasicDBObject("accountId", 1));
+        collection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        collection.createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+        collection.createIndex(new BasicDBObject("accountId", 1));
         this.eventService = eventService;
         this.memberDao = memberDao;
     }
@@ -127,8 +126,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         try {
             collection.update(query, toDBObject(update));
         } catch (MongoException ex) {
-            LOG.error(ex.getMessage(), ex);
-            throw new ServerException("It is not possible to update workspace");
+            throw new ServerException("It is not possible to update workspace", ex);
         }
     }
 

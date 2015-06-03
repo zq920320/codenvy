@@ -47,6 +47,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -122,19 +123,19 @@ public class AccountDaoImpl implements AccountDao {
                           SubscriptionQueryBuilder subscriptionQueryBuilder) {
         this.subscriptionQueryBuilder = subscriptionQueryBuilder;
         accountCollection = db.getCollection(accountCollectionName);
-        accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        accountCollection.ensureIndex(new BasicDBObject("name", 1));
-        accountCollection.ensureIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
+        accountCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        accountCollection.createIndex(new BasicDBObject("name", 1));
+        accountCollection.createIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
-        subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("state", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("serviceId", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("nextBillingDate", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("trialEndDate", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("endDate", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        subscriptionCollection.createIndex(new BasicDBObject("accountId", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("state", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("serviceId", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("nextBillingDate", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("trialEndDate", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("endDate", 1));
         memberCollection = db.getCollection(memberCollectionName);
-        memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
+        memberCollection.createIndex(new BasicDBObject("members.accountId", 1));
         this.workspaceDao = workspaceDao;
     }
 
@@ -610,7 +611,7 @@ public class AccountDaoImpl implements AccountDao {
     static Subscription toSubscription(Object dbObject) {
         final BasicDBObject basicSubscriptionObj = (BasicDBObject)dbObject;
         @SuppressWarnings("unchecked") //properties is always Map of Strings
-        final Map<String, String> properties = (Map<String, String>)basicSubscriptionObj.get("properties");
+        final Map<String, String> properties = new HashMap<>((Map<String, String>)basicSubscriptionObj.get("properties"));
         return new Subscription().withId(basicSubscriptionObj.getString("id"))
                                  .withAccountId(basicSubscriptionObj.getString("accountId"))
                                  .withServiceId(basicSubscriptionObj.getString("serviceId"))

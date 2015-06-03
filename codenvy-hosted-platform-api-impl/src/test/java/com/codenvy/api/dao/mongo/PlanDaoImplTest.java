@@ -17,16 +17,10 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
-import com.mongodb.ServerAddress;
 
 import org.eclipse.che.api.account.server.dao.PlanDao;
 import org.eclipse.che.api.account.shared.dto.BillingCycleType;
@@ -34,11 +28,9 @@ import org.eclipse.che.api.account.shared.dto.Plan;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.dto.server.DtoFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -55,37 +47,21 @@ import static org.testng.Assert.assertTrue;
  *
  * @author Alexander Garagatyi
  */
-public class PlanDaoImplTest {
+public class PlanDaoImplTest extends BaseDaoTest {
     private PlanDao planDao;
 
     private static final String DB_NAME   = "test1";
     private static final String COLL_NAME = "collName";
 
-    protected DBCollection collection;
-    protected MongoClient  client;
-    protected MongoServer  server;
-    protected DB           db;
-
     @BeforeMethod
     public void setUp() throws Exception {
-        server = new MongoServer(new MemoryBackend());
-
-        // bind on a random local port
-        InetSocketAddress serverAddress = server.bind();
-
-        client = new MongoClient(new ServerAddress(serverAddress));
+        setUp(COLL_NAME);
         db = spy(client.getDB(DB_NAME));
         collection = spy(db.getCollection(COLL_NAME));
 
         when(db.getCollection(COLL_NAME)).thenReturn(collection);
 
         planDao = new PlanDaoImpl(db, COLL_NAME);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        client.close();
-        server.shutdownNow();
     }
 
     @Test

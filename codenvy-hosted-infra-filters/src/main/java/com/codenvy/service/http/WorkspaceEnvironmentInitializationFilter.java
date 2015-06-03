@@ -25,69 +25,90 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.servlet.*;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
+ * Sets workspace meta information into current {@link EnvironmentContext}
+ *
  * @author Sergii Kabashniuk
+ * @author Eugene Voevodin
  */
-
 public abstract class WorkspaceEnvironmentInitializationFilter implements Filter {
 
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceEnvironmentInitializationFilter.class);
 
-    @Named("error.page.workspace_not_found_redirect_url")
     @Inject
+    @Named("error.page.workspace_not_found_redirect_url")
     private String wsNotFoundRedirectUrl;
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-
     }
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            WorkspaceDescriptor workspace = getWorkspaceFromRequest(request);
-            if (workspace == null) {
+            final WorkspaceDescriptor workspace = getWorkspaceFromRequest(request);
+            if (workspace != null) {
+                final EnvironmentContext env = EnvironmentContext.getCurrent();
+                env.setWorkspaceName(workspace.getName());
+                env.setWorkspaceId(workspace.getId());
+                env.setAccountId(workspace.getAccountId());
+                env.setWorkspaceTemporary(workspace.isTemporary());
+                LOG.debug("Set environment context - workspace name: {}, workspace id: {}, account id:{} , is temporary: {}",
+                          env.getWorkspaceName(),
+                          env.getWorkspaceId(),
+                          env.getAccountId(),
+                          env.isWorkspaceTemporary());
+                chain.doFilter(request, response);
+            } else {
                 workspaceNotFoundHandler(request, response, chain);
-                return;
             }
-            final EnvironmentContext env = EnvironmentContext.getCurrent();
-            env.setWorkspaceName(workspace.getName());
-            env.setWorkspaceId(workspace.getId());
-            env.setAccountId(workspace.getAccountId());
-            env.setWorkspaceTemporary(workspace.isTemporary());
-            LOG.debug("Set context wsn:{}. wsid:{}, accountid:{} , iswstmp:{}", env.getWorkspaceName(), env.getWorkspaceId(),
-                      env.getAccountId(), env.isWorkspaceTemporary());
-            chain.doFilter(request, response);
         } finally {
             EnvironmentContext.reset();
         }
     }
 
     /**
+     * Retrieves {@link WorkspaceDescriptor} from {@code request} if possible, otherwise returns {@code null}
+     * <p/>
+     * When method returns {@code null} then {@link #workspaceNotFoundHandler(ServletRequest, ServletResponse, FilterChain)}
+     * will be invoked with default behaviour, if default behaviour is not appropriate - override handler method as well
+     *
      * @param request
-     *         - given request
-     * @return - workspace name for given request.
+     *         current filter request
+     * @return workspace descriptor or {@code null}
      */
     protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request);
 
     /**
-     * Handle situation when workspace is not found.
+     * Will be invoked when {@link #getWorkspaceFromRequest(ServletRequest)} returns {@code null}.
+     * By default sends redirect to {@link #wsNotFoundRedirectUrl}
      *
      * @param request
+     *         current filter request
      * @param response
+     *         current filter response
      * @param chain
+     *         chain for current filter
      * @throws IOException
+     *         when any i/o error occurs
+     * @throws ServletException
+     *         when any other error occurs
      */
-    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException {
+    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+                                                                                                                        ServletException {
         ((HttpServletResponse)response).sendRedirect(wsNotFoundRedirectUrl);
     }
 
     @Override
     public void destroy() {
-
     }
 }

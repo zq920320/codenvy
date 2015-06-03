@@ -19,21 +19,25 @@ package com.codenvy.api.dao.mongo;
 
 import com.mongodb.DB;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.net.UnknownHostException;
+
+import static com.mongodb.MongoCredential.createCredential;
+import static java.util.Collections.singletonList;
 
 /**
  * Provides single instance of database to all consumers.
  */
+@Singleton
 public class MongoDatabaseProvider implements Provider<DB> {
     private final String dbUrl;
     private final String dbName;
     private final String username;
     private final String password;
+
     private volatile DB db;
 
     public MongoDatabaseProvider(String dbUrl, String dbName, String username, String password) {
@@ -47,15 +51,10 @@ public class MongoDatabaseProvider implements Provider<DB> {
     public DB get() {
         if (db == null) {
             synchronized (this) {
-                try {
-                    if (db == null) {
-                        MongoClient mongoClient = new MongoClient(dbUrl);
-                        db = mongoClient.getDB(dbName);
-                        if (!db.authenticate(username, password.toCharArray()))
-                            throw new RuntimeException("Incorrect MongoDB credentials: authentication failed.");
-                    }
-                } catch (UnknownHostException e) {
-                    throw new RuntimeException("Can't connect to MongoDB.");
+                if (db == null) {
+                    final MongoCredential credential = createCredential(username, dbName, password.toCharArray());
+                    MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
+                    db = mongoClient.getDB(dbName);
                 }
             }
         }

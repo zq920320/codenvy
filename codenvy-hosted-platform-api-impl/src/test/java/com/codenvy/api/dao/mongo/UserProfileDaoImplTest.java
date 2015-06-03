@@ -23,7 +23,6 @@ import org.eclipse.che.api.user.server.dao.Profile;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -51,11 +50,6 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
         profileDaoImpl = new UserProfileDaoImpl(db, COLL_NAME);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
     }
 
     @Test

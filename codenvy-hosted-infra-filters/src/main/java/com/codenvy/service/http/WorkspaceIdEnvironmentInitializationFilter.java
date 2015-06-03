@@ -51,7 +51,6 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
     @Inject
     private WorkspaceInfoCache cache;
 
-
     @Override
     protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
@@ -68,8 +67,8 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
     }
 
     @Override
-    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain)
-            throws IOException {
+    protected void workspaceNotFoundHandler(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException,
+                                                                                                                        ServletException {
         //super.workspaceNotFoundHandler(request, response, chain);
         HttpServletResponse httpResponse = (HttpServletResponse)response;
         httpResponse.setStatus(404);
