@@ -449,7 +449,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
         assertNull(found);
     }
 
-    @Test
+    @Test(enabled = false)
     public void shouldBeAbleToGetActiveSubscriptionsByAccountAndService() throws Exception {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId());
