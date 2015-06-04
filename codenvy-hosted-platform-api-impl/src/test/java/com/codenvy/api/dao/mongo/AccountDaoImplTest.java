@@ -397,16 +397,13 @@ public class AccountDaoImplTest extends BaseDaoTest {
     public void shouldBeAbleToGetActiveSubscriptionsByAccount() throws Exception {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId()).withServiceId("Saas");
-//        final Subscription subscription2 = createSubscription().withAccountId(account.getId()).withId(subscription1.getId() + "other");
-        insertSubscriptions(subscription1);
+        final Subscription subscription2 = createSubscription().withAccountId(account.getId()).withId(subscription1.getId() + "other");
+        insertSubscriptions(subscription1, subscription2);
         insertAccounts(account);
 
         final List<Subscription> found = accountDao.getActiveSubscriptions(account.getId());
 
-//        assertEquals(found.get(0), subscription1);
-        assertTrue(found.get(0).equals(subscription1));
-
-//        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1)));
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
     }
 
     @Test
