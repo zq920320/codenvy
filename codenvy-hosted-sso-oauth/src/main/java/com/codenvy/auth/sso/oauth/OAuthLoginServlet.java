@@ -144,39 +144,14 @@ public class OAuthLoginServlet extends HttpServlet {
             try {
                 inputDataValidator.validateUserMail(username);
 
-                // find name for user's workspace
-                String workspaceName = username.substring(0, username.indexOf('@'));
-
-                try {
-                    inputDataValidator.validateWSName(workspaceName);
-                } catch (InputDataException e) {
-                    workspaceName = wsNameProposer.propose(workspaceName);
-                }
-
-                int counter = 0;
-                String currentWorkspace = workspaceName;
-                //TODO Optimize it. {@link WorkspaceNameProposer#propose(String)} has the same loop
-                //Why does max value of counter equals 100? What will happen if counter will be more than 100?
-                while (counter++ < 100) {
-                    try {
-                        workspaceDao.getByName(currentWorkspace);
-                        currentWorkspace = wsNameProposer.propose(workspaceName);
-                    } catch (NotFoundException e) {
-                        break;
-                    }
-                }
-
                 URI uri =
                         UriBuilder.fromUri(createWorkspacePage).replaceQuery(req.getQueryString())
-                                  .replaceQueryParam(
-                                          "signature")
+                                  .replaceQueryParam("signature")
                                   .replaceQueryParam("oauth_provider")
-                                  .replaceQueryParam("bearertoken",
-                                                     handler.generateBearerToken(username, profileInfo))
-                                  .queryParam("workspace", currentWorkspace).build();
+                                  .replaceQueryParam("bearertoken", handler.generateBearerToken(username, profileInfo)).build();
 
                 resp.sendRedirect(uri.toString());
-            } catch (InputDataException | ServerException e) {
+            } catch (InputDataException e) {
                 throw new ServletException(e.getLocalizedMessage(), e);
             }
         }

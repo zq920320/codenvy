@@ -89,7 +89,13 @@ public class BuildStatusSubscriber extends MeteredBuildEventSubscriber {
     private void registerMemoryUsage(BuilderEvent event) {
         try {
             final Workspace workspace = workspaceDao.getById(event.getWorkspace());
-            final BuildQueueTask task = buildQueue.getTask(event.getTaskId());
+            final BuildQueueTask task;
+            try {
+                task = buildQueue.getTask(event.getTaskId());
+            } catch (NotFoundException nfe) {
+                //task already is interrupted
+                return;
+            }
             final BaseBuilderRequest request = task.getRequest();
             final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(BuildTasksActivityChecker.BUILDER_MEMORY_SIZE,
                                                                            task.getCreationTime(),

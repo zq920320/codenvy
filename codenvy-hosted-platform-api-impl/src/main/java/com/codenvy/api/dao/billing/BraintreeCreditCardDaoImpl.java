@@ -196,16 +196,21 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
         try {
             Customer customer = gateway.customer().find(accountId);
             for (com.braintreegateway.CreditCard card : customer.getCreditCards()) {
-                result.add(DtoFactory.getInstance().createDto(CreditCard.class).withAccountId(accountId)
-                                     .withToken(card.getToken())
-                                     .withType(card.getCardType())
-                                     .withNumber(card.getMaskedNumber())
-                                     .withCardholder(card.getCardholderName())
-                                     .withStreetAddress(card.getBillingAddress().getStreetAddress())
-                                     .withCity(card.getBillingAddress().getLocality())
-                                     .withState(card.getBillingAddress().getRegion())
-                                     .withCountry(card.getBillingAddress().getCountryName())
-                                     .withExpiration(card.getExpirationDate()));
+                CreditCard creditCard =
+                        DtoFactory.getInstance().createDto(CreditCard.class).withAccountId(accountId)
+                                  .withToken(card.getToken())
+                                  .withType(card.getCardType())
+                                  .withNumber(card.getMaskedNumber())
+                                  .withCardholder(card.getCardholderName())
+                                  .withExpiration(card.getExpirationDate());
+
+                if (card.getBillingAddress() != null) {
+                    creditCard.withStreetAddress(card.getBillingAddress().getStreetAddress())
+                              .withCity(card.getBillingAddress().getLocality())
+                              .withState(card.getBillingAddress().getRegion())
+                              .withCountry(card.getBillingAddress().getCountryName());
+                }
+                result.add(creditCard);
             }
         } catch (NotFoundException nf) {
             // nothing found - empty list
@@ -268,10 +273,8 @@ public class BraintreeCreditCardDaoImpl implements CreditCardDao {
 
         // Check is paid resources used, lock and send notify emails.
         if (!resources.isEmpty()) {
-            accountLocker.lock(accountId);
-            subscriptionMailSender.sendAccountLockedNotification(accountId, Double.toString(resources.get(0).getPaidAmount()));
-        } else {
-            subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
+            accountLocker.setPaymentLock(accountId);
         }
+        subscriptionMailSender.sendCCRemovedNotification(accountId, card.getLast4(), card.getCardType());
     }
 }

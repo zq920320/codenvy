@@ -112,11 +112,6 @@ public class OnPremisesSubscriptionService extends SubscriptionService {
     public void onCheckSubscriptions() throws ApiException {
         removeUtil.removeExpiredTrial(this);
         chargeUtil.charge(this);
-
-//        TODO It is need to send emails about trial expiration?
-//        expirationUtil.sendEmailAboutExpiringTrial(getServiceId(), 2);
-//        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 2);
-//        expirationUtil.sendEmailAboutExpiredTrial(getServiceId(), 7);
     }
 
     @Override

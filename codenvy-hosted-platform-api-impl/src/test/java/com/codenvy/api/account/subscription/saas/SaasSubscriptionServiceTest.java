@@ -140,6 +140,27 @@ public class SaasSubscriptionServiceTest {
     }
 
     @Test
+    public void shouldReturnInformationAboutUsedResourcesForWorkspaceThatNotReturnsByWorkspaceDao() throws ServerException {
+        when(period.getStartDate()).thenReturn(new Date());
+        Workspace workspace = new Workspace().withId("workspaceID");
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(workspace));
+
+        Map<String, Double> usedReport = new HashMap<>();
+        usedReport.put("workspaceID", 1024D);
+        usedReport.put("removeWorkspaceId", 1024D);
+        when(meterBasedStorage.getMemoryUsedReport(anyString(), anyLong(), anyLong())).thenReturn(usedReport);
+
+        final UsedAccountResources usedAccountResources = service.getAccountResources(new Subscription());
+
+        final List<WorkspaceResources> used = usedAccountResources.getUsed();
+        assertEquals(used.size(), 2);
+        assertEquals(used.get(1).getWorkspaceId(), "workspaceID");
+        assertEquals(used.get(1).getMemory(), 1024D);
+        assertEquals(used.get(0).getWorkspaceId(), "removeWorkspaceId");
+        assertEquals(used.get(0).getMemory(), 1024D);
+    }
+
+    @Test
     public void shouldResetSizeOfRunnerRamToMaxAllowedValueIfItNecessaryOnRemoveSubscription() throws Exception {
         Map<String, String> attributes = new HashMap<>();
         attributes.put(Constants.RUNNER_MAX_MEMORY_SIZE, "512");

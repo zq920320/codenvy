@@ -47,7 +47,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNT_USAGE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNTS_USAGE_SELECT;
+import static com.codenvy.api.dao.sql.SqlDaoQueries.ACCOUNT_BONUSES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.CHARGES_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.EXCESSIVE_ACCOUNT_USAGE_SELECT;
 import static com.codenvy.api.dao.sql.SqlDaoQueries.FFREE_AMOUNT;
@@ -91,7 +92,7 @@ public class SqlBillingService implements BillingService {
     }
 
     @Override
-    public void generateInvoices(long from, long till) throws ServerException {
+    public int generateInvoices(long from, long till) throws ServerException {
         String calculationId = UUID.randomUUID().toString();
 
         try (Connection connection = connectionFactory.getConnection()) {
@@ -113,27 +114,33 @@ public class SqlBillingService implements BillingService {
                     saasCharges.setDouble(2, saasFreeGbH);
                     saasCharges.setDouble(3, saasFreeGbH);
                     saasCharges.setDouble(4, saasFreeGbH);
-                    saasCharges.setDouble(5, saasChargeableGbHPrice);
-                    saasCharges.setString(6, calculationId);
+                    saasCharges.setDouble(5, saasFreeGbH);
+                    saasCharges.setDouble(6, saasChargeableGbHPrice);
+                    saasCharges.setString(7, calculationId);
 
-                    saasCharges.setObject(7, range);
                     saasCharges.setObject(8, range);
-                    saasCharges.setDouble(9, till - from);
-                    saasCharges.setObject(10, range);
-                    saasCharges.setString(11, calculationId);
+                    saasCharges.setObject(9, range);
+                    saasCharges.setDouble(10, till - from);
+                    saasCharges.setObject(11, range);
+                    saasCharges.setObject(12, range);
+                    saasCharges.setString(13, calculationId);
 
                     saasCharges.execute();
                 }
 
+                int generatedInvoices;
                 try (PreparedStatement invoices = connection.prepareStatement(INVOICES_INSERT)) {
                     invoices.setLong(1, System.currentTimeMillis());
                     invoices.setObject(2, range);
                     invoices.setString(3, calculationId);
                     invoices.setString(4, calculationId);
                     invoices.execute();
+                    generatedInvoices = invoices.getUpdateCount();
                 }
 
                 connection.commit();
+
+                return generatedInvoices;
             } catch (SQLException e) {
                 connection.rollback();
                 if (e.getLocalizedMessage().contains("conflicts with existing key (faccount_id, fperiod)")) {
@@ -144,7 +151,6 @@ public class SqlBillingService implements BillingService {
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
-
     }
 
 
@@ -310,9 +316,9 @@ public class SqlBillingService implements BillingService {
                     .append(" SUM(A.FPAID_AMOUNT)    AS FPAID_AMOUNT, ")
                     .append(" SUM(A.FPREPAID_AMOUNT) AS FPREPAID_AMOUNT ")
                     .append(" FROM (")
-                    .append(ACCOUNT_USAGE_SELECT);
+                    .append(ACCOUNTS_USAGE_SELECT);
             appendOverlapRange(select, "M.FDURING", from, till);
-            select.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT ");
+            select.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT, B.FAMOUNT ");
             select.append(" ) AS A ");
 
             try (PreparedStatement usageStatement = connection.prepareStatement(select.toString())) {
@@ -332,6 +338,7 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setObject(11, range);
                 usageStatement.setLong(12, till - from);
                 usageStatement.setObject(13, range);
+                usageStatement.setObject(14, range);
 
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
                     if (usageResultSet.next()) {
@@ -357,10 +364,10 @@ public class SqlBillingService implements BillingService {
     public List<AccountResources> getEstimatedUsageByAccount(ResourcesFilter resourcesFilter) throws ServerException {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
-            StringBuilder accountUsageSelect = new StringBuilder(ACCOUNT_USAGE_SELECT);
+            StringBuilder accountUsageSelect = new StringBuilder(ACCOUNTS_USAGE_SELECT);
             appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getTillDate());
             appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
-            accountUsageSelect.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT ");
+            accountUsageSelect.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT, B.FAMOUNT");
 
             int havingFields = 0;
             havingFields += appendHavingGreater(accountUsageSelect,
@@ -396,9 +403,10 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setObject(11, range);
                 usageStatement.setLong(12, resourcesFilter.getTillDate() - resourcesFilter.getFromDate());
                 usageStatement.setObject(13, range);
+                usageStatement.setObject(14, range);
 
                 //set variable for 'having' sql part.
-                for (int i = 14; i < 14 + havingFields * 3; ) {
+                for (int i = 15; i < 15 + havingFields * 3; ) {
                     usageStatement.setObject(i++, range);
                     usageStatement.setObject(i++, range);
                     usageStatement.setDouble(i++, saasFreeGbH);
@@ -413,6 +421,7 @@ public class SqlBillingService implements BillingService {
                                             .withFreeAmount(usageResultSet.getDouble("FFREE_AMOUNT"))
                                             .withPaidAmount(usageResultSet.getDouble("FPAID_AMOUNT"))
                                             .withPrePaidAmount(usageResultSet.getDouble("FPREPAID_AMOUNT"))
+                                            .withPaidSum(usageResultSet.getDouble("FPAID_AMOUNT") * saasChargeableGbHPrice)
                                  );
                     }
                     return usage;
@@ -434,26 +443,50 @@ public class SqlBillingService implements BillingService {
                 usageStatement.setDouble(3, saasFreeGbH);
                 usageStatement.setObject(4, range);
                 usageStatement.setObject(5, range);
-                usageStatement.setDouble(6, saasFreeGbH);
+                usageStatement.setLong(6, till - from);
                 usageStatement.setObject(7, range);
-                usageStatement.setObject(8, range);
-                usageStatement.setLong(9, till - from);
-                usageStatement.setObject(10, range);
-                usageStatement.setObject(11, till);
-                usageStatement.setString(12, accountId);
-                usageStatement.setObject(13, range);
-                usageStatement.setString(14, accountId);
+                usageStatement.setObject(8, till);
+                usageStatement.setString(9, accountId);
+                usageStatement.setString(10, accountId);
+                usageStatement.setObject(11, range);
+                usageStatement.setObject(12, range);
+                usageStatement.setString(13, accountId);
                 try (ResultSet usageResultSet = usageStatement.executeQuery()) {
                     if (usageResultSet.next()) {
                         return !(usageResultSet.getDouble("FPAID_AMOUNT") > 0.0);
+                    } else {
+                        // Account doesn't have any metrics records in given period.
+                        // That means that available resources has not been used at all
+                        return true;
                     }
                 }
             }
         } catch (SQLException e) {
             throw new ServerException(e.getLocalizedMessage(), e);
         }
+    }
 
-        return false;
+    @Override
+    public double getProvidedFreeResources(String accountId, Long from, Long till) throws ServerException {
+        try (Connection connection = connectionFactory.getConnection()) {
+            connection.setAutoCommit(false);
+            try (PreparedStatement usageStatement = connection.prepareStatement(ACCOUNT_BONUSES_SELECT)) {
+                Int8RangeType range = new Int8RangeType(from, till, true, true);
+                usageStatement.setString(1, accountId);
+                usageStatement.setObject(2, range);
+                try (ResultSet usageResultSet = usageStatement.executeQuery()) {
+                    if (usageResultSet.next()) {
+                        return saasFreeGbH + usageResultSet.getDouble("FAMOUNT");
+                    } else {
+                        // Account doesn't have any metrics records in given period.
+                        // That means that available resources has not been used at all
+                        return saasFreeGbH;
+                    }
+                }
+            }
+        } catch (SQLException e) {
+            throw new ServerException(e.getLocalizedMessage(), e);
+        }
     }
 
     private Map<String, String> getMemoryChargeDetails(Connection connection, String accountId, String calculationID)
@@ -505,6 +538,8 @@ public class SqlBillingService implements BillingService {
             try (ResultSet chargesResultSet = chargesStatement.executeQuery()) {
                 while (chargesResultSet.next()) {
                     charges.add(DtoFactory.getInstance().createDto(Charge.class)
+                                          .withProvidedFreeAmount(chargesResultSet.getDouble("FPROVIDED_FREE_AMOUNT"))
+                                          .withProvidedPrepaidAmount(chargesResultSet.getDouble("FPROVIDED_PREPAID_AMOUNT"))
                                           .withPaidAmount(chargesResultSet.getDouble("FPAID_AMOUNT"))
                                           .withServiceId(chargesResultSet.getString("FSERVICE_ID"))
                                           .withPaidPrice(chargesResultSet.getDouble("FPAID_PRICE"))

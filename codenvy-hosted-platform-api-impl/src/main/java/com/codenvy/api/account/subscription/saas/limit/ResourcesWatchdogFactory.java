@@ -133,7 +133,7 @@ public class ResourcesWatchdogFactory {
 
         @Override
         public void lock() {
-            accountLocker.lockResources(accountId);
+            accountLocker.setResourcesLock(accountId);
         }
     }
 
@@ -190,7 +190,7 @@ public class ResourcesWatchdogFactory {
 
         @Override
         public void lock() {
-            workspaceLocker.lockResources(workspaceId);
+            workspaceLocker.setResourcesLock(workspaceId);
         }
     }
 }

@@ -18,8 +18,13 @@
 package com.codenvy.api.account.billing;
 
 import com.codenvy.api.account.PaymentService;
+import com.codenvy.api.account.promotion.PromotionService;
 import com.codenvy.api.dao.billing.BraintreeCreditCardDaoImpl;
+import com.codenvy.api.dao.sql.SqlBonusDao;
 import com.google.inject.AbstractModule;
+import com.google.inject.matcher.Matchers;
+
+import static org.eclipse.che.inject.Matchers.names;
 
 /**
  * @author Sergii Kabashniuk
@@ -29,12 +34,20 @@ public class BillingModule extends AbstractModule {
     protected void configure() {
         bind(com.braintreegateway.BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
         bind(PaymentService.class).to(BraintreePaymentService.class).asEagerSingleton();
-        bind(BillingPeriod.class).to(DailyBillingPeriod.class);
+        bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
+        bind(BonusDao.class).to(SqlBonusDao.class);
         bind(com.codenvy.api.account.billing.CreditCardDao.class).to(BraintreeCreditCardDaoImpl.class);
         bind(TemplateProcessor.class);
 
         bind(CreditCardService.class);
         bind(InvoiceService.class);
         bind(BillingRestService.class);
+        bind(PromotionService.class);
+
+        CreateBonusInterceptor createBonusInterceptor = new CreateBonusInterceptor();
+        requestInjection(createBonusInterceptor);
+        bindInterceptor(Matchers.subclassesOf(BonusDao.class),
+                        names("create"),
+                        createBonusInterceptor);
     }
 }

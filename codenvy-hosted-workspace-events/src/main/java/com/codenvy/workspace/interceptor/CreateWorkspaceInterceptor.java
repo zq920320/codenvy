@@ -17,14 +17,13 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import org.aopalliance.intercept.MethodInterceptor;
+import org.aopalliance.intercept.MethodInvocation;
+import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
-
-import org.aopalliance.intercept.MethodInterceptor;
-import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,9 +36,13 @@ import java.util.Map;
 
 /**
  * Intercepts calls to workspace/create() service and sends welcome email.
+ *
  * @author Max Shaposhnik
  */
 public class CreateWorkspaceInterceptor implements MethodInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(CreateWorkspaceInterceptor.class);
+
+    private static final String MAIL_TEMPLATE = "email-templates/workspace_created.html";
 
     @Inject
     private MailSenderClient mailSenderClient;
@@ -47,37 +50,39 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     @Inject
     private UserDao userDao;
 
-
     @Inject
     @Named("api.endpoint")
     private String apiEndpoint;
 
-    private static final String MAIL_TEMPLATE = "email-templates/workspace_created.html";
+    @Inject
+    @Named("subscription.saas.usage.free.gbh")
+    private String freeGbh;
 
-    private static final Logger LOG = LoggerFactory.getLogger(CreateWorkspaceInterceptor.class);
+    @Inject
+    @Named("subscription.saas.free.max_limit_mb")
+    private String freeLimit;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
-        if ("create".equals(invocation.getMethod().getName())) {
-            try {
-                String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
-                WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+        try {
+            String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
+            WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
 
-                Map<String, String> props = new HashMap<>();
-                props.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
-                props.put("workspace", descriptor.getName());
+            Map<String, String> properties = new HashMap<>();
+            properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+            properties.put("workspace", descriptor.getName());
+            properties.put("free.gbh", freeGbh);
+            properties.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
+            mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
+                                      "Welcome To Codenvy",
+                                      MediaType.TEXT_HTML,
+                                      IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
+                                      properties);
 
-                mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
-                                          "Welcome To Codenvy",
-                                          MediaType.TEXT_HTML,
-                                          IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
-
-                LOG.info("Workspace created message send to {}", creatorEmail);
-            } catch (Exception e) {
-                LOG.warn("Unable to send workspace creation notification email", e);
-            }
-
+            LOG.info("Workspace created message send to {}", creatorEmail);
+        } catch (Exception e) {
+            LOG.warn("Unable to send workspace creation notification email", e);
         }
         return result;
     }

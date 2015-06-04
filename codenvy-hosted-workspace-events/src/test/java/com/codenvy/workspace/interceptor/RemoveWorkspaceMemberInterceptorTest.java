@@ -76,20 +76,11 @@ public class RemoveWorkspaceMemberInterceptorTest {
     public void setup() throws Exception {
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
-
-
     }
 
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSendEmailIfInvocationThrowsException() throws Throwable {
         when(invocation.proceed()).thenThrow(new ConflictException("conflict"));
-        interceptor.invoke(invocation);
-        verifyZeroInteractions(mailSenderClient);
-    }
-
-    @Test
-    public void shouldNotSendEmailIfInvocationToAnotherMethod() throws Throwable {
-        when(invocation.getMethod()).thenReturn(WorkspaceService.class.getMethod("remove", String.class));
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }
@@ -117,6 +108,5 @@ public class RemoveWorkspaceMemberInterceptorTest {
         verify(mailSenderClient)
                 .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html; charset=utf-8"),
                           anyString(), anyMapOf(String.class, String.class));
-
     }
 }

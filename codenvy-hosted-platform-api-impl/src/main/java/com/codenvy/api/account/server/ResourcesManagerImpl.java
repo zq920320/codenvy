@@ -183,8 +183,8 @@ public class ResourcesManagerImpl implements ResourcesManager {
                 final Subscription activeSaasSubscription = accountDao.getActiveSubscription(accountId, ServiceId.SAAS);
                 if ((activeSaasSubscription == null || "sas-community".equals(activeSaasSubscription.getPlanId()))
                     && runnerRam > freeMaxLimit) {
-                    throw new ConflictException(format("Size of RAM for workspace %s has a 4096 MB limit.",
-                                                       resourcesDescriptor.getWorkspaceId()));
+                    throw new ConflictException(format("Size of RAM for workspace %s has a %d MB limit.",
+                                                       resourcesDescriptor.getWorkspaceId(), freeMaxLimit));
 
                 }
             }

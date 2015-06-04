@@ -92,7 +92,7 @@ public class RunTasksActivityChecker {
 
                     final long time = currentTimeMillis();
                     final String analyticsID = descriptor.getCreationTime() + "-" + descriptor.getProcessId();
-                    LOG.info("EVENT#build-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, request.getMemorySize());
+                    LOG.info("EVENT#run-usage# TIME#{}# ID#{}# MEMORY#{}#", time, analyticsID, request.getMemorySize());
                 }
             }
         } catch (Exception e) {

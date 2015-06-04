@@ -17,12 +17,13 @@
  */
 package com.codenvy.workspace.activity;
 
-import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.core.notification.EventSubscriber;
 import com.codenvy.workspace.event.WsActivityEvent;
 import com.codenvy.workspace.listener.WorkspaceRemovalListener;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
+
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.core.notification.EventSubscriber;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
@@ -49,8 +50,10 @@ public class WsActivityListener {
     private final EventSubscriber<WsActivityEvent> subscriber;
 
     @Inject
-    public WsActivityListener(WorkspaceRemovalListener removalListener, @Named(TEMPORARY_WS_STOP_TIME) long temporaryTime,
-                              @Named(PERSISTENT_WS_STOP_TIME) long persistentTime, EventService eventService) {
+    public WsActivityListener(WorkspaceRemovalListener removalListener,
+                              @Named(TEMPORARY_WS_STOP_TIME) long temporaryTime,
+                              @Named(PERSISTENT_WS_STOP_TIME) long persistentTime,
+                              EventService eventService) {
         this.eventService = eventService;
 
         this.persistentWSCache = CacheBuilder.newBuilder()

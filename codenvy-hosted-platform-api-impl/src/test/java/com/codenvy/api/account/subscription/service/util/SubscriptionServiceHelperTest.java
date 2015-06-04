@@ -37,6 +37,7 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -93,7 +94,8 @@ public class SubscriptionServiceHelperTest {
         when(subscriptionQueryBuilder.getTrialQuery(anyString(), anyString())).thenReturn(subscriptionQuery);
         when(subscriptionQuery.execute()).thenReturn(Collections.singletonList(new Subscription()));
 
-        subscriptionServiceHelper.checkTrial(new Subscription());
+        subscriptionServiceHelper.checkTrial(new Subscription().withTrialStartDate(new Date(10))
+                                                               .withTrialEndDate(new Date(20)));
     }
 
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Can't add subscription. Please, contact support")
@@ -104,13 +106,22 @@ public class SubscriptionServiceHelperTest {
         when(subscriptionQueryBuilder.getTrialQuery(anyString(), anyString())).thenReturn(subscriptionQuery);
         when(subscriptionQuery.execute()).thenThrow(new ServerException(""));
 
-        subscriptionServiceHelper.checkTrial(new Subscription());
+        subscriptionServiceHelper.checkTrial(new Subscription().withTrialStartDate(new Date(10))
+                                                               .withTrialEndDate(new Date(20)));
     }
 
     @Test
     public void shouldNotCheckTrialHistoryIfUserIsAdmin() throws Exception {
         prepareUserRole("system/admin");
 
+        subscriptionServiceHelper.checkTrial(new Subscription().withTrialStartDate(new Date(10))
+                                                               .withTrialEndDate(new Date(20)));
+
+        verifyZeroInteractions(accountDao);
+    }
+
+    @Test
+    public void shouldNotCheckTrialHistoryIfSubscriptionDoesNotHaveTrial() throws Exception {
         subscriptionServiceHelper.checkTrial(new Subscription());
 
         verifyZeroInteractions(accountDao);

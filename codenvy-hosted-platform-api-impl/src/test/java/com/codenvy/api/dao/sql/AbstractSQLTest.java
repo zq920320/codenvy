@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.dao.sql;
 
-import org.h2.jdbcx.JdbcConnectionPool;
 import org.postgresql.ds.PGPoolingDataSource;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -32,17 +31,12 @@ import java.text.SimpleDateFormat;
  */
 public class AbstractSQLTest {
 
-    protected DataSource[] sources;
+    protected static DataSource source;
 
-    protected SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
+    protected static SimpleDateFormat sdf = new SimpleDateFormat("dd-M-yyyy HH:mm:ss");
 
     @BeforeSuite
-    public void initSources() throws SQLException {
-
-
-      //  JdbcConnectionPool h2 = JdbcConnectionPool.create("jdbc:h2:mem:test", "sa", "sa");
-
-
+    public void init() throws SQLException {
         final PGPoolingDataSource postgresql = new PGPoolingDataSource();
         postgresql.setDataSourceName("codenvy");
         postgresql.setServerName("dev.box.com");
@@ -51,18 +45,13 @@ public class AbstractSQLTest {
         postgresql.setPassword("codenvy");
         postgresql.setMaxConnections(10);
         postgresql.setPortNumber(5432);
-
-        sources = new DataSource[]{
-               // h2
-                //,
-                postgresql
-        };
+        source = postgresql;
     }
 
     @BeforeMethod
     @AfterMethod
     public void cleanup() throws SQLException {
-        for (DataSource source : sources) {
+        if (source != null) {
             StorageInitializer initializer = new StorageInitializer(source, true);
             initializer.clean();
             initializer.init();

@@ -21,10 +21,12 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-//import org.eclipse.che.api.factory.FactoryService;
-//import org.eclipse.che.api.factory.dto.Factory;
-//import org.eclipse.che.api.factory.dto.WorkspaceResources;
-//import org.eclipse.che.api.runner.internal.Constants;
+/*
+import org.eclipse.che.api.factory.FactoryService;
+import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.dto.WorkspaceResources;
+import org.eclipse.che.api.runner.internal.Constants;
+*/
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -36,43 +38,61 @@ import static javax.ws.rs.core.UriBuilder.fromUri;
 
 /**
  * Allows to set internal resource attributes into workspace.
- * @author Max Shaposhnik
  *
+ * @author Max Shaposhnik
  */
 public class FactoryResourcesInterceptor implements MethodInterceptor {
-
     @Inject
     @Named("api.endpoint")
-    private  String   apiEndPoint;
+    private String apiEndPoint;
+
+    @Inject
+    @Named("factory.runner.lifetime")
+    private String runnerLifetime;
+
+    @Inject
+    @Named("factory.runner.ram")
+    private String runnerRam;
+
+    @Inject
+    @Named("factory.builder.execution_time")
+    private String builderExecutionTime;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        /*if ("create".equals(invocation.getMethod().getName()) || "createTemporary".equals(invocation.getMethod().getName())) {
-            Workspace inbound = (Workspace)invocation.getArguments()[0];
-            if (inbound.getAttributes().containsKey("sourceFactoryId")) {
-                String getFactoryUrl =
-                        fromUri(apiEndPoint).path(FactoryService.class).path(FactoryService.class, "getFactory")
-                                            .build(inbound.getAttributes().get("sourceFactoryId")).toString();
-                Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
-                Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
-                org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
-                WorkspaceResources resources = factoryWorkspace.getResources();
-                if (resources != null) {
-                    if (resources.getRunnerRam() != null) {
-                        inbound.getAttributes()
-                               .put(Constants.RUNNER_MAX_MEMORY_SIZE, Integer.toString(resources.getRunnerRam()));
-                    }
-                    if (resources.getRunnerTimeout() != null) {
-                        inbound.getAttributes()
-                               .put(Constants.RUNNER_LIFETIME, Integer.toString(resources.getRunnerTimeout()));
-                    }
-                    if (resources.getBuilderTimeout() != null) {
-                        inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
-                                                    Integer.toString(resources.getBuilderTimeout()));
-                    }
-                }
-            }
-        }*/
+        /*
+        Workspace inbound = (Workspace)invocation.getArguments()[0];
+
+        //Workspace created without factory
+        if (!inbound.getAttributes().containsKey("sourceFactoryId")) {
+            return invocation.proceed();
+        }
+
+        String getFactoryUrl = fromUri(apiEndPoint).path(FactoryService.class)
+                                                   .path(FactoryService.class, "getFactory")
+                                                   .build(inbound.getAttributes().get("sourceFactoryId"))
+                                                   .toString();
+        Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
+        Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
+        org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
+        if (factoryWorkspace == null || factoryWorkspace.getResources() == null) {
+            inbound.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE, runnerRam);
+            inbound.getAttributes().put(Constants.RUNNER_LIFETIME, runnerLifetime);
+            inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME, builderExecutionTime);
+            return invocation.proceed();
+        }
+        //looking one-by-one because they may be set partially
+        WorkspaceResources resources = factoryWorkspace.getResources();
+        inbound.getAttributes().put(Constants.RUNNER_MAX_MEMORY_SIZE,
+                                    resources.getRunnerRam() != null ? Integer.toString(resources.getRunnerRam()) : runnerRam);
+        inbound.getAttributes().put(Constants.RUNNER_LIFETIME,
+                                    resources.getRunnerTimeout() != null ? Integer.toString(resources.getRunnerTimeout())
+                                                                         : runnerLifetime);
+
+        inbound.getAttributes().put(org.eclipse.che.api.builder.internal.Constants.BUILDER_EXECUTION_TIME,
+                                    resources.getBuilderTimeout() != null ? Integer.toString(resources.getBuilderTimeout())
+                                                                          : builderExecutionTime);
+        */
         return invocation.proceed();
     }
 }

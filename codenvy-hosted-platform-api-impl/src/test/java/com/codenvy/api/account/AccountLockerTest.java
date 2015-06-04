@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.account;
 
-import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
@@ -35,10 +34,13 @@ import org.testng.annotations.Test;
 
 import java.util.Arrays;
 
+import static org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY;
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
+import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -69,18 +71,18 @@ public class AccountLockerTest {
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", false),
                                                                               createWorkspace("accountId", "ws_2", false)));
-        accountLocker.lockResources("accountId");
+        accountLocker.setResourcesLock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object o) {
                 final Account account = (Account)o;
                 return "accountId".equals(account.getId())
-                       && account.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
+                       && account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceLocker).lockResources(eq("ws_1"));
-        verify(workspaceLocker).lockResources(eq("ws_2"));
+        verify(workspaceLocker).setResourcesLock(eq("ws_1"));
+        verify(workspaceLocker).setResourcesLock(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
@@ -90,25 +92,37 @@ public class AccountLockerTest {
     }
 
     @Test
+    public void shouldNotLockResourcesForAccountIfItAlreadyHasResourcesLockedProperty() throws Exception {
+        Account account = new Account().withId("accountId");
+        account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(anyString())).thenReturn(account);
+
+        accountLocker.setResourcesLock("accountId");
+
+        verify(accountDao, never()).update((Account)anyObject());
+        verify(eventService, never()).publish(anyObject());
+    }
+
+    @Test
     public void shouldUnlockResourcesForAccountAndItsWorkspaces() throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
-        account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+        account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
         when(accountDao.getById(anyString())).thenReturn(account);
 
         when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", true),
                                                                               createWorkspace("accountId", "ws_2", true)));
-        accountLocker.unlockResources("accountId");
+        accountLocker.removeResourcesLock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object o) {
                 final Account account = (Account)o;
                 return "accountId".equals(account.getId())
-                       && !account.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY);
+                       && !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
             }
         }));
-        verify(workspaceLocker).unlockResources(eq("ws_1"));
-        verify(workspaceLocker).unlockResources(eq("ws_2"));
+        verify(workspaceLocker).removeResourcesLock(eq("ws_1"));
+        verify(workspaceLocker).removeResourcesLock(eq("ws_2"));
         verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
@@ -118,36 +132,104 @@ public class AccountLockerTest {
     }
 
     @Test
-    public void shouldLockAccount() throws NotFoundException, ServerException, ConflictException {
+    public void shouldDoNotUnlockResourcesIfAccountAlreadyHasNotResourcesLockedProperty() throws Exception {
         Account account = new Account().withId("accountId");
         when(accountDao.getById(anyString())).thenReturn(account);
 
-        accountLocker.lock("accountId");
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(createWorkspace("accountId", "ws_1", true),
+                                                                              createWorkspace("accountId", "ws_2", true)));
+        accountLocker.removeResourcesLock("accountId");
+
+        verify(accountDao, never()).update((Account)anyObject());
+        verify(workspaceLocker, never()).removeResourcesLock(anyString());
+        verify(eventService, never()).publish(account);
+    }
+
+    @Test
+    public void shouldPaymentLockAccount() throws NotFoundException, ServerException, ConflictException {
+        Account account = new Account().withId("accountId");
+        when(accountDao.getById(anyString())).thenReturn(account);
+
+        accountLocker.setPaymentLock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object o) {
                 final Account account = (Account)o;
                 return "accountId".equals(account.getId())
-                       && account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY);
+                       && account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)
+                       && account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                return AccountLockEvent.EventType.ACCOUNT_LOCKED.equals(((AccountLockEvent)o).getType());
             }
         }));
     }
 
     @Test
-    public void shouldUnlockAccount() throws NotFoundException, ServerException, ConflictException {
+    public void shouldNotPaymentLockAccountIfItAlreadyHasPaymentLockedProperty() throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
-        account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+        account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
         when(accountDao.getById(anyString())).thenReturn(account);
 
-        accountLocker.unlock("accountId");
+        accountLocker.setPaymentLock("accountId");
+
+        verify(accountDao, never()).update((Account)anyObject());
+        verify(eventService, never()).publish(anyObject());
+    }
+
+    @Test
+    public void shouldPaymentUnlockAccount() throws NotFoundException, ServerException, ConflictException {
+        Account account = new Account().withId("accountId");
+        account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+        account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(anyString())).thenReturn(account);
+
+        accountLocker.removePaymentLock("accountId");
 
         verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
             @Override
             public boolean matches(Object o) {
                 final Account account = (Account)o;
                 return "accountId".equals(account.getId())
-                       && !account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY);
+                       && !account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)
+                       && !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                return AccountLockEvent.EventType.ACCOUNT_UNLOCKED.equals(((AccountLockEvent)o).getType());
+            }
+        }));
+    }
+
+    @Test
+    public void shouldNotUnlockAccountIfItHasNotPaymentLockProperty() throws NotFoundException, ServerException, ConflictException {
+        Account account = new Account().withId("accountId");
+        account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+        account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
+        when(accountDao.getById(anyString())).thenReturn(account);
+
+        accountLocker.removePaymentLock("accountId");
+
+        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
+            @Override
+            public boolean matches(Object o) {
+                final Account account = (Account)o;
+                return "accountId".equals(account.getId())
+                       && !account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)
+                       && !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                return AccountLockEvent.EventType.ACCOUNT_UNLOCKED.equals(((AccountLockEvent)o).getType());
             }
         }));
     }
@@ -156,7 +238,7 @@ public class AccountLockerTest {
         Workspace workspace = new Workspace().withAccountId(accountId)
                                              .withId(workspaceId);
         if (lockedResources) {
-            workspace.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+            workspace.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
         }
         return workspace;
     }

@@ -40,9 +40,10 @@ public interface BillingService {
      *         beginning of period.
      * @param till
      *         end of period.
+     * @return number of generated invoices
      * @throws ServerException
      */
-    void generateInvoices(long from, long till) throws ServerException;
+    int generateInvoices(long from, long till) throws ServerException;
 
     /**
      * Get list of invoices with given Payment state.
@@ -138,5 +139,19 @@ public interface BillingService {
      * @throws ServerException
      */
     boolean hasAvailableResources(String accountId, Long from, Long till) throws ServerException;
+
+    /**
+     * Get provided free resources for account by given period.
+     *
+     * @param accountId
+     *         id of account
+     * @param from
+     *         begin of period
+     * @param till
+     *         end of period
+     * @return number of provided free resources
+     * @throws ServerException
+     */
+    double getProvidedFreeResources(String accountId, Long from, Long till) throws ServerException;
 
 }

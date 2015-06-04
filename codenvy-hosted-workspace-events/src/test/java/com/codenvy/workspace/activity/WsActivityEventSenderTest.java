@@ -36,17 +36,17 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 @Listeners(value = {MockitoTestNGListener.class})
-public class WsActivitySenderTest {
+public class WsActivityEventSenderTest {
     private EventService eventService;
 
-    private WsActivitySender wsActivitySender;
+    private WsActivityEventSender wsActivityEventSender;
 
     private EventSubscriber<WsActivityEvent> eventSubscriber;
 
     @BeforeMethod
     public void setUp() throws Exception {
         eventService = new EventService();
-        wsActivitySender = new WsActivitySender(eventService);
+        wsActivityEventSender = new WsActivityEventSender(eventService);
 
         eventSubscriber = spy(new EventSubscriber<WsActivityEvent>() {
             @Override
@@ -60,7 +60,7 @@ public class WsActivitySenderTest {
     @Test
     public void shouldSendEventIfThisIsFirstAccessToWs() throws InterruptedException {
 
-        wsActivitySender.onMessage("id", true);
+        wsActivityEventSender.onActivity("id", true);
 
         Thread.sleep(500);
 
@@ -76,13 +76,13 @@ public class WsActivitySenderTest {
     @Test(enabled = false)
     public void shouldSendEventIfLastAccessToWsWasMoreThan60SecondsAgo() throws Exception {
 
-        setFinalStatic(WsActivitySender.class.getField("ACTIVITY_PERIOD"), Integer.valueOf(1000));
+        setFinalStatic(WsActivityEventSender.class.getField("ACTIVITY_PERIOD"), Integer.valueOf(1000));
 
-        wsActivitySender.onMessage("id", true);
+        wsActivityEventSender.onActivity("id", true);
 
         Thread.sleep(2000);
 
-        wsActivitySender.onMessage("id", true);
+        wsActivityEventSender.onActivity("id", true);
 
         Thread.sleep(500);
 
@@ -97,8 +97,8 @@ public class WsActivitySenderTest {
 
     @Test
     public void shouldNotSendEventIfLastAccessToWsWasLessThan60SecondsAgo() {
-        wsActivitySender.onMessage("id", true);
-        wsActivitySender.onMessage("id", true);
+        wsActivityEventSender.onActivity("id", true);
+        wsActivityEventSender.onActivity("id", true);
 
         verify(eventSubscriber, times(1)).onEvent(argThat(new ArgumentMatcher<WsActivityEvent>() {
             @Override

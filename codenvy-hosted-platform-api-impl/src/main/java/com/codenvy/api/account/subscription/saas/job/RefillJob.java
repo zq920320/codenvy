@@ -71,7 +71,7 @@ public class RefillJob implements Runnable {
             Set<String> accountIdsWithPaymentLock = new HashSet<>();
             for (Account account : accountDao.getAccountsWithLockedResources()) {
                 if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
-                    accountLocker.unlockResources(account.getId());
+                    accountLocker.removeResourcesLock(account.getId());
                 } else {
                     accountIdsWithPaymentLock.add(account.getId());
                 }
@@ -79,7 +79,7 @@ public class RefillJob implements Runnable {
 
             for (Workspace workspace : workspaceDao.getWorkspacesWithLockedResources()) {
                 if (!accountIdsWithPaymentLock.contains(workspace.getAccountId())) {
-                    workspaceLocker.unlockResources(workspace.getId());
+                    workspaceLocker.removeResourcesLock(workspace.getId());
                 }
             }
         } catch (ServerException | ForbiddenException e) {

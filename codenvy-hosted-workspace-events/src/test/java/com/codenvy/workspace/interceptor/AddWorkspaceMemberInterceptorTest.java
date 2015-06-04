@@ -17,17 +17,9 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import static javax.ws.rs.core.Response.Status.CREATED;
-import static javax.ws.rs.core.Response.status;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.anyMapOf;
-import static org.mockito.Mockito.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.verifyZeroInteractions;
-import static org.mockito.Mockito.when;
-
+import org.aopalliance.intercept.MethodInvocation;
+import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
@@ -39,9 +31,6 @@ import org.eclipse.che.api.workspace.shared.dto.WorkspaceReference;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.user.UserImpl;
 import org.eclipse.che.dto.server.DtoFactory;
-
-import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -56,9 +45,17 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.status;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.anyMapOf;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
+import static org.mockito.Mockito.when;
+
 @Listeners(value = {MockitoTestNGListener.class})
 public class AddWorkspaceMemberInterceptorTest {
-
     @Mock
     private MailSenderClient mailSenderClient;
 
@@ -84,20 +81,11 @@ public class AddWorkspaceMemberInterceptorTest {
     public void setup() throws Exception {
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
-
-
     }
 
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSendEmailIfInvocationThrowsException() throws Throwable {
         when(invocation.proceed()).thenThrow(new ConflictException("conflict"));
-        interceptor.invoke(invocation);
-        verifyZeroInteractions(mailSenderClient);
-    }
-
-    @Test
-    public void shouldNotSendEmailIfInvocationToAnotherMethod() throws Throwable {
-        when(invocation.getMethod()).thenReturn(WorkspaceService.class.getMethod("remove", String.class));
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }
@@ -144,16 +132,12 @@ public class AddWorkspaceMemberInterceptorTest {
         verify(mailSenderClient)
                 .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html; charset=utf-8"),
                           anyString(), anyMapOf(String.class, String.class));
-
     }
-
 
     @Test
     public void shouldNotSendEmailOnFirstUser() throws Throwable {
-
         String recipient = "test@user.com";
-        Method method =
-                WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
+        Method method = WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
         Field f = interceptor.getClass().getDeclaredField("apiEndpoint");
         f.setAccessible(true);
         f.set(interceptor, "http://dev.box.com/api");
@@ -175,5 +159,4 @@ public class AddWorkspaceMemberInterceptorTest {
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }
-
 }

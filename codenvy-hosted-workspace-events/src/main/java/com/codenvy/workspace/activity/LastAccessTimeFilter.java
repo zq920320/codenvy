@@ -35,11 +35,11 @@ import java.io.IOException;
 @Singleton
 public class LastAccessTimeFilter implements Filter {
 
-    private final WsActivitySender wsActivitySender;
+    private final WsActivityEventSender wsActivityEventSender;
 
     @Inject
-    public LastAccessTimeFilter(WsActivitySender wsActivitySender) {
-        this.wsActivitySender = wsActivitySender;
+    public LastAccessTimeFilter(WsActivityEventSender wsActivityEventSender) {
+        this.wsActivityEventSender = wsActivityEventSender;
     }
 
     @Override
@@ -53,7 +53,7 @@ public class LastAccessTimeFilter implements Filter {
             EnvironmentContext context = EnvironmentContext.getCurrent();
             // check for null to be able map filter to root
             if (null != context.getWorkspaceId()) {
-                wsActivitySender.onMessage(context.getWorkspaceId(), context.isWorkspaceTemporary());
+                wsActivityEventSender.onActivity(context.getWorkspaceId(), context.isWorkspaceTemporary());
             }
         } finally {
             chain.doFilter(request, response);

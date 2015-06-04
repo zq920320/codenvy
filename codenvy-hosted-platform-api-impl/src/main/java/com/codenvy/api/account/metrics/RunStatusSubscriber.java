@@ -90,7 +90,13 @@ public class RunStatusSubscriber/* implements EventSubscriber<RunnerEvent>*/ {
     private void registerMemoryUsage(RunnerEvent event) {
         try {
             final Workspace workspace = workspaceDao.getById(event.getWorkspace());
-            final RunQueueTask task = runQueue.getTask(event.getProcessId());
+            final RunQueueTask task;
+            try {
+                task = runQueue.getTask(event.getProcessId());
+            } catch (NotFoundException nfe) {
+                //task already is interrupted
+                return;
+            }
             final RunRequest request = task.getRequest();
             final MemoryUsedMetric memoryUsedMetric = new MemoryUsedMetric(request.getMemorySize(),
                                                                            task.getCreationTime(),
@@ -103,8 +109,8 @@ public class RunStatusSubscriber/* implements EventSubscriber<RunnerEvent>*/ {
 
             resourcesUsageTracker.resourceUsageStarted(memoryUsedMetric);
         } catch (NotFoundException | ServerException e) {
-            LOG.error("Error registration usage of resources by run process {} in workspace {} in project {}", event.getProcessId(),
-                      event.getWorkspace(), event.getProject());
+            LOG.error(String.format("Error registration usage of resources by run process %s in workspace %s in project %s",
+                                    event.getProcessId(), event.getWorkspace(), event.getProject()), e);
         }
     }*/
 }

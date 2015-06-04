@@ -31,6 +31,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 
 import static java.lang.String.format;
+import static org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY;
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
 
 /**
  * Locks and unlocks account and its workspaces
@@ -53,62 +55,107 @@ public class AccountLocker {
         this.workspaceLocker = workspaceLocker;
     }
 
-    public void unlockResources(String accountId) {
-        try {
-            final Account account;
-            account = accountDao.getById(accountId);
-            account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY);
-            accountDao.update(account);
-        } catch (NotFoundException | ServerException e) {
-            LOG.error(format("Error removing lock property from account %s .", accountId), e);
-        }
-
-        try {
-            for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
-                workspaceLocker.unlockResources(workspace.getId());
-            }
-        } catch (ServerException e) {
-            LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
-        }
-        eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
+    /**
+     * Sets resources lock for account with given id.
+     * Account won't be locked second time if it already has resources lock
+     */
+    public void setResourcesLock(String accountId) {
+        setPaymentLock(accountId, false);
     }
 
-    public void lockResources(String accountId) {
+    /**
+     * Sets payment lock for account with given id.
+     * Setting of payment lock also sets resources lock.
+     * Account won't be locked second time if it already has payment lock
+     */
+    public void setPaymentLock(String accountId) {
+        setPaymentLock(accountId, true);
+    }
+
+    /**
+     * Removes resources lock for account with given id.
+     * Account's resources won't be unlocked if account hasn't resources lock.
+     * Account's resources won't be unlocked if it has payment lock.
+     */
+    public void removeResourcesLock(String accountId) {
+        unlock(accountId, false);
+    }
+
+    /**
+     * Removes payment lock for account with given id.
+     * Removing of payment lock also removes resources lock.
+     * Account won't be unlocked second time if it hasn't payment lock
+     */
+    //TODO Use this method after successfully charging of invoice
+    public void removePaymentLock(String accountId) {
+        unlock(accountId, true);
+    }
+
+    private void setPaymentLock(String accountId, boolean paymentLock) {
         try {
             final Account account = accountDao.getById(accountId);
-            account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
-            accountDao.update(account);
+
+            boolean accountChanged = false;
+            if (paymentLock) {
+                if (!account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)) {
+                    account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
+                    account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+                    accountChanged = true;
+                } else {
+                    LOG.warn("Trying to set payment lock for account with id {} that already is locked", accountId);
+                }
+            } else if (!account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+                accountChanged = true;
+            } else {
+                LOG.warn("Trying to set resources lock for account with id {} that already is locked", accountId);
+            }
+
+            if (accountChanged) {
+                accountDao.update(account);
+                eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
+                try {
+                    for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
+                        workspaceLocker.setResourcesLock(workspace.getId());
+                    }
+                } catch (ServerException e) {
+                    LOG.error(format("Can't get account's workspaces %s for writing lock property", accountId), e);
+                }
+            }
         } catch (ServerException | NotFoundException e) {
             LOG.error(format("Error writing lock property into account %s .", accountId), e);
         }
-
-        eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
-        try {
-            for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
-                workspaceLocker.lockResources(workspace.getId());
-            }
-        } catch (ServerException e) {
-            LOG.error(format("Can't get account's workspaces %s for writing lock property", accountId), e);
-        }
     }
 
-    public void lock(String accountId) {
-        try {
-            final Account account = accountDao.getById(accountId);
-            account.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
-            accountDao.update(account);
-        } catch (NotFoundException | ServerException e) {
-            LOG.error(format("Error writing lock property into account %s .", accountId), e);
-        }
-    }
-
-    //TODO Use this method after successfully charging of invoice
-    public void unlock(String accountId) {
+    private void unlock(String accountId, boolean paymentLock) {
         try {
             final Account account;
             account = accountDao.getById(accountId);
-            account.getAttributes().remove(org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY);
-            accountDao.update(account);
+
+            boolean accountChanged = false;
+            if (paymentLock) {
+                if (account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)) {
+                    account.getAttributes().remove(PAYMENT_LOCKED_PROPERTY);
+                    account.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
+                    accountChanged = true;
+                }
+            } else if (account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                account.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
+                accountChanged = true;
+            }
+
+            if (accountChanged) {
+                accountDao.update(account);
+                eventService.publish(AccountLockEvent.accountUnlockedEvent(accountId));
+
+                try {
+                    for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
+                        workspaceLocker.removeResourcesLock(workspace.getId());
+                    }
+                } catch (ServerException e) {
+                    LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
+                }
+            }
         } catch (NotFoundException | ServerException e) {
             LOG.error(format("Error removing lock property from account %s .", accountId), e);
         }
