@@ -424,18 +424,18 @@ public class TestTaskMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
-                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_b={id=id3_b}, "
-                                   + "id3_r={id=id3_r}, "
+                                   + "id3_d={id=id3_d}, "
+                                   + "id4_r={id=id4_r}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
                                    + "session2={id=session2}, "
-                                   + "id3_d={id=id3_d}"
+                                   + "id2_b={id=id2_b}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id2_r={id=id2_r}"
                                    + "}");
     }
 
@@ -456,16 +456,16 @@ public class TestTaskMetrics extends BaseTest {
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
                                    + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_b={id=id3_b}, "
-                                   + "id3_r={id=id3_r}, "
+                                   + "id3_d={id=id3_d}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
                                    + "session2={id=session2}, "
-                                   + "id3_d={id=id3_d}"
+                                   + "id2_b={id=id2_b}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id2_r={id=id2_r}, "
+                                   + "id1_r={id=id1_r}"
                                    + "}");
     }
 
@@ -485,18 +485,18 @@ public class TestTaskMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
-                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_b={id=id3_b}, "
-                                   + "id3_r={id=id3_r}, "
+                                   + "id3_d={id=id3_d}, "
+                                   + "id4_r={id=id4_r}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
                                    + "session2={id=session2}, "
-                                   + "id3_d={id=id3_d}"
+                                   + "id2_b={id=id2_b}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id2_r={id=id2_r}"
                                    + "}");
     }
 
@@ -515,18 +515,18 @@ public class TestTaskMetrics extends BaseTest {
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
         assertEquals(m.toString(), "{"
-                                   + "id4_r={id=id4_r}, "
                                    + "id1_b={id=id1_b}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_b={id=id3_b}, "
-                                   + "id3_r={id=id3_r}, "
+                                   + "id3_d={id=id3_d}, "
+                                   + "id4_r={id=id4_r}, "
                                    + "id2_d={id=id2_d}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id2_r={id=id2_r}, "
                                    + "session2={id=session2}, "
-                                   + "id3_d={id=id3_d}"
+                                   + "id2_b={id=id2_b}, "
+                                   + "id1_d={id=id1_d}, "
+                                   + "id3_b={id=id3_b}, "
+                                   + "session1={id=session1}, "
+                                   + "id3_r={id=id3_r}, "
+                                   + "id1_r={id=id1_r}, "
+                                   + "id2_r={id=id2_r}"
                                    + "}");
     }
 
@@ -545,13 +545,13 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id4_r={id=id4_r}, " +
-                                   "id1_b={id=id1_b}, " +
-                                   "id1_r={id=id1_r}, " +
+        assertEquals(m.toString(), "{id1_b={id=id1_b}, " +
+                                   "id3_d={id=id3_d}, " +
                                    "id1_d={id=id1_d}, " +
                                    "id3_b={id=id3_b}, " +
                                    "id3_r={id=id3_r}, " +
-                                   "id3_d={id=id3_d}}");
+                                   "id1_r={id=id1_r}, " +
+                                   "id4_r={id=id4_r}}");
     }
 
     @Test
@@ -618,9 +618,9 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{id3_b={id=id3_b}, " +
-                                   "id3_r={id=id3_r}, " +
-                                   "id3_d={id=id3_d}}");
+        assertEquals(m.toString(), "{id3_d={id=id3_d}, " +
+                                   "id3_b={id=id3_b}, " +
+                                   "id3_r={id=id3_r}}");
     }
 
     void prepareData() throws Exception {

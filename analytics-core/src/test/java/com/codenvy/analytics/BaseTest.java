@@ -44,7 +44,7 @@ import org.testng.annotations.BeforeClass;
 import java.io.IOException;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import static org.mockito.Mockito.spy;
@@ -110,7 +110,7 @@ public class BaseTest {
     }
 
     protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {
-        Map<String, Map<String, ValueData>> result = new HashMap<>();
+        Map<String, Map<String, ValueData>> result = new LinkedHashMap<>();
 
         for (ValueData item : valueData.getAll()) {
             MapValueData row = (MapValueData)item;
