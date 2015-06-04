@@ -47,6 +47,7 @@ import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -610,7 +611,7 @@ public class AccountDaoImpl implements AccountDao {
     static Subscription toSubscription(Object dbObject) {
         final BasicDBObject basicSubscriptionObj = (BasicDBObject)dbObject;
         @SuppressWarnings("unchecked") //properties is always Map of Strings
-        final Map<String, String> properties = (Map<String, String>)basicSubscriptionObj.get("properties");
+        final Map<String, String> properties = new HashMap<>((Map<String, String>)basicSubscriptionObj.get("properties"));
 
         Subscription subscription = new Subscription().withId(basicSubscriptionObj.getString("id"))
                                                       .withAccountId(basicSubscriptionObj.getString("accountId"))
