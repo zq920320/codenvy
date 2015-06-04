@@ -20,6 +20,8 @@ package com.codenvy.workspace.interceptor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
@@ -53,6 +55,9 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
     private UserDao userDao;
 
     @Inject
+    private AccountDao accountDao;
+
+    @Inject
     private WorkspaceDao workspaceDao;
 
     @Inject
@@ -72,10 +77,19 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
         String recipientEmail = userDao.getById(userId).getEmail();
         String senderEmail = environmentContext.getUser().getName();
 
+        String accountOwnerEmail = "";
+        for (Member member : accountDao.getMembers(environmentContext.getAccountId())) {
+            if (member.getRoles().contains("account/owner")) {
+                accountOwnerEmail = userDao.getById(member.getUserId()).getEmail();
+                break;
+            }
+        }
+
         Map<String, String> properties = new HashMap<>();
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
         properties.put("workspace", ws.getName());
         properties.put("admin.email", senderEmail);
+        properties.put("accountOwner.email", accountOwnerEmail);
 
         mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                   "Codenvy Workspace Access Removed",

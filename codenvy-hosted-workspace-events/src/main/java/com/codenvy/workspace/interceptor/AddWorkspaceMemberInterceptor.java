@@ -20,6 +20,7 @@ package com.codenvy.workspace.interceptor;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
@@ -57,6 +58,9 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     private UserDao userDao;
 
     @Inject
+    private AccountDao accountDao;
+
+    @Inject
     private MemberDao memberDao;
 
     @Inject
@@ -66,6 +70,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
+        EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
         MemberDescriptor memberDescriptor = (MemberDescriptor)((Response)result).getEntity();
         WorkspaceReference workspaceReference = memberDescriptor.getWorkspaceReference();
         // Do not send notifications on join to temporary ws.
@@ -88,6 +93,14 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
                 }
             }
 
+            String accountOwnerEmail = "";
+            for (org.eclipse.che.api.account.server.dao.Member member : accountDao.getMembers(environmentContext.getAccountId())) {
+                if (member.getRoles().contains("account/owner")) {
+                    accountOwnerEmail = userDao.getById(member.getUserId()).getEmail();
+                    break;
+                }
+            }
+
             String recipientEmail = userDao.getById(memberDescriptor.getUserId()).getEmail();
             String senderUserId = EnvironmentContext.getCurrent().getUser().getId();
             String senderEmail = userDao.getById(senderUserId).getEmail();
@@ -96,6 +109,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
             properties.put("workspace", workspaceReference.getName());
             properties.put("usermail.whoInvited", senderEmail);
             properties.put("admin.email", adminEmail);
+            properties.put("accountOwner.email", accountOwnerEmail);
             mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                       "Codenvy Workspace Invite",
                                       "text/html; charset=utf-8",
