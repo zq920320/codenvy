@@ -464,8 +464,8 @@ public class TestTaskMetrics extends BaseTest {
                                    + "id3_b={id=id3_b}, "
                                    + "session1={id=session1}, "
                                    + "id3_r={id=id3_r}, "
-                                   + "id2_r={id=id2_r}, "
-                                   + "id1_r={id=id1_r}"
+                                   + "id1_r={id=id1_r}, "
+                                   + "id2_r={id=id2_r}"
                                    + "}");
     }
 
