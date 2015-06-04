@@ -37,12 +37,12 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-filters</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-listeners</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.factory</groupId>

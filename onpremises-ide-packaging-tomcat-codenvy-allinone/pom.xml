@@ -33,31 +33,31 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-datasource-plugin</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-builder</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-codeassistant</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-runner</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>

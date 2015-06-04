@@ -32,7 +32,7 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-filters</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>codenvy-hosted-infra-filters</artifactId>
@@ -51,7 +51,7 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-listeners</artifactId>
-            <version>${project.version}</version>
+            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.dashboard</groupId>
