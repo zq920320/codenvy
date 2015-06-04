@@ -15,28 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-
-package com.codenvy.hostedtype.inject;
+package com.codenvy.ide.hostedtype;
 
 import com.codenvy.ide.subscriptions.client.OnPremisesChecker;
-import com.google.gwt.inject.client.AbstractGinModule;
-import com.codenvy.hostedtype.OnPremisesCheckerImpl;
-
-import org.eclipse.che.ide.api.extension.ExtensionGinModule;
-
-import javax.inject.Singleton;
 
 /**
- * This Gin module is initializing in onpremises-ide-compiling-war-ide-codenvy package.
- * It is needed for identifying onpremises version ide.
+ * Implementation of OnPremisesChecker for onpremises version.
  *
  * @author Igor Vinokur
  */
-@ExtensionGinModule
-public class OnPremisesGinModule extends AbstractGinModule {
+public class OnPremisesCheckerImpl implements OnPremisesChecker {
 
     @Override
-    protected void configure() {
-        bind(OnPremisesChecker.class).to(OnPremisesCheckerImpl.class).in(Singleton.class);
+    public boolean isOnPremises() {
+        return true;
     }
 }
