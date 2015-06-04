@@ -82,8 +82,8 @@ public class WSO2OAuthAuthenticator extends OAuthAuthenticator {
             getUserUrL = new URL(String.format("%s?schema=%s", userUri, SCOPE));
             JsonValue userValue = doRequest(getUserUrL, params);
             User user = new Wso2User();
-            user.setEmail(userValue.getElement("http://wso2.org/claims/emailaddress").getStringValue());
-            user.setName(userValue.getElement("http://wso2.org/claims/fullname").getStringValue());
+            user.setEmail(userValue.getElement("email").getStringValue());
+            user.setName(userValue.getElement("name").getStringValue());
             return user;
         } catch (JsonParseException | IOException e) {
             throw new OAuthAuthenticationException(e.getMessage(), e);
