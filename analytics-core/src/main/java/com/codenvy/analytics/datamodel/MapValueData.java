@@ -46,7 +46,7 @@ public class MapValueData extends CollectionValueData {
     }
 
     public static MapValueData valueOf(String values) {
-        Map<String, ValueData> value = new HashMap<>();
+        Map<String, ValueData> value = new LinkedHashMap<>();
         for (String s : values.split(",")) {
             String[] pair = s.split("=");
             try {
