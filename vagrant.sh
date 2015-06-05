@@ -39,6 +39,9 @@ getOptionsHelp() {
     echo "         --dp"
     echo "             Do not make pull in deployment project."
     echo ""
+    echo "         --dc"
+    echo "             Do not make checkout deployment project."
+    echo ""
     echo "         --notests, --t"
     echo "             Do not run tests."
     echo ""
@@ -78,6 +81,12 @@ pullDeploymentProject() {
   cd ../onpremises
 }
 
+checkoutDeploymentProject() {
+  cd ../deployment
+  git checkout enterprise
+  cd ../onpremises
+}
+
 parseParameters() {
   for i in "$@"
   do
@@ -110,6 +119,9 @@ parseParameters() {
         ;;
       --dp)
         MAKE_PULL_IN_DEPLOYMENT=false
+        ;;
+      --dc)
+        MAKE_CHECKOUT_DEPLOYMENT=false
         ;;
       --nogwt)
         mvn_version=`mvn -v | grep "Apache Maven" | sed 's/Apache Maven //g' | sed 's/ .*//g'`
@@ -192,6 +204,7 @@ SKIP_BUILD=false
 DESTROY_VM=false
 MULTI_SERVER=false
 MAKE_PULL_IN_DEPLOYMENT=true
+MAKE_CHECKOUT_DEPLOYMENT=true
 OS_CENTOS6=false
 #
 
@@ -202,6 +215,10 @@ cloneDeploymentProject
 
 if [ ${MAKE_PULL_IN_DEPLOYMENT} == true ]; then
   pullDeploymentProject
+fi
+
+if [ ${MAKE_CHECKOUT_DEPLOYMENT} == true ]; then
+  checkoutDeploymentProject
 fi
 
 # Build project
