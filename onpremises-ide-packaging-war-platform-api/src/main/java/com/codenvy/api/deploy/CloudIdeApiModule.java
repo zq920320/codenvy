@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.deploy;
 
+import com.codenvy.api.account.ResourcesManagerImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.sql.SQLModule;
