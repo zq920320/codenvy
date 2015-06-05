@@ -274,7 +274,6 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(ProfileMigrator.class).asEagerSingleton();
 
-        // used own InterceptorModule
         install(new com.codenvy.workspace.interceptor.InterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerInterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
