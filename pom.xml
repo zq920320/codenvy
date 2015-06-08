@@ -66,6 +66,9 @@
                                 <exec dir="${basedir}" executable="gulp" failonerror="true">
                                     <arg value="enterprise" />
                                 </exec>
+                                <exec dir="${basedir}" executable="gulp" failonerror="true">
+                                    <arg value="onprem_se" />
+                                </exec>
                             </target>
                         </configuration>
                     </execution>
@@ -136,6 +139,19 @@
                             <finalName>${project.artifactId}-${project.version}</finalName>
                             <descriptors>
                                 <descriptor>${basedir}/assembly/assembly-enterprise.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>onprem-se</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                        <configuration>
+                            <finalName>${project.artifactId}-${project.version}</finalName>
+                            <descriptors>
+                                <descriptor>${basedir}/assembly/assembly-onprem-se.xml</descriptor>
                             </descriptors>
                         </configuration>
                     </execution>

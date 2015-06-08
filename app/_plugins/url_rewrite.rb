@@ -2,7 +2,7 @@ module Jekyll
   module URLFilter
     def url(input)
         case @context.registers[:site].config['profile']
-        when "production", "stage", "enterprise"
+        when "production", "stage", "enterprise", "onpremSE"
             if input[0] != "/" then
                 input = "/" + input
             end
