@@ -57,7 +57,7 @@ public class PromotionService extends Service {
     private final PreferenceDao          preferenceDao;
     private final UserDao                userDao;
     private final SubscriptionMailSender mailSender;
-    private final double                 bonusSize;
+    private final double                 defaultBonusSize;
 
     @Inject
     public PromotionService(@Named("promotion.bonus.resources.gb") Double bonusSize,
@@ -71,7 +71,7 @@ public class PromotionService extends Service {
         this.bonusDao = promotionDao;
         this.userDao = userDao;
         this.mailSender = mailSender;
-        this.bonusSize = bonusSize;
+        this.defaultBonusSize = bonusSize;
     }
 
 
@@ -111,13 +111,16 @@ public class PromotionService extends Service {
         Bonus senderBonus = new Bonus().withAccountId(accountDao.getByOwner(senderId).get(0).getId())
                                        .withFromDate(System.currentTimeMillis())
                                        .withTillDate(calendar.getTimeInMillis())
-                                       .withResources(bonusSize)
+                                       .withResources(
+                                               promotionRequest.getBonusSize() != null ? promotionRequest.getBonusSize() : defaultBonusSize)
                                        .withCause("Promotion bonus as inviter.");
         Bonus recipientBonus = new Bonus().withAccountId(accountDao.getByOwner(recipientId).get(0).getId())
                                               .withFromDate(System.currentTimeMillis())
                                               .withTillDate(calendar.getTimeInMillis())
                                               .withCause("promotion bonus as invited")
-                                              .withResources(bonusSize);
+                                              .withResources(
+                                                      promotionRequest.getBonusSize() != null ? promotionRequest.getBonusSize()
+                                                                                              : defaultBonusSize);
         bonusDao.create(senderBonus);
         mailSender.sendReferringBonusNotification(senderBonus);
         bonusDao.create(recipientBonus);

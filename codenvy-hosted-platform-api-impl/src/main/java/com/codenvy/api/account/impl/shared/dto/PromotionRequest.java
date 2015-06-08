@@ -44,4 +44,11 @@ public interface PromotionRequest {
     void setTimestamp(Long timestamp);
 
     PromotionRequest withTimestamp(Long timestamp);
+
+
+    Double getBonusSize();
+
+    void setBonusSize(Double bonusSize);
+
+    PromotionRequest withBonusSize(Double bonusSize);
 }
