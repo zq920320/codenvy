@@ -18,7 +18,7 @@
 package com.codenvy.api.dao.mongo;
 
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.machine.server.exception.SnapshotException;
 import org.eclipse.che.api.machine.server.impl.ProjectBindingImpl;
 import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
@@ -64,13 +64,13 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
     }
 
     @Override
-    public SnapshotImpl getSnapshot(String snapshotId) throws NotFoundException, ServerException {
+    public SnapshotImpl getSnapshot(String snapshotId) throws NotFoundException, SnapshotException {
         final DBObject snapshotDocument;
         try {
             snapshotDocument = machineCollection.findOne(new BasicDBObject("_id", snapshotId));
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve snapshot");
+            throw new SnapshotException("It is not possible to retrieve snapshot");
         }
         if (snapshotDocument == null) {
             throw new NotFoundException(format("Snapshot with id %s not found", snapshotId));
@@ -79,17 +79,17 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
     }
 
     @Override
-    public void saveSnapshot(SnapshotImpl snapshot) throws ServerException {
+    public void saveSnapshot(SnapshotImpl snapshot) throws SnapshotException {
         try {
             machineCollection.save(toDBObject(snapshot));
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to save snapshot");
+            throw new SnapshotException("It is not possible to save snapshot");
         }
     }
 
     @Override
-    public List<SnapshotImpl> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws ServerException {
+    public List<SnapshotImpl> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws SnapshotException {
         BasicDBObject query = new BasicDBObject("owner", owner);
         query.append("workspaceId", workspaceId);
         if (project != null) {
@@ -104,12 +104,12 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
             return result;
         } catch (MongoException e) {
             LOG.error(e.getMessage(), e);
-            throw new ServerException("It is not possible to retrieve snapshots");
+            throw new SnapshotException("It is not possible to retrieve snapshots");
         }
     }
 
     @Override
-    public void removeSnapshot(String snapshotId) throws NotFoundException, ServerException {
+    public void removeSnapshot(String snapshotId) throws NotFoundException, SnapshotException {
         try {
             final WriteResult writeResult = machineCollection.remove(new BasicDBObject("_id", snapshotId));
 
@@ -118,7 +118,7 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
             }
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to remove snapshot");
+            throw new SnapshotException ("It is not possible to remove snapshot");
         }
     }
 
