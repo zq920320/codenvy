@@ -1,0 +1,5 @@
+# jekyll configuration used for the enterprise build
+
+port: 4000
+destination: ../onprem-se
+profile: onpremSE
