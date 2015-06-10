@@ -15,19 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.hostedtype;
-
-import com.codenvy.ide.subscriptions.client.OnPremisesChecker;
+package com.codenvy.ide.onpremises;
 
 /**
- * Implementation of OnPremisesChecker for onpremises version.
+ * The queue type value enumeration.
  *
- * @author Igor Vinokur
+ * @author Kevin Pollet
  */
-public class OnPremisesCheckerImpl implements OnPremisesChecker {
-
-    @Override
-    public boolean isOnPremises() {
-        return true;
-    }
+public enum QueueType {
+    DEDICATED,
+    SHARED
 }

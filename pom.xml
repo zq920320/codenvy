@@ -53,7 +53,7 @@
         <module>onpremises-ide-packaging-tomcat-codeassistant</module>
         <module>onpremises-ide-packaging-tomcat-datasource-plugin</module>
         <module>onpremises-ide-packaging-tomcat-codenvy-allinone</module>
-        <module>onpremises-ide-hosted-type</module>
+        <module>onpremises-ide-plugin-onpremises</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/onpremises.git</connection>
@@ -64,7 +64,7 @@
         <dashboard.classifier>onprem</dashboard.classifier>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <odyssey.classifier>prod</odyssey.classifier>
+        <odyssey.classifier>onprem-se</odyssey.classifier>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
 </project>

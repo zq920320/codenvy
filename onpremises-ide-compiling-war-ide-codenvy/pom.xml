@@ -35,7 +35,7 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-hosted-type</artifactId>
+            <artifactId>onpremises-ide-plugin-onpremises</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
@@ -71,11 +71,6 @@
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
             <artifactId>codenvy-ext-profile</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ext-subscriptions</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>

@@ -54,7 +54,7 @@
     <inherits name='com.codenvy.ide.ext.gae.GAE'/>
     <inherits name='com.codenvy.ide.Factory'/>
     <inherits name="com.codenvy.ide.Permissions" />
-    <inherits name="com.codenvy.ide.Subscriptions" />
+    <inherits name="com.codenvy.ide.Onpremises" />
     <inherits name='com.codenvy.ide.support.help.SupportHelp'/>
     <inherits name='com.codenvy.ide.profile.Profile'/>
     <inherits name='com.codenvy.ide.hosted.Hosted'/>
