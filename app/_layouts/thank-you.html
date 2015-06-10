@@ -6,11 +6,12 @@
         <meta name="description" content="Developer workspaces to modify, run and debug code in the cloud or on-premises.">
         <meta name="keywords" content="Codenvy, Cloud IDE, Java IDE, online IDE, web IDE, development environment, IDE, cloud, JavaScript, Java, Spring, Groovy, Ruby, PHP, code, deploy">
         <meta name="author" content="Codenvy">
-        <link rel="shortcut icon" href="/site/images/ico/favicon.png">
-        <link href="/site/images/ico/favicon.ico" rel="shortcut icon" type="image/x-icon">
-        <link href="/site/images/ico/favicon.ico" rel="icon" type="image/x-icon">
-        <link href='https://fonts.googleapis.com/css?family=Roboto:400,300,500' rel='stylesheet' type='text/css'>
+        <link rel="shortcut icon" href="images/ico/favicon.png">
+        <link href="/images/ico/favicon.ico" rel="shortcut icon" type="image/x-icon">
+        <link href="/images/ico/favicon.ico" rel="icon" type="image/x-icon">
         <script src="{{'/site/scripts/vendor/modernizr.custom.29458.js' | resource }}"></script>
+        <title>{{ page.title }}</title>
+
         <!-- Bootstrap core CSS -->
         <link rel="stylesheet" href="/site/styles/bootstrap.css" >
         
@@ -26,23 +27,16 @@
             <script src="js/respond.min.js"></script>
         <![endif]-->
     </head>
+    {% include smartpixel.html %}
     <body>
-        <div class="error-page">
-            <div class="vmiddle">
-                <div class="container">
-                    <div class="row text-center">
-                        <div class="col-md-12">
-                            <a href="/"><img src="/site/images/logo@3x.png" alt="logo" class="logo" /></a>
-                            {{ content }}
-                        </div>
-                    </div>
-                </div>
-            </div>
+        <div class="signup-page">
+            {{ content }}
         </div>
 
         <!--[if lt IE 7]>
             <p class="chromeframe">You are using an outdated browser. <a href="http://browsehappy.com/">Upgrade your browser today</a> or <a href="http://www.google.com/chromeframe/?redirect=true">install Google Chrome Frame</a> to better experience this site.</p>
         <![endif]-->
+        {% include application-script.html %}
 
         {% if site.profile != "enterprise" %}
             <!-- Including Codenvy Trackers -->

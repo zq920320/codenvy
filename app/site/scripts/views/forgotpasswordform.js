@@ -27,9 +27,8 @@ define(["jquery","underscore","views/accountformbase","models/account"],
 
                 Account.recoverPassword(
                     this.$("input[name='email']").val(),
-                    _.bind(function(d){
+                    _.bind(function(){
                         this.__showResultMessage();
-                        this.trigger("success",d);
                     },this),
                     _.bind(function(errors){
 
@@ -47,6 +46,7 @@ define(["jquery","underscore","views/accountformbase","models/account"],
             },
 
             __showResultMessage : function(){
+                $(".notice").addClass("hide");
 				$(".forgotpassword-form").addClass("hide");
 				$(".forgotpassword-result").removeClass("hide");
             }

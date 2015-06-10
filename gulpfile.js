@@ -24,22 +24,25 @@ var gulp = require('gulp'),
     //livereload = require('gulp-livereload'), // Livereload for Gulp
 
 var buildConfig = {
-        jekyllStageConfig : "_config.stage.yml",
-        jekyllProdConfig : "_config.prod.yml",
-        jekyllGHConfig : "_config.gh.yml",
-        jekyllEEConfig : "_config.enterprise.yml",
+        jekyllStageConfig : "_config.stage.yml", //saas-stage
+        jekyllProdConfig : "_config.prod.yml", //saas-prod
+        jekyllGHConfig : "_config.gh.yml", //github-pages
+        jekyllEEConfig : "_config.enterprise.yml", //onprem-ccis
+        jekyllOnpremSEConfig : "_config.onprem-se.yml" //onprem-se
     };
 
 var paths = {
         src: 'app/',
+         // assembly folders
         prod: './target/prod/',
         stage: './target/stage/',
         enterprise: './target/enterprise/',
+        onpremSE: './target/onprem-se/',
         gh: './target/gh/',
+        // ------------------
         temp: 'target/temp/',
-        dist: 'target/dist/',
-        config: 'assembly/build/',
-        site: 'app/_site/'
+        dist: 'target/dist/', //dist folder
+        config: 'assembly/build/' //jekill configurations
 };
 
 // This task creates local server
@@ -157,14 +160,16 @@ gulp.task('rmbuild', ['copy_src','prod_cfg','css','rjs','jekyll','myrev','replac
 
 gulp.task('copy_prod',['copy_src','duplicate_html','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild'], function(){
   gulp.src([paths.prod+'/**/*.html', // all HTML
+    '!'+paths.prod+'site/onpremises_pages/*.html',
+    '!'+paths.prod+'site/email-templates_onpremises/*.html',
     paths.prod+'**/amd-app-*.js', // minified JS
     paths.prod+'**/*-*.css', // minified CSS
     paths.prod+'**/*.jpg',
     paths.prod+'**/*.ico',
     paths.prod+'**/*.png',
     paths.prod+'**/*.svg',
-    paths.prod+'**/*.txt',
-    paths.prod+'**/modernizr.custom.*.js'] // robots.txt
+    paths.prod+'**/*.txt',  // robots.txt
+    paths.prod+'**/modernizr.custom.*.js']
     )
       .pipe(print(function(filepath) {
         if (filepath){return "copy prod -> built: " + filepath;}
@@ -240,6 +245,8 @@ gulp.task('jekyll_stage',['copy_src','stage_cfg'], function () {
 
 gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], function(){
   gulp.src([paths.stage+'/**/*.html', // all HTML
+    '!'+paths.stage+'site/onpremises_pages/*.html',
+    '!'+paths.stage+'site/email-templates_onpremises/*.html',
     paths.stage+'**/*.js',
     paths.stage+'**/*.css',
     paths.stage+'**/*.jpg',
@@ -252,14 +259,15 @@ gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], func
 });
 
 
-// --------------------------- Building On-premises ----------------------------- 
+// --------------------------- Building On-premises (LDAP version) ----------------------------- 
 //----------------
 //----------
-gulp.task('enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise','onprem_login_page'], function(){
+gulp.task('enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise','onprem_login_page','copy_email_templates'], function(){
 
 })
 
 gulp.task('enterprise_cfg', function(){
+  console.log(buildConfig.jekyllEEConfig);
   return gulp.src(paths.config + buildConfig.jekyllEEConfig)
   .pipe(rename('_config.yml'))
   .pipe(gulp.dest(paths.temp))
@@ -293,6 +301,8 @@ gulp.task('jekyll_enterprise',['copy_src','enterprise_cfg'], function () {
 gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise'], function(){
   gulp.src([paths.enterprise+'**/*.html', // all HTML
     '!'+paths.enterprise+'site/onpremises_pages/*.html',
+    '!'+paths.enterprise+'site/email-templates_onpremises/*.html',
+    '!'+paths.enterprise+'site/email-templates/*.html',
     '!'+paths.enterprise+'site/login.html',
     '!'+paths.enterprise+'site/create-account.html',
     '!'+paths.enterprise+'site/recover-password.html',
@@ -312,21 +322,147 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
 // Copy omprem login page to as index.html and /site/login.html
 gulp.task('onprem_login_page', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
   return   gulp.src(paths.enterprise + 'site/onpremises_pages/onpremises-login.html')
-  //.pipe(print())
-  .pipe(rename('index.html'))
-  /*.pipe(print(function(filepath) {
-    return "renamed to: " + filepath;
-    }))*/
-  .pipe(gulp.dest(paths.dist+'enterprise'))
-/*  .pipe(print(function(filepath) {
-    return "Copied to: " + filepath;
-    }))*/
-  .pipe(rename('login.html'))
-  .pipe(gulp.dest(paths.dist+'enterprise/site'));
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest(paths.dist+'enterprise'))
+    .pipe(rename('login.html'))
+    .pipe(gulp.dest(paths.dist+'enterprise/site'));
 });
 
-//***************************************************************** enterprise
+// Copy omprem email templates page
+gulp.task('copy_email_templates', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
+  return   gulp.src(paths.enterprise+'site/email-templates_onpremises/*.html')
+    .pipe(gulp.dest(paths.dist+'enterprise/site/email-templates'))
+});
 
+//***************************************************************** the end On-premises (LDAP version)
+
+// --------------------------- Building On-premises SE (standart edition version) ----------------------------- path.onpremSE
+//----------------
+//----------
+gulp.task('onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se', 'rjs_se', 'rev-se','copy_onprem_se','copy_onprem_se_email_templates'], function(){
+
+})
+
+gulp.task('onprem_se_cfg', function(){
+  return gulp.src(paths.config + buildConfig.jekyllOnpremSEConfig)
+  .pipe(rename('_config.yml'))
+  .pipe(gulp.dest(paths.temp))
+})
+
+gulp.task('css_onprem_se', ['copy_src'], function() {
+  return gulp.src(paths.temp+'site/styles/*.scss')
+  .pipe(compass({
+    css: paths.temp +'site/styles',
+    sass: paths.temp +'site/styles'
+  }))
+  .pipe(gulp.dest(paths.onpremSE + 'site/styles/'));
+});
+
+// Ensure waiting for Jekill job finishing
+gulp.task('jekyll_onprem_se',['copy_src','onprem_se_cfg'], function () {
+         console.log('Jekyll onpremSE......... ');
+   return gulp.src(paths.temp+'_config.yml', {read: false})
+    .pipe(shell([
+      'jekyll build'
+    ], {
+      cwd: 'target/temp',
+      templateData: {
+        f: function (s) {
+          return s.replace(/$/, '.bak')
+        }
+      }
+    }))
+});
+
+// Builds projects using require.js's optimizer + Minify files with UglifyJS
+gulp.task('rjs_se',['copy_src','jekyll_onprem_se'], function(){
+      return  rjs({
+            mainConfigFile: paths.temp +'site/scripts/main.js',
+            //optimize: 'none', //hardcoded in requirejs plugin
+            baseUrl: paths.temp + 'site/scripts',
+            wrap: true,
+            name: 'main',
+            mainFile: paths.temp+'site/index.html',
+            out: 'amd-main.js'
+        })
+      .pipe(print(function(filepath) {
+        return "rjs -> built: " + filepath;
+      }))
+      .pipe(gulp.src(paths.temp +'site/scripts/vendor/require.js'))
+      .pipe(reverse({objectMode: true})) // requirejs should be at the begining
+      .pipe(concat('amd-app.js'))
+      .pipe(uglify())
+      .pipe(gulp.dest(paths.onpremSE + 'site/scripts'));
+ });
+
+// Replaces references with reved names
+  gulp.task ('rev-se', ['copy_src','css_onprem_se','rjs_se','jekyll_onprem_se'], function(){
+    return gulp.src([paths.onpremSE + 'site/scripts/amd-app.js', paths.onpremSE + 'site/styles/*.css'],{base:paths.onpremSE})
+    //.pipe(wait(1500))
+    .pipe(rev())
+    .pipe(print(function(filepath) {
+        return "rev -> built: " + filepath;
+      }))
+    .pipe(gulp.dest(paths.onpremSE))
+    .pipe(rev.manifest())
+    .pipe(print(function(filepath) {
+        return "manifest -> built: " + filepath;
+      }))
+    .pipe(gulp.dest(paths.onpremSE));
+  });
+
+// Start replacing rev references
+gulp.task('replace-se',['copy_src','css_onprem_se', 'rjs_se','jekyll_onprem_se','rev-se'], function(){
+
+  var manifest = require(paths.onpremSE+'rev-manifest.json')
+  console.log('Process rev-manifest.json: \n');
+  console.log(manifest);
+  return gulp.src([paths.onpremSE+'**/*.html'])
+  .pipe(replaceRevRef({
+    base: paths.onpremSE, //process.cwd()+'/target/prod',
+    manifest: manifest,
+    path: ''/*,
+    cdnPrefix: 'http://absolute.path/cdn/'*/
+  }))
+  .pipe(gulp.dest(paths.onpremSE));
+
+});
+
+// Removes <!-- build:js ... blocks from html for prod configeration
+gulp.task('rmbuild-se', ['copy_src','css_onprem_se','rjs_se','jekyll_onprem_se','rev-se','replace-se'], function(){
+  return gulp.src(paths.onpremSE+'**/*.html')
+  .pipe(useref())
+  .pipe(print(function(filepath) {
+        return "remove <!-- build:js ... blocks -> built: " + filepath;
+      }))
+  .pipe(gulp.dest(paths.onpremSE));
+
+});
+
+gulp.task('copy_onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se', 'rjs_se', 'rev-se', 'replace-se', 'rmbuild-se'], function(){
+  gulp.src([paths.onpremSE+'**/*.html', // all HTML
+    '!'+paths.onpremSE+'site/onpremises_pages/*.html',
+    '!'+paths.onpremSE+'site/email-templates_onpremises/*.html',
+    '!'+paths.onpremSE+'site/email-templates/*.html',
+    paths.onpremSE+'**/amd-app-*.js', // minified JS
+    paths.onpremSE+'**/*-*.css', // minified CSS
+    paths.onpremSE+'**/*.jpg',
+    paths.onpremSE+'**/*.ico',
+    paths.onpremSE+'**/*.png',
+    paths.onpremSE+'**/*.svg',
+    paths.prod+'**/modernizr.custom.*.js',
+    paths.onpremSE+'**/*.txt'  // robots.txt
+    ])
+  .pipe(gulp.dest(paths.dist+'onprem-se'));
+});
+
+// Copy omprem email templates page
+gulp.task('copy_onprem_se_email_templates', ['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se'], function(){
+  return   gulp.src(paths.onpremSE+'site/email-templates_onpremises/*.html')
+    .pipe(gulp.dest(paths.dist+'onprem-se/site/email-templates'))
+});
+
+//***************************************************************** On-premises (base version)
 
 // --------------------------- Building GitHub pages (localhost:8080) -----------------------------
 //----------------

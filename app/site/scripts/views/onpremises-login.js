@@ -51,9 +51,6 @@
                             $(this.el).find("input[name='username']").val().toLowerCase(),
                             $(this.el).find("input[name='password']").val(),
                             Account.getQueryParameterByName('redirect_url'),
-                            _.bind(function(d){
-                                this.trigger("success",d);
-                            },this),
                             _.bind(function(errors){
                                 if(errors.length !== 0){
                                     $(this.el).find("input[name='password']").val("");

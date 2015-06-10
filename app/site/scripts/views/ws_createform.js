@@ -24,9 +24,11 @@
             var WSCreateForm = AccountFormBase.extend({
 
                 initialize : function(attributes){
-                    Account.redirectIfUserHasLoginCookie();
+                    //Account.redirectIfUserHasLoginCookie();
+                    if (Account.isLoginCookiePresent() && (Account.getQueryParameterByName('account') !== "new")){
+                        window.location = '/site/login' + window.location.search;
+                    }
                     AccountFormBase.prototype.initialize.apply(this,attributes);
-                    Account.supportTab();
                     //bind onclick to Google and GitHub buttons
                     $(".oauth-button.google").click(function(){
                         Account.loginWithGoogle("Create WS page", function(url){
@@ -40,9 +42,9 @@
                         });
                     });
 
-                    $(".sign-in").click(function(){
-                        var url = "/site/login" + window.location.search;
-                        window.location = url;
+                    $("#signIn").click(function(){
+                        $.cookie('logged_in', true, {path: "/"});
+                        window.location = Account.appendQuery("/site/login");
                     });
 
                 },
@@ -69,9 +71,6 @@
                 Account.createTenant(
                     $(form).find("input[name='email']").val(),
                     $(form).find("input[name='domain']").val(),
-                    _.bind(function(d){
-                        this.trigger("success",d);
-                    },this),
                     _.bind(function(errors){
 
                         this.__restoreForm();

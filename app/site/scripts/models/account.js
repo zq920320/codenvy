@@ -17,7 +17,7 @@
  */
 (function(window) {
     var _gaq = _gaq || [];
-    define(["jquery", "json", "models/tenant", "models/useraccounts", "models/profile", "models/workspaces", "cookies"], function($, JSON, Tenant, Accounts, Profile, Workspaces) {
+    define(["jquery", "json", "cookies"], function($, JSON) {
         /*
             AccountError is used to report errors through error callback function
             (see details below ). Example usage:
@@ -25,24 +25,7 @@
             new AccountError("password","Your password is too short")
 
         */
-        var userProfile = userProfile || {}; // user Profile to store user's data from server
-        var showSupportLink = function(isPaid) {
-            var freeLink = $('.footer-link')[2];
-            var paidLink = $('#uvTabLabel')[0];
-            if (!paidLink & !freeLink) {
-                if (isPaid) {
-                    var uv = document.createElement('script');
-                    uv.type = 'text/javascript';
-                    uv.async = true;
-                    uv.src = ('https:' === document.location.protocol ? 'https://' : 'http://') + 'widget.uservoice.com/wfZmoiHoOptcKkBgu238zw.js';
-                    var s = document.getElementsByTagName('script')[0];
-                    s.parentNode.insertBefore(uv, s);
-                } else {
-                    var el = $("footer").find("ul");
-                    el.append('<li><a class="footer-link" href="http://helpdesk.codenvy.com">Feedback & support</a></li>');
-                }
-            }
-        };
+
         var AccountError = function(fieldName, errorDescription) {
             return {
                 getFieldName: function() {
@@ -54,9 +37,6 @@
             };
         };
 
-        var isBadGateway = function(jqXHR) {
-            return jqXHR.status === 502;
-        };
         var getQueryParameterByName = function(name, queryString) {
             if (typeof queryString === 'undefined') {
                 queryString = window.location.search;
@@ -68,97 +48,11 @@
                 return decodeURIComponent(results[1].replace(/\+/g, " "));
             }
         };
-        /*START paid support tab*/
-        /*global ActiveXObject: false */
-        // Verify subscriptions for Organization
-        function checkSubscriptionFor(orgId) {
-            var request;
-            var plansArray = ["Saas"];
-            var url = "/api/account/" + orgId + "/subscriptions";
-            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-                request = new XMLHttpRequest();
-            } else { // code for IE6, IE5
-                request = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            request.onreadystatechange = function() {
-                var response;
-                var paid = false;
-                if (request.readyState === 4 && request.status === 200) {
-                    try {
-                        response = JSON.parse(request.responseText);
-                        if (response.length) {
-                            if (response.some(function(sub) {
-                                return (plansArray.indexOf(sub.serviceId) >= 0);
-                            })) {
-                                paid = true;
-                            }
-                        }
-                        showSupportLink(paid);
-                    } catch (err) {
-                        showSupportLink(false);
-                    }
-                }
-            };
-            request.open("GET", url, true);
-            request.send();
-        }
-        // Sets Info for Premium User
-        function setPremiumUserInfo() {
-            var request;
-            var url = "/api/account";
-            if (window.XMLHttpRequest) { // code for IE7+, Firefox, Chrome, Opera, Safari
-                request = new XMLHttpRequest();
-            } else { // code for IE6, IE5
-                request = new ActiveXObject("Microsoft.XMLHTTP");
-            }
-            request.onreadystatechange = function() {
-                var response;
-                /*var accountOwnerIndex=null;*/
-                if (request.readyState === 4 && request.status === 200) {
-                    response = JSON.parse(request.responseText);
-                    if (response.length > 0) {
-                        response.forEach(function(account, index) {
-                            var isOwner = (account.roles.indexOf('account/owner') >= 0);
-                            if (isOwner) {
-                                checkSubscriptionFor(response[index].accountReference.id);
-                            }
-                        });
-                    } else {
-                        showSupportLink(false);
-                    }
-                }
-            };
-            request.open("GET", url, true);
-            request.send();
-        }
-        /*END paid support tab*/
-        /*
-
-            Filling the Profile page
-        */
-        function onReceiveUserProfileInfo(response) {
-            userProfile = response.attributes;
-            var profileAttributes = userProfile.attributes;
-            var attributes = {};
-            for (var key in profileAttributes) {
-                // Get attributes only for Profile page
-                var profilePageAttributes = ["firstName", "lastName", "phone", "employer", "jobtitle", "email"];
-                if (profilePageAttributes.indexOf(key) >= 0) {
-                    Object.defineProperty(attributes, key, {
-                        value: profileAttributes[key]
-                    });
-                }
-            }
-            document.getElementById("account_value").innerHTML = attributes.email || "";
-            document.getElementsByName("first_name")[0].value = attributes.firstName || "";
-            document.getElementsByName("last_name")[0].value = attributes.lastName || "";
-            document.getElementsByName("phone_work")[0].value = attributes.phone || "";
-            document.getElementsByName("company")[0].value = attributes.employer || "";
-            document.getElementsByName("title")[0].value = attributes.jobtitle || "";
-        }
+ 
         var loginWithGoogle = function(page, callback) {
             if (isWebsocketEnabled()) {
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + window.location.hash);
+                var pageUrl = "&page_url=" + window.location.pathname;
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + pageUrl + window.location.hash);
                 _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
                 var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
@@ -168,8 +62,9 @@
         };
         var loginWithGithub = function(page, callback) {
             if (isWebsocketEnabled()) {
+                var pageUrl = "&page_url=" + window.location.pathname;
                 _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + window.location.hash);
+                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + pageUrl + window.location.hash);
                 var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
                     callback(url);
@@ -245,13 +140,85 @@
             }
             return ownAccount;
         };
+        // Verify api response. Returns false if response does not contain "implementationVendor" field 
+        var isApiAvailable = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api/";
+            $.ajax({
+                url: url,
+                type: "OPTIONS",
+                success: function(response){
+                    if (response.implementationVendor) {//response.implementationVendor == "Codenvy, S.A."
+                        deferredResult.resolve(true);
+                    }else{
+                        deferredResult.resolve(false);
+                    }
+                },
+                error: function(){
+                    deferredResult.resolve(false);
+                }
+            });
+            return deferredResult;
+        };
 
-        var getUserMemberships = function(){
-            var url = "/api/account";
-            return $.ajax({
+        var getLastProject = function(){
+            var deferredResult = $.Deferred();
+            var url = "/api/profile/prefs";
+            $.ajax({
                 url: url,
                 type: "GET",
+                complete: function(response){
+                    var recentProject;
+                    try{
+                        recentProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentProject;
+                        testProjectPath(recentProject)
+                        .then(function(){
+                            return deferredResult.resolve("/ws" + recentProject.path);
+                        })
+                        .fail(function(){
+                            return deferredResult.resolve("");
+                        });
+                    }catch(err){
+                        //if response does not contain JSON object
+                        deferredResult.resolve("");
+                    }
+                }
             });
+            return deferredResult;
+        };
+
+        var testProjectPath = function(recentProject){
+            var deferredResult = $.Deferred();
+            var projectName = recentProject.path.substr(recentProject.path.indexOf("/",1));
+            var url = "/api/project/" + recentProject.workspaceId + projectName;
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(project) {
+                        deferredResult.resolve(project);
+                },
+                error: function() {
+                    deferredResult.reject();
+                }
+            });
+            return deferredResult;
+        };
+
+        var getWorkspaces = function() {
+            var deferredResult = $.Deferred();
+            var url = "/api/workspace/all";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(workspaces) {
+                        deferredResult.resolve(workspaces[0]); //returns first available workspace
+                },
+                error: function() {
+                    deferredResult.resolve(false);
+                }
+            });
+            return deferredResult;
+
         };
 
         var ensureExistenceAccount = function(accountName) {
@@ -263,14 +230,14 @@
                 success: function(membership) {
                     var account = getOwnAccount(membership);
                     if (account.accountReference.id){
-                        deferredResult.resolve(account.accountReference); //returns Account
+                        deferredResult.resolve(account.accountReference, false); //returns Account
                     }
                     else {
                         // user hasn't memberships
                         createAccount(accountName)
                         .fail(function(error){deferredResult.reject(error);})
                         .then(function(account){
-                        deferredResult.resolve(account);
+                        deferredResult.resolve(account, true);
                         });
 
                     }
@@ -282,11 +249,47 @@
             return deferredResult;
         };
 
-        var createAccount = function(account) {
+        var ensureExistenceWorkspace = function(workspaceName, accountId) {
+            var deferredResult = $.Deferred();
+            var url = "/api/workspace/all";
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(workspace) {
+                    if (!workspace.length){
+                        // user has no workspace
+                        var workspaceID;
+                        createWorkspace(workspaceName,accountId)
+                        .then(function(workspace){
+                           workspaceID = workspace.id; // store workspace id
+                            return getUserInfo();
+                        })
+                        .then(function(user){
+                            return addMemberToWorkspace(workspaceID,user.id)
+                            .then(function(){
+                                deferredResult.resolve();
+                            });
+                        })
+                        .fail(function(error){
+                            deferredResult.reject(error);
+                        });
+                    } else{
+                        deferredResult.resolve();
+                    }
+
+                },
+                error: function(error) {
+                    deferredResult.reject(error);
+                }
+            });
+            return deferredResult;
+        };
+
+        var createAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
             var data = {
-                name: account
+                name: accountName
             };
             $.ajax({
                 url: url,
@@ -303,12 +306,12 @@
             return deferredResult;
         };
 
-        var createWorkspace = function(workspace, account) {
+        var createWorkspace = function(workspace, accountId) {
             var deferredResult = $.Deferred();
             var url = "/api/workspace";
             var data = {
                 name: workspace,
-                accountId: account
+                accountId: accountId
             };
             $.ajax({
                 url: url,
@@ -324,7 +327,6 @@
             });
             return deferredResult;
         };
-
 
         var login = function(email, password) {
             if (isWebsocketEnabled()) {
@@ -382,9 +384,42 @@
         var redirectToUrl = function(url) {
             window.location = url;
         };
-        
+
+        var navigateToLocation = function(){
+            var redirect_url = "/dashboard/";
+            return getWorkspaces()
+            .then(function(workspace){
+                if (!workspace){
+                    redirectToUrl("/site/auth/no-workspaces-found");
+                    return $.Deferred().reject();
+                } else {
+                    return $.Deferred().resolve(workspace.workspaceReference.id);
+                }
+            })
+            .then(function(){
+                return getLastProject();
+            })
+            .then(function(lastProject) {
+                if (lastProject) {
+                    redirect_url = lastProject;
+                }
+                redirectToUrl(redirect_url);
+            });
+        };
+
+        var getResponseMessage = function(response){
+            var responseErr;
+            try{
+                responseErr = JSON.parse(response.responseText).message;
+            }catch(e){
+                console.log(e);
+                responseErr = "Something went wrong. Please try again or contact support. Check <a href='http://status.codenvy.com/'>http://status.codenvy.com</a>";
+            }
+            return responseErr;
+        };
+
         var appendQuery = function(url) {
-            return url  +  window.location.search;
+            return url  +  window.location.search + window.location.hash;
         };
         return {
             removeCookie: removeCookie,
@@ -395,156 +430,103 @@
             authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
             getOwnAccount: getOwnAccount,
+            isApiAvailable: isApiAvailable,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
             isValidEmail: function(email) {
                 return (/^[^\+\/]+$/).test(email);
             },
-            //Password must contain at least one letter, at least one number, and be longer than 8 charaters.
+            //Password must contain at least one letter, at least one number, and be longer than 8 charaters, and shorter than 100.
             isValidPassword: function(value) {
-                return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*)[0-9a-zA-Z]{8,}$/).test(value);
+                return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*).{8,100}$/).test(value);
+            },
+
+            isLoginCookiePresent: function() {
+                return $.cookie('logged_in')?true:false;
             },
 
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
-                if ($.cookie('logged_in')) {
+                if ($.cookie('logged_in') && (getQueryParameterByName('account') !== "new")) {
                     window.location = '/site/login' + window.location.search;
                 }
             },
-
-            processLogin: function(email, password, redirect_url, success, error){
-                var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                var workspaceId;
-                //TODO login refactoring
+            // Login with email and password
+            processLogin: function(email, password, redirect_url, error){
                 login(email, password)
-                .then(function() {
-                        getUserMemberships()// getUserMemberships()
-                        .then(function(accounts){
-                            var account = getOwnAccount(accounts);
-                            if(!account.accountReference.id){//if user has no account
-                                var accountName = email.indexOf('@')>=0?email.substring(0, email.indexOf('@')):email; //email.substring(0, email.indexOf('@'));
-                                return createAccount(accountName)//create account
-                                .then(function(newAccount){
-                                    account = newAccount;
-                                    return createWorkspace(accountName, account.id);//create WS
-                                })
-                                .then(function(workspace){
-                                    workspaceId = workspace.id;
-                                    return getUserInfo();
-                                })
-                                .then(function(user){
-                                    return addMemberToWorkspace(workspaceId,user.id);//add User to WS
-                                });
-
-                            }
-                        })
-                        .then(function(){
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
-                        });
-
-                    })
-                    .fail(function(response /*, status , err*/ ) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            console.log(e);
-                            responseErr = "Something went wrong. Please try again or contact support";
-                        }
-                        error([
-                            new AccountError(null, responseErr)
-                        ]);
-                        }
-                    );
-
-            },
-
-            onpremLogin: function(username, password, redirect_url, success, error) {
-                if (isWebsocketEnabled()) {
-                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
-                    var data = {
-                        username: username,
-                        password: password
-                    };
-                    $.ajax({
-                        url: loginUrl,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        success: function() {
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
-                        },
-                        error: function(response /*, status , err*/ ) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
-                            }
-
-
+                .then(function(){
+                    if (!redirect_url){
+                        navigateToLocation();    
+                    } else {
+                        redirectToUrl(redirect_url);
+                    }
+                })
+                .fail(function(response) {
+                        if (response){
                             error([
-                                new AccountError(null, responseErr)
+                                new AccountError(null, getResponseMessage(response))
                             ]);
                         }
-                    });
-                }
+                    }
+                );
             },
 
-            adminLogin: function(email, password, redirect_url, success, error) {
+            // signup, oAuth login,
+            processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
+                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
+                authenticate(username, bearertoken)
+                .then(function(){
+                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
+                        return ensureExistenceAccount(accountName) // get existence or create a new account
+                        .then(function(account){
+                                return ensureExistenceWorkspace(workspaceName, account.id);
+                        })
+                        .fail(function(error) {
+                            return $.Deferred().reject(error);
+                        });
+                    }else{
+                        return $.Deferred().resolve();
+                    }
+                })
+                .then(function(){
+                    if (!redirect_url){
+                        navigateToLocation();    
+                    } else {
+                        redirectToUrl(redirect_url);
+                    }
+                })
+                .fail(function(response) {
+                    if (response){
+                        error([
+                            new AccountError(null, getResponseMessage(response))
+                        ]);
+                    }
+                });
+            },
+
+            adminLogin: function(email, password, redirect_url, error) {
                 if (isWebsocketEnabled()) {
                     var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var selectWsUrl = "/site/private/select-tenant?cookiePresent&" + window.location.search.substring(1);
                     var data = {
                         username: email,
                         password: password,
                         realm: "sysldap"
                     };
+                    if (!redirect_url){
+                        redirect_url = "/site/private/select-tenant?" + window.location.search.substring(1);
+                    }
                     $.ajax({
                         url: loginUrl,
                         type: "POST",
                         contentType: "application/json",
                         data: JSON.stringify(data),
                         success: function() {
-                            if (redirect_url) {
-                                success({
-                                    url: redirect_url
-                                });
-                            } else {
-                                success({
-                                    url: selectWsUrl
-                                });
-                            }
+                            redirectToUrl(redirect_url);
                         },
                         error: function(response /*, status , err*/ ) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Authentication: Something went wrong. Please try again or contact support";
-                            }
-
-
                             error([
-                                new AccountError(null, responseErr)
+                                new AccountError(null, getResponseMessage(response))
                             ]);
                         }
                     });
@@ -552,7 +534,7 @@
             },
             loginWithGoogle: loginWithGoogle,
             loginWithGithub: loginWithGithub,
-            createTenant: function(email, domain, success, error) {
+            createTenant: function(email, domain, error) {
                 var data = {
                     email: email.toLowerCase(),
                     workspacename: domain.toLowerCase()
@@ -564,9 +546,7 @@
                     contentType: "application/json",
                     data: JSON.stringify(data),
                     success: function() {
-                        success({
-                            url: '../site/thank-you'
-                        });
+                        redirectToUrl('../site/thank-you');
                     },
                     error: function(xhr /*, status , err*/ ) {
                         error([
@@ -576,123 +556,26 @@
                 });
             },
 
-            processCreate: function(username, bearertoken, workspace, redirect_url, error) {
-                var workspaceID;
-                authenticate(username, bearertoken)
-                .fail(function(response) {
-                    var responseErr;
-                    try{
-                        responseErr = JSON.parse(response.responseText).message;
-                    }catch(e){
-                        responseErr = "Something went wrong. Please try again or contact support";
-                    }
-
-
-                    error([
-                        new AccountError(null, responseErr)
-                    ]);
-                })
-                .then(function(){
-                    if (workspace) {
-                        ensureExistenceAccount(workspace) // get/create account
-                        .then(function(account){
-                            return createWorkspace(workspace, account.id);
-                        })
-                        .then(function(workspace){
-                            workspaceID = workspace.id; // store workspace id
-                            return getUserInfo();
-                        })
-                        .then(function(user){
-                            return addMemberToWorkspace(workspaceID,user.id);
-                        })
-                        .done(function() {
-                            if (redirect_url) {
-                                redirectToUrl(redirect_url);
-                            }else {
-                                redirectToUrl("/dashboard/");
-                            }
-                        })
-                        .fail(function(response) {
-                            var responseErr;
-                            try{
-                                responseErr = JSON.parse(response.responseText).message;
-                            }catch(e){
-                                responseErr = "Something went wrong. Please try again or contact support";
-                            }
-
-
-                            error([
-                                new AccountError(null, responseErr)
-                            ]);
-                        });
-                    } else if (redirect_url) {
-                        redirectToUrl(redirect_url);
-                    } else {
-                        redirectToUrl("/dashboard/");
-                    }
-
-                });
-
-            },
-
-            joinWorkspace: function(username, bearertoken, workspace, success, error) {
-                var data = {
-                    username: username.toLowerCase(),
-                    token: bearertoken
-                };
-                var destinationUrl = window.location.protocol + "//" + window.location.host + "/ws/" + workspace;
-                var waitUrl = "../wait-for-tenant?type=start&tenantName=" + workspace + "&redirect_url=" + encodeURIComponent(destinationUrl);
-                //var workspaceName = {name: workspace};
-                var authenticateUrl = "/api/internal/token/authenticate";
-                $.ajax({
-                    url: authenticateUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success: function() {
-                        success({
-                            url: waitUrl
-                        });
-                    },
-                    error: function(xhr /*, status , err*/ ) {
-                        error([
-                            new AccountError(null, xhr.responseText)
-                        ]);
-                    }
-                });
-            },
+            //--------------------------------- Recover password module
+            // Send recover password request
             recoverPassword: function(email, success, error) {
-                //implementation based on this:
-                //https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/recover-password.js
                 var passwordRecoveryUrl = "/api/password/recover/" + email;
                 $.ajax({
                     url: passwordRecoveryUrl,
                     type: "POST",
                     data: {},
-                    success: function(output, status, xhr) {
-                        success({
-                            message: xhr.responseText
-                        });
+                    success: function() {
+                        success();
                     },
                     error: function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Recover passowrd: Something went wrong. Please try again or contact support";
-                        }
-
                         error([
-                            new AccountError(null, responseErr)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     }
                 });
             },
+            // Get user email by reset password id
             confirmSetupPassword: function(success, error) {
-                // implementation based on this:
-                // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
-                // just like with setupPassword, we expect the id to be in the url:
-                // https://codenvy.com/pages/setup-password?id=df3c62fe-1459-48af-a4a0-d0c1cc17614a
                 var confirmSetupPasswordUrl = "/api/password/verify",
                     id = getQueryParameterByName("id");
                 if (typeof id === 'undefined') {
@@ -719,6 +602,7 @@
                     }
                 });
             },
+            // Setup new password
             setupPassword: function(password, success, error) {
                 // implementation based on this:
                 // https://github.com/codenvy/cloud-ide/blob/master/cloud-ide-war/src/main/webapp/js/setup-password.js
@@ -734,82 +618,16 @@
                         password: password
                     },
                     success: function() {
-                        success({
-                            url: "/site/login"
-                        });
+                        redirectToUrl("/site/login");
                     },
                     error: function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Setup passowrd: Something went wrong. Please try again or contact support";
-                        }
-
                         error([
-                            new AccountError(null, responseErr)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     }
                 });
             },
-            // change password in Profile page
-            changePassword: function(password, success, error) {
-                var changePasswordUrl = "/api/user/password";
-                $.ajax({
-                    url: changePasswordUrl,
-                    type: "POST",
-                    data: "password=" + password,
-                    success: function() {
-                        success({
-                            url: "/"
-                        });
-                    },
-                    error: function(response) {
-                        var responseErr;
-                        try{
-                            responseErr = JSON.parse(response.responseText).message;
-                        }catch(e){
-                            responseErr = "Change passowrd: Something went wrong. Please try again or contact support";
-                        }
-
-                        error([
-                            new AccountError(null, responseErr)
-                        ]);
-                    }
-                });
-            },
-            // update User`s profile in Profile page
-            updateProfile: function(userAttributes, success, error) {
-                // userProfile.attributes = body;//Updating profile attributes
-                Object.getOwnPropertyNames(userAttributes).forEach(function(prop) {
-                    userProfile.attributes[prop] = userAttributes[prop];
-                });
-                var data = JSON.stringify(userProfile.attributes);
-                $.ajax({
-                    url: "/api/profile",
-                    type: "POST",
-                    data: data,
-                    contentType: "application/json; charset=utf-8",
-                    success: function() {
-                        success();
-                    },
-                    error: function(xhr) {
-                        error([
-                            new AccountError(null, xhr.responseText)
-                        ]);
-                    }
-                });
-            },
-            // get User`s profile in Profile page
-            getUserProfile: function(success, error) {
-                $.when(Profile.getUser()).done(function(user) {
-                    onReceiveUserProfileInfo(user);
-                }).fail(function(msg) {
-                    error([
-                        new AccountError(null, msg)
-                    ]);
-                });
-            },
+            //--------------------------------- The end of Recover password module
             /**
              * Encode all special characters including ~!*()'. Replace " " on "+"
              * @see http://xkr.us/articles/javascript/encode-compare/
@@ -845,257 +663,11 @@
                 }
                 return string;
             },
-            getTenants: function(success, error, redirect) {
-                $.when(Tenant.getTenants()).done(function(tenants) {
-                    switch (tenants.length) {
-                        case 0:
-                            redirect({
-                                url: "/site/create-account"
-                            });
-                            break;
-                        case 1:
-                            redirect({
-                                url: "/ws/" + tenants[0].toJSON().name
-                            });
-                            break;
-                        default:
-                            $.when(Profile.getUser()).done(function(user) {
-                                success(tenants, user);
-                            }).fail(function(msg) {
-                                error([
-                                    new AccountError(null, msg)
-                                ]);
-                            });
-                    }
-                }).fail(function(msg) {
-                    error([
-                        new AccountError(null, msg)
-                    ]);
-                });
-            },
-            // Braintree payment: select account for payment
-            getAccounts: function(payment, success, error, redirect) {
-                $.when(Accounts.getAccounts()).done(function(accounts) {
-                    switch (accounts.length) {
-                        case 0:
-                            redirect({
-                                url: "/site/error/no-valid-workspaces"
-                            });
-                            break;
-                        default:
-                            $.each(accounts, function(index, account) {
-                                $.when(Workspaces.getWorkspaces(account.id)).done(function(workspaces) {
-                                    switch (workspaces.length) {
-                                        case 0:
-                                            redirect({
-                                                url: "/site/error/no-valid-workspaces"
-                                            });
-                                            break;
-                                            /*case 1: success(workspaces);
-                                            break;*/
-                                        default:
-                                            success(workspaces, payment);
-                                    }
-                                }).fail(function(msg) {
-                                    error([
-                                        new AccountError(null, msg)
-                                    ]);
-                                });
-                            });
-                    }
-                }).fail(function(msg) {
-                    error([
-                        new AccountError(null, msg)
-                    ]);
-                });
-            },
-            // Returns true if User has WS with tariff plan
-            supportTab: function() {
-                if ($.cookie("logged_in")) {
-                    setPremiumUserInfo();
-                } else {
-                    showSupportLink(false);
-                }
-            },
-            addSubscription: function(form, workspaceId, showPaymentForm, success, error) {
-                // Get accountId for current User
-                var url = "/api/account";
-                $.ajax({
-                    url: url,
-                    type: "GET",
-                    success: function(data) {
-                        //Get accountId
-                        sendSubscriptionRequest(data[0].id, workspaceId, form, showPaymentForm, success, error);
-                    },
-                    error: function(response) {
-                        //Show error
-                        error([
-                            new AccountError(null, "Authentication Error" + response.message)
-                        ]);
-                    }
-                });
-                /*form = $('#codenvy-add-subscription-form');
-                e.preventDefault();*/
-                var sendSubscriptionRequest = function(accountId, workspaceId, form, showPaymentForm, success, error) {
-                    var addSubscriptionUrl = "/api/account/subscriptions/";
-                    var data = {};
-                    var serviceId = getQueryParameterByName("serviceId"),
-                        startDate = getQueryParameterByName("startDate"),
-                        endDate = getQueryParameterByName("endDate"),
-                        Package = getQueryParameterByName("Package"),
-                        RAM = getQueryParameterByName("RAM"),
-                        TariffPlan = getQueryParameterByName("TariffPlan");
-                    if (serviceId) { //If serviceId not exists in query params - throw error
-                        data.serviceId = serviceId;
-                        data.accountId = accountId;
-                        if (startDate) {
-                            data.startDate = startDate;
-                        }
-                        if (endDate) {
-                            data.endDate = endDate;
-                        }
-                        data.properties = {
-                            "codenvy:workspace_id": workspaceId
-                        };
-                        if (Package) {
-                            data.properties.Package = Package;
-                        }
-                        if (RAM) {
-                            data.properties.RAM = RAM;
-                        }
-                        if (TariffPlan) {
-                            data.properties.TariffPlan = TariffPlan;
-                        }
-                        $.ajax({
-                            url: addSubscriptionUrl,
-                            type: "POST",
-                            contentType: "application/json",
-                            data: JSON.stringify(data),
-                            success: function() {
-                                success('Subscription added succesfully');
-                            },
-                            error: function(response) {
-                                if (response.status === 402) {
-                                    var subscription = JSON.parse(response.responseText);
-                                    showPaymentForm(subscription.id);
-                                } else {
-                                    error([
-                                        new AccountError(null, response.responseText)
-                                    ]);
-                                }
-                            }
-                        });
-                    } else {
-                        error([
-                            new AccountError(null, "Not found serviceId parameter. Error")
-                        ]);
-                    }
-                };
-            },
-            paymentFormSubmit: function(subscriptionid, success, error) {
-                //var subscriptionid = $("input[name=subscriptionid]")[0].value;
-                var purchaseUrl = "/api/account/subscriptions/" + subscriptionid + "/purchase";
-                var data = {
-                    cardholderName: $('input[name=cardholderName]')[0].value,
-                    //subscriptionid:$('input[name=subscriptionid]')[0].value,
-                    subscriptionid: subscriptionid,
-                    cardNumber: $('input[name=cardNumber]')[0].value,
-                    cvv: $('input[name=cvv]')[0].value,
-                    expirationMonth: $('input[name=expirationMonth]')[0].value,
-                    expirationYear: $('input[name=expirationYear]')[0].value
-                };
-                $.ajax({
-                    url: purchaseUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success: function() {
-                        success("Subscription added succesfully.");
-                    },
-                    error: function(response) {
-                        var paymentError, message;
-                        paymentError = JSON.parse(response.responseText);
-                        if (paymentError.message) {
-                            message = paymentError.message;
-                        } else {
-                            message = "Payment error cccurred. Please contact support.";
-                        }
-                        error([
-                            new AccountError(null, message)
-                        ]);
-                    }
-                });
-            },
+
             // Changing login page behavior if authtype=ldap
             isAuthtypeLdap: function() {
                 var type = getQueryParameterByName("authtype");
                 return type;
-            },
-            waitForTenant: function(success, error) {
-                //based on : https://github.com/codenvy/cloud-ide/blob/8fe1e50cc6434899dfdfd7b2e85c82008a39a880/cloud-ide-war/src/main/webapp/js/wait-tenant-creation.js
-                var type = getQueryParameterByName("type"); //create OR start
-                var redirectUrl = getQueryParameterByName("redirect_url");
-                var tenantName = getQueryParameterByName("tenantName");
-                if (typeof tenantName === 'undefined') {
-                    error([
-                        new AccountError(null, "This is not a valid url")
-                    ]);
-                }
-                var MAX_WAIT_TIME_SECONDS = 180,
-                    PING_TIMEOUT_MILLISECONDS = 500,
-                    endTime = new Date().getTime() + MAX_WAIT_TIME_SECONDS * 1000;
-
-                function buildRedirectUrl() {
-                    return redirectUrl;
-                }
-
-                function hitServer() {
-                    if (new Date().getTime() >= endTime) {
-                        // removing autologin cookie if exist
-                        removeCookie("autologin");
-                        if (type === "create") {
-                            error([
-                                new AccountError(null, "Workspace creation delayed. We'll email you the credentials after your workspace is created.")
-                            ]);
-                        } else if (type === "factory") {
-                            window.location = "/site/error/error-factory-creation";
-                        } else {
-                            error([
-                                new AccountError(null, "The requested workspace <strong>'" + tenantName + "'</strong> is not available. Please, contact support.")
-                            ]);
-                        }
-                        return;
-                    }
-                    $.ajax({
-                        url: "/cloud-admin/rest/cloud-admin/tenant-service/tenant-state/" + tenantName,
-                        type: "GET",
-                        success: function(output, status, xhr) {
-                            if (xhr.responseText === "ONLINE") {
-                                success({
-                                    url: buildRedirectUrl()
-                                });
-                            } else if (xhr.responseText === "CREATION_FAIL") {
-                                success({
-                                    url: "/site/error/error-create-tenant"
-                                });
-                            } else {
-                                setTimeout(hitServer, PING_TIMEOUT_MILLISECONDS);
-                            }
-                        },
-                        error: function(xhr) {
-                            if (isBadGateway(xhr)) {
-                                error([
-                                    new AccountError(null, "The requested workspace is not available. Please, contact support.")
-                                ]);
-                            } else {
-                                error([
-                                    new AccountError(null, xhr.responseText)
-                                ]);
-                            }
-                        }
-                    });
-                }
-                hitServer();
             }
         };
     });
