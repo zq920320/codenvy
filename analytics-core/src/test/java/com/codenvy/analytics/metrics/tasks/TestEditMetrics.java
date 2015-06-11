@@ -45,6 +45,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author Dmytro Nochevnov */
 public class TestEditMetrics extends BaseTest {
@@ -63,8 +64,16 @@ public class TestEditMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{session1={id=session1}, " +
-                                   "session2={id=session2}}");
+
+        assertEquals(m.size(), 2);
+
+        assertTrue(m.containsKey("session1"));
+        assertTrue(m.get("session1").containsKey("id"));
+        assertEquals(m.get("session1").get("id").getAsString(), "session1");
+
+        assertTrue(m.containsKey("session2"));
+        assertTrue(m.get("session2").containsKey("id"));
+        assertEquals(m.get("session2").get("id").getAsString(), "session2");
     }
 
     @Test
@@ -76,8 +85,14 @@ public class TestEditMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{session1={id=session1}, " +
-                                   "session2={id=session2}}");
+
+        assertTrue(m.containsKey("session1"));
+        assertTrue(m.get("session1").containsKey("id"));
+        assertEquals(m.get("session1").get("id").getAsString(), "session1");
+
+        assertTrue(m.containsKey("session2"));
+        assertTrue(m.get("session2").containsKey("id"));
+        assertEquals(m.get("session2").get("id").getAsString(), "session2");
 
     }
 
@@ -90,8 +105,14 @@ public class TestEditMetrics extends BaseTest {
 
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{session1={id=session1}, " +
-                                   "session2={id=session2}}");
+
+        assertTrue(m.containsKey("session1"));
+        assertTrue(m.get("session1").containsKey("id"));
+        assertEquals(m.get("session1").get("id").getAsString(), "session1");
+
+        assertTrue(m.containsKey("session2"));
+        assertTrue(m.get("session2").containsKey("id"));
+        assertEquals(m.get("session2").get("id").getAsString(), "session2");
     }
 
     private void prepareData() throws Exception {

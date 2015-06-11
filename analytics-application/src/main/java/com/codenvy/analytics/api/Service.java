@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
-import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -58,23 +58,23 @@ public class Service {
      *
      * @param jobClass
      *         one of the jobs:
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.PigRunnerFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataComputationFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.DataIntegrityFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ActOnFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoInitializerFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoUpdaterFeature
-     *         analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReindexerFeature
+     *         com.codenvy.analytics.services.PigRunnerFeature
+     *         com.codenvy.analytics.services.DataComputationFeature
+     *         com.codenvy.analytics.services.DataIntegrityFeature
+     *         com.codenvy.analytics.services.ViewBuilderFeature
+     *         com.codenvy.analytics.services.LogCheckerFeature
+     *         com.codenvy.analytics.services.ReportSenderFeature
+     *         com.codenvy.analytics.services.ActOnFeature
+     *         com.codenvy.analytics.services.MarketoInitializerFeature
+     *         com.codenvy.analytics.services.MarketoUpdaterFeature
+     *         com.codenvy.analytics.services.ReindexerFeature
      * @param fromDate
      *         the beginning of the date interval in format yyyyMMdd
      * @param toDate
      *         the ending of the date interval in format yyyyMMdd
      */
-    @GET
-    @Path("launch/{job}/{fromDate}/{toDate}")
+    @POST
+    @Path("{job}/{fromDate}/{toDate}")
     @Produces(MediaType.APPLICATION_JSON)
     @RolesAllowed({"user", "system/admin", "system/manager"})
     public Response launchJob(@PathParam("job") String jobClass,
