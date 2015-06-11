@@ -57,23 +57,23 @@ import static com.google.gwt.dom.client.Style.Unit.PX;
 public class MemoryIndicatorAction extends Action implements CustomComponentAction {
     private static final int FULL_WIDTH = 100;
 
-    private final PanelResources                 resources;
-    private final RunnerServiceClient            runnerServiceClient;
-    private final DtoUnmarshallerFactory         dtoUnmarshallerFactory;
-    private final IndicatorsLocalizationConstant locale;
-    private final Element                        usedMemoryElement;
-    private final Element                        valueUsedMemoryElement;
-    private final Element                        totalMemoryElement;
-    private final Element                        valueTotalMemoryElement;
-    private final AnalyticsEventLogger           eventLogger;
-    private final Element                        tooltipBodyMessageElement;
+    private final PanelResources         resources;
+    private final RunnerServiceClient    runnerServiceClient;
+    private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
+    private final LocalizationConstants  locale;
+    private final Element                usedMemoryElement;
+    private final Element                valueUsedMemoryElement;
+    private final Element                totalMemoryElement;
+    private final Element                valueTotalMemoryElement;
+    private final AnalyticsEventLogger   eventLogger;
+    private final Element                tooltipBodyMessageElement;
 
     private String totalMemory;
     private String usedMemory;
 
     @Inject
     public MemoryIndicatorAction(PanelResources resources,
-                                 IndicatorsLocalizationConstant locale,
+                                 LocalizationConstants locale,
                                  RunnerServiceClient runnerServiceClient,
                                  AnalyticsEventLogger eventLogger,
                                  DtoUnmarshallerFactory dtoUnmarshallerFactory) {

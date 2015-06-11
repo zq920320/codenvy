@@ -36,8 +36,6 @@ import org.eclipse.che.ide.websocket.WebSocketException;
 import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
 import org.eclipse.che.ide.workspace.WorkspacePresenter;
 
-import static com.codenvy.ide.onpremises.QueueType.DEDICATED;
-
 /**
  * @author Igor Vinokur
  */
@@ -88,7 +86,7 @@ public class OnpremisesExtention {
         rightBottomToolbarGroup.addSeparator();
         rightBottomToolbarGroup.add(queueTypeIndicatorAction, Constraints.LAST);
         rightBottomToolbarGroup.addSeparator();
-        updateResourcesInformation(DEDICATED);
+        updateResourcesInformation();
 
         DefaultActionGroup leftBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_LEFT_STATUS_PANEL);
         leftBottomToolbarGroup.add(onpremisesIndicatorAction, Constraints.LAST);
@@ -99,8 +97,8 @@ public class OnpremisesExtention {
         trademarkLinkAction.updateLinkElement(locale.trademarkTitle(), locale.trademarkUrl());
     }
 
-    private void updateResourcesInformation(QueueType queueType) {
-        queueTypeIndicatorAction.setQueueType(queueType);
+    private void updateResourcesInformation() {
+        queueTypeIndicatorAction.updateCustomComponent();
         runnerServiceClient.getResources(
                 new AsyncRequestCallback<ResourcesDescriptor>(dtoUnmarshallerFactory.newUnmarshaller(ResourcesDescriptor.class)) {
                     @Override

@@ -35,7 +35,6 @@ import org.eclipse.che.ide.api.action.CustomComponentAction;
 import org.eclipse.che.ide.api.action.Presentation;
 import org.vectomatic.dom.svg.ui.SVGImage;
 
-import static com.codenvy.ide.onpremises.QueueType.SHARED;
 import static com.google.gwt.dom.client.Style.Display.BLOCK;
 import static com.google.gwt.dom.client.Style.Display.NONE;
 import static com.google.gwt.dom.client.Style.Unit.PX;
@@ -46,18 +45,15 @@ import static com.google.gwt.dom.client.Style.Unit.PX;
  * @author Oleksii Orel
  */
 public class QueueTypeIndicatorAction extends Action implements CustomComponentAction {
-    private final PanelResources                 resources;
-    private final IndicatorsLocalizationConstant locale;
-    private final AnalyticsEventLogger           eventLogger;
-    private final Element                        tooltipHeader;
-    private final Element                        tooltipBodyMessageElement;
-    private final Element                        iconBlockElement;
-
-    private QueueType queueType;
+    private final PanelResources        resources;
+    private final LocalizationConstants locale;
+    private final AnalyticsEventLogger  eventLogger;
+    private final Element               tooltipHeader;
+    private final Element               tooltipBodyMessageElement;
+    private final Element               iconBlockElement;
 
     @Inject
-    public QueueTypeIndicatorAction(PanelResources resources, IndicatorsLocalizationConstant locale,
-                                    AnalyticsEventLogger eventLogger) {
+    public QueueTypeIndicatorAction(PanelResources resources, LocalizationConstants locale, AnalyticsEventLogger eventLogger) {
         this.resources = resources;
         this.locale = locale;
 
@@ -70,30 +66,15 @@ public class QueueTypeIndicatorAction extends Action implements CustomComponentA
         this.eventLogger = eventLogger;
     }
 
-    public void setQueueType(QueueType queueType) {
-        this.queueType = queueType;
-        updateCustomComponent();
-    }
-
-    private void updateCustomComponent() {
-        if (queueType == null) {
-            return;
-        }
+    public void updateCustomComponent() {
         tooltipHeader.removeAllChildren();
         iconBlockElement.removeAllChildren();
-        final Element tooltipHeaderMessageElement = DOM.createSpan();
 
-        if (SHARED.equals(queueType)) {
-            tooltipHeaderMessageElement.setInnerHTML(locale.queueTypeTooltipSharedTitle());
-            tooltipBodyMessageElement.setInnerHTML(locale.queueTypeTooltipSharedMessage());
-            tooltipHeader.appendChild(new SVGImage(resources.sharedQueue()).getElement());
-            iconBlockElement.appendChild(new SVGImage(resources.sharedQueue()).getElement());
-        } else {
-            tooltipHeaderMessageElement.setInnerHTML(locale.queueTypeTooltipDedicatedTitle());
-            tooltipBodyMessageElement.setInnerHTML(locale.queueTypeTooltipDedicatedMessage(1));
-            tooltipHeader.appendChild(new SVGImage(resources.dedicatedQueue()).getElement());
-            iconBlockElement.appendChild(new SVGImage(resources.dedicatedQueue()).getElement());
-        }
+        final Element tooltipHeaderMessageElement = DOM.createSpan();
+        tooltipHeaderMessageElement.setInnerHTML(locale.queueTypeTooltipDedicatedTitle());
+        tooltipBodyMessageElement.setInnerHTML(locale.queueTypeTooltipDedicatedMessage(1));
+        tooltipHeader.appendChild(new SVGImage(resources.dedicatedQueue()).getElement());
+        iconBlockElement.appendChild(new SVGImage(resources.dedicatedQueue()).getElement());
         tooltipHeader.appendChild(tooltipHeaderMessageElement);
     }
 
@@ -164,7 +145,7 @@ public class QueueTypeIndicatorAction extends Action implements CustomComponentA
 
     @Override
     public void update(ActionEvent e) {
-        e.getPresentation().setVisible(queueType != null);
+        e.getPresentation().setVisible(true);
     }
 
 }

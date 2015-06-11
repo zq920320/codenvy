@@ -26,6 +26,9 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface LocalizationConstants extends Messages {
 
+    /*
+     * Onpremises Label
+     */
     @Key("onpremisesIndicatorAction.description")
     String hostedTypeDescription();
 
@@ -34,5 +37,23 @@ public interface LocalizationConstants extends Messages {
 
     @Key("trademarkLinkAction.url")
     String trademarkUrl();
+
+    /*
+     * Memory
+     */
+    @Key("memory.indicator.tooltip.title")
+    String memoryIndicatorTooltipTitle();
+
+    @Key("memory.indicator.tooltip.message")
+    String memoryIndicatorTooltipMessage();
+
+    /*
+     * Queue Type
+     */
+    @Key("queue.type.indicator.tooltip.dedicated.title")
+    String queueTypeTooltipDedicatedTitle();
+
+    @Key("queue.type.indicator.tooltip.dedicated.message")
+    String queueTypeTooltipDedicatedMessage(int nbQueues);
 
 }
