@@ -441,7 +441,7 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-prod.zip" />
+                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
                                 <copy file="${project.build.directory}/unzip/odyssey/site/war/api/error/error-oauth.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-oauth.jsp" />
                                 <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates">
                                     <fileset dir="${project.build.directory}/unzip/odyssey/site/email-templates" />
@@ -476,7 +476,7 @@
                                     <groupId>com.codenvy</groupId>
                                     <artifactId>odyssey</artifactId>
                                     <version>${codenvy.odyssey.version}</version>
-                                    <classifier>prod</classifier>
+                                    <classifier>${odyssey.classifier}</classifier>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
