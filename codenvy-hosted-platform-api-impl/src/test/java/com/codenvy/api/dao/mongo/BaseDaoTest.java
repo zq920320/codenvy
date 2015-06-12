@@ -22,7 +22,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
 
-import org.h2.engine.Database;
 
 /**
  * Base test for
@@ -34,9 +33,8 @@ public class BaseDaoTest {
     private static final String DB_NAME = "test1";
 
     protected DBCollection collection;
-    protected MongoClient client;
-    protected DB          db;
-    protected Database    database;
+    protected MongoClient  client;
+    protected DB           db;
 
     public void setUp(String collectionName) {
         final Fongo fongo = new Fongo("test server");

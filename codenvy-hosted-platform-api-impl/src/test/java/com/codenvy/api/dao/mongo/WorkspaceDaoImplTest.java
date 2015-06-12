@@ -18,16 +18,15 @@
 package com.codenvy.api.dao.mongo;
 
 
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
-
-import com.mongodb.BasicDBObject;
-import com.mongodb.DBObject;
-
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;

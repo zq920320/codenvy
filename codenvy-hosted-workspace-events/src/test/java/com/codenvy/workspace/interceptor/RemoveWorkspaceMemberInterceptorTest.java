@@ -19,6 +19,8 @@ package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
@@ -38,7 +40,9 @@ import org.testng.annotations.Test;
 import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import static org.mockito.Matchers.anyMapOf;
@@ -61,6 +65,12 @@ public class RemoveWorkspaceMemberInterceptorTest {
     private WorkspaceDao workspaceDao;
 
     @Mock
+    private AccountDao accountDao;
+
+    @Mock
+    private EnvironmentContext environmentContext;
+
+    @Mock
     private User user;
 
     @Mock
@@ -76,6 +86,7 @@ public class RemoveWorkspaceMemberInterceptorTest {
     public void setup() throws Exception {
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
+        context.setAccountId("AccountID");
     }
 
     @Test(expectedExceptions = ConflictException.class)
@@ -103,6 +114,9 @@ public class RemoveWorkspaceMemberInterceptorTest {
         when(userDao.getById(anyString())).thenReturn(user);
         when(user.getEmail()).thenReturn(recipient);
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withName("someName"));
+
+        List<String> accountRole = Arrays.asList("account/owner");
+        when(accountDao.getMembers(eq("AccountID"))).thenReturn(Arrays.asList(new Member().withRoles(accountRole)));
 
         interceptor.invoke(invocation);
         verify(mailSenderClient)
