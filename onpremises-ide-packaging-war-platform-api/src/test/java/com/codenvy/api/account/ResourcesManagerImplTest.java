@@ -17,17 +17,10 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.account.ResourcesManagerImpl;
-import com.codenvy.api.account.billing.BillingPeriod;
-import com.codenvy.api.account.billing.Period;
-import com.codenvy.api.account.metrics.MeterBasedStorage;
-import com.codenvy.api.account.server.ResourcesChangesNotifier;
-import com.codenvy.api.account.subscription.ServiceId;
+import com.codenvy.api.subscription.saas.server.ResourcesChangesNotifier;
 
-import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.server.dao.Subscription;
 import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
@@ -40,14 +33,12 @@ import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,22 +68,12 @@ public class ResourcesManagerImplTest {
     @Mock
     ResourcesChangesNotifier resourcesChangesNotifier;
     @Mock
-    BillingPeriod            billingPeriod;
-    @Mock
-    MeterBasedStorage        meterBasedStorage;
-    @Mock
     EventService             eventService;
 
     ResourcesManagerImpl resourcesManager;
 
-    @Mock
-    Period period;
-
     @BeforeMethod
     public void setUp() throws NotFoundException, ServerException {
-        when(billingPeriod.getCurrent()).thenReturn(period);
-        when(period.getStartDate()).thenReturn(new Date());
-
         Map<String, String> firstAttributes = new HashMap<>();
         firstAttributes.put(Constants.RUNNER_MAX_MEMORY_SIZE, "1024");
         Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
@@ -226,39 +207,5 @@ public class ResourcesManagerImplTest {
 
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq("1024"));
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("2048"));
-    }
-
-    @Test
-    public void shouldBeAbleToAddMemoryWithoutLimitationForAccountWithNotCommunitySubscription() throws Exception {
-        //given
-        Subscription subscription = Mockito.mock(Subscription.class);
-        when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
-        when(accountDao.getActiveSubscription(eq(ACCOUNT_ID), eq(ServiceId.SAAS))).thenReturn(subscription);
-
-        //when
-        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                                   .withWorkspaceId(FIRST_WORKSPACE_ID)
-                                                                                   .withRunnerRam(Integer.MAX_VALUE),
-                                                                         DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                                   .withWorkspaceId(SECOND_WORKSPACE_ID)
-                                                                                   .withRunnerRam(0)));
-
-        //then
-        ArgumentCaptor<Workspace> workspaceArgumentCaptor = ArgumentCaptor.forClass(Workspace.class);
-        verify(workspaceDao, times(2)).update(workspaceArgumentCaptor.capture());
-
-        for (Workspace workspace : workspaceArgumentCaptor.getAllValues()) {
-            switch (workspace.getId()) {
-                case FIRST_WORKSPACE_ID:
-                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), String.valueOf(Integer.MAX_VALUE));
-                    break;
-                case SECOND_WORKSPACE_ID:
-                    assertEquals(workspace.getAttributes().get(Constants.RUNNER_MAX_MEMORY_SIZE), "0");
-                    break;
-            }
-        }
-
-        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq(String.valueOf(Integer.MAX_VALUE)));
-        verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("0"));
     }
 }

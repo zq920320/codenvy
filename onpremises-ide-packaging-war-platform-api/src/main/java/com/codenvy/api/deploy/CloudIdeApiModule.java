@@ -20,8 +20,9 @@ package com.codenvy.api.deploy;
 import com.codenvy.api.account.ResourcesManagerImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
-import com.codenvy.api.dao.sql.SQLModule;
 import com.codenvy.api.dao.util.ProfileMigrator;
+import com.codenvy.api.subscription.server.AbstractSubscriptionService;
+import com.codenvy.api.subscription.server.SubscriptionModule;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -114,6 +115,7 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(WorkspaceService.class);
         bind(UserService.class);
         bind(UserProfileService.class);
+        bind(AccountService.class);
 
         bind(BuilderSelectionStrategy.class).to(LastInUseBuilderSelectionStrategy.class);
         bind(BuilderService.class);
@@ -257,6 +259,7 @@ public class CloudIdeApiModule extends AbstractModule {
                 )
                                             );
 
+        Multibinder.newSetBinder(binder(), AbstractSubscriptionService.class);
 
         bindConstant().annotatedWith(Names.named("notification.server.propagate_events")).to("vfs,workspace");
 
@@ -271,7 +274,6 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(com.codenvy.workspace.CreateWsRootDirSubscriber.class).asEagerSingleton();
 
-        bind(org.eclipse.che.api.account.server.dao.PlanDao.class).to(com.codenvy.api.dao.mongo.PlanDaoImpl.class);
 
         bind(ProfileMigrator.class).asEagerSingleton();
 
@@ -280,18 +282,13 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
         install(new InstrumentationModule());
-        install(new SQLModule());
 
         //turned off Modules to not to count resources
         //install(new BillingModule());
         //install(new MetricModule());
-        //install(new SubscriptionModule());
+        install(new SubscriptionModule());
         // used Multibinder to get alive SubscriptionService
-        Multibinder.newSetBinder(binder(), org.eclipse.che.api.account.server.SubscriptionService.class);
         //install(new AnalyticsModule());
         //install(new ScheduleModule());
-
-
-        bind(com.codenvy.api.dao.mongo.SubscriptionQueryBuilder.class).to(com.codenvy.api.dao.mongo.MongoSubscriptionQueryBuilder.class);
     }
 }

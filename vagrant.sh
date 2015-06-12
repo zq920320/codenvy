@@ -75,15 +75,15 @@ cloneDeploymentProject() {
   fi
 }
 
-pullDeploymentProject() {
-  cd ../deployment
-  git pull
-  cd ../onpremises
-}
-
 checkoutDeploymentProject() {
   cd ../deployment
   git checkout enterprise
+  cd ../onpremises
+}
+
+pullDeploymentProject() {
+  cd ../deployment
+  git pull
   cd ../onpremises
 }
 

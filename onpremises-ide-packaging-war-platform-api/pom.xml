@@ -56,6 +56,16 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-analytics</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-api-creditcard</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-fs-migration</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
@@ -97,6 +107,16 @@
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server-organization</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-subscription-saas</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>

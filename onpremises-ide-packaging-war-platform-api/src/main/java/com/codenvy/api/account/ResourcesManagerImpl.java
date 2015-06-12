@@ -17,7 +17,8 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.account.server.ResourcesChangesNotifier;
+
+import com.codenvy.api.subscription.saas.server.ResourcesChangesNotifier;
 
 import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;

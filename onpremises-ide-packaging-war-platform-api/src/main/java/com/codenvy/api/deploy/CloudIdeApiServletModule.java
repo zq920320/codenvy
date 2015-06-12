@@ -19,6 +19,7 @@ package com.codenvy.api.deploy;
 
 import com.codenvy.api.filter.FactoryWorkspaceIdEnvironmentInitializationFilter;
 import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
+import com.google.common.collect.ImmutableMap;
 import com.google.inject.servlet.ServletModule;
 
 import org.eclipse.che.inject.DynaModule;
@@ -67,7 +68,11 @@ public class CloudIdeApiServletModule extends ServletModule {
         filter("/factory/*")
                 .through(FactoryWorkspaceIdEnvironmentInitializationFilter.class);
 
-        filterRegex("^/(account|creditcard|invoice)/(?!find|list|subscriptions).+").through(AccountIdEnvironmentInitializationFilter.class);
+        filterRegex("^/account/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
+                                                         ImmutableMap.of("accountIdPosition", "3"));
+        //TODO Remove this bindings when dashboard will not send request to this service
+        filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
+                                                              ImmutableMap.of("accountIdPosition", "5"));
 
         // turned of unnecessary
         filter("/factory/*",
@@ -105,7 +110,9 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/appengine/*",
                "/gae-validator/*",
-               "/gae-parameters/*")
+               "/gae-parameters/*",
+               "/subscription/*",
+               "/subscription")
 //               "/billing/*",
 //               "/creditcard/*",
 //               "/invoice/*",
