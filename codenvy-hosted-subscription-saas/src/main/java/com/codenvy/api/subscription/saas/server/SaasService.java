@@ -281,6 +281,17 @@ public class SaasService extends Service {
         return result;
     }
 
+    /**
+     * Returns locked accounts list.
+     *
+     */
+    @ApiOperation(value = "Get locked accounts list",
+            notes = "Returns locked accounts list. Roles: system/manager, system/admin.",
+            position = 17)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @GET
     @Path("/locked")
     @Produces(APPLICATION_JSON)
