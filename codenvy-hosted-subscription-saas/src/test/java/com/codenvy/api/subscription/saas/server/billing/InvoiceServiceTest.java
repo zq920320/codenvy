@@ -134,6 +134,7 @@ public class InvoiceServiceTest {
 
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .accept("application/json")
                                    .when()
                                    .get(SECURE_PATH + "/invoice/123");
 
