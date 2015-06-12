@@ -31,6 +31,10 @@
     <packaging>pom</packaging>
     <name>Codenvy :: Hosted :: Parent</name>
     <modules>
+        <module>codenvy-hosted-api-subscription</module>
+        <module>codenvy-hosted-api-creditcard</module>
+        <module>codenvy-hosted-subscription-onpremises</module>
+        <module>codenvy-hosted-subscription-saas</module>
         <module>codenvy-hosted-mail-client</module>
         <module>codenvy-hosted-mail-server</module>
         <module>codenvy-hosted-platform-api-impl</module>
@@ -44,6 +48,7 @@
         <module>codenvy-hosted-sso-server-ldap</module>
         <module>codenvy-hosted-sso-server-organization</module>
         <module>codenvy-hosted-fs-migration</module>
+        <module>codenvy-hosted-analytics</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/hosted-infrastructure.git</connection>
@@ -52,6 +57,7 @@
         <url>https://github.com/codenvy/hosted-infrastructure</url>
     </scm>
     <properties>
+        <com.braintreepayments.gateway.version>2.39.2</com.braintreepayments.gateway.version>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
