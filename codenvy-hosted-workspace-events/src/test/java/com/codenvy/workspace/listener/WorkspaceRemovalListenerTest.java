@@ -29,6 +29,7 @@ import com.codenvy.workspace.event.StopWsEvent;
 import com.google.common.cache.RemovalCause;
 import com.google.common.cache.RemovalNotification;
 
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -37,9 +38,11 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Constructor;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -55,6 +58,8 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class WorkspaceRemovalListenerTest {
     private static final String WS_ID = "wsId";
+    private static final String PERSISTENT_USER_ID = "PERSISTENT_USER_1";
+    private static final String TEMP_USER_ID = "TEMP_USER_2";
     @Mock
     private WorkspaceDao  workspaceDao;
     @Mock
@@ -95,18 +100,34 @@ public class WorkspaceRemovalListenerTest {
     @Test
     public void shouldRemoveTempWsWithTempUsersThatAreMembers() throws Exception {
         List<Member> members = new ArrayList<>();
-        members.add(new Member().withWorkspaceId(WS_ID).withUserId("PERSISTENT_USER_1"));
-        members.add(new Member().withWorkspaceId(WS_ID).withUserId("TEMP_USER_2"));
+        members.add(new Member().withWorkspaceId(WS_ID).withUserId(PERSISTENT_USER_ID));
+        members.add(new Member().withWorkspaceId(WS_ID).withUserId(TEMP_USER_ID));
         when(memberDao.getWorkspaceMembers(WS_ID)).thenReturn(members);
-        when(preferenceDao.getPreferences("PERSISTENT_USER_1")).thenReturn(Collections.singletonMap("temporary", "false"));
-        when(preferenceDao.getPreferences("TEMP_USER_2")).thenReturn(Collections.singletonMap("temporary", "true"));
+        when(preferenceDao.getPreferences(PERSISTENT_USER_ID)).thenReturn(Collections.singletonMap("temporary", "false"));
+        when(preferenceDao.getPreferences(TEMP_USER_ID)).thenReturn(Collections.singletonMap("temporary", "true"));
 
         listener.onRemoval(notification);
 
         verify(workspaceDao).remove(WS_ID);
-        verify(userDao).remove("TEMP_USER_2");
-        verify(userDao, never()).remove("PERSISTENT_USER_1");
+        verify(userDao).remove(TEMP_USER_ID);
+        verify(userDao, never()).remove(PERSISTENT_USER_ID);
         assertTrue(testEventSubscriber.isEventPublished());
+    }
+
+    @Test
+    public void shouldNotRemoveUsersThatAreMembersOfAnotherWorkspaces() throws Exception {
+        List<Member> members = new ArrayList<>();
+        members.add(new Member().withWorkspaceId(WS_ID).withUserId(TEMP_USER_ID));
+        when(memberDao.getWorkspaceMembers(WS_ID)).thenReturn(members);
+        when(memberDao.getUserRelationships(TEMP_USER_ID))
+                .thenReturn(Arrays.asList(new Member().withUserId(TEMP_USER_ID).withWorkspaceId(WS_ID)));
+        when(preferenceDao.getPreferences(PERSISTENT_USER_ID)).thenReturn(Collections.singletonMap("temporary", "false"));
+        when(preferenceDao.getPreferences(TEMP_USER_ID)).thenReturn(Collections.singletonMap("temporary", "true"));
+
+        listener.onRemoval(notification);
+
+        verify(workspaceDao).remove(WS_ID);
+        verify(userDao, never()).remove(TEMP_USER_ID);
     }
 
     @Test
