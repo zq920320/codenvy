@@ -70,11 +70,11 @@ public class CloudIdeApiServletModule extends ServletModule {
 
         filterRegex("^/account/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                          ImmutableMap.of("accountIdPosition", "3"));
-        //TODO Remove this bindings when dashboard will not send request to this service
-        filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
-                                                              ImmutableMap.of("accountIdPosition", "5"));
+//        filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
+//                                                              ImmutableMap.of("accountIdPosition", "5"));
+//        filterRegex("^/saas/resources/\\w*/(provided|used)").through(new AccountIdEnvironmentInitializationFilter(),
+//                                                                     ImmutableMap.of("accountIdPosition", "4"));
 
-        // turned of unnecessary
         filter("/factory/*",
                "/workspace/*",
                "/account/*",
@@ -110,13 +110,14 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/appengine/*",
                "/gae-validator/*",
-               "/gae-parameters/*",
-               "/subscription/*",
-               "/subscription")
+               "/gae-parameters/*")
 //               "/billing/*",
 //               "/creditcard/*",
 //               "/invoice/*",
 //               "/billing/*",
+//               "/subscription/*",
+//               "/subscription",
+//               "/saas/*",
 //               "/promotion/*")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
