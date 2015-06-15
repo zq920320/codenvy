@@ -82,7 +82,7 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
 
                     for (Member member : members) {
                         final Map<String, String> preferences = preferenceDao.getPreferences(member.getUserId());
-                        if (parseBoolean(preferences.get("temporary"))) {
+                        if (parseBoolean(preferences.get("temporary")) && memberDao.getUserRelationships(member.getUserId()).isEmpty()) {
                             userDao.remove(member.getUserId());
                         }
                     }
