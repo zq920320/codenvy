@@ -21,10 +21,12 @@ import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.Bonus;
 import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
+import com.codenvy.api.subscription.saas.server.billing.InvoiceService;
 import com.codenvy.api.subscription.saas.server.billing.Period;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
@@ -43,7 +45,11 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+import org.eclipse.che.api.account.server.AccountService;
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -57,6 +63,7 @@ import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 
+import javax.annotation.Nullable;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -64,6 +71,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.HttpMethod;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -74,6 +82,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -90,6 +99,7 @@ public class SaasService extends Service {
     private final BillingService         billingService;
     private final BillingPeriod          billingPeriod;
     private final AccountDao             accountDao;
+    private final LockDao                lockDao;
     private final SubscriptionDao        subscriptionDao;
     private final BonusDao               bonusDao;
     private final PreferenceDao          preferenceDao;
@@ -103,6 +113,7 @@ public class SaasService extends Service {
                        BillingService billingService,
                        BillingPeriod billingPeriod,
                        AccountDao accountDao,
+                       LockDao lockDao,
                        SubscriptionDao subscriptionDao,
                        BonusDao bonusDao,
                        PreferenceDao preferenceDao,
@@ -114,6 +125,7 @@ public class SaasService extends Service {
         this.billingService = billingService;
         this.billingPeriod = billingPeriod;
         this.accountDao = accountDao;
+        this.lockDao = lockDao;
         this.subscriptionDao = subscriptionDao;
         this.bonusDao = bonusDao;
         this.preferenceDao = preferenceDao;
@@ -268,6 +280,35 @@ public class SaasService extends Service {
 
         return result;
     }
+
+    /**
+     * Returns locked accounts list.
+     *
+     */
+    @ApiOperation(value = "Get locked accounts list",
+            notes = "Returns locked accounts list. Roles: system/manager, system/admin.",
+            position = 17)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
+    @GET
+    @Path("/locked")
+    @Produces(APPLICATION_JSON)
+    @RolesAllowed({"system/admin", "system/manager"})
+    public List<AccountDescriptor> getLockedAccounts(@DefaultValue("20") @QueryParam("maxItems") int maxItems,
+                                                     @QueryParam("skipCount") int skipCount) throws ServerException, ForbiddenException {
+
+        return FluentIterable.from(lockDao.getAccountsWithLockedResources()).transform(
+                new Function<Account, AccountDescriptor>() {
+                    @Nullable
+                    @Override
+                    public AccountDescriptor apply(Account input) {
+                        return toDescriptor(input);
+                    }
+                }).skip(skipCount).limit(maxItems).toList();
+    }
+
 
     @GET
     @Path("/resources")
@@ -426,6 +467,46 @@ public class SaasService extends Service {
                          .withFromDate(bonus.getFromDate())
                          .withTillDate(bonus.getTillDate())
                          .withCause(bonus.getCause())
+                         .withLinks(links);
+    }
+
+    private AccountDescriptor toDescriptor(Account account) {
+        final UriBuilder baseUriBuilder = getServiceContext().getBaseUriBuilder();
+        final List<Link> links = new LinkedList<>();
+        links.add(LinksHelper.createLink(HttpMethod.GET,
+                                         baseUriBuilder.clone()
+                                                       .path(AccountService.class)
+                                                       .path(AccountService.class, "getMembers")
+                                                       .build(account.getId())
+                                                       .toString(),
+                                         null,
+                                         MediaType.APPLICATION_JSON,
+                                         Constants.LINK_REL_GET_MEMBERS));
+        links.add(LinksHelper.createLink(HttpMethod.GET,
+                                         baseUriBuilder.clone()
+                                                       .path(AccountService.class)
+                                                       .path(AccountService.class, "getById")
+                                                       .build(account.getId())
+                                                       .toString(),
+                                         null,
+                                         MediaType.APPLICATION_JSON,
+                                         Constants.LINK_REL_GET_ACCOUNT_BY_ID));
+        links.add(LinksHelper.createLink(HttpMethod.GET,
+                                         baseUriBuilder.clone()
+                                                       .path(InvoiceService.class)
+                                                       .path(InvoiceService.class, "getInvoices")
+                                                       .queryParam("accountId", account.getId())
+                                                       .build()
+                                                       .toString(),
+                                         null,
+                                         MediaType.APPLICATION_JSON,
+                                         "get invoices"));
+        account.getAttributes().remove("codenvy:creditCardToken");
+        account.getAttributes().remove("codenvy:billing.date");
+        return DtoFactory.getInstance().createDto(AccountDescriptor.class)
+                         .withId(account.getId())
+                         .withName(account.getName())
+                         .withAttributes(account.getAttributes())
                          .withLinks(links);
     }
 }

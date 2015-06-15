@@ -24,6 +24,7 @@ import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
 import com.codenvy.api.subscription.saas.server.billing.Period;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
 import com.codenvy.api.subscription.saas.shared.dto.NewBonus;
@@ -36,7 +37,9 @@ import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
 
+import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
@@ -79,8 +82,6 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for {@link SaasService}
@@ -107,6 +108,8 @@ public class SaasServiceTest {
     @Mock
     private AccountDao             accountDao;
     @Mock
+    private LockDao                lockDao;
+    @Mock
     private SubscriptionDao        subscriptionDao;
     @Mock
     private BonusDao               bonusDao;
@@ -132,6 +135,7 @@ public class SaasServiceTest {
                                       billingService,
                                       billingPeriod,
                                       accountDao,
+                                      lockDao,
                                       subscriptionDao,
                                       bonusDao,
                                       preferenceDao,
@@ -372,6 +376,23 @@ public class SaasServiceTest {
         List<WorkspaceResources> result = unwrapDtoList(response, WorkspaceResources.class);
 
         assertEquals(result.size(), 1);
+    }
+
+    @Test
+    public void shouldBeAbleToGetLockedAccounts() throws Exception {
+        when(lockDao.getAccountsWithLockedResources())
+                .thenReturn(Collections.singletonList(new Account().withId(ACCOUNT_ID).withName("name")));
+        Response response = given().auth()
+                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .when()
+                                   .get(SECURE_PATH + "/saas/locked");
+
+        assertEquals(response.getStatusCode(), 200);
+
+        List<AccountDescriptor> result = unwrapDtoList(response, AccountDescriptor.class);
+
+        assertEquals(result.size(), 1);
+        assertEquals(result.get(0).getId(), ACCOUNT_ID);
     }
 
     @Test
