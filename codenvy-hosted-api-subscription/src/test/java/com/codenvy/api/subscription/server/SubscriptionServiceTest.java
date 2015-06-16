@@ -751,7 +751,7 @@ public class SubscriptionServiceTest {
         properties.put("codenvyProperty", "value");
         properties.put("codenvy:", "value");
         Subscription subscription = createSubscription().withProperties(properties);
-        String [] roles = new String[] {"user", "account/admin"};
+        String [] roles = new String[] {"user", "account/admin", "account/member"};
 
         for (String role : roles) {
             prepareSecurityContext(role);
@@ -777,7 +777,6 @@ public class SubscriptionServiceTest {
 
         for (String property : descriptor.getProperties().keySet()) {
             assertFalse(property.startsWith("restricted:"));
-            assertFalse(property.startsWith("codenvy:"));
         }
     }
 
