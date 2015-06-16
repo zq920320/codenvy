@@ -18,11 +18,11 @@
 package com.codenvy.api.deploy;
 
 import com.codenvy.api.account.ResourcesManagerImpl;
+import com.codenvy.api.account.SubscriptionDaoImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.util.ProfileMigrator;
-import com.codenvy.api.subscription.server.AbstractSubscriptionService;
-import com.codenvy.api.subscription.server.SubscriptionModule;
+import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -33,7 +33,6 @@ import com.codenvy.auth.sso.client.filter.PathSegmentValueFilter;
 import com.codenvy.auth.sso.client.filter.RegexpRequestFilter;
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.filter.RequestMethodFilter;
-import com.codenvy.auth.sso.client.filter.UriStartFromAndMethodRequestFilter;
 import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreator;
@@ -86,6 +85,7 @@ import org.eclipse.che.ide.ext.ssh.server.KeyService;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
 import org.eclipse.che.ide.ext.ssh.server.UserProfileSshKeyStore;
 import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.inject.lifecycle.ScheduleModule;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
@@ -152,8 +152,9 @@ public class CloudIdeApiModule extends AbstractModule {
         // Copied from IDE3 api war >
 
         //Temporary FS change
-        final Multibinder<VirtualFileFilter> multibinder =
-                Multibinder.newSetBinder(binder(), VirtualFileFilter.class, Names.named("vfs.index_filter"));
+        final Multibinder<VirtualFileFilter> multibinder = Multibinder.newSetBinder(binder(),
+                                                                                    VirtualFileFilter.class,
+                                                                                    Names.named("vfs.index_filter"));
         multibinder.addBinding().toInstance(new VirtualFileFilter() {
             @Override
             public boolean accept(VirtualFile virtualFile) {
@@ -189,8 +190,6 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(AccountDao.class).to(com.codenvy.api.dao.mongo.AccountDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
         bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
-
-        bind(AccountService.class);
 
         bind(com.codenvy.service.http.WorkspaceInfoCache.class);
         bind(com.codenvy.workspace.listener.WsCacheCleanupSubscriber.class);
@@ -254,12 +253,10 @@ public class CloudIdeApiModule extends AbstractModule {
                         ),
                         new UriStartFromRequestFilter("/api/analytics/public-metric"),
                         new UriStartFromRequestFilter("/api/docs"),
-                        new UriStartFromAndMethodRequestFilter("POST", "/api/user/create"),
                         new RegexpRequestFilter("^/api/builder/(\\w+)/download/(.+)$")
                 )
                                             );
 
-        Multibinder.newSetBinder(binder(), AbstractSubscriptionService.class);
 
         bindConstant().annotatedWith(Names.named("notification.server.propagate_events")).to("vfs,workspace");
 
@@ -274,7 +271,6 @@ public class CloudIdeApiModule extends AbstractModule {
 
         bind(com.codenvy.workspace.CreateWsRootDirSubscriber.class).asEagerSingleton();
 
-
         bind(ProfileMigrator.class).asEagerSingleton();
 
         install(new com.codenvy.workspace.interceptor.InterceptorModule());
@@ -282,13 +278,20 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
         install(new InstrumentationModule());
+//        install(new SQLModule());
+//
+//        install(new SubscriptionModule());
+//
+//        install(new SaasSubscriptionModule());
+//        install(new OnPremisesSubscriptionModule());
+//        install(new BillingModule());
+//        install(new MetricModule());
+//
+//        install(new ScheduleModule());
+//        install(new CreditCardModule());
+//
+//        install(new AnalyticsModule());
 
-        //turned off Modules to not to count resources
-        //install(new BillingModule());
-        //install(new MetricModule());
-        install(new SubscriptionModule());
-        // used Multibinder to get alive SubscriptionService
-        //install(new AnalyticsModule());
-        //install(new ScheduleModule());
+        bind(SubscriptionDao.class).to(SubscriptionDaoImpl.class).asEagerSingleton();
     }
 }
