@@ -25,6 +25,8 @@ import com.codenvy.api.subscription.shared.dto.Plan;
 import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.subscription.shared.dto.SubscriptionState;
 import com.google.common.annotations.Beta;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Maps;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -69,7 +71,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -403,7 +404,7 @@ public class SubscriptionService extends Service {
      * @param resolvedRoles
      *         resolved roles. Do not use if id of the account presents in REST path.
      */
-    private SubscriptionDescriptor toDescriptor(Subscription subscription, SecurityContext securityContext, Set resolvedRoles) {
+    private SubscriptionDescriptor toDescriptor(Subscription subscription, final SecurityContext securityContext, Set resolvedRoles) {
         List<Link> links = new ArrayList<>(2);
         // community subscriptions should not use urls
         final UriBuilder uriBuilder = getServiceContext().getServiceUriBuilder();
@@ -415,10 +416,10 @@ public class SubscriptionService extends Service {
                                          null,
                                          MediaType.APPLICATION_JSON,
                                          Constants.LINK_REL_GET_SUBSCRIPTION));
-        boolean isUserPrivileged = (resolvedRoles != null && resolvedRoles.contains("account/owner")) ||
-                                   securityContext.isUserInRole("account/owner") ||
-                                   securityContext.isUserInRole("system/admin") ||
-                                   securityContext.isUserInRole("system/manager");
+        final boolean isUserPrivileged = (resolvedRoles != null && resolvedRoles.contains("account/owner")) ||
+                                         securityContext.isUserInRole("account/owner") ||
+                                         securityContext.isUserInRole("system/admin") ||
+                                         securityContext.isUserInRole("system/manager");
         if (SubscriptionState.ACTIVE.equals(subscription.getState()) && isUserPrivileged) {
             links.add(LinksHelper.createLink(HttpMethod.DELETE,
                                              uriBuilder.clone()
@@ -430,14 +431,18 @@ public class SubscriptionService extends Service {
                                              Constants.LINK_REL_DEACTIVATE_SUBSCRIPTION));
         }
 
-        // Do not send with REST properties that starts from 'codenvy:'
-        LinkedHashMap<String, String> filteredProperties = new LinkedHashMap<>();
-        for (Map.Entry<String, String> property : subscription.getProperties().entrySet()) {
-            if (!property.getKey().startsWith("codenvy:") || securityContext.isUserInRole("system/admin") ||
-                securityContext.isUserInRole("system/manager")) {
-                filteredProperties.put(property.getKey(), property.getValue());
-            }
-        }
+        // Do not send with REST properties that starts from 'codenvy:' for all or 'restricted:' for not acc/admins
+        Map<String, String> filteredProperties =
+                Maps.filterEntries(subscription.getProperties(), new Predicate<Map.Entry<String, String>>() {
+                    @Override
+                    public boolean apply(Map.Entry<String, String> input) {
+                        if (isUserPrivileged) {
+                            return !(securityContext.isUserInRole("account/owner") && input.getKey().startsWith("codenvy:"));
+                        }
+                        return !input.getKey().startsWith("codenvy:") && !input.getKey().startsWith("restricted:");
+                    }
+                });
+
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("MM/dd/yyyy");
         dateFormat.setLenient(false);
