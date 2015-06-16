@@ -751,13 +751,32 @@ public class SubscriptionServiceTest {
         properties.put("codenvyProperty", "value");
         properties.put("codenvy:", "value");
         Subscription subscription = createSubscription().withProperties(properties);
+        String [] roles = new String[] {"user", "account/admin", "account/member"};
 
-        prepareSecurityContext("user");
+        for (String role : roles) {
+            prepareSecurityContext(role);
+            SubscriptionDescriptor descriptor = getDescriptor(subscription);
+
+            for (String property : descriptor.getProperties().keySet()) {
+                assertFalse(property.startsWith("codenvy:"));
+            }
+        }
+    }
+
+    @Test
+    public void shouldNotAddRestrictedPropertiesInSubscriptionDescriptorIfUserIsNotAccountOwner() throws Exception {
+        Map<String, String> properties = new HashMap<>();
+        properties.put("codenvy:property", "value");
+        properties.put("someproperty", "value");
+        properties.put("restricted:property", "value");
+        Subscription subscription = createSubscription().withProperties(properties);
+
+        prepareSecurityContext("account/member");
 
         SubscriptionDescriptor descriptor = getDescriptor(subscription);
 
         for (String property : descriptor.getProperties().keySet()) {
-            assertFalse(property.startsWith("codenvy:"));
+            assertFalse(property.startsWith("restricted:"));
         }
     }
 
