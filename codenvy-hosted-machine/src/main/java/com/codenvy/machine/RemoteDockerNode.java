@@ -203,6 +203,12 @@ public class RemoteDockerNode implements DockerNode {
         return hostProjectsFolder;
     }
 
+
+    @Override
+    public String getHost() {
+        return nodeLocation;
+    }
+
     private void copyProject(String workspaceId, ProjectBinding project)
             throws MachineException {
         final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
