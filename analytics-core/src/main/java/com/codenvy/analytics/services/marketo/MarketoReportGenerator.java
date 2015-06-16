@@ -113,12 +113,12 @@ public class MarketoReportGenerator {
                                                                 }
                                                             };
 
-        Set<ValueData> newUsers = getNewUsers(context);
+        Set<ValueData> newUsers = getNewUsers(context)  ;
 
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
         Context.Builder builder = new Context.Builder(context);
         builder.put(Parameters.PER_PAGE, pageSize);
-        builder.put(Parameters.SORT, "+user");
+        builder.put(Parameters.SORT, "+_id");
         builder.put(MetricFilter.REGISTERED_USER, 1);
         context = builder.build();
 
