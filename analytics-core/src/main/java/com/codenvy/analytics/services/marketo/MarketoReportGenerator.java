@@ -113,7 +113,7 @@ public class MarketoReportGenerator {
                                                                 }
                                                             };
 
-        Set<ValueData> newUsers = getNewUsers(context)  ;
+        Set<ValueData> newUsers = getNewUsers(context);
 
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
         Context.Builder builder = new Context.Builder(context);
