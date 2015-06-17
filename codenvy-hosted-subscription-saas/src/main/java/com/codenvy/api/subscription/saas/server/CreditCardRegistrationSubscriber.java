@@ -139,6 +139,6 @@ public class CreditCardRegistrationSubscriber implements EventSubscriber<CreditC
                                                 .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
                                                 .withTillDate(System.currentTimeMillis())
                                                 .build();
-        return billingService.getEstimatedUsageByAccount(filter).isEmpty();
+        return !billingService.getEstimatedUsageByAccount(filter).isEmpty();
     }
 }
