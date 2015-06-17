@@ -319,11 +319,6 @@ public class UserDaoTest extends BaseTest {
         assertEquals(user.getAliases(), users[2].getAliases());
     }
 
-    @Test
-    public void should() {
-
-    }
-
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowNotFoundExceptionWhenUserWithGivenAliasDoesNotExist() throws Exception {
         userDao.getByAlias("invalid");
