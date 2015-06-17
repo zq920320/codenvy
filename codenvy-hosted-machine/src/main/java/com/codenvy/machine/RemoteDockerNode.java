@@ -173,28 +173,28 @@ public class RemoteDockerNode implements DockerNode {
     }
 
     private void execSystemHook(String hookExecutable, String workspaceId, String hostProjectsFolder) {
-        final ProcessBuilder pb = new ProcessBuilder(hookExecutable, workspaceId, nodeLocation, hostProjectsFolder);
-
-        LineConsumer lineConsumer = new LogLineConsumer();
-
-        Process process;
         try {
+            final File workspacePath = mountStrategy.getMountPath(workspaceId);
+
+            final ProcessBuilder pb = new ProcessBuilder(hookExecutable, workspacePath.toString(), nodeLocation, hostProjectsFolder);
+
+            LineConsumer lineConsumer = new LogLineConsumer();
+            Process process;
             process = ProcessUtil.execute(pb, lineConsumer);
-        } catch (IOException e) {
+
+            // process will be stopped after timeout
+            Watchdog watcher = new Watchdog(3, TimeUnit.SECONDS);
+            watcher.start(new CancellableProcessWrapper(process));
+
+            try {
+                process.waitFor();
+            } catch (InterruptedException e) {
+                Thread.interrupted();
+            } finally {
+                watcher.stop();
+            }
+        } catch (ServerException | IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
-            return;
-        }
-
-        // process will be stopped after timeout
-        Watchdog watcher = new Watchdog(3, TimeUnit.SECONDS);
-        watcher.start(new CancellableProcessWrapper(process));
-
-        try {
-            process.waitFor();
-        } catch (InterruptedException e) {
-            Thread.interrupted();
-        } finally {
-            watcher.stop();
         }
     }
 
