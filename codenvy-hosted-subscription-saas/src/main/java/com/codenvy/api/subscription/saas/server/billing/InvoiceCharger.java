@@ -15,96 +15,66 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
+package com.codenvy.api.subscription.saas.server.billing;
 
-package com.codenvy.api.subscription.saas.server.schedulers;
-
+import com.codenvy.api.creditcard.server.CreditCardDao;
+import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.server.InvoicePaymentService;
-import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.creditcard.server.CreditCardDao;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
-import com.codenvy.api.subscription.saas.server.billing.PaymentState;
-import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.commons.schedule.ScheduleDelay;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
 
 /**
- * Charges all unpaid invoices
+ * Charges invoice
  *
  * @author Sergii Leschenko
  */
 @Singleton
-public class MeterBasedCharger {
-    private static final Logger LOG = LoggerFactory.getLogger(MeterBasedCharger.class);
-
-    private static final String INVOICE_FETCH_LIMIT = "billing.invoice.fetch.limit";
+public class InvoiceCharger {
+    private static final Logger LOG = LoggerFactory.getLogger(InvoiceCharger.class);
 
     private final BillingService        billingService;
     private final InvoicePaymentService invoicePaymentService;
     private final CreditCardDao         creditCardDao;
     private final AccountLocker         accountLocker;
-    private final int                   invoices_limit;
 
     @Inject
-    public MeterBasedCharger(InvoicePaymentService invoicePaymentService,
-                             BillingService billingService,
-                             CreditCardDao creditCardDao,
-                             AccountLocker accountLocker,
-                             @Named(INVOICE_FETCH_LIMIT) int invoices_limit) {
+    public InvoiceCharger(InvoicePaymentService invoicePaymentService,
+                          BillingService billingService,
+                          CreditCardDao creditCardDao,
+                          AccountLocker accountLocker) {
         this.billingService = billingService;
         this.invoicePaymentService = invoicePaymentService;
         this.creditCardDao = creditCardDao;
         this.accountLocker = accountLocker;
-        this.invoices_limit = invoices_limit;
     }
 
-    @ScheduleDelay(delay = 60)
-    public void chargeInvoices() {
-        try {
-            List<Invoice> notPaidInvoices = billingService.getInvoices(InvoiceFilter.builder()
-                                                                                    .withPaymentStates(PaymentState.WAITING_EXECUTOR)
-                                                                                    .withMaxItems(invoices_limit)
-                                                                                    .build());
-            for (Invoice invoice : notPaidInvoices) {
-                doCharge(invoice);
-            }
-        } catch (Exception e) {
-            LOG.error("Error of invoices charging. " + e.getLocalizedMessage(), e);
-        }
-    }
-
-    private void doCharge(Invoice invoice) {
-        if (invoice.getTotal() <= 0) {
-            setPaymentState(invoice.getId(), PaymentState.NOT_REQUIRED);
-            return;
-        }
-
+    public void charge(Invoice invoice) throws ApiException {
         final String ccToken = getCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
             accountLocker.setPaymentLock(invoice.getAccountId());
-            return;
+
+            throw new ConflictException("Account with id " + invoice.getAccountId() + " does not have credit card");
         }
 
-        LOG.info("PAYMENTS# Saas #Start# accountId#{}#", invoice.getAccountId());
         try {
             invoicePaymentService.charge(invoice.withCreditCardId(ccToken));
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY, ccToken);
         } catch (ApiException e) {
-            LOG.error("Can't pay invoice " + invoice.getId(), e);
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
             accountLocker.setPaymentLock(invoice.getAccountId());
+            throw e;
         }
     }
 

@@ -21,6 +21,7 @@ import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.server.payment.GuiceBraintreeGateway;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
+import com.google.inject.name.Names;
 
 import static org.eclipse.che.inject.Matchers.names;
 
@@ -34,6 +35,9 @@ public class BillingModule extends AbstractModule {
         bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
 
         bind(InvoiceTemplateProcessor.class);
+
+        bind(InvoiceCharger.class);
+        bind(InvoiceRecharger.class).asEagerSingleton();
 
         bind(InvoiceService.class);
 

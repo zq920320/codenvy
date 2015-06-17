@@ -17,9 +17,6 @@
  */
 package com.codenvy.api.subscription.saas.server.metric;
 
-import com.codenvy.api.subscription.saas.server.metric.ResourcesUsageTracker;
-import com.codenvy.api.subscription.saas.server.metric.RunTasksActivityChecker;
-
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;

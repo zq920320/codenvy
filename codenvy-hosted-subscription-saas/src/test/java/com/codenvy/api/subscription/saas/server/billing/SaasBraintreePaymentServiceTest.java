@@ -30,7 +30,6 @@ import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 
 import com.codenvy.api.creditcard.server.CreditCardDao;
-import com.codenvy.api.subscription.saas.server.billing.SaasBraintreeInvoicePaymentService;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.shared.dto.BillingCycleType;
 import com.codenvy.api.subscription.shared.dto.SubscriptionState;
@@ -65,12 +64,12 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
 /**
- * Tests for {@link SaasBraintreeInvoicePaymentService}
+ * Tests for {@link SaasBraintreePaymentService}
  *
  * @author Alexander Garagatyi
  */
 @Listeners(MockitoTestNGListener.class)
-public class SaasBraintreeInvoicePaymentServiceTest {
+public class SaasBraintreePaymentServiceTest {
     private static final String SUBSCRIPTION_ID = "subscriptionId";
     private static final String PLAN_ID         = "planId";
     private static final String PAYMENT_TOKEN   = "ptoken";
@@ -100,7 +99,7 @@ public class SaasBraintreeInvoicePaymentServiceTest {
     SubscriptionMailSender mailSender;
 
     @InjectMocks
-    private SaasBraintreeInvoicePaymentService service;
+    private SaasBraintreePaymentService service;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -137,7 +136,7 @@ public class SaasBraintreeInvoicePaymentServiceTest {
     @Test(expectedExceptions = ServerException.class, expectedExceptionsMessageRegExp = "Internal server error occurs. Please, contact " +
                                                                                         "support")
     public void shouldThrowServerExceptionIfPriceIsMissing() throws Exception {
-        Field prices = SaasBraintreeInvoicePaymentService.class.getDeclaredField("prices");
+        Field prices = SaasBraintreePaymentService.class.getDeclaredField("prices");
         prices.setAccessible(true);
         prices.set(service, Collections.emptyMap());
 
@@ -146,7 +145,7 @@ public class SaasBraintreeInvoicePaymentServiceTest {
 
     @Test
     public void shouldDoNotChargeSubscriptionIfHimPriceEqualsTo0() throws Exception {
-        Field prices = SaasBraintreeInvoicePaymentService.class.getDeclaredField("prices");
+        Field prices = SaasBraintreePaymentService.class.getDeclaredField("prices");
         prices.setAccessible(true);
         prices.set(service, Collections.singletonMap(PLAN_ID, 0D));
 
@@ -182,12 +181,12 @@ public class SaasBraintreeInvoicePaymentServiceTest {
         when(plan.getId()).thenReturn("planId");
         when(plan.getPrice()).thenReturn(new BigDecimal(1));
 
-        Method getPrices = SaasBraintreeInvoicePaymentService.class.getDeclaredMethod("updatePrices");
+        Method getPrices = SaasBraintreePaymentService.class.getDeclaredMethod("updatePrices");
         assertTrue(getPrices.isAnnotationPresent(ScheduleDelay.class));
         getPrices.setAccessible(true);
         getPrices.invoke(service);
 
-        Field pricesField = SaasBraintreeInvoicePaymentService.class.getDeclaredField("prices");
+        Field pricesField = SaasBraintreePaymentService.class.getDeclaredField("prices");
         pricesField.setAccessible(true);
         Map<String, BigInteger> planPricesMap;
         while (true) {
@@ -223,7 +222,7 @@ public class SaasBraintreeInvoicePaymentServiceTest {
     }
 
     private void prepareSuccessfulCharge() throws NoSuchFieldException, IllegalAccessException {
-        Field prices = SaasBraintreeInvoicePaymentService.class.getDeclaredField("prices");
+        Field prices = SaasBraintreePaymentService.class.getDeclaredField("prices");
         prices.setAccessible(true);
         prices.set(service, Collections.singletonMap(PLAN_ID, PRICE));
         when(gateway.transaction()).thenReturn(transactionGateway);

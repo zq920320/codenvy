@@ -17,12 +17,12 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.server.SubscriptionEvent;
-import com.codenvy.api.subscription.server.util.SubscriptionServiceHelper;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.server.AbstractSubscriptionService;
+import com.codenvy.api.subscription.server.SubscriptionEvent;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
+import com.codenvy.api.subscription.server.util.SubscriptionServiceHelper;
 
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
@@ -105,6 +105,7 @@ public class SaasSubscriptionService extends AbstractSubscriptionService {
 
         eventService.publish(SubscriptionEvent.subscriptionAddedEvent(subscription));
 
+        accountLocker.removePaymentLock(subscription.getAccountId());
         accountLocker.removeResourcesLock(subscription.getAccountId());
 
         final String prepaidGbH = subscription.getProperties().get("PrepaidGbH");

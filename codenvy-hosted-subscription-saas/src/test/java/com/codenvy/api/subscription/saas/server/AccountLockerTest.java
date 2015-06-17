@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.AccountLockEvent;
-import com.codenvy.api.subscription.saas.server.AccountLocker;
-import com.codenvy.api.subscription.saas.server.WorkspaceLocker;
+import com.codenvy.api.subscription.saas.server.billing.BillingService;
+import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
+import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
@@ -29,6 +29,7 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -37,6 +38,7 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import static org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY;
 import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
@@ -64,6 +66,8 @@ public class AccountLockerTest {
     WorkspaceLocker workspaceLocker;
     @Mock
     EventService    eventService;
+    @Mock
+    BillingService  billingService;
 
     @InjectMocks
     AccountLocker accountLocker;
@@ -150,7 +154,7 @@ public class AccountLockerTest {
     }
 
     @Test
-    public void shouldPaymentLockAccount() throws NotFoundException, ServerException, ConflictException {
+    public void shouldSetPaymentLockInAccount() throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
         when(accountDao.getById(anyString())).thenReturn(account);
 
@@ -175,7 +179,8 @@ public class AccountLockerTest {
     }
 
     @Test
-    public void shouldNotPaymentLockAccountIfItAlreadyHasPaymentLockedProperty() throws NotFoundException, ServerException, ConflictException {
+    public void shouldNotSetPaymentLockAccountIfItAlreadyHasPaymentLockedProperty()
+            throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
         account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
         when(accountDao.getById(anyString())).thenReturn(account);
@@ -187,7 +192,7 @@ public class AccountLockerTest {
     }
 
     @Test
-    public void shouldPaymentUnlockAccount() throws NotFoundException, ServerException, ConflictException {
+    public void shouldRemovePaymentLockInAccount() throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
         account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
         account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
@@ -213,29 +218,29 @@ public class AccountLockerTest {
     }
 
     @Test
-    public void shouldNotUnlockAccountIfItHasNotPaymentLockProperty() throws NotFoundException, ServerException, ConflictException {
+    public void shouldNotUnlockAccountIfItDoNotHavePaymentLockProperty() throws NotFoundException, ServerException, ConflictException {
+        Account account = new Account().withId("accountId");
+        when(accountDao.getById(anyString())).thenReturn(account);
+        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Collections.<Invoice>emptyList());
+
+        accountLocker.removePaymentLock("accountId");
+
+        verify(accountDao, never()).update((Account)anyObject());
+        verify(eventService, never()).publish(anyObject());
+    }
+
+    @Test
+    public void shouldNotUnlockAccountIfItHasUnpaidInvoices() throws NotFoundException, ServerException, ConflictException {
         Account account = new Account().withId("accountId");
         account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
         account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
         when(accountDao.getById(anyString())).thenReturn(account);
+        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Collections.singletonList(DtoFactory.getInstance().createDto(Invoice.class)));
 
         accountLocker.removePaymentLock("accountId");
 
-        verify(accountDao).update(argThat(new ArgumentMatcher<Account>() {
-            @Override
-            public boolean matches(Object o) {
-                final Account account = (Account)o;
-                return "accountId".equals(account.getId())
-                       && !account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)
-                       && !account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
-            }
-        }));
-        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
-            @Override
-            public boolean matches(Object o) {
-                return AccountLockEvent.EventType.ACCOUNT_UNLOCKED.equals(((AccountLockEvent)o).getType());
-            }
-        }));
+        verify(accountDao, never()).update((Account)anyObject());
+        verify(eventService, never()).publish(anyObject());
     }
 
     private Workspace createWorkspace(String accountId, String workspaceId, boolean lockedResources) {

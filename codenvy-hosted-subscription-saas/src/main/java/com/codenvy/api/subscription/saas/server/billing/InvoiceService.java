@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.subscription.saas.server.billing;
 
+import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.InvoiceDescriptor;
 import com.google.common.annotations.Beta;
@@ -26,6 +27,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -61,9 +63,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.CREDIT_CARD_MISSING;
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.PAYMENT_FAIL;
 import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 /**
+ * @author Sergii Leschenko
  * @author Max Shaposhnik
  */
 @Beta
@@ -75,16 +80,22 @@ public class InvoiceService extends Service {
     private final InvoiceTemplateProcessor invoiceTemplateProcessor;
     private final BillingPeriod            billingPeriod;
     private final AccountDao               accountDao;
+    private final AccountLocker            accountLocker;
+    private final InvoiceCharger           invoiceCharger;
 
     @Inject
     public InvoiceService(BillingService billingService,
                           InvoiceTemplateProcessor initializer,
                           BillingPeriod billingPeriod,
-                          AccountDao accountDao) {
+                          AccountDao accountDao,
+                          AccountLocker accountLocker,
+                          InvoiceCharger invoiceCharger) {
         this.billingService = billingService;
         this.invoiceTemplateProcessor = initializer;
         this.billingPeriod = billingPeriod;
         this.accountDao = accountDao;
+        this.accountLocker = accountLocker;
+        this.invoiceCharger = invoiceCharger;
     }
 
     @GET
@@ -123,6 +134,25 @@ public class InvoiceService extends Service {
             }
         };
         return Response.ok(response).build();
+    }
+
+    @POST
+    @Path("/{invoiceId}/charge")
+    @Produces(MediaType.APPLICATION_JSON)
+    @RolesAllowed({"user", "system/admin", "system/manager"})
+    public Response charge(@ApiParam(value = "Invoice ID", required = true)
+                           @PathParam("invoiceId") long invoiceId) throws ApiException {
+        final Invoice invoice = getInvoice(invoiceId);
+        if (!CREDIT_CARD_MISSING.getState().equals(invoice.getPaymentState())
+            && !PAYMENT_FAIL.getState().equals(invoice.getPaymentState())) {
+
+            throw new ConflictException("Payment is not required for invoice with id " + invoiceId);
+        }
+
+        invoiceCharger.charge(invoice);
+        accountLocker.removePaymentLock(invoice.getAccountId());
+
+        return Response.status(204).build();
     }
 
     /**
@@ -189,13 +219,7 @@ public class InvoiceService extends Service {
     private Invoice getInvoice(long invoiceId) throws ServerException,
                                                       NotFoundException,
                                                       ForbiddenException {
-        List<Invoice> invoices = billingService.getInvoices(InvoiceFilter.builder()
-                                                                         .withId(invoiceId)
-                                                                         .build());
-        if (invoices.isEmpty()) {
-            throw new NotFoundException("Account with id " + String.valueOf(invoiceId) + " was not found");
-        }
-        Invoice invoice = invoices.get(0);
+        Invoice invoice = billingService.getInvoice(invoiceId);
         Set<String> roles = resolveRolesForSpecificAccount(invoice.getAccountId());
         final User currentUser = EnvironmentContext.getCurrent().getUser();
         final boolean isAdmin = currentUser.isMemberOf("system/admin") || currentUser.isMemberOf("system/manager");

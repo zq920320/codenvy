@@ -35,7 +35,7 @@ public enum PaymentState {
 
     private final String state;
 
-    private PaymentState(String state) {
+    PaymentState(String state) {
         this.state = state;
     }
 

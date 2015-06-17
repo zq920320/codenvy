@@ -18,14 +18,14 @@
 package com.codenvy.api.subscription.saas.server;
 
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.billing.SaasBraintreeInvoicePaymentService;
+import com.codenvy.api.subscription.saas.server.billing.SaasBraintreePaymentService;
 import com.codenvy.api.subscription.saas.server.dao.sql.SqlBonusDao;
 import com.codenvy.api.subscription.saas.server.job.RefillJob;
 import com.codenvy.api.subscription.saas.server.limit.ActiveTasksHolder;
 import com.codenvy.api.subscription.saas.server.limit.ResourcesUsageLimitProvider;
 import com.codenvy.api.subscription.saas.server.schedulers.GenerateInvoicesJob;
+import com.codenvy.api.subscription.saas.server.schedulers.InvoiceChargingScheduler;
 import com.codenvy.api.subscription.saas.server.schedulers.MailScheduler;
-import com.codenvy.api.subscription.saas.server.schedulers.MeterBasedCharger;
 import com.codenvy.api.subscription.saas.server.schedulers.SubscriptionScheduler;
 import com.codenvy.api.subscription.server.AbstractSubscriptionService;
 import com.google.inject.AbstractModule;
@@ -37,7 +37,7 @@ import com.google.inject.multibindings.Multibinder;
 public class SaasSubscriptionModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(InvoicePaymentService.class).to(SaasBraintreeInvoicePaymentService.class).asEagerSingleton();
+        bind(InvoicePaymentService.class).to(SaasBraintreePaymentService.class).asEagerSingleton();
         bind(BonusDao.class).to(SqlBonusDao.class);
         bind(SaasService.class);
 
@@ -47,8 +47,8 @@ public class SaasSubscriptionModule extends AbstractModule {
 
         bind(ActiveTasksHolder.class).asEagerSingleton();
         bind(ResourcesUsageLimitProvider.class).asEagerSingleton();
+        bind(InvoiceChargingScheduler.class);
         bind(RefillJob.class);
-        bind(MeterBasedCharger.class);
         bind(MailScheduler.class);
         bind(GenerateInvoicesJob.class);
         bind(SubscriptionScheduler.class).asEagerSingleton();
