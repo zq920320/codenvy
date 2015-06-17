@@ -19,6 +19,7 @@ package com.codenvy.api.dao.ldap;
 
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
+
 import org.eclipse.che.api.user.server.dao.User;
 
 import javax.inject.Inject;
@@ -30,7 +31,6 @@ import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.directory.BasicAttribute;
 import javax.naming.directory.BasicAttributes;
-import javax.naming.directory.DirContext;
 import javax.naming.directory.ModificationItem;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -38,17 +38,20 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
+import static javax.naming.directory.DirContext.REPLACE_ATTRIBUTE;
+
 /**
  * Mapper is used for mapping LDAP Attributes to/from {@code User} POJO.
  *
  * @author andrew00x
+ * @author Eugene Voevodin
  */
 @Singleton
 public class UserAttributesMapper {
 
     final PasswordEncryptor encryptor;
     final String[]          userObjectClasses;
-    final String            userDn;
+    final String            userNameAttr;
     final String            userIdAttr;
     final String            userPasswordAttr;
     final String            userEmailAttr;
@@ -71,7 +74,7 @@ public class UserAttributesMapper {
      *         encryptor of user passwords
      * @param userObjectClasses
      *         values for objectClass attribute. Typical value is 'inetOrgPerson'.
-     * @param userDn
+     * @param userNameAttr
      *         name of attribute that contains name of User object. Typical value is 'CN'.
      *         <p/>
      *         Example:
@@ -91,14 +94,14 @@ public class UserAttributesMapper {
     @Inject
     public UserAttributesMapper(PasswordEncryptor encryptor,
                                 @Named("user.ldap.object_classes") String[] userObjectClasses,
-                                @Named("user.ldap.user_dn") String userDn,
                                 @Named("user.ldap.attr.id") String userIdAttr,
+                                @Named("user.ldap.attr.name") String userNameAttr,
                                 @Named("user.ldap.attr.password") String userPasswordAttr,
                                 @Named("user.ldap.attr.email") String userEmailAttr,
                                 @Named("user.ldap.attr.aliases") String userAliasesAttr) {
         this.encryptor = encryptor;
         this.userObjectClasses = userObjectClasses;
-        this.userDn = userDn;
+        this.userNameAttr = userNameAttr;
         this.userIdAttr = userIdAttr;
         this.userPasswordAttr = userPasswordAttr;
         this.userEmailAttr = userEmailAttr;
@@ -108,7 +111,7 @@ public class UserAttributesMapper {
     }
 
     public UserAttributesMapper() {
-        this(new SSHAPasswordEncryptor(), new String[]{"inetOrgPerson"}, "cn", "uid", "userPassword", "mail", "initials");
+        this(new SSHAPasswordEncryptor(), new String[]{"inetOrgPerson"}, "uid", "cn", "userPassword", "mail", "initials");
     }
 
     /**
@@ -126,10 +129,13 @@ public class UserAttributesMapper {
         }
     }
 
-    /** Restores instance of {@code User} from LDAP {@code Attributes}. */
+    /**
+     * Restores instance of {@code User} from LDAP {@code Attributes}.
+     */
     public User fromAttributes(Attributes attributes) throws NamingException {
         final User user = new User();
         user.setId(attributes.get(userIdAttr).get().toString());
+        user.setName(attributes.get(userNameAttr).get().toString());
         user.setEmail(attributes.get(userEmailAttr).get().toString());
         final NamingEnumeration enumeration = attributes.get(userAliasesAttr).getAll();
         final List<String> aliases = new LinkedList<>();
@@ -145,7 +151,9 @@ public class UserAttributesMapper {
         return user;
     }
 
-    /** Converts {@code User} instance to LDAP {@code Attributes}. */
+    /**
+     * Converts {@code User} instance to LDAP {@code Attributes}.
+     */
     public Attributes toAttributes(User user) throws NamingException {
         final Attributes attributes = new BasicAttributes();
         final Attribute objectClassAttr = new BasicAttribute("objectClass");
@@ -153,10 +161,17 @@ public class UserAttributesMapper {
             objectClassAttr.add(oc);
         }
         attributes.put(objectClassAttr);
-        attributes.put(userDn, user.getId());
         attributes.put(userIdAttr, user.getId());
+        if (user.getName() != null) {
+            attributes.put(userNameAttr, user.getName());
+        } else {
+            attributes.put(userNameAttr, user.getId());
+        }
+        if (user.getEmail() == null) {
+            user.setEmail(user.getName());
+        }
         attributes.put(userEmailAttr, user.getEmail());
-        attributes.put(userPasswordAttr, encryptor.encryptPassword(user.getPassword().getBytes()));
+        attributes.put(userPasswordAttr, new String(encryptor.encrypt(user.getPassword().getBytes())));
         final Attribute aliasesAttr = new BasicAttribute(userAliasesAttr);
         final List<String> aliases = user.getAliases();
         if (!aliases.isEmpty()) {
@@ -173,32 +188,41 @@ public class UserAttributesMapper {
         return attributes;
     }
 
-    /** Compares two {@code User} objects and provides diff of {@code ModificationItem[]} form. */
-    public ModificationItem[] createModifications(User user1, User user2) throws NamingException {
-        final List<ModificationItem> mods = new ArrayList<>(3);
-        if (!user1.getEmail().equals(user2.getEmail())) {
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, new BasicAttribute(userEmailAttr, user2.getEmail())));
+    /**
+     * Compares two {@code User} objects and provides diff of {@code ModificationItem[]} form.
+     */
+    public ModificationItem[] createModifications(User src, User dest) throws NamingException {
+        final List<ModificationItem> mods = new ArrayList<>();
+
+        // create modification for email if necessary
+        if (dest.getEmail() != null && !dest.getEmail().equals(src.getEmail())) {
+            mods.add(new ModificationItem(REPLACE_ATTRIBUTE, new BasicAttribute(userEmailAttr, dest.getEmail())));
         }
-        if (!user1.getAliases().equals(user2.getAliases())) {
+
+        // create modification for name if necessary
+        if (dest.getName() != null && !dest.getName().equals(src.getName())) {
+            mods.add(new ModificationItem(REPLACE_ATTRIBUTE, new BasicAttribute(userNameAttr, dest.getName())));
+        }
+
+        // create modification for password if necessary
+        if (dest.getPassword() != null) {
+            mods.add(new ModificationItem(REPLACE_ATTRIBUTE,
+                                          new BasicAttribute(userPasswordAttr, encryptor.encrypt(dest.getPassword().getBytes()))));
+        }
+
+        // create modifications for aliases
+        if (!src.getAliases().equals(dest.getAliases())) {
             final Attribute aliasesAttr = new BasicAttribute(userAliasesAttr);
-            final List<String> aliases = user2.getAliases();
+            final List<String> aliases = dest.getAliases();
             if (!aliases.isEmpty()) {
                 for (String alias : aliases) {
                     aliasesAttr.add(alias);
                 }
             } else {
-                aliasesAttr.add(user2.getEmail());
+                aliasesAttr.add(dest.getEmail());
             }
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE, aliasesAttr));
-        }
-        if (user2.getPassword() != null) {
-            mods.add(new ModificationItem(DirContext.REPLACE_ATTRIBUTE,
-                                          new BasicAttribute(userPasswordAttr, encryptor.encryptPassword(
-                                                  user2.getPassword().getBytes()))
-            ));
+            mods.add(new ModificationItem(REPLACE_ATTRIBUTE, aliasesAttr));
         }
         return mods.toArray(new ModificationItem[mods.size()]);
     }
-
-
 }

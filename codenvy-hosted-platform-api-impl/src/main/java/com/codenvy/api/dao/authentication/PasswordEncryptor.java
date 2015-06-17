@@ -17,14 +17,19 @@
  */
 package com.codenvy.api.dao.authentication;
 
-import javax.naming.NamingException;
-
 /**
- * Encryptor of user passwords.
- *
+ * Encrypts password in implementation specific way
  */
-
 public interface PasswordEncryptor {
 
-    String encryptPassword(byte[] password) throws NamingException;
+    /**
+     * Encrypts (digests) the given {@code password}
+     *
+     * @param password
+     *         the plain password to be encrypted
+     * @return the encrypted password
+     * @throws RuntimeException
+     *         when it is not possible to encrypt password
+     */
+    byte[] encrypt(byte[] password) throws RuntimeException;
 }
