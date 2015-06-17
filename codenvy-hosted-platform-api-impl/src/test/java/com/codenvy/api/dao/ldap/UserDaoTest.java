@@ -193,6 +193,22 @@ public class UserDaoTest extends BaseTest {
         assertNull(result.getPassword());
     }
 
+    @Test
+    public void shouldUseUserIdWhenUserNameIsNullWhenCreatingUser() throws Exception {
+        final User newUser = new User().withId("user123")
+                                       .withName("user123")
+                                       .withPassword("password");
+
+        userDao.create(newUser);
+
+        final User result = userDao.getByAlias("user123");
+        assertEquals(result.getId(), newUser.getId());
+        assertEquals(result.getName(), newUser.getId());
+        assertEquals(result.getEmail(), newUser.getEmail());
+        assertEquals(result.getAliases(), singletonList(newUser.getEmail()));
+        assertNull(result.getPassword());
+    }
+
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Unable create new user .*. User already exists")
     public void shouldThrowConflictExceptionWhenCreatingUserWithReservedId() throws Exception {
@@ -301,6 +317,11 @@ public class UserDaoTest extends BaseTest {
         assertEquals(user.getName(), users[2].getName());
         assertEquals(user.getPassword(), null);
         assertEquals(user.getAliases(), users[2].getAliases());
+    }
+
+    @Test
+    public void should() {
+
     }
 
     @Test(expectedExceptions = NotFoundException.class)

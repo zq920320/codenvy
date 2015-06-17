@@ -65,7 +65,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     private final PreferenceDao             preferenceDao;
     private final InitialLdapContextFactory contextFactory;
     private final String                    userContainerDn;
-    private final String                    userDn;
+    private final String                    userIdAttr;
     private final String                    roleAttrName;
     private final String                    allowedRole;
 
@@ -75,7 +75,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     MemberDao memberDao,
                                     PreferenceDao preferenceDao,
                                     @Named("user.ldap.user_container_dn") String userContainerDn,
-                                    @Named("user.ldap.user_dn") String userDn,
+                                    @Named("user.ldap.attr.id") String userIdAttr,
                                     @Nullable @Named("user.ldap.attr.role_name") String roleAttrName,
                                     @Nullable @Named("user.ldap.allowed_role") String allowedRole,
                                     InitialLdapContextFactory contextFactory) {
@@ -86,7 +86,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
         this.userContainerDn = userContainerDn;
-        this.userDn = userDn;
+        this.userIdAttr = userIdAttr;
         this.contextFactory = contextFactory;
     }
 
@@ -145,7 +145,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
         try {
             context = contextFactory.createContext();
 
-            final Attributes userAttrs = context.getAttributes(getUserDn(id));
+            final Attributes userAttrs = context.getAttributes(userIdAttr + '=' + id + ',' + userContainerDn);
 
             rolesEnum = userAttrs.get(roleAttrName).getAll();
 
@@ -163,10 +163,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             close(context);
             close(rolesEnum);
         }
-    }
-
-    private String getUserDn(String userId) {
-        return userDn + '=' + userId + ',' + userContainerDn;
     }
 
     private void close(Context ctx) {

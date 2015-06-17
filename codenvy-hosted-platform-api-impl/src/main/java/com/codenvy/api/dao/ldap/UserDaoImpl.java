@@ -351,9 +351,22 @@ public class UserDaoImpl implements UserDao {
         return user;
     }
 
+    //TODO consider context#search & context#getAttributes
     private Attributes getUserAttributesById(InitialLdapContext context, String id) throws NamingException {
         try {
-            return context.getAttributes(addContainerDn(mapper.userIdAttr, id));
+            final SearchControls controls = new SearchControls();
+            controls.setSearchScope(SearchControls.SUBTREE_SCOPE);
+            final String filter = createFilter(mapper.userIdAttr, id);
+            NamingEnumeration<SearchResult> enumeration = null;
+            try {
+                enumeration = context.search(containerDn, filter, controls);
+                if (enumeration.hasMore()) {
+                    return enumeration.next().getAttributes();
+                }
+                return null;
+            } finally {
+                close(enumeration);
+            }
         } catch (NameNotFoundException nfEx) {
             return null;
         }
@@ -370,10 +383,10 @@ public class UserDaoImpl implements UserDao {
                 if (enumeration.hasMore()) {
                     return enumeration.next().getAttributes();
                 }
+                return null;
             } finally {
                 close(enumeration);
             }
-            return context.getAttributes(addContainerDn(mapper.userNameAttr, name));
         } catch (NameNotFoundException nfEx) {
             return null;
         }
