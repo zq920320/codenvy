@@ -1143,7 +1143,7 @@ function AnalyticsConfiguration() {
             modelViewName: "current_user_accounts_list",
 
             columnLinkPrefixList: {
-                "ID": "/analytics/pages/current-account-view.jsp?account_id",
+                "ID": "/analytics/pages/current-user-account-view.jsp?account_id",
                 "User": "/analytics/pages/user-view.jsp?user"
             }
         },
