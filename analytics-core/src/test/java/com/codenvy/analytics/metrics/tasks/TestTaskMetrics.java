@@ -52,6 +52,7 @@ import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static com.codenvy.analytics.pig.scripts.util.Event.Builder.createFactoryUrlAcceptedEvent;
 import static java.lang.Math.round;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /** @author Dmytro Nochevnov */
 public class TestTaskMetrics extends BaseTest {
@@ -454,19 +455,40 @@ public class TestTaskMetrics extends BaseTest {
         ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
 
         Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.TASK_ID);
-        assertEquals(m.toString(), "{"
-                                   + "id1_b={id=id1_b}, "
-                                   + "id3_d={id=id3_d}, "
-                                   + "id2_d={id=id2_d}, "
-                                   + "session2={id=session2}, "
-                                   + "id2_b={id=id2_b}, "
-                                   + "id1_d={id=id1_d}, "
-                                   + "id3_b={id=id3_b}, "
-                                   + "session1={id=session1}, "
-                                   + "id3_r={id=id3_r}, "
-                                   + "id1_r={id=id1_r}, "
-                                   + "id2_r={id=id2_r}"
-                                   + "}");
+
+        assertEquals(m.size(), 11);
+        assertTrue(m.containsKey("id1_b"));
+        assertEquals(m.get("id1_b").get("id").getAsString(), "id1_b");
+
+        assertTrue(m.containsKey("id3_b"));
+        assertEquals(m.get("id3_d").get("id").getAsString(), "id3_d");
+
+        assertTrue(m.containsKey("id2_d"));
+        assertEquals(m.get("id2_d").get("id").getAsString(), "id2_d");
+
+        assertTrue(m.containsKey("session2"));
+        assertEquals(m.get("session2").get("id").getAsString(), "session2");
+
+        assertTrue(m.containsKey("id2_b"));
+        assertEquals(m.get("id2_b").get("id").getAsString(), "id2_b");
+
+        assertTrue(m.containsKey("id1_d"));
+        assertEquals(m.get("id1_d").get("id").getAsString(), "id1_d");
+
+        assertTrue(m.containsKey("id3_b"));
+        assertEquals(m.get("id3_b").get("id").getAsString(), "id3_b");
+
+        assertTrue(m.containsKey("session1"));
+        assertEquals(m.get("session1").get("id").getAsString(), "session1");
+
+        assertTrue(m.containsKey("id3_r"));
+        assertEquals(m.get("id3_r").get("id").getAsString(), "id3_r");
+
+        assertTrue(m.containsKey("id1_r"));
+        assertEquals(m.get("id1_r").get("id").getAsString(), "id1_r");
+
+        assertTrue(m.containsKey("id2_r"));
+        assertEquals(m.get("id2_r").get("id").getAsString(), "id2_r");
     }
 
     @Test
