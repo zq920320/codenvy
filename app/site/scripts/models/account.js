@@ -213,8 +213,8 @@
                 success: function(workspaces) {
                         deferredResult.resolve(workspaces[0]); //returns first available workspace
                 },
-                error: function() {
-                    deferredResult.resolve(false);
+                error: function(error) {
+                    deferredResult.reject(error);
                 }
             });
             return deferredResult;
@@ -388,6 +388,9 @@
         var navigateToLocation = function(){
             var redirect_url = "/dashboard/";
             return getWorkspaces()
+            .fail(function(error){
+                return $.Deferred().reject(error);
+            })
             .then(function(workspace){
                 if (!workspace){
                     redirectToUrl("/site/auth/no-workspaces-found");
@@ -457,7 +460,10 @@
                 login(email, password)
                 .then(function(){
                     if (!redirect_url){
-                        navigateToLocation();    
+                        return navigateToLocation()
+                        .fail(function(error){
+                            return $.Deferred().reject(error);
+                        });    
                     } else {
                         redirectToUrl(redirect_url);
                     }
@@ -491,7 +497,10 @@
                 })
                 .then(function(){
                     if (!redirect_url){
-                        navigateToLocation();    
+                        return navigateToLocation()
+                        .fail(function(error){
+                            return $.Deferred().reject(error);
+                        });
                     } else {
                         redirectToUrl(redirect_url);
                     }
