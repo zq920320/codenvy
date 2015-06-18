@@ -140,7 +140,7 @@ public class SaasBraintreePaymentService implements InvoicePaymentService {
     }
 
     @Override
-    public void charge(Invoice invoice) throws ApiException {
+    public void charge(Invoice invoice) throws ForbiddenException, ServerException {
         if (invoice.getCreditCardId() == null) {
             throw new ForbiddenException("Credit card token can't be null");
         }

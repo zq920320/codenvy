@@ -23,8 +23,8 @@ import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.server.InvoicePaymentService;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
-import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
@@ -100,12 +100,12 @@ public class InvoiceChargerTest {
         verify(billingService).setPaymentState(eq(1L), eq(PaymentState.PAID_SUCCESSFULLY), eq("ccToken"));
     }
 
-    @Test(expectedExceptions = ApiException.class)
+    @Test(expectedExceptions = ServerException.class)
     public void shouldSetPaymentStateToPaymentFailedIfWereSomeChargingTroubles() throws Exception {
         when(creditCardDao.getCards(anyString())).thenReturn(Collections.singletonList(dto.createDto(CreditCard.class)
                                                                                           .withToken("ccToken")));
 
-        doThrow(new ApiException("Exception")).when(invoicePaymentService).charge((Invoice)anyObject());
+        doThrow(new ServerException("Exception")).when(invoicePaymentService).charge((Invoice)anyObject());
 
         invoiceCharger.charge(dto.createDto(Invoice.class)
                                  .withTotal(100D)

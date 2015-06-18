@@ -72,6 +72,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -222,7 +223,7 @@ public class SubscriptionServiceTest {
         when(subscriptionDao.getActive(ACCOUNT_ID)).thenReturn(Arrays.asList(expectedSubscription));
         prepareSecurityContext("system/admin");
 
-        ContainerResponse response = makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account/" + ACCOUNT_ID, null, null);
+        ContainerResponse response = makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account?id=" + ACCOUNT_ID, null, null);
 
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
         @SuppressWarnings("unchecked") List<SubscriptionDescriptor> subscriptions = (List<SubscriptionDescriptor>)response.getEntity();
@@ -240,7 +241,7 @@ public class SubscriptionServiceTest {
         prepareSecurityContext("system/admin");
 
         ContainerResponse response =
-                makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account/" + ACCOUNT_ID + "?service=" + SERVICE_ID, null, null);
+                makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account?id=" + ACCOUNT_ID + "&service=" + SERVICE_ID, null, null);
 
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
         @SuppressWarnings("unchecked") List<SubscriptionDescriptor> subscriptions = (List<SubscriptionDescriptor>)response.getEntity();
@@ -257,7 +258,7 @@ public class SubscriptionServiceTest {
         prepareSecurityContext("system/admin");
 
         ContainerResponse response =
-                makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account/" + ACCOUNT_ID + "?service=" + SERVICE_ID, null, null);
+                makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account/?id=" + ACCOUNT_ID + "&service=" + SERVICE_ID, null, null);
 
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
         @SuppressWarnings("unchecked") List<SubscriptionDescriptor> subscriptions = (List<SubscriptionDescriptor>)response.getEntity();
@@ -507,8 +508,8 @@ public class SubscriptionServiceTest {
         ContainerResponse response =
                 makeRequest(HttpMethod.DELETE, SERVICE_PATH + "/" + SUBSCRIPTION_ID, null, null);
 
-        assertEquals(response.getStatus(), Response.Status.FORBIDDEN.getStatusCode());
-        assertEquals(getErrorMessage(response.getEntity()), "Subscription is inactive already " + subscription.getId());
+        assertEquals(response.getStatus(), Response.Status.CONFLICT.getStatusCode());
+        assertEquals(getErrorMessage(response.getEntity()), "Subscription with id " + subscription.getId() + " is inactive already");
 
         verify(subscriptionDao, never()).deactivate(Matchers.anyString());
     }
@@ -548,7 +549,7 @@ public class SubscriptionServiceTest {
         ContainerResponse response =
                 makeRequest(HttpMethod.POST, SERVICE_PATH, MediaType.APPLICATION_JSON, null);
 
-        assertEquals(response.getStatus(), Response.Status.CONFLICT.getStatusCode());
+        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(getErrorMessage(response.getEntity()), "New subscription required");
     }
 
@@ -560,7 +561,7 @@ public class SubscriptionServiceTest {
                 makeRequest(HttpMethod.POST, SERVICE_PATH, MediaType.APPLICATION_JSON,
                             newSubscription.withAccountId(null));
 
-        assertEquals(response.getStatus(), Response.Status.CONFLICT.getStatusCode());
+        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(getErrorMessage(response.getEntity()), "Account identifier required");
     }
 
@@ -571,7 +572,7 @@ public class SubscriptionServiceTest {
         ContainerResponse response =
                 makeRequest(HttpMethod.POST, SERVICE_PATH, MediaType.APPLICATION_JSON, newSubscription.withPlanId(null));
 
-        assertEquals(response.getStatus(), Response.Status.CONFLICT.getStatusCode());
+        assertEquals(response.getStatus(), Response.Status.BAD_REQUEST.getStatusCode());
         assertEquals(getErrorMessage(response.getEntity()), "Plan identifier required");
     }
 
@@ -736,7 +737,7 @@ public class SubscriptionServiceTest {
                                     .withHref(SERVICE_PATH + "/" + SUBSCRIPTION_ID)
                                     .withProduces(MediaType.APPLICATION_JSON));
 
-        prepareSecurityContext("user");
+        prepareAccountsRoles(Collections.singletonList("account/member"), ACCOUNT_ID);
 
         SubscriptionDescriptor descriptor = getDescriptor(createSubscription());
 
@@ -744,27 +745,9 @@ public class SubscriptionServiceTest {
     }
 
     @Test
-    public void shouldNotAddCodenvyPropertiesInSubscriptionDescriptorIfUserIsNotSystemAdminOrManager() throws Exception {
-        Map<String, String> properties = new HashMap<>();
-        properties.put("codenvy:property", "value");
-        properties.put("someproperty", "value");
-        properties.put("codenvyProperty", "value");
-        properties.put("codenvy:", "value");
-        Subscription subscription = createSubscription().withProperties(properties);
-        String [] roles = new String[] {"user", "account/admin", "account/member"};
-
-        for (String role : roles) {
-            prepareSecurityContext(role);
-            SubscriptionDescriptor descriptor = getDescriptor(subscription);
-
-            for (String property : descriptor.getProperties().keySet()) {
-                assertFalse(property.startsWith("codenvy:"));
-            }
-        }
-    }
-
-    @Test
     public void shouldNotAddRestrictedPropertiesInSubscriptionDescriptorIfUserIsNotAccountOwner() throws Exception {
+        prepareAccountsRoles(Collections.singletonList("account/member"), ACCOUNT_ID);
+
         Map<String, String> properties = new HashMap<>();
         properties.put("codenvy:property", "value");
         properties.put("someproperty", "value");
@@ -782,6 +765,8 @@ public class SubscriptionServiceTest {
 
     @Test
     public void shouldBeAbleToReturnDescriptorWithNullDates() throws Exception {
+        prepareSecurityContext("system/admin");
+
         Subscription subscription = createSubscription()
                 .withStartDate(null)
                 .withEndDate(null)
@@ -792,6 +777,11 @@ public class SubscriptionServiceTest {
         SubscriptionDescriptor descriptor = getDescriptor(subscription);
 
         assertEquals(descriptor.withLinks(null), convertToDescriptor(subscription));
+    }
+
+    private void prepareAccountsRoles(List<String> roles, final String accountId) throws NotFoundException, ServerException {
+        when(accountDao.getByMember(anyString())).thenReturn(Collections.singletonList(new Member().withRoles(roles)
+                                                                                                   .withAccountId(accountId)));
     }
 
     private Subscription createSubscription() {
@@ -829,7 +819,7 @@ public class SubscriptionServiceTest {
     private SubscriptionDescriptor getDescriptor(Subscription subscription) throws Exception {
         when(subscriptionDao.getActive(ACCOUNT_ID)).thenReturn(Arrays.asList(subscription));
 
-        ContainerResponse response = makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account/" + ACCOUNT_ID, null, null);
+        ContainerResponse response = makeRequest(HttpMethod.GET, SERVICE_PATH + "/find/account?id=" + ACCOUNT_ID, null, null);
 
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
 

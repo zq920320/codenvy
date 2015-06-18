@@ -340,7 +340,7 @@ public class InvoiceServiceTest {
                                    .when()
                                    .get(SECURE_PATH + "/invoice/find");
 
-        assertEquals(response.getStatusCode(), 403);
+        assertEquals(response.getStatusCode(), 400);
         assertEquals(unwrapDto(response, ServiceError.class).getMessage(), "Missed value of account id parameter");
     }
 

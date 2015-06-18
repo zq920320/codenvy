@@ -23,7 +23,6 @@ import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.server.InvoicePaymentService;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
-import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
@@ -59,7 +58,7 @@ public class InvoiceCharger {
         this.accountLocker = accountLocker;
     }
 
-    public void charge(Invoice invoice) throws ApiException {
+    public void charge(Invoice invoice) throws ConflictException, ServerException, ForbiddenException {
         final String ccToken = getCreditCardToken(invoice.getAccountId());
         if (ccToken == null) {
             setPaymentState(invoice.getId(), PaymentState.CREDIT_CARD_MISSING);
@@ -71,7 +70,7 @@ public class InvoiceCharger {
         try {
             invoicePaymentService.charge(invoice.withCreditCardId(ccToken));
             setPaymentState(invoice.getId(), PaymentState.PAID_SUCCESSFULLY, ccToken);
-        } catch (ApiException e) {
+        } catch (ServerException | ForbiddenException e) {
             setPaymentState(invoice.getId(), PaymentState.PAYMENT_FAIL, ccToken);
             accountLocker.setPaymentLock(invoice.getAccountId());
             throw e;
