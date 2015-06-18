@@ -65,22 +65,24 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
+
         try {
-            String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
-            WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+            WorkspaceDescriptor descriptor = (WorkspaceDescriptor) ((Response) result).getEntity();
+            if (!descriptor.isTemporary()) {
+                String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
+                Map<String, String> properties = new HashMap<>();
+                properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+                properties.put("workspace", descriptor.getName());
+                properties.put("free.gbh", freeGbh);
+                properties.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
+                mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
+                        "Welcome To Codenvy",
+                        MediaType.TEXT_HTML,
+                        IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
+                        properties);
 
-            Map<String, String> properties = new HashMap<>();
-            properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
-            properties.put("workspace", descriptor.getName());
-            properties.put("free.gbh", freeGbh);
-            properties.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
-            mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
-                                      "Welcome To Codenvy",
-                                      MediaType.TEXT_HTML,
-                                      IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
-                                      properties);
-
-            LOG.info("Workspace created message send to {}", creatorEmail);
+                LOG.info("Workspace created message send to {}", creatorEmail);
+            }
         } catch (Exception e) {
             LOG.warn("Unable to send workspace creation notification email", e);
         }
