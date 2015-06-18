@@ -95,6 +95,14 @@ public class CreateWorkspaceInterceptorTest {
     }
 
     @Test
+    public void shouldNotSendEmailIfWorkspaceiIsTemporary() throws Throwable {
+        when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
+        when(workspaceDescriptor.isTemporary()).thenReturn(true);
+        interceptor.invoke(invocation);
+        verifyZeroInteractions(mailSenderClient);
+    }
+
+    @Test
     public void shouldSendEmail() throws Throwable {
         Method method =
                 WorkspaceService.class.getMethod("create", NewWorkspace.class, SecurityContext.class);
