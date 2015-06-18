@@ -23,7 +23,7 @@
     <parent>
         <artifactId>analytics-parent</artifactId>
         <groupId>com.codenvy.analytics</groupId>
-        <version>3.9.1</version>
+        <version>3.9.2-SNAPSHOT</version>
     </parent>
     <artifactId>analytics-core</artifactId>
     <name>Codenvy :: Analytics :: Core</name>
