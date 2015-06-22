@@ -26,6 +26,7 @@ import org.eclipse.che.api.core.notification.EventService;
 
 import com.codenvy.api.event.user.RemoveUserEvent;
 
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
@@ -78,6 +79,7 @@ public class UserDaoImpl implements UserDao {
     private final MemberDao                 memberDao;
     private final UserProfileDao            profileDao;
     private final WorkspaceDao              workspaceDao;
+    private final PreferenceDao             preferenceDao;
     private final UserAttributesMapper      mapper;
     private final InitialLdapContextFactory contextFactory;
 
@@ -95,6 +97,7 @@ public class UserDaoImpl implements UserDao {
                        MemberDao memberDao,
                        UserProfileDao profileDao,
                        WorkspaceDao workspaceDao,
+                       PreferenceDao preferenceDao,
                        InitialLdapContextFactory contextFactory,
                        @Named("user.ldap.user_container_dn") String userContainerDn,
                        @Named("user.ldap.user_dn") String userDn,
@@ -111,6 +114,7 @@ public class UserDaoImpl implements UserDao {
         this.memberDao = memberDao;
         this.profileDao = profileDao;
         this.workspaceDao = workspaceDao;
+        this.preferenceDao = preferenceDao;
         final StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
             sb.append("(objectClass=");
@@ -258,6 +262,8 @@ public class UserDaoImpl implements UserDao {
         }
         //remove profile
         profileDao.remove(id);
+        //remove preferences
+        preferenceDao.remove(id);
         //remove user
         InitialLdapContext context = null;
         try {
@@ -292,7 +298,7 @@ public class UserDaoImpl implements UserDao {
         try {
             final User user = doGetById(id);
             if (user == null) {
-                throw new NotFoundException("User not found " + id);
+                throw new NotFoundException("User " + id + " was not found ");
             }
             return doClone(user);
         } catch (NamingException e) {

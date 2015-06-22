@@ -23,6 +23,7 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.workspace.server.dao.Member;
@@ -64,6 +65,8 @@ public class UserDaoTest extends BaseTest {
     MemberDao      memberDao;
     @Mock
     WorkspaceDao   workspaceDao;
+    @Mock
+    PreferenceDao  preferenceDao;
 
     UserDaoImpl               userDao;
     InitialLdapContextFactory factory;
@@ -86,6 +89,7 @@ public class UserDaoTest extends BaseTest {
                                   memberDao,
                                   profileDao,
                                   workspaceDao,
+                                  preferenceDao,
                                   factory,
                                   "dc=codenvy;dc=com",
                                   "uid",
@@ -376,41 +380,49 @@ public class UserDaoTest extends BaseTest {
     }
 
     @Test
-    public void testRemoveUser() throws Exception {
+    public void shouldRemoveUserAndAllDependentEntries() throws Exception {
+        //given
+        //prepare user
+        final User testUser = users[0];
+
+        //prepare account
         final Account testAccount = new Account().withId("account_id");
-        when(accountDao.getByOwner(users[0].getId())).thenReturn(singletonList(testAccount));
+        when(accountDao.getByOwner(testUser.getId())).thenReturn(singletonList(testAccount));
+
+        //prepare account members
         final org.eclipse.che.api.account.server.dao.Member accountMember = new org.eclipse.che.api.account.server.dao.Member();
-        accountMember.withUserId(users[0].getId())
+        accountMember.withUserId(testUser.getId())
                      .withAccountId(testAccount.getId())
                      .withRoles(singletonList("account/owner"));
         when(accountDao.getMembers(testAccount.getId())).thenReturn(singletonList(accountMember));
-        when(accountDao.getByMember(users[0].getId())).thenReturn(singletonList(accountMember));
-        final Member workspaceMember = new Member().withUserId(users[0].getId())
+        when(accountDao.getByMember(testUser.getId())).thenReturn(singletonList(accountMember));
+
+        //prepare workspace members
+        final Member workspaceMember = new Member().withUserId(testUser.getId())
                                                    .withWorkspaceId("test_workspace_id")
                                                    .withRoles(singletonList("workspace/developer"));
-        when(memberDao.getUserRelationships(users[0].getId())).thenReturn(singletonList(workspaceMember));
-        assertNotNull(userDao.getById(users[0].getId()));
+        when(memberDao.getUserRelationships(testUser.getId())).thenReturn(singletonList(workspaceMember));
 
-        userDao.remove(users[0].getId());
+        //when
+        userDao.remove(testUser.getId());
 
+        //then
         try {
-            userDao.getById(users[0].getId());
-            fail();
+            userDao.getById(testUser.getId());
+            fail("User was not removed");
         } catch (NotFoundException ignored) {
+            //user was removed successfully
         }
         verify(accountDao).remove(testAccount.getId());
         verify(accountDao).removeMember(accountMember);
         verify(memberDao).remove(workspaceMember);
-        verify(profileDao).remove(users[0].getId());
+        verify(profileDao).remove(testUser.getId());
+        verify(preferenceDao).remove(testUser.getId());
     }
 
-    @Test
-    public void testRemoveNotExistedUser() throws Exception {
-        try {
-            userDao.remove("invalid");
-            fail();
-        } catch (NotFoundException ignored) {
-        }
+    @Test(expectedExceptions = NotFoundException.class)
+    public void shouldThrowNotFoundExceptionWhenUserDoesNotExist() throws Exception {
+        userDao.remove("invalid");
     }
 
     private User doClone(User other) {
