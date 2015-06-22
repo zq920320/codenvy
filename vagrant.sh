@@ -213,12 +213,12 @@ parseParameters "$@"
 
 cloneDeploymentProject
 
-if [ ${MAKE_PULL_IN_DEPLOYMENT} == true ]; then
-  pullDeploymentProject
-fi
-
 if [ ${MAKE_CHECKOUT_DEPLOYMENT} == true ]; then
   checkoutDeploymentProject
+fi
+
+if [ ${MAKE_PULL_IN_DEPLOYMENT} == true ]; then
+  pullDeploymentProject
 fi
 
 # Build project
