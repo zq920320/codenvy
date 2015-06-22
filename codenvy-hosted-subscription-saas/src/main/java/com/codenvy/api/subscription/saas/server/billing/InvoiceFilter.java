@@ -119,15 +119,15 @@ public class InvoiceFilter {
             return this;
         }
 
-        public Builder withFromDate(long fromDate) {
-            if (fromDate > 0) {
+        public Builder withFromDate(Long fromDate) {
+            if (fromDate != null && fromDate > 0) {
                 instance.fromDate = fromDate;
             }
             return this;
         }
 
-        public Builder withTillDate(long tillDate) {
-            if (tillDate > 0) {
+        public Builder withTillDate(Long tillDate) {
+            if (tillDate != null && tillDate > 0) {
                 instance.tillDate = tillDate;
             }
             return this;
