@@ -57,7 +57,6 @@ public class UserAttributesMapper {
     final String            userEmailAttr;
     final String            userAliasesAttr;
 
-
     /**
      * Basically for representing user in LDAP 'person', 'organizationalPerson' or 'inetOrgPerson' are used. Some of
      * attributes may be

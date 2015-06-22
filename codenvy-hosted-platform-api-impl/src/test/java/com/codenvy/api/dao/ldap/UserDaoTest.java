@@ -36,13 +36,13 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import javax.naming.NameAlreadyBoundException;
+import javax.naming.NameNotFoundException;
 import javax.naming.NamingException;
+import javax.naming.directory.Attributes;
+import javax.naming.ldap.InitialLdapContext;
 import java.util.ArrayList;
 
 import static java.util.Collections.singletonList;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.contains;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -88,6 +88,8 @@ public class UserDaoTest extends BaseTest {
                                   workspaceDao,
                                   factory,
                                   "dc=codenvy;dc=com",
+                                  "uid",
+                                  "cn",
                                   mapper,
                                   new EventService());
 
@@ -340,6 +342,25 @@ public class UserDaoTest extends BaseTest {
         assertEquals(user.getName(), users[1].getName());
         assertEquals(user.getPassword(), null);
         assertEquals(user.getAliases(), users[1].getAliases());
+    }
+
+    @Test
+    public void shouldRenameEntityWhenItIsNotFoundWithNewDn() throws Exception {
+        final Attributes attributes = mapper.toAttributes(new User().withId("user123")
+                                                                    .withName("user123")
+                                                                    .withPassword("password"));
+        InitialLdapContext context = factory.createContext();
+        context.createSubcontext("cn=user123,dc=codenvy;dc=com", attributes);
+
+        userDao.getById("user123");
+
+        try {
+            context.getAttributes("cn=user123,dc=codenvy;dc=com");
+            fail("Should rename entity");
+        } catch (NameNotFoundException ignored) {
+            //it okay
+        }
+        assertNotNull(context.getAttributes("uid=user123,dc=codenvy;dc=com"));
     }
 
     @Test(expectedExceptions = NotFoundException.class)
