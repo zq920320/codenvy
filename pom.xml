@@ -34,7 +34,6 @@
     <modules>
         <module>analytics-core</module>
         <module>analytics-application</module>
-        <module>analytics-tomcat-pkg</module>
         <module>analytics-tomcat-local-pkg</module>
     </modules>
     <scm>
