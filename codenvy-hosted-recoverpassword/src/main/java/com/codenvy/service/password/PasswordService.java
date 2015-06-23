@@ -17,6 +17,7 @@
  */
 package com.codenvy.service.password;
 
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.Profile;
@@ -229,7 +230,7 @@ public class PasswordService {
     @Path("setup")
     @Consumes(MediaType.APPLICATION_FORM_URLENCODED)
     public Response setupPassword(@FormParam("uuid") String uuid, @FormParam("password") String newPassword)
-            throws NotFoundException, ServerException {
+            throws NotFoundException, ServerException, ConflictException {
         // verify is confirmationId valid
         if (!recoveryStorage.isValid(uuid)) {
             LOG.warn("Setup password token is incorrect or has expired");

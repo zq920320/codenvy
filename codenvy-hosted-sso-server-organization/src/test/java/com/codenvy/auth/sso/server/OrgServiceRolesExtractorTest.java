@@ -98,6 +98,7 @@ public class OrgServiceRolesExtractorTest {
                                                                                     preferenceDao,
                                                                                     null,
                                                                                     null,
+                                                                                    null,
                                                                                     "member",
                                                                                     "admin",
                                                                                     null));
@@ -112,6 +113,7 @@ public class OrgServiceRolesExtractorTest {
                                                                                     accountDao,
                                                                                     memberDao,
                                                                                     preferenceDao,
+                                                                                    null,
                                                                                     null,
                                                                                     null,
                                                                                     "member",

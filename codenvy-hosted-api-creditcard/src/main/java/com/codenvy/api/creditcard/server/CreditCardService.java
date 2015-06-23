@@ -22,6 +22,7 @@ import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.creditcard.shared.dto.CreditCardDescriptor;
 import com.codenvy.api.creditcard.shared.dto.NewCreditCard;
 import com.google.common.annotations.Beta;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -58,6 +59,8 @@ import java.util.List;
  * @author Max Shaposhnik
  */
 @Beta
+@Api(value = "/creditcard",
+        description = "Credit card manager")
 @Path("/creditcard")
 public class CreditCardService extends Service {
     private final CreditCardDao creditCardDao;

@@ -108,6 +108,7 @@ public class InitialLdapContextFactory {
      */
     public InitialLdapContext createContext() throws NamingException {
         final Hashtable<String, String> env = new Hashtable<>();
+        env.put("java.naming.ldap.deleteRDN", "false");
         env.put(INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put(PROVIDER_URL, providerUrl);
         if (authType != null) {

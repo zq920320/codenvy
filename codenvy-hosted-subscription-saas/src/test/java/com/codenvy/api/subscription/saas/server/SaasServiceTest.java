@@ -204,7 +204,7 @@ public class SaasServiceTest {
                                    .when()
                                    .post(SECURE_PATH + "/saas/bonus");
 
-        assertEquals(response.getStatusCode(), 403);
+        assertEquals(response.getStatusCode(), 400);
         assertEquals("Bonus required", unwrapDto(response, ServiceError.class).getMessage());
     }
 
@@ -222,7 +222,7 @@ public class SaasServiceTest {
                                    .when()
                                    .post(SECURE_PATH + "/saas/bonus");
 
-        assertEquals(response.getStatusCode(), 403);
+        assertEquals(response.getStatusCode(), 400);
         assertEquals("Account id required", unwrapDto(response, ServiceError.class).getMessage());
     }
 

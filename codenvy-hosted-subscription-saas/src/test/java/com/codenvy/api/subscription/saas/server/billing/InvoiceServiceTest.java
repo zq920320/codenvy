@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.subscription.saas.server.billing;
 
+import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.InvoiceDescriptor;
 import com.google.common.collect.FluentIterable;
@@ -24,6 +25,8 @@ import com.jayway.restassured.response.Response;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.core.ForbiddenException;
+import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.commons.env.EnvironmentContext;
@@ -44,6 +47,7 @@ import org.mockito.stubbing.Answer;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
+import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -51,10 +55,10 @@ import javax.ws.rs.core.UriInfo;
 import java.io.Writer;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.PAID_SUCCESSFULLY;
 import static com.jayway.restassured.RestAssured.given;
 import static java.util.Collections.singletonList;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_NAME;
@@ -64,6 +68,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -96,6 +101,10 @@ public class InvoiceServiceTest {
     private AccountDao               accountDao;
     @Mock
     private UriInfo                  uriInfo;
+    @Mock
+    private AccountLocker            accountLocker;
+    @Mock
+    private InvoiceCharger           invoiceCharger;
 
     @InjectMocks
     InvoiceService invoiceService;
@@ -130,7 +139,7 @@ public class InvoiceServiceTest {
 
         Invoice invoice = newDto(Invoice.class).withId(123L)
                                                .withAccountId("accountId");
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(singletonList(invoice));
+        when(billingService.getInvoice(123L)).thenReturn(invoice);
 
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
@@ -164,7 +173,7 @@ public class InvoiceServiceTest {
 
         Invoice invoice = newDto(Invoice.class).withId(123L)
                                                .withAccountId("accountId");
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(singletonList(invoice));
+        when(billingService.getInvoice(123L)).thenReturn(invoice);
 
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
@@ -180,7 +189,7 @@ public class InvoiceServiceTest {
     public void shouldNotBeAbleToGetInvoiceByIdIfUserDoesNotHaveAccountOwnerRole() throws Exception {
         Invoice invoice = newDto(Invoice.class).withId(123L)
                                                .withAccountId("accountId");
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(singletonList(invoice));
+        when(billingService.getInvoice(123L)).thenReturn(invoice);
 
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
@@ -193,10 +202,11 @@ public class InvoiceServiceTest {
 
     @Test
     public void shouldReturn404WhenInvoiceDoesNotExist() throws Exception {
-        when(billingService.getInvoices((InvoiceFilter)anyObject())).thenReturn(Collections.<Invoice>emptyList());
+        doThrow(new NotFoundException("Invoice does not exist")).when(billingService).getInvoice(123L);
 
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .accept("text/html")
                                    .when()
                                    .get(SECURE_PATH + "/invoice/123");
 
@@ -277,6 +287,55 @@ public class InvoiceServiceTest {
         }));
     }
 
+    @Test(dataProvider = "invoiceChargingProvider")
+    public void shouldBeAbleToChargerInvoice(Invoice invoice) throws Exception {
+        when(accountDao.getByMember(anyString())).thenReturn(singletonList(new Member().withUserId("userId")
+                                                                                       .withAccountId("account123")
+                                                                                       .withRoles(singletonList("account/owner"))));
+
+        when(billingService.getInvoice(123L)).thenReturn(invoice);
+
+        Response response = given().auth()
+                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .accept("application/json")
+                                   .when()
+                                   .post(SECURE_PATH + "/invoice/123/charge");
+
+        assertEquals(response.getStatusCode(), 204);
+        verify(invoiceCharger).charge(invoice);
+        verify(accountLocker).removePaymentLock("account123");
+    }
+
+    @DataProvider(name = "invoiceChargingProvider")
+    public Object[][] invoiceChargingProvider() {
+        final Invoice invoice = newDto(Invoice.class).withId(123L)
+                                                     .withAccountId("account123");
+        return new Object[][]{
+                {invoice.withPaymentState(PaymentState.PAYMENT_FAIL.getState())},
+                {invoice.withPaymentState(PaymentState.CREDIT_CARD_MISSING.getState())}
+        };
+    }
+
+    @Test
+    public void shouldNotBeAbleToChargerInvoiceThatHasPaidState() throws Exception {
+        when(accountDao.getByMember(anyString())).thenReturn(singletonList(new Member().withUserId("userId")
+                                                                                       .withAccountId("account123")
+                                                                                       .withRoles(singletonList("account/owner"))));
+        Invoice invoice = newDto(Invoice.class).withId(123L)
+                                               .withAccountId("account123")
+                                               .withPaymentState(PAID_SUCCESSFULLY.getState());
+        when(billingService.getInvoice(123L)).thenReturn(invoice);
+
+        Response response = given().auth()
+                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .accept("application/json")
+                                   .when()
+                                   .post(SECURE_PATH + "/invoice/123/charge");
+
+        assertEquals(response.getStatusCode(), 409);
+        assertEquals(unwrapDto(response, ServiceError.class).getMessage(), "Payment is not required for invoice with id 123");
+    }
+
     @Test
     public void shouldNotBeAbleToGetInvoicesForUserWhenMissedAccountIdParam() {
         Response response = given().auth()
@@ -284,7 +343,7 @@ public class InvoiceServiceTest {
                                    .when()
                                    .get(SECURE_PATH + "/invoice/find");
 
-        assertEquals(response.getStatusCode(), 403);
+        assertEquals(response.getStatusCode(), 400);
         assertEquals(unwrapDto(response, ServiceError.class).getMessage(), "Missed value of account id parameter");
     }
 

@@ -22,14 +22,14 @@ import com.braintreegateway.Plan;
 import com.braintreegateway.Result;
 import com.braintreegateway.Transaction;
 import com.braintreegateway.TransactionRequest;
-import com.codenvy.api.subscription.saas.server.AccountLocker;
-import com.codenvy.api.subscription.saas.server.InvoicePaymentService;
+import com.codenvy.api.creditcard.server.CreditCardDao;
 import com.codenvy.api.creditcard.server.event.CreditCardChargeEvent;
 import com.codenvy.api.creditcard.shared.dto.CreditCard;
+import com.codenvy.api.subscription.saas.server.AccountLocker;
+import com.codenvy.api.subscription.saas.server.InvoicePaymentService;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
-
-import com.codenvy.api.creditcard.server.CreditCardDao;
 import com.codenvy.api.subscription.server.dao.Subscription;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
@@ -49,14 +49,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 /**
- * Charge subscription with the Braintree.
+ * Charge subscription and invoice with the Braintree.
  *
  * @author Alexander Garagatyi
  */
 // must be eager singleton
 @Singleton
-public class SaasBraintreeInvoicePaymentService implements InvoicePaymentService {
-    private static final Logger LOG = LoggerFactory.getLogger(SaasBraintreeInvoicePaymentService.class);
+public class SaasBraintreePaymentService implements InvoicePaymentService {
+    private static final Logger LOG = LoggerFactory.getLogger(SaasBraintreePaymentService.class);
 
     private final CreditCardDao       creditCardDao;
     private final BraintreeGateway    gateway;
@@ -65,8 +65,8 @@ public class SaasBraintreeInvoicePaymentService implements InvoicePaymentService
     private       Map<String, Double> prices;
 
     @Inject
-    public SaasBraintreeInvoicePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, AccountLocker accountLocker,
-                                              EventService eventService) {
+    public SaasBraintreePaymentService(CreditCardDao creditCardDao, BraintreeGateway gateway, AccountLocker accountLocker,
+                                       EventService eventService) {
         this.creditCardDao = creditCardDao;
         this.gateway = gateway;
         this.eventService = eventService;
@@ -140,7 +140,7 @@ public class SaasBraintreeInvoicePaymentService implements InvoicePaymentService
     }
 
     @Override
-    public void charge(Invoice invoice) throws ApiException {
+    public void charge(Invoice invoice) throws ForbiddenException, ServerException {
         if (invoice.getCreditCardId() == null) {
             throw new ForbiddenException("Credit card token can't be null");
         }
@@ -150,6 +150,7 @@ public class SaasBraintreeInvoicePaymentService implements InvoicePaymentService
         String accountId = invoice.getAccountId();
         Double price = invoice.getTotal();
         try {
+            LOG.info("PAYMENTS# Saas #Start# accountId#{}#", invoice.getAccountId());
             final TransactionRequest request = new TransactionRequest()
                     .paymentMethodToken(invoice.getCreditCardId())
                             // add invoice id to identify charging reason

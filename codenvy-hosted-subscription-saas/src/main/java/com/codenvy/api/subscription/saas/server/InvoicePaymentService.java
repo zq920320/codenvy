@@ -21,6 +21,7 @@ import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
 import com.codenvy.api.subscription.server.dao.Subscription;
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
 
 /**
@@ -39,5 +40,5 @@ public interface InvoicePaymentService {
      */
     void charge(Subscription subscription) throws ApiException;
 
-    void charge(Invoice invoice) throws ApiException;
+    void charge(Invoice invoice) throws ForbiddenException, ServerException;
 }

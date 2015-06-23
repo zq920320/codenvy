@@ -17,6 +17,10 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
+import com.codenvy.api.subscription.saas.server.billing.BillingService;
+import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
+import com.codenvy.api.subscription.saas.shared.dto.Invoice;
+
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
@@ -29,7 +33,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.List;
+import java.util.Map;
 
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.CREDIT_CARD_MISSING;
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.PAYMENT_FAIL;
 import static java.lang.String.format;
 import static org.eclipse.che.api.account.server.Constants.PAYMENT_LOCKED_PROPERTY;
 import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
@@ -46,13 +54,19 @@ public class AccountLocker {
     private final WorkspaceDao    workspaceDao;
     private final EventService    eventService;
     private final WorkspaceLocker workspaceLocker;
+    private final BillingService  billingService;
 
     @Inject
-    public AccountLocker(AccountDao accountDao, WorkspaceDao workspaceDao, EventService eventService, WorkspaceLocker workspaceLocker) {
+    public AccountLocker(AccountDao accountDao,
+                         WorkspaceDao workspaceDao,
+                         EventService eventService,
+                         WorkspaceLocker workspaceLocker,
+                         BillingService billingService) {
         this.accountDao = accountDao;
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
         this.workspaceLocker = workspaceLocker;
+        this.billingService = billingService;
     }
 
     /**
@@ -85,8 +99,8 @@ public class AccountLocker {
      * Removes payment lock for account with given id.
      * Removing of payment lock also removes resources lock.
      * Account won't be unlocked second time if it hasn't payment lock
+     * Account won't be unlocked if it has any unpaid invoices
      */
-    //TODO Use this method after successfully charging of invoice
     public void removePaymentLock(String accountId) {
         unlock(accountId, true);
     }
@@ -94,18 +108,18 @@ public class AccountLocker {
     private void setPaymentLock(String accountId, boolean paymentLock) {
         try {
             final Account account = accountDao.getById(accountId);
-
+            final Map<String, String> attributes = account.getAttributes();
             boolean accountChanged = false;
             if (paymentLock) {
-                if (!account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)) {
-                    account.getAttributes().put(PAYMENT_LOCKED_PROPERTY, "true");
-                    account.getAttributes().put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
+                if (!attributes.containsKey(PAYMENT_LOCKED_PROPERTY)) {
+                    attributes.put(PAYMENT_LOCKED_PROPERTY, "true");
+                    attributes.put(Constants.RESOURCES_LOCKED_PROPERTY, "true");
                     accountChanged = true;
                 } else {
                     LOG.warn("Trying to set payment lock for account with id {} that already is locked", accountId);
                 }
-            } else if (!account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
-                account.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+            } else if (!attributes.containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                attributes.put(RESOURCES_LOCKED_PROPERTY, "true");
                 accountChanged = true;
             } else {
                 LOG.warn("Trying to set resources lock for account with id {} that already is locked", accountId);
@@ -114,6 +128,7 @@ public class AccountLocker {
             if (accountChanged) {
                 accountDao.update(account);
                 eventService.publish(AccountLockEvent.accountLockedEvent(accountId));
+
                 try {
                     for (Workspace workspace : workspaceDao.getByAccount(accountId)) {
                         workspaceLocker.setResourcesLock(workspace.getId());
@@ -129,18 +144,23 @@ public class AccountLocker {
 
     private void unlock(String accountId, boolean paymentLock) {
         try {
-            final Account account;
-            account = accountDao.getById(accountId);
-
+            Account account = accountDao.getById(accountId);
+            Map<String, String> attributes = account.getAttributes();
             boolean accountChanged = false;
             if (paymentLock) {
-                if (account.getAttributes().containsKey(PAYMENT_LOCKED_PROPERTY)) {
-                    account.getAttributes().remove(PAYMENT_LOCKED_PROPERTY);
-                    account.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
-                    accountChanged = true;
+                if (attributes.containsKey(PAYMENT_LOCKED_PROPERTY)) {
+                    final List<Invoice> unpaidInvoices = billingService.getInvoices(InvoiceFilter.builder()
+                                                                                                 .withPaymentStates(CREDIT_CARD_MISSING,
+                                                                                                                    PAYMENT_FAIL)
+                                                                                                 .build());
+                    if (unpaidInvoices.isEmpty()) {
+                        attributes.remove(PAYMENT_LOCKED_PROPERTY);
+                        attributes.remove(RESOURCES_LOCKED_PROPERTY);
+                        accountChanged = true;
+                    }
                 }
-            } else if (account.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
-                account.getAttributes().remove(RESOURCES_LOCKED_PROPERTY);
+            } else if (attributes.containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                attributes.remove(RESOURCES_LOCKED_PROPERTY);
                 accountChanged = true;
             }
 
@@ -153,7 +173,7 @@ public class AccountLocker {
                         workspaceLocker.removeResourcesLock(workspace.getId());
                     }
                 } catch (ServerException e) {
-                    LOG.error(format("Error removing lock property from workspace %s .", accountId), e);
+                    LOG.error(format("Can't get account's workspaces %s for removing lock property", accountId), e);
                 }
             }
         } catch (NotFoundException | ServerException e) {

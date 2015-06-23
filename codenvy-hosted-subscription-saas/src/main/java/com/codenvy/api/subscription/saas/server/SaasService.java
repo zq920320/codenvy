@@ -40,6 +40,7 @@ import com.codenvy.api.subscription.shared.dto.WorkspaceResources;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -50,6 +51,7 @@ import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -93,9 +95,11 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  * @author Sergii Leschenko
  */
 @Beta
+@Api(value = "/saas",
+     description = "Saas features manager")
 @Path("/saas")
 public class SaasService extends Service {
-    private final double                 defaultBonusSize;
+    private final Double                 defaultBonusSize;
     private final BillingService         billingService;
     private final BillingPeriod          billingPeriod;
     private final AccountDao             accountDao;
@@ -135,11 +139,110 @@ public class SaasService extends Service {
         this.workspaceDao = workspaceDao;
     }
 
+    /**
+     * Returns resources which are provided by saas service
+     *
+     * @param accountId
+     *         account id
+     */
+    @ApiOperation(value = "Get resources which are provided by saas service",
+                  notes = "Returns used resources, provided by saas service. Roles: account/owner, account/member, system/manager, system/admin.",
+                  position = 1)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
+    @GET
+    @Path("/resources/{accountId}/provided")
+    @RolesAllowed({"account/owner", "account/member", "system/manager", "system/admin"})
+    @Produces(MediaType.APPLICATION_JSON)
+    public ProvidedResourcesDescriptor getProvidedResources(@ApiParam(value = "Account ID")
+                                                            @PathParam("accountId") String accountId) throws ServerException,
+                                                                                                             NotFoundException,
+                                                                                                             ConflictException {
+        ProvidedResourcesDescriptor result = DtoFactory.getInstance().createDto(ProvidedResourcesDescriptor.class);
+        Period current = billingPeriod.getCurrent();
+        result.withFreeAmount(billingService.getProvidedFreeResources(accountId,
+                                                                      current.getStartDate().getTime(),
+                                                                      current.getEndDate().getTime()));
+
+        final Subscription activeSaasSubscription = subscriptionDao.getActiveByServiceId(accountId, SAAS_SUBSCRIPTION_ID);
+        String prepaidAmount;
+        if (activeSaasSubscription != null && (prepaidAmount = activeSaasSubscription.getProperties().get("PrepaidGbH")) != null) {
+            result.setPrepaidAmount(Double.parseDouble(prepaidAmount));
+        } else {
+            result.setPrepaidAmount(0D);
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns used resources, provided by saas service
+     *
+     * @param accountId
+     *         account id
+     */
+    @ApiOperation(value = "Get used resources, provided by saas service grouped by workspaces",
+                  notes = "Returns used resources, provided by saas service grouped by workspaces. Roles: account/owner, account/member, system/manager, system/admin.",
+                  position = 2)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
+    @GET
+    @Path("/resources/{accountId}/used")
+    @RolesAllowed({"account/owner", "account/member", "system/manager", "system/admin"})
+    @Produces(MediaType.APPLICATION_JSON)
+    public List<WorkspaceResources> getUsedResources(@ApiParam(value = "Account ID")
+                                                     @PathParam("accountId") String accountId,
+                                                     @ApiParam(value = "Max items", required = false)
+                                                     @DefaultValue("30") @QueryParam("maxItems") int maxItems,
+                                                     @ApiParam(value = "Skip count", required = false)
+                                                     @DefaultValue("0") @QueryParam("skipCount") int skipCount) throws ServerException,
+                                                                                                                       NotFoundException,
+                                                                                                                       ConflictException {
+        final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
+                                                                                           billingPeriod.getCurrent().getStartDate()
+                                                                                                        .getTime(),
+                                                                                           System.currentTimeMillis());
+
+        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
+        for (Workspace workspace : workspaces) {
+            if (!memoryUsedReport.containsKey(workspace.getId())) {
+                memoryUsedReport.put(workspace.getId(), 0D);
+            }
+        }
+
+        List<WorkspaceResources> result = new ArrayList<>();
+        for (Map.Entry<String, Double> usedMemory : memoryUsedReport.entrySet()) {
+            result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
+                                 .withWorkspaceId(usedMemory.getKey())
+                                 .withMemory(usedMemory.getValue()));
+        }
+
+        return FluentIterable.from(result)
+                             .skip(skipCount)
+                             .limit(maxItems)
+                             .toList();
+    }
+
+    @ApiOperation(value = "Create bonus for account",
+                  response = BonusDescriptor.class,
+                  notes = "Create bonus for account. Roles: system/manager, system/admin.",
+                  position = 3)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "User is not authorized to call this operation"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @POST
     @Path("/bonus")
     @Produces(APPLICATION_JSON)
     @RolesAllowed({"system/admin", "system/manager"})
-    public BonusDescriptor createBonus(NewBonus newBonus) throws ServerException, NotFoundException, ForbiddenException {
+    public BonusDescriptor createBonus(@ApiParam(value = "New bonus", required = true)
+                                       NewBonus newBonus)
+            throws ServerException, NotFoundException, ForbiddenException, BadRequestException {
         requiredNotNull(newBonus, "Bonus");
         requiredNotNull(newBonus.getAccountId(), "Account id");
         requiredNotNull(newBonus.getResources(), "Value of resources");
@@ -156,15 +259,29 @@ public class SaasService extends Service {
         return toDescriptor(result);
     }
 
+    @ApiOperation(value = "Get bonuses",
+                  response = BonusDescriptor.class,
+                  responseContainer = "List",
+                  notes = "Get bonuses. Roles: system/manager, system/admin.",
+                  position = 4)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @GET
     @Path("/bonus")
     @Produces(APPLICATION_JSON)
     @RolesAllowed({"system/admin", "system/manager"})
-    public List<BonusDescriptor> getBonuses(@QueryParam("startPeriod") Long startPeriod,
+    public List<BonusDescriptor> getBonuses(@ApiParam(value = "Start period in milliseconds from epoch time", required = false)
+                                            @QueryParam("startPeriod") Long startPeriod,
+                                            @ApiParam(value = "End period in milliseconds from epoch time", required = false)
                                             @QueryParam("endPeriod") Long endPeriod,
+                                            @ApiParam(value = "Account Id", required = false)
                                             @QueryParam("accountId") String accountId,
+                                            @ApiParam(value = "Cause", required = false)
                                             @QueryParam("cause") String cause,
-                                            @DefaultValue("20") @QueryParam("maxItems") int maxItems,
+                                            @ApiParam(value = "Max items", required = false)
+                                            @DefaultValue("30") @QueryParam("maxItems") int maxItems,
+                                            @ApiParam(value = "Skip count", required = false)
                                             @QueryParam("skipCount") int skipCount) throws ServerException {
         if (startPeriod == null) {
             startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
@@ -193,101 +310,31 @@ public class SaasService extends Service {
                              .toList();
     }
 
+    @ApiOperation(value = "Remove bonus",
+                  response = BonusDescriptor.class,
+                  notes = "Remove bonus. Roles: system/manager, system/admin.",
+                  position = 5)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "User is not authorized to call this operation"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @DELETE
     @Path("/bonus/{id}")
     @RolesAllowed({"system/admin", "system/manager"})
-    public void removeBonus(@PathParam("id") Long bonusId) throws ServerException {
+    public Response removeBonus(@ApiParam(value = "Bonus Id")
+                                @PathParam("id") Long bonusId) throws ServerException, BadRequestException {
+        requiredNotNull(bonusId, "Bonus id");
         bonusDao.remove(bonusId, System.currentTimeMillis());
-    }
-
-    /**
-     * Returns resources which are provided by saas service
-     *
-     * @param accountId
-     *         account id
-     */
-    @ApiOperation(value = "Get resources which are provided by saas service",
-            notes = "Returns used resources, provided by saas service. Roles: account/owner, account/member, system/manager, system/admin.",
-            position = 17)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Not found"),
-            @ApiResponse(code = 500, message = "Internal Server Error")})
-    @GET
-    @Path("/resources/{accountId}/provided")
-    @RolesAllowed({"account/owner", "account/member", "system/manager", "system/admin"})
-    @Produces(MediaType.APPLICATION_JSON)
-    public ProvidedResourcesDescriptor getProvidedResources(@ApiParam(value = "Account ID", required = true)
-                                                            @PathParam("accountId") String accountId) throws ServerException,
-                                                                                                             NotFoundException,
-                                                                                                             ConflictException {
-        ProvidedResourcesDescriptor result = DtoFactory.getInstance().createDto(ProvidedResourcesDescriptor.class);
-        Period current = billingPeriod.getCurrent();
-        result.withFreeAmount(billingService.getProvidedFreeResources(accountId,
-                                                                      current.getStartDate().getTime(),
-                                                                      current.getEndDate().getTime()));
-
-        final Subscription activeSaasSubscription = subscriptionDao.getActiveByServiceId(accountId, SAAS_SUBSCRIPTION_ID);
-        String prepaidAmount;
-        if (activeSaasSubscription != null && (prepaidAmount = activeSaasSubscription.getProperties().get("PrepaidGbH")) != null) {
-            result.setPrepaidAmount(Double.parseDouble(prepaidAmount));
-        } else {
-            result.setPrepaidAmount(0D);
-        }
-
-        return result;
-    }
-
-    /**
-     * Returns used resources, provided by saas service
-     *
-     * @param accountId
-     *         account id
-     */
-    @ApiOperation(value = "Get used resources, provided by saas service",
-            notes = "Returns used resources, provided by saas service. Roles: account/owner, account/member, system/manager, system/admin.",
-            position = 17)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Not found"),
-            @ApiResponse(code = 500, message = "Internal Server Error")})
-    @GET
-    @Path("/resources/{accountId}/used")
-    @RolesAllowed({"account/owner", "account/member", "system/manager", "system/admin"})
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<WorkspaceResources> getUsedResources(@ApiParam(value = "Account ID", required = true)//TODO Add paging
-                                                     @PathParam("accountId") String accountId) throws ServerException,
-                                                                                                      NotFoundException,
-                                                                                                      ConflictException {
-        final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
-                                                                                           billingPeriod.getCurrent().getStartDate()
-                                                                                                        .getTime(),
-                                                                                           System.currentTimeMillis());
-
-        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-        for (Workspace workspace : workspaces) {
-            if (!memoryUsedReport.containsKey(workspace.getId())) {
-                memoryUsedReport.put(workspace.getId(), 0D);
-            }
-        }
-
-        List<WorkspaceResources> result = new ArrayList<>();
-        for (Map.Entry<String, Double> usedMemory : memoryUsedReport.entrySet()) {
-            result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
-                                 .withWorkspaceId(usedMemory.getKey())
-                                 .withMemory(usedMemory.getValue()));
-        }
-
-        return result;
+        return Response.noContent().build();
     }
 
     /**
      * Returns locked accounts list.
-     *
      */
     @ApiOperation(value = "Get locked accounts list",
-            notes = "Returns locked accounts list. Roles: system/manager, system/admin.",
-            position = 17)
+                  notes = "Returns locked accounts list. Roles: system/manager, system/admin.",
+                  position = 6)
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "OK"),
             @ApiResponse(code = 403, message = "Forbidden"),
@@ -296,7 +343,9 @@ public class SaasService extends Service {
     @Path("/locked")
     @Produces(APPLICATION_JSON)
     @RolesAllowed({"system/admin", "system/manager"})
-    public List<AccountDescriptor> getLockedAccounts(@DefaultValue("20") @QueryParam("maxItems") int maxItems,
+    public List<AccountDescriptor> getLockedAccounts(@ApiParam(value = "Max items count", required = false)
+                                                     @DefaultValue("30") @QueryParam("maxItems") int maxItems,
+                                                     @ApiParam(value = "Skip count", required = false)
                                                      @QueryParam("skipCount") int skipCount) throws ServerException, ForbiddenException {
 
         return FluentIterable.from(lockDao.getAccountsWithLockedResources()).transform(
@@ -310,11 +359,20 @@ public class SaasService extends Service {
     }
 
 
+    @ApiOperation(value = "Returns resources usage in given period",
+                  notes = "Returns resources usage in given period. Roles: system/manager, system/admin.",
+                  position = 7)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @GET
     @Path("/resources")
     @Produces(APPLICATION_JSON)
     @RolesAllowed({"system/admin", "system/manager"})
-    public Resources getEstimatedResources(@QueryParam("startPeriod") Long startPeriod,
+    public Resources getEstimatedResources(@ApiParam(value = "Start period in milliseconds from epoch time", required = false)
+                                           @QueryParam("startPeriod") Long startPeriod,
+                                           @ApiParam(value = "End period in milliseconds from epoch time", required = false)
                                            @QueryParam("endPeriod") Long endPeriod) throws ServerException {
         if (startPeriod == null) {
             startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
@@ -327,13 +385,24 @@ public class SaasService extends Service {
         return billingService.getEstimatedUsage(startPeriod, endPeriod);
     }
 
+    @ApiOperation(value = "Returns resources usage in given period by accounts",
+                  notes = "Returns resources usage in given period by accounts. Roles: system/manager, system/admin.",
+                  position = 8)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @GET
     @Path("/resources/accounts")
     @Produces(APPLICATION_JSON)
     @RolesAllowed({"system/admin", "system/manager"})
-    public List<AccountResources> getEstimatedResourcesByAccounts(@QueryParam("startPeriod") Long startPeriod,
+    public List<AccountResources> getEstimatedResourcesByAccounts(@ApiParam(value = "Start period in milliseconds from epoch time",
+                                                                            required = false)
+                                                                  @QueryParam("startPeriod") Long startPeriod,
+                                                                  @ApiParam(value = "End period in milliseconds from epoch time",
+                                                                            required = false)
                                                                   @QueryParam("endPeriod") Long endPeriod,
-                                                                  @DefaultValue("-1") @QueryParam("maxItems") int maxItems,
+                                                                  @DefaultValue("30") @QueryParam("maxItems") int maxItems,
                                                                   @QueryParam("skipCount") int skipCount,
                                                                   @QueryParam("freeGbH") Double freeGbH,
                                                                   @QueryParam("paidGbH") Double paidGbH,
@@ -368,6 +437,13 @@ public class SaasService extends Service {
         return billingService.getEstimatedUsageByAccount(builder.build());
     }
 
+    @ApiOperation(value = "Creates promotion for account",
+                  notes = "Creates promotion for account. Roles: system/manager, system/admin.",
+                  position = 8)
+    @ApiResponses(value = {
+            @ApiResponse(code = 200, message = "OK"),
+            @ApiResponse(code = 403, message = "Forbidden"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
     @Path("/promotion")
     @POST
     @RolesAllowed({"system/admin", "system/manager"})
@@ -429,12 +505,12 @@ public class SaasService extends Service {
      *         object reference to check
      * @param subject
      *         used as subject of exception message "{subject} required"
-     * @throws ForbiddenException
+     * @throws BadRequestException
      *         when object reference is {@code null}
      */
-    private void requiredNotNull(Object object, String subject) throws ForbiddenException {
+    private void requiredNotNull(Object object, String subject) throws BadRequestException {
         if (object == null) {
-            throw new ForbiddenException(subject + " required");
+            throw new BadRequestException(subject + " required");
         }
     }
 
