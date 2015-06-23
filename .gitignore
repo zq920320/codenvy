@@ -7,7 +7,7 @@ test/scripts
 build/node_modules
 node_modules
 npm-debug.log
-
+.directory
 # Idea #
 ##################
 *.iml
