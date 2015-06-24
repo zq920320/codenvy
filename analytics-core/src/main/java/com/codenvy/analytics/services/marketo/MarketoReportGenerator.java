@@ -239,13 +239,14 @@ public class MarketoReportGenerator {
     }
 
     private Map<String, Double> getUsersGbHoursUse(List<ValueData> profiles) throws IOException {
-        Map<String, Double> usersGbHours = new LinkedHashMap<>();
+        Map<String, Double> usersGbHours = new LinkedHashMap<>(profiles.size());
 
-        Set<String> users = new LinkedHashSet<>();
-        for (int i= 0; i<profiles.size(); i++) {
+
+        Set<String> users = new LinkedHashSet<>(1000);
+        for (int i = 0; i < profiles.size(); i++) {
             users.add(((MapValueData)profiles.get(i)).getAll().get(ID).getAsString());
 
-            if (users.size() == 1000 || ( i == profiles.size() - 1)) {
+            if (users.size() == 1000 || (i == profiles.size() - 1)) {
                 Context.Builder builder = new Context.Builder();
                 builder.put(MetricFilter.USER_ID, Utils.getFilterAsString(users));
 
@@ -265,13 +266,13 @@ public class MarketoReportGenerator {
     }
 
     private Map<String, Long> getUsersCreatedDates(List<ValueData> profiles) throws IOException {
-        Map<String, Long> usersCreatedDate = new LinkedHashMap<>();
+        Map<String, Long> usersCreatedDate = new LinkedHashMap<>(profiles.size());
 
-        Set<String> users = new LinkedHashSet<>();
-        for (int i= 0; i<profiles.size(); i++) {
+        Set<String> users = new LinkedHashSet<>(1000);
+        for (int i = 0; i < profiles.size(); i++) {
             users.add(((MapValueData)profiles.get(i)).getAll().get(ID).getAsString());
 
-            if (users.size() == 1000 || ( i == profiles.size() - 1)) {
+            if (users.size() == 1000 || (i == profiles.size() - 1)) {
                 Context.Builder builder = new Context.Builder();
                 builder.put(MetricFilter.USER_ID, Utils.getFilterAsString(users));
 

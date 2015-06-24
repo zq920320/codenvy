@@ -41,13 +41,12 @@ public class CreatedUsersList extends AbstractListValueResulted {
     /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER,
-                            DATE};
+        return new String[]{USER, DATE};
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "List of registered users by date";
+        return "List of created users with date creation";
     }
 }
