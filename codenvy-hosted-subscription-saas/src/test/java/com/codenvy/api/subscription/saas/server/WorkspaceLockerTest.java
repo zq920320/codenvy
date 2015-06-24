@@ -17,9 +17,10 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
-import com.codenvy.api.subscription.saas.server.billing.Period;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.WorkspaceLockEvent;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.metrics.server.period.Period;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.core.notification.EventService;
@@ -59,7 +60,7 @@ public class WorkspaceLockerTest {
     @Mock
     EventService      eventService;
     @Mock
-    BillingPeriod     billingPeriod;
+    MetricPeriod      metricPeriod;
     @Mock
     MeterBasedStorage meterBasedStorage;
     @Mock
@@ -70,7 +71,7 @@ public class WorkspaceLockerTest {
 
     @BeforeMethod
     public void setUp() {
-        when(billingPeriod.getCurrent()).thenReturn(period);
+        when(metricPeriod.getCurrent()).thenReturn(period);
         when(period.getStartDate()).thenReturn(new Date(0));
         when(period.getEndDate()).thenReturn(new Date(10));
     }

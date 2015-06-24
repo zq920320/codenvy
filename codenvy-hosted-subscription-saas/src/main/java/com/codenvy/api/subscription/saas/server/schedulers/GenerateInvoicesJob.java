@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.subscription.saas.server.schedulers;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Period;
+import com.codenvy.api.metrics.server.period.Period;
 
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.schedule.ScheduleCron;
@@ -42,12 +42,12 @@ public class GenerateInvoicesJob implements Runnable {
     BillingService billingService;
 
     @Inject
-    BillingPeriod billingPeriod;
+    MetricPeriod metricPeriod;
 
     @ScheduleCron(cronParameterName = "billing.invoices.generate.cron")
     @Override
     public void run() {
-        final Period previousPeriod = billingPeriod.getCurrent().getPreviousPeriod();
+        final Period previousPeriod = metricPeriod.getCurrent().getPreviousPeriod();
         try {
             billingService.generateInvoices(previousPeriod.getStartDate().getTime(), previousPeriod.getEndDate().getTime());
         } catch (ServerException e) {

@@ -17,15 +17,17 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
+import com.codenvy.api.metrics.server.WorkspaceLockEvent;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.resources.server.ResourcesManager;
+import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 
-import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -47,7 +49,7 @@ import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROP
 import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
 
 /**
- * Implementation of {@link org.eclipse.che.api.account.server.ResourcesManager}
+ * Implementation of {@link ResourcesManager}
  *
  * @author Sergii Leschenko
  * @author Max Shaposhnik
@@ -58,7 +60,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
     private final WorkspaceDao             workspaceDao;
     private final Integer                  freeMaxLimit;
     private final ResourcesChangesNotifier resourcesChangesNotifier;
-    private final BillingPeriod            billingPeriod;
+    private final MetricPeriod             metricPeriod;
     private final MeterBasedStorage        meterBasedStorage;
     private final EventService             eventService;
 
@@ -68,7 +70,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                 SubscriptionDao subscriptionDao,
                                 WorkspaceDao workspaceDao,
                                 ResourcesChangesNotifier resourcesChangesNotifier,
-                                BillingPeriod billingPeriod,
+                                MetricPeriod metricPeriod,
                                 MeterBasedStorage meterBasedStorage,
                                 EventService eventService) {
         this.freeMaxLimit = freeMaxLimit;
@@ -76,7 +78,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
         this.subscriptionDao = subscriptionDao;
         this.workspaceDao = workspaceDao;
         this.resourcesChangesNotifier = resourcesChangesNotifier;
-        this.billingPeriod = billingPeriod;
+        this.metricPeriod = metricPeriod;
         this.meterBasedStorage = meterBasedStorage;
         this.eventService = eventService;
     }
@@ -123,7 +125,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
                     workspace.getAttributes().put(RESOURCES_USAGE_LIMIT_PROPERTY,
                                                   Double.toString(resourcesDescriptor.getResourcesUsageLimit()));
                     if (isPermittedChangingWorkspaceLock) {
-                        long billingPeriodStart = billingPeriod.getCurrent().getStartDate().getTime();
+                        long billingPeriodStart = metricPeriod.getCurrent().getStartDate().getTime();
                         Double usedMemory = meterBasedStorage.getUsedMemoryByWorkspace(workspace.getId(),
                                                                                        billingPeriodStart,
                                                                                        System.currentTimeMillis());

@@ -26,7 +26,6 @@ import com.codenvy.api.subscription.shared.dto.Plan;
 import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.codenvy.api.subscription.shared.dto.SubscriptionState;
 
-import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
@@ -113,8 +112,6 @@ public class SubscriptionServiceTest {
     private UserDao                     userDao;
     @Mock
     private PlanDao                     planDao;
-    @Mock
-    private ResourcesManager            resourcesManager;
     @Mock
     private SecurityContext             securityContext;
     @Mock

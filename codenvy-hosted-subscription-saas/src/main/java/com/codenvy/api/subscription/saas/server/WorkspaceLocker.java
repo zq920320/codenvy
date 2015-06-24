@@ -17,8 +17,9 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.WorkspaceLockEvent;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -44,17 +45,17 @@ public class WorkspaceLocker {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceLocker.class);
     private final WorkspaceDao      workspaceDao;
     private final EventService      eventService;
-    private final BillingPeriod     billingPeriod;
+    private final MetricPeriod      metricPeriod;
     private final MeterBasedStorage meterBasedStorage;
 
     @Inject
     public WorkspaceLocker(WorkspaceDao workspaceDao,
                            EventService eventService,
-                           BillingPeriod billingPeriod,
+                           MetricPeriod metricPeriod,
                            MeterBasedStorage meterBasedStorage) {
         this.workspaceDao = workspaceDao;
         this.eventService = eventService;
-        this.billingPeriod = billingPeriod;
+        this.metricPeriod = metricPeriod;
         this.meterBasedStorage = meterBasedStorage;
     }
 
@@ -107,7 +108,7 @@ public class WorkspaceLocker {
 
     private boolean isReachedResourcesUsageLimit(Workspace workspace) throws ServerException {
         if (workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)) {
-            long billingPeriodStart = billingPeriod.getCurrent().getStartDate().getTime();
+            long billingPeriodStart = metricPeriod.getCurrent().getStartDate().getTime();
             Double usedMemory = meterBasedStorage.getUsedMemoryByWorkspace(workspace.getId(),
                                                                            billingPeriodStart,
                                                                            System.currentTimeMillis());

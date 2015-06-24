@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.subscription.saas.server.limit;
 
-import com.codenvy.api.subscription.server.SubscriptionEvent;
+import com.codenvy.api.metrics.server.builds.MeteredBuildEventSubscriber;
 import com.codenvy.api.subscription.saas.server.WorkspaceResourcesUsageLimitChangedEvent;
-import com.codenvy.api.subscription.saas.server.metric.MeteredBuildEventSubscriber;
+import com.codenvy.api.subscription.server.SubscriptionEvent;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;

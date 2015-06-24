@@ -17,10 +17,11 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Period;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.period.Period;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.server.util.SubscriptionServiceHelper;
 import com.codenvy.api.subscription.server.dao.Subscription;
@@ -65,7 +66,7 @@ public class SaasSubscriptionServiceTest {
     @Mock
     MeterBasedStorage         meterBasedStorage;
     @Mock
-    BillingPeriod             billingPeriod;
+    MetricPeriod              metricPeriod;
     @Mock
     AccountLocker             accountLocker;
     @Mock
@@ -94,7 +95,7 @@ public class SaasSubscriptionServiceTest {
                                               subscriptionServiceHelper,
                                               resourcesChangesNotifier);
 
-        when(billingPeriod.getCurrent()).thenReturn(period);
+        when(metricPeriod.getCurrent()).thenReturn(period);
     }
 
     @Test

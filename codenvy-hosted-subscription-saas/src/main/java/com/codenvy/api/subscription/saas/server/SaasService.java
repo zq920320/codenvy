@@ -17,15 +17,14 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
-import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceService;
-import com.codenvy.api.subscription.saas.server.billing.Period;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceService;
+import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
 import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
@@ -36,7 +35,6 @@ import com.codenvy.api.subscription.saas.shared.dto.Resources;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.api.subscription.shared.dto.ProvidedResourcesDescriptor;
-import com.codenvy.api.subscription.shared.dto.WorkspaceResources;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
@@ -61,8 +59,6 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.core.util.LinksHelper;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.Nullable;
@@ -101,7 +97,7 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class SaasService extends Service {
     private final Double                 defaultBonusSize;
     private final BillingService         billingService;
-    private final BillingPeriod          billingPeriod;
+    private final MetricPeriod           metricPeriod;
     private final AccountDao             accountDao;
     private final LockDao                lockDao;
     private final SubscriptionDao        subscriptionDao;
@@ -109,25 +105,21 @@ public class SaasService extends Service {
     private final PreferenceDao          preferenceDao;
     private final UserDao                userDao;
     private final SubscriptionMailSender mailSender;
-    private final MeterBasedStorage      meterBasedStorage;
-    private final WorkspaceDao           workspaceDao;
 
     @Inject
     public SaasService(@Named("promotion.bonus.resources.gb") Double bonusSize,
                        BillingService billingService,
-                       BillingPeriod billingPeriod,
+                       MetricPeriod metricPeriod,
                        AccountDao accountDao,
                        LockDao lockDao,
                        SubscriptionDao subscriptionDao,
                        BonusDao bonusDao,
                        PreferenceDao preferenceDao,
                        UserDao userDao,
-                       SubscriptionMailSender mailSender,
-                       MeterBasedStorage meterBasedStorage,
-                       WorkspaceDao workspaceDao) {
+                       SubscriptionMailSender mailSender) {
         this.defaultBonusSize = bonusSize;
         this.billingService = billingService;
-        this.billingPeriod = billingPeriod;
+        this.metricPeriod = metricPeriod;
         this.accountDao = accountDao;
         this.lockDao = lockDao;
         this.subscriptionDao = subscriptionDao;
@@ -135,8 +127,6 @@ public class SaasService extends Service {
         this.preferenceDao = preferenceDao;
         this.userDao = userDao;
         this.mailSender = mailSender;
-        this.meterBasedStorage = meterBasedStorage;
-        this.workspaceDao = workspaceDao;
     }
 
     /**
@@ -161,7 +151,7 @@ public class SaasService extends Service {
                                                                                                              NotFoundException,
                                                                                                              ConflictException {
         ProvidedResourcesDescriptor result = DtoFactory.getInstance().createDto(ProvidedResourcesDescriptor.class);
-        Period current = billingPeriod.getCurrent();
+        Period current = metricPeriod.getCurrent();
         result.withFreeAmount(billingService.getProvidedFreeResources(accountId,
                                                                       current.getStartDate().getTime(),
                                                                       current.getEndDate().getTime()));
@@ -175,56 +165,6 @@ public class SaasService extends Service {
         }
 
         return result;
-    }
-
-    /**
-     * Returns used resources, provided by saas service
-     *
-     * @param accountId
-     *         account id
-     */
-    @ApiOperation(value = "Get used resources, provided by saas service grouped by workspaces",
-                  notes = "Returns used resources, provided by saas service grouped by workspaces. Roles: account/owner, account/member, system/manager, system/admin.",
-                  position = 2)
-    @ApiResponses(value = {
-            @ApiResponse(code = 200, message = "OK"),
-            @ApiResponse(code = 404, message = "Not found"),
-            @ApiResponse(code = 500, message = "Internal Server Error")})
-    @GET
-    @Path("/resources/{accountId}/used")
-    @RolesAllowed({"account/owner", "account/member", "system/manager", "system/admin"})
-    @Produces(MediaType.APPLICATION_JSON)
-    public List<WorkspaceResources> getUsedResources(@ApiParam(value = "Account ID")
-                                                     @PathParam("accountId") String accountId,
-                                                     @ApiParam(value = "Max items", required = false)
-                                                     @DefaultValue("30") @QueryParam("maxItems") int maxItems,
-                                                     @ApiParam(value = "Skip count", required = false)
-                                                     @DefaultValue("0") @QueryParam("skipCount") int skipCount) throws ServerException,
-                                                                                                                       NotFoundException,
-                                                                                                                       ConflictException {
-        final Map<String, Double> memoryUsedReport = meterBasedStorage.getMemoryUsedReport(accountId,
-                                                                                           billingPeriod.getCurrent().getStartDate()
-                                                                                                        .getTime(),
-                                                                                           System.currentTimeMillis());
-
-        List<Workspace> workspaces = workspaceDao.getByAccount(accountId);
-        for (Workspace workspace : workspaces) {
-            if (!memoryUsedReport.containsKey(workspace.getId())) {
-                memoryUsedReport.put(workspace.getId(), 0D);
-            }
-        }
-
-        List<WorkspaceResources> result = new ArrayList<>();
-        for (Map.Entry<String, Double> usedMemory : memoryUsedReport.entrySet()) {
-            result.add(DtoFactory.getInstance().createDto(WorkspaceResources.class)
-                                 .withWorkspaceId(usedMemory.getKey())
-                                 .withMemory(usedMemory.getValue()));
-        }
-
-        return FluentIterable.from(result)
-                             .skip(skipCount)
-                             .limit(maxItems)
-                             .toList();
     }
 
     @ApiOperation(value = "Create bonus for account",
@@ -284,11 +224,11 @@ public class SaasService extends Service {
                                             @ApiParam(value = "Skip count", required = false)
                                             @QueryParam("skipCount") int skipCount) throws ServerException {
         if (startPeriod == null) {
-            startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
+            startPeriod = metricPeriod.getCurrent().getStartDate().getTime();
         }
 
         if (endPeriod == null) {
-            endPeriod = billingPeriod.getCurrent().getEndDate().getTime();
+            endPeriod = metricPeriod.getCurrent().getEndDate().getTime();
         }
 
         final List<Bonus> bonuses = bonusDao.getBonuses(BonusFilter.builder()
@@ -375,11 +315,11 @@ public class SaasService extends Service {
                                            @ApiParam(value = "End period in milliseconds from epoch time", required = false)
                                            @QueryParam("endPeriod") Long endPeriod) throws ServerException {
         if (startPeriod == null) {
-            startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
+            startPeriod = metricPeriod.getCurrent().getStartDate().getTime();
         }
 
         if (endPeriod == null) {
-            endPeriod = billingPeriod.getCurrent().getEndDate().getTime();
+            endPeriod = metricPeriod.getCurrent().getEndDate().getTime();
         }
 
         return billingService.getEstimatedUsage(startPeriod, endPeriod);
@@ -409,7 +349,7 @@ public class SaasService extends Service {
                                                                   @QueryParam("prepaidGbH") Double prepaidGbH,
                                                                   @QueryParam("accountId") String accountId) throws ServerException {
         if (startPeriod == null) {
-            startPeriod = billingPeriod.getCurrent().getStartDate().getTime();
+            startPeriod = metricPeriod.getCurrent().getStartDate().getTime();
         }
 
         if (endPeriod == null) {

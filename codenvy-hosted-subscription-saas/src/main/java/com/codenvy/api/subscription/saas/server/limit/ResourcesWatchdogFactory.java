@@ -19,9 +19,9 @@ package com.codenvy.api.subscription.saas.server.limit;
 
 import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.server.WorkspaceLocker;
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 
@@ -45,7 +45,7 @@ import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIM
 @Singleton
 public class ResourcesWatchdogFactory {
     private final SubscriptionDao   subscriptionDao;
-    private final BillingPeriod     billingPeriod;
+    private final MetricPeriod      metricPeriod;
     private final BillingService    billingService;
     private final WorkspaceDao      workspaceDao;
     private final MeterBasedStorage meterBasedStorage;
@@ -54,14 +54,14 @@ public class ResourcesWatchdogFactory {
 
     @Inject
     public ResourcesWatchdogFactory(SubscriptionDao subscriptionDao,
-                                    BillingPeriod billingPeriod,
+                                    MetricPeriod metricPeriod,
                                     BillingService billingService,
                                     WorkspaceDao workspaceDao,
                                     MeterBasedStorage meterBasedStorage,
                                     AccountLocker accountLocker,
                                     WorkspaceLocker workspaceLocker) {
         this.subscriptionDao = subscriptionDao;
-        this.billingPeriod = billingPeriod;
+        this.metricPeriod = metricPeriod;
         this.billingService = billingService;
         this.workspaceDao = workspaceDao;
         this.meterBasedStorage = meterBasedStorage;
@@ -104,7 +104,7 @@ public class ResourcesWatchdogFactory {
 
             try {
                 return !billingService.hasAvailableResources(accountId,
-                                                             billingPeriod
+                                                             metricPeriod
                                                                      .getCurrent()
                                                                      .getStartDate()
                                                                      .getTime(),
@@ -161,7 +161,7 @@ public class ResourcesWatchdogFactory {
             }
 
             try {
-                long billingPeriodStart = billingPeriod.getCurrent().getStartDate().getTime();
+                long billingPeriodStart = metricPeriod.getCurrent().getStartDate().getTime();
                 Double usedMemory = meterBasedStorage.getUsedMemoryByWorkspace(workspaceId, billingPeriodStart, System.currentTimeMillis());
                 return usedMemory > resourcesUsageLimit;
             } catch (ServerException e) {

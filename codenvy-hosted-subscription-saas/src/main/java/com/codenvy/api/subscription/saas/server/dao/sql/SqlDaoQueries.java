@@ -1,10 +1,10 @@
 /*
  * CODENVY CONFIDENTIAL
  * __________________
- * 
- *  [2012] - [2015] Codenvy, S.A. 
+ *
+ *  [2012] - [2015] Codenvy, S.A.
  *  All Rights Reserved.
- * 
+ *
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
@@ -17,9 +17,9 @@
  */
 package com.codenvy.api.subscription.saas.server.dao.sql;
 
-import com.codenvy.api.subscription.saas.server.billing.PaymentState;
-
-import java.util.concurrent.TimeUnit;
+import static com.codenvy.api.metrics.server.dao.sql.MetricsSqlQueries.GBH_SUM;
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.NOT_REQUIRED;
+import static com.codenvy.api.subscription.saas.server.billing.PaymentState.WAITING_EXECUTOR;
 
 /**
  * Set of SQL queries
@@ -27,18 +27,6 @@ import java.util.concurrent.TimeUnit;
  * @author Sergii Kabashniuk
  */
 public interface SqlDaoQueries {
-    /**
-     * Multiplier to transform GB/h to MB/msec back and forth.
-     */
-    long MBMSEC_TO_GBH_MULTIPLIER = TimeUnit.HOURS.toMillis(1) * 1000;
-
-    String GBH_SUM = " SUM(" +
-                     "     ROUND(" +
-                     "           M.FAMOUNT * ( upper(M.FDURING * ?) - lower(M.FDURING * ?) - 1)/" + MBMSEC_TO_GBH_MULTIPLIER + ".0 " +
-                     "           ,6)" +
-                     "     ) ";
-
-
     String TOTAL_SUM = "ROUND(SUM(ROUND(FPAID_AMOUNT,2)*FPAID_PRICE),2)";
 
     String INVOICES_FIELDS =
@@ -246,8 +234,8 @@ public interface SqlDaoQueries {
             "   " + TOTAL_SUM + " AS FTOTAL, " +
             "   FACCOUNT_ID AS FACCOUNT_ID, " +
             "  CASE " +
-            "   WHEN " + TOTAL_SUM + "> 0.0 THEN '" + PaymentState.WAITING_EXECUTOR.getState() + "'" +
-            "   ELSE  '" + PaymentState.NOT_REQUIRED.getState() + "'" +
+            "   WHEN " + TOTAL_SUM + "> 0.0 THEN '" + WAITING_EXECUTOR.getState() + "'" +
+            "   ELSE  '" + NOT_REQUIRED.getState() + "'" +
             "  END as FPAYMENT_STATE, " +
             "   ? as FCREATED_TIME, " +
             "   ? as FPERIOD, " +
@@ -258,7 +246,6 @@ public interface SqlDaoQueries {
             "  FCALC_ID = ? " +
             "GROUP BY " +
             "  FACCOUNT_ID ";
-
 
     /**
      * Update payment status and credit card of invoices.
@@ -308,77 +295,6 @@ public interface SqlDaoQueries {
             "WHERE " +
             " FACCOUNT_ID  = ? " +
             " AND FCALC_ID = ? ";
-
-
-    String METRIC_INSERT = "INSERT INTO METRICS " +
-                           "  (" +
-                           "      FAMOUNT," +
-                           "      FDURING," +
-                           "      FUSER_ID," +
-                           "      FACCOUNT_ID," +
-                           "      FWORKSPACE_ID, " +
-                           "      FRUN_ID" +
-                           "  )" +
-                           "    VALUES (?, ?, ?, ?, ?, ? );";
-
-    String METRIC_SELECT_ID = " SELECT " +
-                              "      FAMOUNT," +
-                              "      FDURING," +
-                              "      FUSER_ID," +
-                              "      FACCOUNT_ID," +
-                              "      FWORKSPACE_ID,  " +
-                              "      FRUN_ID " +
-                              "FROM " +
-                              "  METRICS " +
-                              "WHERE FID=?";
-
-    String METRIC_SELECT_RUNID = " SELECT " +
-                                 "      FAMOUNT," +
-                                 "      FSTART_TIME," +
-                                 "      FSTOP_TIME," +
-                                 "      FUSER_ID," +
-                                 "      FACCOUNT_ID," +
-                                 "      FWORKSPACE_ID,  " +
-                                 "      FRUN_ID " +
-                                 "FROM " +
-                                 "  METRICS " +
-                                 "WHERE " +
-                                 "  FRUN_ID=? " +
-                                 "ORDER BY " +
-                                 "  FSTART_TIME";
-
-
-    String METRIC_SELECT_ACCOUNT_TOTAL = "SELECT " +
-                                         "  " + GBH_SUM + " AS FAMOUNT " +
-                                         "FROM " +
-                                         "  METRICS AS M " +
-                                         "WHERE " +
-                                         "   M.FACCOUNT_ID=?" +
-                                         "   AND M.FDURING && ?";
-
-    String METRIC_SELECT_ACCOUNT_GB_WS_TOTAL = "SELECT " +
-                                               "  " + GBH_SUM + " AS FAMOUNT, " +
-                                               "   M.FWORKSPACE_ID " +
-                                               "FROM " +
-                                               "  METRICS AS M " +
-                                               "WHERE " +
-                                               "   M.FACCOUNT_ID=?" +
-                                               "   AND M.FDURING && ?" +
-                                               "GROUP BY M.FWORKSPACE_ID";
-
-    String METRIC_SELECT_WORKSPACE_GB_TOTAL = "SELECT " +
-                                              "  " + GBH_SUM + " AS FAMOUNT, " +
-                                              "   M.FWORKSPACE_ID " +
-                                              "FROM " +
-                                              "  METRICS AS M " +
-                                              "WHERE " +
-                                              "   M.FWORKSPACE_ID=?" +
-                                              "   AND M.FDURING && ?" +
-                                              "GROUP BY M.FWORKSPACE_ID";
-
-    String METRIC_UPDATE = "UPDATE  METRICS " +
-                           " SET FDURING=? " +
-                           " WHERE FID=? ";
 
 
     String PREPAID_INSERT = "INSERT INTO PREPAID " +

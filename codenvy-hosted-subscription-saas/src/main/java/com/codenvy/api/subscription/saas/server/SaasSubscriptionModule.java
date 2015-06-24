@@ -17,8 +17,10 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.dao.BonusDao;
+import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.SaasBraintreePaymentService;
+import com.codenvy.api.subscription.saas.server.dao.BonusDao;
+import com.codenvy.api.subscription.saas.server.dao.sql.SqlBillingService;
 import com.codenvy.api.subscription.saas.server.dao.sql.SqlBonusDao;
 import com.codenvy.api.subscription.saas.server.job.RefillJob;
 import com.codenvy.api.subscription.saas.server.limit.ActiveTasksHolder;
@@ -53,5 +55,6 @@ public class SaasSubscriptionModule extends AbstractModule {
         bind(GenerateInvoicesJob.class);
         bind(SubscriptionScheduler.class).asEagerSingleton();
         bind(CreditCardRegistrationSubscriber.class);
+        bind(BillingService.class).to(SqlBillingService.class);
     }
 }

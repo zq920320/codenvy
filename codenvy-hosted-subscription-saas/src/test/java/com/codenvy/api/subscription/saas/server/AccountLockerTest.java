@@ -18,7 +18,7 @@
 package com.codenvy.api.subscription.saas.server;
 
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
 import org.eclipse.che.api.account.server.dao.Account;

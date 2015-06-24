@@ -17,21 +17,23 @@
  */
 package com.codenvy.api.subscription.saas.server.dao.sql;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.MemoryUsedMetric;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.dao.sql.SqlMeterBasedStorage;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.metrics.server.period.MonthlyMetricPeriod;
+import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
-import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
-import com.codenvy.api.subscription.saas.server.billing.MonthlyBillingPeriod;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
-import com.codenvy.api.subscription.saas.server.billing.Period;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
-import com.codenvy.api.subscription.saas.server.metric.MemoryUsedMetric;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
+import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.Charge;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.Resources;
+import com.codenvy.sql.DataSourceConnectionFactory;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;
@@ -53,7 +55,7 @@ import static org.testng.AssertJUnit.assertFalse;
 
 
 public class SqlBillingServiceTest extends AbstractSQLTest {
-    private BillingPeriod billingPeriod = new MonthlyBillingPeriod();
+    private MetricPeriod metricPeriod = new MonthlyMetricPeriod();
 
     private MeterBasedStorage meterBasedStorage;
     private BillingService    billingService;
@@ -786,7 +788,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("01-02-2015 00:00:00").getTime());
         billingService.removeSubscription("ac-1", sdf.parse("15-01-2015 00:00:00").getTime());
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-1")), 0);
@@ -822,7 +824,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("15-01-2015 00:00:00").getTime(),
                                        sdf.parse("01-02-2015 00:00:00").getTime());
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-1")), 0);
@@ -850,7 +852,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         assertTrue(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")).isEmpty());
@@ -873,7 +875,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
@@ -904,7 +906,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
@@ -935,7 +937,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
@@ -969,7 +971,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
@@ -1003,7 +1005,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         billingService.generateInvoices(period.getStartDate().getTime(), period.getEndDate().getTime());
         //then
         Invoice actual = get(billingService.getInvoices(getInvoiceFilterWithAccountId("ac-5")), 0);
@@ -1191,7 +1193,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("15-02-2015 00:00:00").getTime());
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         List<AccountResources> usage = billingService
                 .getEstimatedUsageByAccount(ResourcesFilter.builder()
                                                            .withFromDate(period.getStartDate().getTime())
@@ -1238,7 +1240,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
 
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
         List<AccountResources> usage = billingService
                 .getEstimatedUsageByAccount(ResourcesFilter.builder()
                                                            .withFromDate(period.getStartDate().getTime())
@@ -1281,7 +1283,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("15-02-2015 00:00:00").getTime() - 1);
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         Resources usage = billingService
                 .getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
@@ -1345,7 +1347,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("15-02-2015 00:00:00").getTime() - 1);
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         Resources usage = billingService
                 .getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
@@ -1414,7 +1416,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("15-02-2015 00:00:00").getTime() - 1);
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         Resources usage = billingService
                 .getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
@@ -1477,7 +1479,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                    .withCause("Bonus"));
 
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         Resources usage = billingService.getEstimatedUsage(period.getStartDate().getTime(), period.getEndDate().getTime());
         List<AccountResources> usageAccount =
@@ -1514,7 +1516,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1254"));
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
     }
@@ -1530,7 +1532,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1254"));
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertFalse(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
     }
@@ -1551,7 +1553,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                    .withTillDate(sdf.parse("01-02-2015 00:00:00").getTime())
                                    .withResources(3D));
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
     }
@@ -1568,7 +1570,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                      "ws-7",
                                      "run-1254"));
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         billingService.addSubscription("ac-6", 0, period.getStartDate().getTime(), period.getEndDate().getTime());
 
@@ -1578,7 +1580,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
     @Test
     public void testCheckingAvailableResourcesWhenAccountDidNotUseResources() throws Exception {
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertTrue(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(), period.getEndDate().getTime()));
     }
@@ -1597,7 +1599,7 @@ public class SqlBillingServiceTest extends AbstractSQLTest {
                                        sdf.parse("10-01-2015 12:00:00").getTime());
         billingService.removeSubscription("ac-6", sdf.parse("10-01-2015 02:00:00").getTime());
         //when
-        Period period = billingPeriod.get(sdf.parse("01-01-2015 00:00:00"));
+        Period period = metricPeriod.get(sdf.parse("01-01-2015 00:00:00"));
 
         assertFalse(billingService.hasAvailableResources("ac-6", period.getStartDate().getTime(),
                                                          sdf.parse("10-01-2015 12:00:00").getTime()));
