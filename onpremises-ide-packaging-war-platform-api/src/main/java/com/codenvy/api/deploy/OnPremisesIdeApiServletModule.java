@@ -26,20 +26,12 @@ import org.eclipse.che.inject.DynaModule;
 import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
-import javax.servlet.Filter;
-import javax.servlet.FilterChain;
-import javax.servlet.FilterConfig;
-import javax.servlet.RequestDispatcher;
-import javax.servlet.ServletException;
-import javax.servlet.ServletRequest;
-import javax.servlet.ServletResponse;
-import java.io.IOException;
 
 /**
  * Servlet module composer for api war.
  */
 @DynaModule
-public class CloudIdeApiServletModule extends ServletModule {
+public class OnPremisesIdeApiServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         filter("/vfs/*",
@@ -70,11 +62,7 @@ public class CloudIdeApiServletModule extends ServletModule {
 
         filterRegex("^/account/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                          ImmutableMap.of("accountIdPosition", "3"));
-//        filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
-//                                                              ImmutableMap.of("accountIdPosition", "5"));
-//        filterRegex("^/saas/resources/\\w*/(provided|used)").through(new AccountIdEnvironmentInitializationFilter(),
-//                                                                     ImmutableMap.of("accountIdPosition", "4"));
-
+        filterRegex("/resources/.*").through(new AccountIdEnvironmentInitializationFilter(), ImmutableMap.of("accountIdPosition", "3"));
         filter("/factory/*",
                "/workspace/*",
                "/account/*",
@@ -110,7 +98,8 @@ public class CloudIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/appengine/*",
                "/gae-validator/*",
-               "/gae-parameters/*")
+               "/gae-parameters/*",
+               "/resources/*")
 //               "/billing/*",
 //               "/creditcard/*",
 //               "/invoice/*",
@@ -122,7 +111,6 @@ public class CloudIdeApiServletModule extends ServletModule {
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
         filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);
-        filter("/resources/*").through(ResourceFilter.class);
 
         bind(com.codahale.metrics.servlets.ThreadDumpServlet.class).in(Singleton.class);
         bind(com.codahale.metrics.servlets.PingServlet.class).in(Singleton.class);
@@ -136,25 +124,5 @@ public class CloudIdeApiServletModule extends ServletModule {
 
         getServletContext().addListener(new WSConnectionTracker());
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
-    }
-
-    @Singleton
-    static class ResourceFilter implements Filter {
-        private RequestDispatcher defaultRequestDispatcher;
-
-        @Override
-        public void init(FilterConfig filterConfig) throws ServletException {
-            this.defaultRequestDispatcher = filterConfig.getServletContext().getNamedDispatcher("default");
-        }
-
-        @Override
-        public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
-            defaultRequestDispatcher.forward(request, response);
-        }
-
-        @Override
-        public void destroy() {
-
-        }
     }
 }

@@ -56,12 +56,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-analytics</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-api-creditcard</artifactId>
+            <artifactId>codenvy-hosted-api-resources</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
@@ -72,6 +67,11 @@
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-infra-filters</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-metrics</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
@@ -107,16 +107,6 @@
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server-organization</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-saas</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
@@ -383,11 +373,6 @@
             <version>${org.everrest.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${jdbc.postgresql-driver.version}</version>
-        </dependency>
-        <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
             <version>${javax.servlet.version}</version>
@@ -462,7 +447,6 @@
                         <configuration>
                             <tasks>
                                 <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/api/error/error-oauth.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-oauth.jsp" />
                                 <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates">
                                     <fileset dir="${project.build.directory}/unzip/odyssey/site/email-templates" />
                                 </copy>

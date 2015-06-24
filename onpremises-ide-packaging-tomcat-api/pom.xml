@@ -91,6 +91,11 @@
             <type>war</type>
         </dependency>
         <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${jdbc.postgresql-driver.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jcl-over-slf4j</artifactId>
             <version>${org.slf4j.version}</version>
@@ -152,6 +157,8 @@
                                 <chmod file="${project.build.directory}/tomcat-api/bin/*.sh" perm="+x" />
                                 <echo message="Copy tomcat-catalina-jmx-remote.jar" />
                                 <copy file="${project.build.directory}/packager-conf/tomcat-jar/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/tomcat-api/lib/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" />
+                                <echo message="Copy postgresql.jar" />
+                                <copy file="${project.build.directory}/packager-conf/tomcat-jar/postgresql-${jdbc.postgresql-driver.version}.jar" tofile="${project.build.directory}/tomcat-api/lib/postgresql-${jdbc.postgresql-driver.version}.jar" />
                                 <echo message="Copy logger jars" />
                                 <copy todir="${project.build.directory}/tomcat-api/endorsed">
                                     <fileset dir="${project.build.directory}/packager-conf/jar" />
@@ -219,7 +226,7 @@
                         <configuration>
                             <includeTypes>jar</includeTypes>
                             <stripVersion>false</stripVersion>
-                            <includeArtifactIds>tomcat-catalina-jmx-remote</includeArtifactIds>
+                            <includeArtifactIds>tomcat-catalina-jmx-remote, postgresql</includeArtifactIds>
                             <outputDirectory>${project.build.directory}/packager-conf/tomcat-jar</outputDirectory>
                         </configuration>
                     </execution>

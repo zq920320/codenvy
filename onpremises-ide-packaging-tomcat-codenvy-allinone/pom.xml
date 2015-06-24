@@ -90,6 +90,11 @@
             <version>${che.plugins.version}</version>
             <type>war</type>
         </dependency>
+        <dependency>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>${jdbc.postgresql-driver.version}</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
@@ -112,6 +117,7 @@
                                 <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/mail.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/che-plugin-git-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/git.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" overwrite="true" tofile="${project.build.directory}/tomcat-aio/webapps/factory.war" />
+                                <copy file="${project.build.directory}/packager-conf/tomcat-jar/postgresql-${jdbc.postgresql-driver.version}.jar" tofile="${project.build.directory}/tomcat-aio/lib/postgresql-${jdbc.postgresql-driver.version}.jar" />
                                 <echo message="Deploying builder application...." />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-builder.war" tofile="${project.build.directory}/tomcat-aio/webapps/builder3.war" />
                                 <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-runner.war" tofile="${project.build.directory}/tomcat-aio/webapps/runner3.war" />
@@ -158,6 +164,19 @@
                             <includeTypes>war</includeTypes>
                             <stripVersion>true</stripVersion>
                             <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>copy-dependencies-jar</id>
+                        <phase>generate-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <includeTypes>jar</includeTypes>
+                            <stripVersion>false</stripVersion>
+                            <includeArtifactIds>postgresql</includeArtifactIds>
+                            <outputDirectory>${project.build.directory}/packager-conf/tomcat-jar</outputDirectory>
                         </configuration>
                     </execution>
                     <execution>

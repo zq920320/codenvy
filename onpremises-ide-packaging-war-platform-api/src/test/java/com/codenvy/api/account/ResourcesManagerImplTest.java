@@ -17,11 +17,11 @@
  */
 package com.codenvy.api.account;
 
-import com.codenvy.api.subscription.saas.server.ResourcesChangesNotifier;
+import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
+import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -93,7 +93,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
-            expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
+          expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
     public void shouldThrowConflictExceptionIfAccountIsNotOwnerOfWorkspace() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -105,7 +105,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
+          expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -116,7 +116,7 @@ public class ResourcesManagerImplTest {
 
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
@@ -125,7 +125,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
@@ -133,7 +133,7 @@ public class ResourcesManagerImplTest {
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
+          expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
                                                Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)

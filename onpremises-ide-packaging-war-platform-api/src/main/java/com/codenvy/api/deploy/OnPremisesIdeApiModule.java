@@ -22,6 +22,9 @@ import com.codenvy.api.account.SubscriptionDaoImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.util.ProfileMigrator;
+import com.codenvy.api.metrics.server.MetricModule;
+import com.codenvy.api.resources.server.ResourcesManager;
+import com.codenvy.api.resources.server.ResourcesService;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
@@ -37,6 +40,7 @@ import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
+import com.codenvy.sql.SQLModule;
 import com.codenvy.vfs.impl.fs.MigrationLocalFSMountStrategy;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
@@ -45,7 +49,6 @@ import com.mongodb.DB;
 import com.palominolabs.metrics.guice.InstrumentationModule;
 
 import org.eclipse.che.api.account.server.AccountService;
-import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
@@ -77,6 +80,7 @@ import org.eclipse.che.api.vfs.server.search.SearcherProvider;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.dao.MemberDao;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.commons.schedule.executor.ScheduleModule;
 import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
 import org.eclipse.che.everrest.ETagResponseFilter;
 import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
@@ -85,7 +89,6 @@ import org.eclipse.che.ide.ext.ssh.server.KeyService;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
 import org.eclipse.che.ide.ext.ssh.server.UserProfileSshKeyStore;
 import org.eclipse.che.inject.DynaModule;
-import org.eclipse.che.inject.lifecycle.ScheduleModule;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
@@ -104,7 +107,7 @@ import org.everrest.guice.PathKey;
  * @author Max Shaposhnik
  */
 @DynaModule
-public class CloudIdeApiModule extends AbstractModule {
+public class OnPremisesIdeApiModule extends AbstractModule {
 
     @Override
     protected void configure() {
@@ -189,7 +192,6 @@ public class CloudIdeApiModule extends AbstractModule {
         bind(MemberDao.class).to(com.codenvy.api.dao.mongo.MemberDaoImpl.class);
         bind(AccountDao.class).to(com.codenvy.api.dao.mongo.AccountDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
-        bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
 
         bind(com.codenvy.service.http.WorkspaceInfoCache.class);
         bind(com.codenvy.workspace.listener.WsCacheCleanupSubscriber.class);
@@ -278,19 +280,21 @@ public class CloudIdeApiModule extends AbstractModule {
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
         install(new InstrumentationModule());
-//        install(new SQLModule());
+        install(new SQLModule());
+        install(new MetricModule());
+
+        bind(ResourcesService.class);
+        bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
 //
 //        install(new SubscriptionModule());
-//
 //        install(new SaasSubscriptionModule());
 //        install(new OnPremisesSubscriptionModule());
 //        install(new BillingModule());
-//        install(new MetricModule());
 //
-//        install(new ScheduleModule());
 //        install(new CreditCardModule());
 //
 //        install(new AnalyticsModule());
+        install(new ScheduleModule());
 
         bind(SubscriptionDao.class).to(SubscriptionDaoImpl.class).asEagerSingleton();
     }
