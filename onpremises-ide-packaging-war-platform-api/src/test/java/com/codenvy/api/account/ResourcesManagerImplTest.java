@@ -18,10 +18,15 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
+import com.codenvy.api.metrics.server.WorkspaceLockEvent;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.limit.ActiveTasksHolder;
+import com.codenvy.api.metrics.server.limit.MeteredTask;
+import com.codenvy.api.metrics.server.limit.WorkspaceResourcesUsageLimitChangedEvent;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
-import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -32,6 +37,8 @@ import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentCaptor;
+import org.mockito.ArgumentMatcher;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -39,11 +46,18 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
+import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
+import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -64,16 +78,27 @@ public class ResourcesManagerImplTest {
     @Mock
     WorkspaceDao             workspaceDao;
     @Mock
-    AccountDao               accountDao;
-    @Mock
     ResourcesChangesNotifier resourcesChangesNotifier;
     @Mock
+    MetricPeriod             metricPeriod;
+    @Mock
+    MeterBasedStorage        meterBasedStorage;
+    @Mock
     EventService             eventService;
+    @Mock
+    ActiveTasksHolder        activeTasksHolder;
 
+    @InjectMocks
     ResourcesManagerImpl resourcesManager;
+
+    @Mock
+    Period period;
 
     @BeforeMethod
     public void setUp() throws NotFoundException, ServerException {
+        when(metricPeriod.getCurrent()).thenReturn(period);
+        when(period.getStartDate()).thenReturn(new Date());
+
         Map<String, String> firstAttributes = new HashMap<>();
         firstAttributes.put(Constants.RUNNER_MAX_MEMORY_SIZE, "1024");
         Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
@@ -87,39 +112,33 @@ public class ResourcesManagerImplTest {
                                                    .withAttributes(secondAttributes);
 
         when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Arrays.asList(firstWorkspace, secondWorkspace));
-        when(accountDao.getById(anyString())).thenReturn(new Account().withId(ACCOUNT_ID).withName("accountName"));
-
-        resourcesManager = new ResourcesManagerImpl(workspaceDao, resourcesChangesNotifier);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "Workspace \\w* is not related to account \\w*")
     public void shouldThrowConflictExceptionIfAccountIsNotOwnerOfWorkspace() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(FIRST_WORKSPACE_ID)
-                                                                       .withRunnerRam(1024),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId("another_workspace")
-                                                                       .withRunnerRam(1024)));
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                   .withRunnerRam(1024),
+                                                                         DtoFactory.newDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId("another_workspace")
+                                                                                   .withRunnerRam(1024)));
     }
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Missed description of resources for workspace \\w*")
     public void shouldThrowConflictExceptionIfMissedResources() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(FIRST_WORKSPACE_ID),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
-                                                                       .withWorkspaceId(SECOND_WORKSPACE_ID)));
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(FIRST_WORKSPACE_ID),
+                                                                         DtoFactory.newDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(SECOND_WORKSPACE_ID)));
     }
-
 
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Size of RAM for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRAMIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                               Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                        .withRunnerRam(-256)));
     }
@@ -127,7 +146,7 @@ public class ResourcesManagerImplTest {
     @Test(expectedExceptions = ConflictException.class,
           expectedExceptionsMessageRegExp = "Builder timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfBuilderTimeoutIsNegativeNumber() throws Exception {
-        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+        resourcesManager.redistributeResources(ACCOUNT_ID, Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                                    .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                                    .withBuilderTimeout(-5)));
     }
@@ -136,22 +155,31 @@ public class ResourcesManagerImplTest {
           expectedExceptionsMessageRegExp = "Runner timeout for workspace \\w* is a negative number")
     public void shouldThrowConflictExceptionIfSizeOfRunnerTimeoutIsNegativeNumber() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                               Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(FIRST_WORKSPACE_ID)
                                                                        .withRunnerTimeout(-1), //ok
-                                                             DtoFactory.getInstance().createDto(
+                                                             DtoFactory.newDto(
                                                                      UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                        .withRunnerTimeout(-5))); // not ok
     }
 
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Resources usage limit for workspace \\w* is a negative number")
+    public void shouldThrowConflictExceptionIfValueOfResourcesUsageLimitIsNegativeNumber() throws Exception {
+        resourcesManager.redistributeResources(ACCOUNT_ID,
+                                               Collections.singletonList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
+                                                                                   .withWorkspaceId(SECOND_WORKSPACE_ID)
+                                                                                   .withResourcesUsageLimit(-2D)));
+    }
+
     @Test
     public void shouldRedistributeRunnerLimitResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                               Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(FIRST_WORKSPACE_ID)
                                                                        .withRunnerTimeout(20),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                             DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                        .withRunnerTimeout(20)));
 
@@ -166,10 +194,10 @@ public class ResourcesManagerImplTest {
     @Test
     public void shouldRedistributeBuilderLimitResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                               Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(FIRST_WORKSPACE_ID)
                                                                        .withBuilderTimeout(10),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                             DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                        .withBuilderTimeout(10)));
 
@@ -184,10 +212,10 @@ public class ResourcesManagerImplTest {
     @Test
     public void shouldRedistributeRAMResources() throws Exception {
         resourcesManager.redistributeResources(ACCOUNT_ID,
-                                               Arrays.asList(DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                               Arrays.asList(DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(FIRST_WORKSPACE_ID)
                                                                        .withRunnerRam(1024),
-                                                             DtoFactory.getInstance().createDto(UpdateResourcesDescriptor.class)
+                                                             DtoFactory.newDto(UpdateResourcesDescriptor.class)
                                                                        .withWorkspaceId(SECOND_WORKSPACE_ID)
                                                                        .withRunnerRam(2048)));
 
@@ -207,5 +235,111 @@ public class ResourcesManagerImplTest {
 
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(FIRST_WORKSPACE_ID), eq("1024"));
         verify(resourcesChangesNotifier).publishTotalMemoryChangedEvent(eq(SECOND_WORKSPACE_ID), eq("2048"));
+    }
+
+    @Test
+    public void shouldRemoveResourcesUsageLimitAndRemoveWorkspaceLockIfNewValueEqualsToMinus1() throws Exception {
+        Map<String, String> firstAttributes = new HashMap<>();
+        firstAttributes.put(RESOURCES_USAGE_LIMIT_PROPERTY, "1");
+        firstAttributes.put(RESOURCES_LOCKED_PROPERTY, "true");
+        Workspace firstWorkspace = new Workspace().withAccountId(ACCOUNT_ID)
+                                                  .withId(FIRST_WORKSPACE_ID)
+                                                  .withAttributes(firstAttributes);
+
+        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(firstWorkspace));
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(-1D)));
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                Workspace workspace = (Workspace)o;
+                return !workspace.getAttributes().containsKey(RESOURCES_USAGE_LIMIT_PROPERTY)
+                       && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService, times(2)).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_UNLOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldUnlockWorkspaceIfNewResourcesUsageMoreThanUsedResources() throws Exception {
+        when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(25D);
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(50D)));
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                final Workspace workspace = (Workspace)o;
+                return FIRST_WORKSPACE_ID.equals(workspace.getId())
+                       && !workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY);
+            }
+        }));
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_LOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
+            }
+        }));
+    }
+
+    @Test
+    public void shouldLockWorkspaceIfNewResourcesUsageLessThanUsedResources() throws Exception {
+        MeteredTask meteredTask = mock(MeteredTask.class);
+        when(activeTasksHolder.getActiveTasks(anyString())).thenReturn(Collections.singletonList(meteredTask));
+
+        when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(50D);
+
+        resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
+                                                                                               .createDto(UpdateResourcesDescriptor.class)
+                                                                                               .withWorkspaceId(FIRST_WORKSPACE_ID)
+                                                                                               .withResourcesUsageLimit(25D)));
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                final Workspace workspace = (Workspace)o;
+                return FIRST_WORKSPACE_ID.equals(workspace.getId())
+                       && "true".equals(workspace.getAttributes().get(RESOURCES_LOCKED_PROPERTY));
+            }
+        }));
+        verify(activeTasksHolder).getActiveTasks(FIRST_WORKSPACE_ID);
+        verify(meteredTask).interrupt();
+        verify(eventService, times(2)).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                if (o instanceof WorkspaceLockEvent) {
+                    final WorkspaceLockEvent workspaceLockEvent = (WorkspaceLockEvent)o;
+                    return workspaceLockEvent.getType().equals(WorkspaceLockEvent.EventType.WORKSPACE_LOCKED);
+                } else if (o instanceof WorkspaceResourcesUsageLimitChangedEvent) {
+                    final WorkspaceResourcesUsageLimitChangedEvent changedEvent = (WorkspaceResourcesUsageLimitChangedEvent)o;
+                    return changedEvent.getWorkspaceId().equals(FIRST_WORKSPACE_ID);
+                }
+                return false;
+            }
+        }));
     }
 }

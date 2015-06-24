@@ -19,6 +19,12 @@ package com.codenvy.api.account;
 
 
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
+import com.codenvy.api.metrics.server.WorkspaceLockEvent;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.limit.ActiveTasksHolder;
+import com.codenvy.api.metrics.server.limit.MeteredTask;
+import com.codenvy.api.metrics.server.limit.WorkspaceResourcesUsageLimitChangedEvent;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.resources.server.ResourcesManager;
 import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
@@ -26,9 +32,12 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import java.util.HashMap;
@@ -36,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.eclipse.che.api.account.server.Constants.RESOURCES_LOCKED_PROPERTY;
+import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIMIT_PROPERTY;
 
 /**
  * Implementation of ResourcesManager for OnPremises packaging
@@ -43,14 +54,28 @@ import static java.lang.String.format;
  * @author Sergii Leschenko
  */
 public class ResourcesManagerImpl implements ResourcesManager {
+    private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
+
     private final WorkspaceDao             workspaceDao;
     private final ResourcesChangesNotifier resourcesChangesNotifier;
+    private final EventService             eventService;
+    private final MetricPeriod             metricPeriod;
+    private final MeterBasedStorage        meterBasedStorage;
+    private final ActiveTasksHolder        activeTasksHolder;
 
     @Inject
     public ResourcesManagerImpl(WorkspaceDao workspaceDao,
-                                ResourcesChangesNotifier resourcesChangesNotifier) {
+                                ResourcesChangesNotifier resourcesChangesNotifier,
+                                EventService eventService,
+                                MetricPeriod metricPeriod,
+                                MeterBasedStorage meterBasedStorage,
+                                ActiveTasksHolder activeTasksHolder) {
         this.workspaceDao = workspaceDao;
         this.resourcesChangesNotifier = resourcesChangesNotifier;
+        this.eventService = eventService;
+        this.metricPeriod = metricPeriod;
+        this.meterBasedStorage = meterBasedStorage;
+        this.activeTasksHolder = activeTasksHolder;
     }
 
     @Override
@@ -80,11 +105,56 @@ public class ResourcesManagerImpl implements ResourcesManager {
                 workspace.getAttributes().put(Constants.RUNNER_LIFETIME, Integer.toString(resourcesDescriptor.getRunnerTimeout()));
             }
 
+            boolean changedWorkspaceLock = false;
+            if (resourcesDescriptor.getResourcesUsageLimit() != null) {
+                if (resourcesDescriptor.getResourcesUsageLimit() == -1) {
+                    workspace.getAttributes().remove(RESOURCES_USAGE_LIMIT_PROPERTY);
+                    if (workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY) != null) {
+                        changedWorkspaceLock = true;
+                    }
+                } else {
+                    workspace.getAttributes().put(RESOURCES_USAGE_LIMIT_PROPERTY,
+                                                  Double.toString(resourcesDescriptor.getResourcesUsageLimit()));
+
+                    long billingPeriodStart = metricPeriod.getCurrent().getStartDate().getTime();
+                    Double usedMemory = meterBasedStorage.getUsedMemoryByWorkspace(workspace.getId(),
+                                                                                   billingPeriodStart,
+                                                                                   System.currentTimeMillis());
+                    if (usedMemory < resourcesDescriptor.getResourcesUsageLimit()) {
+                        if (workspace.getAttributes().remove(RESOURCES_LOCKED_PROPERTY) != null) {
+                            changedWorkspaceLock = true;
+                        }
+                    } else {
+                        workspace.getAttributes().put(RESOURCES_LOCKED_PROPERTY, "true");
+                        changedWorkspaceLock = true;
+                    }
+                }
+            }
+
             workspaceDao.update(workspace);
 
             if (resourcesDescriptor.getRunnerRam() != null) {
                 resourcesChangesNotifier.publishTotalMemoryChangedEvent(resourcesDescriptor.getWorkspaceId(),
                                                                         Integer.toString(resourcesDescriptor.getRunnerRam()));
+            }
+
+            if (changedWorkspaceLock) {
+                if (workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
+                    eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspace.getId()));
+                    for (MeteredTask meteredTask : activeTasksHolder.getActiveTasks(workspace.getId())) {
+                        try {
+                            meteredTask.interrupt();
+                        } catch (Exception e) {
+                            LOG.error("Can't interrupt task with id " + meteredTask.getId(), e);
+                        }
+                    }
+                } else {
+                    eventService.publish(WorkspaceLockEvent.workspaceUnlockedEvent(workspace.getId()));
+                }
+            }
+
+            if (resourcesDescriptor.getResourcesUsageLimit() != null) {
+                eventService.publish(new WorkspaceResourcesUsageLimitChangedEvent(workspace.getId()));
             }
         }
     }

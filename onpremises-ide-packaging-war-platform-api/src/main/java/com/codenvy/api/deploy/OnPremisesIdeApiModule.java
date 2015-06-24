@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.deploy;
 
+import com.codenvy.api.account.RefillJob;
 import com.codenvy.api.account.ResourcesManagerImpl;
 import com.codenvy.api.account.SubscriptionDaoImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
@@ -285,6 +286,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(ResourcesService.class);
         bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
+        bind(RefillJob.class);
 //
 //        install(new SubscriptionModule());
 //        install(new SaasSubscriptionModule());
