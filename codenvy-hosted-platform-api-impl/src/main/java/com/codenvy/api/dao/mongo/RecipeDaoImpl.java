@@ -36,9 +36,9 @@ import org.eclipse.che.api.machine.server.recipe.GroupImpl;
 import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
-import org.eclipse.che.api.machine.shared.recipe.Group;
-import org.eclipse.che.api.machine.shared.recipe.Permissions;
-import org.eclipse.che.api.machine.shared.recipe.Recipe;
+import org.eclipse.che.api.machine.shared.Group;
+import org.eclipse.che.api.machine.shared.ManagedRecipe;
+import org.eclipse.che.api.machine.shared.Permissions;
 
 import javax.annotation.Nullable;
 import javax.inject.Named;
@@ -96,7 +96,7 @@ public class RecipeDaoImpl implements RecipeDao {
     }
 
     @Override
-    public void create(Recipe recipe) throws ServerException, ConflictException {
+    public void create(ManagedRecipe recipe) throws ServerException, ConflictException {
         requireNonNull(recipe, "Recipe required");
         try {
             if (recipes.findOne(recipe.getId()) != null) {
@@ -109,7 +109,7 @@ public class RecipeDaoImpl implements RecipeDao {
     }
 
     @Override
-    public void update(Recipe recipe) throws ServerException, NotFoundException {
+    public void update(ManagedRecipe recipe) throws ServerException, NotFoundException {
         requireNonNull(recipe, "Recipe required");
         try {
             if (recipes.findOne(recipe.getId()) == null) {
@@ -132,7 +132,7 @@ public class RecipeDaoImpl implements RecipeDao {
     }
 
     @Override
-    public Recipe getById(String id) throws ServerException, NotFoundException {
+    public ManagedRecipe getById(String id) throws ServerException, NotFoundException {
         requireNonNull(id, "Recipe id required");
         final DBObject recipeObj;
         try {
@@ -167,7 +167,7 @@ public class RecipeDaoImpl implements RecipeDao {
      * </pre>
      */
     @Override
-    public List<Recipe> search(List<String> tags, String type, int skipCount, int maxItems) throws ServerException {
+    public List<ManagedRecipe> search(List<String> tags, String type, int skipCount, int maxItems) throws ServerException {
 
         final BasicDBObject query =
                 new BasicDBObject("permissions.groups",
@@ -195,7 +195,7 @@ public class RecipeDaoImpl implements RecipeDao {
     }
 
     @Override
-    public List<Recipe> getByCreator(String creator, int skipCount, int maxItems) throws ServerException {
+    public List<ManagedRecipe> getByCreator(String creator, int skipCount, int maxItems) throws ServerException {
         requireNonNull(creator, "Recipe creator required");
         try (DBCursor cursor = recipes.find(new BasicDBObject("creator", creator))
                                       .skip(skipCount)
@@ -213,14 +213,14 @@ public class RecipeDaoImpl implements RecipeDao {
      * Transforms database object to recipe.
      * It is stateless so thread safe.
      */
-    /*used it test*/static class FromDBObjectToRecipeFunction implements Function<Object, Recipe> {
+    /*used it test*/static class FromDBObjectToRecipeFunction implements Function<Object, ManagedRecipe> {
 
         @Nullable
         @Override
-        public Recipe apply(Object input) {
+        public ManagedRecipe apply(Object input) {
             final BasicDBObject basicObj = (BasicDBObject)input;
 
-            final Recipe recipe = new RecipeImpl().withId(basicObj.getString("_id"))
+            final RecipeImpl recipe = new RecipeImpl().withId(basicObj.getString("_id"))
                                                   .withCreator(basicObj.getString("creator"))
                                                   .withType(basicObj.getString("type"))
                                                   .withScript(basicObj.getString("script"))
@@ -246,7 +246,7 @@ public class RecipeDaoImpl implements RecipeDao {
         }
     }
 
-    /*used it test*/ BasicDBObject asDBObject(Recipe recipe) {
+    /*used it test*/ BasicDBObject asDBObject(ManagedRecipe recipe) {
         final BasicDBObject recipeObj = new BasicDBObject().append("_id", recipe.getId())
                                                            .append("creator", recipe.getCreator())
                                                            .append("script", recipe.getScript())

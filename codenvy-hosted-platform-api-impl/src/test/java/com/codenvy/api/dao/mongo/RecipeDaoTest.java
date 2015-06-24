@@ -29,8 +29,8 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.machine.server.recipe.GroupImpl;
 import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
-import org.eclipse.che.api.machine.shared.recipe.Group;
-import org.eclipse.che.api.machine.shared.recipe.Recipe;
+import org.eclipse.che.api.machine.shared.Group;
+import org.eclipse.che.api.machine.shared.ManagedRecipe;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -68,15 +68,15 @@ public class RecipeDaoTest extends BaseDaoTest {
     public void shouldBeAbleToGetRecipeById() throws Exception {
         final Group group = new GroupImpl("workspace/admin", "workspace123", asList("read"));
         final Map<String, List<String>> users = singletonMap("user123", asList("read", "write"));
-        final Recipe example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"))
-                                               .withPermissions(new PermissionsImpl(users, asList(group)));
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"))
+                                                   .withPermissions(new PermissionsImpl(users, asList(group)));
         collection.save(recipeDao.asDBObject(example));
 
-        final Recipe recipe = recipeDao.getById(example.getId());
+        final ManagedRecipe recipe = recipeDao.getById(example.getId());
 
         assertEquals(recipe, example);
     }
@@ -91,12 +91,12 @@ public class RecipeDaoTest extends BaseDaoTest {
     public void shouldBeAbleToCreateNewRecipe() throws Exception {
         final Group group = new GroupImpl("workspace/admin", "workspace123", asList("read"));
         final Map<String, List<String>> users = singletonMap("user123", asList("read", "write"));
-        final Recipe example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"))
-                                               .withPermissions(new PermissionsImpl(users, asList(group)));
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"))
+                                                   .withPermissions(new PermissionsImpl(users, asList(group)));
 
         recipeDao.create(example);
 
@@ -114,18 +114,18 @@ public class RecipeDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldBeAbleToGetRecipesByCreator() throws Exception {
-        final Recipe example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"));
-        final Recipe example2 = copy(example).withId("recipe234");
-        final Recipe example3 = copy(example).withId("recipe345").withCreator("other-user");
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"));
+        final RecipeImpl example2 = copy(example).withId("recipe234");
+        final RecipeImpl example3 = copy(example).withId("recipe345").withCreator("other-user");
         collection.save(recipeDao.asDBObject(example));
         collection.save(recipeDao.asDBObject(example2));
         collection.save(recipeDao.asDBObject(example3));
 
-        List<Recipe> recipes = recipeDao.getByCreator("someone", 0, 10);
+        List<ManagedRecipe> recipes = recipeDao.getByCreator("someone", 0, 10);
         assertEquals(new HashSet<>(recipes), new HashSet<>(asList(example, copy(example2))));
 
         recipes = recipeDao.getByCreator("other-user", 0, 10);
@@ -134,7 +134,7 @@ public class RecipeDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldBeAbleToGetRecipesByCreatorWithLimitAndSkipCount() throws Exception {
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
@@ -143,13 +143,13 @@ public class RecipeDaoTest extends BaseDaoTest {
             collection.save(recipeDao.asDBObject(copy(example).withId(Integer.toString(i))));
         }
 
-        final List<Recipe> recipes = recipeDao.getByCreator("someone", 5, 10);
+        final List<ManagedRecipe> recipes = recipeDao.getByCreator("someone", 5, 10);
         assertEquals(recipes.size(), 10);
         final Set<String> ids = FluentIterable.from(recipes)
-                                              .transform(new Function<Recipe, String>() {
+                                              .transform(new Function<ManagedRecipe, String>() {
                                                   @Nullable
                                                   @Override
-                                                  public String apply(Recipe recipe) {
+                                                  public String apply(ManagedRecipe recipe) {
                                                       return recipe.getId();
                                                   }
                                               }).toSet();
@@ -158,21 +158,21 @@ public class RecipeDaoTest extends BaseDaoTest {
 
     @Test
     public void shouldReturnEmptyRecipesListWhenFoundRecipesCountIsFewerThanSkipCount() throws Exception {
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
                                                .withTags(asList("tag1", "tag2"));
         collection.save(recipeDao.asDBObject(example));
 
-        final List<Recipe> recipes = recipeDao.getByCreator("someone", 5, 10);
+        final List<ManagedRecipe> recipes = recipeDao.getByCreator("someone", 5, 10);
 
         assertEquals(recipes.size(), 0);
     }
 
     @Test
     public void shouldBeRemoveRecipeById() throws Exception {
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
@@ -189,7 +189,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         final Group group = new GroupImpl("workspace/admin", "workspace123", asList("read"));
         final Map<String, List<String>> users = new HashMap<>();
         users.put("user123", asList("read", "write"));
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
@@ -216,17 +216,17 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToSearchRecipesByTagsAndType() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
                                                .withTags(asList("tag1", "tag2"))
                                                .withPermissions(new PermissionsImpl(null, asList(group)));
-        final Recipe example2 = copy(example).withId("recipe234")
+        final RecipeImpl example2 = copy(example).withId("recipe234")
                                              .withTags(asList("tag1", "tag2", "tag3"));
-        final Recipe example3 = copy(example).withId("recipe345")
+        final RecipeImpl example3 = copy(example).withId("recipe345")
                                              .withTags(asList("tag1"));
-        final Recipe example4 = copy(example).withId("recipe456")
+        final RecipeImpl example4 = copy(example).withId("recipe456")
                                              .withType("another type")
                                              .withPermissions(null);
         collection.save(recipeDao.asDBObject(example));
@@ -234,7 +234,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         collection.save(recipeDao.asDBObject(example3));
         collection.save(recipeDao.asDBObject(example4));
 
-        final List<Recipe> recipes = recipeDao.search(asList("tag1", "tag2"), "script-type", 0, 10);
+        final List<ManagedRecipe> recipes = recipeDao.search(asList("tag1", "tag2"), "script-type", 0, 10);
 
         assertEquals(new HashSet<>(recipes), new HashSet<>(asList(example, example2)));
     }
@@ -242,29 +242,29 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToSearchRecipesByTags() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
-        final Recipe example = new RecipeImpl().withId("recipe123")
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
                                                .withCreator("someone")
                                                .withScript("script content")
                                                .withType("script-type")
                                                .withTags(asList("tag1", "tag2"))
                                                .withPermissions(new PermissionsImpl(null, asList(group)));
-        final Recipe example2 = copy(example).withId("recipe234")
+        final RecipeImpl example2 = copy(example).withId("recipe234")
                                              .withTags(asList("tag1", "tag2", "tag3"));
-        final Recipe example3 = copy(example).withId("recipe345")
+        final RecipeImpl example3 = copy(example).withId("recipe345")
                                              .withTags(asList("tag1"));
-        final Recipe example4 = copy(example).withId("recipe456")
+        final RecipeImpl example4 = copy(example).withId("recipe456")
                                              .withType("another type");
         collection.save(recipeDao.asDBObject(example));
         collection.save(recipeDao.asDBObject(example2));
         collection.save(recipeDao.asDBObject(example3));
         collection.save(recipeDao.asDBObject(example4));
 
-        final List<Recipe> recipes = recipeDao.search(asList("tag1", "tag2"), null, 0, 10);
+        final List<ManagedRecipe> recipes = recipeDao.search(asList("tag1", "tag2"), null, 0, 10);
 
         assertEquals(new HashSet<>(recipes), new HashSet<>(asList(example, example2, example4)));
     }
 
-    private Recipe copy(Recipe recipe) {
+    private RecipeImpl copy(RecipeImpl recipe) {
         return new RecipeImpl().withId(recipe.getId())
                                .withCreator(recipe.getCreator())
                                .withType(recipe.getType())
