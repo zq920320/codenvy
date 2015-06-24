@@ -365,7 +365,6 @@ public class MarketoReportGenerator {
         out.write(",");
 
         out.write(userCreatedDate);
-        out.write(",");
 
         out.newLine();
     }
