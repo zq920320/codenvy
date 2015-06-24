@@ -18,8 +18,8 @@
 package com.codenvy.api.subscription.saas.server.schedulers;
 
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceTemplateProcessor;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceTemplateProcessor;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;

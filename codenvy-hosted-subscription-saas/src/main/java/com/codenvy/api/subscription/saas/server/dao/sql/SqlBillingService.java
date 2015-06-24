@@ -19,14 +19,15 @@ package com.codenvy.api.subscription.saas.server.dao.sql;
 
 
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.InvoiceFilter;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
-import com.codenvy.api.subscription.saas.server.dao.sql.postgresql.Int8RangeType;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.Charge;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.Resources;
+import com.codenvy.sql.ConnectionFactory;
+import com.codenvy.sql.postgresql.Int8RangeType;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -47,6 +48,14 @@ import java.util.Map;
 import java.util.UUID;
 
 import static com.codenvy.api.subscription.saas.server.SaasSubscriptionService.SAAS_SUBSCRIPTION_ID;
+import static com.codenvy.sql.SqlQueryAppender.appendContainsRange;
+import static com.codenvy.sql.SqlQueryAppender.appendEqual;
+import static com.codenvy.sql.SqlQueryAppender.appendHavingGreater;
+import static com.codenvy.sql.SqlQueryAppender.appendIn;
+import static com.codenvy.sql.SqlQueryAppender.appendIsNull;
+import static com.codenvy.sql.SqlQueryAppender.appendLimit;
+import static com.codenvy.sql.SqlQueryAppender.appendOffset;
+import static com.codenvy.sql.SqlQueryAppender.appendOverlapRange;
 
 
 /**
@@ -180,16 +189,16 @@ public class SqlBillingService implements BillingService {
             StringBuilder invoiceSelect = new StringBuilder();
             invoiceSelect.append("SELECT ").append(SqlDaoQueries.INVOICES_FIELDS).append(" FROM INVOICES ");
 
-            SqlQueryAppender.appendEqual(invoiceSelect, "FID", filter.getId());
-            SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
-            SqlQueryAppender.appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
-            SqlQueryAppender.appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
-            SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(), filter.getTillDate());
+            appendEqual(invoiceSelect, "FID", filter.getId());
+            appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
+            appendIn(invoiceSelect, "FPAYMENT_STATE", filter.getStates());
+            appendIsNull(invoiceSelect, "FMAILING_TIME", filter.getIsMailNotSend());
+            appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(), filter.getTillDate());
 
             invoiceSelect.append(" ORDER BY FACCOUNT_ID, FCREATED_TIME DESC ");
 
-            SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
-            SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
+            appendLimit(invoiceSelect, filter.getMaxItems());
+            appendOffset(invoiceSelect, filter.getSkipCount());
 
 
             try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
@@ -294,7 +303,7 @@ public class SqlBillingService implements BillingService {
                     .append(" SUM(A.FPREPAID_AMOUNT) AS FPREPAID_AMOUNT ")
                     .append(" FROM (")
                     .append(SqlDaoQueries.ACCOUNTS_USAGE_SELECT);
-            SqlQueryAppender.appendOverlapRange(select, "M.FDURING", from, till);
+            appendOverlapRange(select, "M.FDURING", from, till);
             select.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT, B.FAMOUNT ");
             select.append(" ) AS A ");
 
@@ -342,26 +351,25 @@ public class SqlBillingService implements BillingService {
         try (Connection connection = connectionFactory.getConnection()) {
             connection.setAutoCommit(false);
             StringBuilder accountUsageSelect = new StringBuilder(SqlDaoQueries.ACCOUNTS_USAGE_SELECT);
-            SqlQueryAppender
-                    .appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getTillDate());
-            SqlQueryAppender.appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
+            appendOverlapRange(accountUsageSelect, "M.FDURING", resourcesFilter.getFromDate(), resourcesFilter.getTillDate());
+            appendEqual(accountUsageSelect, "M.FACCOUNT_ID", resourcesFilter.getAccountId());
             accountUsageSelect.append(" GROUP BY M.FACCOUNT_ID, P.FAMOUNT, B.FAMOUNT");
 
             int havingFields = 0;
-            havingFields += SqlQueryAppender.appendHavingGreater(accountUsageSelect,
-                                                                 SqlDaoQueries.FFREE_AMOUNT,
-                                                                 resourcesFilter.getFreeGbHMoreThan()) ? 1 : 0;
-            havingFields += SqlQueryAppender.appendHavingGreater(accountUsageSelect,
-                                                                 SqlDaoQueries.FPREPAID_AMOUNT,
-                                                                 resourcesFilter.getPrePaidGbHMoreThan()) ? 1 : 0;
-            havingFields += SqlQueryAppender.appendHavingGreater(accountUsageSelect,
-                                                                 SqlDaoQueries.FPAID_AMOUNT,
-                                                                 resourcesFilter.getPaidGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                SqlDaoQueries.FFREE_AMOUNT,
+                                                resourcesFilter.getFreeGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                SqlDaoQueries.FPREPAID_AMOUNT,
+                                                resourcesFilter.getPrePaidGbHMoreThan()) ? 1 : 0;
+            havingFields += appendHavingGreater(accountUsageSelect,
+                                                SqlDaoQueries.FPAID_AMOUNT,
+                                                resourcesFilter.getPaidGbHMoreThan()) ? 1 : 0;
 
             accountUsageSelect.append(" ORDER BY M.FACCOUNT_ID ");
 
-            SqlQueryAppender.appendLimit(accountUsageSelect, resourcesFilter.getMaxItems());
-            SqlQueryAppender.appendOffset(accountUsageSelect, resourcesFilter.getSkipCount());
+            appendLimit(accountUsageSelect, resourcesFilter.getMaxItems());
+            appendOffset(accountUsageSelect, resourcesFilter.getSkipCount());
 
 
             try (PreparedStatement usageStatement = connection.prepareStatement(accountUsageSelect.toString())) {

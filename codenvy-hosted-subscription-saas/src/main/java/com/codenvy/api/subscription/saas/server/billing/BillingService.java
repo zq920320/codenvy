@@ -18,6 +18,7 @@
 package com.codenvy.api.subscription.saas.server.billing;
 
 
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.Resources;

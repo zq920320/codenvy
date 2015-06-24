@@ -17,10 +17,11 @@
  */
 package com.codenvy.api.subscription.saas.server.dao.sql;
 
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
-import com.codenvy.api.subscription.saas.server.dao.sql.postgresql.Int8RangeType;
+import com.codenvy.sql.ConnectionFactory;
+import com.codenvy.sql.postgresql.Int8RangeType;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;
@@ -35,6 +36,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+
+import static com.codenvy.sql.SqlQueryAppender.appendContainsRange;
+import static com.codenvy.sql.SqlQueryAppender.appendEqual;
+import static com.codenvy.sql.SqlQueryAppender.appendLimit;
+import static com.codenvy.sql.SqlQueryAppender.appendOffset;
 
 /**
  * @author Sergii Leschenko
@@ -128,16 +134,16 @@ public class SqlBonusDao implements BonusDao {
             StringBuilder invoiceSelect = new StringBuilder();
             invoiceSelect.append("SELECT FID, FACCOUNT_ID, FPERIOD, FAMOUNT, FCAUSE, FADDED").append(" FROM BONUSES ");
 
-            SqlQueryAppender.appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
-            SqlQueryAppender.appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(), filter.getTillDate());
+            appendEqual(invoiceSelect, "FACCOUNT_ID", filter.getAccountId());
+            appendContainsRange(invoiceSelect, "FPERIOD", filter.getFromDate(), filter.getTillDate());
 
             if (filter.getCause() != null) {
-                SqlQueryAppender.appendEqual(invoiceSelect, "FCAUSE", filter.getCause());
+                appendEqual(invoiceSelect, "FCAUSE", filter.getCause());
             }
 
             invoiceSelect.append(" ORDER BY FADDED DESC ");
-            SqlQueryAppender.appendLimit(invoiceSelect, filter.getMaxItems());
-            SqlQueryAppender.appendOffset(invoiceSelect, filter.getSkipCount());
+            appendLimit(invoiceSelect, filter.getMaxItems());
+            appendOffset(invoiceSelect, filter.getSkipCount());
 
             try (PreparedStatement statement = connection.prepareStatement(invoiceSelect.toString())) {
                 statement.setFetchSize(filter.getMaxItems() != null ? filter.getMaxItems() : 0);

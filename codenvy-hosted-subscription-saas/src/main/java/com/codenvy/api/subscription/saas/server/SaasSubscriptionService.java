@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
+import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.server.AbstractSubscriptionService;
 import com.codenvy.api.subscription.server.SubscriptionEvent;

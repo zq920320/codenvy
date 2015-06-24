@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
-import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
-import com.codenvy.api.subscription.saas.server.billing.Period;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
 import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
@@ -32,7 +32,6 @@ import com.codenvy.api.subscription.saas.shared.dto.Resources;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.api.subscription.shared.dto.ProvidedResourcesDescriptor;
-import com.codenvy.api.subscription.shared.dto.WorkspaceResources;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
@@ -44,7 +43,6 @@ import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.user.UserImpl;
@@ -66,7 +64,6 @@ import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
@@ -102,7 +99,7 @@ public class SaasServiceTest {
     @Mock
     private BillingService         billingService;
     @Mock
-    private BillingPeriod          billingPeriod;
+    private MetricPeriod           metricPeriod;
     @Mock
     private Period                 period;
     @Mock
@@ -126,23 +123,21 @@ public class SaasServiceTest {
     @Mock
     private UriInfo                uriInfo;
 
-    @SuppressWarnings("unused")
+    @SuppressWarnings({"unused", "unusedLocal"})
     private SaasService saasService;
 
     @BeforeMethod
     public void setUp() throws Exception {
         saasService = new SaasService(PROMOTION_RESOURCES_SIZE,
                                       billingService,
-                                      billingPeriod,
+                                      metricPeriod,
                                       accountDao,
                                       lockDao,
                                       subscriptionDao,
                                       bonusDao,
                                       preferenceDao,
                                       userDao,
-                                      mailSender,
-                                      meterBasedStorage,
-                                      workspaceDao);
+                                      mailSender);
 
         when(uriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl());
         final Field uriField = saasService.getClass()
@@ -151,7 +146,7 @@ public class SaasServiceTest {
         uriField.setAccessible(true);
         uriField.set(saasService, uriInfo);
 
-        when(billingPeriod.getCurrent()).thenReturn(period);
+        when(metricPeriod.getCurrent()).thenReturn(period);
     }
 
     @Filter
@@ -237,7 +232,7 @@ public class SaasServiceTest {
                                    .get(SECURE_PATH + "/saas/bonus");
         assertEquals(response.getStatusCode(), 200);
 
-        verify(billingPeriod, times(2)).getCurrent();
+        verify(metricPeriod, times(2)).getCurrent();
         verify(bonusDao).getBonuses(argThat(new ArgumentMatcher<BonusFilter>() {
             @Override
             public boolean matches(Object o) {
@@ -359,26 +354,6 @@ public class SaasServiceTest {
     }
 
     @Test
-    public void shouldBeAbleToGetAccountResources() throws Exception {
-        when(period.getStartDate()).thenReturn(new Date());
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace().withId("ws_id")
-                                                                                                        .withAccountId(ACCOUNT_ID)));
-
-        when(meterBasedStorage.getMemoryUsedReport(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(new HashMap<String, Double>());
-
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .when()
-                                   .get(SECURE_PATH + "/saas/resources/" + ACCOUNT_ID + "/used");
-
-        assertEquals(response.getStatusCode(), 200);
-
-        List<WorkspaceResources> result = unwrapDtoList(response, WorkspaceResources.class);
-
-        assertEquals(result.size(), 1);
-    }
-
-    @Test
     public void shouldBeAbleToGetLockedAccounts() throws Exception {
         when(lockDao.getAccountsWithLockedResources())
                 .thenReturn(Collections.singletonList(new Account().withId(ACCOUNT_ID).withName("name")));
@@ -393,63 +368,6 @@ public class SaasServiceTest {
 
         assertEquals(result.size(), 1);
         assertEquals(result.get(0).getId(), ACCOUNT_ID);
-    }
-
-    @Test
-    public void shouldReturnUsedResourcesByWorkspacesOnGetUsedAccountResources() throws Exception {
-        when(period.getStartDate()).thenReturn(new Date());
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace().withId("ws_id")
-                                                                                                        .withAccountId(ACCOUNT_ID)));
-        when(meterBasedStorage.getMemoryUsedReport(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(ImmutableMap.of("ws_id", 123D));
-
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .when()
-                                   .get(SECURE_PATH + "/saas/resources/" + ACCOUNT_ID + "/used");
-
-        assertEquals(response.getStatusCode(), 200);
-
-        List<WorkspaceResources> result = unwrapDtoList(response, WorkspaceResources.class);
-        assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getWorkspaceId(), "ws_id");
-        assertEquals(result.get(0).getMemory(), 123D);
-    }
-
-    @Test
-    public void shouldReturnUsedResourcesByWorkspaceWhichDoesNotUseResourcesOnGetUsedAccountResources() throws Exception {
-        when(period.getStartDate()).thenReturn(new Date());
-        when(workspaceDao.getByAccount(ACCOUNT_ID)).thenReturn(Collections.singletonList(new Workspace().withId("workspaceID")
-                                                                                                        .withAccountId(ACCOUNT_ID)));
-
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .when()
-                                   .get(SECURE_PATH + "/saas/resources/" + ACCOUNT_ID + "/used");
-
-        assertEquals(response.getStatusCode(), 200);
-
-        List<WorkspaceResources> result = unwrapDtoList(response, WorkspaceResources.class);
-        assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getWorkspaceId(), "workspaceID");
-        assertEquals(result.get(0).getMemory(), 0D);
-    }
-
-    @Test
-    public void shouldReturnUsedResourcesByWorkspaceWhichNotReturnsByWorkspaceDaoOnGetUsedAccountResources() throws Exception {
-        when(period.getStartDate()).thenReturn(new Date());
-        when(meterBasedStorage.getMemoryUsedReport(eq(ACCOUNT_ID), anyLong(), anyLong())).thenReturn(ImmutableMap.of("ws_id", 123D));
-
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .when()
-                                   .get(SECURE_PATH + "/saas/resources/" + ACCOUNT_ID + "/used");
-
-        assertEquals(response.getStatusCode(), 200);
-
-        List<WorkspaceResources> result = unwrapDtoList(response, WorkspaceResources.class);
-        assertEquals(result.size(), 1);
-        assertEquals(result.get(0).getWorkspaceId(), "ws_id");
-        assertEquals(result.get(0).getMemory(), 123D);
     }
 
     @Test

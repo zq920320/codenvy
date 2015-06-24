@@ -17,7 +17,7 @@
  */
 package com.codenvy.api.subscription.saas.server.dao.sql;
 
-import com.codenvy.api.subscription.saas.server.dao.sql.StorageInitializer;
+import com.codenvy.sql.StorageInitializer;
 
 import org.postgresql.ds.PGPoolingDataSource;
 import org.testng.annotations.AfterMethod;

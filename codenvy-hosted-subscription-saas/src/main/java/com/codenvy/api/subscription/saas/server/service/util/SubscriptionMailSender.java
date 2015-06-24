@@ -17,11 +17,11 @@
  */
 package com.codenvy.api.subscription.saas.server.service.util;
 
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
-import com.codenvy.api.subscription.saas.server.billing.Period;
+import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 
 import org.codenvy.mail.MailSenderClient;
@@ -89,7 +89,7 @@ public class SubscriptionMailSender {
                                   UserDao userDao,
                                   MailSenderClient mailClient,
                                   BillingService billingService,
-                                  BillingPeriod billingPeriod) {
+                                  MetricPeriod metricPeriod) {
         this.invoiceChargedSubject = invoiceChargedSubject;
         this.invoiceNoChargesSubject = invoiceNoChargesSubject;
         this.invoiceFailedSubject = invoiceFailedSubject;
@@ -100,7 +100,7 @@ public class SubscriptionMailSender {
         this.userDao = userDao;
         this.mailClient = mailClient;
         this.billingService = billingService;
-        this.billingPeriod = billingPeriod.getCurrent();
+        this.billingPeriod = metricPeriod.getCurrent();
     }
 
     public void sendInvoice(Invoice invoice, String text) throws IOException, MessagingException, ServerException {

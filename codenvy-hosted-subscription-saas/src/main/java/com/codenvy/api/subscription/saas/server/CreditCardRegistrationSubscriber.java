@@ -19,7 +19,7 @@ package com.codenvy.api.subscription.saas.server;
 
 import com.braintreegateway.CreditCard;
 import com.codenvy.api.creditcard.server.event.CreditCardRegistrationEvent;
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
@@ -54,7 +54,7 @@ public class CreditCardRegistrationSubscriber implements EventSubscriber<CreditC
     private final EventService                eventService;
     private final SubscriptionMailSender      subscriptionMailSender;
     private final SubscriptionDao             subscriptionDao;
-    private final BillingPeriod               billingPeriod;
+    private final MetricPeriod                metricPeriod;
     private final SubscriptionServiceRegistry registry;
     private final BillingService              billingService;
     private final AccountLocker               accountLocker;
@@ -63,14 +63,14 @@ public class CreditCardRegistrationSubscriber implements EventSubscriber<CreditC
     public CreditCardRegistrationSubscriber(EventService eventService,
                                             SubscriptionMailSender subscriptionMailSender,
                                             SubscriptionDao subscriptionDao,
-                                            BillingPeriod billingPeriod,
+                                            MetricPeriod metricPeriod,
                                             SubscriptionServiceRegistry registry,
                                             BillingService billingService,
                                             AccountLocker accountLocker) {
         this.eventService = eventService;
         this.subscriptionMailSender = subscriptionMailSender;
         this.subscriptionDao = subscriptionDao;
-        this.billingPeriod = billingPeriod;
+        this.metricPeriod = metricPeriod;
         this.registry = registry;
         this.billingService = billingService;
         this.accountLocker = accountLocker;
@@ -136,7 +136,7 @@ public class CreditCardRegistrationSubscriber implements EventSubscriber<CreditC
         //Get paid GbH before removing subscription
         ResourcesFilter filter = ResourcesFilter.builder().withAccountId(accountId)
                                                 .withPaidGbHMoreThan(0)
-                                                .withFromDate(billingPeriod.getCurrent().getStartDate().getTime())
+                                                .withFromDate(metricPeriod.getCurrent().getStartDate().getTime())
                                                 .withTillDate(System.currentTimeMillis())
                                                 .build();
         return !billingService.getEstimatedUsageByAccount(filter).isEmpty();

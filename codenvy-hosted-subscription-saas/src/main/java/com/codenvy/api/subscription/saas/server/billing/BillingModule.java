@@ -17,11 +17,16 @@
  */
 package com.codenvy.api.subscription.saas.server.billing;
 
+import com.codenvy.api.AccountLockWebSocketMessenger;
+import com.codenvy.api.subscription.saas.server.billing.bonus.CreateBonusInterceptor;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceCharger;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceRecharger;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceService;
+import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceTemplateProcessor;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.server.payment.GuiceBraintreeGateway;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
-import com.google.inject.name.Names;
 
 import static org.eclipse.che.inject.Matchers.names;
 
@@ -32,7 +37,6 @@ public class BillingModule extends AbstractModule {
     @Override
     protected void configure() {
         bind(com.braintreegateway.BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
-        bind(BillingPeriod.class).to(MonthlyBillingPeriod.class);
 
         bind(InvoiceTemplateProcessor.class);
 
@@ -40,6 +44,7 @@ public class BillingModule extends AbstractModule {
         bind(InvoiceRecharger.class).asEagerSingleton();
 
         bind(InvoiceService.class);
+        bind(AccountLockWebSocketMessenger.class);
 
         CreateBonusInterceptor createBonusInterceptor = new CreateBonusInterceptor();
         requestInjection(createBonusInterceptor);

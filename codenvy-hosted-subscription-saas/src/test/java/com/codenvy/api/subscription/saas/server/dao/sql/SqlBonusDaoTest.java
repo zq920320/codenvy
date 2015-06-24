@@ -17,9 +17,10 @@
  */
 package com.codenvy.api.subscription.saas.server.dao.sql;
 
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
+import com.codenvy.sql.DataSourceConnectionFactory;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
+import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;

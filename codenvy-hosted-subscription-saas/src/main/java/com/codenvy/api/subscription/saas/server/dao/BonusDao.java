@@ -17,8 +17,8 @@
  */
 package com.codenvy.api.subscription.saas.server.dao;
 
-import com.codenvy.api.subscription.saas.server.billing.Bonus;
-import com.codenvy.api.subscription.saas.server.billing.BonusFilter;
+import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
+import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;

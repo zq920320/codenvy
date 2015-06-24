@@ -31,6 +31,9 @@
     <packaging>pom</packaging>
     <name>Codenvy :: Hosted :: Parent</name>
     <modules>
+        <module>codenvy-hosted-sql-core</module>
+        <module>codenvy-hosted-metrics</module>
+        <module>codenvy-hosted-api-resources</module>
         <module>codenvy-hosted-api-subscription</module>
         <module>codenvy-hosted-api-creditcard</module>
         <module>codenvy-hosted-subscription-onpremises</module>

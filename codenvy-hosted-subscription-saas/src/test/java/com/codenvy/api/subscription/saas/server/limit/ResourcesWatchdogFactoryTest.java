@@ -19,10 +19,10 @@ package com.codenvy.api.subscription.saas.server.limit;
 
 import com.codenvy.api.subscription.saas.server.AccountLocker;
 import com.codenvy.api.subscription.saas.server.WorkspaceLocker;
-import com.codenvy.api.subscription.saas.server.billing.BillingPeriod;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
-import com.codenvy.api.subscription.saas.server.billing.Period;
-import com.codenvy.api.subscription.saas.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.period.Period;
+import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 
@@ -59,7 +59,7 @@ public class ResourcesWatchdogFactoryTest {
     @Mock
     SubscriptionDao   subscriptionDao;
     @Mock
-    BillingPeriod     billingPeriod;
+    MetricPeriod      metricPeriod;
     @Mock
     BillingService    billingService;
     @Mock
@@ -79,7 +79,7 @@ public class ResourcesWatchdogFactoryTest {
 
     @BeforeMethod
     public void setUp() {
-        when(billingPeriod.getCurrent()).thenReturn(period);
+        when(metricPeriod.getCurrent()).thenReturn(period);
         when(period.getStartDate()).thenReturn(new Date());
     }
 
