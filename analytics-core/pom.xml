@@ -221,13 +221,6 @@
                         </includes>
                     </resource>
                     <resource>
-                        <targetPath>scripts</targetPath>
-                        <directory>scripts</directory>
-                        <includes>
-                            <include>*</include>
-                        </includes>
-                    </resource>
-                    <resource>
                         <directory>src/main/java</directory>
                     </resource>
                 </resources>
