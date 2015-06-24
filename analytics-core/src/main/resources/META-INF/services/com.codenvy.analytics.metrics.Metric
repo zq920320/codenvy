@@ -150,12 +150,14 @@ com.codenvy.analytics.metrics.users.UsersStatisticsPrecomputed
 com.codenvy.analytics.metrics.users.CompletedProfiles
 com.codenvy.analytics.metrics.users.CreatedUsers
 com.codenvy.analytics.metrics.users.CreatedUsersSet
+com.codenvy.analytics.metrics.users.CreatedUsersList
 com.codenvy.analytics.metrics.users.CreatedUniqueUsers
 com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth
 com.codenvy.analytics.metrics.users.NewUsersUsageTimeGreater1Min
 com.codenvy.analytics.metrics.users.NewUsersUsageTimeGreater60Min
 com.codenvy.analytics.metrics.users.NewUsersGbHours
+com.codenvy.analytics.metrics.users.UsersGbHoursList
 com.codenvy.analytics.metrics.users.NewUsersRuns
 com.codenvy.analytics.metrics.users.NewUsersBuilds
 com.codenvy.analytics.metrics.users.NewUsersDeploys

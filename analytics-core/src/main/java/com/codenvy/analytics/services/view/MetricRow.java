@@ -55,7 +55,7 @@ import static com.codenvy.analytics.DateRangeUtils.getFirstDayOfPeriod;
 public class MetricRow extends AbstractRow {
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("00");
 
-    private static final String DEFAULT_NUMERIC_FORMAT = "%,.4f";
+    public static final  String DEFAULT_NUMERIC_FORMAT = "%,.4f";
     private static final String DEFAULT_INTEGER_FORMAT = "%,d";
     public static final  String DEFAULT_DATE_FORMAT    = "yyyy-MM-dd HH:mm:ss";
     private static final String DEFAULT_TIME_FORMAT    = "HH:mm:ss";

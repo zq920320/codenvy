@@ -18,9 +18,11 @@
 package com.codenvy.analytics.services.marketo;
 
 import com.codenvy.analytics.Configurator;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.NumericValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -41,6 +43,7 @@ import com.mongodb.DBObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.BufferedWriter;
@@ -52,18 +55,22 @@ import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import static com.codenvy.analytics.Utils.toArray;
 import static com.codenvy.analytics.metrics.AbstractMetric.BUILDS;
+import static com.codenvy.analytics.metrics.AbstractMetric.DATE;
 import static com.codenvy.analytics.metrics.AbstractMetric.DEPLOYS;
+import static com.codenvy.analytics.metrics.AbstractMetric.GIGABYTE_RAM_HOURS;
 import static com.codenvy.analytics.metrics.AbstractMetric.ID;
 import static com.codenvy.analytics.metrics.AbstractMetric.LOGINS;
 import static com.codenvy.analytics.metrics.AbstractMetric.PROJECTS;
 import static com.codenvy.analytics.metrics.AbstractMetric.RUNS;
 import static com.codenvy.analytics.metrics.AbstractMetric.TIME;
+import static com.codenvy.analytics.metrics.AbstractMetric.USER;
 
 /**
  * @author Alexander Reshetnyak
@@ -76,6 +83,7 @@ public class MarketoReportGenerator {
     public static final String PROFILE_COMPLETED  = "Profile Complete";
     public static final String POINTS             = "Product Score";
     public static final String LAST_PRODUCT_LOGIN = "Last Product Login";
+    public static final String SING_UP_DATE       = "Date Sign-Up";
     public static final String NEW_USER           = "New User";
 
     private final Configurator configurator;
@@ -94,6 +102,8 @@ public class MarketoReportGenerator {
         put(LAST_PRODUCT_LOGIN, "Last Product Login");
         put(POINTS, POINTS);
         //put(NEW_USER, NEW_USER);
+        put(GIGABYTE_RAM_HOURS, "Gigabyte Hours");
+        put(SING_UP_DATE, SING_UP_DATE);
     }};
 
     @Inject
@@ -131,7 +141,10 @@ public class MarketoReportGenerator {
                 context = context.cloneAndPut(Parameters.PAGE, currentPage);
 
                 List<ValueData> profiles = getUsersProfiles(context);
-                writeUsersWithStatistics(activeUsers, newUsers, profiles, out);
+                Map<String, Double> usersGbHours = getUsersGbHoursUse(profiles);
+                Map<String, Long> usersCreatedDates = getUsersCreatedDates(profiles);
+
+                writeUsersWithStatistics(activeUsers, newUsers, profiles, usersGbHours, usersCreatedDates, out);
 
                 if (profiles.size() < pageSize) {
                     break;
@@ -143,6 +156,8 @@ public class MarketoReportGenerator {
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
                                           Set<ValueData> createdTodayUsers,
                                           List<ValueData> profiles,
+                                          Map<String, Double> usersGbHours,
+                                          Map<String, Long> usersCreatedDates,
                                           BufferedWriter out) throws IOException, ParseException {
         for (ValueData object : profiles) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
@@ -152,7 +167,10 @@ public class MarketoReportGenerator {
             // Skip users without email which stored in a field ALIASES.
             if (activeUsers.contains(user)
                 && toArray(profile.get(AbstractMetric.ALIASES)).length != 0) {
-                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user));
+                Double userGbHoursValue = usersGbHours.containsKey(user.getAsString()) ? usersGbHours.get(user.getAsString()) : 0.0D;
+                Long userCreatedDate = usersCreatedDates.get(user.getAsString());
+
+                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate);
             }
         }
     }
@@ -160,16 +178,19 @@ public class MarketoReportGenerator {
     private void writeUserWithStatistics(BufferedWriter out,
                                          Map<String, ValueData> profile,
                                          ValueData user,
-                                         boolean isNewUser) throws IOException, ParseException {
+                                         boolean isNewUser,
+                                         Double userGbHours,
+                                         @Nullable Long userCreatedDateLong) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
         String lastProductLoginDate = getLastProductLogin(user.getAsString());
+        String userCreatedDate = userCreatedDateLong == null ? "" : new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(userCreatedDateLong);
 
         if (stat.isEmpty()) {
             MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
         } else {
             MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser);
+            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
         }
     }
 
@@ -217,6 +238,58 @@ public class MarketoReportGenerator {
         return valueData.getAll();
     }
 
+    private Map<String, Double> getUsersGbHoursUse(List<ValueData> profiles) throws IOException {
+        Map<String, Double> usersGbHours = new LinkedHashMap<>();
+
+        Set<String> users = new LinkedHashSet<>();
+        for (int i= 0; i<profiles.size(); i++) {
+            users.add(((MapValueData)profiles.get(i)).getAll().get(ID).getAsString());
+
+            if (users.size() == 1000 || ( i == profiles.size() - 1)) {
+                Context.Builder builder = new Context.Builder();
+                builder.put(MetricFilter.USER_ID, Utils.getFilterAsString(users));
+
+                Metric metric = MetricFactory.getMetric(MetricType.USERS_GB_HOURS_LIST);
+                ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+
+                for (ValueData mvd : valueData.getAll()) {
+                    Double value = ((NumericValueData)(((MapValueData)mvd).getAll().get(GIGABYTE_RAM_HOURS))).getAsDouble();
+                    usersGbHours.put(((MapValueData)mvd).getAll().get(USER).getAsString(), value);
+                }
+
+                users.clear();
+            }
+        }
+
+        return usersGbHours;
+    }
+
+    private Map<String, Long> getUsersCreatedDates(List<ValueData> profiles) throws IOException {
+        Map<String, Long> usersCreatedDate = new LinkedHashMap<>();
+
+        Set<String> users = new LinkedHashSet<>();
+        for (int i= 0; i<profiles.size(); i++) {
+            users.add(((MapValueData)profiles.get(i)).getAll().get(ID).getAsString());
+
+            if (users.size() == 1000 || ( i == profiles.size() - 1)) {
+                Context.Builder builder = new Context.Builder();
+                builder.put(MetricFilter.USER_ID, Utils.getFilterAsString(users));
+
+                Metric metric = MetricFactory.getMetric(MetricType.CREATED_USERS_LIST);
+                ListValueData valueData = (ListValueData)metric.getValue(builder.build());
+
+                for (ValueData mvd : valueData.getAll()) {
+                    Long value = ((LongValueData)(((MapValueData)mvd).getAll().get(DATE))).getAsLong();
+                    usersCreatedDate.put(((MapValueData)mvd).getAll().get(USER).getAsString(), value);
+                }
+
+                users.clear();
+            }
+        }
+
+        return usersCreatedDate;
+    }
+
     private List<ValueData> getUsersStatistics(String user) throws IOException, ParseException {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_ID, user);
@@ -246,7 +319,9 @@ public class MarketoReportGenerator {
                                  Map<String, ValueData> stat,
                                  Map<String, ValueData> profile,
                                  String lastProductLoginDate,
-                                 boolean isCreatedTodayUser) throws IOException {
+                                 boolean isCreatedTodayUser,
+                                 Double userGbHoursValue,
+                                 String userCreatedDate) throws IOException {
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
@@ -281,9 +356,16 @@ public class MarketoReportGenerator {
         out.write(",");
 
         writeInt(out, ActOn.getPoints(stat, profile));
-        //out.write(",");
+        out.write(",");
 
         //out.write(isCreatedTodayUser ? "1" :"0");
+        //out.write(",");
+
+        out.write(String.format(MetricRow.DEFAULT_NUMERIC_FORMAT, userGbHoursValue));
+        out.write(",");
+
+        out.write(userCreatedDate);
+        out.write(",");
 
         out.newLine();
     }

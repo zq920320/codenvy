@@ -18,6 +18,7 @@
 package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.Utils;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
@@ -29,6 +30,7 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Summaraziable;
@@ -42,8 +44,10 @@ import org.testng.annotations.Test;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
@@ -644,6 +648,46 @@ public class TestTaskMetrics extends BaseTest {
                                    "id3_b={id=id3_b}, " +
                                    "id3_r={id=id3_r}}");
     }
+
+    @Test
+    public void testUsersGbHoursList() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_GB_HOURS_LIST);
+
+        ListValueData lvd = getAsList(metric, Context.EMPTY);
+
+        Map<String, Map<String, ValueData>> m = listToMap(lvd, AbstractMetric.USER);
+
+        assertEquals(m.size(), 3);
+        assertEquals(m.get("user1@gmail.com").get("user"), StringValueData.valueOf("user1@gmail.com"));
+        assertEquals(m.get("user1@gmail.com").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.00125));
+        assertEquals(m.get("anonymoususer_user11").get("user"), StringValueData.valueOf("anonymoususer_user11"));
+        assertEquals(m.get("anonymoususer_user11").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.00125));
+        assertEquals(m.get("user").get("user"), StringValueData.valueOf("user"));
+        assertEquals(m.get("user").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.1279));
+    }
+
+    @Test
+    public void testUsersGbHoursListWithFilterByUsers() throws Exception {
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_GB_HOURS_LIST);
+
+        Set<String> users = new LinkedHashSet<>();
+        users.add("user1@gmail.com");
+        users.add("user");
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_ID, Utils.getFilterAsString(users));
+
+        ListValueData lvd = getAsList(metric, builder.build());
+
+        Map<String, Map<String, ValueData>> m = listToMap(lvd, AbstractMetric.USER);
+
+        assertEquals(m.size(), 2);
+        assertEquals(m.get("user1@gmail.com").get("user"), StringValueData.valueOf("user1@gmail.com"));
+        assertEquals(m.get("user1@gmail.com").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.00125));
+        assertEquals(m.get("user").get("user"), StringValueData.valueOf("user"));
+        assertEquals(m.get("user").get("gigabyte_ram_hours"), DoubleValueData.valueOf(0.1279));
+    }
+
 
     void prepareData() throws Exception {
         Context.Builder builder = new Context.Builder();
