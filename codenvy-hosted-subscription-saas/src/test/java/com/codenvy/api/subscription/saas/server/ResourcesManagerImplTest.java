@@ -22,13 +22,13 @@ import com.codenvy.api.metrics.server.WorkspaceLockEvent;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.period.Period;
-import com.codenvy.api.resources.server.ResourcesManager;
-import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 
+import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
