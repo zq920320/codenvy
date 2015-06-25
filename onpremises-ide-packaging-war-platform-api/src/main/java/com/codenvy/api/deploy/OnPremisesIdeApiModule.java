@@ -23,7 +23,6 @@ import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.api.metrics.server.MetricModule;
-import com.codenvy.api.resources.server.ResourcesManager;
 import com.codenvy.api.resources.server.ResourcesService;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
@@ -49,6 +48,7 @@ import com.mongodb.DB;
 import com.palominolabs.metrics.guice.InstrumentationModule;
 
 import org.eclipse.che.api.account.server.AccountService;
+import org.eclipse.che.api.account.server.ResourcesManager;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;

@@ -19,9 +19,9 @@ package com.codenvy.api.account;
 
 
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
-import com.codenvy.api.resources.server.ResourcesManager;
-import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
+import org.eclipse.che.api.account.server.ResourcesManager;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;

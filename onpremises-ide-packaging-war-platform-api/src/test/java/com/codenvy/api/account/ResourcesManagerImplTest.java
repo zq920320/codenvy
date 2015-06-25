@@ -18,10 +18,10 @@
 package com.codenvy.api.account;
 
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
-import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.shared.dto.UpdateResourcesDescriptor;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
