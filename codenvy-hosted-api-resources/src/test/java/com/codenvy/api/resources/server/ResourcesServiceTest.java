@@ -20,15 +20,12 @@ package com.codenvy.api.resources.server;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.period.Period;
-import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.resources.shared.dto.WorkspaceResources;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
 
-import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
-import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.env.EnvironmentContext;
@@ -54,12 +51,8 @@ import static com.jayway.restassured.RestAssured.given;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_NAME;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_PASSWORD;
 import static org.everrest.assured.JettyHttpServer.SECURE_PATH;
-import static org.mockito.Matchers.anyListOf;
 import static org.mockito.Matchers.anyLong;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
@@ -86,8 +79,6 @@ public class ResourcesServiceTest {
     WorkspaceDao      workspaceDao;
     @Mock
     MetricPeriod      metricPeriod;
-    @Mock
-    ResourcesManager  resourcesManager;
 
     @InjectMocks
     private ResourcesService resourcesService;
@@ -104,36 +95,6 @@ public class ResourcesServiceTest {
     @BeforeMethod
     public void setUp() {
         when(metricPeriod.getCurrent()).thenReturn(period);
-    }
-
-    @Test
-    public void shouldBeAbleToRedistributeResources() throws Exception {
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .contentType("application/json")
-                                   .when()
-                                   .body(newDto(UpdateResourcesDescriptor.class).withWorkspaceId("some_workspace"))
-                                   .post(SECURE_PATH + "/resources/" + ACCOUNT_ID);
-
-        assertEquals(response.getStatusCode(), 204);
-        verify(resourcesManager).redistributeResources(eq("account"), anyListOf(UpdateResourcesDescriptor.class));
-    }
-
-    @Test
-    public void shouldThrowExceptionWhenResourcesManagerThrowsIt() throws Exception {
-        doThrow(new ServerException("Error")).when(resourcesManager)
-                                             .redistributeResources(anyString(), anyListOf(UpdateResourcesDescriptor.class));
-
-        Response response = given().auth()
-                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                   .contentType("application/json")
-                                   .when()
-                                   .body(newDto(UpdateResourcesDescriptor.class).withWorkspaceId("some_workspace"))
-                                   .post(SECURE_PATH + "/resources/" + ACCOUNT_ID);
-
-        assertEquals(response.getStatusCode(), 500);
-        assertEquals(unwrapDto(response, ServiceError.class).getMessage(), "Error");
-        verify(resourcesManager).redistributeResources(eq("account"), anyListOf(UpdateResourcesDescriptor.class));
     }
 
     @Test
