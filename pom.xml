@@ -23,11 +23,11 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>org.eclipse.che.depmgt</groupId>
-        <version>1.21.1-SNAPSHOT</version>
+        <version>3.10.2-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy.onpremises</groupId>
     <artifactId>onpremises-ide-parent</artifactId>
-    <version>3.10.1-SNAPSHOT</version>
+    <version>3.10.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Onpremises IDE :: Parent</name>
     <modules>
