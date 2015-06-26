@@ -34,6 +34,11 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-api-resources</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-plugin-onpremises</artifactId>
             <version>${project.version}</version>
@@ -71,6 +76,11 @@
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
             <artifactId>codenvy-ext-profile</artifactId>
+            <version>${codenvy.plugin.hosted.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin-hosted</groupId>
+            <artifactId>codenvy-ext-resources</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
