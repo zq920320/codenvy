@@ -19,6 +19,7 @@ package com.codenvy.api.resources.server;
 
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
+import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.resources.shared.dto.WorkspaceResources;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
@@ -29,17 +30,21 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.Service;
+import org.eclipse.che.api.core.rest.annotations.Required;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -60,14 +65,58 @@ public class ResourcesService extends Service {
     private final MeterBasedStorage meterBasedStorage;
     private final WorkspaceDao      workspaceDao;
     private final MetricPeriod      metricPeriod;
+    private final ResourcesManager  resourcesManager;
 
     @Inject
     public ResourcesService(MeterBasedStorage meterBasedStorage,
                             WorkspaceDao workspaceDao,
-                            MetricPeriod metricPeriod) {
+                            MetricPeriod metricPeriod,
+                            ResourcesManager resourcesManager) {
         this.meterBasedStorage = meterBasedStorage;
         this.workspaceDao = workspaceDao;
         this.metricPeriod = metricPeriod;
+        this.resourcesManager = resourcesManager;
+    }
+
+
+    /**
+     * Redistributes resources between workspaces
+     *
+     * @param id
+     *         account id
+     * @param updateResourcesDescriptors
+     *         descriptor of resources for updating
+     * @throws ForbiddenException
+     *         when account hasn't permission for setting attribute in workspace
+     * @throws NotFoundException
+     *         when account or workspace with given id doesn't exist
+     * @throws ConflictException
+     *         when account hasn't required Saas subscription
+     *         or user want to use more RAM than he has
+     * @throws ServerException
+     */
+    @ApiOperation(value = "Redistributes resources",
+                  notes = "Redistributes resources between workspaces. Roles: account/owner, system/manager, system/admin.",
+                  position = 17)
+    @ApiResponses(value = {
+            @ApiResponse(code = 204, message = "OK"),
+            @ApiResponse(code = 403, message = "Access denied"),
+            @ApiResponse(code = 404, message = "Not found"),
+            @ApiResponse(code = 409, message = "Conflict Error"),
+            @ApiResponse(code = 500, message = "Internal Server Error")})
+    @POST
+    @Path("/{accountId}")
+    @RolesAllowed({"account/owner", "system/manager", "system/admin"})
+    @Consumes(MediaType.APPLICATION_JSON)
+    public void redistributeResources(@ApiParam(value = "Account ID", required = true)
+                                      @PathParam("accountId") String id,
+                                      @ApiParam(value = "Resources description", required = true)
+                                      @Required
+                                      List<UpdateResourcesDescriptor> updateResourcesDescriptors) throws ForbiddenException,
+                                                                                                         ConflictException,
+                                                                                                         NotFoundException,
+                                                                                                         ServerException {
+        resourcesManager.redistributeResources(id, updateResourcesDescriptors);
     }
 
     /**
