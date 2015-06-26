@@ -18,18 +18,15 @@
 package com.codenvy.api.dao.authentication;
 
 
-import org.eclipse.che.api.auth.AuthenticationDao;
+import com.jayway.restassured.http.ContentType;
+
 import org.eclipse.che.api.auth.AuthenticationExceptionMapper;
 import org.eclipse.che.api.auth.AuthenticationService;
-import org.eclipse.che.api.auth.server.dto.DtoServerImpls;
 import org.eclipse.che.api.auth.shared.dto.Credentials;
 import org.eclipse.che.api.auth.shared.dto.Token;
 import org.eclipse.che.commons.user.User;
 import org.eclipse.che.commons.user.UserImpl;
 import org.eclipse.che.dto.server.DtoFactory;
-import com.jayway.restassured.http.ContentType;
-import com.jayway.restassured.mapper.ObjectMapper;
-
 import org.everrest.assured.EverrestJetty;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
@@ -51,7 +48,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.anyBoolean;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -61,8 +60,6 @@ import static org.testng.Assert.assertEquals;
  */
 @Listeners(value = {EverrestJetty.class, MockitoTestNGListener.class})
 public class AuthenticationServiceTest {
-
-
     @Mock
     protected AuthenticationHandler         handler;
     @Mock
@@ -82,12 +79,13 @@ public class AuthenticationServiceTest {
 
     protected AuthenticationService service;
 
+    @SuppressWarnings("unused")
     protected AuthenticationService authenticationService;
     protected String                token;
     protected String                tokenOld;
 
+    @SuppressWarnings("unused")
     private ExceptionMapper exceptionMapper = new AuthenticationExceptionMapper();
-    private AuthenticationDao dao1;
 
     @BeforeMethod
     public void init() {
@@ -99,14 +97,11 @@ public class AuthenticationServiceTest {
         when(handler.getType()).thenReturn("default");
         when(uniqueTokenGenerator.generate()).thenReturn(token);
         service = new AuthenticationService(dao);
-
     }
 
     @Test
     public void shouldAuthenticateWithCorrectParams() throws Exception {
         //given
-
-
         when(handler.authenticate(eq("user@site.com"), eq("secret")))
                 .thenReturn(new UserImpl("user@site.com", "14433", "t11", Collections.<String>emptyList(), false));
 
@@ -127,28 +122,26 @@ public class AuthenticationServiceTest {
             }
         }).when(cookieBuilder).setCookies(any(Response.ResponseBuilder.class), anyString(), anyBoolean());
 
-
         // when
-        Token response = given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("user@site.com")
-                                  .withPassword("secret")
-                     )
-                .then()
-                .expect().statusCode(200)
-                .cookie("token-access-key", token)
-                .cookie("session-access-key", token)
-                .cookie("logged_in", "true")
+        final Token receivedToken = unwrapDto(given()
+                                                      .contentType(ContentType.JSON)
+                                                      .body(DtoFactory.getInstance().createDto(Credentials.class)
+                                                                      .withUsername("user@site.com")
+                                                                      .withPassword("secret"))
+                                                      .then()
+                                                      .expect().statusCode(200)
+                                                      .cookie("token-access-key", token)
+                                                      .cookie("session-access-key", token)
+                                                      .cookie("logged_in", "true")
 
-                .when()
-                .post("/auth/login").as(DtoServerImpls.TokenImpl.class, ObjectMapper.GSON);
+                                                      .when()
+                                                      .post("/auth/login"),
+                                              Token.class);
 
         ArgumentCaptor<AccessTicket> argument = ArgumentCaptor.forClass(AccessTicket.class);
         verify(ticketManager).putAccessTicket(argument.capture());
-        assertEquals(response.getValue(), token);
-        assertEquals(argument.getValue().getAccessToken(), token);
+        assertEquals(receivedToken.getValue(), this.token);
+        assertEquals(argument.getValue().getAccessToken(), this.token);
     }
 
 
@@ -156,89 +149,70 @@ public class AuthenticationServiceTest {
     public void shouldReturnBadRequestIfLoginIsNotSet() throws Exception {
         //given
         // when
-        given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername(null)
-                                  .withPassword("secret")
-                     )
-
-                .then()
-                .expect().statusCode(400)
-                .when()
-                .post("/auth/login");
+        given().contentType(ContentType.JSON)
+               .body(DtoFactory.getInstance().createDto(Credentials.class)
+                               .withUsername(null)
+                               .withPassword("secret"))
+               .then()
+               .expect().statusCode(400)
+               .when()
+               .post("/auth/login");
     }
 
     @Test
     public void shouldReturnBadRequestIfLoginIsEmpty() throws Exception {
         //given
         // when
-        given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("")
-                                  .withPassword("secret")
-                     )
-
-                .then()
-                .expect().statusCode(400)
-                .when()
-                .post("/auth/login");
+        given().contentType(ContentType.JSON)
+               .body(DtoFactory.getInstance().createDto(Credentials.class)
+                               .withUsername("")
+                               .withPassword("secret"))
+               .then()
+               .expect().statusCode(400)
+               .when()
+               .post("/auth/login");
     }
 
     @Test
     public void shouldReturnBadRequestIfPassowordIsNotSet() throws Exception {
         //given
         // when
-        given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("user@site.com")
-                                  .withPassword(null)
-                     )
-
-                .then()
-                .expect().statusCode(400)
-                .when()
-                .post("/auth/login");
+        given().contentType(ContentType.JSON)
+               .body(DtoFactory.getInstance().createDto(Credentials.class)
+                               .withUsername("user@site.com")
+                               .withPassword(null))
+               .then()
+               .expect().statusCode(400)
+               .when()
+               .post("/auth/login");
     }
 
     @Test
     public void shouldReturnBadRequestIfPasswordIsEmpty() throws Exception {
         //given
         // when
-        given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("user@site.com")
-                                  .withPassword("")
-                     )
-
-                .then()
-                .expect().statusCode(400)
-                .when()
-                .post("/auth/login");
+        given().contentType(ContentType.JSON)
+               .body(DtoFactory.getInstance().createDto(Credentials.class)
+                               .withUsername("user@site.com")
+                               .withPassword(""))
+               .then()
+               .expect().statusCode(400)
+               .when()
+               .post("/auth/login");
     }
 
     @Test
     public void shouldReturnBadRequestIfHandlerNotAbleToAuthenticate() throws Exception {
         //given
         // when
-        given()
-                .contentType(ContentType.JSON)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("user@site.com")
-                                  .withPassword("asdfasdf")
-                     )
-                .then()
-                .expect().statusCode(400)
-                .when()
-                .post("/auth/login");
+        System.out.println(given().contentType(ContentType.JSON)
+                                  .body(DtoFactory.getInstance().createDto(Credentials.class)
+                                                  .withUsername("user@site.com")
+                                                  .withPassword("asdfasdf"))
+                                   .then()
+//               .expect().statusCode(400)
+                                   .when()
+                                   .post("/auth/login").print());
     }
 
     @Test
@@ -264,31 +238,27 @@ public class AuthenticationServiceTest {
             }
         }).when(cookieBuilder).setCookies(any(Response.ResponseBuilder.class), anyString(), anyBoolean());
 
-
         // when
-        Token response = given()
-                .contentType(ContentType.JSON)
-                .cookie("session-access-key", tokenOld)
-                .body(
-                        DtoFactory.getInstance().createDto(Credentials.class)
-                                  .withUsername("user@site.com")
-                                  .withPassword("secret")
-                     )
-                .then()
-                .expect().statusCode(200)
-                .cookie("token-access-key", token)
-                .cookie("session-access-key", token)
-                .cookie("logged_in", "true")
+        final Token receivedToken = unwrapDto(given().contentType(ContentType.JSON)
+                                                     .cookie("session-access-key", tokenOld)
+                                                     .body(DtoFactory.getInstance().createDto(Credentials.class)
+                                                                     .withUsername("user@site.com")
+                                                                     .withPassword("secret"))
+                                                     .then()
+                                                     .expect().statusCode(200)
+                                                     .cookie("token-access-key", this.token)
+                                                     .cookie("session-access-key", this.token)
+                                                     .cookie("logged_in", "true")
 
-                .when()
-                .post("/auth/login").as(DtoServerImpls.TokenImpl.class, ObjectMapper.GSON);
+                                                     .when()
+                                                     .post("/auth/login"),
+                                              Token.class);
 
         ArgumentCaptor<AccessTicket> argument = ArgumentCaptor.forClass(AccessTicket.class);
         verify(ticketManager).removeTicket(eq(tokenOld));
         verify(ticketManager).putAccessTicket(argument.capture());
-        assertEquals(response.getValue(), token);
-        assertEquals(argument.getValue().getAccessToken(), token);
-
+        assertEquals(receivedToken.getValue(), this.token);
+        assertEquals(argument.getValue().getAccessToken(), this.token);
     }
 
     @Test
@@ -334,5 +304,9 @@ public class AuthenticationServiceTest {
                 .when()
                 .post("/auth/logout");
 
+    }
+
+    private static <T> T unwrapDto(com.jayway.restassured.response.Response response, Class<T> dtoClass) {
+        return DtoFactory.getInstance().createDtoFromJson(response.body().print(), dtoClass);
     }
 }
