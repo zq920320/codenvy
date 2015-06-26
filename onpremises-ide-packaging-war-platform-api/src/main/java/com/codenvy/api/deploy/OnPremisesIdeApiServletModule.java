@@ -63,6 +63,8 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
         filterRegex("^/account/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                          ImmutableMap.of("accountIdPosition", "3"));
         filterRegex("/resources/.*").through(new AccountIdEnvironmentInitializationFilter(), ImmutableMap.of("accountIdPosition", "3"));
+        filterRegex("^/saas/resources/\\w*/provided").through(new AccountIdEnvironmentInitializationFilter(),
+                                                              ImmutableMap.of("accountIdPosition", "4"));
         filter("/factory/*",
                "/workspace/*",
                "/account/*",
