@@ -86,12 +86,14 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
                 if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
                     ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
                     try {
-                        memberDao.getWorkspaceMember(ws.getId(), currentUser.getId());
-                        return Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withId(ws.getId())
-                                                     .withAccountId(ws.getAccountId())
-                                                     .withTemporary(ws.isTemporary())
-                                                     .withName(ws.getName())
-                                                     .withAttributes(ws.getAttributes())).build();
+                        Member member = memberDao.getWorkspaceMember(ws.getId(), currentUser.getId());
+                        if (member.getRoles().contains("workspace/developer")) {
+                            return Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withId(ws.getId())
+                                                         .withAccountId(ws.getAccountId())
+                                                         .withTemporary(ws.isTemporary())
+                                                         .withName(ws.getName())
+                                                         .withAttributes(ws.getAttributes())).build();
+                        }
                     } catch (NotFoundException nfe) {
                         //ok
                     }
