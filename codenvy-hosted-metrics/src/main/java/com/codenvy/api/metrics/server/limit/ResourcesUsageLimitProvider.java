@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server.limit;
+package com.codenvy.api.metrics.server.limit;
 
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;

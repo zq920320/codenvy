@@ -15,15 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server.limit;
+package com.codenvy.api.metrics.server.limit;
 
 /**
- * Execution of implementation for this interface may be interrupted.
+ * Event for notifying about change value of workspace resources usage limit
  *
  * @author Sergii Leschenko
  */
-public interface MeteredTask {
-    String getId();
+public class WorkspaceResourcesUsageLimitChangedEvent {
+    private final String workspaceId;
 
-    void interrupt() throws Exception;
+    public WorkspaceResourcesUsageLimitChangedEvent(String workspaceId) {
+        this.workspaceId = workspaceId;
+    }
+
+    public String getWorkspaceId() {
+        return workspaceId;
+    }
 }

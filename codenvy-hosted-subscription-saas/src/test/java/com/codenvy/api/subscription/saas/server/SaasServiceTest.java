@@ -24,7 +24,7 @@ import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
 import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
+import com.codenvy.api.subscription.saas.server.dao.sql.AccountLockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
 import com.codenvy.api.subscription.saas.shared.dto.NewBonus;
@@ -105,7 +105,7 @@ public class SaasServiceTest {
     @Mock
     private AccountDao             accountDao;
     @Mock
-    private LockDao                lockDao;
+    private AccountLockDao         accountLockDao;
     @Mock
     private SubscriptionDao        subscriptionDao;
     @Mock
@@ -132,7 +132,7 @@ public class SaasServiceTest {
                                       billingService,
                                       metricPeriod,
                                       accountDao,
-                                      lockDao,
+                                      accountLockDao,
                                       subscriptionDao,
                                       bonusDao,
                                       preferenceDao,
@@ -355,7 +355,7 @@ public class SaasServiceTest {
 
     @Test
     public void shouldBeAbleToGetLockedAccounts() throws Exception {
-        when(lockDao.getAccountsWithLockedResources())
+        when(accountLockDao.getAccountsWithLockedResources())
                 .thenReturn(Collections.singletonList(new Account().withId(ACCOUNT_ID).withName("name")));
         Response response = given().auth()
                                    .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)

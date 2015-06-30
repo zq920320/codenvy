@@ -17,9 +17,10 @@
  */
 package com.codenvy.api.subscription.saas.server.job;
 
+import com.codenvy.api.metrics.server.limit.WorkspaceLockDao;
+import com.codenvy.api.metrics.server.limit.WorkspaceLocker;
 import com.codenvy.api.subscription.saas.server.AccountLocker;
-import com.codenvy.api.subscription.saas.server.WorkspaceLocker;
-import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
+import com.codenvy.api.subscription.saas.server.dao.sql.AccountLockDao;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
@@ -47,18 +48,20 @@ public class RefillJobTest {
     @Mock
     AccountLocker    accountLocker;
     @Mock
-    LockDao lockDao;
+    AccountLockDao   accountLockDao;
     @Mock
     WorkspaceLocker  workspaceLocker;
+    @Mock
+    WorkspaceLockDao workspaceLockDao;
 
     @InjectMocks
     RefillJob refillJob;
 
     @Test
     public void shouldRefillResources() throws Exception {
-        when(lockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
+        when(workspaceLockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
         final Account lockedAccountId = new Account().withId("lockedAccountId");
-        when(lockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
+        when(accountLockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
 
         refillJob.run();
 
@@ -68,10 +71,10 @@ public class RefillJobTest {
 
     @Test
     public void shouldNotRefillResourcesForPaidLockedAccount() throws Exception {
-        when(lockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
+        when(workspaceLockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.<Workspace>emptyList());
         final Account lockedAccountId = new Account().withId("lockedAccountId");
         lockedAccountId.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
-        when(lockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
+        when(accountLockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
 
         refillJob.run();
 
@@ -81,9 +84,9 @@ public class RefillJobTest {
 
     @Test
     public void shouldRefillResourcesForLockedWorkspace() throws Exception {
-        when(lockDao.getAccountsWithLockedResources()).thenReturn(Collections.<Account>emptyList());
+        when(accountLockDao.getAccountsWithLockedResources()).thenReturn(Collections.<Account>emptyList());
         final Workspace workspace = new Workspace().withId("workspaceId");
-        when(lockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
+        when(workspaceLockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
 
         refillJob.run();
 
@@ -95,9 +98,9 @@ public class RefillJobTest {
     public void shouldNotRefillResourcesForLockedWorkspaceWithPaidLockedAccount() throws Exception {
         final Account lockedAccountId = new Account().withId("lockedAccountId");
         lockedAccountId.getAttributes().put(Constants.PAYMENT_LOCKED_PROPERTY, "true");
-        when(lockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
+        when(accountLockDao.getAccountsWithLockedResources()).thenReturn(Collections.singletonList(lockedAccountId));
         final Workspace workspace = new Workspace().withId("workspaceId").withAccountId("lockedAccountId");
-        when(lockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
+        when(workspaceLockDao.getWorkspacesWithLockedResources()).thenReturn(Collections.singletonList(workspace));
 
         refillJob.run();
 

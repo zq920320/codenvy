@@ -20,6 +20,9 @@ package com.codenvy.api.subscription.saas.server;
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
 import com.codenvy.api.metrics.server.WorkspaceLockEvent;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.limit.ActiveTasksHolder;
+import com.codenvy.api.metrics.server.limit.MeteredTask;
+import com.codenvy.api.metrics.server.limit.WorkspaceResourcesUsageLimitChangedEvent;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.resources.server.ResourcesManager;
 import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
@@ -36,6 +39,8 @@ import org.eclipse.che.api.core.notification.EventService;
 //import org.eclipse.che.api.runner.internal.Constants;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -55,6 +60,8 @@ import static org.eclipse.che.api.workspace.server.Constants.RESOURCES_USAGE_LIM
  * @author Max Shaposhnik
  */
 public class ResourcesManagerImpl implements ResourcesManager {
+    private static final Logger LOG = LoggerFactory.getLogger(ResourcesManagerImpl.class);
+
     private final AccountDao               accountDao;
     private final SubscriptionDao          subscriptionDao;
     private final WorkspaceDao             workspaceDao;
@@ -63,6 +70,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
     private final MetricPeriod             metricPeriod;
     private final MeterBasedStorage        meterBasedStorage;
     private final EventService             eventService;
+    private final ActiveTasksHolder        activeTasksHolder;
 
     @Inject
     public ResourcesManagerImpl(@Named("subscription.saas.free.max_limit_mb") int freeMaxLimit,
@@ -72,7 +80,8 @@ public class ResourcesManagerImpl implements ResourcesManager {
                                 ResourcesChangesNotifier resourcesChangesNotifier,
                                 MetricPeriod metricPeriod,
                                 MeterBasedStorage meterBasedStorage,
-                                EventService eventService) {
+                                EventService eventService,
+                                ActiveTasksHolder activeTasksHolder) {
         this.freeMaxLimit = freeMaxLimit;
         this.accountDao = accountDao;
         this.subscriptionDao = subscriptionDao;
@@ -81,6 +90,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
         this.metricPeriod = metricPeriod;
         this.meterBasedStorage = meterBasedStorage;
         this.eventService = eventService;
+        this.activeTasksHolder = activeTasksHolder;
     }
 
     @Override
@@ -151,6 +161,13 @@ public class ResourcesManagerImpl implements ResourcesManager {
             if (changedWorkspaceLock) {
                 if (workspace.getAttributes().containsKey(RESOURCES_LOCKED_PROPERTY)) {
                     eventService.publish(WorkspaceLockEvent.workspaceLockedEvent(workspace.getId()));
+                    for (MeteredTask meteredTask : activeTasksHolder.getActiveTasks(workspace.getId())) {
+                        try {
+                            meteredTask.interrupt();
+                        } catch (Exception e) {
+                            LOG.error("Can't interrupt task with id " + meteredTask.getId(), e);
+                        }
+                    }
                 } else {
                     eventService.publish(WorkspaceLockEvent.workspaceUnlockedEvent(workspace.getId()));
                 }

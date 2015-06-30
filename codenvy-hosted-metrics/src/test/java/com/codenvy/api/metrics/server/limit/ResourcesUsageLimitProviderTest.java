@@ -15,12 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server.limit;
-
-import com.codenvy.api.subscription.saas.server.limit.ActiveTasksHolder;
-import com.codenvy.api.subscription.saas.server.limit.MeteredTask;
-import com.codenvy.api.subscription.saas.server.limit.ResourcesUsageLimitProvider;
-import com.codenvy.api.subscription.saas.server.limit.ResourcesWatchdog;
+package com.codenvy.api.metrics.server.limit;
 
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
