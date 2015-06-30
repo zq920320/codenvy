@@ -15,11 +15,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server;
+package com.codenvy.api.metrics.server.limit;
 
 import com.codenvy.api.metrics.server.WorkspaceLockEvent;
-import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.period.MetricPeriod;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;

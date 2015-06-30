@@ -25,7 +25,7 @@ import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceService;
 import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
-import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
+import com.codenvy.api.subscription.saas.server.dao.sql.AccountLockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
 import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
@@ -99,7 +99,7 @@ public class SaasService extends Service {
     private final BillingService         billingService;
     private final MetricPeriod           metricPeriod;
     private final AccountDao             accountDao;
-    private final LockDao                lockDao;
+    private final AccountLockDao         accountLockDao;
     private final SubscriptionDao        subscriptionDao;
     private final BonusDao               bonusDao;
     private final PreferenceDao          preferenceDao;
@@ -111,7 +111,7 @@ public class SaasService extends Service {
                        BillingService billingService,
                        MetricPeriod metricPeriod,
                        AccountDao accountDao,
-                       LockDao lockDao,
+                       AccountLockDao accountLockDao,
                        SubscriptionDao subscriptionDao,
                        BonusDao bonusDao,
                        PreferenceDao preferenceDao,
@@ -121,7 +121,7 @@ public class SaasService extends Service {
         this.billingService = billingService;
         this.metricPeriod = metricPeriod;
         this.accountDao = accountDao;
-        this.lockDao = lockDao;
+        this.accountLockDao = accountLockDao;
         this.subscriptionDao = subscriptionDao;
         this.bonusDao = bonusDao;
         this.preferenceDao = preferenceDao;
@@ -288,7 +288,7 @@ public class SaasService extends Service {
                                                      @ApiParam(value = "Skip count", required = false)
                                                      @QueryParam("skipCount") int skipCount) throws ServerException, ForbiddenException {
 
-        return FluentIterable.from(lockDao.getAccountsWithLockedResources()).transform(
+        return FluentIterable.from(accountLockDao.getAccountsWithLockedResources()).transform(
                 new Function<Account, AccountDescriptor>() {
                     @Nullable
                     @Override

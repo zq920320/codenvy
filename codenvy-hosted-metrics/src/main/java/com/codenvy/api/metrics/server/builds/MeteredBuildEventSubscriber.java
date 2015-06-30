@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 public abstract class MeteredBuildEventSubscriber implements EventSubscriber<BuilderEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(MeteredBuildEventSubscriber.class);
 
-    private final BuildQueue buildQueue;
+    protected final BuildQueue buildQueue;
 
     public MeteredBuildEventSubscriber(BuildQueue buildQueue) {
         this.buildQueue = buildQueue;

@@ -18,9 +18,10 @@
 
 package com.codenvy.api.subscription.saas.server.job;
 
+import com.codenvy.api.metrics.server.limit.WorkspaceLockDao;
+import com.codenvy.api.metrics.server.limit.WorkspaceLocker;
 import com.codenvy.api.subscription.saas.server.AccountLocker;
-import com.codenvy.api.subscription.saas.server.WorkspaceLocker;
-import com.codenvy.api.subscription.saas.server.dao.sql.LockDao;
+import com.codenvy.api.subscription.saas.server.dao.sql.AccountLockDao;
 
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
@@ -41,31 +42,33 @@ import java.util.Set;
  *
  * @author Max Shaposhnik
  */
-
 @Singleton
 public class RefillJob implements Runnable {
     private static final Logger LOG = LoggerFactory.getLogger(RefillJob.class);
 
-    private final LockDao         lockDao;
-    private final AccountLocker   accountLocker;
-    private final WorkspaceLocker workspaceLocker;
+    private final AccountLockDao   accountLockDao;
+    private final AccountLocker    accountLocker;
+    private final WorkspaceLocker  workspaceLocker;
+    private final WorkspaceLockDao workspaceLockDao;
 
     @Inject
-    public RefillJob(LockDao lockDao,
+    public RefillJob(AccountLockDao accountLockDao,
                      AccountLocker accountLocker,
-                     WorkspaceLocker workspaceLocker) {
-        this.lockDao = lockDao;
+                     WorkspaceLocker workspaceLocker,
+                     WorkspaceLockDao workspaceLockDao) {
+        this.accountLockDao = accountLockDao;
         this.accountLocker = accountLocker;
         this.workspaceLocker = workspaceLocker;
+        this.workspaceLockDao = workspaceLockDao;
     }
 
 
-    @ScheduleCron(cronParameterName = "billing.resources.refill.cron")
+    @ScheduleCron(cronParameterName = "resources.refill.cron")
     @Override
     public void run() {
         try {
             Set<String> accountIdsWithPaymentLock = new HashSet<>();
-            for (Account account : lockDao.getAccountsWithLockedResources()) {
+            for (Account account : accountLockDao.getAccountsWithLockedResources()) {
                 if (!account.getAttributes().containsKey(Constants.PAYMENT_LOCKED_PROPERTY)) {
                     accountLocker.removeResourcesLock(account.getId());
                 } else {
@@ -73,7 +76,7 @@ public class RefillJob implements Runnable {
                 }
             }
 
-            for (Workspace workspace : lockDao.getWorkspacesWithLockedResources()) {
+            for (Workspace workspace : workspaceLockDao.getWorkspacesWithLockedResources()) {
                 if (!accountIdsWithPaymentLock.contains(workspace.getAccountId())) {
                     workspaceLocker.removeResourcesLock(workspace.getId());
                 }

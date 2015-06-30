@@ -17,14 +17,18 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
+import com.codenvy.api.metrics.server.limit.ActiveTasksHolder;
+import com.codenvy.api.metrics.server.limit.ResourcesWatchdogProvider;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.SaasBraintreePaymentService;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.saas.server.dao.sql.SqlBillingService;
 import com.codenvy.api.subscription.saas.server.dao.sql.SqlBonusDao;
 import com.codenvy.api.subscription.saas.server.job.RefillJob;
-import com.codenvy.api.subscription.saas.server.limit.ActiveTasksHolder;
-import com.codenvy.api.subscription.saas.server.limit.ResourcesUsageLimitProvider;
+import com.codenvy.api.metrics.server.limit.ResourcesUsageLimitProvider;
+import com.codenvy.api.subscription.saas.server.limit.AccountLimitResourcesWatchdogProvider;
+import com.codenvy.api.metrics.server.limit.subscriber.ChangeResourceUsageLimitSubscriber;
+import com.codenvy.api.subscription.saas.server.limit.ChangeSubscriptionSubscriber;
 import com.codenvy.api.subscription.saas.server.schedulers.GenerateInvoicesJob;
 import com.codenvy.api.subscription.saas.server.schedulers.InvoiceChargingScheduler;
 import com.codenvy.api.subscription.saas.server.schedulers.MailScheduler;
@@ -56,5 +60,12 @@ public class SaasSubscriptionModule extends AbstractModule {
         bind(SubscriptionScheduler.class).asEagerSingleton();
         bind(CreditCardRegistrationSubscriber.class);
         bind(BillingService.class).to(SqlBillingService.class);
+        bind(ChangeSubscriptionSubscriber.class).asEagerSingleton();
+
+        bind(ChangeResourceUsageLimitSubscriber.class).asEagerSingleton();
+
+        Multibinder<ResourcesWatchdogProvider> watchdogProviders = Multibinder.newSetBinder(binder(),
+                                                                                            ResourcesWatchdogProvider.class);
+        watchdogProviders.addBinding().to(AccountLimitResourcesWatchdogProvider.class);
     }
 }

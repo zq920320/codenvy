@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.subscription.saas.server;
 
+import com.codenvy.api.metrics.server.limit.WorkspaceLocker;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.server.billing.invoice.InvoiceFilter;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;

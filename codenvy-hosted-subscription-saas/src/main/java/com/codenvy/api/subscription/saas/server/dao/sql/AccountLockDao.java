@@ -36,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -44,41 +45,18 @@ import java.util.Map;
 /**
  * @author Sergii Leschenko
  */
-public class LockDao {
-    private static final Logger LOG = LoggerFactory.getLogger(LockDao.class);
+@Singleton
+public class AccountLockDao {
+    private static final Logger LOG = LoggerFactory.getLogger(AccountLockDao.class);
 
-    private static final String WORKSPACE_COLLECTION = "organization.storage.db.workspace.collection";
     private static final String ACCOUNT_COLLECTION   = "organization.storage.db.account.collection";
 
-    private final DBCollection workspaceCollection;
     private final DBCollection accountCollection;
 
     @Inject
-    public LockDao(DB db,
-                   @Named(WORKSPACE_COLLECTION) String workspaceCollectionName,
-                   @Named(ACCOUNT_COLLECTION) String accountCollectionName) {
-        workspaceCollection = db.getCollection(workspaceCollectionName);
+    public AccountLockDao(DB db,
+                          @Named(ACCOUNT_COLLECTION) String accountCollectionName) {
         accountCollection = db.getCollection(accountCollectionName);
-    }
-
-    /**
-     * Get all workspaces which are locked after RAM runner resources was exceeded.
-     *
-     * @return all locked workspaces
-     */
-    public List<Workspace> getWorkspacesWithLockedResources() throws ServerException {
-        DBObject query = QueryBuilder.start("attributes").elemMatch(new BasicDBObject("name", Constants.RESOURCES_LOCKED_PROPERTY)).get();
-
-        try (DBCursor accounts = workspaceCollection.find(query)) {
-            final ArrayList<Workspace> result = new ArrayList<>();
-            for (DBObject accountObj : accounts) {
-                result.add(toWorkspace(accountObj));
-            }
-            return result;
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve workspaces");
-        }
     }
 
     /**
@@ -99,18 +77,6 @@ public class LockDao {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to retrieve accounts");
         }
-    }
-
-    /**
-     * Converts database object to workspace ready-to-use object
-     */
-    /*used in tests*/Workspace toWorkspace(DBObject wsObj) {
-        final BasicDBObject basicWsObj = (BasicDBObject)wsObj;
-        return new Workspace().withId(basicWsObj.getString("id"))
-                              .withName(basicWsObj.getString("name"))
-                              .withAccountId(basicWsObj.getString("accountId"))
-                              .withTemporary(basicWsObj.getBoolean("temporary"))
-                              .withAttributes(asMap(basicWsObj.get("attributes")));
     }
 
     /**

@@ -15,21 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server;
+package com.codenvy.api.metrics.server.limit;
 
 /**
- * Event for notifying about change value of workspace resources usage limit
+ * Provides control of resources usage limit
  *
  * @author Sergii Leschenko
  */
-public class WorkspaceResourcesUsageLimitChangedEvent {
-    private final String workspaceId;
+public interface ResourcesWatchdog {
+    String getId();
 
-    public WorkspaceResourcesUsageLimitChangedEvent(String workspaceId) {
-        this.workspaceId = workspaceId;
-    }
+    boolean isLimitedReached();
 
-    public String getWorkspaceId() {
-        return workspaceId;
-    }
+    void checkLimit();
+
+    void lock();
 }

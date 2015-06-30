@@ -15,19 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.subscription.saas.server.limit;
+package com.codenvy.api.metrics.server.limit;
 
 /**
- * Provides control of resources usage limit
+ * Serves as base interface for providing instances of {@link ResourcesWatchdog}.
  *
  * @author Sergii Leschenko
  */
-public interface ResourcesWatchdog {
-    String getId();
+public interface ResourcesWatchdogProvider {
+    /**
+     * Returns id of watchdog that corresponds to given metered task
+     */
+    String getId(MeteredTask meteredTask);
 
-    boolean isLimitedReached();
-
-    void checkLimit();
-
-    void lock();
+    /**
+     * Returns an instance of {@link ResourcesWatchdog} which will track resources usage
+     */
+    ResourcesWatchdog createWatchdog(MeteredTask meteredTask);
 }

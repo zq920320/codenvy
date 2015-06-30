@@ -21,11 +21,18 @@ import com.codenvy.api.metrics.server.builds.BuildStatusSubscriber;
 import com.codenvy.api.metrics.server.builds.BuildTasksActivityChecker;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.metrics.server.dao.sql.SqlMeterBasedStorage;
+import com.codenvy.api.metrics.server.limit.ResourcesUsageLimitProvider;
+import com.codenvy.api.metrics.server.limit.ResourcesWatchdogProvider;
+import com.codenvy.api.metrics.server.limit.WorkspaceCapsResourcesWatchdogProvider;
+import com.codenvy.api.metrics.server.limit.subscriber.BuildEventSubscriber;
+import com.codenvy.api.metrics.server.limit.subscriber.ChangeResourceUsageLimitSubscriber;
+import com.codenvy.api.metrics.server.limit.subscriber.RunEventSubscriber;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.period.MonthlyMetricPeriod;
 import com.codenvy.api.metrics.server.runs.RunStatusSubscriber;
 import com.codenvy.api.metrics.server.runs.RunTasksActivityChecker;
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 
 /**
  * @author Sergii Kabashniuk
@@ -40,5 +47,13 @@ public class MetricModule extends AbstractModule {
         bind(BuildStatusSubscriber.class);
         bind(RunStatusSubscriber.class);
         bind(WorkspaceLockWebSocketMessenger.class);
+
+        bind(BuildEventSubscriber.class).asEagerSingleton();
+        bind(RunEventSubscriber.class).asEagerSingleton();
+        bind(ChangeResourceUsageLimitSubscriber.class).asEagerSingleton();
+        bind(ResourcesUsageLimitProvider.class);
+        Multibinder<ResourcesWatchdogProvider> watchdogProviders = Multibinder.newSetBinder(binder(),
+                                                                                            ResourcesWatchdogProvider.class);
+        watchdogProviders.addBinding().to(WorkspaceCapsResourcesWatchdogProvider.class);
     }
 }

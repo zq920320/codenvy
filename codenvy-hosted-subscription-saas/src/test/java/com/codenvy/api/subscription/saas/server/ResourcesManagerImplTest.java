@@ -20,6 +20,9 @@ package com.codenvy.api.subscription.saas.server;
 import com.codenvy.api.metrics.server.ResourcesChangesNotifier;
 import com.codenvy.api.metrics.server.WorkspaceLockEvent;
 import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
+import com.codenvy.api.metrics.server.limit.ActiveTasksHolder;
+import com.codenvy.api.metrics.server.limit.MeteredTask;
+import com.codenvy.api.metrics.server.limit.WorkspaceResourcesUsageLimitChangedEvent;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.resources.server.ResourcesManager;
@@ -41,7 +44,6 @@ import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.ArgumentCaptor;
 import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -60,6 +62,7 @@ import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -93,6 +96,8 @@ public class ResourcesManagerImplTest {
     MeterBasedStorage        meterBasedStorage;
     @Mock
     EventService             eventService;
+    @Mock
+    ActiveTasksHolder        activeTasksHolder;
 
     ResourcesManager resourcesManager;
 
@@ -121,7 +126,7 @@ public class ResourcesManagerImplTest {
 
         resourcesManager =
                 new ResourcesManagerImpl(MAX_LIMIT, accountDao, subscriptionDao, workspaceDao, resourcesChangesNotifier, metricPeriod,
-                                         meterBasedStorage, eventService);
+                                         meterBasedStorage, eventService, activeTasksHolder);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
@@ -260,7 +265,7 @@ public class ResourcesManagerImplTest {
     @Test
     public void shouldBeAbleToAddMemoryWithoutLimitationForAccountWithSaasSubscription() throws Exception {
         //given
-        Subscription subscription = Mockito.mock(Subscription.class);
+        Subscription subscription = mock(Subscription.class);
         when(subscription.getPlanId()).thenReturn("Super-Pupper-Plan");
         when(subscriptionDao.getActiveByServiceId(eq(ACCOUNT_ID), eq(SAAS_SUBSCRIPTION_ID))).thenReturn(subscription);
 
@@ -445,6 +450,9 @@ public class ResourcesManagerImplTest {
 
     @Test
     public void shouldLockWorkspaceIfNewResourcesUsageLessThanUsedResources() throws Exception {
+        MeteredTask meteredTask = mock(MeteredTask.class);
+        when(activeTasksHolder.getActiveTasks(anyString())).thenReturn(Collections.singletonList(meteredTask));
+
         when(meterBasedStorage.getUsedMemoryByWorkspace(eq(FIRST_WORKSPACE_ID), anyLong(), anyLong())).thenReturn(50D);
 
         resourcesManager.redistributeResources(ACCOUNT_ID, Collections.singletonList(DtoFactory.getInstance()
@@ -459,6 +467,8 @@ public class ResourcesManagerImplTest {
                        && "true".equals(workspace.getAttributes().get(RESOURCES_LOCKED_PROPERTY));
             }
         }));
+        verify(activeTasksHolder).getActiveTasks(FIRST_WORKSPACE_ID);
+        verify(meteredTask).interrupt();
         verify(eventService, times(2)).publish(argThat(new ArgumentMatcher<Object>() {
             @Override
             public boolean matches(Object o) {
