@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-projectlocker-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.10.2-SNAPSHOT</version>
+        <version>3.10.2</version>
     </parent>
     <artifactId>codenvy-plugin-projectlocker-oauth2</artifactId>
     <name>Codenvy Plugin :: Projectlocker :: OAuth2</name>
