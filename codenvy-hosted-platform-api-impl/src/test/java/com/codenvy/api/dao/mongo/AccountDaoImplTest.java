@@ -17,8 +17,7 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.subscription.server.dao.Subscription;
-import com.codenvy.api.subscription.server.dao.SubscriptionDao;
+import com.codenvy.api.event.user.RemoveAccountEvent;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
@@ -29,8 +28,10 @@ import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.mockito.ArgumentMatcher;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
@@ -38,7 +39,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -46,6 +46,7 @@ import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -67,9 +68,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
     private static final String MEMBER_COLL_NAME = "members";
 
     @Mock
-    private WorkspaceDao    workspaceDao;
+    private WorkspaceDao workspaceDao;
     @Mock
-    private SubscriptionDao subscriptionDao;
+    private EventService eventService;
 
     private AccountDaoImpl accountDao;
     private DBCollection   membersCollection;
@@ -86,7 +87,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                         workspaceDao,
                                         ACC_COLL_NAME,
                                         MEMBER_COLL_NAME,
-                                        subscriptionDao);
+                                        eventService);
     }
 
     @Override
@@ -167,9 +168,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
     public void shouldBeAbleToRemoveAccount() throws Exception {
         final Account account = createAccount();
         when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
-        final Subscription subscription = new Subscription().withId("subscriptionId")
-                                                            .withAccountId(account.getId())
-                                                            .withPlanId("superPlan");
         final Member member1 = new Member().withUserId("test_user_1")
                                            .withAccountId(account.getId())
                                            .withRoles(asList("account/owner"));
@@ -178,17 +176,22 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                            .withRoles(asList("account/member"));
         insertMembers(member1, member2);
         insertAccounts(account);
-        when(subscriptionDao.getActive("test_account_id")).thenReturn(Arrays.asList(subscription));
 
         accountDao.remove(account.getId());
 
-        verify(subscriptionDao).remove("subscriptionId");
+        verify(eventService).publish(argThat(new ArgumentMatcher<Object>() {
+            @Override
+            public boolean matches(Object o) {
+                final RemoveAccountEvent accountEvent = (RemoveAccountEvent)o;
+                return "test_account_id".equals(accountEvent.getAccountId());
+            }
+        }));
         assertNull(collection.findOne(new BasicDBObject("id", account.getId())));
         assertFalse(membersCollection.find(new BasicDBObject("members.accountId", account.getId())).hasNext());
     }
 
     @Test(expectedExceptions = ConflictException.class,
-            expectedExceptionsMessageRegExp = "It is not possible to remove account having associated workspaces")
+          expectedExceptionsMessageRegExp = "It is not possible to remove account having associated workspaces")
     public void shouldNotBeAbleToRemoveAccountWithAssociatedWorkspace() throws Exception {
         final Account account = createAccount();
         when(workspaceDao.getByAccount(account.getId())).thenReturn(asList(mock(Workspace.class)));

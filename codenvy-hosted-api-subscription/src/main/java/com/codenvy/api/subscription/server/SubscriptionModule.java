@@ -18,6 +18,7 @@
 package com.codenvy.api.subscription.server;
 
 import com.codenvy.api.subscription.server.dao.PlanDao;
+import com.codenvy.api.subscription.server.dao.RemoveAccountEventSubscriber;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.api.subscription.server.dao.SubscriptionQueryBuilder;
 import com.codenvy.api.subscription.server.dao.mongo.MongoSubscriptionQueryBuilder;
@@ -35,5 +36,6 @@ public class SubscriptionModule extends AbstractModule {
         bind(SubscriptionDao.class).to(SubscriptionDaoImpl.class);
         bind(SubscriptionQueryBuilder.class).to(MongoSubscriptionQueryBuilder.class);
         bind(SubscriptionService.class);
+        bind(RemoveAccountEventSubscriber.class).asEagerSingleton();
     }
 }

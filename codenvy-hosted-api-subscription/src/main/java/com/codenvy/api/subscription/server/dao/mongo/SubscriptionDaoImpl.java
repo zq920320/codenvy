@@ -70,7 +70,6 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
         subscriptionCollection.ensureIndex(new BasicDBObject("state", 1));
         subscriptionCollection.ensureIndex(new BasicDBObject("serviceId", 1));
         subscriptionCollection.ensureIndex(new BasicDBObject("nextBillingDate", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("trialEndDate", 1));
         subscriptionCollection.ensureIndex(new BasicDBObject("endDate", 1));
     }
 
@@ -82,6 +81,25 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
         try {
             final BasicDBObject query = new BasicDBObject("accountId", accountId);
             query.append("state", "ACTIVE");
+
+            final List<Subscription> result = new ArrayList<>();
+            try (DBCursor subscriptions = subscriptionCollection.find(query)) {
+                for (DBObject currentSubscription : subscriptions) {
+                    result.add(toSubscription(currentSubscription));
+                }
+            }
+
+            return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscriptions");
+        }
+    }
+
+    @Override
+    public List<Subscription> getByAccountId(String accountId) throws ServerException {
+        try {
+            final BasicDBObject query = new BasicDBObject("accountId", accountId);
 
             final List<Subscription> result = new ArrayList<>();
             try (DBCursor subscriptions = subscriptionCollection.find(query)) {

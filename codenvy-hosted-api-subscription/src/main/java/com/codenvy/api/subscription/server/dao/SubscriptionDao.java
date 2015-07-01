@@ -61,6 +61,16 @@ public interface SubscriptionDao {
     List<Subscription> getActive(String accountId) throws NotFoundException, ServerException;
 
     /**
+     * Gets list of subscriptions related to given account.
+     *
+     * @param accountId
+     *         account id
+     * @return list of subscriptions, or empty list if no subscriptions found or account does not exist
+     */
+    @Beta
+    List<Subscription> getByAccountId(String accountId) throws ServerException;
+
+    /**
      * Gets active subscription with given service related to given account.
      *
      * @param accountId

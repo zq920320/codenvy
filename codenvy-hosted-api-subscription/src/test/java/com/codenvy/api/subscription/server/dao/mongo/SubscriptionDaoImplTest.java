@@ -222,6 +222,27 @@ public class SubscriptionDaoImplTest extends BaseDaoTest {
     }
 
     @Test
+    public void shouldBeAbleToGetAllSubscriptionsByAccountId() throws Exception {
+        final Subscription subscription1 = createSubscription().withAccountId("account_id")
+                                                               .withState(SubscriptionState.INACTIVE);
+        final Subscription subscription2 = createSubscription().withAccountId("account_id")
+                                                               .withId(subscription1.getId() + "other");
+        insertSubscriptions(subscription1, subscription2);
+
+        final List<Subscription> found = subscriptionDao.getByAccountId("account_id");
+
+        assertEquals(new HashSet<>(found), new HashSet<>(asList(subscription1, subscription2)));
+    }
+
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionOnGetSubscriptionsIfMongoExceptionOccurs() throws Exception {
+        doThrow(new MongoException("")).when(collection).find(any(DBObject.class));
+
+        subscriptionDao.getByAccountId("account");
+    }
+
+    @Test
     public void shouldBeAbleToGetActiveSubscriptionsByAccount() throws Exception {
         final Account account = createAccount();
         final Subscription subscription1 = createSubscription().withAccountId(account.getId()).withServiceId("SomeService");

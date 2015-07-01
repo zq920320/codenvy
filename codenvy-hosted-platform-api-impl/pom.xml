@@ -34,11 +34,6 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-api-subscription</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-workspace-events</artifactId>
             <version>${project.version}</version>
         </dependency>
