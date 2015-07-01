@@ -17,12 +17,14 @@
  */
 package com.codenvy.api.subscription.server;
 
+import com.braintreegateway.BraintreeGateway;
 import com.codenvy.api.subscription.server.dao.PlanDao;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.api.subscription.server.dao.SubscriptionQueryBuilder;
 import com.codenvy.api.subscription.server.dao.mongo.MongoSubscriptionQueryBuilder;
 import com.codenvy.api.subscription.server.dao.mongo.PlanDaoImpl;
 import com.codenvy.api.subscription.server.dao.mongo.SubscriptionDaoImpl;
+import com.codenvy.api.subscription.server.payment.GuiceBraintreeGateway;
 import com.google.inject.AbstractModule;
 
 /**
@@ -34,6 +36,7 @@ public class SubscriptionModule extends AbstractModule {
         bind(PlanDao.class).to(PlanDaoImpl.class);
         bind(SubscriptionDao.class).to(SubscriptionDaoImpl.class);
         bind(SubscriptionQueryBuilder.class).to(MongoSubscriptionQueryBuilder.class);
+        bind(BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
         bind(SubscriptionService.class);
     }
 }
