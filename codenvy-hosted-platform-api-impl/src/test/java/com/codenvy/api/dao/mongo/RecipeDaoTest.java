@@ -31,6 +31,7 @@ import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.shared.Group;
 import org.eclipse.che.api.machine.shared.ManagedRecipe;
+import org.eclipse.che.api.machine.shared.Permissions;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -200,7 +201,8 @@ public class RecipeDaoTest extends BaseDaoTest {
         example.setType("new-script-type");
         example.setScript("new-script-content");
         example.getPermissions().getUsers().put("user234", asList("read"));
-        example.getPermissions().getGroups().add(new GroupImpl("workspace/developer", "workspace123", asList("read")));
+        final PermissionsImpl permissions = (PermissionsImpl) example.getPermissions();
+        permissions.getGroups().add(new GroupImpl("workspace/developer", "workspace123", asList("read")));
 
         recipeDao.update(example);
 
