@@ -116,7 +116,7 @@ public class FactoryWorkspaceInterceptorTest {
         NewWorkspace inbound = DtoFactory.getInstance().createDto(NewWorkspace.class);
         inbound.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
         when(invocation.getArguments()).thenReturn(new Object[]{inbound, context});
-        when(factory.getWorkspace()).thenReturn(null);
+        when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId(USER_ID));
 
         interceptor.invoke(invocation);
@@ -129,7 +129,7 @@ public class FactoryWorkspaceInterceptorTest {
         NewWorkspace inbound = DtoFactory.getInstance().createDto(NewWorkspace.class);
         inbound.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
         when(invocation.getArguments()).thenReturn(new Object[]{inbound, context});
-        when(factory.getWorkspace()).thenReturn(null);
+        when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome"));
 
         interceptor.invoke(invocation);

@@ -79,9 +79,12 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         final Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
         final org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
 
-        if (factoryWorkspace != null && factoryWorkspace.getType() != null && factoryWorkspace.getType().equals("named")) {
-            String ownerAccountId = (factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) ?
-                                    factory.getCreator().getAccountId() : inbound.getAccountId();
+        if (factoryWorkspace == null || factoryWorkspace.getType() == null || factoryWorkspace.getType().equals("named")) {
+
+            String ownerAccountId =
+                    (factoryWorkspace != null && factoryWorkspace.getLocation() != null && factoryWorkspace.getLocation().equals("owner")) ?
+                    factory.getCreator().getAccountId() : inbound.getAccountId();
+
             for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
                 if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
                     ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
@@ -102,7 +105,7 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         }
 
         boolean needAddOwner = false;
-        if (factoryWorkspace == null || factoryWorkspace.getLocation() == null || factoryWorkspace.getLocation().equals("owner")) {
+        if (factoryWorkspace != null && factoryWorkspace.getLocation() != null && factoryWorkspace.getLocation().equals("owner")) {
             // no need to add role if creator and user are the same (will throw role already exists exc).
             needAddOwner = !factory.getCreator().getUserId().equals(currentUser.getId());
             invocation.getArguments()[1] = new SecurityContext() {
