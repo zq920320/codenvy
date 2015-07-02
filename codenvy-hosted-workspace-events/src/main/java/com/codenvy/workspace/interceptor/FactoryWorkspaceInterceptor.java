@@ -85,8 +85,8 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         if (factoryWorkspace == null || factoryWorkspace.getType() == null || factoryWorkspace.getType().equals("named")) {
 
             String ownerAccountId =
-                    (factoryWorkspace != null && factoryWorkspace.getLocation() != null && factoryWorkspace.getLocation().equals("owner")) ?
-                    factory.getCreator().getAccountId() : inbound.getAccountId();
+                    (factoryWorkspace != null && "owner".equals(factoryWorkspace.getLocation())) ? factory.getCreator().getAccountId()
+                                                                                                 : inbound.getAccountId();
 
             for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
                 if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
