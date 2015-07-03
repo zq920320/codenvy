@@ -35,6 +35,7 @@
     <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
     <!-- Other module inherits                                      -->
+    <inherits name='org.eclipse.che.ide.ext.help.HelpAboutExtension'/>
     <inherits name='org.eclipse.che.ide.Api'/>
     <inherits name="org.eclipse.che.ide.Core"/>
     <inherits name='org.eclipse.che.ide.ext.web.Web'/>

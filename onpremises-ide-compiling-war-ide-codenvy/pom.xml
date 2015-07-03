@@ -220,6 +220,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-help-ext-client</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-ant</artifactId>
             <version>${che.plugins.version}</version>
         </dependency>
@@ -489,7 +494,7 @@
                         <configuration>
                             <tasks>
                                 <?SORTPOM IGNORE?>
-                                <echo append="false" file="${project.build.directory}/classes/org/eclipse/che/ide/BuildInfo.properties">
+                                <echo append="false" file="${project.build.directory}/classes/org/eclipse/che/ide/ext/help/client/BuildInfo.properties">
                                     revision= ${revision}
                                     buildTime = ${timestamp}
                                     version = ${codenvy.cloud-ide.version}
