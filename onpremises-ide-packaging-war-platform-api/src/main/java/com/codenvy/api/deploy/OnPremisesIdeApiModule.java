@@ -19,12 +19,14 @@ package com.codenvy.api.deploy;
 
 import com.codenvy.api.account.RefillJob;
 import com.codenvy.api.account.ResourcesManagerImpl;
+import com.codenvy.api.account.SubscriptionDaoImpl;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.api.metrics.server.MetricModule;
 import com.codenvy.api.resources.server.ResourcesManager;
 import com.codenvy.api.resources.server.ResourcesService;
+import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -281,7 +283,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new InstrumentationModule());
         install(new SQLModule());
         install(new MetricModule());
-        install(new ScheduleModule());
 
         bind(ResourcesService.class);
         bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
@@ -291,7 +292,12 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 //        install(new SaasSubscriptionModule());
 //        install(new OnPremisesSubscriptionModule());
 //        install(new BillingModule());
+//
 //        install(new CreditCardModule());
+//
 //        install(new AnalyticsModule());
+        install(new ScheduleModule());
+
+        bind(SubscriptionDao.class).to(SubscriptionDaoImpl.class).asEagerSingleton();
     }
 }
