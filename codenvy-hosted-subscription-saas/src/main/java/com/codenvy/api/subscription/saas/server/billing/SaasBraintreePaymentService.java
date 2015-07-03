@@ -111,8 +111,8 @@ public class SaasBraintreePaymentService implements InvoicePaymentService {
                     .amount(new BigDecimal(price, new MathContext(2)));
 
             final Result<Transaction> result = gateway.transaction().sale(request);
-            final Transaction target = result.getTarget();
             if (result.isSuccess()) {
+                final Transaction target = result.getTarget();
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# subscriptionId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
                          subscription.getId(), target.getStatus(), result.getMessage(), target.getId());
@@ -120,7 +120,7 @@ public class SaasBraintreePaymentService implements InvoicePaymentService {
                                                                                         subscription.getId(), price));
             } else {
                 LOG.error("PAYMENTS# state#Error# subscriptionId#{}# message#{}#", subscription.getId(), result.getMessage());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
                                                                                        subscription.getId(), price));
                 accountLocker.setPaymentLock(accountId);
                 throw new ForbiddenException(result.getMessage());
@@ -159,8 +159,8 @@ public class SaasBraintreePaymentService implements InvoicePaymentService {
                     .amount(new BigDecimal(price, new MathContext(2)));
 
             final Result<Transaction> result = gateway.transaction().sale(request);
-            final Transaction target = result.getTarget();
             if (result.isSuccess()) {
+                final Transaction target = result.getTarget();
                 // transaction successfully submitted for settlement
                 LOG.info("PAYMENTS# state#Success# invoice#{}# accountId#{}# transactionStatus#{}# message#{}# transactionId#{}#",
                          invoice.getId(), accountId, target.getStatus(), result.getMessage(), target.getId());
@@ -169,7 +169,7 @@ public class SaasBraintreePaymentService implements InvoicePaymentService {
             } else {
                 LOG.error("PAYMENTS# state#Error# invoice#{}# accountId#{}# message#{}#", invoice.getId(), invoice.getAccountId(),
                           result.getMessage());
-                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, target.getCreditCard().getMaskedNumber(),
+                eventService.publish(CreditCardChargeEvent.creditCardChargeFailedEvent(accountId, getCreditCardNumber(accountId),
                                                                                        Long.toString(invoice.getId()), price));
                 accountLocker.setPaymentLock(accountId);
                 throw new ForbiddenException(result.getMessage());
