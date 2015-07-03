@@ -17,5 +17,5 @@
     from Codenvy S.A..
 
 -->
-<Context path="/mail" docBase="mail" reloadable="true" crossContext="false"/>
+<Context path="/mail" docBase="mail" reloadable="false" crossContext="false"/>
 
