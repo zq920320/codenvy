@@ -30,16 +30,6 @@
     <name>Onpremises IDE :: Tomcat :: IM</name>
     <dependencies>
         <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-classic</artifactId>
-            <version>${ch.qos.logback.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>ch.qos.logback</groupId>
-            <artifactId>logback-core</artifactId>
-            <version>${ch.qos.logback.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.im</groupId>
             <artifactId>installation-manager-server-war</artifactId>
             <version>${codenvy.im.version}</version>
@@ -52,54 +42,10 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>javax.mail</groupId>
-            <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat</artifactId>
-            <version>${org.apache.tomcat.version}</version>
+            <groupId>com.codenvy.resources</groupId>
+            <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
+            <version>${version.resource-bundle}</version>
             <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-catalina-jmx-remote</artifactId>
-            <version>${org.apache.tomcat.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>tomcat-coyote</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-catalina</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-juli</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jcl-over-slf4j</artifactId>
-            <version>${org.slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>jul-to-slf4j</artifactId>
-            <version>${org.slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>log4j-over-slf4j</artifactId>
-            <version>${org.slf4j.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.slf4j</groupId>
-            <artifactId>slf4j-api</artifactId>
-            <version>${org.slf4j.version}</version>
         </dependency>
     </dependencies>
     <profiles>
@@ -127,18 +73,6 @@
                                 </configuration>
                             </execution>
                             <execution>
-                                <id>copy-dependencies-jar</id>
-                                <phase>generate-resources</phase>
-                                <goals>
-                                    <goal>copy-dependencies</goal>
-                                </goals>
-                                <configuration>
-                                    <includeTypes>jar</includeTypes>
-                                    <stripVersion>false</stripVersion>
-                                    <outputDirectory>${project.build.directory}/packager-conf/jar</outputDirectory>
-                                </configuration>
-                            </execution>
-                            <execution>
                                 <id>copy-dependencies-zip</id>
                                 <phase>generate-resources</phase>
                                 <goals>
@@ -163,27 +97,8 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <!-- unpacking resources -->
-                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
-                                        <move todir="${project.build.directory}/installation-manager-server-tomcat">
-                                            <fileset dir="${project.build.directory}/apache-tomcat-${org.apache.tomcat.version}/">
-                                                <exclude name="**/ROOT/**" />
-                                                <exclude name="**/docs/**" />
-                                                <exclude name="**/examples/**" />
-                                                <exclude name="**/manager/**" />
-                                                <exclude name="**/host-manager/**" />
-                                            </fileset>
-                                        </move>
-                                        <!-- Coping resources -->
-                                        <copy overwrite="true" todir="${project.build.directory}/installation-manager-server-tomcat/">
-                                            <fileset dir="${basedir}/src/main/resources/server" />
-                                        </copy>
-                                        <copy overwrite="true" todir="${project.build.directory}/installation-manager-server-tomcat/endorsed">
-                                            <fileset dir="${project.build.directory}/packager-conf/jar" />
-                                        </copy>
-                                        <move file="${project.build.directory}/installation-manager-server-tomcat/endorsed/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/installation-manager-server-tomcat/lib/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" />
+                                        <unzip dest="${project.build.directory}/installation-manager-server-tomcat" src="${project.build.directory}/packager-conf/zip/codenvy-tomcat8-slf4j-logback.zip" />
                                         <move file="${project.build.directory}/packager-conf/war/installation-manager-server-war.war" tofile="${project.build.directory}/installation-manager-server-tomcat/webapps/im.war" />
-                                        <chmod file="${project.build.directory}/installation-manager-server-tomcat/bin/*.sh" perm="+x" />
                                         <!-- Patching Docs service address in the codenvy-api-docs-ui.war/index.html file -->
                                         <unzip dest="${project.build.directory}/packager-conf/war/im-api-docs-ui" src="${project.build.directory}/packager-conf/war/codenvy-api-docs-ui.war" />
                                         <replace file="${project.build.directory}/packager-conf/war/im-api-docs-ui/index.html">
