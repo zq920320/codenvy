@@ -344,9 +344,12 @@ gulp.task('onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem
 })
 
 // Copy onprem create-account page TODO
-gulp.task('onprem_create_account_page', ['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se', 'rjs_se', 'rev-se'], function(){
+gulp.task('onprem_create_account_page', ['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se', 'rjs_se', 'rev-se','replace-se','rmbuild-se'], function(){
   return   gulp.src(paths.onpremSE + 'site/custom_pages/onprem-se/create-account.html')
-    .pipe(gulp.dest(paths.dist+'onprem-se/site'))
+  .pipe(gulp.dest(paths.dist+'onprem-se/site'))
+  .pipe(print(function(filepath) {
+    return "Copy onprem-se custom pages to ->" + filepath;
+  }));
 });
 
 gulp.task('onprem_se_cfg', function(){
