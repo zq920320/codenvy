@@ -46,15 +46,15 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.resources</groupId>
-            <artifactId>codenvy-tomcat-slf4j-logback</artifactId>
-            <version>${version.resource-bundle}</version>
-            <type>zip</type>
-        </dependency>
-        <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
             <version>${javax.mail.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.tomcat</groupId>
+            <artifactId>tomcat</artifactId>
+            <version>${org.apache.tomcat.version}</version>
+            <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
@@ -148,9 +148,9 @@
                                 <configuration>
                                     <target>
                                         <!-- unpacking resources -->
-                                        <unzip dest="${project.build.directory}/codenvy-tomcat-slf4j-logback" src="${project.build.directory}/packager-conf/zip/codenvy-tomcat-slf4j-logback.zip" />
+                                        <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
                                         <move todir="${project.build.directory}/analytics-tomcat">
-                                            <fileset dir="${project.build.directory}/codenvy-tomcat-slf4j-logback/">
+                                            <fileset dir="${project.build.directory}/apache-tomcat-${org.apache.tomcat.version}/">
                                                 <exclude name="**/ROOT/**" />
                                                 <exclude name="**/docs/**" />
                                                 <exclude name="**/examples/**" />
@@ -172,6 +172,11 @@
                                             <fileset dir="${basedir}/../analytics-core/scripts/" />
                                         </copy>
                                         <copy file="${project.build.directory}/packager-conf/jar/tomcat-catalina-jmx-remote-${org.apache.tomcat.version}.jar" tofile="${project.build.directory}/analytics-tomcat/lib/catalina-jmx-remote.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-classic-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/endorsed/logback-classic.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/logback-core-${ch.qos.logback.version}.jar" tofile="${project.build.directory}/analytics-tomcat/endorsed/logback-core.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/slf4j-api-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/endorsed/slf4j-api.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/jul-to-slf4j-${org.slf4j.version}.jar" tofile="${project.build.directory}/analytics-tomcat/endorsed/jul-to-slf4j.jar" />
+                                        <copy file="${project.build.directory}/packager-conf/jar/mail-${javax.mail.version}.jar" tofile="${project.build.directory}/analytics-tomcat/endorsed/mail.jar" />
                                         <chmod file="${project.build.directory}/analytics-tomcat/bin/*.sh" perm="+x" />
                                         <!-- prepare last day log (based on 2013.12.15) -->
                                         <tstamp>

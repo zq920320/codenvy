@@ -25,9 +25,10 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
-import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+
+import org.eclipse.che.api.account.shared.dto.SubscriptionDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
