@@ -29,6 +29,11 @@
     <name>Codenvy :: Analytics :: Core</name>
     <dependencies>
         <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-api-subscription</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
             <version>${com.google.guava.version}</version>
