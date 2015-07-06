@@ -120,9 +120,7 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
         serve("/metrics/threaddump").with(com.codahale.metrics.servlets.ThreadDumpServlet.class);
 
         serve("/oauth").with(com.codenvy.auth.sso.oauth.OAuthLoginServlet.class);
-        serve("/ws/*").with(org.eclipse.che.everrest.CodenvyEverrestWebSocketServlet.class);
-        serve("/eventbus/*").with(org.eclipse.che.everrest.CodenvyEverrestWebSocketServlet.class);
-        serve("/*").with(org.everrest.guice.servlet.GuiceEverrestServlet.class);
+        serveRegex("^((?!(\\/(ws|eventbus)($|\\/.*)))\\/.*)").with(org.everrest.guice.servlet.GuiceEverrestServlet.class);
 
         getServletContext().addListener(new WSConnectionTracker());
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
