@@ -166,12 +166,12 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-ext-factory</artifactId>
+            <artifactId>codenvy-hosted-ext-factory</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-runner-docker</artifactId>
+            <artifactId>codenvy-hosted-runner-docker</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
