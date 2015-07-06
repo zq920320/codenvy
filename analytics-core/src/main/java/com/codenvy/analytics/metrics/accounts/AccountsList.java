@@ -28,6 +28,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
@@ -35,7 +36,6 @@ import com.google.common.collect.FluentIterable;
 
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
-import org.eclipse.che.api.account.shared.dto.SubscriptionDescriptor;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
