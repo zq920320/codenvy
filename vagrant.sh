@@ -234,6 +234,7 @@ fi
 if [ ${MULTI_SERVER} == false ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
   cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
   # Open folder for AIO env
   cd ../deployment/puppet
 else
@@ -244,7 +245,9 @@ else
   cp -f onpremises-ide-packaging-tomcat-builder/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-builder.zip
   cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
   cp -f onpremises-ide-packaging-tomcat-codeassistant/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-codeassistant.zip
-  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment/puppet/modules/multi_server/files/analytics-tomcat.zip
+  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
+  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment/puppet/modules/multi_server/files/analytics-tomcat-pkg.zip
+
 
   # Open folder for multi server env
   cd ../deployment/puppet/vagrant-multi-vm-env
