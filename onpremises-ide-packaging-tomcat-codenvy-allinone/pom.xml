@@ -79,10 +79,9 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-docs-ui</artifactId>
-            <version>${codenvy.api-docs-ui.version}</version>
-            <type>war</type>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-datasource-ssl-socket-factory</artifactId>
+            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
@@ -99,137 +98,22 @@
     <build>
         <plugins>
             <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-admin-configuration</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                        <configuration>
-                            <tasks>
-                                <unzip dest="${project.build.directory}/tomcat-aio/" src="${project.build.directory}/packager-conf/zip/tomcat.zip" />
-                                <copy overwrite="true" todir="${project.build.directory}/tomcat-aio/">
-                                    <fileset dir="${basedir}/src/main/resources/tomcat/" />
-                                </copy>
-                                <copy file="${project.build.directory}/packager-conf/war/onpremises-ide-packaging-war-platform-api.war" tofile="${project.build.directory}/tomcat-aio/webapps/api.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/codenvy-hosted-mail-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/mail.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/che-plugin-git-server.war" tofile="${project.build.directory}/tomcat-aio/webapps/git.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-factory.war" overwrite="true" tofile="${project.build.directory}/tomcat-aio/webapps/factory.war" />
-                                <copy file="${project.build.directory}/packager-conf/tomcat-jar/postgresql-${jdbc.postgresql-driver.version}.jar" tofile="${project.build.directory}/tomcat-aio/lib/postgresql-${jdbc.postgresql-driver.version}.jar" />
-                                <echo message="Deploying builder application...." />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-builder.war" tofile="${project.build.directory}/tomcat-aio/webapps/builder3.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-runner.war" tofile="${project.build.directory}/tomcat-aio/webapps/runner3.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-datasource-plugin.war" tofile="${project.build.directory}/tomcat-aio/webapps/datasource.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/cloud-ide-packaging-war-next-codeassistant.war" tofile="${project.build.directory}/tomcat-aio/webapps/java-ca.war" />
-                                <copy file="${project.build.directory}/packager-conf/war/codenvy-api-docs-ui.war" tofile="${project.build.directory}/tomcat-aio/webapps/api-docs-ui.war" />
-                                <chmod dir="${project.build.directory}/tomcat-aio/bin" includes="**/*.sh" perm="+x" />
-                            </tasks>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
-            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-assembly-plugin</artifactId>
                 <executions>
-                    <!-- Create the distribution zip and attach it to maven -->
                     <execution>
-                        <id>tomcat-zip</id>
+                        <id>make-assembly</id>
                         <phase>package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>
-                        <configuration>
-                            <appendAssemblyId>false</appendAssemblyId>
-                            <updateOnly>false</updateOnly>
-                            <descriptors>
-                                <descriptor>${project.basedir}/src/main/assembly/tomcat-archive.xml</descriptor>
-                            </descriptors>
-                        </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>copy-dependencies-war</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeTypes>war</includeTypes>
-                            <stripVersion>true</stripVersion>
-                            <outputDirectory>${project.build.directory}/packager-conf/war</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-dependencies-jar</id>
-                        <phase>generate-resources</phase>
-                        <goals>
-                            <goal>copy-dependencies</goal>
-                        </goals>
-                        <configuration>
-                            <includeTypes>jar</includeTypes>
-                            <stripVersion>false</stripVersion>
-                            <includeArtifactIds>postgresql</includeArtifactIds>
-                            <outputDirectory>${project.build.directory}/packager-conf/tomcat-jar</outputDirectory>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-resources</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>com.codenvy.onpremises</groupId>
-                                    <artifactId>onpremises-ide-packaging-tomcat-site</artifactId>
-                                    <version>${project.version}</version>
-                                    <type>zip</type>
-                                    <overWrite>true</overWrite>
-                                    <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
-                                    <destFileName>tomcat.zip</destFileName>
-                                </artifactItem>
-                                <artifactItem>
-                                    <groupId>org.exoplatform.ide</groupId>
-                                    <artifactId>ide-codeassistant-lucene-index</artifactId>
-                                    <version>20120627</version>
-                                    <type>zip</type>
-                                    <overWrite>false</overWrite>
-                                    <outputDirectory>${project.build.directory}/packager-conf/zip</outputDirectory>
-                                    <destFileName>ide-codeassistant-lucene-index.zip</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                            <outputDirectory>${project.build.directory}/wars</outputDirectory>
-                            <overWriteReleases>false</overWriteReleases>
-                            <overWriteSnapshots>true</overWriteSnapshots>
-                        </configuration>
-                    </execution>
-                    <execution>
-                        <id>copy-datasource-ssl-factory</id>
-                        <phase>process-resources</phase>
-                        <goals>
-                            <goal>copy</goal>
-                        </goals>
-                        <configuration>
-                            <artifactItems>
-                                <artifactItem>
-                                    <groupId>org.eclipse.che.plugin</groupId>
-                                    <artifactId>che-plugin-datasource-ssl-socket-factory</artifactId>
-                                    <version>${che.plugins.version}</version>
-                                    <outputDirectory>${project.build.directory}/tomcat-aio/lib</outputDirectory>
-                                    <destFileName>codenvy-ssl-socket-factory.jar</destFileName>
-                                </artifactItem>
-                            </artifactItems>
-                        </configuration>
-                    </execution>
-                </executions>
+                <configuration>
+                    <appendAssemblyId>false</appendAssemblyId>
+                    <updateOnly>false</updateOnly>
+                    <descriptor>${project.basedir}/src/assembly/assembly.xml</descriptor>
+                </configuration>
             </plugin>
         </plugins>
     </build>

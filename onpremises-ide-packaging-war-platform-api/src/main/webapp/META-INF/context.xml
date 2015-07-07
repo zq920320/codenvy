@@ -17,6 +17,6 @@
     from Codenvy S.A..
 
 -->
-<Context path="/api" docBase="api" reloadable="true" crossContext="false">
+<Context path="/api" docBase="api" >
     <ResourceLink global="jdbc/codenvy" name="jdbc/codenvy" type="javax.sql.DataSource"/>
 </Context>
