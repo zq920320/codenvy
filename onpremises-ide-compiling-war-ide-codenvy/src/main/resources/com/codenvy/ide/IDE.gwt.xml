@@ -54,9 +54,6 @@
     <inherits name='org.eclipse.che.ide.ext.datasource.Datasource'/>
     <inherits name='com.codenvy.ide.ext.gae.GAE'/>
     <inherits name='com.codenvy.ide.factory.Factory'/>
-    <inherits name='com.codenvy.ide.clone.Clone'/>
-    <inherits name='com.codenvy.ide.share.Share'/>
-    <inherits name='com.codenvy.ide.dashboard.Dashboard'/>
     <inherits name="com.codenvy.ide.permissions.Permissions"/>
     <inherits name="com.codenvy.ide.Onpremises"/>
     <inherits name='com.codenvy.ide.support.help.SupportHelp'/>
