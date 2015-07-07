@@ -60,47 +60,32 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-clone</artifactId>
+            <artifactId>codenvy-ext-factory</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-dashboard</artifactId>
+            <artifactId>codenvy-ext-hosted</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-factory</artifactId>
+            <artifactId>codenvy-ext-permissions</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-hosted</artifactId>
+            <artifactId>codenvy-ext-profile</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-permissions</artifactId>
+            <artifactId>codenvy-ext-resources</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-profile</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-resources</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-share</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-support-help</artifactId>
+            <artifactId>codenvy-ext-support-help</artifactId>
             <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
