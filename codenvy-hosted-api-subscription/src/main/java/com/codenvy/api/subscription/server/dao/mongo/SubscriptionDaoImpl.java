@@ -97,6 +97,25 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
     }
 
     @Override
+    public List<Subscription> getByAccountId(String accountId) throws ServerException {
+        try {
+            final BasicDBObject query = new BasicDBObject("accountId", accountId);
+
+            final List<Subscription> result = new ArrayList<>();
+            try (DBCursor subscriptions = subscriptionCollection.find(query)) {
+                for (DBObject currentSubscription : subscriptions) {
+                    result.add(toSubscription(currentSubscription));
+                }
+            }
+
+            return result;
+        } catch (MongoException me) {
+            LOG.error(me.getMessage(), me);
+            throw new ServerException("It is not possible to retrieve subscriptions");
+        }
+    }
+
+    @Override
     public Subscription getActiveByServiceId(String accountId, String serviceId) throws ServerException, NotFoundException {
         //ensure existence of account
         accountDao.getById(accountId);

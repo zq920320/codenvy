@@ -19,6 +19,7 @@ package com.codenvy.api.subscription.server;
 
 import com.braintreegateway.BraintreeGateway;
 import com.codenvy.api.subscription.server.dao.PlanDao;
+import com.codenvy.api.subscription.server.dao.RemoveAccountEventSubscriber;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
 import com.codenvy.api.subscription.server.dao.SubscriptionQueryBuilder;
 import com.codenvy.api.subscription.server.dao.mongo.MongoSubscriptionQueryBuilder;
@@ -38,5 +39,6 @@ public class SubscriptionModule extends AbstractModule {
         bind(SubscriptionQueryBuilder.class).to(MongoSubscriptionQueryBuilder.class);
         bind(BraintreeGateway.class).to(GuiceBraintreeGateway.class).asEagerSingleton();
         bind(SubscriptionService.class);
+        bind(RemoveAccountEventSubscriber.class).asEagerSingleton();
     }
 }

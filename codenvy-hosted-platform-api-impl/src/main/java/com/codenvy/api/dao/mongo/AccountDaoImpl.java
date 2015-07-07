@@ -17,8 +17,7 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.subscription.server.dao.Subscription;
-import com.codenvy.api.subscription.server.dao.SubscriptionDao;
+import com.codenvy.api.event.user.RemoveAccountEvent;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -33,6 +32,7 @@ import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -99,18 +99,18 @@ public class AccountDaoImpl implements AccountDao {
     private static final String ACCOUNT_COLLECTION = "organization.storage.db.account.collection";
     private static final String MEMBER_COLLECTION  = "organization.storage.db.acc.member.collection";
 
-    private final DBCollection    accountCollection;
-    private final DBCollection    memberCollection;
-    private final WorkspaceDao    workspaceDao;
-    private final SubscriptionDao subscriptionDao;
+    private final DBCollection accountCollection;
+    private final DBCollection memberCollection;
+    private final WorkspaceDao workspaceDao;
+    private final EventService eventService;
 
     @Inject
     public AccountDaoImpl(@Named("mongo.db.organization") DB db,
                           WorkspaceDao workspaceDao,
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(MEMBER_COLLECTION) String memberCollectionName,
-                          SubscriptionDao subscriptionDao) {
-        this.subscriptionDao = subscriptionDao;
+                          EventService eventService) {
+        this.eventService = eventService;
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         accountCollection.createIndex(new BasicDBObject("name", 1));
@@ -200,18 +200,13 @@ public class AccountDaoImpl implements AccountDao {
             throw new ConflictException("It is not possible to remove account having associated workspaces");
         }
         try {
-            // Removing subscriptions
-            for (Subscription subscription : subscriptionDao.getActive(id)) {
-                if (!subscription.getPlanId().endsWith("-community")) {
-                    subscriptionDao.remove(subscription.getId());
-                }
-            }
             //Removing members
             for (Member member : getMembers(id)) {
                 removeMember(member);
             }
             // Removing account itself
             accountCollection.remove(new BasicDBObject("id", id));
+            eventService.publish(new RemoveAccountEvent(id));
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
             throw new ServerException("It is not possible to remove account");

@@ -148,6 +148,8 @@ public class FactoryWorkspaceInterceptorTest {
         when(invocation.getArguments()).thenReturn(new Object[]{inbound, context});
         when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner").withType("named"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome").withAccountId("acc"));
+        when(memberDao.getWorkspaceMember(anyString(), anyString())).thenReturn(
+                new Member().withRoles(Arrays.asList("workspace/developer")));
 
         org.eclipse.che.api.workspace.server.dao.Workspace ws = new org.eclipse.che.api.workspace.server.dao.Workspace().withId("testId");
         ws.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
