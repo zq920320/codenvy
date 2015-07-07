@@ -171,13 +171,17 @@
                     var recentProject;
                     try{
                         recentProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentProject;
-                        testProjectPath(recentProject)
-                        .then(function(){
-                            return deferredResult.resolve("/ws" + recentProject.path);
-                        })
-                        .fail(function(){
-                            return deferredResult.resolve("");
-                        });
+                        if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
+                            testProjectPath(recentProject)
+                            .then(function(){
+                                return deferredResult.resolve("/ws" + recentProject.path);
+                            })
+                            .fail(function(){
+                                return deferredResult.resolve("");
+                            });
+                        }else{
+                            deferredResult.resolve("");
+                        }
                     }catch(err){
                         //if response does not contain JSON object
                         deferredResult.resolve("");
