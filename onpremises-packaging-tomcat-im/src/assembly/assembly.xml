@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="UTF-8"?>
 <!--
 
     CODENVY CONFIDENTIAL
@@ -25,23 +24,38 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <fileSets>
-        <!-- Default files -->
-        <fileSet>
-            <directory>${project.build.directory}/installation-manager-server-tomcat</directory>
-            <outputDirectory/>
-            <excludes>
-                <exclude>**/*.sh</exclude>
-            </excludes>
-        </fileSet>
-        <!-- Executable files-->
-        <fileSet>
-            <directory>${project.build.directory}/installation-manager-server-tomcat</directory>
-            <outputDirectory/>
+    <dependencySets>
+        <dependencySet>
+            <unpack>true</unpack>
+            <outputDirectory></outputDirectory>
             <includes>
-                <include>**/*.sh</include>
+                <include>com.codenvy.resources:codenvy-tomcat8-slf4j-logback</include>
             </includes>
-            <fileMode>755</fileMode>
+        </dependencySet>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <outputDirectory>webapps</outputDirectory>
+            <outputFileNameMapping>im.war</outputFileNameMapping>
+            <includes>
+                <include>com.codenvy.im:installation-manager-server-war</include>
+            </includes>
+        </dependencySet>
+    </dependencySets>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/packager-conf/war</directory>
+            <outputDirectory>webapps</outputDirectory>
+            <includes>
+                <include>im-api-docs-ui/**</include>
+            </includes>
+        </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/main/resources/conf</directory>
+            <outputDirectory>conf</outputDirectory>
+            <includes>
+                <include>server.xml</include>
+            </includes>
         </fileSet>
     </fileSets>
 </assembly>
