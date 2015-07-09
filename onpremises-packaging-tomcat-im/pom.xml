@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-packaging-tomcat-im</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IM</name>
+    <name>Onpremises IDE :: Tomcat :: IM  :: Installation Manager</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.im</groupId>

@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-war-ide-resources-codenvy</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR    :: IDE3 :: Resources</name>
+    <name>Onpremises IDE :: WAR    :: IDE :: Resources</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

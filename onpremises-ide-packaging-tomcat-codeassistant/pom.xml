@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-codeassistant</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: CodeAssistant</name>
+    <name>Onpremises IDE :: Tomcat :: IDE :: CodeAssistant</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

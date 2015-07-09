@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-datasource-plugin</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: Plugin Datasource</name>
+    <name>Onpremises IDE :: Tomcat :: IDE :: Plugin Datasource</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-plugin-onpremises</artifactId>
     <packaging>jar</packaging>
-    <name>Onpremises IDE :: Plugin :: Onpremises</name>
+    <name>Onpremises IDE :: Plugin :: IDE :: Onpremises</name>
     <dependencies>
         <dependency>
             <groupId>com.google.gwt</groupId>

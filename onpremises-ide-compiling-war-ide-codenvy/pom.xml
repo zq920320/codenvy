@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-compiling-war-ide-codenvy</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR :: IDE3 :: Compiling App</name>
+    <name>Onpremises IDE :: WAR    :: IDE :: Compiling App</name>
     <properties>
         <generated.sources.directory>${project.build.directory}/generated-sources/gen</generated.sources.directory>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

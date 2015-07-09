@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-runner</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: Runner</name>
+    <name>Onpremises IDE :: Tomcat :: IDE :: Runner</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

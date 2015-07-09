@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-builder</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: Builder</name>
+    <name>Onpremises IDE :: Tomcat :: IDE :: Builder</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

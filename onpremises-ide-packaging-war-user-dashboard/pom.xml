@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-war-user-dashboard</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR :: IDE3 :: Dashboard</name>
+    <name>Onpremises IDE :: WAR    :: IDE :: User Dashboard</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>

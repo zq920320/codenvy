@@ -27,7 +27,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-codenvy-allinone</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE3 :: All-in-One</name>
+    <name>Onpremises IDE :: Tomcat :: IDE :: All-in-One</name>
     <dependencies>
         <!-- Cloud IDE dependency -->
         <dependency>
