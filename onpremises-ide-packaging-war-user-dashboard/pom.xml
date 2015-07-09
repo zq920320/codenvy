@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>3.11.1</version>
+        <version>3.11.2-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-user-dashboard</artifactId>
     <packaging>war</packaging>
