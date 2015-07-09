@@ -81,6 +81,15 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <outputDirectory>webapps</outputDirectory>
+            <outputFileNameMapping>admin.war</outputFileNameMapping>
+            <includes>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-admin-dashboard</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>api-docs-ui.war</outputFileNameMapping>
             <includes>
                 <include>com.codenvy.platform-api:codenvy-api-docs-ui</include>
