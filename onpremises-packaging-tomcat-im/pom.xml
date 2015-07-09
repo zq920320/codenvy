@@ -78,6 +78,24 @@
                                     </artifactItems>
                                 </configuration>
                             </execution>
+                            <execution>
+                                <id>copy-tomcat-dependencies</id>
+                                <phase>generate-resources</phase>
+                                <goals>
+                                    <goal>unpack</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${project.build.directory}/tomcat</outputDirectory>
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>com.codenvy.resources</groupId>
+                                            <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
+                                            <version>${version.resource-bundle}</version>
+                                            <type>zip</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
                         </executions>
                     </plugin>
                     <plugin>
@@ -86,21 +104,42 @@
                         <version>1.5.3</version>
                         <executions>
                             <execution>
+                                <id>api-docs-ui</id>
                                 <phase>prepare-package</phase>
                                 <goals>
                                     <goal>replace</goal>
                                 </goals>
+                                <configuration>
+                                    <file>${project.build.directory}/packager-conf/war/im-api-docs-ui/index.html</file>
+                                    <replacements>
+                                        <replacement>
+                                            <token>api/docs</token>
+                                            <value>im/docs</value>
+                                        </replacement>
+                                    </replacements>
+                                </configuration>
+                            </execution>
+                            <execution>
+                                <id>tomcat-ports</id>
+                                <phase>prepare-package</phase>
+                                <goals>
+                                    <goal>replace</goal>
+                                </goals>
+                                <configuration>
+                                    <file>${project.build.directory}/tomcat/conf/server.xml</file>
+                                    <replacements>
+                                        <replacement>
+                                            <token>Server port="8005"</token>
+                                            <value>Server port="8006"</value>
+                                        </replacement>
+                                        <replacement>
+                                            <token>Connector port="8080"</token>
+                                            <value>Connector port="8082"</value>
+                                        </replacement>
+                                    </replacements>
+                                </configuration>
                             </execution>
                         </executions>
-                        <configuration>
-                            <file>${project.build.directory}/packager-conf/war/im-api-docs-ui/index.html</file>
-                            <replacements>
-                                <replacement>
-                                    <token>api/docs</token>
-                                    <value>im/docs</value>
-                                </replacement>
-                            </replacements>
-                        </configuration>
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>

@@ -24,14 +24,20 @@
         <format>zip</format>
     </formats>
     <includeBaseDirectory>false</includeBaseDirectory>
-    <dependencySets>
-        <dependencySet>
-            <unpack>true</unpack>
-            <outputDirectory></outputDirectory>
+    <fileSets>
+        <fileSet>
+            <directory>${project.build.directory}/tomcat</directory>
+            <outputDirectory>/</outputDirectory>
+        </fileSet>
+        <fileSet>
+            <directory>${project.build.directory}/packager-conf/war</directory>
+            <outputDirectory>webapps</outputDirectory>
             <includes>
-                <include>com.codenvy.resources:codenvy-tomcat8-slf4j-logback</include>
+                <include>im-api-docs-ui/**</include>
             </includes>
-        </dependencySet>
+        </fileSet>
+    </fileSets>
+    <dependencySets>
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
@@ -42,20 +48,4 @@
             </includes>
         </dependencySet>
     </dependencySets>
-    <fileSets>
-        <fileSet>
-            <directory>${project.build.directory}/packager-conf/war</directory>
-            <outputDirectory>webapps</outputDirectory>
-            <includes>
-                <include>im-api-docs-ui/**</include>
-            </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/main/resources/conf</directory>
-            <outputDirectory>conf</outputDirectory>
-            <includes>
-                <include>server.xml</include>
-            </includes>
-        </fileSet>
-    </fileSets>
 </assembly>
