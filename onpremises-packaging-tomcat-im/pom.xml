@@ -136,6 +136,14 @@
                                             <token>Connector port="8080"</token>
                                             <value>Connector port="8082"</value>
                                         </replacement>
+                                        <replacement>
+                                            <token>rmiRegistryPortPlatform="32001"</token>
+                                            <value>rmiRegistryPortPlatform="32002"</value>
+                                        </replacement>
+                                        <replacement>
+                                            <token>rmiServerPortPlatform="32101"</token>
+                                            <value>rmiServerPortPlatform="32102"</value>
+                                        </replacement>
                                     </replacements>
                                 </configuration>
                             </execution>
