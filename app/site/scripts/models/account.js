@@ -198,7 +198,9 @@
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(project) {
+                success: function(project,a,b) {
+                    console.info('a-> '+ a);
+                    console.info('b-> '+ b);
                         deferredResult.resolve(project);
                 },
                 error: function() {
