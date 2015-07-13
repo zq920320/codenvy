@@ -20,6 +20,7 @@ package com.codenvy.runner.docker;
 
 
 import com.codenvy.docker.DockerConnector;
+import com.codenvy.docker.InitialAuthConfig;
 
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.util.CustomPortService;
@@ -84,10 +85,14 @@ public class DockerRunnerTest {
     @Mock
     private RunRequest request;
 
+    @Mock
+    private InitialAuthConfig initialAuthConfig;
+
     @Before
     public void beforeTest() {
         this.dockerRunner =
-                new DockerRunner(deployDirectoryRoot, 5, HOSTNAME, new String[]{}, allocators, portService, dockerConnector, eventService,
+                new DockerRunner(deployDirectoryRoot, 5, HOSTNAME, "localhost:8080/api", new String[]{}, allocators, portService,
+                                 initialAuthConfig, dockerConnector, eventService,
                                  applicationLinksGenerator);
 
         this.env = new ArrayList<>();

@@ -40,5 +40,27 @@ public interface HostedLocalizationConstant extends Messages {
     @Key("connection.closed.dialog.message")
     String connectionClosedDialogMessage();
 
+    /* Session expired dialog */
+    @Key("session.expired.dialog.title")
+    String sessionExpiredDialogTitle();
+
+    @Key("session.expired.dialog.message")
+    String sessionExpiredDialogMessage();
+
+    /* Temporary */
+    @Key("temporary.toolbar-label.text")
+    String temporaryToolbarLabelText();
+
+    @Key("temporary.toolbar-label.title")
+    String temporaryToolbarLabelTitle();
+
+    @Key("temporary.toolbar-label.title.message")
+    String temporaryToolbarLabelTitleMessage();
+
+    @Key("login.button")
+    String loginButtonTitle();
+
+    @Key("create.account.button")
+    String createAccountButtonTitle();
 
 }

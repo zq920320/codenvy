@@ -21,8 +21,6 @@ import com.codenvy.ide.share.client.share.CommitView;
 import com.codenvy.ide.share.client.share.CommitViewImpl;
 import com.codenvy.ide.share.client.share.ShareActionView;
 import com.codenvy.ide.share.client.share.ShareActionViewImpl;
-import com.codenvy.ide.factory.client.login.PromptToLoginView;
-import com.codenvy.ide.factory.client.login.PromptToLoginViewImpl;
 import com.google.gwt.inject.client.AbstractGinModule;
 
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;

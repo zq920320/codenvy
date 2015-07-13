@@ -46,9 +46,6 @@ public class FactoryExtension {
 
     @Inject
     public FactoryExtension(AcceptFactoryHandler acceptFactoryHandler,
-                            UnstagedChangesInformer unstagedChangesInformer,
-                            TemporaryWorkspaceInformer temporaryWorkspaceInformer,
-                            HttpSessionDestroyedInformer httpSessionDestroyedInformer,
                             ActionManager actionManager,
                             FactoryResources resources,
                             ImportFromConfigAction importFromConfigAction,
@@ -56,8 +53,6 @@ public class FactoryExtension {
                             GreetingPartPresenter greetingPartPresenter,
                             OpenWelcomePageAction openWelcomePageAction) {
         acceptFactoryHandler.process();
-        temporaryWorkspaceInformer.process();
-        httpSessionDestroyedInformer.process();
         greetingPartPresenter.process();
 
         /*
@@ -89,8 +84,6 @@ public class FactoryExtension {
                       }).inject();
 
         resources.factoryCSS().ensureInjected();
-
-        actionManager.registerAction("warnOnClose", unstagedChangesInformer);
 
         actionManager.registerAction("openWelcomePage", openWelcomePageAction);
 

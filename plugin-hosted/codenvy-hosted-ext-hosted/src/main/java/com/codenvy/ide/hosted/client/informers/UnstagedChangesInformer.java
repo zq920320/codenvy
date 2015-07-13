@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client;
+package com.codenvy.ide.hosted.client.informers;
 
 import com.google.inject.Inject;
 
@@ -65,13 +65,13 @@ public class UnstagedChangesInformer extends Action {
     private native String checkUnstagedChanges() /*-{
         var instance = this;
 
-        var projectPath = instance.@com.codenvy.ide.factory.client.UnstagedChangesInformer::getCurrentProjectPath()();
+        var projectPath = instance.@com.codenvy.ide.hosted.client.informers.UnstagedChangesInformer::getCurrentProjectPath()();
         if (projectPath == null) {
             return;
         }
 
-        var gitStatusUrl = instance.@com.codenvy.ide.factory.client.UnstagedChangesInformer::restContext + "/git/"
-            + instance.@com.codenvy.ide.factory.client.UnstagedChangesInformer::workspaceId +
+        var gitStatusUrl = instance.@com.codenvy.ide.hosted.client.informers.UnstagedChangesInformer::restContext + "/git/"
+            + instance.@com.codenvy.ide.hosted.client.informers.UnstagedChangesInformer::workspaceId +
             "/status?projectPath=" + projectPath + "&short=false";
 
         try {
@@ -107,7 +107,7 @@ public class UnstagedChangesInformer extends Action {
 
                 if (prompt) {
                     try {
-                        var url = instance.@com.codenvy.ide.factory.client.UnstagedChangesInformer::restContext +
+                        var url = instance.@com.codenvy.ide.hosted.client.informers.UnstagedChangesInformer::restContext +
                             "/ui-messages/unstaged.changes.warning";
 
                         var request = new XMLHttpRequest();

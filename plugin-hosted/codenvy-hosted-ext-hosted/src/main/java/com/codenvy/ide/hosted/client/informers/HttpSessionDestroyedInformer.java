@@ -15,14 +15,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client;
+package com.codenvy.ide.hosted.client.informers;
 
 import org.eclipse.che.api.user.gwt.client.UserServiceClient;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.event.HttpSessionDestroyedEvent;
 import org.eclipse.che.ide.api.event.HttpSessionDestroyedHandler;
-import com.codenvy.ide.factory.client.login.PromptToLoginView;
+
+import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
+import com.codenvy.ide.hosted.client.login.PromptToLoginView;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import com.google.gwt.user.client.Window;
@@ -38,12 +40,12 @@ import com.google.web.bindery.event.shared.EventBus;
  */
 @Singleton
 public class HttpSessionDestroyedInformer implements HttpSessionDestroyedHandler {
-    private final EventBus                    eventBus;
-    private final PromptToLoginView           view;
-    private final DtoUnmarshallerFactory      dtoUnmarshallerFactory;
-    private final UserServiceClient           userServiceClient;
-    private final AppContext                  appContext;
-    private final FactoryLocalizationConstant localizationConstant;
+    private final EventBus                   eventBus;
+    private final PromptToLoginView          view;
+    private final DtoUnmarshallerFactory     dtoUnmarshallerFactory;
+    private final UserServiceClient          userServiceClient;
+    private final AppContext                 appContext;
+    private final HostedLocalizationConstant localizationConstant;
 
     @Inject
     HttpSessionDestroyedInformer(EventBus eventBus,
@@ -51,7 +53,7 @@ public class HttpSessionDestroyedInformer implements HttpSessionDestroyedHandler
                                  DtoUnmarshallerFactory dtoUnmarshallerFactory,
                                  UserServiceClient userServiceClient,
                                  AppContext appContext,
-                                 FactoryLocalizationConstant localizationConstant) {
+                                 HostedLocalizationConstant localizationConstant) {
         this.eventBus = eventBus;
         this.view = view;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;

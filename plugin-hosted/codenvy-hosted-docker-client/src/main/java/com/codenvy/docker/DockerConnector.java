@@ -40,6 +40,7 @@ import com.google.common.io.CharStreams;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jna.ptr.LongByReference;
 
+import org.apache.commons.codec.binary.Base64;
 import org.eclipse.che.api.core.util.FileCleaner;
 import org.eclipse.che.api.core.util.SystemInfo;
 import org.eclipse.che.api.core.util.ValueHolder;
@@ -99,18 +100,18 @@ public class DockerConnector {
 
     private final URI                      dockerDaemonUri;
     private final DockerCertificates       dockerCertificates;
-    private final AuthConfigs              authConfigs;
+    private final InitialAuthConfig        initialAuthConfig;
     private final ExecutorService          executor;
     private final Map<String, OOMDetector> oomDetectors;
 
-    public DockerConnector(AuthConfigs authConfigs) {
-        this(new DockerConnectorConfiguration(authConfigs));
+    public DockerConnector(InitialAuthConfig initialAuthConfig) {
+        this(new DockerConnectorConfiguration(initialAuthConfig));
     }
 
-    public DockerConnector(URI dockerDaemonUri, DockerCertificates dockerCertificates, AuthConfigs authConfigs) {
+    public DockerConnector(URI dockerDaemonUri, DockerCertificates dockerCertificates, InitialAuthConfig initialAuthConfig) {
         this.dockerDaemonUri = dockerDaemonUri;
         this.dockerCertificates = dockerCertificates;
-        this.authConfigs = authConfigs;
+        this.initialAuthConfig = initialAuthConfig;
         executor = Executors.newCachedThreadPool(new ThreadFactoryBuilder().setNameFormat("DockerApiConnector-%d").setDaemon(true).build());
         oomDetectors = new ConcurrentHashMap<>();
     }
@@ -206,11 +207,12 @@ public class DockerConnector {
      * @throws InterruptedException
      *         if build process was interrupted
      */
-    public String buildImage(String repository, ProgressMonitor progressMonitor, File... files) throws IOException, InterruptedException {
+    public String buildImage(String repository, ProgressMonitor progressMonitor, AuthConfigs authConfigs, File... files)
+            throws IOException, InterruptedException {
         final File tar = Files.createTempFile(null, ".tar").toFile();
         try {
             createTarArchive(tar, files);
-            return buildImage(repository, tar, progressMonitor);
+            return buildImage(repository, tar, progressMonitor, authConfigs);
         } finally {
             FileCleaner.addFile(tar);
         }
@@ -218,8 +220,9 @@ public class DockerConnector {
 
     protected String buildImage(String repository,
                                 File tar,
-                                final ProgressMonitor progressMonitor) throws IOException, InterruptedException {
-        return doBuildImage(repository, tar, progressMonitor, dockerDaemonUri);
+                                final ProgressMonitor progressMonitor,
+                                AuthConfigs authConfigs) throws IOException, InterruptedException {
+        return doBuildImage(repository, tar, progressMonitor, dockerDaemonUri, authConfigs);
     }
 
 
@@ -663,12 +666,14 @@ public class DockerConnector {
     protected String doBuildImage(String repository,
                                   File tar,
                                   final ProgressMonitor progressMonitor,
-                                  URI dockerDaemonUri) throws IOException, InterruptedException {
+                                  URI dockerDaemonUri,
+                                  AuthConfigs authConfigs) throws IOException, InterruptedException {
         DockerConnection connection = openConnection(dockerDaemonUri);
         try {
-            final List<Pair<String, ?>> headers = new ArrayList<>(2);
+            final List<Pair<String, ?>> headers = new ArrayList<>(3);
             headers.add(Pair.of("Content-Type", "application/x-compressed-tar"));
             headers.add(Pair.of("Content-Length", tar.length()));
+            headers.add(Pair.of("X-Registry-Config", Base64.encodeBase64String(JsonHelper.toJson(authConfigs).getBytes())));
             final DockerResponse response;
             try (InputStream tarInput = new FileInputStream(tar)) {
                 response = connection.method("POST").path(String.format("/build?t=%s&rm=%d&pull=%d", repository, 1, 1)).headers(headers)
@@ -775,7 +780,7 @@ public class DockerConnector {
             final List<Pair<String, ?>> headers = new ArrayList<>(3);
             headers.add(Pair.of("Content-Type", "text/plain"));
             headers.add(Pair.of("Content-Length", 0));
-            headers.add(Pair.of("X-Registry-Auth", authConfigs.getAuthHeader(registry)));
+            headers.add(Pair.of("X-Registry-Auth", initialAuthConfig.getAuthConfigHeader()));
             final StringBuilder pathBuilder = new StringBuilder("/images/");
             if (registry != null) {
                 pathBuilder.append(registry).append("/").append(repository);
@@ -878,7 +883,7 @@ public class DockerConnector {
             final List<Pair<String, ?>> headers = new ArrayList<>(3);
             headers.add(Pair.of("Content-Type", "text/plain"));
             headers.add(Pair.of("Content-Length", 0));
-            headers.add(Pair.of("X-Registry-Auth", authConfigs.getAuthHeader(registry)));
+            headers.add(Pair.of("X-Registry-Auth", initialAuthConfig.getAuthConfigHeader()));
             final StringBuilder pathBuilder = new StringBuilder("/images/create?fromImage=");
             if (registry != null) {
                 pathBuilder.append(registry).append("/");
@@ -1012,7 +1017,6 @@ public class DockerConnector {
     private void createTarArchive(File tar, File... files) throws IOException {
         TarUtils.tarFiles(tar, 0, files);
     }
-
 
     // OOM detect
 

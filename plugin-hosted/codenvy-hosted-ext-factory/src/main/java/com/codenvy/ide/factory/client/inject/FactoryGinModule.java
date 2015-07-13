@@ -19,8 +19,6 @@ package com.codenvy.ide.factory.client.inject;
 
 import com.codenvy.ide.factory.client.json.ImportFromConfigView;
 import com.codenvy.ide.factory.client.json.ImportFromConfigViewImpl;
-import com.codenvy.ide.factory.client.login.PromptToLoginView;
-import com.codenvy.ide.factory.client.login.PromptToLoginViewImpl;
 import com.codenvy.ide.factory.client.welcome.GreetingPartView;
 import com.codenvy.ide.factory.client.welcome.GreetingPartViewImpl;
 import com.codenvy.ide.factory.client.welcome.preferences.ShowWelcomePreferencePagePresenter;
@@ -44,7 +42,6 @@ public class FactoryGinModule extends AbstractGinModule {
     protected void configure() {
         bind(GreetingPartView.class).to(GreetingPartViewImpl.class).in(Singleton.class);
         bind(ImportFromConfigView.class).to(ImportFromConfigViewImpl.class).in(Singleton.class);
-        bind(PromptToLoginView.class).to(PromptToLoginViewImpl.class);
         bind(ShowWelcomePreferencePageView.class).to(ShowWelcomePreferencePageViewImpl.class).in(Singleton.class);
 
         final GinMultibinder<PreferencePagePresenter> prefBinder = GinMultibinder.newSetBinder(binder(), PreferencePagePresenter.class);

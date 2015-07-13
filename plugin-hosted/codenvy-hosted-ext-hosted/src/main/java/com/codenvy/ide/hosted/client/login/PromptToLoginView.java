@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client.login;
+package com.codenvy.ide.hosted.client.login;
 
 
 import org.eclipse.che.ide.api.mvp.View;

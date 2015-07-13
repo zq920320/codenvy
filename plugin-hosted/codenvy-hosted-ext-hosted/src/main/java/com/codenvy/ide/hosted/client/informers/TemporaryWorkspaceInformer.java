@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client;
+package com.codenvy.ide.hosted.client.informers;
 
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
@@ -26,6 +26,9 @@ import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.action.Presentation;
 import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.util.Config;
+
+import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
+import com.codenvy.ide.hosted.client.HostedResources;
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.event.dom.client.MouseOutEvent;
 import com.google.gwt.event.dom.client.MouseOutHandler;
@@ -49,13 +52,15 @@ import static com.google.gwt.dom.client.Style.Unit.PX;
  * @author Oleksii Orel
  */
 public class TemporaryWorkspaceInformer {
-    private final FactoryResources            resources;
-    private final FactoryLocalizationConstant locale;
+    private final HostedResources             resources;
+    private final HostedLocalizationConstant  locale;
     private final ActionManager               actionManager;
     private final TemporaryWorkspaceIndicator temporaryWorkspaceIndicator;
 
     @Inject
-    public TemporaryWorkspaceInformer(ActionManager actionManager, FactoryResources resources, FactoryLocalizationConstant locale) {
+    public TemporaryWorkspaceInformer(ActionManager actionManager,
+                                      HostedResources resources,
+                                      HostedLocalizationConstant locale) {
         this.actionManager = actionManager;
         this.resources = resources;
         this.locale = locale;
@@ -91,10 +96,10 @@ public class TemporaryWorkspaceInformer {
             final Element tooltipBodyMessageElement = DOM.createSpan();
             final Element tooltipArrow = DOM.createDiv();
 
-            wrapper.addStyleName(resources.factoryCSS().temporary());
+            wrapper.addStyleName(resources.hostedCSS().temporary());
             wrapper.add(new SVGImage(resources.temporaryButton()));
 
-            button.addStyleName(resources.factoryCSS().temporaryLabel());
+            button.addStyleName(resources.hostedCSS().temporaryLabel());
             button.setText(locale.temporaryToolbarLabelText());
             button.ensureDebugId("temporary-workspace-used-toolbar-button");
 
@@ -137,14 +142,14 @@ public class TemporaryWorkspaceInformer {
 
             wrapper.add(button);
 
-            tooltipHeader.addClassName(resources.factoryCSS().bottomMenuTooltipHeader());
+            tooltipHeader.addClassName(resources.hostedCSS().bottomMenuTooltipHeader());
             tooltipHeader.appendChild(new SVGImage(resources.temporaryButton()).getElement());
             tooltipHeader.appendChild(tooltipHeaderMessageElement);
 
-            tooltipBody.addClassName(resources.factoryCSS().bottomMenuTooltipBody());
+            tooltipBody.addClassName(resources.hostedCSS().bottomMenuTooltipBody());
             tooltipBody.appendChild(tooltipBodyMessageElement);
 
-            tooltipElement.addClassName(resources.factoryCSS().bottomMenuTooltip());
+            tooltipElement.addClassName(resources.hostedCSS().bottomMenuTooltip());
             tooltipElement.appendChild(tooltipHeader);
             tooltipElement.appendChild(tooltipBody);
             tooltipElement.appendChild(tooltipArrow);

@@ -15,9 +15,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.hosted.client;
+package com.codenvy.ide.hosted.client.informers;
 
-import com.codenvy.ide.factory.client.login.PromptToLoginView;
+import com.codenvy.ide.hosted.client.login.PromptToLoginView;
+import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 

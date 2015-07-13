@@ -15,9 +15,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client.login;
+package com.codenvy.ide.hosted.client.login;
 
-import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
+import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -46,7 +46,7 @@ public class PromptToLoginViewImpl extends Window implements PromptToLoginView {
     private ActionDelegate delegate;
 
     @Inject
-    public PromptToLoginViewImpl(FactoryLocalizationConstant localizationConstant,
+    public PromptToLoginViewImpl(HostedLocalizationConstant localizationConstant,
                                  PromptToLoginViewImplUiBinder uiBinder) {
         this.setWidget(uiBinder.createAndBindUi(this));
 

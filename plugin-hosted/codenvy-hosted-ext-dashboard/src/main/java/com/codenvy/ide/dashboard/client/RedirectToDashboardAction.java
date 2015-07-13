@@ -17,7 +17,7 @@
  */
 package com.codenvy.ide.dashboard.client;
 
-import com.codenvy.ide.factory.client.login.PromptToLoginView;
+import com.codenvy.ide.hosted.client.login.PromptToLoginView;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;

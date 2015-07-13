@@ -17,6 +17,7 @@
  */
 package com.codenvy.runner.docker;
 
+import com.codenvy.docker.AuthConfigs;
 import com.codenvy.docker.DockerConnector;
 import com.codenvy.docker.DockerException;
 import com.codenvy.docker.DockerFileException;
@@ -189,6 +190,8 @@ public abstract class BaseDockerRunner extends Runner {
      */
     protected abstract DockerEnvironment getDockerEnvironment(RunRequest request) throws IOException, RunnerException;
 
+    protected abstract AuthConfigs getAuthConfigs(RunRequest request) throws IOException, RunnerException;
+
     public static class DockerRunnerConfiguration extends RunnerConfiguration {
         public DockerRunnerConfiguration(int memory, RunRequest request) {
             super(memory, request);
@@ -236,6 +239,7 @@ public abstract class BaseDockerRunner extends Runner {
             final RunRequest request = dockerRunnerCfg.getRequest();
             final DockerEnvironment dockerEnvironment = getDockerEnvironment(request);
             final Mapper mapper = dockerEnvironment.getMapper();
+            final AuthConfigs authConfigs = getAuthConfigs(request);
             final Dockerfile dockerfileModel = getDockerfileModel(dockerEnvironment);
             final DockerImage dockerImageModel = getDockerImageModel(dockerfileModel);
             dockerfileModel.getParameters().put("debug", request.isInDebugMode());
@@ -297,7 +301,7 @@ public abstract class BaseDockerRunner extends Runner {
             logsPublisher.writeLine(String.format("[INFO] Starting Runner @ %1$ta %1$tb %1$td %1$tT %1$tZ %1$tY", startTime));
             final String dockerRepoName = String.format("%s/%s", getDockerNamespace(request), getDockerRepositoryName(request));
             final ImageIdentifier imageIdentifier =
-                    createImage(dockerRepoName, logsPublisher, files.toArray(new java.io.File[files.size()]));
+                    createImage(dockerRepoName, logsPublisher, authConfigs, files.toArray(new java.io.File[files.size()]));
             final long initImageTime = System.currentTimeMillis() - startTime;
 
             final ImageInfo imageDetails = dockerConnector.inspectImage(imageIdentifier.id);
@@ -563,14 +567,14 @@ public abstract class BaseDockerRunner extends Runner {
         return sb.toString();
     }
 
-    private ImageIdentifier createImage(String dockerRepoName, final ApplicationLogsPublisher logsPublisher, java.io.File... files)
+    private ImageIdentifier createImage(String dockerRepoName, final ApplicationLogsPublisher logsPublisher, AuthConfigs authConfigs, java.io.File... files)
             throws IOException, RunnerException {
         final String fullImageName = dockerRepoName + ':' + NameGenerator.generate(null, 8);
         final long startTime = System.currentTimeMillis();
         String imageId;
         final CreateImageLogger output = new CreateImageLogger(logsPublisher);
         try {
-            imageId = dockerConnector.buildImage(fullImageName, output, files);
+            imageId = dockerConnector.buildImage(fullImageName, output, authConfigs, files);
         } catch (InterruptedException e) {
             throw new RunnerException("Interrupted while waiting for creation of docker image. ");
         } catch (IOException e) {

@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.factory.client;
+package com.codenvy.ide.hosted.client;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -23,21 +23,26 @@ import com.google.gwt.resources.client.CssResource;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 /**
- * Factory extension resources (css styles, images).
+ * Hosted extension resources (css styles, images).
  *
  * @author Ann Shumilova
  */
-public interface FactoryResources extends ClientBundle {
-    interface FactoryCSS extends CssResource {
-        String label();
+public interface HostedResources extends ClientBundle {
+    interface HostedCSS extends CssResource {
+        String bottomMenuTooltip();
+
+        String bottomMenuTooltipBody();
+
+        String bottomMenuTooltipHeader();
+
+        String temporary();
+
+        String temporaryLabel();
     }
 
-    @Source({"Factory.css", "org/eclipse/che/ide/api/ui/style.css"})
-    FactoryCSS factoryCSS();
+    @Source({"Hosted.css", "org/eclipse/che/ide/api/ui/style.css"})
+    HostedCSS hostedCSS();
 
-    @Source("factory/export-config.svg")
-    SVGResource exportConfig();
-
-    @Source("factory/import-config.svg")
-    SVGResource importConfig();
+    @Source("temporary/temporary.svg")
+    SVGResource temporaryButton();
 }

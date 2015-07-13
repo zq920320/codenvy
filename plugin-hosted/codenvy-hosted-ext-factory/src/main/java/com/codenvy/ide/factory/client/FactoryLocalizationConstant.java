@@ -60,27 +60,6 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("accept.canceled.required.authorize")
     String canceledRequiredAuthorize();
 
-    @Key("login.button")
-    String loginButtonTitle();
-
-    @Key("create.account.button")
-    String createAccountButtonTitle();
-
-     /* ************************************************************************************************************
-     *
-     * Temporary
-     *
-     * ************************************************************************************************************/
-
-    @Key("temporary.toolbar-label.text")
-    String temporaryToolbarLabelText();
-
-    @Key("temporary.toolbar-label.title")
-    String temporaryToolbarLabelTitle();
-
-    @Key("temporary.toolbar-label.title.message")
-    String temporaryToolbarLabelTitleMessage();
-
     /* ***************************************************************************************************************
      *
      * Importing from Config File
@@ -116,18 +95,6 @@ public interface FactoryLocalizationConstant extends Messages {
 
     @Key("export.config.view.description")
     String exportConfigDescription();
-
-    /* ***************************************************************************************************************
-     *
-     * Session expired dialog
-     *
-     * **************************************************************************************************************/
-
-    @Key("session.expired.dialog.title")
-    String sessionExpiredDialogTitle();
-
-    @Key("session.expired.dialog.message")
-    String sessionExpiredDialogMessage();
 
     /* ***************************************************************************************************************
      *

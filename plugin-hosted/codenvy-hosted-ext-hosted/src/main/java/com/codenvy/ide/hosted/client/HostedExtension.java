@@ -17,9 +17,13 @@
  */
 package com.codenvy.ide.hosted.client;
 
+import com.codenvy.ide.hosted.client.informers.HttpSessionDestroyedInformer;
+import com.codenvy.ide.hosted.client.informers.TemporaryWorkspaceInformer;
+import com.codenvy.ide.hosted.client.informers.UnstagedChangesInformer;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.extension.Extension;
 
 
@@ -36,8 +40,19 @@ public class HostedExtension {
 
     /** Create extension. */
     @Inject
-    public HostedExtension(HostedLocalizationConstant localizationConstant) {
+    public HostedExtension(ActionManager actionManager,
+                           HostedResources resources,
+                           HostedLocalizationConstant localizationConstant,
+                           HttpSessionDestroyedInformer httpSessionDestroyedInformer,
+                           UnstagedChangesInformer unstagedChangesInformer,
+                           TemporaryWorkspaceInformer temporaryWorkspaceInformer) {
         this.localizationConstant = localizationConstant;
+        httpSessionDestroyedInformer.process();
+        temporaryWorkspaceInformer.process();
+
+        resources.hostedCSS().ensureInjected();
+
+        actionManager.registerAction("warnOnClose", unstagedChangesInformer);
     }
 
 
