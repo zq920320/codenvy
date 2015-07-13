@@ -116,6 +116,21 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-contribution-projecttype</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-hosted-ext-factory</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-hosted-runner-docker</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
@@ -155,24 +170,9 @@
             <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-contribution</groupId>
-            <artifactId>codenvy-contribution-projecttype</artifactId>
-            <version>${codenvy.plugin-contribution.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.plugin-gae</groupId>
             <artifactId>codenvy-plugin-gae</artifactId>
             <version>${codenvy.plugin.gae.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-factory</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-runner-docker</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.palominolabs.metrics</groupId>
