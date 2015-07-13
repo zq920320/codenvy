@@ -1,0 +1,93 @@
+/*
+ * CODENVY CONFIDENTIAL
+ * __________________
+ *
+ *  [2012] - [2015] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+.tooltip > span {
+    position: absolute;
+    color: mainFontColor;
+    border: 1px solid #202020;
+    background: #202020;
+    white-space: nowrap;
+    font-family: mainFontFamily;
+    font-size: 8pt;
+    font-weight: normal;
+    text-align: left;
+    padding: 10px 20px;
+    line-height: normal;
+    z-index: 1147483647;
+    right: 1px;
+    margin-top: 28px;
+    display: none;
+}
+
+.tooltip > span:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 10px solid;
+    border-color: transparent transparent #202020 transparent;
+    top: -20px;
+    right: 7px;
+}
+
+.tooltip:hover > span {
+    display: inline;
+}
+
+.tooltip > span:hover {
+    pointer-events: none;
+}
+
+.buttonTooltip > span {
+    position: fixed;
+    margin: 0;
+    z-index: 7;
+}
+
+.buttonTooltip > span:after {
+    right: 45px;
+}
+
+.dashboardButton {
+    margin: 0 0 0 4px;
+    padding: 0;
+    opacity: 1;
+    width: 25px;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+}
+
+.dashboardButton svg {
+    width: 18px;
+    height: 20px;
+    fill: #e7e7e7;
+    vertical-align: middle;
+    padding-bottom: 1px;
+}
+
+.dashboardButton:HOVER svg {
+    fill: #6cbfff;
+}
+
+.dashboardButtonTooltip > span {
+    right: auto;
+}
+
+.dashboardButtonTooltip > span:after {
+    left: 0;
+}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    Copyright (c) 2012-2015 Codenvy, S.A.
+    Copyright (c) 2014-2015 Codenvy, S.A.
     All rights reserved. This program and the accompanying materials
     are made available under the terms of the Eclipse Public License v1.0
     which accompanies this distribution, and is available at
@@ -14,35 +14,35 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <groupId>org.eclipse.che.depmgt</groupId>
+        <artifactId>codenvy-plugin-parent</artifactId>
+        <groupId>com.codenvy.plugin</groupId>
         <version>4.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.codenvy.plugin</groupId>
-    <artifactId>codenvy-plugin-parent</artifactId>
+    <artifactId>contributor-parent</artifactId>
     <version>4.0.0-SNAPSHOT</version>
     <packaging>pom</packaging>
-    <name>Codenvy Plugin Parent</name>
+    <name>Codenvy Plugin :: Contribution :: Parent</name>
+    <licenses>
+        <license>
+            <name>Eclipse Public License</name>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <modules>
-        <module>plugin-google</module>
-        <module>plugin-bitbucket</module>
-        <module>plugin-wso2</module>
-        <module>plugin-projectlocker</module>
-        <!--<module>plugin-contribution</module>-->
-        <module>plugin-hosted</module>
+        <module>codenvy-plugin-contribution</module>
+        <module>codenvy-plugin-review</module>
+        <module>codenvy-contribution-vcs</module>
+        <module>codenvy-contribution-projecttype</module>
     </modules>
     <scm>
-        <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/plugins.git</developerConnection>
+        <connection>scm:git:git@github.com:codenvy/plugin-contribution.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/plugin-contribution.git</developerConnection>
         <tag>HEAD</tag>
-        <url>https://github.com/codenvy/plugins</url>
     </scm>
     <properties>
-        <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
-        <maven.model.version>3.0.5</maven.model.version>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <specification.version>1.0-beta2</specification.version>
+        <license_years>2014-2015</license_years>
     </properties>
     <repositories>
         <repository>

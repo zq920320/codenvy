@@ -1,0 +1,250 @@
+/*
+ * CODENVY CONFIDENTIAL
+ * __________________
+ *
+ *  [2012] - [2015] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+.link {
+    display: inline-block;
+    vertical-align: middle;
+    word-break: break-all;
+    margin-right: 10px;
+    overflow: hidden;
+    -moz-user-select: text !important;
+    -webkit-user-select: text !important;
+    user-select: text !important;
+    line-height: 10px;
+}
+
+.link a {
+    font-size: smallFontSize;
+    font-family: mainFontFamily;
+    color: factoryLinkColor;
+    text-shadow: 0px 0px 1px rgba(0, 0, 0, 0.5);
+    display: -webkit-box;
+    display: -moz-box;
+    display: -ms-box;
+    -webkit-line-clamp: 1;
+    -webkit-box-orient: vertical;
+    display: box;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.input {
+    background-color: editorBackgroundColor;
+    border: 1px solid boxBorderColor;
+    border-radius: 1px;
+    margin-right: 5px;
+    color: mainFontColor;
+    word-break: keep-all;
+    box-shadow: none;
+    font-family: mainFontFamily;
+    font-size: boxFontSize;
+    -moz-box-sizing: border-box;
+    box-sizing: border-box;
+}
+
+.tooltip > span {
+    position: absolute;
+    color: mainFontColor;
+    border: 1px solid #202020;
+    background: #202020;
+    white-space: nowrap;
+    font-family: mainFontFamily;
+    font-size: 8pt;
+    font-weight: normal;
+    text-align: left;
+    padding: 10px 20px;
+    line-height: normal;
+    z-index: 1147483647;
+    right: 1px;
+    margin-top: 28px;
+    display: none;
+}
+
+.tooltip > span:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 10px solid;
+    border-color: transparent transparent #202020 transparent;
+    top: -20px;
+    right: 7px;
+}
+
+.tooltip:hover > span {
+    display: inline;
+}
+
+.tooltip > span:hover {
+    pointer-events: none;
+}
+
+.buttonTooltip > span {
+    position: fixed;
+    margin: 0;
+    z-index: 7;
+}
+
+.buttonTooltip > span:after {
+    right: 45px;
+}
+
+.social {
+    position: absolute;
+    background: #202020;
+    border: 1px solid #202020;
+    width: 118px;
+}
+
+.social:after {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 10px solid;
+    border-color: #202020 transparent transparent transparent;
+    top: 38px;
+    right: 50px;
+}
+
+.social svg {
+    width: 24px;
+    height: 24px;
+    float: left;
+    margin: 7px;
+    cursor: pointer;
+    fill: socialButtonColor;
+    opacity: 0.75;
+}
+
+.social svg:hover {
+    opacity: 1;
+}
+
+.mainMenuBarButton {
+    height: 17px;
+    margin: 1px 2px 1px 2px;
+    padding: 0 5px 0 5px;
+    line-height: 14px;
+    font-family: mainFontFamily;
+    font-size: 8pt;
+    font-weight: normal;
+    color: #e7e7e7;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, 1);
+    box-shadow: none;
+    box-sizing: content-box;
+    background: #515151;
+    border: 1px solid #000000;
+    cursor: pointer;
+}
+
+.mainMenuBarButton:visited {
+    color: #e7e7e7;
+}
+
+.mainMenuBarButton:hover {
+    background: #202020;
+    color: #ffffff;
+    box-shadow: 0 1px 0 0 rgba(66, 66, 66, 1);
+}
+
+.mainMenuBarButtonClicked {
+    background: #202020;
+    color: #ffffff;
+    box-shadow: 0 1px 0 0 rgba(66, 66, 66, 1);
+}
+
+.shareButton svg {
+    width: 14px;
+    height: 16px;
+    vertical-align: middle;
+    fill: #e7e7e7;
+    margin-right: 5px;
+    padding-bottom: 2px;
+}
+
+.shareButtonTooltip > span:after {
+    right: 36px;
+}
+
+.shareDropDown {
+    font-size: 8pt;
+    background: #202020;
+    display: block;
+    cursor: pointer;
+}
+
+.shareDropDown > span:first-child {
+    content: "";
+    position: absolute;
+    width: 0;
+    height: 0;
+    border-width: 10px;
+    border-style: solid;
+    border-color: transparent transparent #202020 transparent;
+    top: -20px;
+    right: 36px;
+}
+
+.shareDropDownWithHeader > span:first-child {
+    border-color: transparent transparent #2D2D2D transparent;
+}
+
+.shareDropDownHeader {
+    font-size: 9pt;
+    font-weight: bold;
+    background: #2D2D2D;
+    border-bottom: 1px solid #595959;
+    border-top: 1px solid #2D2D2D;
+    padding: 5px 15px;
+    cursor: default;
+}
+
+.shareDropDownHeader span {
+    vertical-align: middle;
+}
+
+.shareDropDownHeader svg {
+    width: 18px;
+    height: 14px;
+    fill: #DBDBDB;
+    vertical-align: middle;
+    margin-right: 15px;
+    cursor: pointer;
+}
+
+.shareDropDownContent div {
+    border-bottom: 1px solid #595959;
+    padding: 5px 80px 5px 15px;
+    cursor: pointer;
+}
+
+.shareDropDownContent div svg {
+    width: 18px;
+    height: 14px;
+    fill: #e7e7e7;
+    vertical-align: middle;
+    margin-right: 15px;
+}
+
+.shareDropDownContent div span {
+    vertical-align: middle;
+}
+
+.shareDropDownContent div:last-child {
+    border: none;
+}

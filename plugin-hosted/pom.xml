@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2015] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>codenvy-plugin-parent</artifactId>
+        <groupId>com.codenvy.plugin</groupId>
+        <version>4.0.0-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
+    <artifactId>codenvy-plugin-hosted-parent</artifactId>
+    <version>4.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Codenvy Plugin :: Hosted :: Parent</name>
+    <modules>
+        <module>codenvy-hosted-client-gwt-subscription</module>
+        <!--
+        <module>codenvy-docker-client</module>
+        <module>codenvy-runner-docker</module>
+        -->
+        <module>codenvy-swarm-machine</module>
+        <module>codenvy-hosted-ext-permissions</module>
+        <!--
+        <module>codenvy-ext-factory</module>
+        <module>codenvy-ext-subscriptions</module>
+        -->
+        <module>codenvy-hosted-ext-support-help</module>
+        <module>codenvy-hosted-ext-profile</module>
+        <module>codenvy-hosted-ext-hosted</module>
+        <module>codenvy-machine-hosted</module>
+        <!--
+        <module>codenvy-ext-resources</module>
+        -->
+        <module>codenvy-router-machine</module>
+    </modules>
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/plugin-hosted.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/plugin-hosted.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <properties>
+        <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
+        <gwt.test.skip>true</gwt.test.skip>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
+    </properties>
+    <build>
+        <pluginManagement>
+            <plugins>
+                <plugin>
+                    <groupId>org.eclipse.che.core</groupId>
+                    <artifactId>che-core-api-dto-maven-plugin</artifactId>
+                    <version>${che.core.version}</version>
+                </plugin>
+            </plugins>
+        </pluginManagement>
+    </build>
+</project>
