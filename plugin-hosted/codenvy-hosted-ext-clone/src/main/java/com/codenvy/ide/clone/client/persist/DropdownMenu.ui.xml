@@ -1,0 +1,113 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2015] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder
+        xmlns:ui="urn:ui:com.google.gwt.uibinder"
+        xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:with field='locale' type='com.codenvy.ide.share.client.ShareLocalizationConstant'/>
+
+    <ui:style type="com.codenvy.ide.clone.client.persist.DropdownMenu.Styles">
+
+        .menu {
+            position: absolute;
+            left: 0px;
+            top: 0px;
+            right: 0px;
+            bottom: 0px;
+            overflow: hidden;
+            z-index: 99999;
+        }
+
+        .glass {
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #373737;
+            opacity: 0.1;
+        }
+
+        .dropdown {
+            position: absolute;
+            left: 0px;
+            min-width: 160px;
+            padding: 5px 0;
+            margin: 2px 0 0;
+            font-size: 14px;
+            background-color: #fff;
+
+            background-clip: padding-box;
+            z-index: 1000;
+            text-align: left;
+            list-style: none;
+            border: 1px solid rgba(0, 0, 0, .15);
+            border-radius: 4px;
+            box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
+            top: 0px;
+        }
+
+        .dropdown > li > a {
+            display: block;
+            padding: 3px 20px;
+            clear: both;
+            font-weight: 400;
+            line-height: 1.42857143;
+            color: #333;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .dropdown > li > a:hover {
+            color: #262626;
+            text-decoration: none;
+            background-color: #f5f5f5;
+        }
+
+        .divider {
+            height: 1px;
+            margin: 9px 0;
+            overflow: hidden;
+            background-color: #e5e5e5;
+        }
+
+    </ui:style>
+
+    <g:HTMLPanel addStyleNames="{style.menu}">
+        <div class="{style.glass}" ui:field="glassElement"></div>
+        <ul class="{style.dropdown}" ui:field="ulElement">
+            <li>
+                <a href="#">Action</a>
+            </li>
+            <li>
+                <a href="#">Another action</a>
+            </li>
+            <li>
+                <a href="#">Something else here</a>
+            </li>
+            <li class="{style.divider}"></li>
+            <li>
+                <a href="#">Separated link</a>
+            </li>
+        </ul>
+    </g:HTMLPanel>
+
+</ui:UiBinder>
