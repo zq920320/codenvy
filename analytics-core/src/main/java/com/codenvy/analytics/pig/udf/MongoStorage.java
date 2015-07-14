@@ -30,7 +30,12 @@ import com.mongodb.MongoClientURI;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
-import org.apache.hadoop.mapreduce.*;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.JobContext;
+import org.apache.hadoop.mapreduce.OutputCommitter;
+import org.apache.hadoop.mapreduce.OutputFormat;
+import org.apache.hadoop.mapreduce.RecordWriter;
+import org.apache.hadoop.mapreduce.TaskAttemptContext;
 import org.apache.pig.StoreFunc;
 import org.apache.pig.data.Tuple;
 import org.slf4j.Logger;
@@ -40,7 +45,10 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Map;
 
-import static com.codenvy.analytics.Utils.*;
+import static com.codenvy.analytics.Utils.fetchEncodedPairs;
+import static com.codenvy.analytics.Utils.isAnonymousUser;
+import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
+import static com.codenvy.analytics.Utils.toArray;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
@@ -121,7 +129,7 @@ public class MongoStorage extends StoreFunc {
                             if (isParameters(key)) {
                                 putKeyValuePairs(dbObject, str);
 
-                            } else if (isAliases(key)) {
+                            } else if (isAliases(key) || isRoles(key)) { //TODO
                                 put(dbObject, key, toArray(str));
 
                             } else if ("params-only-remove-event".equals(key)) {
@@ -195,6 +203,15 @@ public class MongoStorage extends StoreFunc {
          */
         private boolean isAliases(String key) {
             return key.equalsIgnoreCase("aliases");
+        }
+
+        /**
+         * The parameter 'roles' contains arrays of strings.
+         *
+         * @return true if key equals to 'roles' and false otherwise
+         */
+        private boolean isRoles(String key) {
+            return key.equalsIgnoreCase("roles");
         }
 
         /**

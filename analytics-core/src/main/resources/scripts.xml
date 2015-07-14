@@ -358,6 +358,12 @@
         <parameter key="EVENT" value="subscription-removed"/>
         <parameter key="STORAGE_TABLE" value="subscription_removed"/>
     </script>
+    <script name="users_accounts">
+        <description>Users' accounts</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="users_accounts"/>
+    </script>
     <script name="events">
         <description>On-prem trial licenses issued</description>
         <parameter key="WS" value="ANY"/>

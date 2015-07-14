@@ -144,7 +144,8 @@ public class MarketoReportGenerator {
                 Map<String, Double> usersGbHours = getUsersGbHoursUse(profiles);
                 Map<String, Long> usersCreatedDates = getUsersCreatedDates(profiles);
 
-                writeUsersWithStatistics(activeUsers, newUsers, profiles, usersGbHours, usersCreatedDates, out);
+                //TODO
+                writeUsersWithStatistics(activeUsers, newUsers, profiles, usersGbHours, usersCreatedDates, null, null, null, null, out);
 
                 if (profiles.size() < pageSize) {
                     break;
@@ -158,6 +159,10 @@ public class MarketoReportGenerator {
                                           List<ValueData> profiles,
                                           Map<String, Double> usersGbHours,
                                           Map<String, Long> usersCreatedDates,
+                                          Map<String, Boolean> usersAccountLockdown,
+                                          Map<String, Boolean> usersCcAdded,
+                                          Map<String, Long> onPremSubAddedDate,
+                                          Map<String, Long> onPremSubRemovedDate,
                                           BufferedWriter out) throws IOException, ParseException {
         for (ValueData object : profiles) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
@@ -167,10 +172,16 @@ public class MarketoReportGenerator {
             // Skip users without email which stored in a field ALIASES.
             if (activeUsers.contains(user)
                 && toArray(profile.get(AbstractMetric.ALIASES)).length != 0) {
-                Double userGbHoursValue = usersGbHours.containsKey(user.getAsString()) ? usersGbHours.get(user.getAsString()) : 0.0D;
-                Long userCreatedDate = usersCreatedDates.get(user.getAsString());
+                String userId = user.getAsString();
 
-                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate);
+                Double userGbHoursValue = usersGbHours.containsKey(userId) ? usersGbHours.get(userId) : 0.0D;
+                Long userCreatedDate = usersCreatedDates.get(userId);
+                boolean accountLockdown = !usersAccountLockdown.get(userId);
+                boolean ccAdded = usersCcAdded.get(userId);
+                Long onPremSubAddedDateLong = onPremSubAddedDate.get(userId);
+                Long onPremSubRemovedDateLong = onPremSubRemovedDate.get(userId);
+
+                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate, accountLockdown, ccAdded, onPremSubAddedDateLong, onPremSubRemovedDateLong);
             }
         }
     }
@@ -180,18 +191,48 @@ public class MarketoReportGenerator {
                                          ValueData user,
                                          boolean isNewUser,
                                          Double userGbHours,
-                                         @Nullable Long userCreatedDateLong) throws IOException, ParseException {
+                                         @Nullable Long userCreatedDateLong,
+                                         boolean accountLockdown,
+                                         boolean ccAdded,
+                                         @Nullable Long onPremSubAddedDateLong,
+                                         @Nullable Long onPremSubRemovedDateLong) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
         String lastProductLoginDate = getLastProductLogin(user.getAsString());
-        String userCreatedDate = userCreatedDateLong == null ? "" : new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(userCreatedDateLong);
+        String userCreatedDate = dateToString(userCreatedDateLong);
+        String onPremSubAddedDate = dateToString(onPremSubAddedDateLong);
+        String onPremSubRemovedDate = dateToString(onPremSubRemovedDateLong);
 
         if (stat.isEmpty()) {
             MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
+            writeStatistics(out,
+                            valueData.getAll(),
+                            profile,
+                            lastProductLoginDate,
+                            isNewUser,
+                            userGbHours,
+                            userCreatedDate,
+                            accountLockdown,
+                            ccAdded,
+                            onPremSubAddedDate,
+                            onPremSubRemovedDate);
         } else {
             MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
+            writeStatistics(out,
+                            valueData.getAll(),
+                            profile,
+                            lastProductLoginDate,
+                            isNewUser,
+                            userGbHours,
+                            userCreatedDate,
+                            accountLockdown,
+                            ccAdded,
+                            onPremSubAddedDate,
+                            onPremSubRemovedDate);
         }
+    }
+
+    private String dateToString(@Nullable Long date) {
+        return date == null ? "" : new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(date);
     }
 
     /**
@@ -322,7 +363,11 @@ public class MarketoReportGenerator {
                                  String lastProductLoginDate,
                                  boolean isCreatedTodayUser,
                                  Double userGbHoursValue,
-                                 String userCreatedDate) throws IOException {
+                                 String userCreatedDate,
+                                 boolean accountLockdown,
+                                 boolean ccAdded,
+                                 String onPremSubAdded,
+                                 String onPremSubRemoved) throws IOException {
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 

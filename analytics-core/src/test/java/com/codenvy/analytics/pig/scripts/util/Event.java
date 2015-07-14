@@ -18,6 +18,7 @@
 package com.codenvy.analytics.pig.scripts.util;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -412,6 +413,22 @@ public class Event {
                                 .withParam("LIFETIME", lifetime)
                                 .withParam("MEMORY", mem)
                                 .withParam("ID", id);
+        }
+
+        public static Builder createAccountAddMemberEvent(String accountId,
+                                                          String userId,
+                                                          List<String> roles) {
+            return new Builder().withParam("EVENT", "account-add-member")
+                                .withParam("ACCOUNT-ID", accountId)
+                                .withParam("USER-ID", userId)
+                                .withParam("ROLES", roles.toString());
+        }
+
+        public static Builder createAccountRemoveMemberEvent(String accountId,
+                                                             String userId) {
+            return new Builder().withParam("EVENT", "account-remove-member")
+                                .withParam("ACCOUNT-ID", accountId)
+                                .withParam("USER-ID", userId);
         }
     }
 }

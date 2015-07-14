@@ -84,7 +84,6 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PROFILE_ATTRIBUTE_FIRST_NAME = "firstName";
     public static final String PROFILE_ATTRIBUTE_LAST_NAME  = "lastName";
     public static final String PROFILE_ATTRIBUTE_EMAIL      = "email";
-    public static final String ROLES                        = "roles";
 
     public static final String SUBSCRIPTION_PROPERTIES = "subscription_properties";
     public static final String SUBSCRIPTION_SERVICE_ID = "subscription_service_id";

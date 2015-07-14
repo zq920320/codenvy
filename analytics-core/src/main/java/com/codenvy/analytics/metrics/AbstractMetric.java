@@ -93,6 +93,10 @@ public abstract class AbstractMetric implements Metric {
     public static final String RUNS_GIGABYTE_RAM_HOURS   = "runs_gigabyte_ram_hours";
     public static final String DEBUGS_GIGABYTE_RAM_HOURS = "debugs_gigabyte_ram_hours";
     public static final String EDITS_GIGABYTE_RAM_HOURS  = "edits_gigabyte_ram_hours";
+    public static final String ROLES                     = "roles";
+    public static final String ACCOUNT                   = "account";
+    public static final String REMOVED                   = "removed";
+    public static final String REMOVED_DATE              = "removed_date";
 
     public static final String IM_ARTIFACT = "artifact";
     public static final String IM_VERSION  = "version";
