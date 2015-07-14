@@ -27,7 +27,7 @@
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
-            <version>${codenvy.plugins.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
