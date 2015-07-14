@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-bitbucket-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.2-SNAPSHOT</version>
+        <version>3.11.2</version>
     </parent>
     <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
     <packaging>jar</packaging>

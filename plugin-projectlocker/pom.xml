@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.2-SNAPSHOT</version>
+        <version>3.11.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>codenvy-plugin-projectlocker-parent</artifactId>
