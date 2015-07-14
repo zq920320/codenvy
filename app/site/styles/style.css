@@ -117,7 +117,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 .signup-page .logo, .error-page .logo{
 	height:41px;
 	width:246px;
-	margin-bottom:21px;
+	margin:20px 0px 21px 0px;
 }
 .signup-page h2, .error-page h2{
 	font-size:24px;
