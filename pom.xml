@@ -27,13 +27,13 @@
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
-    <version>3.11.2-SNAPSHOT</version>
+    <version>3.11.2</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
     <scm>
         <connection>scm:git:git@github.com:codenvy/odyssey.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/odyssey.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>3.11.2</tag>
         <url>https://fisheye.exoplatform.org/browse/odyssey</url>
     </scm>
     <properties>
