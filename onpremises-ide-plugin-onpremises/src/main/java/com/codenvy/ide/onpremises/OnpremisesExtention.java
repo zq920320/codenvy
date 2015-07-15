@@ -40,53 +40,31 @@ import org.eclipse.che.ide.workspace.WorkspacePresenter;
  * @author Igor Vinokur
  */
 @Singleton
-@Extension(title = "Subscription", version = "1.0.0")
+@Extension(title = "Onpremises", version = "1.0.0")
 public class OnpremisesExtention {
-
-    public static final String USED_RESOURCES_CHANGE_CHANEL = "workspace:resources:";
-
-    private final RunnerServiceClient runnerServiceClient;
-
-    private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
-    private final MessageBus             messageBus;
-
-    private final MemoryIndicatorAction    memoryIndicatorAction;
-    private final QueueTypeIndicatorAction queueTypeIndicatorAction;
 
     @Inject
     public OnpremisesExtention(PanelResources resources,
                                LocalizationConstants locale,
-                               RunnerServiceClient runnerServiceClient,
-                               DtoUnmarshallerFactory dtoUnmarshallerFactory,
                                WorkspacePresenter workspacePresenter,
-                               MessageBus messageBus,
                                ActionManager actionManager,
                                QueueTypeIndicatorAction queueTypeIndicatorAction,
-                               MemoryIndicatorAction memoryIndicatorAction,
                                OnpremisesIndicatorAction onpremisesIndicatorAction,
                                TrademarkLinkAction trademarkLinkAction) {
-
-        this.queueTypeIndicatorAction = queueTypeIndicatorAction;
-        this.runnerServiceClient = runnerServiceClient;
-        this.memoryIndicatorAction = memoryIndicatorAction;
-        this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
-        this.messageBus = messageBus;
 
         resources.subscriptionsCSS().ensureInjected();
 
         workspacePresenter.setStatusPanelVisible(true);
 
-        actionManager.registerAction("memoryIndicator", memoryIndicatorAction);
         actionManager.registerAction("queueTypeIndicator", queueTypeIndicatorAction);
         actionManager.registerAction("subscriptionTitle", onpremisesIndicatorAction);
         actionManager.registerAction("trademarkLink", trademarkLinkAction);
 
         DefaultActionGroup rightBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_RIGHT_STATUS_PANEL);
-        rightBottomToolbarGroup.add(memoryIndicatorAction, Constraints.FIRST);
         rightBottomToolbarGroup.addSeparator();
         rightBottomToolbarGroup.add(queueTypeIndicatorAction, Constraints.LAST);
         rightBottomToolbarGroup.addSeparator();
-        updateResourcesInformation();
+        queueTypeIndicatorAction.updateCustomComponent();
 
         DefaultActionGroup leftBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_LEFT_STATUS_PANEL);
         leftBottomToolbarGroup.add(onpremisesIndicatorAction, Constraints.LAST);
@@ -95,58 +73,5 @@ public class OnpremisesExtention {
         DefaultActionGroup centerBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_CENTER_STATUS_PANEL);
         centerBottomToolbarGroup.add(trademarkLinkAction);
         trademarkLinkAction.updateLinkElement(locale.trademarkTitle(), locale.trademarkUrl());
-    }
-
-    private void updateResourcesInformation() {
-        queueTypeIndicatorAction.updateCustomComponent();
-        runnerServiceClient.getResources(
-                new AsyncRequestCallback<ResourcesDescriptor>(dtoUnmarshallerFactory.newUnmarshaller(ResourcesDescriptor.class)) {
-                    @Override
-                    protected void onSuccess(ResourcesDescriptor result) {
-                        memoryIndicatorAction.setUsedMemorySize(result.getUsedMemory());
-                        memoryIndicatorAction.setTotalMemorySize(result.getTotalMemory());
-                        try {
-                            messageBus.subscribe(USED_RESOURCES_CHANGE_CHANEL + Config.getWorkspaceId(),
-                                                 new UsedResourcesUpdater(Config.getWorkspaceId()));
-                        } catch (WebSocketException e) {
-                            Log.error(getClass(), "Can't open websocket connection");
-                        }
-                    }
-
-                    @Override
-                    protected void onFailure(Throwable exception) {
-                        Log.error(getClass(), exception.getMessage());
-                    }
-                });
-    }
-
-    private class UsedResourcesUpdater extends SubscriptionHandler<ResourcesDescriptor> {
-        private final String workspaceId;
-
-        UsedResourcesUpdater(String workspaceId) {
-            super(dtoUnmarshallerFactory.newWSUnmarshaller(ResourcesDescriptor.class));
-            this.workspaceId = workspaceId;
-        }
-
-        @Override
-        protected void onMessageReceived(ResourcesDescriptor result) {
-            if (result.getUsedMemory() != null) {
-                memoryIndicatorAction.setUsedMemorySize(result.getUsedMemory());
-            }
-
-            if (result.getTotalMemory() != null) {
-                memoryIndicatorAction.setTotalMemorySize(result.getTotalMemory());
-            }
-        }
-
-        @Override
-        protected void onErrorReceived(Throwable throwable) {
-            try {
-                messageBus.unsubscribe(USED_RESOURCES_CHANGE_CHANEL + workspaceId, this);
-                Log.error(UsedResourcesUpdater.class, throwable);
-            } catch (WebSocketException e) {
-                Log.error(UsedResourcesUpdater.class, e);
-            }
-        }
     }
 }

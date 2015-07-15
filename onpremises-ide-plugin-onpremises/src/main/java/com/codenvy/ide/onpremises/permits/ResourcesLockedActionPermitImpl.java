@@ -20,21 +20,72 @@ package com.codenvy.ide.onpremises.permits;
 
 import com.google.inject.Inject;
 
+import org.eclipse.che.api.account.gwt.client.AccountServiceClient;
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
+import org.eclipse.che.api.account.shared.dto.WorkspaceLockDetails;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.ide.api.action.permits.ResourcesLockedActionPermit;
+import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.rest.AsyncRequestCallback;
+import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+import org.eclipse.che.ide.util.loging.Log;
+import org.eclipse.che.ide.websocket.MessageBus;
+import org.eclipse.che.ide.websocket.WebSocketException;
+import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
+
 
 /**
- * Dummy implementation of resources locked permit for build and run actions.
+ * Implementation of resources locked permit for build and run actions.
  *
- * @author Igor Vinokur
+ * @author Oleksii Orel
  */
 public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPermit {
+    private final MessageBus             messageBus;
+    private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
+    private final String                 workspaceLockChangeChanel;
+
+    private boolean isWorkspaceLocked;
+
     @Inject
-    public ResourcesLockedActionPermitImpl() {
+    public ResourcesLockedActionPermitImpl(MessageBus messageBus,
+                                           AppContext appContext,
+                                           AccountServiceClient accountServiceClient,
+                                           DtoUnmarshallerFactory dtoUnmarshallerFactory) {
+        this.messageBus = messageBus;
+        this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
+
+        this.isWorkspaceLocked = false;
+
+        final WorkspaceDescriptor workspace = appContext.getWorkspace();
+
+        accountServiceClient.getAccountById(workspace.getAccountId(), new AsyncRequestCallback<AccountDescriptor>(
+                dtoUnmarshallerFactory.newUnmarshaller(AccountDescriptor.class)) {
+            @Override
+            protected void onSuccess(AccountDescriptor account) {
+                if (workspace.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
+                    isWorkspaceLocked = true;
+                }
+            }
+
+            @Override
+            protected void onFailure(Throwable error) {
+                Log.error(this.getClass(), "Unable to get account descriptor", error);
+            }
+        });
+
+        workspaceLockChangeChanel = "workspace:" + workspace.getId() + ":lock";
+
+        try {
+            messageBus.subscribe(workspaceLockChangeChanel, new WorkspaceLockedStateUpdater());
+        } catch (WebSocketException e) {
+            Log.error(getClass(), "Can't open websocket connection");
+        }
     }
 
     @Override
     public boolean isAllowed() {
-        return true;
+        return !isWorkspaceLocked;
     }
 
     @Override
@@ -44,6 +95,29 @@ public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPer
 
     @Override
     public boolean isWorkspaceLocked() {
-        return false;
+        return isWorkspaceLocked;
+    }
+
+
+    private class WorkspaceLockedStateUpdater extends SubscriptionHandler<WorkspaceLockDetails> {
+
+        WorkspaceLockedStateUpdater() {
+            super(dtoUnmarshallerFactory.newWSUnmarshaller(WorkspaceLockDetails.class));
+        }
+
+        @Override
+        protected void onMessageReceived(WorkspaceLockDetails workspaceLockDetails) {
+            isWorkspaceLocked = workspaceLockDetails.isLocked();
+        }
+
+        @Override
+        protected void onErrorReceived(Throwable throwable) {
+            try {
+                messageBus.unsubscribe(workspaceLockChangeChanel, this);
+                Log.error(WorkspaceLockDetails.class, throwable);
+            } catch (WebSocketException e) {
+                Log.error(WorkspaceLockDetails.class, e);
+            }
+        }
     }
 }

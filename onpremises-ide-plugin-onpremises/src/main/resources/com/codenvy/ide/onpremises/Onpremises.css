@@ -24,32 +24,6 @@
     line-height: 17px;
 }
 
-.memoryIndicator {
-    display: inline;
-    float: left;
-    margin-left: 2px;
-}
-
-.memoryIndicator .indicatorBackground {
-    height: 15px;
-    display: inline-block;
-}
-
-.memoryIndicator .usedMemory {
-    font-size: 11px;
-    color: white;
-    position: absolute;
-    margin-left: 4px;
-}
-
-.memoryIndicator .totalMemory {
-    font-size: 11px;
-    color: white;
-    text-align: right;
-    position: absolute;
-    right: 10px;
-}
-
 .queueTypeIndicator {
     margin: 0 2px;
     float: left;
@@ -59,57 +33,6 @@
     width: 14px;
     height: 15px;
     fill: #DBDBDB;
-}
-
-.tooltip {
-    font-family: mainFontFamily;
-    font-size: 8pt;
-    position: fixed;
-    z-index: 7;
-    border-top: 1px solid #2D2D2D;
-    cursor: default;
-    text-align: left;
-    line-height: normal;
-    display: none;
-}
-
-.tooltip:hover {
-    pointer-events: none;
-}
-
-.tooltip div:last-child {
-    content: "";
-    position: fixed;
-    width: 0;
-    height: 0;
-    border: 10px solid;
-    border-color: #202020 transparent transparent transparent;
-}
-
-.tooltipHeader {
-    font-size: 9pt;
-    font-weight: bold;
-    background: #2D2D2D;
-    border-top: 1px solid #2D2D2D;
-    border-bottom: 1px solid #595959;
-    padding: 3px 20px;
-}
-
-.tooltipHeader svg {
-    width: 15px;
-    height: 15px;
-    fill: #DBDBDB;
-    vertical-align: middle;
-    margin-right: 10px;
-}
-
-.tooltipHeader span {
-    vertical-align: middle;
-}
-
-.tooltipBody {
-    background: #202020;
-    padding: 10px 20px;
 }
 
 .bottomMenuTooltip {

@@ -31,12 +31,6 @@ public interface PanelResources extends ClientBundle {
 
         String panel();
 
-        String tooltip();
-
-        String tooltipHeader();
-
-        String tooltipBody();
-
         String bottomMenuTooltip();
 
         String bottomMenuTooltipBody();
@@ -46,25 +40,11 @@ public interface PanelResources extends ClientBundle {
         String centerContent();
 
         String subscriptionTitle();
-
-        String memoryIndicator();
-
-        String indicatorBackground();
-
-        String usedMemory();
-
-        String totalMemory();
     }
 
-    @Source({"HostedTypeIndicator.css", "org/eclipse/che/ide/api/ui/style.css"})
+    @Source({"Onpremises.css", "org/eclipse/che/ide/api/ui/style.css"})
     SubscriptionsCSS subscriptionsCSS();
 
-    @Source("com/codenvy/ide/onpremises/indicators/memory.svg")
-    SVGResource memory();
-
-    @Source("com/codenvy/ide/onpremises/indicators/dedicated-queue.svg")
+    @Source("com/codenvy/ide/onpremises/dedicated-queue.svg")
     SVGResource dedicatedQueue();
-
-    @Source("com/codenvy/ide/onpremises/indicators/shared-queue.svg")
-    SVGResource sharedQueue();
 }

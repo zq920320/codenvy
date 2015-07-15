@@ -17,20 +17,61 @@
  */
 package com.codenvy.ide.onpremises.permits;
 
+
+import com.codenvy.ide.onpremises.ActionPermissionLocalizationConstant;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.inject.Inject;
+
 import org.eclipse.che.ide.api.action.permits.ActionDenyAccessDialog;
+import org.eclipse.che.ide.api.action.permits.ResourcesLockedActionPermit;
+import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
+import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 
 /**
- * Dummy implementation of resources locked deny access dialog component for build and run actions.
+ * Implementation of resources locked deny access dialog component for build and run actions.
  *
- * @author Igor Vinokur
+ * @author Oleksii Orel
  */
 public class ResourcesLockedDenyAccessDialogImpl implements ActionDenyAccessDialog {
+    private final DialogFactory                        dialogFactory;
+    private final ActionPermissionLocalizationConstant localizationConstants;
+    private final ResourcesLockedActionPermit          resourcesLockedActionPermit;
 
-    public ResourcesLockedDenyAccessDialogImpl() {
+    @Inject
+    public ResourcesLockedDenyAccessDialogImpl(DialogFactory dialogFactory,
+                                               ResourcesLockedActionPermit resourcesLockedActionPermit,
+                                               ActionPermissionLocalizationConstant localizationConstants) {
+        this.dialogFactory = dialogFactory;
+        this.resourcesLockedActionPermit = resourcesLockedActionPermit;
+        this.localizationConstants = localizationConstants;
+
+    }
+
+    private String getDialogMessage() {
+        if (resourcesLockedActionPermit.isWorkspaceLocked()) {
+            return localizationConstants.lockedWorkspaceDialogMessage();
+        } else {
+            return localizationConstants.unlockedDialogMessage();
+        }
+    }
+
+    private String getDialogTitle() {
+        if (resourcesLockedActionPermit.isWorkspaceLocked()) {
+            return localizationConstants.lockedWorkspaceDialogTitle();
+        } else {
+            return localizationConstants.unlockedDialogTitle();
+        }
     }
 
     @Override
     public void show() {
-
+        dialogFactory.createMessageDialog(getDialogTitle(),
+                                          new HTML(getDialogMessage()),
+                                          new ConfirmCallback() {
+                                              @Override
+                                              public void accepted() {
+                                              }
+                                          })
+                     .show();
     }
 }

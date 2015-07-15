@@ -20,31 +20,24 @@ package com.codenvy.ide.onpremises;
 import com.google.gwt.i18n.client.Messages;
 
 /**
- * The localization constants for the subscription panel presenter.
+ * The localization constants for the permission action.
  *
  * @author Oleksii Orel
  */
-public interface LocalizationConstants extends Messages {
+public interface ActionPermissionLocalizationConstant extends Messages {
 
     /*
-     * Onpremises Label
+     * Locked dialog
      */
-    @Key("onpremisesIndicatorAction.description")
-    String hostedTypeDescription();
+    @Key("actionPermission.locked.workspace.dialog.title")
+    String lockedWorkspaceDialogTitle();
 
-    @Key("trademarkLinkAction.title")
-    String trademarkTitle();
+    @Key("actionPermission.locked.workspace.dialog.message")
+    String lockedWorkspaceDialogMessage();
 
-    @Key("trademarkLinkAction.url")
-    String trademarkUrl();
+    @Key("actionPermission.unlocked.dialog.title")
+    String unlockedDialogTitle();
 
-    /*
-     * Queue Type
-     */
-    @Key("queue.type.indicator.tooltip.dedicated.title")
-    String queueTypeTooltipDedicatedTitle();
-
-    @Key("queue.type.indicator.tooltip.dedicated.message")
-    String queueTypeTooltipDedicatedMessage(int nbQueues);
-
+    @Key("actionPermission.unlocked.dialog.message")
+    String unlockedDialogMessage();
 }
