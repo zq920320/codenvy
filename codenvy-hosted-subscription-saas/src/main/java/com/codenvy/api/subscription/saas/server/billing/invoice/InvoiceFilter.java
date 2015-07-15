@@ -19,6 +19,8 @@ package com.codenvy.api.subscription.saas.server.billing.invoice;
 
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
 
+import java.util.Arrays;
+
 /**
  * Filter for invoice queries.
  *
@@ -92,7 +94,7 @@ public class InvoiceFilter {
 
         public Builder withPaymentStates(PaymentState... states) {
             if (states.length == 0) {
-                throw new RuntimeException("Invalid value " + states);
+                throw new RuntimeException("Invalid value " + Arrays.toString(states));
             }
             instance.states = new String[states.length];
             for (int i = 0; i < states.length; i++) {
