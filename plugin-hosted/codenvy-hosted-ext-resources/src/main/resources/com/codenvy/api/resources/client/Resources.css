@@ -24,15 +24,30 @@
     line-height: 17px;
 }
 
-.queueTypeIndicator {
-    margin: 0 2px;
+.memoryIndicator {
+    display: inline;
     float: left;
+    margin-left: 2px;
 }
 
-.queueTypeIndicator svg {
-    width: 14px;
+.memoryIndicator .indicatorBackground {
     height: 15px;
-    fill: #DBDBDB;
+    display: inline-block;
+}
+
+.memoryIndicator .usedMemory {
+    font-size: 11px;
+    color: white;
+    position: absolute;
+    margin-left: 4px;
+}
+
+.memoryIndicator .totalMemory {
+    font-size: 11px;
+    color: white;
+    text-align: right;
+    position: absolute;
+    right: 10px;
 }
 
 .bottomMenuTooltip {
@@ -84,15 +99,4 @@
 .bottomMenuTooltipBody {
     background: #202020;
     padding: 10px 20px;
-}
-
-.centerContent a,
-.centerContent span {
-    cursor: pointer;
-    color: #6396cf;
-}
-
-.subscriptionTitle {
-    margin-left: 4px;
-    margin-right: 4px;
 }

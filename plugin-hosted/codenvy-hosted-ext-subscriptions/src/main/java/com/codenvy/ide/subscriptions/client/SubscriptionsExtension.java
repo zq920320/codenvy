@@ -17,9 +17,28 @@
  */
 package com.codenvy.ide.subscriptions.client;
 
-import org.eclipse.che.ide.api.extension.Extension;
+import com.codenvy.api.subscription.gwt.client.SubscriptionServiceClient;
+import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
+import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
+import org.eclipse.che.api.account.server.Constants;
+import org.eclipse.che.ide.api.action.ActionManager;
+import org.eclipse.che.ide.api.action.DefaultActionGroup;
+import org.eclipse.che.ide.api.action.IdeActions;
+import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.constraints.Constraints;
+import org.eclipse.che.ide.api.extension.Extension;
+import org.eclipse.che.ide.collections.Array;
+import org.eclipse.che.ide.rest.AsyncRequestCallback;
+import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+import org.eclipse.che.ide.util.Config;
+import org.eclipse.che.ide.util.loging.Log;
+import org.eclipse.che.ide.workspace.WorkspacePresenter;
+
+import static com.codenvy.ide.subscriptions.client.QueueType.DEDICATED;
+import static com.codenvy.ide.subscriptions.client.QueueType.SHARED;
 
 /**
  * @author Vitaliy Guliy
@@ -29,9 +48,104 @@ import com.google.inject.Singleton;
 @Singleton
 @Extension(title = "Subscription", version = "1.0.0")
 public class SubscriptionsExtension {
+    private final SubscriptionServiceClient subscriptionServiceClient;
+
+    private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
+
+    private final SubscriptionIndicatorAction subscriptionIndicatorAction;
+    private final QueueTypeIndicatorAction queueTypeIndicatorAction;
+
     @Inject
-    public SubscriptionsExtension(SubscriptionPanelPresenter subscriptionPanelPresenter, SubscriptionsResources resources) {
+    public SubscriptionsExtension(SubscriptionsResources resources,
+                                  DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                                  WorkspacePresenter workspacePresenter,
+                                  AppContext appContext,
+                                  ActionManager actionManager,
+                                  RedirectLinkAction redirectLinkAction,
+                                  SubscriptionIndicatorAction subscriptionIndicatorAction,
+                                  QueueTypeIndicatorAction queueTypeIndicatorAction,
+                                  SubscriptionPanelLocalizationConstant locale,
+                                  SubscriptionServiceClient subscriptionServiceClient) {
+
         resources.subscriptionsCSS().ensureInjected();
-        subscriptionPanelPresenter.process();
+
+        this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
+        this.subscriptionIndicatorAction = subscriptionIndicatorAction;
+        this.queueTypeIndicatorAction = queueTypeIndicatorAction;
+        this.subscriptionServiceClient = subscriptionServiceClient;
+
+        workspacePresenter.setStatusPanelVisible(true);
+
+        actionManager.registerAction("centerContent", redirectLinkAction);
+        actionManager.registerAction("subscriptionTitle", subscriptionIndicatorAction);
+        actionManager.registerAction("queueTypeIndicator", queueTypeIndicatorAction);
+
+        DefaultActionGroup rightBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_RIGHT_STATUS_PANEL);
+        rightBottomToolbarGroup.addSeparator();
+        rightBottomToolbarGroup.add(queueTypeIndicatorAction, Constraints.LAST);
+        rightBottomToolbarGroup.addSeparator();
+
+        DefaultActionGroup centerBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_CENTER_STATUS_PANEL);
+        centerBottomToolbarGroup.add(redirectLinkAction);
+
+        DefaultActionGroup leftBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_LEFT_STATUS_PANEL);
+        leftBottomToolbarGroup.add(subscriptionIndicatorAction, Constraints.LAST);
+
+        if (Config.getCurrentWorkspace().getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
+            redirectLinkAction.updateLinkElement(locale.lockDownModeTitle(), locale.lockDownModeUrl(), true);
+        }
+
+        if (Config.getCurrentWorkspace().isTemporary()) {
+            queueTypeIndicatorAction.setQueueType(SHARED);
+
+            if (!appContext.getCurrentUser().isUserPermanent()) {
+                redirectLinkAction.updateLinkElement(locale.createAccountActionTitle(),
+                                                     Window.Location.getHref() + "?login", true);
+            }
+        } else {
+            checkSaasSubscription();
+        }
+
+
+    }
+
+    private void checkSaasSubscription() {
+        String accountId = Config.getCurrentWorkspace().getAccountId();
+        subscriptionServiceClient.getSubscriptionByServiceId(accountId, "Saas", new AsyncRequestCallback<Array<SubscriptionDescriptor>>(
+                dtoUnmarshallerFactory.newArrayUnmarshaller(SubscriptionDescriptor.class)) {
+            @Override
+            protected void onSuccess(Array<SubscriptionDescriptor> result) {
+                if (result.isEmpty()) {
+                    Log.error(getClass(), "Required Saas subscription is absent");
+                    updateSaasInformation("Community", SHARED);
+                    return;
+                }
+
+                if (result.size() > 1) {
+                    Log.error(getClass(), "User has more than 1 Saas subscriptions");
+                    updateSaasInformation("Community", SHARED);
+                    return;
+                }
+
+                SubscriptionDescriptor subscription = result.get(0);
+
+                final String subscriptionPackage = subscription.getProperties().get("Package");
+
+                updateSaasInformation(subscriptionPackage, DEDICATED);
+            }
+
+            @Override
+            protected void onFailure(Throwable exception) {
+                //User hasn't permission to account
+                updateSaasInformation("Community", SHARED);
+            }
+        });
+    }
+
+    private void updateSaasInformation(String subscriptionPackage, QueueType queueType) {
+        final String formattedSubscriptionPackage = subscriptionPackage.substring(0, 1).toUpperCase() +
+                                                    subscriptionPackage.substring(1).toLowerCase();
+        subscriptionIndicatorAction.setDescription("Subscription: SAAS " + formattedSubscriptionPackage);
+        queueTypeIndicatorAction.setQueueType(queueType);
     }
 }

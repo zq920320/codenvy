@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.subscriptions.client;
+package com.codenvy.api.resources.client;
 
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.Element;
@@ -58,10 +58,10 @@ import static com.google.gwt.dom.client.Style.Unit.PX;
 public class MemoryIndicatorAction extends Action implements CustomComponentAction {
     private static final int FULL_WIDTH = 100;
 
-    private final SubscriptionsResources            resources;
+    private final PanelResources                    resources;
     private final RunnerServiceClient               runnerServiceClient;
     private final DtoUnmarshallerFactory            dtoUnmarshallerFactory;
-    private final SubscriptionsLocalizationConstant locale;
+    private final ResourcesLocalizationConstant     locale;
     private final Element                           usedMemoryElement;
     private final Element                           valueUsedMemoryElement;
     private final Element                           totalMemoryElement;
@@ -75,8 +75,8 @@ public class MemoryIndicatorAction extends Action implements CustomComponentActi
     private boolean lastValueOfAllowed;
 
     @Inject
-    public MemoryIndicatorAction(SubscriptionsResources resources,
-                                 SubscriptionsLocalizationConstant locale,
+    public MemoryIndicatorAction(PanelResources resources,
+                                 ResourcesLocalizationConstant locale,
                                  RunnerServiceClient runnerServiceClient,
                                  AnalyticsEventLogger eventLogger,
                                  DtoUnmarshallerFactory dtoUnmarshallerFactory,
@@ -89,14 +89,14 @@ public class MemoryIndicatorAction extends Action implements CustomComponentActi
         this.runnerServiceClient = runnerServiceClient;
 
         valueUsedMemoryElement = DOM.createSpan();
-        valueUsedMemoryElement.setClassName(resources.subscriptionsCSS().usedMemory());
+        valueUsedMemoryElement.setClassName(resources.resourcesCSS().usedMemory());
         valueTotalMemoryElement = DOM.createSpan();
-        valueTotalMemoryElement.setClassName(resources.subscriptionsCSS().totalMemory());
+        valueTotalMemoryElement.setClassName(resources.resourcesCSS().totalMemory());
         usedMemoryElement = DOM.createDiv();
-        usedMemoryElement.setClassName(resources.subscriptionsCSS().indicatorBackground());
+        usedMemoryElement.setClassName(resources.resourcesCSS().indicatorBackground());
         usedMemoryElement.setId("memory-widget-usedram");
         totalMemoryElement = DOM.createDiv();
-        totalMemoryElement.setClassName(resources.subscriptionsCSS().indicatorBackground());
+        totalMemoryElement.setClassName(resources.resourcesCSS().indicatorBackground());
 
         tooltipBodyMessageElement = DOM.createSpan();
 
@@ -132,9 +132,9 @@ public class MemoryIndicatorAction extends Action implements CustomComponentActi
         final Element tooltipBody = DOM.createDiv();
         final Element tooltipArrow = DOM.createDiv();
 
-        panel.addStyleName(resources.subscriptionsCSS().panel());
+        panel.addStyleName(resources.resourcesCSS().panel());
         memoryElement.setId("memory-widget-panel");
-        memoryElement.setClassName(resources.subscriptionsCSS().memoryIndicator());
+        memoryElement.setClassName(resources.resourcesCSS().memoryIndicator());
 
         // add the 5 children
         memoryElement.appendChild(valueUsedMemoryElement);
@@ -182,14 +182,14 @@ public class MemoryIndicatorAction extends Action implements CustomComponentActi
             }
         }, MouseOutEvent.getType());
 
-        tooltipHeader.addClassName(resources.subscriptionsCSS().bottomMenuTooltipHeader());
+        tooltipHeader.addClassName(resources.resourcesCSS().bottomMenuTooltipHeader());
         tooltipHeader.appendChild(new SVGImage(resources.memory()).getElement());
         tooltipHeader.appendChild(tooltipHeaderMessageElement);
 
-        tooltipBody.addClassName(resources.subscriptionsCSS().bottomMenuTooltipBody());
+        tooltipBody.addClassName(resources.resourcesCSS().bottomMenuTooltipBody());
         tooltipBody.appendChild(tooltipBodyMessageElement);
 
-        tooltipElement.addClassName(resources.subscriptionsCSS().bottomMenuTooltip());
+        tooltipElement.addClassName(resources.resourcesCSS().bottomMenuTooltip());
         tooltipElement.appendChild(tooltipHeader);
         tooltipElement.appendChild(tooltipBody);
         tooltipElement.appendChild(tooltipArrow);
