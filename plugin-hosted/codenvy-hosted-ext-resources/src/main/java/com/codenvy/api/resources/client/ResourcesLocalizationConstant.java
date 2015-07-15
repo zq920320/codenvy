@@ -15,29 +15,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.subscriptions.client;
+package com.codenvy.api.resources.client;
 
 import com.google.gwt.i18n.client.Messages;
 
 /**
- * The localization constants for the subscriptions extension.
+ * The localization constants for the subscription panel presenter.
  *
- * @author Kevin Pollet
+ * @author Oleksii Orel
  */
-public interface SubscriptionsLocalizationConstant extends Messages {
+public interface ResourcesLocalizationConstant extends Messages {
 
     /*
-     * Queue Type
+     * Memory
      */
-    @Key("queue.type.indicator.tooltip.shared.title")
-    String queueTypeTooltipSharedTitle();
+    @Key("memory.indicator.tooltip.title")
+    String memoryIndicatorTooltipTitle();
 
-    @Key("queue.type.indicator.tooltip.shared.message")
-    String queueTypeTooltipSharedMessage();
+    @Key("memory.indicator.tooltip.message")
+    String memoryIndicatorTooltipMessage();
 
-    @Key("queue.type.indicator.tooltip.dedicated.title")
-    String queueTypeTooltipDedicatedTitle();
+    @Key("memory.indicator.tooltip.account.locked.message")
+    String memoryIndicatorTooltipAccountLockedMessage();
 
-    @Key("queue.type.indicator.tooltip.dedicated.message")
-    String queueTypeTooltipDedicatedMessage(int nbQueues);
+    @Key("memory.indicator.tooltip.workspace.locked.message")
+    String memoryIndicatorTooltipWorkspaceLockedMessage();
 }
