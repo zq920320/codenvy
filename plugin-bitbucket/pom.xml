@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.3-SNAPSHOT</version>
+        <version>3.11.3</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>codenvy-plugin-bitbucket-parent</artifactId>
