@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.subscriptions.client;
+package com.codenvy.api.resources.client;
 
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
@@ -25,10 +25,9 @@ import org.vectomatic.dom.svg.ui.SVGResource;
 /**
  * @author Kevin Pollet
  */
-public interface SubscriptionsResources extends ClientBundle {
-    interface SubscriptionsCSS extends CssResource {
-        String queueTypeIndicator();
+public interface PanelResources extends ClientBundle {
 
+    interface ResourcesCSS extends CssResource {
         String panel();
 
         String bottomMenuTooltip();
@@ -37,17 +36,18 @@ public interface SubscriptionsResources extends ClientBundle {
 
         String bottomMenuTooltipHeader();
 
-        String centerContent();
+        String memoryIndicator();
 
-        String subscriptionTitle();
+        String indicatorBackground();
+
+        String usedMemory();
+
+        String totalMemory();
     }
 
-    @Source({"Subscriptions.css", "org/eclipse/che/ide/api/ui/style.css"})
-    SubscriptionsCSS subscriptionsCSS();
+    @Source({"Resources.css", "org/eclipse/che/ide/api/ui/style.css"})
+    ResourcesCSS resourcesCSS();
 
-    @Source("queue/dedicated-queue.svg")
-    SVGResource dedicatedQueue();
-
-    @Source("queue/shared-queue.svg")
-    SVGResource sharedQueue();
+    @Source("memory.svg")
+    SVGResource memory();
 }
