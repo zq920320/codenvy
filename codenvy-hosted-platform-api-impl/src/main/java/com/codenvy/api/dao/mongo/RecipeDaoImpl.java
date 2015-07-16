@@ -27,7 +27,9 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.DuplicateKeyException;
 import com.mongodb.MongoException;
+import com.mongodb.WriteResult;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -48,6 +50,7 @@ import java.util.Map;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
 import static com.codenvy.api.dao.mongo.MongoUtil.asStringList;
+import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static java.util.Objects.requireNonNull;
@@ -58,15 +61,16 @@ import static java.util.Objects.requireNonNull;
  * Database schema:
  * {
  *     "_id" : "recipe12345...",
+ *     "name" : "recipe-name",
  *     "creator: "user12345...",
  *     "type" : "recipe-type",
  *     "script" : "script-content",
  *     "tags" : [ "tag1", "tag2 ],
  *     "permissions" : {
- *         "users" : [
+ *         "users" : {
  *              "user1" : [ "read", "write" ],
  *              "user2" : [ "read" ]
- *         ],
+ *         },
  *         "groups: [
  *              {
  *                  name: "workspace/admin",
@@ -111,11 +115,27 @@ public class RecipeDaoImpl implements RecipeDao {
     @Override
     public void update(ManagedRecipe recipe) throws ServerException, NotFoundException {
         requireNonNull(recipe, "Recipe required");
+        final BasicDBObject dbUpdate = new BasicDBObject();
+        if (!isNullOrEmpty(recipe.getType())) {
+            dbUpdate.append("type", recipe.getType());
+        }
+        if (!isNullOrEmpty(recipe.getScript())) {
+            dbUpdate.append("script", recipe.getScript());
+        }
+        if (!isNullOrEmpty(recipe.getName())) {
+            dbUpdate.append("name", recipe.getName());
+        }
+        if (!recipe.getTags().isEmpty()) {
+            dbUpdate.append("tags", asDBList(recipe.getTags()));
+        }
+        if (recipe.getPermissions() != null) {
+            dbUpdate.append("permissions", asDBObject(recipe.getPermissions()));
+        }
         try {
-            if (recipes.findOne(recipe.getId()) == null) {
-                throw new NotFoundException(format("Recipe with id '%s' was not found", recipe.getId()));
+            WriteResult wr = recipes.update(new BasicDBObject("_id", recipe.getId()), new BasicDBObject("$set", dbUpdate));
+            if (wr.getN() == 0) {
+                throw new NotFoundException("Recipe with id '" + recipe.getId() + "' was not found");
             }
-            recipes.update(new BasicDBObject("_id", recipe.getId()), asDBObject(recipe));
         } catch (MongoException ex) {
             throw new ServerException("Impossible to update recipe", ex);
         }
@@ -213,7 +233,7 @@ public class RecipeDaoImpl implements RecipeDao {
      * Transforms database object to recipe.
      * It is stateless so thread safe.
      */
-    /*used it test*/static class FromDBObjectToRecipeFunction implements Function<Object, ManagedRecipe> {
+    /*used in test*/static class FromDBObjectToRecipeFunction implements Function<Object, ManagedRecipe> {
 
         @Nullable
         @Override
@@ -221,10 +241,11 @@ public class RecipeDaoImpl implements RecipeDao {
             final BasicDBObject basicObj = (BasicDBObject)input;
 
             final RecipeImpl recipe = new RecipeImpl().withId(basicObj.getString("_id"))
-                                                  .withCreator(basicObj.getString("creator"))
-                                                  .withType(basicObj.getString("type"))
-                                                  .withScript(basicObj.getString("script"))
-                                                  .withTags(asStringList(basicObj.get("tags")));
+                                                      .withName(basicObj.getString("name"))
+                                                      .withCreator(basicObj.getString("creator"))
+                                                      .withType(basicObj.getString("type"))
+                                                      .withScript(basicObj.getString("script"))
+                                                      .withTags(asStringList(basicObj.get("tags")));
             final BasicDBObject permObj = (BasicDBObject)basicObj.get("permissions");
             if (permObj != null) {
                 final BasicDBObject usersObj = (BasicDBObject)permObj.get("users");
@@ -246,30 +267,32 @@ public class RecipeDaoImpl implements RecipeDao {
         }
     }
 
-    /*used it test*/ BasicDBObject asDBObject(ManagedRecipe recipe) {
+    /*used in test*/ BasicDBObject asDBObject(ManagedRecipe recipe) {
         final BasicDBObject recipeObj = new BasicDBObject().append("_id", recipe.getId())
+                                                           .append("name", recipe.getName())
                                                            .append("creator", recipe.getCreator())
                                                            .append("script", recipe.getScript())
                                                            .append("type", recipe.getType())
                                                            .append("tags", asDBList(recipe.getTags()));
-        final Permissions permissions = recipe.getPermissions();
-        if (permissions != null) {
-            final BasicDBObject users = new BasicDBObject();
-            for (Map.Entry<String, List<String>> entry : permissions.getUsers().entrySet()) {
-                final BasicDBList acl = new BasicDBList();
-                acl.addAll(entry.getValue());
-                users.put(entry.getKey(), acl);
-            }
-
-            final BasicDBList groups = new BasicDBList();
-            for (Group group : permissions.getGroups()) {
-                groups.add(new BasicDBObject().append("name", group.getName())
-                                              .append("unit", group.getUnit())
-                                              .append("acl", asDBList(group.getAcl())));
-            }
-            recipeObj.append("permissions", new BasicDBObject().append("users", users)
-                                                               .append("groups", groups));
+        if (recipe.getPermissions() != null) {
+            recipeObj.append("permissions", asDBObject(recipe.getPermissions()));
         }
         return recipeObj;
+    }
+
+    private BasicDBObject asDBObject(Permissions permissions) {
+        final BasicDBObject users = new BasicDBObject();
+        for (Map.Entry<String, List<String>> entry : permissions.getUsers().entrySet()) {
+            final BasicDBList acl = new BasicDBList();
+            acl.addAll(entry.getValue());
+            users.put(entry.getKey(), acl);
+        }
+        final BasicDBList groups = new BasicDBList();
+        for (Group group : permissions.getGroups()) {
+            groups.add(new BasicDBObject().append("name", group.getName())
+                                          .append("unit", group.getUnit())
+                                          .append("acl", asDBList(group.getAcl())));
+        }
+        return new BasicDBObject("users", users).append("groups", groups);
     }
 }

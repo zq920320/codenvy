@@ -21,6 +21,7 @@ package com.codenvy.api.dao.mongo;
 import com.codenvy.api.dao.mongo.RecipeDaoImpl.FromDBObjectToRecipeFunction;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -32,6 +33,7 @@ import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.shared.Group;
 import org.eclipse.che.api.machine.shared.ManagedRecipe;
 import org.eclipse.che.api.machine.shared.Permissions;
+import org.eclipse.che.api.machine.shared.Recipe;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
@@ -43,9 +45,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
+import static com.codenvy.api.dao.mongo.MongoUtil.asStringList;
 import static java.util.Arrays.asList;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 
 /**
@@ -70,6 +76,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         final Group group = new GroupImpl("workspace/admin", "workspace123", asList("read"));
         final Map<String, List<String>> users = singletonMap("user123", asList("read", "write"));
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withName("name")
                                                    .withCreator("someone")
                                                    .withScript("script content")
                                                    .withType("script-type")
@@ -93,6 +100,7 @@ public class RecipeDaoTest extends BaseDaoTest {
         final Group group = new GroupImpl("workspace/admin", "workspace123", asList("read"));
         final Map<String, List<String>> users = singletonMap("user123", asList("read", "write"));
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withName("name")
                                                    .withCreator("someone")
                                                    .withScript("script content")
                                                    .withType("script-type")
@@ -116,6 +124,7 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetRecipesByCreator() throws Exception {
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withName("name")
                                                    .withCreator("someone")
                                                    .withScript("script content")
                                                    .withType("script-type")
@@ -136,10 +145,11 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetRecipesByCreatorWithLimitAndSkipCount() throws Exception {
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"));
         for (int i = 0; i < 15; i++) {
             collection.save(recipeDao.asDBObject(copy(example).withId(Integer.toString(i))));
         }
@@ -160,10 +170,11 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldReturnEmptyRecipesListWhenFoundRecipesCountIsFewerThanSkipCount() throws Exception {
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"));
         collection.save(recipeDao.asDBObject(example));
 
         final List<ManagedRecipe> recipes = recipeDao.getByCreator("someone", 5, 10);
@@ -174,10 +185,11 @@ public class RecipeDaoTest extends BaseDaoTest {
     @Test
     public void shouldBeRemoveRecipeById() throws Exception {
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"));
         collection.save(recipeDao.asDBObject(example));
 
         recipeDao.remove(example.getId());
@@ -191,17 +203,20 @@ public class RecipeDaoTest extends BaseDaoTest {
         final Map<String, List<String>> users = new HashMap<>();
         users.put("user123", asList("read", "write"));
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(new ArrayList<>(asList("tag1", "tag2")))
-                                               .withPermissions(new PermissionsImpl(users, new ArrayList<>(asList(group))));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(new ArrayList<>(asList("tag1", "tag2")))
+                                                   .withPermissions(new PermissionsImpl(users, new ArrayList<>(asList(group))));
         collection.save(recipeDao.asDBObject(example));
-
-        example.setType("new-script-type");
-        example.setScript("new-script-content");
+        //preparing update
+        example.withName("new-name")
+               .withType("new-type")
+               .withScript("new-script")
+               .withTags(asList("new-tags"));
         example.getPermissions().getUsers().put("user234", asList("read"));
-        final PermissionsImpl permissions = (PermissionsImpl) example.getPermissions();
+        final PermissionsImpl permissions = (PermissionsImpl)example.getPermissions();
         permissions.getGroups().add(new GroupImpl("workspace/developer", "workspace123", asList("read")));
 
         recipeDao.update(example);
@@ -219,18 +234,19 @@ public class RecipeDaoTest extends BaseDaoTest {
     public void shouldBeAbleToSearchRecipesByTagsAndType() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"))
-                                               .withPermissions(new PermissionsImpl(null, asList(group)));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"))
+                                                   .withPermissions(new PermissionsImpl(null, asList(group)));
         final RecipeImpl example2 = copy(example).withId("recipe234")
-                                             .withTags(asList("tag1", "tag2", "tag3"));
+                                                 .withTags(asList("tag1", "tag2", "tag3"));
         final RecipeImpl example3 = copy(example).withId("recipe345")
-                                             .withTags(asList("tag1"));
+                                                 .withTags(asList("tag1"));
         final RecipeImpl example4 = copy(example).withId("recipe456")
-                                             .withType("another type")
-                                             .withPermissions(null);
+                                                 .withType("another type")
+                                                 .withPermissions(null);
         collection.save(recipeDao.asDBObject(example));
         collection.save(recipeDao.asDBObject(example2));
         collection.save(recipeDao.asDBObject(example3));
@@ -245,17 +261,18 @@ public class RecipeDaoTest extends BaseDaoTest {
     public void shouldBeAbleToSearchRecipesByTags() throws Exception {
         final Group group = new GroupImpl("public", "null", asList("read", "search"));
         final RecipeImpl example = new RecipeImpl().withId("recipe123")
-                                               .withCreator("someone")
-                                               .withScript("script content")
-                                               .withType("script-type")
-                                               .withTags(asList("tag1", "tag2"))
-                                               .withPermissions(new PermissionsImpl(null, asList(group)));
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"))
+                                                   .withPermissions(new PermissionsImpl(null, asList(group)));
         final RecipeImpl example2 = copy(example).withId("recipe234")
-                                             .withTags(asList("tag1", "tag2", "tag3"));
+                                                 .withTags(asList("tag1", "tag2", "tag3"));
         final RecipeImpl example3 = copy(example).withId("recipe345")
-                                             .withTags(asList("tag1"));
+                                                 .withTags(asList("tag1"));
         final RecipeImpl example4 = copy(example).withId("recipe456")
-                                             .withType("another type");
+                                                 .withType("another type");
         collection.save(recipeDao.asDBObject(example));
         collection.save(recipeDao.asDBObject(example2));
         collection.save(recipeDao.asDBObject(example3));
@@ -264,6 +281,69 @@ public class RecipeDaoTest extends BaseDaoTest {
         final List<ManagedRecipe> recipes = recipeDao.search(asList("tag1", "tag2"), null, 0, 10);
 
         assertEquals(new HashSet<>(recipes), new HashSet<>(asList(example, example2, example4)));
+    }
+
+    @Test
+    public void shouldConvertRecipeToDBObject() {
+        final Group group = new GroupImpl("workspace/admin", "workspace", asList("read", "write"));
+        final RecipeImpl example = new RecipeImpl().withId("recipe123")
+                                                   .withName("name")
+                                                   .withCreator("someone")
+                                                   .withScript("script content")
+                                                   .withType("script-type")
+                                                   .withTags(asList("tag1", "tag2"))
+                                                   .withPermissions(new PermissionsImpl(singletonMap("user-id", singletonList("read")),
+                                                                                        singletonList(group)));
+
+        final BasicDBObject recipeObj = recipeDao.asDBObject(example);
+
+        assertEquals(recipeObj.getString("_id"), example.getId());
+        assertEquals(recipeObj.getString("name"), example.getName());
+        assertEquals(recipeObj.getString("creator"), example.getCreator());
+        assertEquals(recipeObj.getString("script"), example.getScript());
+        assertEquals(recipeObj.getString("type"), example.getType());
+        assertEquals(recipeObj.get("tags"), asDBList(example.getTags()));
+
+        final BasicDBObject permissionsObj = (BasicDBObject)recipeObj.get("permissions");
+        final BasicDBObject usersObj = (BasicDBObject)permissionsObj.get("users");
+        assertEquals(usersObj.size(), 1);
+        assertEquals(usersObj.get("user-id"), asDBList(singletonList("read")));
+
+        final BasicDBList groupsObj = (BasicDBList)permissionsObj.get("groups");
+        assertEquals(groupsObj.size(), 1);
+
+        final BasicDBObject groupObj = (BasicDBObject)groupsObj.get(0);
+        assertEquals(groupObj.getString("name"), "workspace/admin");
+        assertEquals(groupObj.getString("unit"), "workspace");
+        assertEquals(groupObj.get("acl"), asDBList(asList("read", "write")));
+    }
+
+    @Test
+    public void shouldConvertDBObjectToRecipe() {
+        final BasicDBObject dbObject = new BasicDBObject().append("_id", "recipe123")
+                                                          .append("name", "name123")
+                                                          .append("creator", "creator")
+                                                          .append("script", "script")
+                                                          .append("type", "type")
+                                                          .append("tags", asDBList(asList("tag1", "tag2")));
+        final BasicDBList groups = asDBList(singletonList(new BasicDBObject().append("name", "workspace/admin")
+                                                                             .append("unit", "workspace")
+                                                                             .append("acl", asDBList(asList("read", "write")))));
+        dbObject.append("permissions", new BasicDBObject().append("users", new BasicDBObject("userId", asDBList(asList("read", "write"))))
+                                                          .append("groups", groups));
+
+        final ManagedRecipe recipe = FROM_OBJECT_TO_RECIPE_FUNCTION.apply(dbObject);
+        assertNotNull(recipe);
+        assertEquals(recipe.getId(), "recipe123");
+        assertEquals(recipe.getName(), "name123");
+        assertEquals(recipe.getCreator(), "creator");
+        assertEquals(recipe.getScript(), "script");
+        assertEquals(recipe.getType(), "type");
+        assertEquals(recipe.getTags(), asList("tag1", "tag2"));
+        assertEquals(recipe.getPermissions().getUsers(), singletonMap("userId", asList("read", "write")));
+        assertEquals(recipe.getPermissions().getGroups(), singletonList(new GroupImpl("workspace/admin",
+                                                                                      "workspace",
+                                                                                      asList("read", "write"))));
     }
 
     private RecipeImpl copy(RecipeImpl recipe) {
