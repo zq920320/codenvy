@@ -18,10 +18,11 @@
 package com.codenvy.machine.backup;
 
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.util.CancellableProcessWrapper;
+import org.eclipse.che.api.core.util.Cancellable;
 import org.eclipse.che.api.core.util.CommandLine;
 import org.eclipse.che.api.core.util.ListLineConsumer;
 import org.eclipse.che.api.core.util.ProcessUtil;
+import org.eclipse.che.api.core.util.ValueHolder;
 import org.eclipse.che.api.core.util.Watchdog;
 import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
 import org.slf4j.Logger;
@@ -31,6 +32,7 @@ import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -78,7 +80,11 @@ public class MachineBackupManager {
 
         CommandLine commandLine = new CommandLine(backupScript, srcPathWithTrailingSlash, srcAddress, destPath.toString());
 
-        execute(commandLine.asArray(), maxBackupDuration);
+        try {
+            execute(commandLine.asArray(), maxBackupDuration);
+        } catch (TimeoutException e) {
+            throw new ServerException("Workspace FS backing up was terminated due to timeout. Please, contact support.");
+        }
     }
 
     /**
@@ -99,10 +105,14 @@ public class MachineBackupManager {
 
         CommandLine commandLine = new CommandLine(restoreScript, srcPathWithTrailingSlash, destPath, destAddress);
 
-        execute(commandLine.asArray(), restoreDuration);
+        try {
+            execute(commandLine.asArray(), restoreDuration);
+        } catch (TimeoutException e) {
+            throw new ServerException("Workspace FS restoring was terminated due to timeout. Please, contact support.");
+        }
     }
 
-    private void execute(String[] commandLine, int timeout) throws ServerException {
+    private void execute(String[] commandLine, int timeout) throws ServerException, TimeoutException {
         ProcessBuilder pb = new ProcessBuilder(commandLine).redirectErrorStream(true);
         final ListLineConsumer outputConsumer = new ListLineConsumer();
 
@@ -110,21 +120,32 @@ public class MachineBackupManager {
         Watchdog watcher = new Watchdog(timeout, TimeUnit.SECONDS);
 
         try {
-            Process process = pb.start();
+            final Process process = pb.start();
 
-            watcher.start(new CancellableProcessWrapper(process));
+            final ValueHolder<Boolean> isTimeoutExceeded = new ValueHolder<>(false);
+            watcher.start(new Cancellable() {
+                @Override
+                public void cancel() throws Exception {
+                    isTimeoutExceeded.set(true);
+                    ProcessUtil.kill(process);
+                }
+            });
 
             // consume logs until process ends
             ProcessUtil.process(process, outputConsumer);
 
             process.waitFor();
 
-            if (process.exitValue() != 0) {
+            if (isTimeoutExceeded.get()) {
+                throw new TimeoutException();
+            } else if (process.exitValue() != 0) {
                 LOG.error(outputConsumer.getText());
-                throw new ServerException("Backup failed. Exit code " + process.exitValue());
+                throw new ServerException("Process failed. Exit code " + process.exitValue());
             }
-        } catch (IOException | InterruptedException e) {
-            throw new ServerException("Backup terminated. " + e.getLocalizedMessage());
+        } catch (InterruptedException e) {
+            throw new ServerException("Process terminated. " + e.getLocalizedMessage());
+        } catch (IOException e) {
+            throw new ServerException("Process failed.");
         } finally {
             watcher.stop();
         }
