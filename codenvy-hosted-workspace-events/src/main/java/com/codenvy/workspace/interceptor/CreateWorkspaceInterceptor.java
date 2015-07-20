@@ -17,6 +17,8 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import com.codenvy.workspace.activity.WsActivityEventSender;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
@@ -48,6 +50,9 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     private MailSenderClient mailSenderClient;
 
     @Inject
+    WsActivityEventSender wsActivityEventSender;
+
+    @Inject
     private UserDao userDao;
 
     @Inject
@@ -65,9 +70,9 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
-
         try {
-            WorkspaceDescriptor descriptor = (WorkspaceDescriptor) ((Response) result).getEntity();
+            WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+            wsActivityEventSender.onActivity(descriptor.getId(), descriptor.isTemporary());
             if (!descriptor.isTemporary()) {
                 String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
                 Map<String, String> properties = new HashMap<>();
@@ -76,10 +81,10 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
                 properties.put("free.gbh", freeGbh);
                 properties.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
                 mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
-                        "Welcome To Codenvy",
-                        MediaType.TEXT_HTML,
-                        IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
-                        properties);
+                                          "Welcome To Codenvy",
+                                          MediaType.TEXT_HTML,
+                                          IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
+                                          properties);
 
                 LOG.info("Workspace created message send to {}", creatorEmail);
             }

@@ -17,6 +17,8 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import com.codenvy.workspace.activity.WsActivityEventSender;
+
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.UserDao;
@@ -41,9 +43,11 @@ import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
+import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
@@ -69,6 +73,9 @@ public class CreateWorkspaceInterceptorTest {
     @Mock
     private WorkspaceDescriptor workspaceDescriptor;
 
+    @Mock
+    private WsActivityEventSender wsActivityEventSender;
+
     @InjectMocks
     private CreateWorkspaceInterceptor interceptor;
 
@@ -78,6 +85,7 @@ public class CreateWorkspaceInterceptorTest {
     public void setup() throws Exception {
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl(recipient, "askd123123", null, null, false));
+        doNothing().when(wsActivityEventSender).onActivity(anyString(), anyBoolean());
     }
 
     @Test(expectedExceptions = ConflictException.class)
