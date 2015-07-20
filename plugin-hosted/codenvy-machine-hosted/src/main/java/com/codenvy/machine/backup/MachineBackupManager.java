@@ -83,7 +83,7 @@ public class MachineBackupManager {
         try {
             execute(commandLine.asArray(), maxBackupDuration);
         } catch (TimeoutException e) {
-            throw new ServerException("Workspace FS backing up was terminated due to timeout. Please, contact support.");
+            throw new ServerException("Workspace FS backup terminated due to timeout. Please, contact support.");
         }
     }
 
@@ -108,7 +108,7 @@ public class MachineBackupManager {
         try {
             execute(commandLine.asArray(), restoreDuration);
         } catch (TimeoutException e) {
-            throw new ServerException("Workspace FS restoring was terminated due to timeout. Please, contact support.");
+            throw new ServerException("Workspace FS restore terminated due to timeout. Please, contact support.");
         }
     }
 
