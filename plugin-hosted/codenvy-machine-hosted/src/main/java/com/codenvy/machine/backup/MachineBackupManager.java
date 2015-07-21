@@ -51,10 +51,10 @@ public class MachineBackupManager {
     private final WorkspaceHashLocalFSMountStrategy mountStrategy;
 
     @Inject
-    public MachineBackupManager(@Named("machine.backup.backup-script") String backupScript,
-                                @Named("machine.backup.restore-script") String restoreScript,
-                                @Named("machine.backup.backup-duration-second") int maxBackupDuration,
-                                @Named("machine.backup.restore-duration-second") int restoreDuration,
+    public MachineBackupManager(@Named("machine.backup.backup_script") String backupScript,
+                                @Named("machine.backup.restore_script") String restoreScript,
+                                @Named("machine.backup.backup_duration_second") int maxBackupDuration,
+                                @Named("machine.backup.restore_duration_second") int restoreDuration,
                                 WorkspaceHashLocalFSMountStrategy mountStrategy) {
         this.backupScript = backupScript;
         this.restoreScript = restoreScript;

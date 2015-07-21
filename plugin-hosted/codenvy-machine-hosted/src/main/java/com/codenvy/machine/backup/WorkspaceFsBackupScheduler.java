@@ -58,7 +58,7 @@ public class WorkspaceFsBackupScheduler {
     @Inject
     public WorkspaceFsBackupScheduler(MachineManager machineManager,
                                       MachineBackupManager backupManager,
-                                      @Named("machine.backup.backup-period-second") long syncTimeoutSecond) {
+                                      @Named("machine.backup.backup_period_second") long syncTimeoutSecond) {
         this.machineManager = machineManager;
         this.backupManager = backupManager;
         this.syncTimeoutMillisecond = TimeUnit.SECONDS.toMillis(syncTimeoutSecond);
