@@ -23,7 +23,6 @@ import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.InstanceMetadata;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
 
-import javax.inject.Inject;
 import java.util.Map;
 
 /**

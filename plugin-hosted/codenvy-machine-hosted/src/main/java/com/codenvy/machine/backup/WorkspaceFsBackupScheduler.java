@@ -22,7 +22,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.api.machine.server.impl.MachineState;
+import org.eclipse.che.api.machine.server.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.spi.InstanceNode;
 import org.eclipse.che.api.machine.shared.MachineStatus;
 import org.eclipse.che.commons.schedule.ScheduleRate;
@@ -70,7 +70,7 @@ public class WorkspaceFsBackupScheduler {
     @ScheduleRate(initialDelay = 1, period = 1, unit = TimeUnit.MINUTES)
     public void scheduleBackup() {
         try {
-            for (final MachineState state : machineManager.getMachinesStates()) {
+            for (final MachineImpl state : machineManager.getMachinesStates()) {
                 final String machineId = state.getId();
 
                 if (state.isWorkspaceBound() &&

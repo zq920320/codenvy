@@ -56,7 +56,8 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
                                                @Assisted("container") String container,
                                                @Assisted DockerNode node,
                                                @Assisted LineConsumer outputConsumer,
-                                               RouterRulesRegistry routerRulesRegistry) {
+                                               RouterRulesRegistry routerRulesRegistry,
+                                               @Assisted int memorySizeMB) {
         super(docker,
               registry,
               dockerMachineFactory,
@@ -67,7 +68,8 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
               displayName,
               container,
               node,
-              outputConsumer);
+              outputConsumer,
+              memorySizeMB);
         this.routerRulesRegistry = routerRulesRegistry;
         this.machineId = machineId;
     }
