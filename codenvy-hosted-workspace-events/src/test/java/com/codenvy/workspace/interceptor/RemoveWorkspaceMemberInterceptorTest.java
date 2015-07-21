@@ -54,6 +54,7 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class RemoveWorkspaceMemberInterceptorTest {
+    private Field notificationTurnedOn;
 
     @Mock
     private MailSenderClient mailSenderClient;
@@ -84,9 +85,20 @@ public class RemoveWorkspaceMemberInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
+        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnMemberRemoved");
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, true);
+
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
         context.setAccountId("AccountID");
+    }
+
+    @Test
+    public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
+        notificationTurnedOn.set(interceptor, false);
+        interceptor.invoke(invocation);
+        verifyZeroInteractions(mailSenderClient);
     }
 
     @Test(expectedExceptions = ConflictException.class)

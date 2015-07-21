@@ -64,9 +64,17 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
     @Named("api.endpoint")
     private String apiEndpoint;
 
+    @Inject
+    @Named("workspace.email.removed.member.enabled")
+    private boolean sendEmailOnMemberRemoved;
+
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
+        // Do not send notification if operation is turned off
+        if (!sendEmailOnMemberRemoved) {
+            return result;
+        }
         EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
         String workspaceId = (String)invocation.getArguments()[0];
         Workspace ws = workspaceDao.getById(workspaceId);

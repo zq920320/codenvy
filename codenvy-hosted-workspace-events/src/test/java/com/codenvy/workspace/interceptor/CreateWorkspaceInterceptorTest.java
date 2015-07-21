@@ -54,6 +54,7 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class CreateWorkspaceInterceptorTest {
+    private Field notificationTurnedOn;
 
     @Mock
     private MailSenderClient mailSenderClient;
@@ -83,6 +84,10 @@ public class CreateWorkspaceInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
+        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnWorkspaceCreated");
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, true);
+
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl(recipient, "askd123123", null, null, false));
         doNothing().when(wsActivityEventSender).onActivity(anyString(), anyBoolean());
@@ -98,6 +103,13 @@ public class CreateWorkspaceInterceptorTest {
     @Test
     public void shouldNotSendEmailIfInvocationToAnotherMethod() throws Throwable {
         when(invocation.getMethod()).thenReturn(WorkspaceService.class.getMethod("remove", String.class));
+        interceptor.invoke(invocation);
+        verifyZeroInteractions(mailSenderClient);
+    }
+
+    @Test
+    public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
+        notificationTurnedOn.set(interceptor, false);
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }

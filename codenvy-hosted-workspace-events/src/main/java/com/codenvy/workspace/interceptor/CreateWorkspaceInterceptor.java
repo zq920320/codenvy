@@ -67,9 +67,17 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     @Named("subscription.saas.free.max_limit_mb")
     private String freeLimit;
 
+    @Inject
+    @Named("workspace.email.created.enabled")
+    private boolean sendEmailOnWorkspaceCreated;
+
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
+        // Do not send notification if operation is turned off
+        if (!sendEmailOnWorkspaceCreated) {
+            return result;
+        }
         try {
             WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
             wsActivityEventSender.onActivity(descriptor.getId(), descriptor.isTemporary());
