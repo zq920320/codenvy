@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-plugin-hosted-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.4-SNAPSHOT</version>
+        <version>3.11.4</version>
     </parent>
     <artifactId>codenvy-hosted-ext-clone</artifactId>
     <packaging>jar</packaging>
