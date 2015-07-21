@@ -138,7 +138,6 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
                             snapshotObject.getString("workspaceId"),
                             projectBindings,
                             snapshotObject.getString("description"),
-                            snapshotObject.getString("label"),
                             snapshotObject.getBoolean("isWorkspaceBound"));
     }
 
@@ -156,7 +155,6 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
                                   .append("projectBindings", projectBindings)
                                   .append("creationDate", snapshot.getCreationDate())
                                   .append("description", snapshot.getDescription())
-                                  .append("label", snapshot.getLabel())
                                   .append("isWorkspaceBound", snapshot.isWorkspaceBound());
     }
 
