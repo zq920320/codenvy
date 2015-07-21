@@ -67,9 +67,17 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     @Named("api.endpoint")
     private String apiEndpoint;
 
+    @Inject
+    @Named("workspace.email.added.member.enabled")
+    private boolean sendEmailOnMemberAdded;
+
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
+        // Do not send notification if operation is turned off
+        if (!sendEmailOnMemberAdded) {
+            return result;
+        }
         EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
         MemberDescriptor memberDescriptor = (MemberDescriptor)((Response)result).getEntity();
         WorkspaceReference workspaceReference = memberDescriptor.getWorkspaceReference();

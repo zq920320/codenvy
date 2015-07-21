@@ -58,6 +58,8 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class AddWorkspaceMemberInterceptorTest {
+    private Field notificationTurnedOn;
+
     @Mock
     private MailSenderClient mailSenderClient;
 
@@ -87,6 +89,10 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
+        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnMemberAdded");
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, true);
+
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
         context.setAccountId("AccountID");
@@ -109,6 +115,14 @@ public class AddWorkspaceMemberInterceptorTest {
         when(memberDescriptor.getWorkspaceReference())
                 .thenReturn(DtoFactory.getInstance().createDto(WorkspaceReference.class).withName("testWSName").withTemporary(true));
 
+        interceptor.invoke(invocation);
+
+        verifyZeroInteractions(mailSenderClient);
+    }
+
+    @Test
+    public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
+        notificationTurnedOn.set(interceptor, false);
         interceptor.invoke(invocation);
 
         verifyZeroInteractions(mailSenderClient);
