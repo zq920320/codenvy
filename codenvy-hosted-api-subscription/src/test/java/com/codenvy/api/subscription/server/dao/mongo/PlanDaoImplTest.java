@@ -17,13 +17,13 @@
  */
 package com.codenvy.api.subscription.server.dao.mongo;
 
-import com.codenvy.api.subscription.server.dao.PlanDao;
-import com.codenvy.api.subscription.shared.dto.BillingCycleType;
-import com.codenvy.api.subscription.shared.dto.Plan;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 
+import com.codenvy.api.subscription.server.dao.PlanDao;
+import com.codenvy.api.subscription.shared.dto.BillingCycleType;
+import com.codenvy.api.subscription.shared.dto.Plan;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -53,7 +53,7 @@ public class PlanDaoImplTest extends BaseDaoTest {
 
     @BeforeMethod
     public void setUp() throws Exception {
-        setUp(COLL_NAME);
+        super.setUp(COLL_NAME);
         db = spy(client.getDB(DB_NAME));
         collection = spy(db.getCollection(COLL_NAME));
 

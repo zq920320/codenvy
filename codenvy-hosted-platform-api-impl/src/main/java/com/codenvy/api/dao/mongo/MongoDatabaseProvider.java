@@ -31,6 +31,7 @@ import static java.util.Collections.singletonList;
 /**
  * Provides single instance of database to all consumers.
  */
+
 @Singleton
 public class MongoDatabaseProvider implements Provider<DB> {
     private final String dbUrl;
@@ -52,7 +53,7 @@ public class MongoDatabaseProvider implements Provider<DB> {
         if (db == null) {
             synchronized (this) {
                 if (db == null) {
-                    final MongoCredential credential = createCredential(username, dbName, password.toCharArray());
+                    MongoCredential credential = createCredential(username, dbName, password.toCharArray());
                     MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
                     db = mongoClient.getDB(dbName);
                 }

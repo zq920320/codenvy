@@ -24,7 +24,7 @@ import com.mongodb.MongoClient;
 
 
 /**
- * Base test for
+ * Base test for <i>XDao</i> implementations based on mongo
  *
  * @author Eugene Voevodin
  */
@@ -40,6 +40,6 @@ public class BaseDaoTest {
         final Fongo fongo = new Fongo("test server");
         client = fongo.getMongo();
         db = client.getDB(DB_NAME);
-        this.collection = db.getCollection(collectionName);
+        collection = db.getCollection(collectionName);
     }
 }
