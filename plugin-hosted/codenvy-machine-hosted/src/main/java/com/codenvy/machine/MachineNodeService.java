@@ -136,8 +136,8 @@ public class MachineNodeService {
             fullPath = new File(binding.getHostFolder());
         }
 
-        if (IoUtil.deleteRecursive(fullPath)) {
-            throw new ServerException("Error occurred on removing of binding");
+        if (!IoUtil.deleteRecursive(fullPath)) {
+            throw new ServerException("Error occurred on removing of binding.");
         }
     }
 
