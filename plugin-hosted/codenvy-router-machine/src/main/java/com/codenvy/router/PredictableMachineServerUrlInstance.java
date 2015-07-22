@@ -24,6 +24,7 @@ import com.google.inject.assistedinject.Assisted;
 import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.impl.ServerImpl;
+import org.eclipse.che.api.machine.shared.Recipe;
 import org.eclipse.che.api.machine.shared.Server;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
 import org.eclipse.che.plugin.docker.machine.DockerNode;
@@ -57,6 +58,7 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
                                                @Assisted DockerNode node,
                                                @Assisted LineConsumer outputConsumer,
                                                RouterRulesRegistry routerRulesRegistry,
+                                               @Assisted Recipe recipe,
                                                @Assisted int memorySizeMB) {
         super(docker,
               registry,
@@ -68,6 +70,7 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
               displayName,
               container,
               node,
+              recipe,
               outputConsumer,
               memorySizeMB);
         this.routerRulesRegistry = routerRulesRegistry;

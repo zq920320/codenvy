@@ -23,6 +23,7 @@ import org.eclipse.che.api.machine.server.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.server.spi.InstanceNode;
 import org.eclipse.che.api.machine.shared.MachineStatus;
+import org.eclipse.che.api.machine.shared.Recipe;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
@@ -45,6 +46,8 @@ import static org.mockito.Mockito.when;
 public class WorkspaceFsBackupSchedulerTest {
     @Mock
     private MachineManager machineManager;
+    @Mock
+    private Recipe         recipe;
 
     @Mock
     private MachineBackupManager backupManager;
@@ -65,7 +68,7 @@ public class WorkspaceFsBackupSchedulerTest {
 
         when(machineManager.getMachinesStates()).thenReturn(machines);
 
-        machines.add(new MachineImpl("id1", "type1", "workspaceId1", "owner1", true, "displayName1", 1024, MachineStatus.RUNNING));
+        machines.add(new MachineImpl("id1", "type1", recipe, "workspaceId1", "owner1", true, "displayName1", 1024, MachineStatus.RUNNING));
 
         when(machineManager.getMachine("id1")).thenReturn(machineInstance);
 
@@ -88,7 +91,7 @@ public class WorkspaceFsBackupSchedulerTest {
 
     @Test
     public void shouldBackupWorkspaceFsOfMachines() throws Exception {
-        machines.add(new MachineImpl("id2", "type2", "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.RUNNING));
+        machines.add(new MachineImpl("id2", "type2", recipe, "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.RUNNING));
         when(machineManager.getMachine("id2")).thenReturn(machineInstance);
         when(node.getHost()).thenReturn("192.168.0.1").thenReturn("192.168.0.2");
         when(node.getProjectsFolder()).thenReturn("/workspace1").thenReturn("/workspace2");
@@ -106,7 +109,7 @@ public class WorkspaceFsBackupSchedulerTest {
 
     @Test
     public void shouldNotBackupWorkspaceOfNonDevMachines() throws Exception {
-        machines.add(new MachineImpl("id2", "type2", "workspaceId2", "owner2", false, "displayName2", 1024, MachineStatus.RUNNING));
+        machines.add(new MachineImpl("id2", "type2", recipe, "workspaceId2", "owner2", false, "displayName2", 1024, MachineStatus.RUNNING));
 
         scheduler.scheduleBackup();
 
@@ -119,8 +122,8 @@ public class WorkspaceFsBackupSchedulerTest {
 
     @Test
     public void shouldNotBackupMachinesInNonRunningStatus() throws Exception {
-        machines.add(new MachineImpl("id2", "type2", "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.CREATING));
-        machines.add(new MachineImpl("id3", "type3", "workspaceId3", "owner3", true, "displayName3", 1024, MachineStatus.DESTROYING));
+        machines.add(new MachineImpl("id2", "type2", recipe, "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.CREATING));
+        machines.add(new MachineImpl("id3", "type3", recipe, "workspaceId3", "owner3", true, "displayName3", 1024, MachineStatus.DESTROYING));
 
         scheduler.scheduleBackup();
 
@@ -133,7 +136,7 @@ public class WorkspaceFsBackupSchedulerTest {
 
     @Test
     public void shouldBeAbleToBackupWorkspacesOfOtherMachinesIfMachineRetrievalFails() throws Exception {
-        machines.add(new MachineImpl("id2", "type2", "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.RUNNING));
+        machines.add(new MachineImpl("id2", "type2", recipe, "workspaceId2", "owner2", true, "displayName2", 1024, MachineStatus.RUNNING));
         when(machineManager.getMachine("id2")).thenThrow(new MachineException(""));
 
         scheduler.scheduleBackup();
