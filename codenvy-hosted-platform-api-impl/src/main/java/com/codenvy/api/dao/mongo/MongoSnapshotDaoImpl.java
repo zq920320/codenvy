@@ -17,13 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.machine.server.exception.SnapshotException;
-import org.eclipse.che.api.machine.server.impl.ProjectBindingImpl;
-import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
-import org.eclipse.che.api.machine.server.dao.SnapshotDao;
-import org.eclipse.che.api.machine.server.spi.InstanceKey;
-import org.eclipse.che.api.machine.shared.ProjectBinding;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -33,6 +26,14 @@ import com.mongodb.DBObject;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.machine.server.dao.SnapshotDao;
+import org.eclipse.che.api.machine.server.exception.SnapshotException;
+import org.eclipse.che.api.machine.server.impl.ProjectBindingImpl;
+import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
+import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
+import org.eclipse.che.api.machine.server.spi.InstanceKey;
+import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -132,6 +133,8 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
 
         return new SnapshotImpl(snapshotObject.getString("_id"),
                             snapshotObject.getString("instanceType"),
+                            new RecipeImpl().withScript(((BasicDBObject)snapshotObject.get("recipe")).getString("script"))
+                                            .withType(((BasicDBObject)snapshotObject.get("recipe")).getString("type")),
                             new InstanceKeyImpl(MongoUtil.asMap(snapshotObject.get("instanceKey"))),
                             snapshotObject.getString("owner"),
                             snapshotObject.getLong("creationDate"),
@@ -151,6 +154,8 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
                                   .append("instanceType", snapshot.getType())
                                   .append("instanceKey", MongoUtil.asDBList(snapshot.getInstanceKey().getFields()))
                                   .append("owner", snapshot.getOwner())
+                                  .append("recipe", new BasicDBObject().append("script", snapshot.getRecipe().getScript())
+                                                                       .append("type", snapshot.getRecipe().getType()))
                                   .append("workspaceId", snapshot.getWorkspaceId())
                                   .append("projectBindings", projectBindings)
                                   .append("creationDate", snapshot.getCreationDate())
