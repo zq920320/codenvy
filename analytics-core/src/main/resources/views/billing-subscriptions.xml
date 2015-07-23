@@ -51,6 +51,9 @@
         </section>
 
         <section name="on_prem_subscriptions">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="On-Prem Subscriptions"/>
+            </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="trial_started"/>
                 <parameter key="description" value="Trial started"/>
@@ -59,10 +62,7 @@
                 <parameter key="name" value="trial_expired"/>
                 <parameter key="description" value="Trial expired"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="On-Prem Subscriptions"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
+              <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="subscription_added"/>
                 <parameter key="description" value="Subscription added"/>
             </row>
