@@ -18,7 +18,9 @@
 package com.codenvy.router;
 
 import com.google.inject.AbstractModule;
+import com.google.inject.assistedinject.FactoryModuleBuilder;
 
+import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.inject.DynaModule;
 
 /**
@@ -30,5 +32,6 @@ public class MachineRouterModule extends AbstractModule {
     protected void configure() {
         bind(RouterListener.class).asEagerSingleton();
         bind(RouterRulesRegistry.class).asEagerSingleton();
+        bind(MachineManager.class).to(RouterMachineManager.class);
     }
 }
