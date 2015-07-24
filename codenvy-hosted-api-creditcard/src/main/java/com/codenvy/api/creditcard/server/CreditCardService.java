@@ -59,8 +59,6 @@ import java.util.List;
  * @author Max Shaposhnik
  */
 @Beta
-@Api(value = "/creditcard",
-        description = "Credit card manager")
 @Path("/creditcard")
 public class CreditCardService extends Service {
     private final CreditCardDao creditCardDao;

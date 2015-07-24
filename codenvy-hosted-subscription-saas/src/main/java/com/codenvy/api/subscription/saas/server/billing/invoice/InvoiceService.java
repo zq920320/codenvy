@@ -78,8 +78,6 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
  * @author Max Shaposhnik
  */
 @Beta
-@Api(value = "/invoice",
-     description = "Invoice manager")
 @Path("/invoice")
 public class InvoiceService extends Service {
     private final BillingService           billingService;
