@@ -94,8 +94,6 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
  * @author Sergii Leschenko
  */
 @Beta
-@Api(value = "/saas",
-     description = "Saas features manager")
 @Path("/saas")
 public class SaasService extends Service {
     private final Double                 defaultBonusSize;
