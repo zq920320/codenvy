@@ -62,6 +62,7 @@
     <inherits name='com.codenvy.ide.support.help.SupportHelp'/>
     <inherits name='com.codenvy.ide.profile.Profile'/>
     <inherits name='com.codenvy.ide.hosted.Hosted'/>
+    <inherits name='com.codenvy.docker.Docker'/>
     <inherits name='com.codenvy.api.resources.Resources'/>
 
     <inherits name='org.eclipse.che.api.Core'/>

@@ -45,12 +45,22 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-hosted-docker-client</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-hosted-ext-clone</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-hosted-ext-dashboard</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-hosted-ext-docker</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
