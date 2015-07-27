@@ -17,8 +17,12 @@
  */
 package com.codenvy.docker;
 
+import com.codenvy.docker.dto.AuthConfig;
+import com.codenvy.docker.dto.AuthConfigs;
+
 import org.apache.commons.codec.binary.Base64;
 import org.eclipse.che.commons.json.JsonHelper;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.inject.ConfigurationProperties;
 
 import javax.inject.Inject;
@@ -73,7 +77,10 @@ public class InitialAuthConfig {
             }
         }
         if (!isNullOrEmpty(serverAddress) && !isNullOrEmpty(username) && !isNullOrEmpty(password) && !isNullOrEmpty(email)) {
-            predefinedConfig = new AuthConfig(serverAddress, username, password, email);
+            predefinedConfig = DtoFactory.newDto(AuthConfig.class).withServeraddress(serverAddress)
+                                         .withUsername(username)
+                                         .withPassword(password)
+                                         .withEmail(email);
         }
     }
 
@@ -95,9 +102,9 @@ public class InitialAuthConfig {
     }
 
     public AuthConfigs getAuthConfigs() {
-        AuthConfigs authConfigs = new AuthConfigs();
+        AuthConfigs authConfigs = DtoFactory.newDto(AuthConfigs.class);
         if (predefinedConfig != null) {
-            authConfigs.addConfig(predefinedConfig);
+            authConfigs.getConfigs().put(predefinedConfig.getServeraddress(), predefinedConfig);
         }
         return authConfigs;
     }

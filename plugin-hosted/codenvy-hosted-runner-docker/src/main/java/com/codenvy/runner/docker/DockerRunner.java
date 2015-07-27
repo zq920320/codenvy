@@ -17,6 +17,13 @@
  */
 package com.codenvy.runner.docker;
 
+import com.codenvy.docker.DockerConnector;
+import com.codenvy.docker.InitialAuthConfig;
+import com.codenvy.docker.dto.AuthConfig;
+import com.codenvy.docker.dto.AuthConfigs;
+import com.google.gson.reflect.TypeToken;
+
+import org.bouncycastle.util.encoders.Base64;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -33,17 +40,13 @@ import org.eclipse.che.api.runner.internal.ResourceAllocators;
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.commons.lang.Pair;
-
-import com.codenvy.docker.AuthConfig;
-import com.codenvy.docker.AuthConfigs;
-import com.codenvy.docker.DockerConnector;
-import com.codenvy.docker.InitialAuthConfig;
-import com.google.gson.reflect.TypeToken;
+import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
@@ -62,7 +65,7 @@ public class DockerRunner extends BaseDockerRunner {
     private static final String AUTH_PREFERENCE_NAME = "codenvy:dockerCredentials";
 
     @Inject
-    public DockerRunner(@Named(Constants.DEPLOY_DIRECTORY) java.io.File deployDirectoryRoot,
+    public DockerRunner(@Named(Constants.DEPLOY_DIRECTORY) File deployDirectoryRoot,
                         @Named(Constants.APP_CLEANUP_TIME) int cleanupTime,
                         @Named(HOST_NAME) String hostName,
                         @Named("api.endpoint") String apiEndpoint,
@@ -108,16 +111,23 @@ public class DockerRunner extends BaseDockerRunner {
 
     @Override
     protected AuthConfigs getAuthConfigs(RunRequest request) throws IOException, RunnerException {
-
         AuthConfigs initial = initialAuthConfig.getAuthConfigs();
-        AuthConfigs userConfig = null;
         try {
-            String response =
-                    HttpJsonHelper.requestString(apiEndPoint + "/profile/prefs", "GET", null, Pair.of("token", request.getUserToken()));
+            String response = HttpJsonHelper.requestString(apiEndPoint + "/profile/prefs", "GET",
+                                                           null,
+                                                           Pair.of("token", request.getUserToken()));
+
             Map<String, String> userPrefs = JsonHelper.fromJson(response, Map.class, new TypeToken<Map<String, String>>() {
             }.getType());
-            if (userPrefs.containsKey(AUTH_PREFERENCE_NAME)) {
-                userConfig = JsonHelper.fromJson(userPrefs.get(AUTH_PREFERENCE_NAME), AuthConfigs.class, null);
+
+            final String encodedAuthConfig = userPrefs.get(AUTH_PREFERENCE_NAME);
+            if (encodedAuthConfig != null) {
+                String userConfigJson = new String(Base64.decode(encodedAuthConfig));
+                AuthConfigs userConfig = DtoFactory.getInstance().createDtoFromJson(userConfigJson, AuthConfigs.class);
+
+                for (AuthConfig one : userConfig.getConfigs().values()) {
+                    initial.getConfigs().put(one.getServeraddress(), one);
+                }
             }
         } catch (ForbiddenException | UnauthorizedException | ServerException un) {
             return null;
@@ -125,11 +135,6 @@ public class DockerRunner extends BaseDockerRunner {
             LOG.warn(e.getLocalizedMessage());
         }
 
-        if (userConfig != null) {
-            for (AuthConfig one : userConfig.getConfigs().values()) {
-                initial.addConfig(one);
-            }
-        }
         return initial;
     }
 }

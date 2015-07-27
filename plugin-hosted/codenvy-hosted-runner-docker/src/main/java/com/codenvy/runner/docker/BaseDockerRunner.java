@@ -17,7 +17,8 @@
  */
 package com.codenvy.runner.docker;
 
-import com.codenvy.docker.AuthConfigs;
+import com.codenvy.docker.json.SystemInfo;
+import com.codenvy.docker.dto.AuthConfigs;
 import com.codenvy.docker.DockerConnector;
 import com.codenvy.docker.DockerException;
 import com.codenvy.docker.DockerFileException;
@@ -215,13 +216,13 @@ public abstract class BaseDockerRunner extends Runner {
     public List<RunnerMetric> getStats() throws RunnerException {
         final List<RunnerMetric> stats = super.getStats();
         try {
-            final com.codenvy.docker.json.SystemInfo systemInfo = dockerConnector.getSystemInfo();
+            final SystemInfo systemInfo = dockerConnector.getSystemInfo();
             final DtoFactory dtoFactory = DtoFactory.getInstance();
-            final String dataSpaceTotal = systemInfo.statusField(com.codenvy.docker.json.SystemInfo.DRIVER_STATE_DATA_SPACE_TOTAL);
+            final String dataSpaceTotal = systemInfo.statusField(SystemInfo.DRIVER_STATE_DATA_SPACE_TOTAL);
             if (dataSpaceTotal != null) {
                 stats.add(dtoFactory.createDto(RunnerMetric.class).withName(RunnerMetric.DISK_SPACE_TOTAL).withValue(dataSpaceTotal));
             }
-            final String dataSpaceUsed = systemInfo.statusField(com.codenvy.docker.json.SystemInfo.DRIVER_STATE_DATA_SPACE_USED);
+            final String dataSpaceUsed = systemInfo.statusField(SystemInfo.DRIVER_STATE_DATA_SPACE_USED);
             if (dataSpaceUsed != null) {
                 stats.add(dtoFactory.createDto(RunnerMetric.class).withName(RunnerMetric.DISK_SPACE_USED).withValue(dataSpaceUsed));
             }

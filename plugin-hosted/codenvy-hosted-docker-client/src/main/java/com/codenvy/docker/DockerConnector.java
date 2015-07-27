@@ -21,6 +21,7 @@ import com.codenvy.docker.connection.DockerConnection;
 import com.codenvy.docker.connection.DockerResponse;
 import com.codenvy.docker.connection.TcpConnection;
 import com.codenvy.docker.connection.UnixSocketConnection;
+import com.codenvy.docker.dto.AuthConfigs;
 import com.codenvy.docker.json.ContainerCommited;
 import com.codenvy.docker.json.ContainerConfig;
 import com.codenvy.docker.json.ContainerCreated;
