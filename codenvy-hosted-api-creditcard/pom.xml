@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>3.11.5</version>
+        <version>3.11.6-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-api-creditcard</artifactId>
     <packaging>jar</packaging>
