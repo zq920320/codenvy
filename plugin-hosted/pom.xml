@@ -35,6 +35,7 @@
         <!--
         <module>codenvy-docker-client</module>
         <module>codenvy-runner-docker</module>
+        <module>codenvy-hosted-ext-docker</module>
         -->
         <module>codenvy-swarm-machine</module>
         <module>codenvy-hosted-ext-permissions</module>

@@ -24,7 +24,7 @@ import org.eclipse.che.api.runner.RunnerException;
 import org.eclipse.che.api.runner.dto.RunRequest;
 import org.eclipse.che.api.runner.internal.ResourceAllocators;
 
-import com.codenvy.docker.AuthConfigs;
+import com.codenvy.docker.dto.AuthConfigs;
 import com.codenvy.docker.DockerConnector;
 import org.eclipse.che.dto.server.DtoFactory;
 
@@ -108,6 +108,6 @@ public class EmbeddedDockerRunner extends BaseDockerRunner {
 
     @Override
     protected AuthConfigs getAuthConfigs(RunRequest request) throws IOException, RunnerException {
-         return new AuthConfigs();
+         return DtoFactory.newDto(AuthConfigs.class);
     }
 }
