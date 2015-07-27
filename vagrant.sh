@@ -71,18 +71,18 @@ deleteFileIfExists() {
 cloneDeploymentProject() {
   # if deployment project does not exist, clone it from github
   if [ ! -d "../deployment" ]; then
-    git clone git@github.com:codenvy/deployment.git ../deployment
+    git clone git@github.com:codenvy/deployment.git ../deployment-onprem
   fi
 }
 
 checkoutDeploymentProject() {
-  cd ../deployment
+  cd ../deployment-onprem
   git checkout enterprise
   cd ../onpremises
 }
 
 pullDeploymentProject() {
-  cd ../deployment
+  cd ../deployment-onprem
   git pull
   cd ../onpremises
 }
@@ -233,24 +233,24 @@ fi
 
 if [ ${MULTI_SERVER} == false ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
-  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
-  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
   # Open folder for AIO env
-  cd ../deployment/puppet
+  cd ../deployment-onprem/puppet
 else
   # Copy tomcats for multi-server environment
-  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
-  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
-  cp -f onpremises-ide-packaging-tomcat-runner/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-runner.zip
-  cp -f onpremises-ide-packaging-tomcat-builder/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-builder.zip
-  cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
-  cp -f onpremises-ide-packaging-tomcat-codeassistant/target/*.zip ../deployment/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-codeassistant.zip
-  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
-  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment/puppet/modules/multi_server/files/analytics-tomcat-pkg.zip
+  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
+  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
+  cp -f onpremises-ide-packaging-tomcat-runner/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-runner.zip
+  cp -f onpremises-ide-packaging-tomcat-builder/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-builder.zip
+  cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
+  cp -f onpremises-ide-packaging-tomcat-codeassistant/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-codeassistant.zip
+  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
+  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/analytics-tomcat-pkg.zip
 
 
   # Open folder for multi server env
-  cd ../deployment/puppet/vagrant-multi-vm-env
+  cd ../deployment-onprem/puppet/vagrant-multi-vm-env
 fi
 
 # Destroy existing VM if user set corresponding parameter
