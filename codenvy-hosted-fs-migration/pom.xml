@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>3.11.5-SNAPSHOT</version>
+        <version>3.11.5</version>
     </parent>
     <artifactId>codenvy-hosted-fs-migration</artifactId>
     <name>Codenvy :: Hosted :: FS migration</name>
