@@ -17,42 +17,30 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
+import com.github.fakemongo.Fongo;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
 
-import java.net.InetSocketAddress;
 
 /**
+ * Base test for <i>XDao</i> implementations based on mongo
  *
+ * @author Eugene Voevodin
  */
 public class BaseDaoTest {
 
     private static final String DB_NAME = "test1";
 
     protected DBCollection collection;
-    protected MongoClient client;
-    protected MongoServer server;
-    protected DB db;
+    protected MongoClient  client;
+    protected DB           db;
 
-    public void setUp(String collectionName) throws Exception {
-        server = new MongoServer(new MemoryBackend());
-
-        // bind on a random local port
-        InetSocketAddress serverAddress = server.bind();
-
-        client = new MongoClient(new ServerAddress(serverAddress));
+    public void setUp(String collectionName) {
+        final Fongo fongo = new Fongo("test server");
+        client = fongo.getMongo();
         db = client.getDB(DB_NAME);
         collection = db.getCollection(collectionName);
-
-    }
-
-    public void tearDown() throws Exception {
-        client.close();
-        server.shutdownNow();
     }
 }

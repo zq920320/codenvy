@@ -50,7 +50,7 @@ public class PlanDaoImpl implements PlanDao {
     @Inject
     public PlanDaoImpl(DB db, @Named(PLAN_COLLECTION) String planCollectionName) {
         planCollection = db.getCollection(planCollectionName);
-        planCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        planCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
     }
 
     @Override

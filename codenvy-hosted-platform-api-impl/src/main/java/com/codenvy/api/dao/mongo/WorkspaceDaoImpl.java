@@ -89,9 +89,9 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                             EventService eventService,
                             @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
-        collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        collection.ensureIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
-        collection.ensureIndex(new BasicDBObject("accountId", 1));
+        collection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        collection.createIndex(new BasicDBObject("name", 1), new BasicDBObject("unique", true));
+        collection.createIndex(new BasicDBObject("accountId", 1));
         this.eventService = eventService;
         this.memberDao = memberDao;
     }

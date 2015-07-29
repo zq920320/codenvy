@@ -74,11 +74,6 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         workspaceDao = new WorkspaceDaoImpl(db, memberDao, new EventService(), COLL_NAME);
     }
 
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void shouldBeAbleToCreateWorkspace() throws Exception {
         final Workspace testWorkspace = createWorkspace();
@@ -139,22 +134,15 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
         assertEquals(actual.getAttributes(), update.getAttributes());
     }
 
-    @Test
+    @Test(expectedExceptions = ConflictException.class)
     public void shouldThrowConflictExceptionIfWorkspaceWithUpdateNameAlreadyExists() throws Exception {
         final Workspace testWorkspace = createWorkspace();
-        //persist workspace
+        //persist first workspace
         collection.insert(workspaceDao.toDBObject(testWorkspace));
-        //prepare update
-        final Workspace update = new Workspace().withId(testWorkspace.getId())
-                                                .withName(testWorkspace.getName());
-        //persist workspace with same name as update name
-        collection.insert(new BasicDBObject("id", "test_id2").append("name", update.getName()));
-        try {
-            workspaceDao.create(update);
-            fail();
-        } catch (ConflictException ex) {
-            assertEquals(ex.getMessage(), "Workspace with name '" + testWorkspace.getName() + "' already exists");
-        }
+        //prepare second workspace
+        collection.insert(workspaceDao.toDBObject(createWorkspace().withId("other").withName("other")));
+
+        workspaceDao.update(new Workspace().withId(testWorkspace.getId()).withName("other"));
     }
 
     @Test
@@ -180,7 +168,7 @@ public class WorkspaceDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToGetWorkspacesByAccount() throws Exception {
         final Workspace testWorkspace1 = createWorkspace();
-        final Workspace testWorkspace2 = createWorkspace().withId("test_id2");
+        final Workspace testWorkspace2 = createWorkspace().withId("test_id2").withName("new name");
         collection.insert(workspaceDao.toDBObject(testWorkspace1));
         collection.insert(workspaceDao.toDBObject(testWorkspace2));
 

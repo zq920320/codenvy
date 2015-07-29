@@ -70,7 +70,7 @@ public class UserProfileDaoImpl implements UserProfileDao {
     @Inject
     public UserProfileDaoImpl(DB db, @Named(DB_COLLECTION) String collectionName) {
         collection = db.getCollection(collectionName);
-        collection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        collection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
     }
 
     @Override

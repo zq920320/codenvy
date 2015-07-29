@@ -69,11 +69,6 @@ public class MemberDaoImplTest extends BaseDaoTest {
         memberDao = new MemberDaoImpl(userDao, workspaceDao, db, COLL_NAME);
     }
 
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void shouldBeAbleToCreateMember() throws Exception {
         final Member testMember = createMember();

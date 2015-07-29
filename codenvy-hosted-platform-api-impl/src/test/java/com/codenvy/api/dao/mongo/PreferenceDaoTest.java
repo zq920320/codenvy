@@ -61,11 +61,6 @@ public class PreferenceDaoTest extends BaseDaoTest {
         preferenceDao = new PreferenceDaoImpl(db, userDao, collectionName);
     }
 
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void shouldBeAbleToSetPreferences() throws Exception {
         final String userId = "test-user-id";

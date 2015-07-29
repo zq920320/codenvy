@@ -90,12 +90,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                         eventService);
     }
 
-    @Override
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void shouldBeAbleToCreateAccount() throws Exception {
         final Account account = createAccount();

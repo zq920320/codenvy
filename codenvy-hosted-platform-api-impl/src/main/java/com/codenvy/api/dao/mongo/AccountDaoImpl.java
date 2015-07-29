@@ -112,11 +112,11 @@ public class AccountDaoImpl implements AccountDao {
                           EventService eventService) {
         this.eventService = eventService;
         accountCollection = db.getCollection(accountCollectionName);
-        accountCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        accountCollection.ensureIndex(new BasicDBObject("name", 1));
-        accountCollection.ensureIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
+        accountCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        accountCollection.createIndex(new BasicDBObject("name", 1));
+        accountCollection.createIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
         memberCollection = db.getCollection(memberCollectionName);
-        memberCollection.ensureIndex(new BasicDBObject("members.accountId", 1));
+        memberCollection.createIndex(new BasicDBObject("members.accountId", 1));
         this.workspaceDao = workspaceDao;
     }
 

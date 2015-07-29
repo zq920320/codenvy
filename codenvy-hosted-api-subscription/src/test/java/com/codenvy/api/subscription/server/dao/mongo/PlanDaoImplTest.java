@@ -17,18 +17,9 @@
  */
 package com.codenvy.api.subscription.server.dao.mongo;
 
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
-import de.bwaldvogel.mongo.exception.MongoServerException;
-
-import com.codenvy.api.subscription.server.dao.mongo.PlanDaoImpl;
 import com.mongodb.BasicDBObject;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
-import com.mongodb.ServerAddress;
 
 import com.codenvy.api.subscription.server.dao.PlanDao;
 import com.codenvy.api.subscription.shared.dto.BillingCycleType;
@@ -36,11 +27,9 @@ import com.codenvy.api.subscription.shared.dto.Plan;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.dto.server.DtoFactory;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.InetSocketAddress;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -50,44 +39,28 @@ import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 
 /**
  * Tests for {@link PlanDaoImpl}
  *
  * @author Alexander Garagatyi
  */
-public class PlanDaoImplTest {
+public class PlanDaoImplTest extends BaseDaoTest {
     private PlanDao planDao;
 
     private static final String DB_NAME   = "test1";
     private static final String COLL_NAME = "collName";
 
-    protected DBCollection collection;
-    protected MongoClient  client;
-    protected MongoServer  server;
-    protected DB           db;
-
     @BeforeMethod
     public void setUp() throws Exception {
-        server = new MongoServer(new MemoryBackend());
-
-        // bind on a random local port
-        InetSocketAddress serverAddress = server.bind();
-
-        client = new MongoClient(new ServerAddress(serverAddress));
+        super.setUp(COLL_NAME);
         db = spy(client.getDB(DB_NAME));
+
         collection = spy(db.getCollection(COLL_NAME));
 
         when(db.getCollection(COLL_NAME)).thenReturn(collection);
 
         planDao = new PlanDaoImpl(db, COLL_NAME);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        client.close();
-        server.shutdownNow();
     }
 
     @Test
@@ -110,7 +83,7 @@ public class PlanDaoImplTest {
         assertEquals(actual, Collections.emptyList());
     }
 
-    @Test (expectedExceptions = ServerException.class)
+    @Test(expectedExceptions = ServerException.class)
     public void shouldThrowServerExceptionIfMongoExceptionOccurs() throws ServerException {
         doThrow(new MongoException("")).when(collection).find();
 

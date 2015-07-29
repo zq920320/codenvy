@@ -53,11 +53,6 @@ public class UserProfileDaoImplTest extends BaseDaoTest {
         profileDaoImpl = new UserProfileDaoImpl(db, COLL_NAME);
     }
 
-    @AfterMethod
-    public void tearDown() throws Exception {
-        super.tearDown();
-    }
-
     @Test
     public void shouldBeAbleToCreateProfile() throws Exception {
         final Profile testProfile = createProfile();

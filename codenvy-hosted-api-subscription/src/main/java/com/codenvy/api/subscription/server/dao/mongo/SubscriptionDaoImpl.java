@@ -65,12 +65,12 @@ public class SubscriptionDaoImpl implements SubscriptionDao {
         this.accountDao = accountDao;
         this.subscriptionQueryBuilder = subscriptionQueryBuilder;
         subscriptionCollection = db.getCollection(subscriptionCollectionName);
-        subscriptionCollection.ensureIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
-        subscriptionCollection.ensureIndex(new BasicDBObject("accountId", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("state", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("serviceId", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("nextBillingDate", 1));
-        subscriptionCollection.ensureIndex(new BasicDBObject("endDate", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
+        subscriptionCollection.createIndex(new BasicDBObject("accountId", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("state", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("serviceId", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("nextBillingDate", 1));
+        subscriptionCollection.createIndex(new BasicDBObject("endDate", 1));
     }
 
     @Override
