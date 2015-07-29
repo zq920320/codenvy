@@ -90,6 +90,8 @@ public class SessionHolder {
         }
     }
 
+
+
     public Session getMailSession() {
         return session;
     }
