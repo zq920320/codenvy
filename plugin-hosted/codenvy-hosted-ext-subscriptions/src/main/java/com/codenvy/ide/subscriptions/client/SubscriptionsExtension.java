@@ -33,7 +33,6 @@ import org.eclipse.che.ide.api.extension.Extension;
 import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
-import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.ide.workspace.WorkspacePresenter;
 
@@ -53,7 +52,8 @@ public class SubscriptionsExtension {
     private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
 
     private final SubscriptionIndicatorAction subscriptionIndicatorAction;
-    private final QueueTypeIndicatorAction queueTypeIndicatorAction;
+    private final QueueTypeIndicatorAction    queueTypeIndicatorAction;
+    private final AppContext                  appContext;
 
     @Inject
     public SubscriptionsExtension(SubscriptionsResources resources,
@@ -73,6 +73,7 @@ public class SubscriptionsExtension {
         this.subscriptionIndicatorAction = subscriptionIndicatorAction;
         this.queueTypeIndicatorAction = queueTypeIndicatorAction;
         this.subscriptionServiceClient = subscriptionServiceClient;
+        this.appContext = appContext;
 
         workspacePresenter.setStatusPanelVisible(true);
 
@@ -91,11 +92,11 @@ public class SubscriptionsExtension {
         DefaultActionGroup leftBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_LEFT_STATUS_PANEL);
         leftBottomToolbarGroup.add(subscriptionIndicatorAction, Constraints.LAST);
 
-        if (Config.getCurrentWorkspace().getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
+        if (appContext.getWorkspace().getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
             redirectLinkAction.updateLinkElement(locale.lockDownModeTitle(), locale.lockDownModeUrl(), true);
         }
 
-        if (Config.getCurrentWorkspace().isTemporary()) {
+        if (appContext.getWorkspace().isTemporary()) {
             queueTypeIndicatorAction.setQueueType(SHARED);
 
             if (!appContext.getCurrentUser().isUserPermanent()) {
@@ -110,13 +111,13 @@ public class SubscriptionsExtension {
     }
 
     private void checkSaasSubscription() {
-        String accountId = Config.getCurrentWorkspace().getAccountId();
+        String accountId = appContext.getWorkspace().getAccountId();
         subscriptionServiceClient.getSubscriptionByServiceId(accountId, "Saas", new AsyncRequestCallback<Array<SubscriptionDescriptor>>(
                 dtoUnmarshallerFactory.newArrayUnmarshaller(SubscriptionDescriptor.class)) {
             @Override
             protected void onSuccess(Array<SubscriptionDescriptor> result) {
                 if (result.isEmpty()) {
-                    Log.error(getClass(), "Required Saas subscription is absent");
+                    //User did not have subscription. It means that his account is community
                     updateSaasInformation("Community", SHARED);
                     return;
                 }
