@@ -66,7 +66,7 @@ public class RouterListener implements EventSubscriber<MachineStatusEvent> {
     public RouterListener(EventService eventService,
                           MachineRegistry registry,
                           RouterRulesRegistry routerRulesRegistry,
-                          @Named("machine.router.routing-pattern") String routingPattern) {
+                          @Named("machine.router.routing_pattern") String routingPattern) {
         this.eventService = eventService;
         this.registry = registry;
         this.routerRulesRegistry = routerRulesRegistry;

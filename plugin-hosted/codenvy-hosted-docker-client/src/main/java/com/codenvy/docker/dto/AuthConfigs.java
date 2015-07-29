@@ -15,23 +15,24 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.router;
+package com.codenvy.docker.dto;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
+import org.eclipse.che.dto.shared.DTO;
 
-import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.inject.DynaModule;
+import java.util.Map;
 
 /**
- * @author Alexander Garagatyi
+ * Implementation of docker model ConfigFile object
+ *
+ * @author Max Shaposhnik
+ * @see <a href="https://github.com/docker/docker/blob/v1.6.0/registry/auth.go#L37">source</a>
  */
-@DynaModule
-public class MachineRouterModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(RouterListener.class).asEagerSingleton();
-        bind(RouterRulesRegistry.class).asEagerSingleton();
-        bind(MachineManager.class).to(RouterMachineManager.class);
-    }
+@DTO
+public interface AuthConfigs {
+
+    Map<String, AuthConfig> getConfigs();
+
+    void setConfigs(Map<String, AuthConfig> configs);
+
+    AuthConfigs withConfigs(Map<String, AuthConfig> configs);
 }

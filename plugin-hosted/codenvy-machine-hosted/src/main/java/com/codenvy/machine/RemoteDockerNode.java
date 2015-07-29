@@ -17,6 +17,7 @@
  */
 package com.codenvy.machine;
 
+import com.codenvy.machine.backup.MachineBackupManager;
 import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.machine.dto.RemoteSyncListener;
 import com.codenvy.machine.dto.SynchronizationConf;
@@ -62,6 +63,7 @@ public class RemoteDockerNode implements DockerNode {
     private final SyncthingSynchronizeEventListener syncthingSynchronizeEventListener;
     private final CustomPortService                 portService;
     private final SyncTasks                         syncTasks;
+    private final MachineBackupManager              backupManager;
 
     private final String hostProjectsFolder;
     private final String nodeLocation;
@@ -77,7 +79,8 @@ public class RemoteDockerNode implements DockerNode {
                             CustomPortService portService,
                             DockerConnector dockerConnector,
                             SyncTasks syncTasks,
-                            @Assisted String containerId) throws MachineException {
+                            @Assisted String containerId,
+                            MachineBackupManager backupManager) throws MachineException {
         this.vfsSyncTaskExecutable = vfsSyncTaskExecutable;
         this.vfsSyncTaskConfTemplate = vfsSyncTaskConfTemplate;
         this.vfsGuiToken = vfsGuiToken;
@@ -86,6 +89,8 @@ public class RemoteDockerNode implements DockerNode {
         this.syncthingSynchronizeEventListener = syncthingSynchronizeEventListener;
         this.portService = portService;
         this.syncTasks = syncTasks;
+        this.backupManager = backupManager;
+
         this.hostProjectsFolder = new File(machineProjectsDir, containerId).toString();
 
         String nodeLocation = "127.0.0.1";
@@ -137,7 +142,11 @@ public class RemoteDockerNode implements DockerNode {
 
     @Override
     public void bindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
-        copySources(workspaceId, null);
+        try {
+            backupManager.restoreWorkspaceBackup(workspaceId, hostProjectsFolder, nodeLocation);
+        } catch (ServerException e) {
+            throw new MachineException(e.getLocalizedMessage(), e);
+        }
 
         try {
             startSynchronization(workspaceId, null);
@@ -151,6 +160,12 @@ public class RemoteDockerNode implements DockerNode {
         try {
             stopSynchronization(null);
         } catch (MachineException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+
+        try {
+            backupManager.backupWorkspace(workspaceId, hostProjectsFolder, nodeLocation);
+        } catch (ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
 

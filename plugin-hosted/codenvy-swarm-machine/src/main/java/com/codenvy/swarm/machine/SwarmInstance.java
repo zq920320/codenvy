@@ -25,8 +25,8 @@ import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.server.spi.InstanceMetadata;
+import org.eclipse.che.api.machine.shared.Recipe;
 import org.eclipse.che.plugin.docker.machine.DockerInstance;
-import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
 import org.eclipse.che.plugin.docker.machine.DockerNode;
 
@@ -56,7 +56,9 @@ public class SwarmInstance extends DockerInstance {
                          @Assisted("displayName") String displayName,
                          @Assisted("container") String container,
                          @Assisted DockerNode node,
-                         @Assisted LineConsumer outputConsumer) {
+                         @Assisted Recipe recipe,
+                         @Assisted LineConsumer outputConsumer,
+                         @Assisted int memorySizeMB) {
         super(docker,
               registry,
               dockerMachineFactory,
@@ -67,7 +69,9 @@ public class SwarmInstance extends DockerInstance {
               displayName,
               container,
               node,
-              outputConsumer);
+              outputConsumer,
+              recipe,
+              memorySizeMB);
         this.docker = docker;
         this.container = container;
     }

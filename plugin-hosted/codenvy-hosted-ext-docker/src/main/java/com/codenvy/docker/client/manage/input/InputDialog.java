@@ -15,23 +15,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.router;
+package com.codenvy.docker.client.manage.input;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-
-import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.inject.DynaModule;
+import com.codenvy.docker.dto.AuthConfig;
 
 /**
- * @author Alexander Garagatyi
+ * Interface for the input dialog component.
+ *
+ * @author Sergii Leschenko
  */
-@DynaModule
-public class MachineRouterModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(RouterListener.class).asEagerSingleton();
-        bind(RouterRulesRegistry.class).asEagerSingleton();
-        bind(MachineManager.class).to(RouterMachineManager.class);
-    }
+public interface InputDialog {
+    /** Operate the input dialog: show it and manage user actions. */
+    void show();
+
+    /** Set the data which will be displayed in the dialog */
+    void setData(AuthConfig authConfig);
 }

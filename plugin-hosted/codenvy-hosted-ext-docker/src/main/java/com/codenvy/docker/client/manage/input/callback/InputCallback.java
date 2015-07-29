@@ -15,23 +15,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.router;
+package com.codenvy.docker.client.manage.input.callback;
 
-import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
-
-import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.inject.DynaModule;
+import com.codenvy.docker.dto.AuthConfig;
 
 /**
- * @author Alexander Garagatyi
+ * Callback called when the user clicks on "Save" in the input dialog.
+ *
+ * @author Sergii Leschenko
  */
-@DynaModule
-public class MachineRouterModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(RouterListener.class).asEagerSingleton();
-        bind(RouterRulesRegistry.class).asEagerSingleton();
-        bind(MachineManager.class).to(RouterMachineManager.class);
-    }
+public interface InputCallback {
+    void saved(AuthConfig authConfig);
 }
