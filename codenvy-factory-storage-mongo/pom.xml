@@ -67,11 +67,10 @@
             <version>${ch.qos.logback.version}</version>
             <scope>test</scope>
         </dependency>
-        <!-- Test dependencies -->
         <dependency>
-            <groupId>de.bwaldvogel</groupId>
-            <artifactId>mongo-java-server</artifactId>
-            <version>${org.mongodb.mongo-java-server.version}</version>
+            <groupId>com.github.fakemongo</groupId>
+            <artifactId>fongo</artifactId>
+            <version>${com.github.fakemongo.version}</version>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->

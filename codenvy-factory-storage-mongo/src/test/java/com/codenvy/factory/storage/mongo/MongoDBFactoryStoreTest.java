@@ -17,9 +17,8 @@
  */
 package com.codenvy.factory.storage.mongo;
 
-import de.bwaldvogel.mongo.MongoServer;
-import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
+import com.github.fakemongo.Fongo;
 import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBCollection;
@@ -46,11 +45,9 @@ import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.testng.Assert;
-import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.net.InetSocketAddress;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -74,27 +71,15 @@ public class MongoDBFactoryStoreTest {
     private static final String COLL_NAME = "factory1";
     private DBCollection   collection;
     private MongoClient    client;
-    private MongoServer    server;
     private MongoDBFactoryStore   store;
     private FactoryBuilder factoryBuilder;
 
     @BeforeMethod
     public void setUp() throws Exception {
-        server = new MongoServer(new MemoryBackend());
-
-        // bind on a random local port
-        InetSocketAddress serverAddress = server.bind();
-
-        client = new MongoClient(new ServerAddress(serverAddress));
+        Fongo fongo = new Fongo("test server");
+        client = fongo.getMongo();
         collection = client.getDB(DB_NAME).getCollection(COLL_NAME);
-
-        store = new MongoDBFactoryStore(serverAddress.getHostName(), serverAddress.getPort(), DB_NAME, COLL_NAME, null, null);
-    }
-
-    @AfterMethod
-    public void tearDown() throws Exception {
-        client.close();
-        server.shutdownNow();
+        store = new MongoDBFactoryStore(collection);
     }
 
     @Test

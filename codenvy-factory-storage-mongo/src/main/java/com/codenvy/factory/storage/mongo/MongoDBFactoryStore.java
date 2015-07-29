@@ -26,8 +26,11 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
 import com.mongodb.util.JSON;
 
+import org.bson.types.Binary;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -51,9 +54,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import static com.mongodb.MongoCredential.createCredential;
 import static java.lang.String.format;
+import static java.util.Collections.singletonList;
 
-/** Implementation of the MongoDB factory storage. */
+/**
+ * Implementation of the MongoDB factory storage.
+ */
 
 @Singleton
 public class MongoDBFactoryStore implements FactoryStore {
@@ -79,6 +86,7 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     DBCollection factories;
 
+    //TODO use database provider
     @Inject
     public MongoDBFactoryStore(@Named(HOST) String host, @Named(PORT) int port, @Named(DATABASE) String dbName,
                                @Named(COLLECTION) String collectionName, @Named(USERNAME) String username,
@@ -89,20 +97,17 @@ public class MongoDBFactoryStore implements FactoryStore {
             throw new RuntimeException("Parameters 'database' and 'collection' can't be null or empty.");
         }
 
-        try {
-            mongoClient = new MongoClient(host, port);
-            db = mongoClient.getDB(dbName);
-
-            if (username != null && password != null) {
-                if (!db.authenticate(username, password.toCharArray())) {
-                    throw new RuntimeException("Wrong MongoDB credentians, authentication failed.");
-                }
-            }
-            factories = db.getCollection(collectionName);
-
-        } catch (UnknownHostException e) {
-            throw new RuntimeException("Can't connect to MongoDB.");
+        final List<MongoCredential> credentials = new ArrayList<>(1);
+        if (username != null && password != null) {
+            credentials.add(createCredential(username, dbName, password.toCharArray()));
         }
+        mongoClient = new MongoClient(new ServerAddress(host, port), credentials);
+        db = mongoClient.getDB(dbName);
+        factories = db.getCollection(collectionName);
+    }
+
+    MongoDBFactoryStore(DBCollection factories) {
+        this.factories = factories;
     }
 
     @Override
@@ -158,7 +163,7 @@ public class MongoDBFactoryStore implements FactoryStore {
             query.append(format("factoryurl.%s", one.first), one.second);
         }
         DBCursor cursor = factories.find(query);
-        for (DBObject one :cursor) {
+        for (DBObject one : cursor) {
             Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(decode(one.get("factoryurl").toString()), Factory.class);
             factoryUrl.setId((String)one.get("_id"));
             result.add(factoryUrl);
@@ -183,7 +188,7 @@ public class MongoDBFactoryStore implements FactoryStore {
                     FactoryImage image = new FactoryImage();
                     image.setName((String)dbobj.get("name"));
                     image.setMediaType((String)dbobj.get("type"));
-                    image.setImageData((byte[])dbobj.get("data"));
+                    image.setImageData(((Binary)dbobj.get("data")).getData());
                     images.add(image);
                 }
             } catch (IOException e) {
@@ -203,8 +208,10 @@ public class MongoDBFactoryStore implements FactoryStore {
      * @param factory
      *         - factory information
      * @return - if of stored factory
-     * @throws org.eclipse.che.api.core.NotFoundException if the given factory ID is not found
-     * @throws org.eclipse.che.api.core.ServerException if factory is null
+     * @throws org.eclipse.che.api.core.NotFoundException
+     *         if the given factory ID is not found
+     * @throws org.eclipse.che.api.core.ServerException
+     *         if factory is null
      */
     @Override
     public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ServerException {
@@ -236,7 +243,9 @@ public class MongoDBFactoryStore implements FactoryStore {
      * Mongodb is avoiding storage of dot and $ sign. Documentation is suggesting that we encode such characters
      * http://docs.mongodb.org/manual/reference/limits/#Restrictions-on-Field-Names
      * http://docs.mongodb.org/manual/faq/developers/#faq-dollar-sign-escaping
-     * @param value the value to encode
+     *
+     * @param value
+     *         the value to encode
      * @return the encoded value
      */
     protected String encode(String value) {
@@ -245,7 +254,9 @@ public class MongoDBFactoryStore implements FactoryStore {
 
     /**
      * Decode the value
-     * @param value value to unescape
+     *
+     * @param value
+     *         value to unescape
      * @return the original value without any encoding
      */
     protected String decode(String value) {
