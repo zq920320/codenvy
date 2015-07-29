@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.users.UsersOwnersAccountsSet;
@@ -178,6 +179,25 @@ public class TestUsersAccounts extends BaseTest {
         vdm = m.get(UID3);
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID3);
         assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID3 + "]");
+    }
+
+    @Test
+    public void testUsersOwnersAccountsListWithUserFilter() throws Exception {
+        computeData("20130101");
+        computeData("20130102");
+
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.USER_ID, UID1);
+
+        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_OWNERS_ACCOUNTS_LIST), builder.build());
+        Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
+
+        assertEquals(l.size(), 1);
+
+        assertTrue(m.containsKey(UID1));
+        Map<String, ValueData> vdm = m.get(UID1);
+        assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
+        assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
     }
 
     /*@Test  ADD metric USERS_MEMBERS_ACCOUNTS_LIST

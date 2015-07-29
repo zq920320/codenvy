@@ -430,5 +430,48 @@ public class Event {
                                 .withParam("ACCOUNT-ID", accountId)
                                 .withParam("USER-ID", userId);
         }
+
+        public static Builder createLockedAccountEvent(String accountId) {
+            return new Builder().withParam("EVENT", "account-locked")
+                                .withParam("ACCOUNT", accountId);
+        }
+
+        public static Builder createUnLockedAccountEvent(String accountId) {
+            return new Builder().withParam("EVENT", "account-unlocked")
+                                .withParam("ACCOUNT", accountId);
+        }
+
+        public static Builder createCreditCardAddedEvent(String userId,
+                                                         String accountId) {
+            return new Builder().withParam("EVENT", "credit-card-added")
+                                .withParam("USER", userId)
+                                .withParam("ACCOUNT", accountId);
+        }
+
+        public static Builder createCreditCardRemovedEvent(String userId,
+                                                           String accountId) {
+            return new Builder().withParam("EVENT", "credit-card-removed")
+                                .withParam("USER", userId)
+                                .withParam("ACCOUNT", accountId);
+        }
+
+        public static Builder createSubscriptionAddedEvent(String accountId,
+                                                           String service,
+                                                           String plan) {
+            return new Builder().withParam("EVENT", "subscription-added")
+                                .withParam("SERVICE", service)
+                                .withParam("PLAN", plan)
+                                .withParam("ACCOUNT", accountId);
+        }
+
+
+        public static Builder createSubscriptionRemovedEvent(String accountId,
+                                                             String service,
+                                                             String plan) {
+            return new Builder().withParam("EVENT", "subscription-removed")
+                                .withParam("SERVICE", service)
+                                .withParam("PLAN", plan)
+                                .withParam("ACCOUNT", accountId);
+        }
     }
 }

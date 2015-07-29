@@ -97,6 +97,7 @@ public abstract class AbstractMetric implements Metric {
     public static final String ACCOUNT                   = "account";
     public static final String REMOVED                   = "removed";
     public static final String REMOVED_DATE              = "removed_date";
+    public static final String SERVICE                   = "service";
 
     public static final String IM_ARTIFACT = "artifact";
     public static final String IM_VERSION  = "version";

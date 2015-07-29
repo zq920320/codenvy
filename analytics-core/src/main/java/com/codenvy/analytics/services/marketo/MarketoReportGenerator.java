@@ -80,11 +80,15 @@ public class MarketoReportGenerator {
 
     private static final Logger LOG = LoggerFactory.getLogger(MarketoReportGenerator.class);
 
-    public static final String PROFILE_COMPLETED  = "Profile Complete";
-    public static final String POINTS             = "Product Score";
-    public static final String LAST_PRODUCT_LOGIN = "Last Product Login";
-    public static final String SING_UP_DATE       = "Date Sign-Up";
-    public static final String NEW_USER           = "New User";
+    public static final String PROFILE_COMPLETED   = "Profile Complete";
+    public static final String POINTS              = "Product Score";
+    public static final String LAST_PRODUCT_LOGIN  = "Last Product Login";
+    public static final String SING_UP_DATE        = "Date Sign-Up";
+    public static final String NEW_USER            = "New User";
+    public static final String ACCOUNT_LOCKDOWN    = "Account Lockdown";
+    public static final String CC_ADDED            = "CC Added";
+    public static final String ON_PREM_SUB_ADDED   = "On-Prem Sub Added";
+    public static final String ON_PREM_SUB_REMOVED = "On-Prem Sub Removed";
 
     private final Configurator configurator;
 
@@ -104,6 +108,10 @@ public class MarketoReportGenerator {
         //put(NEW_USER, NEW_USER);
         put(GIGABYTE_RAM_HOURS, "Gigabyte Hours");
         put(SING_UP_DATE, SING_UP_DATE);
+        put(ACCOUNT_LOCKDOWN, ACCOUNT_LOCKDOWN);
+        put(CC_ADDED, CC_ADDED);
+        put(ON_PREM_SUB_ADDED, ON_PREM_SUB_ADDED);
+        put(ON_PREM_SUB_REMOVED, ON_PREM_SUB_REMOVED);
     }};
 
     @Inject
@@ -167,8 +175,10 @@ public class MarketoReportGenerator {
             // Skip users without email which stored in a field ALIASES.
             if (activeUsers.contains(user)
                 && toArray(profile.get(AbstractMetric.ALIASES)).length != 0) {
-                Double userGbHoursValue = usersGbHours.containsKey(user.getAsString()) ? usersGbHours.get(user.getAsString()) : 0.0D;
-                Long userCreatedDate = usersCreatedDates.get(user.getAsString());
+                String userId = user.getAsString();
+
+                Double userGbHoursValue = usersGbHours.containsKey(userId) ? usersGbHours.get(userId) : 0.0D;
+                Long userCreatedDate = usersCreatedDates.get(userId);
 
                 writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate);
             }
@@ -183,15 +193,45 @@ public class MarketoReportGenerator {
                                          @Nullable Long userCreatedDateLong) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
         String lastProductLoginDate = getLastProductLogin(user.getAsString());
-        String userCreatedDate = userCreatedDateLong == null ? "" : new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(userCreatedDateLong);
+        boolean accountLockdown = MarketoReportGeneratorUtils.isUserAccountsLockdown(user.getAsString());
+        boolean ccAdded = MarketoReportGeneratorUtils.isUserCreditCardAdded(user.getAsString());
+
+        String userCreatedDate = dateToString(userCreatedDateLong);
+
+        String onPremSubAddedDate = dateToString(MarketoReportGeneratorUtils.getDateOnPremisesSubscriptionAdded(user.getAsString()));
+        String onPremSubRemovedDate = dateToString(MarketoReportGeneratorUtils.getDateOnPremisesSubscriptionRemoved(user.getAsString()));
 
         if (stat.isEmpty()) {
             MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
+            writeStatistics(out,
+                            valueData.getAll(),
+                            profile,
+                            lastProductLoginDate,
+                            isNewUser,
+                            userGbHours,
+                            userCreatedDate,
+                            accountLockdown,
+                            ccAdded,
+                            onPremSubAddedDate,
+                            onPremSubRemovedDate);
         } else {
             MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out, valueData.getAll(), profile, lastProductLoginDate, isNewUser, userGbHours, userCreatedDate);
+            writeStatistics(out,
+                            valueData.getAll(),
+                            profile,
+                            lastProductLoginDate,
+                            isNewUser,
+                            userGbHours,
+                            userCreatedDate,
+                            accountLockdown,
+                            ccAdded,
+                            onPremSubAddedDate,
+                            onPremSubRemovedDate);
         }
+    }
+
+    private String dateToString(@Nullable Long date) {
+        return date == null || date == 0 ? "" : new SimpleDateFormat(MetricRow.DEFAULT_DATE_FORMAT).format(date);
     }
 
     /**
@@ -240,7 +280,6 @@ public class MarketoReportGenerator {
 
     private Map<String, Double> getUsersGbHoursUse(List<ValueData> profiles) throws IOException {
         Map<String, Double> usersGbHours = new LinkedHashMap<>(profiles.size());
-
 
         Set<String> users = new LinkedHashSet<>(1000);
         for (int i = 0; i < profiles.size(); i++) {
@@ -322,7 +361,11 @@ public class MarketoReportGenerator {
                                  String lastProductLoginDate,
                                  boolean isCreatedTodayUser,
                                  Double userGbHoursValue,
-                                 String userCreatedDate) throws IOException {
+                                 String userCreatedDate,
+                                 boolean accountLockdown,
+                                 boolean ccAdded,
+                                 String onPremSubAdded,
+                                 String onPremSubRemoved) throws IOException {
         writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
         out.write(",");
 
@@ -353,7 +396,7 @@ public class MarketoReportGenerator {
         writeInt(out, stat.get(UsersStatisticsList.LOGINS));
         out.write(",");
 
-        out.write(lastProductLoginDate);
+        writeNotNullStr(out, lastProductLoginDate);
         out.write(",");
 
         writeInt(out, ActOn.getPoints(stat, profile));
@@ -362,10 +405,22 @@ public class MarketoReportGenerator {
         //out.write(isCreatedTodayUser ? "1" :"0");
         //out.write(",");
 
-        out.write(String.format(MetricRow.DEFAULT_NUMERIC_FORMAT, userGbHoursValue));
+        writeNotNullStr(out, String.format(MetricRow.DEFAULT_NUMERIC_FORMAT, userGbHoursValue));
         out.write(",");
 
-        out.write(userCreatedDate);
+        writeNotNullStr(out, userCreatedDate);
+        out.write(",");
+
+        writeNotNullStr(out, Boolean.toString(accountLockdown));
+        out.write(",");
+
+        writeNotNullStr(out, Boolean.toString(ccAdded));
+        out.write(",");
+
+        writeNotNullStr(out, onPremSubAdded);
+        out.write(",");
+
+        writeNotNullStr(out, onPremSubRemoved);
 
         out.newLine();
     }

@@ -365,9 +365,13 @@ com.codenvy.analytics.metrics.subscription.CreditCardRemoved
 com.codenvy.analytics.metrics.subscription.CreditCardChargeSuccess
 com.codenvy.analytics.metrics.subscription.CreditCardChargeFailed
 com.codenvy.analytics.metrics.subscription.AccountLocked
+com.codenvy.analytics.metrics.subscription.AccountLockedList
 com.codenvy.analytics.metrics.subscription.AccountUnLocked
+com.codenvy.analytics.metrics.subscription.AccountUnLockedList
 com.codenvy.analytics.metrics.subscription.SubscriptionAdded
+com.codenvy.analytics.metrics.subscription.SubscriptionAddedList
 com.codenvy.analytics.metrics.subscription.SubscriptionRemoved
+com.codenvy.analytics.metrics.subscription.SubscriptionRemovedList
 com.codenvy.analytics.metrics.subscription.SubscriptionRenewed
 com.codenvy.analytics.metrics.subscription.TrialStarted
 com.codenvy.analytics.metrics.subscription.TrialExpired

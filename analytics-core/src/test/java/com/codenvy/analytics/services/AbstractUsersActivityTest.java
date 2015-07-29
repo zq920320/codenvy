@@ -33,6 +33,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -51,6 +52,13 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
     protected void computeStatistics(String date) throws Exception {
         executeScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST, date);
         executeScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST, date);
+        executeScript(ScriptType.USERS_ACCOUNTS, MetricType.USERS_ACCOUNTS_LIST, date);
+        executeScript(ScriptType.EVENTS, MetricType.CREDIT_CARD_ADDED, date);
+        executeScript(ScriptType.EVENTS, MetricType.CREDIT_CARD_REMOVED, date);
+        executeScript(ScriptType.EVENTS, MetricType.ACCOUNT_LOCKED, date);
+        executeScript(ScriptType.EVENTS, MetricType.ACCOUNT_UNLOCKED, date);
+        executeScript(ScriptType.EVENTS, MetricType.SUBSCRIPTION_ADDED, date);
+        executeScript(ScriptType.EVENTS, MetricType.SUBSCRIPTION_REMOVED, date);
         executeScript(ScriptType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS_LIST, date);
         executeScript(ScriptType.USERS_STATISTICS, MetricType.USERS_STATISTICS_LIST, date);
         executeScript(ScriptType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST, date);
@@ -83,9 +91,21 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
         try (BufferedReader reader = new BufferedReader(new FileReader(jobFile))) {
             String line;
+            boolean isHeaderRead = false;
             while ((line = reader.readLine()) != null) {
-                line = line.replace("\"", "");  // remove all '"'
-                String[] userDataArray = line.split(",");
+                String[] userDataArray;
+                if (!isHeaderRead) {
+                    line = line.replace("\"", "");  // remove all '"'
+                    userDataArray = line.split(",");
+                    isHeaderRead = true;
+                } else {
+                    userDataArray = line.split(",");
+
+                    for (int i=0; i<userDataArray.length; i++) {
+                        userDataArray[i] = userDataArray[i].replace("\"", "");  // remove all '"'
+                    }
+                }
+
                 // put line values into map
                 Map<String, String> userDataMap = new HashMap<>();
                 for (int i = 0; i < userDataArray.length; i++) {
@@ -113,6 +133,29 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserCreatedEvent("id3", "user3@gmail.com", "user3@gmail.com")
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
+
+        events.add(Event.Builder.createAccountAddMemberEvent("acid1", "id1", Arrays.asList("account/owner"))
+                                .withDate("2013-11-01", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid1", "id1", Arrays.asList("account/member"))
+                                .withDate("2013-11-01", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid2", "id2", Arrays.asList("account/owner"))
+                                .withDate("2013-11-01", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid2", "id2", Arrays.asList("account/member"))
+                                .withDate("2013-11-01", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid3", "id3", Arrays.asList("account/owner"))
+                                .withDate("2013-11-01", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid3", "id3", Arrays.asList("account/member"))
+                                .withDate("2013-11-01", "10:00:00").build());
+
+        events.add(Event.Builder.createCreditCardAddedEvent("id2", "acid2")
+                                .withDate("2013-11-01", "11:00:00").build());
+        events.add(Event.Builder.createCreditCardAddedEvent("id3", "acid3")
+                                .withDate("2013-11-01", "11:00:00").build());
+
+        events.add(Event.Builder.createSubscriptionAddedEvent("acid2", "OnPremises", "opm-com-25u-y")
+                                .withDate("2013-11-01", "11:15:01").build());
+        events.add(Event.Builder.createSubscriptionAddedEvent("acid3", "OnPremises", "opm-com-25u-y")
+                                .withDate("2013-11-01", "11:15:03").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent("user2@gmail.com", "google")
                                 .withDate("2013-11-01").withTime("10:10:20").build());
@@ -194,6 +237,17 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:00:00").build());
         events.add(Event.Builder.createSessionUsageEvent("user2@gmail.com", "ws1", "2", false).withDate("2013-11-02").withTime("20:10:00").build());
 
+        events.add(Event.Builder.createAccountAddMemberEvent("acid2", "id1", Arrays.asList("account/member"))
+                                .withDate("2013-11-02", "10:00:00").build());
+        events.add(Event.Builder.createAccountAddMemberEvent("acid1", "id2", Arrays.asList("account/member"))
+                                .withDate("2013-11-02", "10:00:00").build());
+
+        events.add(Event.Builder.createLockedAccountEvent("acid2")
+                                .withDate("2013-11-02", "11:00:00").build());
+
+        events.add(Event.Builder.createSubscriptionRemovedEvent("acid2", "OnPremises", "pay-as-you-go")
+                                .withDate("2013-11-02", "11:15:07").build());
+
         events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "", "", "", "", "", "")
                                 .withDate("2013-11-01")
                                 .withTime("20:03:00").build());
@@ -219,6 +273,9 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createApplicationCreatedEvent("user3@gmail.com", "ws2___", "project1", "type1", "paas2")
                                 .withTime("10:00:01")
                                 .withDate("2013-11-03").build());
+
+        events.add(Event.Builder.createAccountRemoveMemberEvent("acid2", "uid1")
+                                .withDate("2013-01-03", "10:00:00").build());
 
         events.add(Event.Builder.createUserCreatedEvent("id4", "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-11-03").withTime("10:00:00,000").build());

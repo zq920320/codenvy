@@ -83,7 +83,7 @@ public class UnionAccountRoles extends EvalFunc<String> {
         }
     }
 
-    private static Set<String> rolesToSet(String roles) throws IOException {
+    public static Set<String> rolesToSet(String roles) throws IOException {
         String rolesNoSpace = roles.replaceAll(" ", "");
         return new LinkedHashSet<>(Arrays.asList(rolesNoSpace.substring(1, rolesNoSpace.length() - 1).split(",")));
     }
