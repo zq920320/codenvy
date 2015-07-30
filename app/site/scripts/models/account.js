@@ -455,6 +455,22 @@
                 return $.cookie('logged_in')?true:false;
             },
 
+            isUserAuthenticated: function() {
+                return getUserInfo()
+                    .then(function(user){
+                        if (user.id){
+                            return true;
+                        }else{
+                            return false;
+                        }
+                    })
+                    .fail(function(){
+                        return false;
+                    });
+            },
+
+            navigateToLocation: navigateToLocation,
+
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {
                 if ($.cookie('logged_in') && (getQueryParameterByName('account') !== "new")) {
