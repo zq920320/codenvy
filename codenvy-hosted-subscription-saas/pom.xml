@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>3.11.6</version>
+        <version>3.11.7-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-subscription-saas</artifactId>
     <packaging>jar</packaging>
