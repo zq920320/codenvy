@@ -16,11 +16,11 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.6-SNAPSHOT</version>
+        <version>3.11.6</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>contributor-parent</artifactId>
-    <version>3.11.6-SNAPSHOT</version>
+    <version>3.11.6</version>
     <packaging>pom</packaging>
     <name>Codenvy Plugin :: Contribution :: Parent</name>
     <licenses>
@@ -39,7 +39,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugin-contribution.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/plugin-contribution.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>3.11.6</tag>
     </scm>
     <properties>
         <license_years>2014-2015</license_years>
