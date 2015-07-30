@@ -97,6 +97,10 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("31", user1Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
         assertEquals("0.0533", user1Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
         assertEquals("2013-11-01 10:00:00", user1Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user1Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("false", user1Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("", user1Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user1Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("0", user1Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
 
         // verify "user2@gmail.com" data
@@ -114,6 +118,10 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("82", user2Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
         assertEquals("0.0084", user2Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
         assertEquals("2013-11-01 10:00:00", user2Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("true", user2Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("true", user2Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("", user2Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("2013-11-02 11:15:07", user2Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("0", user2Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
 
         // verify "user3@gmail.com" data
@@ -131,6 +139,10 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("10", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
         assertEquals("0.0000", user3Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
         assertEquals("2013-11-01 10:00:00", user3Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user3Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("true", user3Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("2013-11-01 11:15:03", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("0", user3Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
     }
 
@@ -182,6 +194,10 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("20", user3Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
         assertEquals("0.0000", user3Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
         assertEquals("2013-11-01 10:00:00", user3Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user3Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("true", user3Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("2013-11-01 11:15:03", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("0", user3Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
 
         // verify "user4@gmail.com" data
@@ -199,6 +215,10 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("0", user4Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
         assertEquals("0.0000", user4Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
         assertEquals("2013-11-03 10:00:00", user4Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user4Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("false", user4Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("", user4Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user4Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("1", user4Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
     }
 }
