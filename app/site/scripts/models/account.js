@@ -167,8 +167,11 @@
             $.ajax({
                 url: url,
                 type: "GET",
-                complete: function(response){
+                success: function(response){
                     deferredResult.resolve(response);
+                },
+                error: function(response){
+                    deferredResult.reject(response);
                 }
             });
             return deferredResult;
@@ -180,7 +183,7 @@
             .then(function(prefs){
                 var recentProject;
                 try{
-                    recentProject = JSON.parse(JSON.parse(prefs.responseText).CodenvyAppState).recentProject;
+                    recentProject = JSON.parse(prefs.CodenvyAppState).recentProject;
                     if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
                         testProjectPath(recentProject)
                         .then(function(){
@@ -196,6 +199,9 @@
                     //if response does not contain JSON object
                     deferredResult.resolve("");
                 }
+            })
+            .fail(function(){
+                deferredResult.resolve("");
             });
             return deferredResult;
 
@@ -468,15 +474,20 @@
             isUserAuthenticated: function() {
                 return getProfilePrefs()
                     .then(function(prefs){
-                        try {
-                            if (JSON.parse(prefs.responseText).temporary!=="true"){
+                            if (prefs.temporary){
+                                try {
+                                    var temporary = JSON.parse(prefs.temporary);
+                                    if (temporary===true){
+                                        return false; // anonymous user
+                                    }else{
+                                        return true;
+                                    }
+                                }catch(err) {
+                                    return false;
+                                }
+                            } else{
                                 return true;
-                            }else{
-                                return false;
                             }
-                        } catch(err) {
-                            return false;
-                        }
                     })
                     .fail(function(){
                         return false;
