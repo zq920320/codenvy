@@ -161,34 +161,44 @@
             return deferredResult;
         };
 
-        var getLastProject = function(){
+        var getProfilePrefs = function(){
             var deferredResult = $.Deferred();
             var url = "/api/profile/prefs";
             $.ajax({
                 url: url,
                 type: "GET",
                 complete: function(response){
-                    var recentProject;
-                    try{
-                        recentProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentProject;
-                        if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
-                            testProjectPath(recentProject)
-                            .then(function(){
-                                return deferredResult.resolve("/ws" + recentProject.path);
-                            })
-                            .fail(function(){
-                                return deferredResult.resolve("");
-                            });
-                        }else{
-                            deferredResult.resolve("");
-                        }
-                    }catch(err){
-                        //if response does not contain JSON object
-                        deferredResult.resolve("");
-                    }
+                    deferredResult.resolve(response);
                 }
             });
             return deferredResult;
+        };
+
+        var getLastProject = function(){
+            var deferredResult = $.Deferred();
+            getProfilePrefs()
+            .then(function(prefs){
+                var recentProject;
+                try{
+                    recentProject = JSON.parse(JSON.parse(prefs.responseText).CodenvyAppState).recentProject;
+                    if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
+                        testProjectPath(recentProject)
+                        .then(function(){
+                            return deferredResult.resolve("/ws" + recentProject.path);
+                        })
+                        .fail(function(){
+                            return deferredResult.resolve("");
+                        });
+                    }else{
+                        deferredResult.resolve("");
+                    }
+                }catch(err){
+                    //if response does not contain JSON object
+                    deferredResult.resolve("");
+                }
+            });
+            return deferredResult;
+
         };
 
         var testProjectPath = function(recentProject){
@@ -456,11 +466,15 @@
             },
 
             isUserAuthenticated: function() {
-                return getUserInfo()
-                    .then(function(user){
-                        if (user.id){
-                            return true;
-                        }else{
+                return getProfilePrefs()
+                    .then(function(prefs){
+                        try {
+                            if (JSON.parse(prefs.responseText).temporary!=="true"){
+                                return true;
+                            }else{
+                                return false;
+                            }
+                        } catch(err) {
                             return false;
                         }
                     })

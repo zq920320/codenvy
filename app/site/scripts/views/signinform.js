@@ -26,8 +26,8 @@
                 initialize : function(attributes){
                     var self = this;
                     Account.isUserAuthenticated()
-                    .then(function(athenticedad){
-                        if (athenticedad){
+                    .then(function(athenticated){
+                        if (athenticated){
                             Account.navigateToLocation();
                         }else {
                             return $.Deferred().reject();
