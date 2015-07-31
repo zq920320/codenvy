@@ -126,27 +126,27 @@ public class CollectionsManagement {
     /**
      * Ensures all indexes.
      */
-    public void ensureIndexes(String name) {
+    public void crateIndexes(String name) {
         CollectionConfiguration collectionConf = configuration.get(name);
 
         IndexesConfiguration indexesConf = collectionConf.getIndexes();
         List<IndexConfiguration> indexes = indexesConf.getIndexes();
 
         for (IndexConfiguration indexConf : indexes) {
-            ensureIndex(name, indexConf);
+            createIndex(name, indexConf);
         }
     }
 
     /**
      * Ensure all indexes.
      */
-    public void ensureIndexes() throws IOException {
+    public void crateIndexes() throws IOException {
         long start = System.currentTimeMillis();
         LOG.info("Start ensuring indexes...");
 
         try {
             for (String name : configuration.keySet()) {
-                ensureIndexes(name);
+                crateIndexes(name);
             }
         } finally {
             LOG.info("Finished ensuring indexes in " + (System.currentTimeMillis() - start) / 1000 + " sec.");
@@ -212,7 +212,7 @@ public class CollectionsManagement {
      * @param indexConfiguration
      *         the index configuration
      */
-    private void ensureIndex(String collectionName, IndexConfiguration indexConfiguration) {
+    private void createIndex(String collectionName, IndexConfiguration indexConfiguration) {
         if (exists(collectionName)) {
             DBCollection dbCollection = getOrCreate(collectionName);
             String expectedIndexName = indexConfiguration.getName();
@@ -231,7 +231,7 @@ public class CollectionsManagement {
                 }
             }
 
-            dbCollection.ensureIndex(expectedIndex, expectedIndexName);
+            dbCollection.createIndex(expectedIndex, expectedIndexName);
         } else {
             LOG.warn("Collection " + collectionName + " doesn't exist");
         }

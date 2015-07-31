@@ -23,8 +23,8 @@ import com.codenvy.analytics.metrics.Parameters;
 
 import org.testng.annotations.Test;
 
-import static com.mongodb.util.MyAsserts.assertFalse;
-import static com.mongodb.util.MyAsserts.assertTrue;
+import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
 /** @author Anatoliy Bazko */

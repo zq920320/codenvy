@@ -32,7 +32,6 @@ import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.Summaraziable;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-import com.mongodb.util.MyAsserts;
 
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -224,7 +223,7 @@ public class TestProjectsStatistics extends BaseTest {
         Metric metric = MetricFactory.getMetric(MetricType.PROJECTS_STATISTICS_LIST);
         
         ListValueData summaryValue = (ListValueData)((Summaraziable)metric).getSummaryValue(Context.EMPTY);
-        MyAsserts.assertEquals(summaryValue.size(), 1);
+        assertEquals(summaryValue.size(), 1);
         Map<String, ValueData> m = ((MapValueData)summaryValue.getAll().get(0)).getAll();
         assertEquals(m.get("builds").getAsString(), "2");
         assertEquals(m.get("runs").getAsString(), "1");

@@ -221,7 +221,7 @@ public class TestCollectionsManagement extends BaseTest {
 
     private void ensureIndexes(String collectionSuffix) throws Exception {
         CollectionsManagement collectionsManagement = initCollectionManagement(collectionSuffix);
-        collectionsManagement.ensureIndexes();
+        collectionsManagement.crateIndexes();
     }
 
     private void dropIndexes(String collectionSuffix) throws Exception {

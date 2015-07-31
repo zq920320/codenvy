@@ -104,7 +104,7 @@ public class DataComputation extends Feature {
             }
         }
 
-        collectionsManagement.ensureIndexes(collectionName);
+        collectionsManagement.crateIndexes(collectionName);
     }
 
     private void write(DBCollection dbCollection, List<ValueData> items) throws IOException {

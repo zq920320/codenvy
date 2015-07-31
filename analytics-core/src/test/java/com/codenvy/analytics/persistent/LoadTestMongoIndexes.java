@@ -144,7 +144,7 @@ public class LoadTestMongoIndexes extends BaseTest {
         indexes.put("user", 1);
         indexes.put("ws", 1);
         indexes.put("domain", 1);
-        dbCollection.ensureIndex(indexes, indexName);
+        dbCollection.createIndex(indexes, indexName);
     }
 
     private BasicDBObject getDBObjectWithTestData(int count) {
