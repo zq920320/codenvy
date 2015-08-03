@@ -42,8 +42,8 @@ import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
-import static com.mongodb.util.MyAsserts.assertEquals;
-import static com.mongodb.util.MyAsserts.assertTrue;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertTrue;
 
 /**
  * @author Alexander Reshetnyak
