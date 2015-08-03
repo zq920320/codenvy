@@ -20,7 +20,7 @@ package com.codenvy.analytics.metrics;
 /**
  * Predefined metrics.
  *
- * @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a>
+ * @author Anatoliy Bazko
  */
 public enum MetricType {
     WORKSPACES,
