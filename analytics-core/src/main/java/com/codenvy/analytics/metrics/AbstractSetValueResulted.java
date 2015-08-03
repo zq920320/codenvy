@@ -36,16 +36,19 @@ public abstract class AbstractSetValueResulted extends ReadBasedMetric {
         this(metricType.toString(), valueField);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{valueField};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return SetValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();

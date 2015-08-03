@@ -27,20 +27,21 @@ a1 = filterByEvent(l, 'account-add-member');
 a2 = extractParam(a1, 'ACCOUNT-ID', 'account');
 a = extractParam(a2, 'ROLES', 'roles');
 
-resultA = FOREACH a GENERATE CONCAT(account, user),
+resultA = FOREACH a GENERATE UUIDFrom(CONCAT(account, user)),
                              TOTUPLE('date', ToMilliSeconds(dt)),
                              TOTUPLE('user', user),
                              TOTUPLE('account', account),
-                             TOTUPLE('roles', UnionAccountRoles(account, user, roles));
+                             TOTUPLE('roles', UnionAccountRoles(account, user, roles)),
+                             TOTUPLE('removed', 0);
 STORE resultA INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -----------------------------------------------------------------------------------
------------------------------- remove user from accoint ---------------------------
+------------------------------ remove user from accont ----------------------------
 -----------------------------------------------------------------------------------
 b1 = filterByEvent(l, 'account-remove-member');
 b = extractParam(b1, 'ACCOUNT-ID', 'account');
 
-resultB = FOREACH b GENERATE CONCAT(account, user),
+resultB = FOREACH b GENERATE UUIDFrom(CONCAT(account, user)),
                              TOTUPLE('user', user),
                              TOTUPLE('account', account),
                              TOTUPLE('removed_date', ToMilliSeconds(dt)),

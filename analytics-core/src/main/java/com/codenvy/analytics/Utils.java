@@ -504,7 +504,7 @@ public class Utils {
     }
 
     /** Converts string into array. */
-    public static String[] toArray(String value, String delimeter) {
+    public static String[] toArray(String value, String delimiter) {
         if (value == null) {
             return new String[0];
         }
@@ -516,7 +516,11 @@ public class Utils {
         if (bareValue.trim().isEmpty()) {
             return new String[0];
         } else {
-            return bareValue.split(delimeter);
+            String[] split = bareValue.split(delimiter);
+            for (int i = 0; i < split.length; i++) {
+                split[i] = split[i].trim();
+            }
+            return split;
         }
     }
 

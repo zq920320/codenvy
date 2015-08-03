@@ -19,9 +19,7 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
@@ -31,18 +29,17 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER})
-public class UsersOwnersAccountsSet extends AbstractListValueResulted {
+public class UsersAccountsOwnerList extends AbstractListValueResulted {
     public static final String ACCOUNTS = "accounts";
 
-    public UsersOwnersAccountsSet() {
-        super(MetricType.USERS_OWNERS_ACCOUNTS_LIST);
+    public UsersAccountsOwnerList() {
+        super(MetricType.USERS_ACCOUNTS_OWNER_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Users' accounts set where user is owner.";
+        return "Active accounts owners";
     }
 
     /** {@inheritDoc} */
@@ -54,15 +51,15 @@ public class UsersOwnersAccountsSet extends AbstractListValueResulted {
     /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
-        return new String[]{USER,
-                            ACCOUNTS};
+        return new String[]{USER, ACCOUNTS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
         match.put(ROLES, new BasicDBObject("$in", new String[]{"account/owner"}));
-        match.put(REMOVED, new BasicDBObject("$exists", false));
+        match.put(REMOVED, 0);
 
         DBObject group = new BasicDBObject();
         group.put(ID, "$" + USER);

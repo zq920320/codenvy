@@ -31,15 +31,16 @@ import org.apache.pig.data.Tuple;
 import org.apache.pig.impl.logicalLayer.schema.Schema;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
+import static com.codenvy.analytics.Utils.toArray;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 import static com.codenvy.analytics.metrics.AbstractMetric.ROLES;
+import static java.util.Arrays.asList;
 
 /**
  * @author Alexander Reshetnyak
@@ -62,30 +63,24 @@ public class UnionAccountRoles extends EvalFunc<String> {
         String userId = (String)input.get(1);
         String newRoles = (String)input.get(2);
 
-        Set<String> unionRoles = rolesToSet(newRoles);
-
+        Set<String> unionRoles = new LinkedHashSet<>(asList(toArray(newRoles)));
         unionRoles.addAll(getCutterRoles(accountId, userId));
 
-        return unionRoles.toString().replaceAll(" ", "");
+        return unionRoles.toString();
     }
 
     private static Set<String> getCutterRoles(String accountId, String userId) throws IOException {
         Context.Builder builder = new Context.Builder();
-        builder.put(MetricFilter._ID, accountId + userId);
+        builder.put(MetricFilter._ID, UUIDFrom.exec(accountId + userId));
 
 
         ListValueData valueData = getAsList(METRIC, builder.build());
         if (valueData.isEmpty()) {
-            return Collections.EMPTY_SET;
+            return Collections.emptySet();
         } else {
             Map<String, ValueData> account = treatAsMap(valueData.getAll().get(0));
-            return rolesToSet(account.get(ROLES).getAsString());
+            return new LinkedHashSet<>(asList(toArray(account.get(ROLES).getAsString())));
         }
-    }
-
-    public static Set<String> rolesToSet(String roles) throws IOException {
-        String rolesNoSpace = roles.replaceAll(" ", "");
-        return new LinkedHashSet<>(Arrays.asList(rolesNoSpace.substring(1, rolesNoSpace.length() - 1).split(",")));
     }
 
     /** {@inheritDoc} */

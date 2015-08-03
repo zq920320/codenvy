@@ -28,14 +28,14 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.users.UsersOwnersAccountsSet;
-import com.codenvy.analytics.pig.udf.UnionAccountRoles;
+import com.codenvy.analytics.metrics.users.UsersAccountsOwnerList;
 
 import java.io.IOException;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+
+import static com.codenvy.analytics.Utils.toArray;
+import static java.util.Arrays.asList;
 
 /**
  * @author Alexander Reshetnyak
@@ -216,10 +216,9 @@ public final class MarketoReportGeneratorUtils {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_ID, userId);
 
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_OWNERS_ACCOUNTS_LIST), builder.build());
+        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_ACCOUNTS_OWNER_LIST), builder.build());
 
-        ValueData accounts = ValueDataUtil.getFirstValue(l, UsersOwnersAccountsSet.ACCOUNTS, StringValueData.valueOf("[]"));
-        Set<String> accountsSet = UnionAccountRoles.rolesToSet(accounts.getAsString());
-        return Arrays.asList(accountsSet.toArray(new String[accountsSet.size()]));
+        ValueData accounts = ValueDataUtil.getFirstValue(l, UsersAccountsOwnerList.ACCOUNTS, StringValueData.valueOf("[]"));
+        return asList(toArray(accounts.getAsString()));
     }
 }

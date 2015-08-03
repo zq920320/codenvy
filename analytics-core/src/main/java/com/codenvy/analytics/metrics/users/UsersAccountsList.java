@@ -18,9 +18,7 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
-import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
-import com.codenvy.analytics.metrics.OmitFilters;
 
 import javax.annotation.security.RolesAllowed;
 
@@ -28,17 +26,16 @@ import javax.annotation.security.RolesAllowed;
  * @author Alexander Reshetnyak
  */
 @RolesAllowed({"system/admin", "system/manager"})
-@OmitFilters({MetricFilter.USER, MetricFilter.ACCOUNT})
-public class UserAccountsList extends AbstractListValueResulted {
+public class UsersAccountsList extends AbstractListValueResulted {
 
-    public UserAccountsList() {
+    public UsersAccountsList() {
         super(MetricType.USERS_ACCOUNTS_LIST);
     }
 
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "Users' accounts where user is owner.";
+        return "Users' roles in accounts";
     }
 
     /** {@inheritDoc} */

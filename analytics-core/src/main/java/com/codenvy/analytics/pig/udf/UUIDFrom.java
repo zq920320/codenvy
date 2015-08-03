@@ -33,9 +33,13 @@ public class UUIDFrom extends EvalFunc<String> {
         if (input.size() == 0) {
             return java.util.UUID.randomUUID().toString();
         } else {
-            byte[] bytes = input.toString().getBytes();
-            return java.util.UUID.nameUUIDFromBytes(bytes).toString();
+            return exec(input.get(0).toString());
         }
+    }
+
+    public static String exec(String input) {
+        byte[] bytes = input.getBytes();
+        return java.util.UUID.nameUUIDFromBytes(bytes).toString();
     }
 
     /** {@inheritDoc} */

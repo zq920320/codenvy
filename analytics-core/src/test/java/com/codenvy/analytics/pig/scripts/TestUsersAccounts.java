@@ -20,16 +20,15 @@ package com.codenvy.analytics.pig.scripts;
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.ValueData;
-import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.metrics.users.UsersOwnersAccountsSet;
+import com.codenvy.analytics.metrics.users.UsersAccountsOwnerList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
+import com.codenvy.analytics.pig.udf.UUIDFrom;
 
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.testng.annotations.Test;
@@ -41,6 +40,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static com.mongodb.util.MyAsserts.assertEquals;
 import static com.mongodb.util.MyAsserts.assertTrue;
 
@@ -97,43 +98,43 @@ public class TestUsersAccounts extends BaseTest {
         computeData("20130101");
         computeData("20130102");
 
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_ACCOUNTS_LIST), Context.EMPTY);
+        ListValueData l = getAsList(getMetric(MetricType.USERS_ACCOUNTS_LIST), Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.ID);
 
         assertEquals(m.size(), 6);
-        assertTrue(m.containsKey(ACID1 + UID1));
-        Map<String, ValueData> vdm = m.get(ACID1 + UID1);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID1 + UID1);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID1 + UID1)));
+        Map<String, ValueData> vdm = m.get(UUIDFrom.exec(ACID1 + UID1));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID1 + UID1));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID1);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member, account/owner]");
-        assertTrue(m.containsKey(ACID2 + UID2));
-        vdm = m.get(ACID2 + UID2);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID2 + UID2);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID2 + UID2)));
+        vdm = m.get(UUIDFrom.exec(ACID2 + UID2));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID2 + UID2));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID2);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID2);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member, account/owner]");
-        assertTrue(m.containsKey(ACID3 + UID3));
-        vdm = m.get(ACID3 + UID3);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID3 + UID3);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID3 + UID3)));
+        vdm = m.get(UUIDFrom.exec(ACID3 + UID3));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID3 + UID3));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID3);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID3);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member, account/owner]");
-        assertTrue(m.containsKey(ACID4 + UID1));
-        vdm = m.get(ACID4 + UID1);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID4 + UID1);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID4 + UID1)));
+        vdm = m.get(UUIDFrom.exec(ACID4 + UID1));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID4 + UID1));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID4);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member, account/owner]");
-        assertTrue(m.containsKey(ACID1 + UID2));
-        vdm = m.get(ACID1 + UID2);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID1 + UID2);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID1 + UID2)));
+        vdm = m.get(UUIDFrom.exec(ACID1 + UID2));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID1 + UID2));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID2);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID1);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member]");
-        assertTrue(m.containsKey(ACID2 + UID1));
-        vdm = m.get(ACID2 + UID1);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID2 + UID1);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID2 + UID1)));
+        vdm = m.get(UUIDFrom.exec(ACID2 + UID1));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID2 + UID1));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID2);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member]");
@@ -141,13 +142,13 @@ public class TestUsersAccounts extends BaseTest {
 
         computeData("20130103");
 
-        l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_ACCOUNTS_LIST), Context.EMPTY);
+        l = getAsList(getMetric(MetricType.USERS_ACCOUNTS_LIST), Context.EMPTY);
         m = listToMap(l, AbstractMetric.ID);
 
         assertEquals(m.size(), 6);
-        assertTrue(m.containsKey(ACID2 + UID1));
-        vdm = m.get(ACID2 + UID1);
-        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), ACID2 + UID1);
+        assertTrue(m.containsKey(UUIDFrom.exec(ACID2 + UID1)));
+        vdm = m.get(UUIDFrom.exec(ACID2 + UID1));
+        assertEquals(vdm.get(AbstractMetric.ID).getAsString(), UUIDFrom.exec(ACID2 + UID1));
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID2);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member]");
@@ -160,7 +161,7 @@ public class TestUsersAccounts extends BaseTest {
         computeData("20130101");
         computeData("20130102");
 
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_OWNERS_ACCOUNTS_LIST), Context.EMPTY);
+        ListValueData l = getAsList(getMetric(MetricType.USERS_ACCOUNTS_OWNER_LIST), Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
 
         assertEquals(l.size(), 3);
@@ -168,17 +169,17 @@ public class TestUsersAccounts extends BaseTest {
         assertTrue(m.containsKey(UID1));
         Map<String, ValueData> vdm = m.get(UID1);
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
-        assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
+        assertEquals(vdm.get(UsersAccountsOwnerList.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
 
         assertTrue(m.containsKey(UID2));
         vdm = m.get(UID2);
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID2);
-        assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID2 + "]");
+        assertEquals(vdm.get(UsersAccountsOwnerList.ACCOUNTS).getAsString(), "[" + ACID2 + "]");
 
         assertTrue(m.containsKey(UID3));
         vdm = m.get(UID3);
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID3);
-        assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID3 + "]");
+        assertEquals(vdm.get(UsersAccountsOwnerList.ACCOUNTS).getAsString(), "[" + ACID3 + "]");
     }
 
     @Test
@@ -189,7 +190,7 @@ public class TestUsersAccounts extends BaseTest {
         Context.Builder builder = new Context.Builder();
         builder.put(MetricFilter.USER_ID, UID1);
 
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_OWNERS_ACCOUNTS_LIST), builder.build());
+        ListValueData l = getAsList(getMetric(MetricType.USERS_ACCOUNTS_OWNER_LIST), builder.build());
         Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
 
         assertEquals(l.size(), 1);
@@ -197,7 +198,7 @@ public class TestUsersAccounts extends BaseTest {
         assertTrue(m.containsKey(UID1));
         Map<String, ValueData> vdm = m.get(UID1);
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
-        assertEquals(vdm.get(UsersOwnersAccountsSet.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
+        assertEquals(vdm.get(UsersAccountsOwnerList.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
     }
 
     /*@Test  ADD metric USERS_MEMBERS_ACCOUNTS_LIST
@@ -206,7 +207,7 @@ public class TestUsersAccounts extends BaseTest {
         computeData("20130102");
         computeData("20130103");
 
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_OWNERS_ACCOUNTS_LIST), Context.EMPTY);
+        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_ACCOUNTS_OWNER_LIST), Context.EMPTY);
         Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
 
         assertEquals(m.size(), 3);
