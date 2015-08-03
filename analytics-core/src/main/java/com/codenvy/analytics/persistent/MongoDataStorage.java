@@ -73,7 +73,7 @@ public class MongoDataStorage {
     private final Configurator configurator;
 
     @Inject
-    public MongoDataStorage(Configurator configurator) throws IOException {
+    public MongoDataStorage(Configurator configurator) throws IOException, URISyntaxException {
         this.configurator = configurator;
         this.uri = new MongoClientURI(configurator.getString(URL));
 
@@ -95,20 +95,13 @@ public class MongoDataStorage {
     /**
      * Initialize Mongo client.
      *
-     * @throws IOException
+     * @throws URISyntaxException
      */
-    private MongoClient initializeClient() throws IOException {
+    private MongoClient initializeClient() throws URISyntaxException {
+        URI url = new URI(configurator.getString(URL));
+        ServerAddress address = new ServerAddress(url.getHost(), url.getPort());
+
         MongoClient mongoClient;
-        ServerAddress address = null;
-        URI url;
-        try {
-            url = new URI(configurator.getString(URL));
-            address = new ServerAddress(url.getHost(), url.getPort());
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }
-
-
         if (isAuthRequired(uri)) {
             MongoCredential credential = createCredential(uri.getUsername(), uri.getDatabase(), uri.getPassword());
             mongoClient = new MongoClient(address, singletonList(credential));
