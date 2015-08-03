@@ -79,7 +79,7 @@ public class TestCollectionsManagement extends BaseTest {
         String collectionSuffix = "2";
 
         createCollection(collectionSuffix);
-        ensureIndexes(collectionSuffix);
+        createIndexes(collectionSuffix);
 
         assertIndexesNumber(collectionSuffix, 3);
     }
@@ -97,7 +97,7 @@ public class TestCollectionsManagement extends BaseTest {
         String collectionSuffix = "4";
 
         createCollection(collectionSuffix);
-        ensureIndexes(collectionSuffix);
+        createIndexes(collectionSuffix);
 
         assertIndexesNumber(collectionSuffix, 3);
 
@@ -111,11 +111,11 @@ public class TestCollectionsManagement extends BaseTest {
         String collectionSuffix = "5";
 
         createCollection(collectionSuffix);
-        ensureIndexes(collectionSuffix);
+        createIndexes(collectionSuffix);
 
         assertIndexesNumber(collectionSuffix, 3);
 
-        ensureIndexes(collectionSuffix);
+        createIndexes(collectionSuffix);
 
         assertIndexesNumber(collectionSuffix, 3);
     }
@@ -125,7 +125,7 @@ public class TestCollectionsManagement extends BaseTest {
         String collectionSuffix = "6";
 
         createCollection(collectionSuffix);
-        ensureIndexes(collectionSuffix);
+        createIndexes(collectionSuffix);
 
         assertIndexesNumber(collectionSuffix, 3);
 
@@ -219,9 +219,9 @@ public class TestCollectionsManagement extends BaseTest {
         dbCollection.save(new BasicDBObject());
     }
 
-    private void ensureIndexes(String collectionSuffix) throws Exception {
+    private void createIndexes(String collectionSuffix) throws Exception {
         CollectionsManagement collectionsManagement = initCollectionManagement(collectionSuffix);
-        collectionsManagement.ensureIndexes();
+        collectionsManagement.crateIndexes();
     }
 
     private void dropIndexes(String collectionSuffix) throws Exception {

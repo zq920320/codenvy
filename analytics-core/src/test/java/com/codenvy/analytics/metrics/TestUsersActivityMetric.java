@@ -28,7 +28,6 @@ import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 
-import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -37,7 +36,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import static com.mongodb.util.MyAsserts.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class TestUsersActivityMetric extends BaseTest {
@@ -252,7 +251,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    0, 0);
 
         metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
-        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(14));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(14));
     }
 
     @Test
@@ -325,7 +324,7 @@ public class TestUsersActivityMetric extends BaseTest {
                    fullDateFormatMils.parse("2013-11-01 20:04:00,000").getTime() - startTime);
 
         metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
-        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
 
@@ -400,7 +399,7 @@ public class TestUsersActivityMetric extends BaseTest {
 
 
         metric = MetricFactory.getMetric(MetricType.USERS_ACTIVITY);
-        Assert.assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
+        assertEquals(metric.getValue(builder.build()), LongValueData.valueOf(3));
     }
 
     @Test

@@ -36,7 +36,7 @@ public class Reindexer extends Feature {
 
     @Override
     protected void doExecute(Context context) throws Exception {
-        collectionsManagement.ensureIndexes();
+        collectionsManagement.crateIndexes();
     }
 
     @Override

@@ -30,7 +30,7 @@ import org.testng.annotations.Test;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 
-import static com.mongodb.util.MyAsserts.assertFalse;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNull;
 import static org.testng.AssertJUnit.assertEquals;
 

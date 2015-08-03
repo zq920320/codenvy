@@ -29,7 +29,13 @@ import de.flapdoodle.embed.mongo.distribution.Version;
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import com.mongodb.*;
+import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
+import com.mongodb.MongoCredential;
+import com.mongodb.ReadPreference;
+import com.mongodb.ServerAddress;
+import com.mongodb.WriteConcern;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,7 +44,15 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
-import java.net.*;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.Socket;
+import java.net.SocketAddress;
+import java.net.URI;
+import java.net.URISyntaxException;
+
+import static com.mongodb.MongoCredential.createCredential;
+import static java.util.Collections.singletonList;
 
 /**
  * Utility class. Provides connection with underlying storage.
@@ -59,7 +73,7 @@ public class MongoDataStorage {
     private final Configurator configurator;
 
     @Inject
-    public MongoDataStorage(Configurator configurator) throws IOException {
+    public MongoDataStorage(Configurator configurator) throws IOException, URISyntaxException {
         this.configurator = configurator;
         this.uri = new MongoClientURI(configurator.getString(URL));
 
@@ -81,19 +95,18 @@ public class MongoDataStorage {
     /**
      * Initialize Mongo client.
      *
-     * @throws IOException
+     * @throws URISyntaxException
      */
-    private MongoClient initializeClient() throws IOException {
-        final MongoClient mongoClient = new MongoClient(uri);
-        try {
-            DB db = mongoClient.getDB(uri.getDatabase());
+    private MongoClient initializeClient() throws URISyntaxException {
+        URI url = new URI(configurator.getString(URL));
+        ServerAddress address = new ServerAddress(url.getHost(), url.getPort());
 
-            if (isAuthRequired(uri)) {
-                db.authenticate(uri.getUsername(), uri.getPassword());
-            }
-        } catch (Exception e) {
-            mongoClient.close();
-            throw new IOException(e);
+        MongoClient mongoClient;
+        if (isAuthRequired(uri)) {
+            MongoCredential credential = createCredential(uri.getUsername(), uri.getDatabase(), uri.getPassword());
+            mongoClient = new MongoClient(address, singletonList(credential));
+        } else {
+            mongoClient = new MongoClient(address);
         }
 
         LOG.info("Mongo client connected to server");
