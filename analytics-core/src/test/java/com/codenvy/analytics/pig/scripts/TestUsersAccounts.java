@@ -19,6 +19,7 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
@@ -152,7 +153,7 @@ public class TestUsersAccounts extends BaseTest {
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(AbstractMetric.ACCOUNT).getAsString(), ACID2);
         assertEquals(vdm.get(AbstractMetric.ROLES).getAsString(), "[account/member]");
-        assertEquals(vdm.get(AbstractMetric.REMOVED).getAsString(), 1);
+        assertEquals(vdm.get(AbstractMetric.REMOVED), LongValueData.valueOf(1));
         assertEquals(vdm.get(AbstractMetric.REMOVED_DATE).getAsString(), "1357200000000");
     }
 
