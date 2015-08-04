@@ -18,11 +18,11 @@
 package com.codenvy.api.subscription.onpremises.server;
 
 
-import com.codenvy.api.subscription.server.SubscriptionEvent;
-import com.codenvy.api.subscription.server.util.SubscriptionServiceHelper;
 import com.codenvy.api.subscription.server.AbstractSubscriptionService;
+import com.codenvy.api.subscription.server.SubscriptionEvent;
 import com.codenvy.api.subscription.server.dao.Subscription;
 import com.codenvy.api.subscription.server.dao.SubscriptionDao;
+import com.codenvy.api.subscription.server.util.SubscriptionServiceHelper;
 
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
@@ -50,15 +50,18 @@ public class OnPremisesSubscriptionService extends AbstractSubscriptionService {
 
     private final SubscriptionDao           subscriptionDao;
     private final EventService              eventService;
+    private final SubscriptionMailSender    mailSender;
     private final SubscriptionServiceHelper subscriptionServiceHelper;
 
     @Inject
     public OnPremisesSubscriptionService(SubscriptionDao subscriptionDao,
                                          EventService eventService,
+                                         SubscriptionMailSender mailSender,
                                          SubscriptionServiceHelper subscriptionServiceHelper) {
         super(ONPREMISES_SERVICE_ID, "OnPremises");
         this.subscriptionDao = subscriptionDao;
         this.eventService = eventService;
+        this.mailSender = mailSender;
         this.subscriptionServiceHelper = subscriptionServiceHelper;
     }
 
@@ -99,5 +102,6 @@ public class OnPremisesSubscriptionService extends AbstractSubscriptionService {
 
     @Override
     public void onCheckSubscriptions() throws ApiException {
+        mailSender.sendEmailAboutExpiring(getServiceId(), 14);
     }
 }

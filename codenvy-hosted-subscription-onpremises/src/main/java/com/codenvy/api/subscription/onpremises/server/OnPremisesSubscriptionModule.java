@@ -30,5 +30,6 @@ public class OnPremisesSubscriptionModule extends AbstractModule {
         Multibinder<AbstractSubscriptionService> subscriptionServiceBinder =
                 Multibinder.newSetBinder(binder(), AbstractSubscriptionService.class);
         subscriptionServiceBinder.addBinding().to(OnPremisesSubscriptionService.class);
+        bind(OnPremisesSubscriptionSubscriber.class);
     }
 }
