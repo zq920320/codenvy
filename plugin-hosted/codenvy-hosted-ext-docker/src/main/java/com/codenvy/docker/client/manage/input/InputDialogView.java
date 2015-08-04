@@ -56,6 +56,10 @@ public interface InputDialogView {
 
     void setReadOnlyServer();
 
+    void setHideServer();
+
+    boolean isVisibleServer();
+
     interface ActionDelegate {
         void cancelled();
 

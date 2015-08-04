@@ -33,8 +33,12 @@ public interface DockerLocalizationConstant extends Messages {
     String dockerPreferencesCategory();
 
 
-    @Key("docker.add.credential.text")
-    String dockerAddCredentialsText();
+    @Key("docker.add.private.registry.text")
+    String dockerAddPrivateRegistryText();
+
+    @Key("docker.add.dockerhub.account.text")
+    String dockerAddDockerhubAccountText();
+
 
 
     @Key("docker.input.credentials.server.address.label")
@@ -58,6 +62,20 @@ public interface DockerLocalizationConstant extends Messages {
 
     @Key("docker.input.credentials.save.button.text")
     String inputCredentialsSaveButtonText();
+
+
+    @Key("docker.add.private.registry.title")
+    String addPrivateRegitryTitle();
+
+    @Key("docker.edit.private.registry.title")
+    String editPrivateRegistryTitle();
+
+    @Key("docker.add.dockerhub.account.title")
+    String addDockerhubAccountTitle();
+
+    @Key("docker.edit.dockerhub.account.title")
+    String editDockerhubAccountTitle();
+
 
     @Key("docker.remove.credentials.confirm.title")
     String removeCredentialsConfirmTitle();

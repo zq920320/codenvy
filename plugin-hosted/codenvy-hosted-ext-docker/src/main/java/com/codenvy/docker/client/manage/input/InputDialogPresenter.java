@@ -36,7 +36,9 @@ import javax.annotation.Nullable;
 public class InputDialogPresenter implements InputDialog, InputDialogView.ActionDelegate {
     public enum InputMode {
         CREATE,
-        EDIT
+        EDIT,
+        CREATE_DOCKERHUB,
+        EDIT_DOCKERHUB
     }
 
     private final InputDialogView            view;
@@ -53,11 +55,19 @@ public class InputDialogPresenter implements InputDialog, InputDialogView.Action
         this.locale = locale;
         switch (inputMode) {
             case CREATE:
-                view.setTitle("Add docker credentials");
+                view.setTitle(locale.addPrivateRegitryTitle());
                 break;
             case EDIT:
-                view.setTitle("Edit docker credentials");
+                view.setTitle(locale.editPrivateRegistryTitle());
                 view.setReadOnlyServer();
+                break;
+            case CREATE_DOCKERHUB:
+                view.setTitle(locale.addDockerhubAccountTitle());
+                view.setHideServer();
+                break;
+            case EDIT_DOCKERHUB:
+                view.setTitle(locale.editDockerhubAccountTitle());
+                view.setHideServer();
                 break;
         }
         this.view = view;
@@ -111,7 +121,7 @@ public class InputDialogPresenter implements InputDialog, InputDialogView.Action
     private boolean isInputValid() {
         String invalidField = null;
 
-        if (view.getServerAddress().trim().isEmpty()) {
+        if (view.isVisibleServer() && view.getServerAddress().trim().isEmpty()) {
             invalidField = locale.inputCredentialsServerAddressLabel().toLowerCase();
         }
 

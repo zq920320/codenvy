@@ -47,6 +47,7 @@ import static com.codenvy.docker.client.manage.input.InputDialogPresenter.InputM
  */
 public class CredentialsPreferencesPresenter extends AbstractPreferencePagePresenter implements CredentialsPreferencesView.ActionDelegate {
     private static final String AUTH_PREFERENCE_NAME = "codenvy:dockerCredentials";
+    private static final String DEFAULT_SERVER = "https://index.docker.io/v1/";
 
     private final CredentialsPreferencesView view;
     private final UserProfileServiceClient   userProfileServiceClient;
@@ -105,8 +106,20 @@ public class CredentialsPreferencesPresenter extends AbstractPreferencePagePrese
     }
 
     @Override
+    public void onAddAccountClicked() {
+        inputDialogFactory.createInputDialog(InputMode.CREATE_DOCKERHUB, new InputCallback() {
+            @Override
+            public void saved(AuthConfig authConfig) {
+                addAuthConfig(authConfig);
+            }
+        }).show();
+    }
+
+    @Override
     public void onEditClicked(AuthConfig authConfig) {
-        final InputDialog inputDialog = inputDialogFactory.createInputDialog(InputMode.EDIT, new InputCallback() {
+        final InputDialog inputDialog = inputDialogFactory
+                .createInputDialog(authConfig.getServeraddress().equals(DEFAULT_SERVER) ? InputMode.EDIT_DOCKERHUB : InputMode.EDIT,
+                                   new InputCallback() {
             @Override
             public void saved(AuthConfig authConfig) {
                 addAuthConfig(authConfig);
@@ -132,6 +145,9 @@ public class CredentialsPreferencesPresenter extends AbstractPreferencePagePrese
     }
 
     private void addAuthConfig(AuthConfig authConfig) {
+        if (authConfig.getServeraddress().isEmpty()) {
+            authConfig.setServeraddress(DEFAULT_SERVER);
+        }
         AuthConfigs authConfigs = getUserCredentials();
         authConfigs.getConfigs().put(authConfig.getServeraddress(), authConfig);
         updateAuthConfigs(authConfigs);

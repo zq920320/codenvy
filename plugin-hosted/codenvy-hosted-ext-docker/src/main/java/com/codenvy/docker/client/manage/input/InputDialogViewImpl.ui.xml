@@ -39,7 +39,7 @@
     <g:DockLayoutPanel unit="PX" width="240px" height="145px" addStyleNames="{style.emptyBorder}">
         <g:center>
             <g:FlowPanel styleName="{style.main}">
-                <g:HorizontalPanel verticalAlignment="MIDDLE" height="28px">
+                <g:HorizontalPanel verticalAlignment="MIDDLE" height="28px" ui:field="serverPanel">
                     <g:cell width="75px" verticalAlignment="ALIGN_MIDDLE">
                         <g:Label text="{locale.inputCredentialsServerAddressLabel}"/>
                     </g:cell>

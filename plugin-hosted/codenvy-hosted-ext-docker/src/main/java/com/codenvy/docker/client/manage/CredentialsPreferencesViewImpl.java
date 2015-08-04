@@ -57,7 +57,10 @@ public class CredentialsPreferencesViewImpl implements CredentialsPreferencesVie
     private ActionDelegate delegate;
 
     @UiField
-    Button addButton;
+    Button addRegistryButton;
+
+    @UiField
+    Button addAccountButton;
 
     @UiField(provided = true)
     CellTable<AuthConfig> keys;
@@ -163,8 +166,13 @@ public class CredentialsPreferencesViewImpl implements CredentialsPreferencesVie
         return rootElement;
     }
 
-    @UiHandler("addButton")
-    void onSaveClicked(ClickEvent event) {
+    @UiHandler("addRegistryButton")
+    void onSaveRegistryClicked(ClickEvent event) {
         delegate.onAddClicked();
+    }
+
+    @UiHandler("addAccountButton")
+    void onSaveAccountClicked(ClickEvent event) {
+        delegate.onAddAccountClicked();
     }
 }

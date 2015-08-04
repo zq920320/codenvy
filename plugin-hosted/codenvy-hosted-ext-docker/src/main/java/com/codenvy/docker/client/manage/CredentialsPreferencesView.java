@@ -36,7 +36,10 @@ public interface CredentialsPreferencesView extends View<CredentialsPreferencesV
     void setKeys(@Nonnull Collection<AuthConfig> keys);
 
     interface ActionDelegate {
+
         void onAddClicked();
+
+        void onAddAccountClicked();
 
         void onEditClicked(AuthConfig authConfig);
 

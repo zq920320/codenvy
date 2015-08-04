@@ -22,6 +22,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.Timer;
+import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PasswordTextBox;
 import com.google.gwt.user.client.ui.TextBox;
@@ -44,6 +45,9 @@ public class InputDialogViewImpl extends Window implements InputDialogView {
 
     @UiField
     TextBox serverAddress;
+
+    @UiField
+    HorizontalPanel serverPanel;
 
     @UiField
     TextBox username;
@@ -76,7 +80,11 @@ public class InputDialogViewImpl extends Window implements InputDialogView {
         new Timer() {
             @Override
             public void run() {
-                serverAddress.setFocus(true);
+                if (isVisibleServer()) {
+                    serverAddress.setFocus(true);
+                } else {
+                    username.setFocus(true);
+                }
             }
         }.schedule(300);
     }
@@ -161,6 +169,16 @@ public class InputDialogViewImpl extends Window implements InputDialogView {
     @Override
     public void setReadOnlyServer() {
         this.serverAddress.setReadOnly(true);
+    }
+
+    @Override
+    public void setHideServer() {
+        this.serverPanel.setVisible(false);
+    }
+
+    @Override
+    public boolean isVisibleServer() {
+        return serverPanel.isVisible();
     }
 
     @UiHandler({"serverAddress", "username", "password", "email"})
