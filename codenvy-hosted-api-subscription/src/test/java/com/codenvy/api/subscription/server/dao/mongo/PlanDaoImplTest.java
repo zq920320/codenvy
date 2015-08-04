@@ -55,6 +55,7 @@ public class PlanDaoImplTest extends BaseDaoTest {
     public void setUp() throws Exception {
         super.setUp(COLL_NAME);
         db = spy(client.getDB(DB_NAME));
+
         collection = spy(db.getCollection(COLL_NAME));
 
         when(db.getCollection(COLL_NAME)).thenReturn(collection);
