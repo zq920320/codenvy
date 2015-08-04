@@ -18,7 +18,7 @@
 
 package com.codenvy.analytics.integration;
 
-import org.testng.annotations.Test;
+import org.junit.Test;
 
 /**
  * @author Anatoliy Bazko
