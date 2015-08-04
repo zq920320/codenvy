@@ -33,6 +33,15 @@ public interface SubscriptionQueryBuilder {
 
     SubscriptionQuery getChargeQuery(String service);
 
+    /**
+     * Get list of subscriptions that will be expired in specified period.
+     *
+     * @param service service ID
+     * @param days count of days until subscription expires
+     * @return
+     */
+    SubscriptionQuery getExpiringQuery(String service, int days);
+
     SubscriptionQuery getTrialExpiringQuery(String service, int days);
 
     SubscriptionQuery getTrialExpiredQuery(String service, int days);

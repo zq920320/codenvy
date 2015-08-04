@@ -86,7 +86,6 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
             @Override
             public List<Subscription> execute() throws ServerException {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
                 calendar.add(Calendar.DATE, days);
 
                 final BasicDBObject query = new BasicDBObject("serviceId", service);
@@ -105,7 +104,6 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
             @Override
             public List<Subscription> execute() throws ServerException {
                 Calendar calendar = Calendar.getInstance();
-                calendar.setTime(new Date());
                 calendar.add(Calendar.DATE, -days);
 
                 final BasicDBObject query = new BasicDBObject("serviceId", service);
@@ -128,6 +126,23 @@ public class MongoSubscriptionQueryBuilder implements SubscriptionQueryBuilder {
                 query.append("state", SubscriptionState.ACTIVE.toString());
                 query.append("trialEndDate", new BasicDBObject("$lt", new Date()));
 
+                return executeQuery(query);
+            }
+        };
+    }
+
+    @Override
+    public SubscriptionQuery getExpiringQuery(final String service, final int days) {
+        return new SubscriptionQuery() {
+            @Override
+            public List<Subscription> execute() throws ServerException {
+                Calendar calendar = Calendar.getInstance();
+                calendar.add(Calendar.DATE, days);
+
+                final BasicDBObject query = new BasicDBObject("serviceId", service);
+                query.append("state", SubscriptionState.ACTIVE.toString());
+                query.append("endDate", new BasicDBObject("$lt", calendar.getTime()));
+                query.append(String.format("properties.codenvy:subscription-email-expiring-%s", days), null);
                 return executeQuery(query);
             }
         };
