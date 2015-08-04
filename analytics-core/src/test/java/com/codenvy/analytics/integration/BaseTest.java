@@ -18,21 +18,210 @@
 
 package com.codenvy.analytics.integration;
 
+import com.codenvy.analytics.datamodel.DoubleValueData;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.SetValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.google.common.base.Function;
+import com.google.common.collect.FluentIterable;
+
+import org.eclipse.che.api.auth.server.dto.DtoServerImpls;
+import org.eclipse.che.api.auth.shared.dto.Token;
+import org.eclipse.che.dto.server.DtoFactory;
+
+import javax.annotation.Nullable;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.SocketTimeoutException;
+import java.net.URL;
+import java.util.List;
+import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static com.codenvy.analytics.Utils.toArray;
+import static java.lang.String.format;
+import static java.util.Arrays.asList;
+import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 
 /**
  * @author Anatoliy Bazko
  */
 public class BaseTest {
-    public static final String API_ENDPOINT  = "http://t2.codenvy-dev.com/api";
-    public static final String ANALYTICS_API = API_ENDPOINT + "/analytics";
-    public static final String METRIC_API    = ANALYTICS_API + "/metric";
+    public static final Pattern VALUE = Pattern.compile(".*\"value\"\\s*:\\s*\"([^\"]*)\"");
 
-    public ValueData getValue() {
-        return null;
+    public static final String ADMIN_USER   = "prodadmin";
+    public static final String ADMIN_PWD    = "CodenvyAdmin";
+    public static final String AUTH_REALM   = "sysldap";
+    public static final String API_ENDPOINT = "http://t2.codenvy-dev.com/api";
+
+    private final HTTPTransport transport;
+    private final String        accessToken;
+
+    public BaseTest() {
+        this.transport = new HTTPTransport(API_ENDPOINT);
+        try {
+            this.accessToken = auth();
+        } catch (IOException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
-    private String auth() {
-        return null;
+    protected ValueData getValue(MetricType metricType, Context context) throws IOException {
+        Metric metric = MetricFactory.getMetric(metricType);
+
+        StringBuilder relPath = new StringBuilder("/analytics/metric/");
+        relPath.append(metric.getName());
+
+        for (Map.Entry<String, String> entry : context.getAllAsString().entrySet()) {
+            if (relPath.indexOf("?") == -1) {
+                relPath.append("?");
+            } else {
+                relPath.append("&");
+            }
+
+            relPath.append(entry.getKey());
+            relPath.append("=");
+            relPath.append(entry.getValue());
+        }
+
+        String json = transport.request("GET", relPath.toString(), null, accessToken);
+
+        return parseResponse(metric, json);
+    }
+
+    protected ValueData getValue(MetricType metricType) throws IOException {
+        Metric metric = MetricFactory.getMetric(metricType);
+        String json = transport.request("GET", "/analytics/metric/" + metric.getName(), null, accessToken);
+
+        return parseResponse(metric, json);
+    }
+
+    private ValueData parseResponse(Metric metric, String json) {
+        String value;
+
+        Matcher matcher = VALUE.matcher(json);
+        if (matcher.find()) {
+            value = matcher.group(1);
+        } else {
+            throw new IllegalArgumentException("Can't parse value from response: " + json);
+        }
+
+
+        if (metric.getValueDataClass() == LongValueData.class) {
+            return LongValueData.valueOf(Integer.parseInt(value));
+
+        } else if (metric.getValueDataClass() == ListValueData.class) {
+            return DoubleValueData.valueOf(Double.parseDouble(value));
+
+        } else if (metric.getValueDataClass() == SetValueData.class) {
+            List<ValueData> l = FluentIterable.from(asList(toArray(value))).transform(new Function<String, ValueData>() {
+                @Override
+                public ValueData apply(String s) {
+                    return StringValueData.valueOf(s);
+                }
+            }).toList();
+
+            return new SetValueData(l);
+
+        } else if (metric.getValueDataClass() == ListValueData.class) {
+        }
+
+        throw new IllegalArgumentException("Unsupported type " + metric.getValueDataClass());
+    }
+
+    protected String auth() throws IOException {
+        DtoServerImpls.CredentialsImpl credentials = new DtoServerImpls.CredentialsImpl();
+        credentials.setUsername(ADMIN_USER);
+        credentials.setPassword(ADMIN_PWD);
+        credentials.setRealm(AUTH_REALM);
+
+        String json = transport.request("POST", "/auth/login", credentials, null);
+        Token token = DtoFactory.getInstance().createDtoFromJson(json, Token.class);
+        return token.getValue();
+    }
+
+    private class HTTPTransport {
+        private final String apiEndpoint;
+
+        public HTTPTransport(String apiEndpoint) {
+            this.apiEndpoint = apiEndpoint;
+        }
+
+        public String request(String method,
+                              String relPath,
+                              @Nullable Object body,
+                              @Nullable String token) throws IOException {
+            return doRequest(relPath, method, body, token);
+        }
+
+        private String doRequest(String relPath,
+                                 String method,
+                                 @Nullable Object body,
+                                 @Nullable String token) throws IOException {
+            final String requestUrl = apiEndpoint + relPath;
+
+            HttpURLConnection conn = null;
+            try {
+                conn = openConnection(requestUrl, token);
+                doRequest(conn, method, body);
+                return readAndCloseQuietly(conn.getInputStream());
+            } catch (SocketTimeoutException e) { // catch exception and throw a new one with proper message
+                URL url = new URL(requestUrl);
+                throw new IOException(format("Can't establish connection with %s://%s", url.getProtocol(), url.getHost()));
+            } finally {
+                if (conn != null) {
+                    conn.disconnect();
+                }
+            }
+        }
+
+        private void doRequest(HttpURLConnection conn,
+                               String method,
+                               @Nullable Object body) throws IOException {
+            conn.setConnectTimeout(30 * 1000);
+            conn.setRequestMethod(method);
+            if (body != null) {
+                conn.addRequestProperty("content-type", "application/json");
+                conn.setDoOutput(true);
+                try (OutputStream output = conn.getOutputStream()) {
+                    output.write(DtoFactory.getInstance().toJson(body).getBytes());
+                }
+            }
+            final int responseCode = conn.getResponseCode();
+
+            if ((responseCode / 100) != 2) {
+                InputStream in = conn.getErrorStream();
+                if (in == null) {
+                    in = conn.getInputStream();
+                }
+
+                throw new IOException("Can't perform request, response from the server: " + readAndCloseQuietly(in));
+            }
+
+            final String contentType = conn.getContentType();
+            if (contentType != null && !contentType.equalsIgnoreCase("application/json")) {
+                throw new IOException("Unsupported type of response from remote server.");
+            }
+        }
+
+        protected HttpURLConnection openConnection(String path, @Nullable String accessToken) throws IOException {
+            HttpURLConnection connection = (HttpURLConnection)new URL(path).openConnection();
+
+            if (accessToken != null) {
+                String accessTokenCookie = format("session-access-key=%s;", accessToken);
+                connection.addRequestProperty("Cookie", accessTokenCookie);
+            }
+
+            return connection;
+        }
     }
 }
