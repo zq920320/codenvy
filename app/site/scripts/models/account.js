@@ -161,34 +161,50 @@
             return deferredResult;
         };
 
-        var getLastProject = function(){
+        var getProfilePrefs = function(){
             var deferredResult = $.Deferred();
             var url = "/api/profile/prefs";
             $.ajax({
                 url: url,
                 type: "GET",
-                complete: function(response){
-                    var recentProject;
-                    try{
-                        recentProject = JSON.parse(JSON.parse(response.responseText).CodenvyAppState).recentProject;
-                        if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
-                            testProjectPath(recentProject)
-                            .then(function(){
-                                return deferredResult.resolve("/ws" + recentProject.path);
-                            })
-                            .fail(function(){
-                                return deferredResult.resolve("");
-                            });
-                        }else{
-                            deferredResult.resolve("");
-                        }
-                    }catch(err){
-                        //if response does not contain JSON object
-                        deferredResult.resolve("");
-                    }
+                success: function(response){
+                    deferredResult.resolve(response);
+                },
+                error: function(response){
+                    deferredResult.reject(response);
                 }
             });
             return deferredResult;
+        };
+
+        var getLastProject = function(){
+            var deferredResult = $.Deferred();
+            getProfilePrefs()
+            .then(function(prefs){
+                var recentProject;
+                try{
+                    recentProject = JSON.parse(prefs.CodenvyAppState).recentProject;
+                    if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
+                        testProjectPath(recentProject)
+                        .then(function(){
+                            return deferredResult.resolve("/ws" + recentProject.path);
+                        })
+                        .fail(function(){
+                            return deferredResult.resolve("");
+                        });
+                    }else{
+                        deferredResult.resolve("");
+                    }
+                }catch(err){
+                    //if response does not contain JSON object
+                    deferredResult.resolve("");
+                }
+            })
+            .fail(function(){
+                deferredResult.resolve("");
+            });
+            return deferredResult;
+
         };
 
         var testProjectPath = function(recentProject){
@@ -198,7 +214,9 @@
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(project) {
+                success: function(project,a,b) {
+                    console.info('a-> '+ a);
+                    console.info('b-> '+ b);
                         deferredResult.resolve(project);
                 },
                 error: function() {
@@ -452,6 +470,31 @@
             isLoginCookiePresent: function() {
                 return $.cookie('logged_in')?true:false;
             },
+
+            isUserAuthenticated: function() {
+                return getProfilePrefs()
+                    .then(function(prefs){
+                            if (prefs.temporary){
+                                try {
+                                    var temporary = JSON.parse(prefs.temporary);
+                                    if (temporary===true){
+                                        return false; // anonymous user
+                                    }else{
+                                        return true;
+                                    }
+                                }catch(err) {
+                                    return false;
+                                }
+                            } else{
+                                return true;
+                            }
+                    })
+                    .fail(function(){
+                        return false;
+                    });
+            },
+
+            navigateToLocation: navigateToLocation,
 
             // redirect to login page if user has 'logged_in' cookie
             redirectIfUserHasLoginCookie: function() {

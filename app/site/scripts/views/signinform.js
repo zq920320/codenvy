@@ -24,28 +24,36 @@
             var SignInForm = AccountFormBase.extend({
 
                 initialize : function(attributes){
-                    if (!Account.isLoginCookiePresent()){
-                        window.location = '/site/create-account' + window.location.search;
-                    }
-                    AccountFormBase.prototype.initialize.apply(this,attributes);
-                    if (Account.isAuthtypeLdap()){
-                        $(".email").attr("placeholder", "Type your login here").removeClass("email");
-                    }
-                     // remove cookie to be able to sign up
-                    $("#signUp").click(function(){
-                        $.removeCookie('logged_in',{path: "/"});
-                        window.location = Account.appendQuery("/site/create-account");
-                    });
-                    //bind onclick to Google and GitHub buttons
-                    $(".oauth-button.google").click(function(){
-                        Account.loginWithGoogle("Login page", function(url){
-                            window.location = url;
+                    var self = this;
+                    Account.isUserAuthenticated()
+                    .then(function(athenticated){
+                        if (athenticated){
+                            Account.navigateToLocation();
+                        }else {
+                            return $.Deferred().reject();
+                        }
+                        })
+                    .fail(function(){
+                        AccountFormBase.prototype.initialize.apply(self,attributes);
+                        if (Account.isAuthtypeLdap()){
+                            $(".email").attr("placeholder", "Type your login here").removeClass("email");
+                        }
+                         // remove cookie to be able to sign up
+                        $("#signUp").click(function(){
+                            $.removeCookie('logged_in',{path: "/"});
+                            window.location = Account.appendQuery("/site/create-account");
                         });
-                    });
+                        //bind onclick to Google and GitHub buttons
+                        $(".oauth-button.google").click(function(){
+                            Account.loginWithGoogle("Login page", function(url){
+                                window.location = url;
+                            });
+                        });
 
-                    $(".oauth-button.github").click(function(){
-                        Account.loginWithGithub("Login page", function(url){
-                            window.location = url;
+                        $(".oauth-button.github").click(function(){
+                            Account.loginWithGithub("Login page", function(url){
+                                window.location = url;
+                            });
                         });
                     });
                 },
