@@ -58,6 +58,8 @@ public interface InputDialogView {
 
     void setHideServer();
 
+    void setFooterButtonText(String text);
+
     boolean isVisibleServer();
 
     interface ActionDelegate {

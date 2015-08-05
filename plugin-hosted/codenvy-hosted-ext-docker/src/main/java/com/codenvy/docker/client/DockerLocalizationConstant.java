@@ -63,6 +63,9 @@ public interface DockerLocalizationConstant extends Messages {
     @Key("docker.input.credentials.save.button.text")
     String inputCredentialsSaveButtonText();
 
+    @Key("docker.input.credentials.edit.button.text")
+    String inputCredentialsEditButtonText();
+
 
     @Key("docker.add.private.registry.title")
     String addPrivateRegitryTitle();

@@ -177,6 +177,11 @@ public class InputDialogViewImpl extends Window implements InputDialogView {
     }
 
     @Override
+    public void setFooterButtonText(String text){
+        this.footer.getSaveButton().setText(text);
+    }
+
+    @Override
     public boolean isVisibleServer() {
         return serverPanel.isVisible();
     }

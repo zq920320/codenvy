@@ -60,6 +60,7 @@ public class InputDialogPresenter implements InputDialog, InputDialogView.Action
             case EDIT:
                 view.setTitle(locale.editPrivateRegistryTitle());
                 view.setReadOnlyServer();
+                view.setFooterButtonText(locale.inputCredentialsEditButtonText());
                 break;
             case CREATE_DOCKERHUB:
                 view.setTitle(locale.addDockerhubAccountTitle());
@@ -68,6 +69,7 @@ public class InputDialogPresenter implements InputDialog, InputDialogView.Action
             case EDIT_DOCKERHUB:
                 view.setTitle(locale.editDockerhubAccountTitle());
                 view.setHideServer();
+                view.setFooterButtonText(locale.inputCredentialsEditButtonText());
                 break;
         }
         this.view = view;
