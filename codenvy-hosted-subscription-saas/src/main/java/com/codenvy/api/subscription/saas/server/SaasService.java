@@ -359,8 +359,7 @@ public class SaasService extends Service {
 
         Set<String> roles = resolveRolesForSpecificAccount(accountId);
         final User currentUser = EnvironmentContext.getCurrent().getUser();
-        final boolean isAdmin = currentUser.isMemberOf("system/admin") || currentUser.isMemberOf("system/manager");
-        if (!isAdmin && !roles.contains("account/owner")) {
+        if (!currentUser.isMemberOf("system/admin") && !currentUser.isMemberOf("system/manager") && !roles.contains("account/owner")) {
             throw new ForbiddenException("Access denied. You must be owner of specified account.");
         }
 
