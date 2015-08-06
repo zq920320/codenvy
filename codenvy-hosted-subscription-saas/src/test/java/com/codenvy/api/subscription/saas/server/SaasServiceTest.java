@@ -21,11 +21,13 @@ import com.codenvy.api.metrics.server.dao.MeterBasedStorage;
 import com.codenvy.api.metrics.server.period.MetricPeriod;
 import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.server.billing.BillingService;
+import com.codenvy.api.subscription.saas.server.billing.ResourcesFilter;
 import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
 import com.codenvy.api.subscription.saas.server.billing.bonus.BonusFilter;
 import com.codenvy.api.subscription.saas.server.dao.BonusDao;
 import com.codenvy.api.subscription.saas.server.dao.sql.AccountLockDao;
 import com.codenvy.api.subscription.saas.server.service.util.SubscriptionMailSender;
+import com.codenvy.api.subscription.saas.shared.dto.AccountResources;
 import com.codenvy.api.subscription.saas.shared.dto.BonusDescriptor;
 import com.codenvy.api.subscription.saas.shared.dto.NewBonus;
 import com.codenvy.api.subscription.saas.shared.dto.Resources;
@@ -38,6 +40,7 @@ import com.jayway.restassured.response.Response;
 
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
@@ -48,7 +51,6 @@ import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.user.UserImpl;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.everrest.assured.EverrestJetty;
-import org.everrest.assured.JettyHttpServer;
 import org.everrest.core.Filter;
 import org.everrest.core.GenericContainerRequest;
 import org.everrest.core.RequestFilter;
@@ -62,14 +64,17 @@ import org.testng.annotations.Test;
 
 import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
 import static com.jayway.restassured.RestAssured.given;
+import static java.util.Collections.singletonList;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_NAME;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_PASSWORD;
 import static org.everrest.assured.JettyHttpServer.SECURE_PATH;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -77,6 +82,7 @@ import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
@@ -90,6 +96,8 @@ public class SaasServiceTest {
     private final static double PROMOTION_RESOURCES_SIZE = 20;
 
     private static final String ACCOUNT_ID = "accountId";
+
+    private static final String USER_ID = "user123";
 
     @SuppressWarnings("unused")
     private final ApiExceptionMapper exceptionMapper = new ApiExceptionMapper();
@@ -153,8 +161,7 @@ public class SaasServiceTest {
     private class EnvironmentFilter implements RequestFilter {
         public void doFilter(GenericContainerRequest request) {
             EnvironmentContext context = EnvironmentContext.getCurrent();
-            context.setUser(new UserImpl(JettyHttpServer.ADMIN_USER_NAME, "id-2314", "token-2323",
-                                         Collections.<String>emptyList(), false));
+            context.setUser(new UserImpl(ADMIN_USER_NAME, USER_ID, "token-2323", Collections.<String>emptyList(), false));
         }
     }
 
@@ -381,6 +388,42 @@ public class SaasServiceTest {
 
         assertEquals(response.getStatusCode(), 200);
         verify(billingService).getEstimatedUsage(10, 20);
+    }
+
+    @Test
+    public void shouldBeAbleToGetEstimatedResourcesByAccount() throws Exception {
+        when(accountDao.getByMember(anyString())).thenReturn(singletonList(new Member().withUserId(USER_ID)
+                                                                                       .withAccountId(ACCOUNT_ID)
+                                                                                       .withRoles(singletonList("account/owner"))));
+
+        when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
+                Arrays.asList(newDto(AccountResources.class)));
+
+        Response response = given().auth()
+                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .when()
+                                   .get(SECURE_PATH + "/saas/resources/accounts?startPeriod=10&endPeriod=20&accountId=" + ACCOUNT_ID);
+
+        assertEquals(response.getStatusCode(), 200);
+        verify(billingService).getEstimatedUsageByAccount(any(ResourcesFilter.class));
+    }
+
+    @Test
+    public void shouldNotBeAbleToGetEstimatedResourcesByAccountNonOwner() throws Exception {
+        when(accountDao.getByMember(anyString())).thenReturn(singletonList(new Member().withUserId(USER_ID)
+                                                                                       .withAccountId(ACCOUNT_ID)
+                                                                                       .withRoles(singletonList("account/member"))));
+
+        when(billingService.getEstimatedUsageByAccount(any(ResourcesFilter.class))).thenReturn(
+                Arrays.asList(newDto(AccountResources.class)));
+
+        Response response = given().auth()
+                                   .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                   .when()
+                                   .get(SECURE_PATH + "/saas/resources/accounts?accountId=" + ACCOUNT_ID);
+
+        assertEquals(response.getStatusCode(), 403);
+        verifyZeroInteractions(billingService);
     }
 
     @Test
