@@ -73,7 +73,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(4, content.size());
+        assertEquals(5, content.size());
 
         // verify
         Map<String, String> headData = content.get("_HEAD");
@@ -144,6 +144,27 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("2013-11-01 11:15:03", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
         assertEquals("", user3Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("0", user3Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
+
+        // verify "user5@gmail.com" data
+        Map<String, String> user5Data = content.get("user5@gmail.com");
+        assertEquals(HEADERS.size(), user3Data.size());
+        assertEquals("user5@gmail.com", user5Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.PROFILE_COMPLETED)));
+        assertEquals("2", user5Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
+        assertEquals("4", user5Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("0.0000", user5Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
+        assertEquals("2013-11-02 10:00:00", user5Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
+        //assertEquals("0", user5Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
     }
 
     @Test
@@ -170,7 +191,7 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(3, content.size());
+        assertEquals(4, content.size());
 
         // verify
         Map<String, String> headData = content.get("_HEAD");
@@ -220,5 +241,27 @@ public class TestMarketoReportGenerator extends AbstractUsersActivityTest {
         assertEquals("", user4Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
         assertEquals("", user4Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
         //assertEquals("1", user4Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
+
+
+        // verify "user5@gmail.com" data
+        Map<String, String> user5Data = content.get("user5@gmail.com");
+        assertEquals(HEADERS.size(), user3Data.size());
+        assertEquals("user5@gmail.com", user5Data.get(HEADERS.get(AbstractMetric.ID)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.BUILDS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.DEPLOYS)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.PROFILE_COMPLETED)));
+        assertEquals("3", user5Data.get(HEADERS.get(UsersStatisticsList.PROJECTS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.RUNS)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.TIME)));
+        assertEquals("0", user5Data.get(HEADERS.get(UsersStatisticsList.LOGINS)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.LAST_PRODUCT_LOGIN)));
+        assertEquals("6", user5Data.get(HEADERS.get(MarketoReportGenerator.POINTS)));
+        assertEquals("0.0000", user5Data.get(HEADERS.get(AbstractMetric.GIGABYTE_RAM_HOURS)));
+        assertEquals("2013-11-02 10:00:00", user5Data.get(HEADERS.get(MarketoReportGenerator.SING_UP_DATE)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.ACCOUNT_LOCKDOWN)));
+        assertEquals("false", user5Data.get(HEADERS.get(MarketoReportGenerator.CC_ADDED)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_ADDED)));
+        assertEquals("", user5Data.get(HEADERS.get(MarketoReportGenerator.ON_PREM_SUB_REMOVED)));
+        //assertEquals("0", user5Data.get(HEADERS.get(MarketoReportGenerator.NEW_USER)));
     }
 }

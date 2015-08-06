@@ -54,7 +54,7 @@ public class TestActOn extends AbstractUsersActivityTest {
 
         Map<String, Map<String, String>> content = read(jobFile);
 
-        assertEquals(content.size(), 4);
+        assertEquals(content.size(), 5);
 
         // verify head of FTP data
         Map<String, String> headData = content.get("_HEAD");

@@ -25,6 +25,7 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 import org.apache.pig.EvalFunc;
 import org.apache.pig.data.DataType;
@@ -70,12 +71,13 @@ public class ReplaceWsWithId extends EvalFunc<String> {
         } else {
             Context.Builder builder = new Context.Builder();
             builder.put(MetricFilter.WS, ws.toLowerCase());
+            builder.put(Parameters.SORT, "+date");
 
             ListValueData valueData = getAsList(METRIC, builder.build());
             if (valueData.isEmpty()) {
                 return ws;
             } else {
-                Map<String, ValueData> profile = treatAsMap(valueData.getAll().get(0));
+                Map<String, ValueData> profile = treatAsMap(valueData.getAll().get(valueData.getAll().size() - 1));
                 return profile.get(AbstractMetric.ID).getAsString();
             }
         }

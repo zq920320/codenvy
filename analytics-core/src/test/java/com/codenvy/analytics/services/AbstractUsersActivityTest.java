@@ -133,6 +133,8 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
         events.add(Event.Builder.createUserCreatedEvent("id3", "user3@gmail.com", "user3@gmail.com")
                                 .withDate("2013-11-01").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createUserCreatedEvent("id5", "user5@gmail.com", "user5@gmail.com")
+                                .withDate("2013-11-01").withTime("10:00:00,000").build());
 
         events.add(Event.Builder.createAccountAddMemberEvent("acid1", "id1", Arrays.asList("account/owner"))
                                 .withDate("2013-11-01", "10:00:00").build());
@@ -177,6 +179,11 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
                                 .withDate("2013-11-01").withTime("08:59:00").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid4", "ws2___", "user3@gmail.com")
                                 .withDate("2013-11-01").withTime("08:59:00").build());
+
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "ws5", "user5@gmail.com")
+                                .withDate("2013-11-01").withTime("09:00:00").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user5@gmail.com", "ws5", "project1", "type1")
+                             .withDate("2013-11-01").withTime("10:05:00").build());
 
         // active users [user1, user2, user3]
         events.add(Event.Builder.createWorkspaceCreatedEvent(WID1, "ws1", "user1@gmail.com").withTime("09:00:00").withDate("2013-11-01")
@@ -248,6 +255,13 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         events.add(Event.Builder.createSubscriptionRemovedEvent("acid2", "OnPremises", "pay-as-you-go")
                                 .withDate("2013-11-02", "11:15:07").build());
 
+        events.add(Event.Builder.createUserCreatedEvent("id6", "user5@gmail.com", "user5@gmail.com")
+                                .withDate("2013-11-02").withTime("10:00:00,000").build());
+        events.add(Event.Builder.createWorkspaceCreatedEvent("wsid6", "ws6", "user5@gmail.com")
+                                .withDate("2013-11-02").withTime("09:00:00").build());
+        events.add(Event.Builder.createProjectCreatedEvent("user5@gmail.com", "ws6", "project1", "type1")
+                                .withDate("2013-11-02").withTime("10:55:00").build());
+
         events.add(Event.Builder.createFactoryCreatedEvent("user1@gmail.com", "ws1", "", "", "", "", "", "")
                                 .withDate("2013-11-01")
                                 .withTime("20:03:00").build());
@@ -279,6 +293,9 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
 
         events.add(Event.Builder.createUserCreatedEvent("id4", "user4@gmail.com", "user4@gmail.com")
                                 .withDate("2013-11-03").withTime("10:00:00,000").build());
+
+        events.add(Event.Builder.createProjectCreatedEvent("user5@gmail.com", "ws6", "project2", "type1")
+                                .withDate("2013-11-03").withTime("11:00:00").build());
 
         return LogGenerator.generateLog(events);
     }
