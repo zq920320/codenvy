@@ -472,17 +472,6 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
     }
 
     @Test
-    public void testExpandedAbstractProjectPaasMetrics() throws Exception {
-        Metric metric = getMetric(MetricType.PROJECT_PAAS_GAE);
-        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
-
-        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.PROJECT_ID);
-        assertEquals(m.size(), 2);
-        assertTrue(m.containsKey(UID2 + "/" + WID2 + "/project1"));
-        assertTrue(m.containsKey(UID2 + "/" + WID2 + "/project2"));
-    }
-
-    @Test
     public void testProjectListFilteredByReadBasedMetric() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.EXPANDED_METRIC_NAME, MetricType.CREATED_PROJECTS.toString());

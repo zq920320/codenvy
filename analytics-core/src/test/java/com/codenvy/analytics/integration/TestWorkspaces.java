@@ -25,8 +25,10 @@ import com.codenvy.analytics.metrics.Parameters;
 
 import org.junit.Test;
 
+import java.util.List;
 import java.util.Set;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsSet;
 import static org.junit.Assert.assertEquals;
@@ -91,5 +93,11 @@ public class TestWorkspaces extends BaseTest {
     public void testCreatedWorkspacesSet() throws Exception {
         ValueData valueData = getValue(MetricType.CREATED_WORKSPACES_SET);
         Set<ValueData> s = treatAsSet(valueData);
+    }
+
+    @Test
+    public void testWorkspacesProfilesList() throws Exception {
+        ValueData valueData = getValue(MetricType.WORKSPACES_PROFILES_LIST);
+        List<ValueData> l = treatAsList(valueData);
     }
 }

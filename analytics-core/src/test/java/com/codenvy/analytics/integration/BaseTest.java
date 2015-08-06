@@ -42,6 +42,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -56,7 +57,8 @@ import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
  * @author Anatoliy Bazko
  */
 public class BaseTest {
-    public static final Pattern VALUE = Pattern.compile(".*\"value\"\\s*:\\s*\"([^\"]*)\"");
+    public static final Pattern SIMPLE_VALUE_PATTERN = Pattern.compile(".*\"value\"\\s*:\\s*\"([^\"]*)\"");
+    public static final Pattern LIST_VALUE_PATTERN   = Pattern.compile(".*\"value\"\\s*:\\s*\"\\[(.*)\\]\"");
 
     public static final String ADMIN_USER   = "prodadmin";
     public static final String ADMIN_PWD    = "CodenvyAdmin";
@@ -65,6 +67,13 @@ public class BaseTest {
 
     private final HTTPTransport transport;
     private final String        accessToken;
+
+    private Map<Class<? extends ValueData>, Pattern> PATTERNS = new HashMap<Class<? extends ValueData>, Pattern>() {{
+        put(LongValueData.class, SIMPLE_VALUE_PATTERN);
+        put(DoubleValueData.class, SIMPLE_VALUE_PATTERN);
+        put(SetValueData.class, SIMPLE_VALUE_PATTERN);
+        put(ListValueData.class, LIST_VALUE_PATTERN);
+    }};
 
     public BaseTest() {
         this.transport = new HTTPTransport(API_ENDPOINT);
@@ -108,7 +117,7 @@ public class BaseTest {
     private ValueData parseResponse(Metric metric, String json) {
         String value;
 
-        Matcher matcher = VALUE.matcher(json);
+        Matcher matcher = PATTERNS.get(metric.getValueDataClass()).matcher(json);
         if (matcher.find()) {
             value = matcher.group(1);
         } else {
@@ -119,7 +128,7 @@ public class BaseTest {
         if (metric.getValueDataClass() == LongValueData.class) {
             return LongValueData.valueOf(Integer.parseInt(value));
 
-        } else if (metric.getValueDataClass() == ListValueData.class) {
+        } else if (metric.getValueDataClass() == DoubleValueData.class) {
             return DoubleValueData.valueOf(Double.parseDouble(value));
 
         } else if (metric.getValueDataClass() == SetValueData.class) {
@@ -133,6 +142,7 @@ public class BaseTest {
             return new SetValueData(l);
 
         } else if (metric.getValueDataClass() == ListValueData.class) {
+            value.split("\\}, \\{");
         }
 
         throw new IllegalArgumentException("Unsupported type " + metric.getValueDataClass());

@@ -26,7 +26,10 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-/** @author <a href="mailto:areshetnyak@codenvy.com">Alexander Reshetnyak</a> */
+
+/**
+ * @author Anatoliy Bazko
+ */
 public abstract class AbstractProjectPaas extends ReadBasedMetric implements ReadBasedExpandable {
     public static final String GAE              = "gae";
     public static final String AWS              = "aws";
@@ -41,8 +44,18 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
     public static final String NONE             = "none";
     public static final String DEFAULT          = "default";
 
-    public static final String[] PAASES =
-            {GAE, AWS, AWS_BEANSTALK, CLOUDFOUNDRY, TIER3_WEB_FABRIC, MANYMO, OPENSHIFT, HEROKU, APPFOG, CLOUDBEES, NONE, DEFAULT};
+    public static final String[] PAASES = {GAE,
+                                           AWS,
+                                           AWS_BEANSTALK,
+                                           CLOUDFOUNDRY,
+                                           TIER3_WEB_FABRIC,
+                                           MANYMO,
+                                           OPENSHIFT,
+                                           HEROKU,
+                                           APPFOG,
+                                           CLOUDBEES,
+                                           NONE,
+                                           DEFAULT};
 
     private final String[] types;
 
@@ -55,31 +68,26 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
         this.types = types;
     }
 
-    protected AbstractProjectPaas(String metricName, String[] types) {
-        super(metricName);
 
-        for (int i = 0; i < types.length; i++) {
-            types[i] = types[i].toLowerCase();
-        }
-        this.types = types;
-    }
-
-
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PROJECT_PAASES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject(PROJECT_PAAS, new BasicDBObject("$in", types));
@@ -92,6 +100,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
                               new BasicDBObject("$group", group)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject match = new BasicDBObject(PROJECT_PAAS, new BasicDBObject("$in", types));
@@ -106,6 +115,7 @@ public abstract class AbstractProjectPaas extends ReadBasedMetric implements Rea
                               new BasicDBObject("$project", projection)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return PROJECT_ID;

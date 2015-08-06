@@ -34,17 +34,6 @@ com.codenvy.analytics.metrics.projects.Projects
 com.codenvy.analytics.metrics.projects.CreatedProjects
 com.codenvy.analytics.metrics.projects.DestroyedProjects
 com.codenvy.analytics.metrics.projects.TotalProjects
-com.codenvy.analytics.metrics.projects.ProjectPaasAppfog
-com.codenvy.analytics.metrics.projects.ProjectPaasAws
-com.codenvy.analytics.metrics.projects.ProjectPaasCloudbees
-com.codenvy.analytics.metrics.projects.ProjectPaasCloudfoundry
-com.codenvy.analytics.metrics.projects.ProjectPaasGae
-com.codenvy.analytics.metrics.projects.ProjectPaasHeroku
-com.codenvy.analytics.metrics.projects.ProjectPaasManymo
-com.codenvy.analytics.metrics.projects.ProjectPaasOpenshift
-com.codenvy.analytics.metrics.projects.ProjectPaasTier3
-com.codenvy.analytics.metrics.projects.ProjectPaasAny
-com.codenvy.analytics.metrics.projects.ProjectNoPassDefined
 com.codenvy.analytics.metrics.projects.ProjectTypeAndroid
 com.codenvy.analytics.metrics.projects.ProjectTypeDjango
 com.codenvy.analytics.metrics.projects.ProjectTypeJar
