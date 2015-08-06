@@ -38,7 +38,6 @@ import com.codenvy.api.subscription.shared.dto.ProvidedResourcesDescriptor;
 import com.google.common.annotations.Beta;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
-import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -48,7 +47,9 @@ import org.eclipse.che.api.account.server.AccountService;
 import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.account.shared.dto.AccountDescriptor;
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
@@ -59,6 +60,8 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.core.util.LinksHelper;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.user.User;
 import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.annotation.Nullable;
@@ -80,9 +83,12 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import static com.codenvy.api.subscription.saas.server.SaasSubscriptionService.SAAS_SUBSCRIPTION_ID;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -333,7 +339,7 @@ public class SaasService extends Service {
     @GET
     @Path("/resources/accounts")
     @Produces(APPLICATION_JSON)
-    @RolesAllowed({"system/admin", "system/manager"})
+    @RolesAllowed({"user","system/admin", "system/manager"})
     public List<AccountResources> getEstimatedResourcesByAccounts(@ApiParam(value = "Start period in milliseconds from epoch time",
                                                                             required = false)
                                                                   @QueryParam("startPeriod") Long startPeriod,
@@ -345,7 +351,16 @@ public class SaasService extends Service {
                                                                   @QueryParam("freeGbH") Double freeGbH,
                                                                   @QueryParam("paidGbH") Double paidGbH,
                                                                   @QueryParam("prepaidGbH") Double prepaidGbH,
-                                                                  @QueryParam("accountId") String accountId) throws ServerException {
+                                                                  @QueryParam("accountId") String accountId)
+            throws ServerException, ForbiddenException {
+
+        Set<String> roles = resolveRolesForSpecificAccount(accountId);
+        final User currentUser = EnvironmentContext.getCurrent().getUser();
+        final boolean isAdmin = currentUser.isMemberOf("system/admin") || currentUser.isMemberOf("system/manager");
+        if (!isAdmin && !roles.contains("account/owner")) {
+            throw new ForbiddenException("Access denied. You must be owner of specified account.");
+        }
+
         if (startPeriod == null) {
             startPeriod = metricPeriod.getCurrent().getStartDate().getTime();
         }
@@ -522,5 +537,25 @@ public class SaasService extends Service {
                          .withName(account.getName())
                          .withAttributes(account.getAttributes())
                          .withLinks(links);
+    }
+
+    /**
+     * Can be used only in methods that is restricted with @RolesAllowed. Require "user" role.
+     *
+     * @param accountId
+     *         account id to resolve roles for
+     * @return set of user roles
+     */
+    private Set<String> resolveRolesForSpecificAccount(String accountId) {
+        try {
+            final String userId = EnvironmentContext.getCurrent().getUser().getId();
+            for (Member membership : accountDao.getByMember(userId)) {
+                if (membership.getAccountId().equals(accountId)) {
+                    return new HashSet<>(membership.getRoles());
+                }
+            }
+        } catch (ApiException ignored) {
+        }
+        return Collections.emptySet();
     }
 }
