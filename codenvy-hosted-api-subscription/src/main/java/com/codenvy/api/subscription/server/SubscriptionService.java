@@ -83,8 +83,6 @@ import java.util.Set;
  * @author Sergii Leschenko
  */
 @Beta
-@Api(value = "/subscription",
-     description = "Subscription manager")
 @Path("/subscription")
 public class SubscriptionService extends Service {
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionService.class);
