@@ -37,6 +37,7 @@ import com.codenvy.docker.json.HostConfig;
 import com.codenvy.docker.json.Image;
 import com.codenvy.docker.json.ImageInfo;
 import com.codenvy.docker.json.ProgressStatus;
+import com.codenvy.docker.json.Version;
 import com.google.common.io.CharStreams;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.sun.jna.ptr.LongByReference;
@@ -148,12 +149,12 @@ public class DockerConnector {
     }
 
     /**
-     * Gets system-wide information.
+     * Gets docker version.
      *
-     * @return system-wide information
+     * @return information about version docker
      * @throws IOException
      */
-    public com.codenvy.docker.json.SystemInfo getVersion() throws IOException {
+    public Version getVersion() throws IOException {
         final DockerConnection connection = openConnection(dockerDaemonUri);
         try {
             final DockerResponse response = connection.method("GET").path("/version").request();
@@ -162,7 +163,8 @@ public class DockerConnector {
                 final String msg = CharStreams.toString(new InputStreamReader(response.getInputStream()));
                 throw new DockerException(String.format("Error response from docker API, status: %d, message: %s", status, msg), status);
             }
-            return JsonHelper.fromJson(response.getInputStream(), com.codenvy.docker.json.SystemInfo.class, null, FIRST_LETTER_LOWERCASE);
+            return JsonHelper.fromJson(response.getInputStream(), Version.class, null,
+                                       FIRST_LETTER_LOWERCASE);
         } catch (JsonParseException e) {
             throw new IOException(e.getMessage(), e);
         } finally {
