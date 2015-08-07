@@ -23,6 +23,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.core.ServerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.inject.Named;
@@ -39,6 +41,8 @@ public class DockerVersionVerifier {
 
     private final DockerConnector dockerConnector;
     private final Set<String>     supportedVersions;
+
+    private static final Logger LOG = LoggerFactory.getLogger(DockerVersionVerifier.class);
 
     @Inject
     public DockerVersionVerifier(DockerConnector dockerConnector, @Named("machine.supported_docker_version") String[] supportedVersions) {
@@ -57,6 +61,7 @@ public class DockerVersionVerifier {
                 throw new ServerException("Unsupported docker version " + versionInfo.getVersion());
             }
         } catch (IOException e) {
+            LOG.info(e.getMessage());
             throw new ServerException("Impossible to get docker version", e);
         }
     }
