@@ -18,12 +18,11 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class NewUsersOnPremTrialLicenses extends AbstractNewUsersAnalysis {
     public NewUsersOnPremTrialLicenses() {
         super(MetricType.NEW_USERS_ON_PREM_TRIAL_LICENSES, MetricType.IM_ON_PREM_ISSUED);

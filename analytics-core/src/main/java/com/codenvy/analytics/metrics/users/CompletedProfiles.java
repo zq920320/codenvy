@@ -26,11 +26,9 @@ import com.codenvy.analytics.metrics.OmitFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class CompletedProfiles extends AbstractUsersProfile {
 
@@ -40,16 +38,19 @@ public class CompletedProfiles extends AbstractUsersProfile {
         super(MetricType.COMPLETED_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.USERS_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
@@ -68,6 +69,7 @@ public class CompletedProfiles extends AbstractUsersProfile {
                               new BasicDBObject("$group", count)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
@@ -77,11 +79,13 @@ public class CompletedProfiles extends AbstractUsersProfile {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of uses with completed profiles";

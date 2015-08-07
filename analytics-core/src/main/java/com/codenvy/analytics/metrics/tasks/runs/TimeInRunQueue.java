@@ -20,18 +20,16 @@ package com.codenvy.analytics.metrics.tasks.runs;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class TimeInRunQueue extends AbstractTimeSpentInAction {
 
     public TimeInRunQueue() {
         super(MetricType.TIME_IN_RUN_QUEUE, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The time spent in runner wait queue";

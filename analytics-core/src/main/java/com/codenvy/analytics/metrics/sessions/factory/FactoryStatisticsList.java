@@ -34,7 +34,6 @@ import com.codenvy.analytics.metrics.tasks.TasksList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +43,6 @@ import java.util.Map;
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactoryStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
@@ -52,16 +50,19 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         super(MetricType.FACTORY_STATISTICS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The statistic of factory";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
@@ -83,6 +84,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject match = new BasicDBObject();
@@ -119,16 +121,21 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         project.put(CONVERTED_SESSION, 1);
         project.put(WS_CREATED, 1);
         project.put(ENCODED_FACTORY, 1);
-        project.put(BUILDS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(BUILDS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
-        project.put(RUNS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(RUNS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
-        project.put(DEBUGS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(DEBUGS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
-        project.put(EDITS_GIGABYTE_RAM_HOURS, Utils.getTruncOperation(EDITS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(BUILDS_GIGABYTE_RAM_HOURS,
+                    Utils.getTruncOperation(BUILDS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(RUNS_GIGABYTE_RAM_HOURS,
+                    Utils.getTruncOperation(RUNS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(DEBUGS_GIGABYTE_RAM_HOURS,
+                    Utils.getTruncOperation(DEBUGS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(EDITS_GIGABYTE_RAM_HOURS,
+                    Utils.getTruncOperation(EDITS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
@@ -143,6 +150,7 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         return dbOperations;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> list2Return = new ArrayList<>();

@@ -18,12 +18,11 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class NewUsersDeploys extends AbstractNewUsersAnalysis {
     public NewUsersDeploys() {
         super(MetricType.NEW_USERS_DEPLOYS, MetricType.DEPLOYS_TO_PAAS);

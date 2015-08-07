@@ -26,10 +26,7 @@ import com.codenvy.analytics.metrics.OmitFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class WorkspacesProfiles extends AbstractWorkspacesProfile {
 
@@ -37,6 +34,7 @@ public class WorkspacesProfiles extends AbstractWorkspacesProfile {
         super(MetricType.WORKSPACES_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -47,16 +45,19 @@ public class WorkspacesProfiles extends AbstractWorkspacesProfile {
         return new DBObject[]{opCount};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of workspaces";

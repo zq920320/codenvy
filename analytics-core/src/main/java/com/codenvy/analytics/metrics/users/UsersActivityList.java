@@ -18,12 +18,22 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.Injector;
-import com.codenvy.analytics.datamodel.*;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.datamodel.ListValueData;
+import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 import com.codenvy.analytics.pig.scripts.EventsHolder;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,7 +41,6 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivityList extends AbstractListValueResulted {
 
     private       Metric       totalActionsNumberMetric;
@@ -48,11 +57,13 @@ public class UsersActivityList extends AbstractListValueResulted {
         this.eventsHolder = Injector.getInstance(EventsHolder.class);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.USERS_ACTIVITY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
@@ -63,11 +74,13 @@ public class UsersActivityList extends AbstractListValueResulted {
                             USER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' actions";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);

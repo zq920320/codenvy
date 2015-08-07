@@ -41,6 +41,7 @@ public class TopReferrers extends AbstractTopMetrics {
         super(MetricType.TOP_REFERRERS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{REFERRER,
@@ -57,6 +58,7 @@ public class TopReferrers extends AbstractTopMetrics {
                             CONVERTED_FACTORY_SESSION_RATE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
@@ -108,11 +110,13 @@ public class TopReferrers extends AbstractTopMetrics {
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The top referrers sorted by overall duration of session in period of time during last days";

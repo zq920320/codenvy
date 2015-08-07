@@ -23,13 +23,11 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class ActiveWorkspaces extends AbstractActiveEntities {
 
@@ -37,6 +35,7 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
         super(MetricType.ACTIVE_WORKSPACES, MetricType.ACTIVE_WORKSPACES_SET, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));
@@ -47,6 +46,7 @@ public class ActiveWorkspaces extends AbstractActiveEntities {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of active persistent workspaces";

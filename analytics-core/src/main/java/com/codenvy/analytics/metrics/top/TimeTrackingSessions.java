@@ -33,6 +33,7 @@ public class TimeTrackingSessions extends AbstractTimeTracking {
         super(MetricType.TIME_TRACKING_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{SESSION_ID,
@@ -41,11 +42,13 @@ public class TimeTrackingSessions extends AbstractTimeTracking {
                             TIME};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         return new DBObject[0];
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder();
@@ -56,6 +59,7 @@ public class TimeTrackingSessions extends AbstractTimeTracking {
         return super.applySpecificFilter(builder.build());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Top 100 sessions by time working in product during specific period";

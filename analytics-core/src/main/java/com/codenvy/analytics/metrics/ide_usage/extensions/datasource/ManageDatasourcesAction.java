@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.datasource;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class ManageDatasourcesAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.ext.datasource.client.action.EditDatasourcesAction",
             "org.eclipse.che.ide.ext.datasource.client.action.EditDatasourcesAction"
     };
+
     public ManageDatasourcesAction() {
         super(MetricType.MANAGE_DATASOURCES_ACTION, SOURCE);
     }

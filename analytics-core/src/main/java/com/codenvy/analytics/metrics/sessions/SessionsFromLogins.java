@@ -24,11 +24,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class SessionsFromLogins extends CalculatedMetric implements Expandable {
     public SessionsFromLogins() {
         super(MetricType.SESSIONS_FROM_LOGINS, new MetricType[]{MetricType.PRODUCT_USAGE_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS});

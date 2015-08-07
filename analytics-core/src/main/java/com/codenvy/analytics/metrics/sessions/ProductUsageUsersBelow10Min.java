@@ -25,11 +25,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Expandable {
 
     public ProductUsageUsersBelow10Min() {
@@ -40,6 +38,7 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Exp
                                MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData value1 = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -53,16 +52,19 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Exp
                                  - value4.getAsLong());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of registered users who spent in product less than 10 minutes";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         ValueData value1 = ((Expandable)basedMetric[0]).getExpandedValue(context);
@@ -78,6 +80,7 @@ public class ProductUsageUsersBelow10Min extends CalculatedMetric implements Exp
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();

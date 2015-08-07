@@ -20,18 +20,16 @@ package com.codenvy.analytics.metrics.tasks.builds;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public class BuildQueueTerminations extends AbstractLongValueResulted {
 
     public BuildQueueTerminations() {
         super(MetricType.BUILD_QUEUE_TERMINATIONS, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of build terminations due to threshold timeout";

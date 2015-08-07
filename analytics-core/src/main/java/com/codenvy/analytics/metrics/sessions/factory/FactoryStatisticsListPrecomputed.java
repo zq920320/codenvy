@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.sessions.factory;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
@@ -28,12 +29,10 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({})
+@InternalMetric
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric, ReadBasedSummariziable {
 
@@ -41,16 +40,19 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
         super(MetricType.FACTORY_STATISTICS_LIST_PRECOMPUTED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The statistic of factory";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.FACTORY_STATISTICS_PRECOMPUTED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY,
@@ -72,28 +74,32 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             EDITS_GIGABYTE_RAM_HOURS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
         DBObject[] dbOperations = summariziable.getSpecificSummarizedDBOperations(clauses);
-        
+
         ((DBObject)(dbOperations[1].get("$group"))).put(SESSIONS, new BasicDBObject("$sum", "$" + SESSIONS));
         ((DBObject)(dbOperations[1].get("$group"))).put(AUTHENTICATED_SESSION, new BasicDBObject("$sum", "$" + AUTHENTICATED_SESSION));
-        
-        return dbOperations; 
+
+        return dbOperations;
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context getContextForBasedMetric() {
         return Context.EMPTY;
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricType getBasedMetric() {
         return MetricType.FACTORY_STATISTICS_LIST;
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean canReadPrecomputedData(Context context) {
         return true;

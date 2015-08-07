@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.grunt;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class CustomGruntRunAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.plugin.grunt.client.menu.CustomGruntRunAction",

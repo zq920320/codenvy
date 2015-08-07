@@ -28,13 +28,11 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsWithBuildPercent extends CalculatedMetric implements Expandable {
     public FactorySessionsWithBuildPercent() {
@@ -42,6 +40,7 @@ public class FactorySessionsWithBuildPercent extends CalculatedMetric implements
                                                                                MetricType.FACTORY_SESSIONS_WITH_BUILD});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -49,21 +48,25 @@ public class FactorySessionsWithBuildPercent extends CalculatedMetric implements
         return new DoubleValueData(100D * number.getAsLong() / total.getAsLong());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return DoubleValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The percent of sessions where user built an application";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         return ((Expandable)basedMetric[1]).getExpandedValue(context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[1]).getExpandedField();

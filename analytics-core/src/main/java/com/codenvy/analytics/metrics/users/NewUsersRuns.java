@@ -21,10 +21,7 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class NewUsersRuns extends AbstractNewUsersAnalysis {
     public NewUsersRuns() {
         super(MetricType.NEW_USERS_RUNS, MetricType.RUNS);

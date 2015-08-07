@@ -23,11 +23,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
 
@@ -35,11 +33,13 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
         super(MetricType.AUTHENTICATED_FACTORY_SESSIONS, SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         if (!context.exists(MetricFilter.USER_ID)) {
@@ -51,11 +51,13 @@ public class AuthenticatedFactorySessions extends AbstractLongValueResulted {
         return context;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{REGISTERED_USER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number sessions in temporary workspaces with registered users";

@@ -23,11 +23,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ConvertedFactorySessions extends AbstractCount {
 
@@ -35,6 +33,7 @@ public class ConvertedFactorySessions extends AbstractCount {
         super(MetricType.CONVERTED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
@@ -42,6 +41,7 @@ public class ConvertedFactorySessions extends AbstractCount {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of converted sessions in temporary workspaces";

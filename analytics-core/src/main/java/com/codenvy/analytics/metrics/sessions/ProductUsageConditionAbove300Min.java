@@ -19,10 +19,7 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageConditionAbove300Min extends AbstractProductUsageCondition {
 
     public ProductUsageConditionAbove300Min() {
@@ -38,6 +35,7 @@ public class ProductUsageConditionAbove300Min extends AbstractProductUsageCondit
               true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users who have the number of sessions more than 5 and usage time more or equal to 120 " +

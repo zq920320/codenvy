@@ -21,10 +21,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactoriesBuilt extends AbstractFactoryAction {
 
@@ -32,6 +29,7 @@ public class FactoriesBuilt extends AbstractFactoryAction {
         super(MetricType.FACTORIES_BUILT, BUILDS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of factory builds";

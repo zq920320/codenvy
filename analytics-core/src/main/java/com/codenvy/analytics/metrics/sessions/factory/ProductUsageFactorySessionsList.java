@@ -33,7 +33,6 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -41,7 +40,6 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ProductUsageFactorySessionsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
@@ -49,6 +47,7 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
         super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{SESSION_ID,
@@ -63,11 +62,13 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
                             CONVERTED_SESSION};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         ReadBasedMetric metric = (ReadBasedMetric)MetricFactory.getMetric(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
@@ -90,6 +91,7 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -109,6 +111,7 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Factory sessions";

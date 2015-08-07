@@ -25,7 +25,6 @@ import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,7 +34,6 @@ import java.util.Map;
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public class ProjectsList extends AbstractListValueResulted {
 
     private static final String OTHER_NULL    = "null";
@@ -45,16 +43,19 @@ public class ProjectsList extends AbstractListValueResulted {
         super(MetricType.PROJECTS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' projects data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PROJECTS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
@@ -65,6 +66,7 @@ public class ProjectsList extends AbstractListValueResulted {
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> list2Return = new ArrayList<>();

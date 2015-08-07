@@ -26,11 +26,9 @@ import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class NonActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NonActiveWorkspaces() {
@@ -38,6 +36,7 @@ public class NonActiveWorkspaces extends CalculatedMetric implements Expandable 
                                                                  MetricType.ACTIVE_WORKSPACES});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context.cloneAndRemove(Parameters.FROM_DATE));
@@ -45,16 +44,19 @@ public class NonActiveWorkspaces extends CalculatedMetric implements Expandable 
         return total.subtract(active);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Non-active workspaces";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         // get all documents from start date of logging to date defined in context
@@ -63,6 +65,7 @@ public class NonActiveWorkspaces extends CalculatedMetric implements Expandable 
         return total.subtract(active);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return WS;

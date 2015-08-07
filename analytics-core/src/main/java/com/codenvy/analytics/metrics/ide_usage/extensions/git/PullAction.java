@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.git;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class PullAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.ext.git.client.action.PullAction",
             "org.eclipse.che.ide.ext.git.client.action.PullAction"
     };
+
     public PullAction() {
         super(MetricType.PULL_ACTION, SOURCE);
     }

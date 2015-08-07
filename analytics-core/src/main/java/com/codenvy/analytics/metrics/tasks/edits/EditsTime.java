@@ -23,23 +23,24 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.Tasks;
 import com.codenvy.analytics.metrics.tasks.TasksTime;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
-@RolesAllowed({"system/admin", "system/manager"})
 public class EditsTime extends TasksTime {
 
     public EditsTime() {
         super(MetricType.EDITS_TIME);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, Tasks.EDITOR);
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total time of all edits in minutes";

@@ -22,12 +22,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class Factories extends AbstractAlias {
     public Factories() {

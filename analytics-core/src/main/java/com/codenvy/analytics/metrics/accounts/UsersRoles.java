@@ -22,19 +22,19 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
+@InternalMetric
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class UsersRoles extends AbstractAccountMetric {
 

@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
@@ -29,7 +30,6 @@ import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ import static com.google.common.base.Strings.nullToEmpty;
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
+@InternalMetric
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class AccountSubscriptionsList extends AbstractAccountMetric {
 

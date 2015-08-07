@@ -23,11 +23,9 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.Tasks;
 import com.codenvy.analytics.metrics.tasks.TasksGigabyteRamHours;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class DebugsGigabyteRamHours extends TasksGigabyteRamHours {
 
     public DebugsGigabyteRamHours() {
@@ -35,7 +33,9 @@ public class DebugsGigabyteRamHours extends TasksGigabyteRamHours {
     }
 
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, Tasks.DEBUGGER);
         return builder.build();

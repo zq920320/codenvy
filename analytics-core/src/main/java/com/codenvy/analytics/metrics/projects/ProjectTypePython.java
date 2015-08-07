@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectTypePython extends AbstractProjectType {
 
     public ProjectTypePython() {
         super(MetricType.PROJECT_TYPE_PYTHON, new String[]{PYTHON, PYTHON_ENGINE, GAE_PYTHON});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of Python projects";

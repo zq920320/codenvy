@@ -19,17 +19,15 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class RedirectToForumsAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.RedirectToForumsAction",
             "org.eclipse.che.ide.actions.RedirectToForumsAction"
     };
+
     public RedirectToForumsAction() {
         super(MetricType.REDIRECT_TO_FORUMS_ACTION, SOURCE);
     }

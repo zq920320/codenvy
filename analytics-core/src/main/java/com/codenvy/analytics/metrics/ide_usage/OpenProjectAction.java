@@ -19,17 +19,15 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class OpenProjectAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.OpenProjectAction",
             "org.eclipse.che.ide.actions.OpenProjectAction"
     };
+
     public OpenProjectAction() {
         super(MetricType.OPEN_PROJECT_ACTION, SOURCE);
     }

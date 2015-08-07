@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.workspaces;
 import com.codenvy.analytics.metrics.AbstractAlias;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Workspaces extends AbstractAlias {
     public Workspaces() {
         super(MetricType.WORKSPACES, MetricType.CREATED_WORKSPACES);

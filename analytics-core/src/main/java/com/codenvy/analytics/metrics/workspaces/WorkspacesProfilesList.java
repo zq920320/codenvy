@@ -33,11 +33,13 @@ public class WorkspacesProfilesList extends AbstractWorkspacesProfile {
         super(MetricType.WORKSPACES_PROFILES_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.WORKSPACES_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{ID,
@@ -45,11 +47,13 @@ public class WorkspacesProfilesList extends AbstractWorkspacesProfile {
                             PERSISTENT_WS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The profiles of the workspaces";

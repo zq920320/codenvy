@@ -23,10 +23,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class NewUsersUsageTimeGreater1Min extends AbstractNewUsersAnalysis {
     public NewUsersUsageTimeGreater1Min() {
         super(MetricType.NEW_USERS_USAGE_TIME_GREATER_1_MIN, MetricType.USERS_STATISTICS);

@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectTypeDjango extends AbstractProjectType {
 
     public ProjectTypeDjango() {
         super(MetricType.PROJECT_TYPE_DJANGO, new String[]{DJANGO});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of Django projects";

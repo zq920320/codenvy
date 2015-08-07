@@ -24,12 +24,9 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public class ProjectsStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
 
@@ -37,16 +34,19 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         super(MetricType.PROJECTS_STATISTICS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' projects statistics data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PROJECTS_STATISTICS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{PROJECT_ID,
@@ -69,6 +69,7 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -91,7 +92,7 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         group.put(USER, new BasicDBObject("$first", "$" + USER));
         group.put(DATE, new BasicDBObject("$first", "$" + DATE));
         group.put(PROJECT_TYPE, new BasicDBObject("$first", "$" + PROJECT_TYPE));
-    
+
         DBObject project = new BasicDBObject();
         project.put(PROJECT_ID, "$" + ID);
         project.put(BUILDS, "$" + BUILDS);
@@ -111,12 +112,13 @@ public class ProjectsStatisticsList extends AbstractListValueResulted implements
         project.put(USER, "$" + USER);
         project.put(DATE, "$" + DATE);
         project.put(PROJECT_TYPE, "$" + PROJECT_TYPE);
-    
-    
+
+
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);

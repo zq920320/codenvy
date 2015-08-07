@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class ActiveWorkspacesSet extends AbstractSetValueResulted {
 
@@ -33,11 +30,13 @@ public class ActiveWorkspacesSet extends AbstractSetValueResulted {
         super(MetricType.ACTIVE_WORKSPACES_SET, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.ACTIVE_WORKSPACES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of active persistent workspaces";

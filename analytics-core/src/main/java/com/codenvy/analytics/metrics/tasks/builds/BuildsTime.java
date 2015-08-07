@@ -23,17 +23,16 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.Tasks;
 import com.codenvy.analytics.metrics.tasks.TasksTime;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class BuildsTime extends TasksTime {
 
     public BuildsTime() {
         super(MetricType.BUILDS_TIME);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
@@ -41,6 +40,7 @@ public class BuildsTime extends TasksTime {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total time of all builds in minutes";

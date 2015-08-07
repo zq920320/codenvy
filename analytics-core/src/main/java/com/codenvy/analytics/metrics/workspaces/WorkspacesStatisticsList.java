@@ -34,7 +34,6 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,7 +42,6 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class WorkspacesStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public static final String JOINED_USERS = "joined_users";
@@ -52,16 +50,19 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         super(MetricType.WORKSPACES_STATISTICS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Workspaces' statistics data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.USERS_STATISTICS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
@@ -82,6 +83,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
                             JOINED_USERS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -177,6 +179,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         }
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
@@ -192,6 +195,7 @@ public class WorkspacesStatisticsList extends AbstractListValueResulted implemen
         return dbOperations;
     }
 
+    /** {@inheritDoc} */
     public Context applySpecificFilter(Context context) throws IOException {
         // Return only persistence workspaces for expanded cumulative metrics
         if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {

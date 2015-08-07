@@ -20,16 +20,14 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersActivity extends AbstractCount {
 
     public UsersActivity() {
         super(MetricType.USERS_ACTIVITY, MetricType.USERS_ACTIVITY_LIST, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of users events";

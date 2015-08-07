@@ -27,7 +27,8 @@ public class TopCompanies extends AbstractTopEntitiesTime {
               new MetricType[]{MetricType.PRODUCT_COMPANIES_TIME},
               MetricFilter.USER_COMPANY);
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Top 100 companies by time working in product during last days";

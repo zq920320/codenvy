@@ -28,7 +28,6 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,13 +35,13 @@ import java.util.List;
 import java.util.Map;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsList extends AbstractProductUsageSessionsList implements ReadBasedSummariziable {
 
     public ProductUsageSessionsList() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
@@ -58,6 +57,7 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList i
                             REFERRER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData postComputation(ValueData valueData, Context clauses) throws IOException {
         List<ValueData> list2Return = new ArrayList<>();
@@ -80,6 +80,7 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList i
         return new ListValueData(list2Return);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -94,6 +95,7 @@ public class ProductUsageSessionsList extends AbstractProductUsageSessionsList i
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' sessions";

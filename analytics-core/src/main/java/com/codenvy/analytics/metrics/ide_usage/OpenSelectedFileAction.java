@@ -19,17 +19,15 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class OpenSelectedFileAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.OpenSelectedFileAction",
             "org.eclipse.che.ide.actions.OpenSelectedFileAction"
     };
+
     public OpenSelectedFileAction() {
         super(MetricType.OPEN_SELECTED_FILE_ACTION, SOURCE);
     }

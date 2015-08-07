@@ -26,10 +26,7 @@ import com.codenvy.analytics.metrics.OmitFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class UsersProfiles extends AbstractUsersProfile {
 
@@ -37,6 +34,7 @@ public class UsersProfiles extends AbstractUsersProfile {
         super(MetricType.USERS_PROFILES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -47,16 +45,19 @@ public class UsersProfiles extends AbstractUsersProfile {
         return new DBObject[]{opCount};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users";

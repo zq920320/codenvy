@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class FactoriesAcceptedList extends AbstractListValueResulted {
 
@@ -33,11 +30,13 @@ public class FactoriesAcceptedList extends AbstractListValueResulted {
         super(MetricType.FACTORIES_ACCEPTED_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.FACTORIES_ACCEPTED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
@@ -48,6 +47,7 @@ public class FactoriesAcceptedList extends AbstractListValueResulted {
                             REFERRER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of accepted factories";

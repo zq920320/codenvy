@@ -19,17 +19,15 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class RenameItemAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.RenameItemAction",
             "org.eclipse.che.ide.actions.RenameItemAction"
     };
+
     public RenameItemAction() {
         super(MetricType.RENAME_ITEM_ACTION, SOURCE);
     }

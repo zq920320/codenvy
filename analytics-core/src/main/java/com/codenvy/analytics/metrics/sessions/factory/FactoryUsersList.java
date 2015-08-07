@@ -25,26 +25,26 @@ import com.codenvy.analytics.metrics.OmitFilters;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactoryUsersList extends AbstractListValueResulted {
     public FactoryUsersList() {
         super(MetricType.FACTORY_USERS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of factory users";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
@@ -55,6 +55,7 @@ public class FactoryUsersList extends AbstractListValueResulted {
                             TIME};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();

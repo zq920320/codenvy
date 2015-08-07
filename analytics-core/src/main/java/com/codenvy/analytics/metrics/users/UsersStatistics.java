@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersStatistics extends AbstractActiveEntities {
 
     public UsersStatistics() {
@@ -34,6 +31,7 @@ public class UsersStatistics extends AbstractActiveEntities {
               USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users in statistics";

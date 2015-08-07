@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageUsersAbove300Min extends AbstractProductUsageUsers {
 
     public ProductUsageUsersAbove300Min() {
         super(MetricType.PRODUCT_USAGE_USERS_ABOVE_300_MIN, 300 * 60 * 1000, Integer.MAX_VALUE, false, true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of registered users who spent in product between 60 and 300 minutes";

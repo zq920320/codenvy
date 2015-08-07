@@ -22,21 +22,20 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class CreatedFactoriesSet extends AbstractSetValueResulted {
     public CreatedFactoriesSet() {
         super(MetricType.CREATED_FACTORIES_SET, FACTORY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.CREATED_FACTORIES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of created factories.";

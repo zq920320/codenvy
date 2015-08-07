@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersAddedToWorkspacesUsingInvitation extends AbstractUsersAddedToWorkspaces {
 
     public UsersAddedToWorkspacesUsingInvitation() {
         super(MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION, new String[]{INVITE});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users who were added to workspace via invitation";

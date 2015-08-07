@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.java;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewJavaSourceFileAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.ext.java.client.action.NewJavaSourceFileAction",
             "org.eclipse.che.ide.ext.java.client.action.NewJavaSourceFileAction"
     };
+
     public NewJavaSourceFileAction() {
         super(MetricType.NEW_JAVA_SOURCE_FILE_ACTION, SOURCE);
     }

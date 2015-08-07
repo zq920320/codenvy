@@ -19,14 +19,13 @@
 package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.im.IMDownloadsList;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class NewUsersOnPremDownloads extends AbstractNewUsersAnalysis {
     public NewUsersOnPremDownloads() {
         super(MetricType.NEW_USERS_ON_PREM_DOWNLOADS, MetricType.IM_DOWNLOADS);

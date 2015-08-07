@@ -22,11 +22,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class TasksStopped extends Tasks {
     public TasksStopped() {
         this(MetricType.TASKS_STOPPED);
@@ -36,12 +34,15 @@ public class TasksStopped extends Tasks {
         super(metricType);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.STOP_TIME, new BasicDBObject("$exists", true));
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of times when user launched task on project";

@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.git;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class ResetToCommitAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.ext.git.client.action.ResetToCommitAction",
             "org.eclipse.che.ide.ext.git.client.action.ResetToCommitAction"
     };
+
     public ResetToCommitAction() {
         super(MetricType.RESET_TO_COMMIT_ACTION, SOURCE);
     }

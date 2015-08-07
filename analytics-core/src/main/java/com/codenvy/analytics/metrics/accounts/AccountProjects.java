@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.accounts;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
@@ -33,6 +34,7 @@ import java.util.List;
 /**
  * @author Alexander Reshetnyak
  */
+@InternalMetric
 public class AccountProjects extends AbstractAccountMetric {
     public AccountProjects() {
         super(MetricType.ACCOUNT_PROJECTS);

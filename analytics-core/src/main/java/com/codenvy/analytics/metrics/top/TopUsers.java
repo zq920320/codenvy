@@ -29,11 +29,13 @@ public class TopUsers extends AbstractTopEntitiesTime {
               MetricFilter.USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return super.getValueDataClass();
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Top 100 users by time working in product during the last days";

@@ -19,10 +19,7 @@ package com.codenvy.analytics.metrics.tasks;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class TasksLaunched extends Tasks {
 
     public static final String ALWAYS_ON = "always-on";
@@ -36,6 +33,7 @@ public class TasksLaunched extends Tasks {
         super(metricType);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of times when user launched task on project";

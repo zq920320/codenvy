@@ -22,14 +22,12 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
-public class ProjectsActiveSet  extends AbstractSetValueResulted {
+public class ProjectsActiveSet extends AbstractSetValueResulted {
 
     public ProjectsActiveSet() {
         super(MetricType.PROJECTS_ACTIVE_SET, PROJECT_ID);
@@ -37,7 +35,8 @@ public class ProjectsActiveSet  extends AbstractSetValueResulted {
 
     /** {@inheritDoc} */
     @Override
-    public String getStorageCollectionName() { return getStorageCollectionName(MetricType.PROJECTS_STATISTICS);
+    public String getStorageCollectionName() {
+        return getStorageCollectionName(MetricType.PROJECTS_STATISTICS);
     }
 
     /** {@inheritDoc} */

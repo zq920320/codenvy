@@ -24,10 +24,7 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsFailsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public ProductUsageSessionsFailsList() {

@@ -33,6 +33,7 @@ public abstract class AbstractTimeSpentInAction extends AbstractLongValueResulte
         super(metricName, expandingField);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME};

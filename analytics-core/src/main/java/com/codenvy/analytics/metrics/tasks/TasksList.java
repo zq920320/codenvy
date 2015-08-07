@@ -25,10 +25,7 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public class TasksList extends AbstractListValueResulted implements ReadBasedSummariziable {
     public TasksList() {
         super(MetricType.TASKS_LIST);
@@ -36,16 +33,19 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
 
     public static final int MAXIMUM_FRACTION_DIGITS = 4;
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "List of tasks";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.TASKS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{DATE,
@@ -69,6 +69,7 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
         };
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -78,7 +79,8 @@ public class TasksList extends AbstractListValueResulted implements ReadBasedSum
 
         DBObject project = new BasicDBObject();
         project.put(USAGE_TIME, "$" + USAGE_TIME);
-        project.put(GIGABYTE_RAM_HOURS, Utils.getTruncOperation(GIGABYTE_RAM_HOURS, MAXIMUM_FRACTION_DIGITS));  // trunc GIGABYTE_RAM_HOURS to 4 fraction digits
+        project.put(GIGABYTE_RAM_HOURS,
+                    Utils.getTruncOperation(GIGABYTE_RAM_HOURS, MAXIMUM_FRACTION_DIGITS));  // trunc GIGABYTE_RAM_HOURS to 4 fraction digits
 
         return new DBObject[]{new BasicDBObject("$group", group),
                               new BasicDBObject("$project", project)};

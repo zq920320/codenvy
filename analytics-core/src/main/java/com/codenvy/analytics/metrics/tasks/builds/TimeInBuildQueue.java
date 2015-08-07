@@ -20,18 +20,16 @@ package com.codenvy.analytics.metrics.tasks.builds;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class TimeInBuildQueue extends AbstractTimeSpentInAction {
 
     public TimeInBuildQueue() {
         super(MetricType.TIME_IN_BUILD_QUEUE, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The time spent in build wait queue";

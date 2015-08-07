@@ -22,13 +22,11 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class AbandonedFactorySessions extends AbstractCount {
 
 
@@ -36,6 +34,7 @@ public class AbandonedFactorySessions extends AbstractCount {
         super(MetricType.ABANDONED_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(context);
@@ -43,6 +42,7 @@ public class AbandonedFactorySessions extends AbstractCount {
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of abandoned sessions in temporary workspaces";

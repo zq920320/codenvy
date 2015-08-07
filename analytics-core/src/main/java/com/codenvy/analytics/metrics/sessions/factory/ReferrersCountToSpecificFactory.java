@@ -27,12 +27,10 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.List;
 
 /** @author Alexander Reshetnyak */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
 
@@ -42,11 +40,13 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
         super(MetricType.REFERRERS_COUNT_TO_SPECIFIC_FACTORY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{FACTORY, UNIQUE_REFERRERS_COUNT};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
@@ -71,16 +71,19 @@ public class ReferrersCountToSpecificFactory extends ReadBasedMetric {
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The referrers count to a specific factory";

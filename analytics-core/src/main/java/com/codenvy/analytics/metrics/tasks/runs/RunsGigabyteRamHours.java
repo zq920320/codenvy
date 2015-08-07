@@ -23,17 +23,17 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.Tasks;
 import com.codenvy.analytics.metrics.tasks.TasksGigabyteRamHours;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class RunsGigabyteRamHours extends TasksGigabyteRamHours {
     public RunsGigabyteRamHours() {
         super(MetricType.RUNS_GIGABYTE_RAM_HOURS);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, Tasks.RUNNER);
         return builder.build();

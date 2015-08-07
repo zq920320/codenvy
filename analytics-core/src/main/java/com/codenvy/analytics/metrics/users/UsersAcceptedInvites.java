@@ -24,37 +24,40 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersAcceptedInvites extends CalculatedMetric implements Expandable {
     public UsersAcceptedInvites() {
         super(MetricType.USERS_ACCEPTED_INVITES,
               new MetricType[]{MetricType.USERS_ADDED_TO_WORKSPACES_USING_INVITATION});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         return basedMetric[0].getValue(context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users who accepted invites";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         return ((Expandable)basedMetric[0]).getExpandedValue(context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();

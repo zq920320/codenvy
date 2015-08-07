@@ -20,18 +20,16 @@ package com.codenvy.analytics.metrics.tasks.runs;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
 public class RunQueueTerminations extends AbstractLongValueResulted {
 
     public RunQueueTerminations() {
         super(MetricType.RUN_QUEUE_TERMINATIONS, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of run terminations due to threshold timeout";

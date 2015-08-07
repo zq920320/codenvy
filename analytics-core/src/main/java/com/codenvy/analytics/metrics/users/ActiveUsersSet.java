@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ActiveUsersSet extends AbstractSetValueResulted {
 
@@ -33,11 +30,13 @@ public class ActiveUsersSet extends AbstractSetValueResulted {
         super(MetricType.ACTIVE_USERS_SET, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.ACTIVE_USERS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The list of active registered users";

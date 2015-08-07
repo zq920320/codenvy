@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductCompaniesTime extends AbstractProductTime {
 
     public ProductCompaniesTime() {
         super(MetricType.PRODUCT_COMPANIES_TIME);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER_COMPANY,
@@ -36,6 +34,7 @@ public class ProductCompaniesTime extends AbstractProductTime {
                             SESSIONS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Companies' time spent in product";

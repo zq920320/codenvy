@@ -23,11 +23,8 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsageTimeByUsersList extends AbstractListValueResulted {
 
     public static final String SESSIONS = "sessions";
@@ -36,16 +33,19 @@ public class UsageTimeByUsersList extends AbstractListValueResulted {
         super(MetricType.USAGE_TIME_BY_USERS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME, SESSIONS, USER};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -62,6 +62,7 @@ public class UsageTimeByUsersList extends AbstractListValueResulted {
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "How much time every user has spent in workspaces";

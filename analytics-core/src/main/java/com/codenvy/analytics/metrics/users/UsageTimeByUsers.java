@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsageTimeByUsers extends AbstractActiveEntities {
 
     public UsageTimeByUsers() {
@@ -32,6 +29,7 @@ public class UsageTimeByUsers extends AbstractActiveEntities {
               USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of users workspaces";

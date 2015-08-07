@@ -28,12 +28,14 @@ public class TopDomains extends AbstractTopEntitiesTime {
               new MetricType[]{MetricType.PRODUCT_DOMAINS_TIME},
               MetricFilter.DOMAIN);
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return super.getValueDataClass();
     }
-    
+
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Top 100 domains by time working in product during last days";

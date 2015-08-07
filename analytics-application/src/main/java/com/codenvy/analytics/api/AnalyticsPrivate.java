@@ -18,8 +18,11 @@
 package com.codenvy.analytics.api;
 
 
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.metrics.MetricRestrictionException;
+import com.codenvy.analytics.metrics.PublicMetric;
 import com.codenvy.analytics.util.Utils;
 import com.google.inject.Inject;
 
@@ -46,7 +49,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.text.ParseException;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -161,8 +163,8 @@ public class AnalyticsPrivate {
                                    @Context UriInfo uriInfo,
                                    @Context SecurityContext securityContext) {
         try {
-            MetricInfoDTO metricInfoDTO = metricHandler.getInfo(metricName, uriInfo);
-            if (!utils.isRolesAllowed(metricInfoDTO, securityContext)) {
+            Metric metric = MetricFactory.getMetric(metricName);
+            if (!metric.getClass().isAnnotationPresent(PublicMetric.class)) {
                 throw new MetricRestrictionException("Security violation. User probably hasn't access to the metric");
             }
 
@@ -230,14 +232,6 @@ public class AnalyticsPrivate {
                                @Context SecurityContext securityContext) {
         try {
             MetricInfoListDTO metricInfoListDTO = metricHandler.getAllInfo(uriInfo);
-
-            Iterator<MetricInfoDTO> iterator = metricInfoListDTO.getMetrics().iterator();
-            while (iterator.hasNext()) {
-                if (!utils.isRolesAllowed(iterator.next(), securityContext)) {
-                    iterator.remove();
-                }
-            }
-
             return Response.status(Response.Status.OK).entity(metricInfoListDTO).build();
         } catch (Exception e) {
             LOG.error(e.getMessage(), e);

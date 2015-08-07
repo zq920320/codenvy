@@ -21,36 +21,40 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Dmytro Nochevnov */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class Zero extends AbstractMetric implements Expandable {
     public Zero() {
         super(MetricType.ZERO);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         return LongValueData.DEFAULT;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Metric which always returns 0 value.";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         throw new UnsupportedOperationException();
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         return ListValueData.DEFAULT;

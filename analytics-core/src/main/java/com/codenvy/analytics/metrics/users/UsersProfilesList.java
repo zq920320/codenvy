@@ -27,13 +27,11 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class UsersProfilesList extends AbstractUsersProfile {
 
@@ -71,11 +69,6 @@ public class UsersProfilesList extends AbstractUsersProfile {
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return ListValueData.class;
-    }
-
-    /** Utility method. */
-    public static ListValueData getByAlias(Object aliases) throws IOException {
-        return getByFilter(MetricFilter.ALIASES, aliases);
     }
 
     /** Utility method. */

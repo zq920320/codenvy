@@ -22,11 +22,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.Tasks;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Runs extends Tasks {
 
     public Runs() {

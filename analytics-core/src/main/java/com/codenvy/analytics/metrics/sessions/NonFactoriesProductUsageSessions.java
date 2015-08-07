@@ -25,11 +25,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class NonFactoriesProductUsageSessions extends CalculatedMetric implements Expandable {
 
     public NonFactoriesProductUsageSessions() {
@@ -38,6 +36,7 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric implement
                                MetricType.PRODUCT_USAGE_FACTORY_SESSIONS});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -45,16 +44,19 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric implement
         return total.subtract(factory);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of users sessions";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context);
@@ -62,6 +64,7 @@ public class NonFactoriesProductUsageSessions extends CalculatedMetric implement
         return total.subtract(factory);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();

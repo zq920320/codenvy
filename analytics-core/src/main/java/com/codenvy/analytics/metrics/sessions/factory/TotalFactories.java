@@ -24,10 +24,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class TotalFactories extends CumulativeMetric {
 
@@ -37,11 +34,13 @@ public class TotalFactories extends CumulativeMetric {
               MetricFactory.getMetric(MetricType.ZERO));        
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of created factories";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return FACTORY;

@@ -22,10 +22,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class TasksGigabyteRamHours extends AbstractLongValueResulted {
 
     public TasksGigabyteRamHours() {

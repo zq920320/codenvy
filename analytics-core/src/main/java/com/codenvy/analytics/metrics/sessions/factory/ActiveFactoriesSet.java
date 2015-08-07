@@ -22,12 +22,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ActiveFactoriesSet extends AbstractSetValueResulted {
 
@@ -35,11 +32,13 @@ public class ActiveFactoriesSet extends AbstractSetValueResulted {
         super(MetricType.ACTIVE_FACTORIES_SET, FACTORY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The set of active factories";

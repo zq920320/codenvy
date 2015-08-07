@@ -55,11 +55,13 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
         this(action, metricType.name(), sources);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.IDE_USAGES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) {
         Context.Builder builder = new Context.Builder(clauses);
@@ -72,16 +74,19 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -92,6 +97,7 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
         return new DBObject[]{new BasicDBObject("$group", group)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -117,6 +123,7 @@ public abstract class AbstractIdeUsage extends ReadBasedMetric implements ReadBa
         return description.trim();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return PROJECT_ID;

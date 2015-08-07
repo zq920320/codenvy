@@ -18,18 +18,18 @@
 package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class CreatedUniqueWorkspaces extends AbstractActiveEntities {
 
     public CreatedUniqueWorkspaces() {
         super(MetricType.CREATED_UNIQUE_WORKSPACES, MetricType.CREATED_WORKSPACES_SET, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of create unique workspaces";

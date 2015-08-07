@@ -20,16 +20,14 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class CreatedProjects extends AbstractCount {
 
     public CreatedProjects() {
         super(MetricType.CREATED_PROJECTS, MetricType.PROJECTS_LIST, PROJECT_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of created projects";

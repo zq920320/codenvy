@@ -22,23 +22,24 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.TasksLaunchedWithTimeout;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class DebugsWithTimeout extends TasksLaunchedWithTimeout {
 
     public DebugsWithTimeout() {
         super(MetricType.DEBUGS_WITH_TIMEOUT);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, DEBUGGER);
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of debugs with timeout";

@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectTypePhp extends AbstractProjectType {
 
     public ProjectTypePhp() {
         super(MetricType.PROJECT_TYPE_PHP, new String[]{PHP, GAE_PHP});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of PHP projects";

@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageSessionsAbove60Min extends AbstractProductUsage {
 
     public ProductUsageSessionsAbove60Min() {
         super(MetricType.PRODUCT_USAGE_SESSIONS_ABOVE_60_MIN, 60 * 60 * 1000, Integer.MAX_VALUE, false, true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of all sessions in persistent workspaces with duration more than 60 minutes";

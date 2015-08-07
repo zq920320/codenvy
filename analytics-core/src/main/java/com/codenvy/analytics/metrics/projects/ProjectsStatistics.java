@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.AbstractActiveEntities;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectsStatistics extends AbstractActiveEntities {
 
     public ProjectsStatistics() {
@@ -32,6 +29,7 @@ public class ProjectsStatistics extends AbstractActiveEntities {
               PROJECT_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of projects";

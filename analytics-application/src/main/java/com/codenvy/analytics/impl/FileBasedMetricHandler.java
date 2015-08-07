@@ -19,11 +19,11 @@ package com.codenvy.analytics.impl;
 
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricNotFoundException;
 import com.codenvy.analytics.metrics.MetricRestrictionException;
-import com.codenvy.analytics.util.MetricDTOFactory;
 
 import org.eclipse.che.api.analytics.MetricHandler;
 import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
@@ -40,101 +40,108 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.codenvy.analytics.util.MetricDTOFactory.createMetricDTO;
+
 /**
  * Metric handler implementation base on data stored in files on file system. Which should be preliminary prepared by
  * calling appropriate scripts.
  *
- * @author <a href="mailto:dkuleshov@codenvy.com">Dmitry Kuleshov</a>
+ * @author Dmitry Kuleshov
+ * @author Anatoliy Bazko
  */
 @Singleton
 public class FileBasedMetricHandler implements MetricHandler {
 
+    /** {@inheritDoc} */
     @Override
     public MetricValueDTO getValue(String metricName,
                                    Map<String, String> context,
-                                   UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
-        MetricValueDTO metricValueDTO = DtoFactory.getInstance().createDto(MetricValueDTO.class);
-        metricValueDTO.setName(metricName);
-        try {
-            ValueData vd = getMetricValue(metricName, Context.valueOf(context));
-            metricValueDTO.setType(vd.getType());
-            metricValueDTO.setValue(vd.getAsString());
-        } catch (IOException e) {
-            throw new IllegalStateException("Inappropriate metric state or metric context to evaluate metric ");
-        } catch (IllegalArgumentException e) {
-            throw new MetricNotFoundException("Metric not found");
-        }
-        return metricValueDTO;
+                                   UriInfo uriInfo) throws MetricNotFoundException,
+                                                           MetricRestrictionException {
+        validateInternalMetric(metricName);
+        return getMetricValueDTO(metricName, context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricValueListDTO getListValues(String metricName,
                                             List<Map<String, String>> parameters,
                                             Map<String, String> context,
-                                            UriInfo uriInfo) throws Exception {
-        MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
+                                            UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+        validateInternalMetric(metricName);
+
+        MetricValueListDTO metricValueListDTO = DtoFactory.newDto(MetricValueListDTO.class);
+
         List<MetricValueDTO> metricValues = new ArrayList<>();
+        metricValueListDTO.setMetrics(metricValues);
 
         if (parameters != null) {
-            for (int i = 0; i < parameters.size(); i++) {
-                Map<String, String> mergedContext = merge(parameters.get(i), context);
-                metricValues.add(getValue(metricName, mergedContext, uriInfo));
+            for (Map<String, String> parameter : parameters) {
+                Map<String, String> mergedContext = merge(parameter, context);
+                metricValues.add(getMetricValueDTO(metricName, mergedContext));
             }
         }
 
-        metricValueListDTO.setMetrics(metricValues);
         return metricValueListDTO;
     }
 
+
+    /** {@inheritDoc} */
     @Override
     public MetricValueDTO getValueByJson(String metricName,
                                          Map<String, String> parameters,
                                          Map<String, String> context,
-                                         UriInfo uriInfo) throws Exception {
-        if (parameters != null) {
-            context = merge(parameters, context);
-        }
-
-        return getValue(metricName, context, uriInfo);
+                                         UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+        validateInternalMetric(metricName);
+        return parameters != null ? getMetricValueDTO(metricName, merge(parameters, context))
+                                  : getMetricValueDTO(metricName, context);
     }
 
+    /** {@inheritDoc} */
     public MetricValueDTO getPublicValue(String metricName,
                                          Map<String, String> context,
                                          UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
-
-        return getValue(metricName, context, uriInfo);
+        validateInternalMetric(metricName);
+        return getMetricValueDTO(metricName, context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricValueListDTO getUserValues(List<String> metricNames,
                                             Map<String, String> context,
-                                            UriInfo uriInfo) throws MetricNotFoundException {
+                                            UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
+        MetricValueListDTO metricValueListDTO = DtoFactory.newDto(MetricValueListDTO.class);
 
-        MetricValueListDTO metricValueListDTO = DtoFactory.getInstance().createDto(MetricValueListDTO.class);
         List<MetricValueDTO> metricValues = new ArrayList<>();
-        for (String metricName : metricNames) {
-            metricValues.add(getValue(metricName, context, uriInfo));
-        }
         metricValueListDTO.setMetrics(metricValues);
+
+        for (String metricName : metricNames) {
+            if (!isInternal(metricName)) {
+                metricValues.add(getMetricValueDTO(metricName, context));
+            }
+        }
+
         return metricValueListDTO;
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricInfoDTO getInfo(String metricName, UriInfo uriInfo) throws MetricNotFoundException {
-        try {
-            Metric metric = MetricFactory.getMetric(metricName);
-            return MetricDTOFactory.createMetricDTO(metric, metricName, uriInfo);
-        } catch (IllegalArgumentException e) {
-            throw new MetricNotFoundException("Metric not found");
-        }
+        validateInternalMetric(metricName);
+
+        Metric metric = MetricFactory.getMetric(metricName);
+        return createMetricDTO(metric, metricName, uriInfo);
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricInfoListDTO getAllInfo(UriInfo uriInfo) throws MetricNotFoundException, MetricRestrictionException {
         List<MetricInfoDTO> metricInfoDTOs = new ArrayList<>();
 
         for (Metric metric : MetricFactory.getAllMetrics()) {
-            metricInfoDTOs.add(MetricDTOFactory.createMetricDTO(metric, metric.getName(), uriInfo));
+            if (!isInternal(metric)) {
+                metricInfoDTOs.add(createMetricDTO(metric, metric.getName(), uriInfo));
+            }
         }
 
         MetricInfoListDTO metricInfoListDTO = DtoFactory.getInstance().createDto(MetricInfoListDTO.class);
@@ -156,5 +163,38 @@ public class FileBasedMetricHandler implements MetricHandler {
             }
         }
         return mergedContext;
+    }
+
+    /**
+     * Indicates if metric internal. In this case it won't be available through API.
+     */
+    protected boolean isInternal(Metric metric) {
+        return metric.getClass().isAnnotationPresent(InternalMetric.class);
+    }
+
+    protected boolean isInternal(String metricName) {
+        return isInternal(MetricFactory.getMetric(metricName));
+    }
+
+    protected void validateInternalMetric(String metricName) throws MetricNotFoundException {
+        Metric metric = MetricFactory.getMetric(metricName);
+        if (isInternal(metric)) {
+            throw new MetricNotFoundException(metricName);
+        }
+    }
+
+    protected MetricValueDTO getMetricValueDTO(String metricName,
+                                               Map<String, String> context) throws MetricNotFoundException,
+                                                                                   MetricRestrictionException {
+        try {
+            ValueData vd = getMetricValue(metricName, Context.valueOf(context));
+            MetricValueDTO metricValueDTO = DtoFactory.newDto(MetricValueDTO.class);
+            metricValueDTO.setName(metricName);
+            metricValueDTO.setType(vd.getType());
+            metricValueDTO.setValue(vd.getAsString());
+            return metricValueDTO;
+        } catch (IOException e) {
+            throw new IllegalStateException("Inappropriate metric state or metric context to evaluate metric ");
+        }
     }
 }

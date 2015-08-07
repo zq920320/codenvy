@@ -24,6 +24,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
@@ -40,7 +41,6 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -55,7 +55,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsMap;
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
+@InternalMetric
 public class AccountsList extends AbstractAccountMetric {
 
     public AccountsList() {

@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.tasks;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class TasksTime extends AbstractTimeSpentInAction {
 
     public TasksTime() {
@@ -34,16 +31,19 @@ public class TasksTime extends AbstractTimeSpentInAction {
         super(metricType, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.TASKS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{USAGE_TIME};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total time of all tasks in milliseconds";

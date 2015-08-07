@@ -22,13 +22,11 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectsActive extends AbstractActiveEntities {
 
     public ProjectsActive() {

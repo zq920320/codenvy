@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.tasks;
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Tasks extends AbstractCount {
     public static final String BUILDER  = "builder";
     public static final String RUNNER   = "runner";
@@ -38,6 +35,7 @@ public class Tasks extends AbstractCount {
         super(metricType, MetricType.TASKS_LIST, TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of tasks";

@@ -19,10 +19,7 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectTypeJar extends AbstractProjectType {
 
     public ProjectTypeJar() {
@@ -30,6 +27,7 @@ public class ProjectTypeJar extends AbstractProjectType {
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of Java Jar projects";

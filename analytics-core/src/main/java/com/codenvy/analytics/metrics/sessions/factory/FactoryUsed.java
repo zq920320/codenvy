@@ -22,10 +22,10 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
+import com.codenvy.analytics.metrics.PublicMetric;
 import com.codenvy.analytics.metrics.RequiredAnyFilter;
 import com.codenvy.analytics.persistent.MongoDataLoader;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
@@ -36,7 +36,7 @@ import static com.codenvy.analytics.Utils.getFilterAsString;
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"any"})
+@PublicMetric
 @RequiredAnyFilter({MetricFilter.FACTORY, MetricFilter.FACTORY_ID})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.WS_ID})
 public class FactoryUsed extends AbstractCount {
@@ -45,11 +45,13 @@ public class FactoryUsed extends AbstractCount {
         super(MetricType.FACTORY_USED, MetricType.FACTORIES_ACCEPTED_LIST, FACTORY);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of factory usage";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Object obj = clauses.get(MetricFilter.FACTORY);

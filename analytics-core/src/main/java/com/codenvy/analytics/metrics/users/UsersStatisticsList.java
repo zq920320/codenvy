@@ -34,7 +34,6 @@ import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -43,23 +42,25 @@ import java.util.List;
 import java.util.Map;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersStatisticsList extends AbstractListValueResulted implements ReadBasedSummariziable {
 
     public UsersStatisticsList() {
         super(MetricType.USERS_STATISTICS_LIST);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Users' statistics data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.USERS_STATISTICS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
@@ -78,6 +79,7 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
                             LOGINS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -116,6 +118,7 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         DBObject[] dbOperations = getSpecificDBOperations(clauses);
@@ -189,6 +192,7 @@ public class UsersStatisticsList extends AbstractListValueResulted implements Re
         }
     }
 
+    /** {@inheritDoc} */
     public Context applySpecificFilter(Context context) throws IOException {
         // Return only registered users for expanded cumulative metrics
         if (context.exists(Parameters.EXPANDED_METRIC_NAME)) {

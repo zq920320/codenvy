@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.runner;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class ShutdownAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.extension.runner.client.actions.ShutdownAction",

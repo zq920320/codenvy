@@ -20,16 +20,14 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.AbstractLongValueResulted;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class DestroyedProjects extends AbstractLongValueResulted {
 
     public DestroyedProjects() {
         super(MetricType.DESTROYED_PROJECTS, PROJECT_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of destroyed projects";

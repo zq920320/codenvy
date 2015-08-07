@@ -28,25 +28,25 @@ import com.codenvy.analytics.metrics.ReadBasedMetric;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 /** @author Alexander Reshetnyak */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMetric implements ReadBasedExpandable {
     public WorkspacesWhereUsersHaveSeveralFactorySessions() {
         super(MetricType.WORKSPACES_WHERE_USERS_HAVE_SEVERAL_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{VALUE};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         List<DBObject> dbOperations = new ArrayList<>();
@@ -75,26 +75,31 @@ public class WorkspacesWhereUsersHaveSeveralFactorySessions extends ReadBasedMet
         return dbOperations.toArray(new DBObject[dbOperations.size()]);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The workspaces count where users have several factory sessions";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return WS;
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context context) {
         List<DBObject> dbOperations = new ArrayList<>();

@@ -23,13 +23,11 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ActiveUsers extends AbstractActiveEntities {
 
@@ -37,11 +35,13 @@ public class ActiveUsers extends AbstractActiveEntities {
         super(MetricType.ACTIVE_USERS, MetricType.ACTIVE_USERS_SET, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of active registered users";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(clauses));

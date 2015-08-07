@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.CumulativeMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class TotalProjects extends CumulativeMetric {
 
     public TotalProjects() {
@@ -34,11 +31,13 @@ public class TotalProjects extends CumulativeMetric {
               MetricFactory.getMetric(MetricType.DESTROYED_PROJECTS));
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of projects";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return PROJECT_ID;

@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.npm;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class NpmInstallAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.plugin.npm.client.menu.NpmInstallAction",
             "org.eclipse.che.plugin.npm.client.menu.NpmInstallAction"
     };
+
     public NpmInstallAction() {
         super(MetricType.NPM_INSTALL_ACTION, SOURCE);
     }

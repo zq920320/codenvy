@@ -1682,20 +1682,7 @@ function AnalyticsConfiguration() {
         "project_type_spring": "#PROJECTS",
         "project_type_war": "#PROJECTS",
 
-        "project_paas_appfog": "#PROJECTS",
-        "project_paas_aws": "#PROJECTS",
-        "project_paas_cloudbees": "#PROJECTS",
-        "project_paas_cloudfoundry": "#PROJECTS",
-        "project_paas_gae": "#PROJECTS",
-        "project_paas_heroku": "#PROJECTS",
-        "project_paas_manymo": "#PROJECTS",
-        "project_paas_openshift": "#PROJECTS",
-        "project_paas_tier3": "#PROJECTS",
-
         "total_projects": "#PROJECTS",
-
-        "project_no_paas_defined": "#PROJECTS",
-        "project_paas_any": "#PROJECTS",
 
         "project_configuration_action": "#PROJECTS",
         "close_project_action": "#PROJECTS",

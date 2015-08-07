@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.maven;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class CreateMavenModuleAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.extension.maven.client.actions.CreateMavenModuleAction",

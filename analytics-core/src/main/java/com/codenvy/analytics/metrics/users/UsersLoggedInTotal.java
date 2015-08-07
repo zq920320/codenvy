@@ -21,13 +21,15 @@ import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.*;
+import com.codenvy.analytics.metrics.CalculatedMetric;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersLoggedInTotal extends CalculatedMetric implements Expandable {
 
     public UsersLoggedInTotal() {
@@ -36,6 +38,7 @@ public class UsersLoggedInTotal extends CalculatedMetric implements Expandable {
                                                                  MetricType.USERS_LOGGED_IN_WITH_GOOGLE});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData form = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -44,16 +47,19 @@ public class UsersLoggedInTotal extends CalculatedMetric implements Expandable {
         return new LongValueData(form.getAsLong() + github.getAsLong() + google.getAsLong());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of login";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         ValueData result = ListValueData.DEFAULT;
@@ -65,6 +71,7 @@ public class UsersLoggedInTotal extends CalculatedMetric implements Expandable {
         return result;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();

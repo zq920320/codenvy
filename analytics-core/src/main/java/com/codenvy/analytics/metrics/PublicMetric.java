@@ -15,20 +15,21 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics.projects;
 
-import com.codenvy.analytics.metrics.MetricType;
+package com.codenvy.analytics.metrics;
 
-/** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-public class ProjectTypeCpp extends AbstractProjectType {
+import java.lang.annotation.Documented;
+import java.lang.annotation.Retention;
+import java.lang.annotation.Target;
 
-    public ProjectTypeCpp() {
-        super(MetricType.PROJECT_TYPE_CPP, new String[]{CPP});
-    }
+import static java.lang.annotation.ElementType.TYPE;
+import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
-    /** {@inheritDoc} */
-    @Override
-    public String getDescription() {
-        return "The number of C++ projects";
-    }
+/**
+ * @author Anatoliy Bazko
+ */
+@Documented
+@Retention(RUNTIME)
+@Target({TYPE})
+public @interface PublicMetric {
 }

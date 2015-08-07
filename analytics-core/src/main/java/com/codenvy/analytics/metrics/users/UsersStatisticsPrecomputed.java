@@ -17,14 +17,17 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.metrics.*;
-
-import javax.annotation.security.RolesAllowed;
+import com.codenvy.analytics.metrics.AbstractCount;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.PrecomputedMetric;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({})
+@InternalMetric
 public class UsersStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
 
 
@@ -34,11 +37,13 @@ public class UsersStatisticsPrecomputed extends AbstractCount implements Precomp
               USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users in statistics";
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean canReadPrecomputedData(Context context) {
         return ((PrecomputedMetric)MetricFactory.getMetric(MetricType.USERS_STATISTICS_LIST_PRECOMPUTED)).canReadPrecomputedData(context);

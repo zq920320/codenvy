@@ -34,12 +34,14 @@ public class TimeTrackingUsers extends AbstractTimeTracking {
         super(MetricType.TIME_TRACKING_USERS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{USER,
                             TIME};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject group = new BasicDBObject();
@@ -54,6 +56,7 @@ public class TimeTrackingUsers extends AbstractTimeTracking {
                               new BasicDBObject("$project", project)};
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder();
@@ -63,6 +66,7 @@ public class TimeTrackingUsers extends AbstractTimeTracking {
         return super.applySpecificFilter(builder.build());
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Top 100 users by time working in product during specific period";

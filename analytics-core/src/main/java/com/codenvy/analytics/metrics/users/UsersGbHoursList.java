@@ -23,12 +23,9 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersGbHoursList extends AbstractListValueResulted {
 
     public UsersGbHoursList() {

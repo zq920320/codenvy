@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.maven;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class CustomBuildAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.extension.maven.client.actions.CustomBuildAction",
             "org.eclipse.che.ide.extension.maven.client.actions.CustomBuildAction"
     };
+
     public CustomBuildAction() {
         super(MetricType.CUSTOM_BUILD_ACTION, SOURCE);
     }

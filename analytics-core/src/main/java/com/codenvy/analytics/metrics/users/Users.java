@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractAlias;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Users extends AbstractAlias {
     public Users() {
         super(MetricType.USERS, MetricType.USER_INVITE);

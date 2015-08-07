@@ -19,6 +19,7 @@ package com.codenvy.analytics.metrics.workspaces;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
@@ -27,31 +28,32 @@ import com.codenvy.analytics.metrics.PrecomputedDataMetric;
 import com.codenvy.analytics.metrics.ReadBasedSummariziable;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 import static com.codenvy.analytics.Utils.getFilterAsSet;
 import static com.codenvy.analytics.Utils.isTemporaryExist;
 
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({})
+@InternalMetric
 public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResulted implements PrecomputedDataMetric, ReadBasedSummariziable {
 
     public WorkspacesStatisticsListPrecomputed() {
         super(MetricType.WORKSPACES_STATISTICS_LIST_PRECOMPUTED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Workspaces' statistics data";
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.WORKSPACES_STATISTICS_PRECOMPUTED);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{WS,
@@ -72,12 +74,14 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
                             WorkspacesStatisticsList.JOINED_USERS};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificSummarizedDBOperations(Context clauses) {
         ReadBasedSummariziable summariziable = (ReadBasedSummariziable)MetricFactory.getMetric(getBasedMetric());
         return summariziable.getSpecificSummarizedDBOperations(clauses);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context getContextForBasedMetric() {
         Context.Builder builder = new Context.Builder();
@@ -85,11 +89,13 @@ public class WorkspacesStatisticsListPrecomputed extends AbstractListValueResult
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public MetricType getBasedMetric() {
         return MetricType.WORKSPACES_STATISTICS_LIST;
     }
 
+    /** {@inheritDoc} */
     @Override
     public boolean canReadPrecomputedData(Context context) {
         String value = context.getAsString(MetricFilter.WS_ID);

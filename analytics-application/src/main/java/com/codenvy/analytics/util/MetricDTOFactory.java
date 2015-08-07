@@ -26,18 +26,15 @@ import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.dto.server.DtoFactory;
 
-import javax.annotation.security.RolesAllowed;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriBuilder;
 import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
- * Utility class to create {@link com.codenvy.api.analytics.shared.dto.MetricInfoDTO} instances and to update its values
+ * Utility class to create {@link org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO} instances and to update its values
  *
  * @author Dmitry Kuleshov
  * @author Anatoliy Bazko
@@ -51,7 +48,6 @@ public class MetricDTOFactory {
         MetricInfoDTO metricInfoDTO = DtoFactory.getInstance().createDto(MetricInfoDTO.class);
         metricInfoDTO.setName(metricName);
         metricInfoDTO.setDescription(metric.getDescription());
-        metricInfoDTO.setRolesAllowed(getRolesAllowed(metric));
         try {
             metricInfoDTO.setType(ValueDataFactory.createDefaultValue(metric.getValueDataClass()).getType());
         } catch (Exception e) {
@@ -59,15 +55,6 @@ public class MetricDTOFactory {
         }
         metricInfoDTO.setLinks(getLinks(metricName, uriInfo));
         return metricInfoDTO;
-    }
-
-    private static List<String> getRolesAllowed(Metric metric) {
-        if (metric.getClass().isAnnotationPresent(RolesAllowed.class)) {
-            RolesAllowed rolesAllowed = metric.getClass().getAnnotation(RolesAllowed.class);
-            return Arrays.asList(rolesAllowed.value());
-        } else {
-            return Collections.emptyList();
-        }
     }
 
     public static List<Link> getLinks(String metricName, UriInfo uriInfo) {

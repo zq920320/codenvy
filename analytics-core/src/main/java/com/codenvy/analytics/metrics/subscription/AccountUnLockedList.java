@@ -18,11 +18,13 @@
 package com.codenvy.analytics.metrics.subscription;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
 /**
  * @author Alexander Reshetnyak
  */
+@InternalMetric
 public class AccountUnLockedList extends AbstractListValueResulted {
 
     public AccountUnLockedList() {

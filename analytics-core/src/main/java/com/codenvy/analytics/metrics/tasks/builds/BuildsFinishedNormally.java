@@ -22,24 +22,25 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.TasksStoppedNormally;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class BuildsFinishedNormally extends TasksStoppedNormally {
 
     public BuildsFinishedNormally() {
         super(MetricType.BUILDS_FINISHED_NORMALLY);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, BUILDER);
         builder.put(MetricFilter.SHUTDOWN_TYPE, NormalShutdownType.NORMAL.name().toLowerCase());
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of builds stopped normally";

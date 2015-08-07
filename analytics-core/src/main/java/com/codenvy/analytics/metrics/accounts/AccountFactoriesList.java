@@ -22,6 +22,7 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.RequiredFilter;
@@ -30,7 +31,6 @@ import com.google.common.collect.FluentIterable;
 
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -39,7 +39,7 @@ import java.util.Map;
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed(value = {"system/admin", "system/manager"})
+@InternalMetric
 @RequiredFilter(MetricFilter.ACCOUNT_ID)
 public class AccountFactoriesList extends AbstractAccountMetric {
 

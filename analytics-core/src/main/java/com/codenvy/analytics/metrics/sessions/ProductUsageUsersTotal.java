@@ -21,22 +21,22 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProductUsageUsersTotal extends AbstractProductUsageUsers {
 
     public ProductUsageUsersTotal() {
         super(MetricType.PRODUCT_USAGE_USERS_TOTAL, 0, Long.MAX_VALUE, true, true);
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         return super.getValue(context);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of registered users who spent in product any time";

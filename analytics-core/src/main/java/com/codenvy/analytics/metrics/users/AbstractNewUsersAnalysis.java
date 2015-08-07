@@ -32,7 +32,6 @@ import com.codenvy.analytics.metrics.tasks.TasksGigabyteRamHours;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -41,7 +40,6 @@ import static com.codenvy.analytics.Utils.getFilterAsString;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsSet;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public abstract class AbstractNewUsersAnalysis extends ReadBasedMetric implements ReadBasedExpandable {
 
     private final Metric basedMetric;

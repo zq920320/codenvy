@@ -162,55 +162,5 @@
                 <parameter key="description" value="Others"/>
             </row>
         </section>
-
-        <section name="projects_paas">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Project PaaS"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_projects"/>
-                <parameter key="description" value="Total Created Projects in Period"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_aws"/>
-                <parameter key="description" value="AWS"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_appfog"/>
-                <parameter key="description" value="AppFog"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudbees"/>
-                <parameter key="description" value="CloudBees"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_cloudfoundry"/>
-                <parameter key="description" value="CloudFoundry"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_gae"/>
-                <parameter key="description" value="GAE"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_heroku"/>
-                <parameter key="description" value="Heroku"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_openshift"/>
-                <parameter key="description" value="OpenShift"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_tier3"/>
-                <parameter key="description" value="Tier3"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_paas_manymo"/>
-                <parameter key="description" value="Manymo"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="project_no_paas_defined"/>
-                <parameter key="description" value="No PaaS Defined"/>
-            </row>
-        </section>
     </view>
 </display>

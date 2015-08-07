@@ -25,13 +25,11 @@ import com.codenvy.analytics.metrics.OmitFilters;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.WithoutFromDateParam;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /**
  * @author Anatoliy Bazko
  */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ActiveUsersFromBeginning extends AbstractActiveEntities implements WithoutFromDateParam {
 
@@ -39,11 +37,13 @@ public class ActiveUsersFromBeginning extends AbstractActiveEntities implements 
         super(MetricType.ACTIVE_USERS_FROM_BEGINNING, MetricType.ACTIVE_USERS_SET, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of active registered users";
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(clauses);

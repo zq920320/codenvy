@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.tasks.debugs;
 import com.codenvy.analytics.metrics.AbstractSum;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class DebugsMemoryUsage extends AbstractSum {
 
     public DebugsMemoryUsage() {
@@ -33,6 +30,7 @@ public class DebugsMemoryUsage extends AbstractSum {
               TASK_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The memory usage in MB";

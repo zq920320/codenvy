@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class CreatedWorkspaces extends AbstractLongValueResulted {
 
@@ -33,6 +30,7 @@ public class CreatedWorkspaces extends AbstractLongValueResulted {
         super(MetricType.CREATED_WORKSPACES, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of created persistent workspaces";

@@ -19,16 +19,15 @@ package com.codenvy.analytics.metrics.users;
 
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
+@InternalMetric
 public class UsersAccountsOwnerList extends AbstractListValueResulted {
     public static final String ACCOUNTS = "accounts";
 

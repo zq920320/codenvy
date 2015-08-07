@@ -20,10 +20,7 @@ package com.codenvy.analytics.metrics.sessions;
 import com.codenvy.analytics.metrics.AbstractAlias;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class Sessions extends AbstractAlias {
     public Sessions() {
         super(MetricType.SESSIONS, MetricType.PRODUCT_USAGE_SESSIONS);

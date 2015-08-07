@@ -20,17 +20,15 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.datasource;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewDatasourceWizardAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.ext.datasource.client.newdatasource.NewDatasourceWizardAction",
             "org.eclipse.che.ide.ext.datasource.client.newdatasource.NewDatasourceWizardAction"
     };
+
     public NewDatasourceWizardAction() {
         super(MetricType.NEW_DATASOURCE_WIZARD_ACTION, SOURCE);
     }

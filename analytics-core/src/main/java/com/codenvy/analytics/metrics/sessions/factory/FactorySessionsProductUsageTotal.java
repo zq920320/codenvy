@@ -22,26 +22,26 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsProductUsageTotal extends AbstractLongValueResulted {
     public FactorySessionsProductUsageTotal() {
         super(MetricType.FACTORY_PRODUCT_USAGE_TIME_TOTAL, SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME};
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total time spent by all users in temporary workspaces";

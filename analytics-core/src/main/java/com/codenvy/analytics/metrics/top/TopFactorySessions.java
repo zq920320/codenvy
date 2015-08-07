@@ -29,6 +29,7 @@ public class TopFactorySessions extends AbstractTopMetrics {
         super(MetricType.TOP_FACTORY_SESSIONS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String[] getTrackedFields() {
         return new String[]{TIME,
@@ -39,6 +40,7 @@ public class TopFactorySessions extends AbstractTopMetrics {
                             CONVERTED_SESSION};
     }
 
+    /** {@inheritDoc} */
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
         DBObject[] dbOperations = new DBObject[4];
@@ -58,12 +60,14 @@ public class TopFactorySessions extends AbstractTopMetrics {
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS);
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The top factory sessions sorted by duration of session in period of time during last days";

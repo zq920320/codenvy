@@ -22,16 +22,14 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.USER_ID, MetricFilter.REGISTERED_USER})
 public class DestroyedWorkspaces extends AbstractLongValueResulted {
     public DestroyedWorkspaces() {
         super(MetricType.DESTROYED_WORKSPACES, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of destroyed persistent workspaces";

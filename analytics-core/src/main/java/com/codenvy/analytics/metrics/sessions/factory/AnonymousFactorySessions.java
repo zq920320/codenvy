@@ -27,11 +27,9 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class AnonymousFactorySessions extends CalculatedMetric implements Expandable {
     public AnonymousFactorySessions() {
@@ -39,6 +37,7 @@ public class AnonymousFactorySessions extends CalculatedMetric implements Expand
                                                                       MetricType.AUTHENTICATED_FACTORY_SESSIONS});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData total = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -46,16 +45,19 @@ public class AnonymousFactorySessions extends CalculatedMetric implements Expand
         return total.subtract(authenticated);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number sessions in temporary workspaces with anonymous user";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         ValueData total = ((Expandable)basedMetric[0]).getExpandedValue(context);
@@ -63,6 +65,7 @@ public class AnonymousFactorySessions extends CalculatedMetric implements Expand
         return total.subtract(authenticated);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();

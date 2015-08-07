@@ -20,18 +20,16 @@ package com.codenvy.analytics.metrics.projects;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractTimeSpentInAction;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Alexander Reshetnyak
  */
-@RolesAllowed({"system/admin", "system/manager"})
 public class DockerConfigurationTime extends AbstractTimeSpentInAction {
 
     public DockerConfigurationTime() {
         super(MetricType.DOCKER_CONFIGURATION_TIME, PROJECT_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The time spent in runner wait queue";

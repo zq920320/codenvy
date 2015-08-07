@@ -33,8 +33,6 @@ import com.codenvy.analytics.metrics.accounts.CurrentUserWorkspacesList;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.api.analytics.shared.dto.MetricInfoDTO;
-
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
@@ -134,31 +132,6 @@ public class Utils {
                              null,
                              null,
                              null);
-    }
-
-    public boolean isRolesAllowed(MetricInfoDTO metricInfoDTO, SecurityContext securityContext) {
-        Principal principal = securityContext.getUserPrincipal();
-        List<String> rolesAllowed = metricInfoDTO.getRolesAllowed();
-
-        if (rolesAllowed.contains("any")) {
-            return true;
-        }
-
-        if (principal == null || rolesAllowed.isEmpty()) {
-            return false;
-        }
-
-        if (isSystemUser(securityContext)) {
-            return true;
-        }
-
-        for (String role : rolesAllowed) {
-            if (securityContext.isUserInRole(role)) {
-                return true;
-            }
-        }
-
-        return false;
     }
 
     public boolean isSystemUser(String email) {

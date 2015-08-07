@@ -21,9 +21,10 @@ package com.codenvy.analytics.metrics;
  * To indicate that metric is not found
  *
  * @author Dmitry Kuleshov
+ * @author Anatoliy Bazko
  */
 public class MetricNotFoundException extends RuntimeException {
-    public MetricNotFoundException(String message) {
-        super(message);
+    public MetricNotFoundException(String metricType) {
+        super("Metric '" + metricType + "' not found");
     }
 }

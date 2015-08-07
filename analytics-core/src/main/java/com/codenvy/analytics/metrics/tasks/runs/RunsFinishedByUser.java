@@ -22,24 +22,25 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.tasks.TasksStoppedNormally;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author Anatoliy Bazko */
-@RolesAllowed(value = {"user", "system/admin", "system/manager"})
 public class RunsFinishedByUser extends TasksStoppedNormally {
 
     public RunsFinishedByUser() {
         super(MetricType.RUNS_FINISHED_BY_USER);
     }
 
-    @Override public Context applySpecificFilter(Context context) throws IOException {
+    /** {@inheritDoc} */
+    @Override
+    public Context applySpecificFilter(Context context) throws IOException {
         Context.Builder builder = new Context.Builder(super.applySpecificFilter(context));
         builder.put(MetricFilter.TASK_TYPE, RUNNER);
         builder.put(MetricFilter.SHUTDOWN_TYPE, NormalShutdownType.USER.name().toLowerCase());
         return builder.build();
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of runs stopped by user";

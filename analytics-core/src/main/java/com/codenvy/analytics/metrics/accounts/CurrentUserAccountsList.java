@@ -22,13 +22,13 @@ import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
 import org.eclipse.che.api.user.shared.dto.ProfileDescriptor;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,7 +36,7 @@ import java.util.List;
 import java.util.Map;
 
 /** @author Alexander Reshetnyak */
-@RolesAllowed(value = {"system/admin", "system/manager"})
+@InternalMetric
 public class CurrentUserAccountsList extends AbstractAccountMetric {
 
     public CurrentUserAccountsList() {

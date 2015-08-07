@@ -20,15 +20,13 @@ package com.codenvy.analytics.metrics.users;
 import com.codenvy.analytics.metrics.AbstractAnalysisMetric;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Dmytro Nochevnov */
-@RolesAllowed({"system/admin", "system/manager"})
 public class UsersWhoBuilt extends AbstractAnalysisMetric {
     public UsersWhoBuilt() {
         super(MetricType.USERS_WHO_BUILT, MetricType.BUILDS, USER);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users who built at least once.";

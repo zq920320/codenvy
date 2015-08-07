@@ -20,12 +20,9 @@ package com.codenvy.analytics.metrics.ide_usage.extensions.runner;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class RunAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.extension.runner.client.actions.RunAction",
@@ -33,6 +30,7 @@ public class RunAction extends AbstractIdeUsage {
             "org.eclipse.che.ide.ext.runner.client.runneractions.impl.RunAction",
             "com.codenvy.ide.extension.runner.client.actions.CustomRunAction",
     };
+
     public RunAction() {
         super(MetricType.RUN_ACTION, SOURCE);
     }

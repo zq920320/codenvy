@@ -19,14 +19,13 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.AbstractCount;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.InternalMetric;
 import com.codenvy.analytics.metrics.MetricFactory;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.PrecomputedMetric;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({})
+@InternalMetric
 public class ProjectsStatisticsPrecomputed extends AbstractCount implements PrecomputedMetric {
 
 

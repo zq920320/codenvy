@@ -17,23 +17,26 @@
  */
 package com.codenvy.analytics.metrics.workspaces;
 
-import com.codenvy.analytics.metrics.*;
-
-import javax.annotation.security.RolesAllowed;
+import com.codenvy.analytics.metrics.AbstractSetValueResulted;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.MetricFilter;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class CreatedWorkspacesSet extends AbstractSetValueResulted {
 
     public CreatedWorkspacesSet() {
         super(MetricType.CREATED_WORKSPACES_SET, WS);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getStorageCollectionName() {
         return getStorageCollectionName(MetricType.CREATED_WORKSPACES);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Context applySpecificFilter(Context clauses) {
         if (!clauses.exists(MetricFilter.WS)) {
@@ -45,6 +48,7 @@ public class CreatedWorkspacesSet extends AbstractSetValueResulted {
         return clauses;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Created persistent workspaces";

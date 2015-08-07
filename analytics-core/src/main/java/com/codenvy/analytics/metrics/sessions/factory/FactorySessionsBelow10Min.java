@@ -21,10 +21,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class FactorySessionsBelow10Min extends AbstractFactorySessions {
 
@@ -32,6 +29,7 @@ public class FactorySessionsBelow10Min extends AbstractFactorySessions {
         super(MetricType.FACTORY_SESSIONS_BELOW_10_MIN, 0, 10 * 60 * 1000, true, false);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of sessions in temporary workspaces with duration less than 10 minutes";

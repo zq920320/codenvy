@@ -22,10 +22,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.OmitFilters;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class ProductUsageFactorySessions extends AbstractCount {
 
@@ -33,6 +30,7 @@ public class ProductUsageFactorySessions extends AbstractCount {
         super(MetricType.PRODUCT_USAGE_FACTORY_SESSIONS, MetricType.PRODUCT_USAGE_FACTORY_SESSIONS_LIST, SESSION_ID);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The total number of factory sessions";

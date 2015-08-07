@@ -19,12 +19,9 @@ package com.codenvy.analytics.metrics.ide_usage;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /**
  * @author Dmytro Nochevnov
  */
-@RolesAllowed({"user", "system/admin", "system/manager"})
 public class NewXmlFileAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.xml.NewXmlFileAction",

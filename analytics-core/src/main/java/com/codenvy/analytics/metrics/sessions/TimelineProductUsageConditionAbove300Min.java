@@ -19,10 +19,7 @@ package com.codenvy.analytics.metrics.sessions;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author Anatoliy Bazko */
-@RolesAllowed({"system/admin", "system/manager"})
 public class TimelineProductUsageConditionAbove300Min extends AbstractTimelineProductUsageCondition {
 
     public TimelineProductUsageConditionAbove300Min() {
@@ -30,6 +27,7 @@ public class TimelineProductUsageConditionAbove300Min extends AbstractTimelinePr
               new MetricType[]{MetricType.PRODUCT_USAGE_CONDITION_ABOVE_300_MIN});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of users who have the number of sessions more than 5 and usage time more or equal to 120 " +

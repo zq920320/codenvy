@@ -19,16 +19,14 @@ package com.codenvy.analytics.metrics.projects;
 
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
-
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ProjectTypeMMP extends AbstractProjectType {
 
     public ProjectTypeMMP() {
         super(MetricType.PROJECT_TYPE_MMP, new String[]{MMP1, MMP2, MMP3});
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "The number of Maven Multi-module projects";

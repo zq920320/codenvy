@@ -25,11 +25,9 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
-import javax.annotation.security.RolesAllowed;
 import java.io.IOException;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
-@RolesAllowed({"system/admin", "system/manager"})
 public class ReturningActiveUsers extends CalculatedMetric implements Expandable {
 
     public ReturningActiveUsers() {
@@ -37,6 +35,7 @@ public class ReturningActiveUsers extends CalculatedMetric implements Expandable
                                                                   MetricType.CREATED_UNIQUE_USERS});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
         LongValueData active = ValueDataUtil.getAsLong(basedMetric[0], context);
@@ -44,16 +43,19 @@ public class ReturningActiveUsers extends CalculatedMetric implements Expandable
         return active.subtract(created);
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getDescription() {
         return "Non-active users";
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getExpandedValue(Context context) throws IOException {
         ValueData active = ((Expandable)basedMetric[0]).getExpandedValue(context);
@@ -61,6 +63,7 @@ public class ReturningActiveUsers extends CalculatedMetric implements Expandable
         return active.subtract(created);
     }
 
+    /** {@inheritDoc} */
     @Override
     public String getExpandedField() {
         return ((Expandable)basedMetric[0]).getExpandedField();
