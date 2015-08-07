@@ -16,7 +16,7 @@
     <parent>
         <artifactId>contributor-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.11.9</version>
+        <version>3.11.10-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-contribution-projecttype</artifactId>
     <name>Codenvy Plugin :: Contribution :: Projecttype</name>
