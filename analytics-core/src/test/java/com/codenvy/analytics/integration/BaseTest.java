@@ -21,6 +21,7 @@ package com.codenvy.analytics.integration;
 import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
@@ -42,7 +43,9 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.SocketTimeoutException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -82,6 +85,17 @@ public class BaseTest {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
+    }
+
+    protected Map<String, Map<String, ValueData>> listToMap(ListValueData valueData, String key) {
+        Map<String, Map<String, ValueData>> result = new LinkedHashMap<>();
+
+        for (ValueData item : valueData.getAll()) {
+            MapValueData row = (MapValueData)item;
+            result.put(row.getAll().get(key).getAsString(), row.getAll());
+        }
+
+        return result;
     }
 
     protected ValueData getValue(MetricType metricType, Context context) throws IOException {
@@ -142,7 +156,20 @@ public class BaseTest {
             return new SetValueData(l);
 
         } else if (metric.getValueDataClass() == ListValueData.class) {
-            value.split("\\}, \\{");
+            String[] items = value.replace("\\", "").split(", ");
+            List<ValueData> l = new ArrayList<>(items.length);
+
+            for (String item : items) {
+                Map<String, ValueData> m = new HashMap<>(item.length());
+                for (String entry : item.substring(1, item.length() - 1).split(",")) {
+                    String[] s = entry.split(":");
+                    m.put(s[0].replace("\"", ""), StringValueData.valueOf(s[1].replace("\"", "")));
+                }
+
+                l.add(MapValueData.valueOf(m));
+            }
+
+            return ListValueData.valueOf(l);
         }
 
         throw new IllegalArgumentException("Unsupported type " + metric.getValueDataClass());
