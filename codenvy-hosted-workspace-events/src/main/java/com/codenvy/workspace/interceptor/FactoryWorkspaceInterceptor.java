@@ -19,6 +19,7 @@ package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
@@ -41,6 +42,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.security.Principal;
 import java.util.Arrays;
+import java.util.Map;
 
 import static javax.ws.rs.core.UriBuilder.fromUri;
 
@@ -57,6 +59,9 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
 
     @Inject
     WorkspaceDao workspaceDao;
+
+    @Inject
+    AccountDao accountDao;
 
     @Inject
     MemberDao memberDao;
@@ -78,13 +83,11 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         Link link = DtoFactory.getInstance().createDto(Link.class).withMethod("GET").withHref(getFactoryUrl);
         final Factory factory = HttpJsonHelper.request(Factory.class, link, Pair.of("validate", true));
         final org.eclipse.che.api.factory.dto.Workspace factoryWorkspace = factory.getWorkspace();
+        String ownerAccountId =
+                (factoryWorkspace != null && "owner".equals(factoryWorkspace.getLocation())) ? factory.getCreator().getAccountId()
+                                                                                             : inbound.getAccountId();
 
         if (factoryWorkspace == null || factoryWorkspace.getType() == null || factoryWorkspace.getType().equals("named")) {
-
-            String ownerAccountId =
-                    (factoryWorkspace != null && "owner".equals(factoryWorkspace.getLocation())) ? factory.getCreator().getAccountId()
-                                                                                                 : inbound.getAccountId();
-
             for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
                 if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
                     ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
@@ -105,7 +108,16 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         }
 
         boolean needAddOwner = false;
-        if (factoryWorkspace != null && factoryWorkspace.getLocation() != null && factoryWorkspace.getLocation().equals("owner")) {
+        boolean needLockWorkspace = false;
+        if (factoryWorkspace != null && "owner".equals(factoryWorkspace.getLocation())) {
+            // is account is locked already, we must lock new workspace also
+            Map<String, String> parentAttributes = accountDao.getById(ownerAccountId).getAttributes();
+            if (Boolean.parseBoolean(parentAttributes.get("codenvy:resources_locked")) ||
+                Boolean.parseBoolean(parentAttributes.get("codenvy:payment_locked"))) {
+                needLockWorkspace = true;
+            }
+
+
             // no need to add role if creator and user are the same (will throw role already exists exc).
             needAddOwner = !factory.getCreator().getUserId().equals(currentUser.getId());
             invocation.getArguments()[1] = new SecurityContext() {
@@ -143,6 +155,12 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
             memberDao.create(new Member().withWorkspaceId(descriptor.getId())
                                          .withUserId(currentUser.getId())
                                          .withRoles(Arrays.asList("workspace/developer")));
+        }
+
+        if (needLockWorkspace) {
+            Workspace toLock = workspaceDao.getById(descriptor.getId());
+            toLock.getAttributes().put("codenvy:resources_locked", Boolean.TRUE.toString());
+            workspaceDao.update(toLock);
         }
         return result;
     }
