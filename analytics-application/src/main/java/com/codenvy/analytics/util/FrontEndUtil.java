@@ -141,21 +141,4 @@ public class FrontEndUtil {
             return email;
         }
     }
-
-    /**
-     * Indicates if user is Codenvy administrator.
-     */
-    public static boolean isCodenvyAdmin(HttpServletRequest request) {
-        Principal principal = request.getUserPrincipal();
-        if (principal == null || principal.getName() == null) {
-            return false;
-        }
-
-        return isSystemCodenvyAdmin(request) || adminPattern.matcher(principal.getName()).matches();
-    }
-
-    private static boolean isSystemCodenvyAdmin(HttpServletRequest request) {
-        return request.getServerName().equals("codenvy.com")
-               && (request.isUserInRole("system/admin") || request.isUserInRole("system/manager"));
-    }
 }

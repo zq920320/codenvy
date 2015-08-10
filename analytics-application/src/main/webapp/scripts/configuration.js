@@ -179,23 +179,6 @@ function AnalyticsConfiguration() {
             displayLineChart: true  // default is false
         },
 
-        billingSubscriptions: {
-            widgetLabel: "Billing And Subscriptions",
-            presenterType: "ReportPresenter",
-            modelViewName: "billing_subscriptions",
-
-            defaultModelParams: {
-                "time_unit": "month"
-            },
-
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "ascSortColumnNumber": 0
-            },
-
-            displayLineChart: true  // default is false
-        },
-
         topFactorySessions: {
             widgetLabel: "Top Factory Sessions",
             presenterType: "TopMetricsPresenter",
@@ -1381,84 +1364,6 @@ function AnalyticsConfiguration() {
             modelMetricName: "tasks",
             doNotDisplayCSVButton: true
         },
-
-        /** for Download statistics */
-        imDownloadStatisticsOverview: {
-            presenterType: "SummaryTablePresenter",
-            modelViewName: "im_downloads_list",
-            modelMetricName: "im_downloads",
-            doNotDisplayCSVButton: true
-        },
-
-        imDownloadStatistics: {
-            widgetLabel: "Download Statistics",
-            presenterType: "EntryViewPresenter",
-            modelViewName: "im_downloads_list",
-
-            defaultModelParams: {
-                "sort": "-date"
-            },
-
-            columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user",
-            },
-
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "ascSortColumnNumber": 0
-            },
-
-            mapColumnToServerSortParam: {
-                "User": "user",
-                "Artifact": "artifact",
-                "Version": "version",
-                "Date": "date",
-            }
-        },
-
-        imOnPremIssuedOverview: {
-            presenterType: "SummaryTablePresenter",
-            modelViewName: "im_on_prem_issued_list",
-            modelMetricName: "im_on_prem_issued",
-            doNotDisplayCSVButton: true
-        },
-
-        imOnPremIssued: {
-            widgetLabel: "On-Prem trial subscriptions issued",
-            presenterType: "EntryViewPresenter",
-            modelViewName: "im_on_prem_issued_list",
-
-            defaultModelParams: {
-                "sort": "-date"
-            },
-
-            columnLinkPrefixList: {
-                "User": "/analytics/pages/user-view.jsp?user",
-            },
-
-            /** @see DatabaseTable::makeTableSortable() method docs */
-            clientSortParams: {
-                "ascSortColumnNumber": 0
-            },
-
-            mapColumnToServerSortParam: {
-                "User": "user",
-                "Date": "date"
-            }
-        },
-
-        imAnalysis: {
-            widgetLabel: "Analysis",
-            presenterType: "ReportPresenter",
-            modelViewName: "im_analysis",
-
-            defaultModelParams: {
-                "time_unit": "month"
-            },
-
-            displayLineChart: true  // default is false
-        },
-
 
         // drill-down page
         drillDown: {
