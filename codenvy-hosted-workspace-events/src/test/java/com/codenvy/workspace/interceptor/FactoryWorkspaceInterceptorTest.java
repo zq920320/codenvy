@@ -18,6 +18,8 @@
 package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInvocation;
+import org.eclipse.che.api.account.server.dao.Account;
+import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 /*
 import org.eclipse.che.api.factory.dto.Author;
@@ -34,6 +36,7 @@ import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.user.UserImpl;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.mockito.ArgumentMatcher;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -47,9 +50,11 @@ import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
+import java.util.HashMap;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.argThat;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.verify;
@@ -68,6 +73,9 @@ public class FactoryWorkspaceInterceptorTest {
 
     @Mock
     private MemberDao memberDao;
+
+    @Mock
+    private AccountDao accountDao;
 
     @Mock
     private MethodInvocation invocation;
@@ -105,6 +113,7 @@ public class FactoryWorkspaceInterceptorTest {
         Method method =
                 WorkspaceService.class.getMethod("create", NewWorkspace.class, SecurityContext.class);
 
+        when(accountDao.getById(anyString())).thenReturn(new Account());
         when(invocation.getMethod()).thenReturn(method);
         when(invocation.proceed())
                 .thenReturn(Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withTemporary(true)).build());
@@ -140,13 +149,38 @@ public class FactoryWorkspaceInterceptorTest {
         verify(memberDao).create(any(Member.class));
     }
 
+    @Test
+    public void shouldLockNewWorkspaceIfAccountIsLocked() throws Throwable {
+        NewWorkspace inbound = DtoFactory.getInstance().createDto(NewWorkspace.class);
+        inbound.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
+        Account ownerAcc = new Account();
+        ownerAcc.getAttributes().put("codenvy:resources_locked", "true");
+        when(invocation.getArguments()).thenReturn(new Object[]{inbound, context});
+        when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner"));
+        when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome"));
+        when(accountDao.getById(anyString())).thenReturn(ownerAcc);
+        when(workspaceDao.getById(anyString()))
+                .thenReturn(new org.eclipse.che.api.workspace.server.dao.Workspace().withAttributes(new HashMap<String, String>()));
+
+        interceptor.invoke(invocation);
+
+        verify(workspaceDao).update(argThat(new ArgumentMatcher<org.eclipse.che.api.workspace.server.dao.Workspace>() {
+            @Override
+            public boolean matches(Object o) {
+                org.eclipse.che.api.workspace.server.dao.Workspace workspace = (org.eclipse.che.api.workspace.server.dao.Workspace)o;
+                return workspace.getAttributes().containsKey("codenvy:resources_locked");
+            }
+        }));
+    }
+
 
     @Test
     public void shouldReturnExistingWorkspaceIfTypeIsNamedAndWSFromFactoryExists() throws Throwable {
         NewWorkspace inbound = DtoFactory.getInstance().createDto(NewWorkspace.class);
         inbound.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
         when(invocation.getArguments()).thenReturn(new Object[]{inbound, context});
-        when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner").withType("named"));
+        when(factory.getWorkspace())
+                .thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner").withType("named"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome").withAccountId("acc"));
         when(memberDao.getWorkspaceMember(anyString(), anyString())).thenReturn(
                 new Member().withRoles(Arrays.asList("workspace/developer")));
