@@ -201,16 +201,4 @@ public class TestUsersAccounts extends BaseTest {
         assertEquals(vdm.get(AbstractMetric.USER).getAsString(), UID1);
         assertEquals(vdm.get(UsersAccountsOwnerList.ACCOUNTS).getAsString(), "[" + ACID4 + ", " + ACID1 + "]");
     }
-
-    /*@Test  ADD metric USERS_MEMBERS_ACCOUNTS_LIST
-    public void testRemoveMemberFromAccount() throws Exception {
-        computeData("20130101");
-        computeData("20130102");
-        computeData("20130103");
-
-        ListValueData l = ValueDataUtil.getAsList(MetricFactory.getMetric(MetricType.USERS_ACCOUNTS_OWNER_LIST), Context.EMPTY);
-        Map<String, Map<String, ValueData>> m = listToMap(l, AbstractMetric.USER);
-
-        assertEquals(m.size(), 3);
-    }*/
 }

@@ -19,6 +19,7 @@ package com.codenvy.analytics.services.marketo;
 
 import com.codenvy.analytics.Configurator;
 import com.codenvy.analytics.Utils;
+import com.codenvy.analytics.datamodel.DoubleValueData;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
@@ -35,7 +36,6 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.acton.ActOn;
 import com.codenvy.analytics.services.view.MetricRow;
 import com.mongodb.DBObject;
@@ -52,6 +52,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -89,6 +90,7 @@ public class MarketoReportGenerator {
     public static final String CC_ADDED            = "CC Added";
     public static final String ON_PREM_SUB_ADDED   = "On-Prem Sub Added";
     public static final String ON_PREM_SUB_REMOVED = "On-Prem Sub Removed";
+    public static final String ALIAS               = "alias";
 
     private final Configurator configurator;
 
@@ -131,6 +133,17 @@ public class MarketoReportGenerator {
                                                                 }
                                                             };
 
+        // Map with statistics of users of the same alias: <alias> -> Set<user_id>
+        Map<String, LinkedHashSet<String>> duplicatedUsers = getDuplicatedUsers();
+
+        if (processActiveUsersOnly) {
+            // Add not included duplicated user in active users
+            activeUsers = addUserIdsDuplicatedUsers(activeUsers, duplicatedUsers);
+        }
+
+        // Map with statistics of users of the same alias: <alias> -> cumulativeMarketoRow
+        Map<String, Map<String, ValueData>> duplicatedUsersCumulativeMarketoRow = new HashMap<>();
+
         Set<ValueData> newUsers = getNewUsers(context);
 
         final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
@@ -152,13 +165,83 @@ public class MarketoReportGenerator {
                 Map<String, Double> usersGbHours = getUsersGbHoursUse(profiles);
                 Map<String, Long> usersCreatedDates = getUsersCreatedDates(profiles);
 
-                writeUsersWithStatistics(activeUsers, newUsers, profiles, usersGbHours, usersCreatedDates, out);
+                writeUsersWithStatistics(activeUsers, newUsers, profiles, usersGbHours, usersCreatedDates, duplicatedUsers, duplicatedUsersCumulativeMarketoRow, out);
 
                 if (profiles.size() < pageSize) {
                     break;
                 }
             }
+
+            //Write statistics of users of the same alias.
+            for ( Map<String, ValueData> row : duplicatedUsersCumulativeMarketoRow.values()) {
+                writeStatistics(out, row);
+            }
         }
+    }
+
+    private Set<ValueData> addUserIdsDuplicatedUsers(Set<ValueData> activeUsers, Map<String, LinkedHashSet<String>> duplicatedUsers) {
+        Set<StringValueData> unScopedUserIds = new LinkedHashSet<>();
+
+        for (Map.Entry<String, LinkedHashSet<String>> entry : duplicatedUsers.entrySet()) {
+            for (String userId : entry.getValue()) {
+                if (!activeUsers.contains(StringValueData.valueOf(userId))) {
+                    unScopedUserIds.add(StringValueData.valueOf(userId));
+                }
+            }
+        }
+
+        Set<ValueData> result = new LinkedHashSet<>();
+        result.addAll(activeUsers);
+        result.addAll(unScopedUserIds);
+
+        return result;
+    }
+
+    private Map<String, LinkedHashSet<String>> getDuplicatedUsers() throws IOException, ParseException {
+        Map<String, LinkedHashSet<String>> map = new HashMap<>();
+
+        final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.PER_PAGE, pageSize);
+        builder.put(Parameters.SORT, "+date");
+        builder.put(MetricFilter.REGISTERED_USER, 1);
+        Context context = builder.build();
+
+        for (int currentPage = 1; ; currentPage++) {
+            context = context.cloneAndPut(Parameters.PAGE, currentPage);
+
+            List<ValueData> profiles = getUsersProfiles(context);
+
+            for (ValueData valueData : profiles) {
+                Map<String, ValueData> profile = ((MapValueData)valueData).getAll();
+
+                String userId = profile.get(ID).getAsString();
+                String alias = toArray(profile.get(AbstractMetric.ALIASES))[0];
+
+                if (map.containsKey(alias)) {
+                    map.get(alias).add(userId);
+                } else {
+                    LinkedHashSet<String> ids = new LinkedHashSet<>();
+                    ids.add(userId);
+
+                    map.put(alias, ids);
+                }
+            }
+
+            if (profiles.size() < pageSize) {
+                break;
+            }
+        }
+
+        Map<String, LinkedHashSet<String>> result = new HashMap<>();
+
+        for(Map.Entry<String, LinkedHashSet<String>> entry : map.entrySet()) {
+            if (entry.getValue().size() > 1) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+
+        return result;
     }
 
     private void writeUsersWithStatistics(Set<ValueData> activeUsers,
@@ -166,6 +249,8 @@ public class MarketoReportGenerator {
                                           List<ValueData> profiles,
                                           Map<String, Double> usersGbHours,
                                           Map<String, Long> usersCreatedDates,
+                                          Map<String, LinkedHashSet<String>> duplicatedUsers,
+                                          Map<String, Map<String, ValueData>> duplicatedUsersCumulativeMarketoRow,
                                           BufferedWriter out) throws IOException, ParseException {
         for (ValueData object : profiles) {
             Map<String, ValueData> profile = ((MapValueData)object).getAll();
@@ -180,7 +265,8 @@ public class MarketoReportGenerator {
                 Double userGbHoursValue = usersGbHours.containsKey(userId) ? usersGbHours.get(userId) : 0.0D;
                 Long userCreatedDate = usersCreatedDates.get(userId);
 
-                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate);
+                writeUserWithStatistics(out, profile, user, createdTodayUsers.contains(user), userGbHoursValue, userCreatedDate, duplicatedUsers,
+                                        duplicatedUsersCumulativeMarketoRow);
             }
         }
     }
@@ -190,7 +276,9 @@ public class MarketoReportGenerator {
                                          ValueData user,
                                          boolean isNewUser,
                                          Double userGbHours,
-                                         @Nullable Long userCreatedDateLong) throws IOException, ParseException {
+                                         @Nullable Long userCreatedDateLong,
+                                         Map<String, LinkedHashSet<String>> duplicatedUsers,
+                                         Map<String, Map<String, ValueData>> duplicatedUsersCumulativeMarketoRow) throws IOException, ParseException {
         List<ValueData> stat = getUsersStatistics(user.getAsString());
         String lastProductLoginDate = getLastProductLogin(user.getAsString());
         boolean accountLockdown = MarketoReportGeneratorUtils.isUserAccountsLockdown(user.getAsString());
@@ -201,33 +289,109 @@ public class MarketoReportGenerator {
         String onPremSubAddedDate = dateToString(MarketoReportGeneratorUtils.getDateOnPremisesSubscriptionAdded(user.getAsString()));
         String onPremSubRemovedDate = dateToString(MarketoReportGeneratorUtils.getDateOnPremisesSubscriptionRemoved(user.getAsString()));
 
+        MapValueData statValueData;
         if (stat.isEmpty()) {
-            MapValueData valueData = MapValueData.DEFAULT;
-            writeStatistics(out,
-                            valueData.getAll(),
-                            profile,
-                            lastProductLoginDate,
-                            isNewUser,
-                            userGbHours,
-                            userCreatedDate,
-                            accountLockdown,
-                            ccAdded,
-                            onPremSubAddedDate,
-                            onPremSubRemovedDate);
+            statValueData = MapValueData.DEFAULT;
         } else {
-            MapValueData valueData = (MapValueData)stat.get(0);
-            writeStatistics(out,
-                            valueData.getAll(),
-                            profile,
-                            lastProductLoginDate,
-                            isNewUser,
-                            userGbHours,
-                            userCreatedDate,
-                            accountLockdown,
-                            ccAdded,
-                            onPremSubAddedDate,
-                            onPremSubRemovedDate);
+            statValueData = (MapValueData)stat.get(0);
         }
+
+        Map<String, ValueData> row = createRowData(statValueData.getAll(),
+                                                   profile,
+                                                   lastProductLoginDate,
+                                                   isNewUser,
+                                                   userGbHours,
+                                                   userCreatedDate,
+                                                   accountLockdown,
+                                                   ccAdded,
+                                                   onPremSubAddedDate,
+                                                   onPremSubRemovedDate);
+
+        String alias = toArray(profile.get(AbstractMetric.ALIASES))[0];
+        if (duplicatedUsers.containsKey(alias)) {
+            accumulateDuplicatedUsersMarketoRow(row, duplicatedUsersCumulativeMarketoRow, isLatestUser(profile.get(AbstractMetric.ID).getAsString(),
+                                                                                                       duplicatedUsers.get(alias)));
+        } else {
+            writeStatistics(out, row);
+        }
+    }
+
+    private boolean isLatestUser(String userId, LinkedHashSet<String> duplicatedUser ) throws RuntimeException {
+        if (!duplicatedUser.contains(userId)) {
+            throw new RuntimeException("Users id " + userId + " dose not  contain it duplicated user set " + duplicatedUser.toString());
+        }
+
+        return duplicatedUser.toArray()[duplicatedUser.size()-1].equals(userId);
+    }
+
+    private Map<String, ValueData> createRowData(Map<String, ValueData> userStatistics,
+                                                 Map<String, ValueData> profile,
+                                                 String lastProductLoginDate,
+                                                 boolean isCreatedTodayUser,
+                                                 Double userGbHoursValue,
+                                                 String userCreatedDate,
+                                                 boolean accountLockdown,
+                                                 boolean ccAdded,
+                                                 String onPremSubAdded,
+                                                 String onPremSubRemoved) {
+        Map<String, ValueData> marketoRow = new LinkedHashMap<>();
+        marketoRow.put(ALIAS, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
+        marketoRow.put(BUILDS, getLongValue(BUILDS, userStatistics));
+        marketoRow.put(DEPLOYS, getLongValue(DEPLOYS, userStatistics));
+
+        boolean profileCompleted = ActOn.isProfileCompleted(profile);
+        marketoRow.put(PROFILE_COMPLETED, StringValueData.valueOf(Boolean.toString(profileCompleted)));
+
+        marketoRow.put(PROJECTS, getLongValue(PROJECTS, userStatistics));
+        marketoRow.put(RUNS, getLongValue(RUNS, userStatistics));
+
+        marketoRow.put(TIME, getLongValue(TIME, userStatistics));
+        marketoRow.put(LOGINS, getLongValue(LOGINS, userStatistics));
+        marketoRow.put(LAST_PRODUCT_LOGIN, StringValueData.valueOf(lastProductLoginDate));
+        marketoRow.put(POINTS, ActOn.getPoints(userStatistics, profile));
+        //marketoRow.put(NEW_USER, StringValueData.valueOf(isCreatedTodayUser ? "1" : "0"));
+        marketoRow.put(GIGABYTE_RAM_HOURS, DoubleValueData.valueOf(userGbHoursValue));
+        marketoRow.put(SING_UP_DATE, StringValueData.valueOf(userCreatedDate));
+        marketoRow.put(ACCOUNT_LOCKDOWN, StringValueData.valueOf(Boolean.toString(accountLockdown)));
+        marketoRow.put(CC_ADDED, StringValueData.valueOf(Boolean.toString(ccAdded)));
+        marketoRow.put(ON_PREM_SUB_ADDED, StringValueData.valueOf(onPremSubAdded));
+        marketoRow.put(ON_PREM_SUB_REMOVED, StringValueData.valueOf(onPremSubRemoved));
+
+        return marketoRow;
+    }
+
+    private void accumulateDuplicatedUsersMarketoRow(Map<String, ValueData> marketoRow,
+                                                     Map<String, Map<String, ValueData>> duplicatedUsersCumulativeMarketoRow,
+                                                     boolean isLatestUser) throws ParseException {
+        Map<String, ValueData> lastUserMarketoRow = duplicatedUsersCumulativeMarketoRow.get(marketoRow.get(ALIAS).getAsString());
+        if (lastUserMarketoRow == null) {
+            duplicatedUsersCumulativeMarketoRow.put(marketoRow.get(ALIAS).getAsString(), marketoRow);
+        } else {
+            // accumulate data
+            lastUserMarketoRow.put(BUILDS, lastUserMarketoRow.get(BUILDS).add(marketoRow.get(BUILDS)));
+            lastUserMarketoRow.put(DEPLOYS, lastUserMarketoRow.get(DEPLOYS).add(marketoRow.get(DEPLOYS)));
+            lastUserMarketoRow.put(PROJECTS, lastUserMarketoRow.get(PROJECTS).add(marketoRow.get(PROJECTS)));
+            lastUserMarketoRow.put(RUNS, lastUserMarketoRow.get(RUNS).add(marketoRow.get(RUNS)));
+            lastUserMarketoRow.put(TIME, lastUserMarketoRow.get(TIME).add(marketoRow.get(TIME)));
+            lastUserMarketoRow.put(LOGINS, lastUserMarketoRow.get(LOGINS).add(marketoRow.get(LOGINS)));
+            lastUserMarketoRow.put(POINTS, lastUserMarketoRow.get(POINTS).add(marketoRow.get(POINTS)));
+            lastUserMarketoRow.put(GIGABYTE_RAM_HOURS, lastUserMarketoRow.get(GIGABYTE_RAM_HOURS).add(marketoRow.get(GIGABYTE_RAM_HOURS)));
+
+            if (isLatestUser) {
+                lastUserMarketoRow.put(PROFILE_COMPLETED, marketoRow.get(PROFILE_COMPLETED));
+                //lastUserMarketoRow.put(NEW_USER, marketoRow.get(NEW_USER));
+                lastUserMarketoRow.put(LAST_PRODUCT_LOGIN, marketoRow.get(LAST_PRODUCT_LOGIN));
+                lastUserMarketoRow.put(SING_UP_DATE, marketoRow.get(SING_UP_DATE));
+                lastUserMarketoRow.put(ACCOUNT_LOCKDOWN, marketoRow.get(ACCOUNT_LOCKDOWN));
+                lastUserMarketoRow.put(CC_ADDED, marketoRow.get(CC_ADDED));
+                lastUserMarketoRow.put(ON_PREM_SUB_ADDED, marketoRow.get(ON_PREM_SUB_ADDED));
+                lastUserMarketoRow.put(ON_PREM_SUB_REMOVED, marketoRow.get(ON_PREM_SUB_REMOVED));
+            }
+        }
+    }
+
+    private ValueData getLongValue(String name,  Map<String, ValueData> userStatistics) {
+        return userStatistics.containsKey(name) ? userStatistics.get(name) : LongValueData.DEFAULT;
     }
 
     private String dateToString(@Nullable Long date) {
@@ -355,72 +519,37 @@ public class MarketoReportGenerator {
         out.newLine();
     }
 
-    private void writeStatistics(BufferedWriter out,
-                                 Map<String, ValueData> stat,
-                                 Map<String, ValueData> profile,
-                                 String lastProductLoginDate,
-                                 boolean isCreatedTodayUser,
-                                 Double userGbHoursValue,
-                                 String userCreatedDate,
-                                 boolean accountLockdown,
-                                 boolean ccAdded,
-                                 String onPremSubAdded,
-                                 String onPremSubRemoved) throws IOException {
-        writeString(out, StringValueData.valueOf(toArray(profile.get(AbstractMetric.ALIASES))[0]));
-        out.write(",");
+    private void writeStatistics(BufferedWriter out, Map<String, ValueData> row) throws IOException {
 
-        writeInt(out, stat.get(BUILDS));
-        out.write(",");
+        int fieldsWrite = 0;
+        for (Map.Entry<String, ValueData> data : row.entrySet()) {
+            String key = data.getKey();
+            ValueData value = data.getValue();
 
-        writeInt(out, stat.get(DEPLOYS));
-        out.write(",");
+            if (key.equals(TIME)) {
+                if (value == null) {
+                    writeNotNullStr(out, "0");
+                } else {
+                    LongValueData time = (LongValueData) value;
+                    writeNotNullStr(out, "" + (time.getAsLong() / (60 * 1000)));  // convert from millisec into minutes
+                }
 
-        boolean profileCompleted = ActOn.isProfileCompleted(profile);
-        writeNotNullStr(out, Boolean.toString(profileCompleted));
-        out.write(",");
+            } else if (key.equals(GIGABYTE_RAM_HOURS)) {
+                DoubleValueData userGbHoursValue = (DoubleValueData) value;
+                out.write(String.format(MetricRow.DEFAULT_NUMERIC_FORMAT, userGbHoursValue.getAsDouble()));
 
-        writeInt(out, stat.get(PROJECTS));
-        out.write(",");
+            } else if (value instanceof LongValueData) {
+                writeInt(out, value);
 
-        writeInt(out, stat.get(UsersStatisticsList.RUNS));
-        out.write(",");
+            } else {
+                writeString(out, value);
+            }
 
-        LongValueData time = (LongValueData)stat.get(UsersStatisticsList.TIME);
-        if (time == null) {
-            writeNotNullStr(out, "0");
-        } else {
-            writeNotNullStr(out, "" + (time.getAsLong() / (60 * 1000)));  // convert from millisec into minutes
+            if (++fieldsWrite != row.size()) {
+                out.write(",");
+            }
+
         }
-        out.write(",");
-
-        writeInt(out, stat.get(UsersStatisticsList.LOGINS));
-        out.write(",");
-
-        writeNotNullStr(out, lastProductLoginDate);
-        out.write(",");
-
-        writeInt(out, ActOn.getPoints(stat, profile));
-        out.write(",");
-
-        //out.write(isCreatedTodayUser ? "1" :"0");
-        //out.write(",");
-
-        writeNotNullStr(out, String.format(MetricRow.DEFAULT_NUMERIC_FORMAT, userGbHoursValue));
-        out.write(",");
-
-        writeNotNullStr(out, userCreatedDate);
-        out.write(",");
-
-        writeNotNullStr(out, Boolean.toString(accountLockdown));
-        out.write(",");
-
-        writeNotNullStr(out, Boolean.toString(ccAdded));
-        out.write(",");
-
-        writeNotNullStr(out, onPremSubAdded);
-        out.write(",");
-
-        writeNotNullStr(out, onPremSubRemoved);
 
         out.newLine();
     }
