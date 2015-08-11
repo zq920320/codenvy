@@ -27,6 +27,7 @@ import com.codenvy.analytics.datamodel.NumericValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.datamodel.ValueDataFactory;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractMetric;
 import com.codenvy.analytics.metrics.Context;
@@ -36,7 +37,7 @@ import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.metrics.ReadBasedMetric;
-import com.codenvy.analytics.services.acton.ActOn;
+import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.services.view.MetricRow;
 import com.mongodb.DBObject;
 
@@ -339,7 +340,7 @@ public class MarketoReportGenerator {
         marketoRow.put(BUILDS, getLongValue(BUILDS, userStatistics));
         marketoRow.put(DEPLOYS, getLongValue(DEPLOYS, userStatistics));
 
-        boolean profileCompleted = ActOn.isProfileCompleted(profile);
+        boolean profileCompleted = isProfileCompleted(profile);
         marketoRow.put(PROFILE_COMPLETED, StringValueData.valueOf(Boolean.toString(profileCompleted)));
 
         marketoRow.put(PROJECTS, getLongValue(PROJECTS, userStatistics));
@@ -348,7 +349,7 @@ public class MarketoReportGenerator {
         marketoRow.put(TIME, getLongValue(TIME, userStatistics));
         marketoRow.put(LOGINS, getLongValue(LOGINS, userStatistics));
         marketoRow.put(LAST_PRODUCT_LOGIN, StringValueData.valueOf(lastProductLoginDate));
-        marketoRow.put(POINTS, ActOn.getPoints(userStatistics, profile));
+        marketoRow.put(POINTS, getPoints(userStatistics, profile));
         //marketoRow.put(NEW_USER, StringValueData.valueOf(isCreatedTodayUser ? "1" : "0"));
         marketoRow.put(GIGABYTE_RAM_HOURS, DoubleValueData.valueOf(userGbHoursValue));
         marketoRow.put(SING_UP_DATE, StringValueData.valueOf(userCreatedDate));
@@ -577,6 +578,72 @@ public class MarketoReportGenerator {
         out.write("\"");
     }
 
+    protected boolean isProfileCompleted(Map<String, ValueData> profile) {
+        return profile.containsKey(AbstractMetric.ID)
+               && profile.containsKey(AbstractMetric.USER_FIRST_NAME)
+               && profile.containsKey(AbstractMetric.USER_LAST_NAME)
+               && profile.containsKey(AbstractMetric.USER_COMPANY)
+               && profile.containsKey(AbstractMetric.USER_JOB)
+               && profile.containsKey(AbstractMetric.USER_PHONE)
+               && !profile.get(AbstractMetric.ID).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_FIRST_NAME).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_LAST_NAME).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_COMPANY).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_JOB).getAsString().isEmpty()
+               && !profile.get(AbstractMetric.USER_PHONE).getAsString().isEmpty();
+    }
+
+    /**
+     * Get total Marketing Qualified Leads (MQL) Score from Product due to example {@link http://jsfiddle.net/ecavazos/64g9b/}.
+     *
+     * @param profile
+     * @param statistics
+     */
+    public ValueData getPoints(Map<String, ValueData> statistics, Map<String, ValueData> profile) {
+        long total = 0;
+
+        if (statistics.size() > 0) {
+            int logins = new Integer(statistics.get(UsersStatisticsList.LOGINS).toString());
+            int projects = new Integer(statistics.get(UsersStatisticsList.PROJECTS).toString());
+            int builds = new Integer(statistics.get(UsersStatisticsList.BUILDS).toString());
+            int runs = new Integer(statistics.get(UsersStatisticsList.RUNS).toString());
+            int debugs = new Integer(statistics.get(UsersStatisticsList.DEBUGS).toString());
+            int deploys = new Integer(statistics.get(UsersStatisticsList.DEPLOYS).toString());
+            int factories = new Integer(statistics.get(UsersStatisticsList.FACTORIES).toString());
+            int invitations = new Integer(statistics.get(UsersStatisticsList.INVITES).toString());
+
+            boolean profileCompleted = isProfileCompleted(profile);
+            long time = getTimeInHours(statistics, UsersStatisticsList.TIME);
+            long buildTime = getTimeInHours(statistics, UsersStatisticsList.BUILD_TIME);
+            long runTime = getTimeInHours(statistics, UsersStatisticsList.RUN_TIME);
+
+            /** compute MQL Score from Product **/
+            total += logins * 2;
+            total += projects * 2;
+            total += builds * 2;
+            total += runs * 2;
+            total += debugs * 2;
+            total += deploys * 10;
+            total += factories * 10;
+            total += invitations * 10;
+
+            // compute Metric Measurement Points
+            total += (logins > 5) ? 5 : 0;
+            total += (projects > 5) ? 5 : 0;
+            total += (deploys > 5) ? 10 : 0;
+            total += (profileCompleted) ? 5 : 0;
+            total += (time > 40) ? 50 : 0;
+            total += (buildTime > 3) ? 50 : 0;
+            total += (runTime > 3) ? 50 : 0;
+        }
+
+        return ValueDataFactory.createValueData(total);
+    }
+
+    private long getTimeInHours(Map<String, ValueData> statistics, String fieldName) {
+        return Math.round(new Long(statistics.get(fieldName).toString()) / (360 * 1000));
+    }
+
     /**
      * Last user's login time.
      */
@@ -587,11 +654,13 @@ public class MarketoReportGenerator {
             super(LastLoginTime.class.getSimpleName());
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getStorageCollectionName() {
             return getStorageCollectionName(MetricType.USERS_LOGGED_IN_TYPES);
         }
 
+        /** {@inheritDoc} */
         @Override
         public Context applySpecificFilter(Context context) throws IOException {
             Context.Builder builder = new Context.Builder(context);
@@ -601,21 +670,25 @@ public class MarketoReportGenerator {
             return builder.build();
         }
 
+        /** {@inheritDoc} */
         @Override
         public String[] getTrackedFields() {
             return new String[]{DATE};
         }
 
+        /** {@inheritDoc} */
         @Override
         public DBObject[] getSpecificDBOperations(Context clauses) {
             return new DBObject[0];
         }
 
+        /** {@inheritDoc} */
         @Override
         public Class<? extends ValueData> getValueDataClass() {
             return LongValueData.class;
         }
 
+        /** {@inheritDoc} */
         @Override
         public String getDescription() {
             return "Last login time";

@@ -108,6 +108,7 @@ public class MarketoInitializer extends Feature {
     }
 
 
+    /** {@inheritDoc} */
     @Override
     public boolean isAvailable() {
         return false;
@@ -133,6 +134,7 @@ public class MarketoInitializer extends Feature {
         return context;
     }
 
+    /** {@inheritDoc} */
     @Override
     protected void doExecute(Context context) throws IOException, ParseException {
         LOG.info(this.getClass().getName() + " is started");

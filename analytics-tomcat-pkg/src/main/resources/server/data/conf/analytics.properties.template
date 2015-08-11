@@ -32,7 +32,6 @@ analytics.scheduler.cron_timetable=0 0 1 ? * *
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ViewBuilderFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.LogCheckerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReportSenderFeature
-# analytics.scheduler.force_run_class=com.codenvy.analytics.services.ActOnFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoInitializerFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.MarketoUpdaterFeature
 # analytics.scheduler.force_run_class=com.codenvy.analytics.services.ReindexerFeature
@@ -62,20 +61,6 @@ analytics.reports.backup_dir=${HOME}/analytics_data/backup/reports
 analytics.reports.recipients=recipients.xml
 analytics.reports.mail_text=Hi.\n\nBest regards, Analytics Team.
 analytics.reports.mail_subject=[period] Analytics reports
-
-# ActOn configuration
-analytics.acton.available=true
-analytics.acton.page_size=1000
-analytics.acton.mail_text=Hi.\n\nNew file was transferred to ActOn.\n\nBest regards, Analytics Team.
-analytics.acton.mail_subject=ActOn is updated
-analytics.acton.mail_to=
-analytics.acton.ftp_server=ftp2.actonsoftware.com
-analytics.acton.ftp_port=21
-analytics.acton.ftp_login=
-analytics.acton.ftp_password=
-analytics.acton.ftp_timeout=5000
-analytics.acton.ftp_auth=TLS
-analytics.acton.ftp_maxEfforts=5
 
 #Data Integrity configuration
 analytics.data-integrity.collections=created_users

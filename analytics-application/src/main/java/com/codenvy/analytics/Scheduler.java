@@ -19,7 +19,6 @@ package com.codenvy.analytics;
 
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Parameters;
-import com.codenvy.analytics.services.ActOnFeature;
 import com.codenvy.analytics.services.DataComputationFeature;
 import com.codenvy.analytics.services.DataIntegrityFeature;
 import com.codenvy.analytics.services.Feature;
@@ -81,7 +80,6 @@ public class Scheduler implements ServletContextListener {
                                                                            ViewBuilderFeature.class,
                                                                            LogCheckerFeature.class,
                                                                            ReportSenderFeature.class,
-                                                                           ActOnFeature.class,
                                                                            MarketoInitializerFeature.class,
                                                                            MarketoUpdaterFeature.class,
                                                                            ReindexerFeature.class};
