@@ -33,13 +33,13 @@
                     <a class="nav" href="/analytics/pages/accounts-view.jsp" id="topmenu-accounts">Accounts</a>
                 <% } %>
 
+                <a class="nav" href="/analytics/pages/workspaces-view.jsp" id="topmenu-workspaces">Workspaces</a>
                 <a class="nav" href="/analytics/pages/users-view.jsp" id="topmenu-users">Users</a>
                 <a class="nav" href="/analytics/pages/sessions-view.jsp" id="topmenu-sessions">Sessions</a>
-                <a class="nav" href="/analytics/pages/workspaces-view.jsp" id="topmenu-workspaces">Workspaces</a>
-                <a class="nav" href="/analytics/pages/factories-view.jsp" id="topmenu-factories">Factories</a>
-                <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
-                <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
                 <a class="nav" href="/analytics/pages/tasks-view.jsp" id="topmenu-tasks">Tasks</a>
+                <a class="nav" href="/analytics/pages/events-view.jsp" id="topmenu-events">Events</a>
+                <a class="nav" href="/analytics/pages/projects-view.jsp" id="topmenu-projects">Projects</a>
+                <a class="nav" href="/analytics/pages/factories-view.jsp" id="topmenu-factories">Factories</a>
 
                 <div class="nav">
                     <div>
@@ -77,12 +77,10 @@
                         <button id="topmenu-user"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></button>
                     </div>
                     <ul class="dropdown-menu">
-                        <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getCurrentUserId(request)%>">My statistics</a></li>
-                        <li><a href="/site/private/select-tenant">My workspace</a></li>
+                        <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getCurrentUserId(request)%>">My data</a></li>
                         <% if (request.isUserInRole("user")) { %>
                             <li><a href="/analytics/pages/current-user-accounts-view.jsp">Organization</a></li>
                         <% } %>
-                        <li><a href="/">Codenvy main page</a></li>
                         <li><a href="#" onclick="analytics.util.processUserLogOut()">Logout</a></li>
                     </ul>                   
                </div>
@@ -96,11 +94,11 @@
                     <ul class="dropdown-menu">
                         <li>
                             <ul id="data-universe" targetWidgets="_all">
-                                <li><a class="command-btn" default>Display statistics by Any workspaces</a></li>
-                                <li><a class="command-btn" value="workspace/developer">Display statistics by workspaces where I have workspace/developer right</a></li>
-                                <li><a class="command-btn" value="workspace/admin">Display statistics by workspaces where I have workspace/admin right</a></li>
-                                <li><a class="command-btn" value="account/member">Display statistics by workspaces where I have account/member rights to</a></li>
-                                <li><a class="command-btn" value="account/owner">Display statistics by workspaces where I have account/owner rights to</a></li>
+                                <li><a class="command-btn" default>Data for all workspaces</a></li>
+                                <li><a class="command-btn" value="workspace/developer">Data for workspaces where I am a workspace/developers</a></li>
+                                <li><a class="command-btn" value="workspace/admin">Data for workspaces where I am a workspace/admin</a></li>
+                                <li><a class="command-btn" value="account/member">Data for workspaces where I am an account/member</a></li>
+                                <li><a class="command-btn" value="account/owner">Data for workspaces where I am an account/owner</a></li>
                             </ul>
                         </li>
                     </ul>
