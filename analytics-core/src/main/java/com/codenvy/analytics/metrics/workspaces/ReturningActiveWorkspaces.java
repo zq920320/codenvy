@@ -32,7 +32,7 @@ public class ReturningActiveWorkspaces extends CalculatedMetric implements Expan
 
     public ReturningActiveWorkspaces() {
         super(MetricType.RETURNING_ACTIVE_WORKSPACES, new MetricType[]{MetricType.ACTIVE_WORKSPACES,
-                                                                       MetricType.CREATED_UNIQUE_WORKSPACES});
+                                                                       MetricType.CREATED_WORKSPACES});
     }
 
     /** {@inheritDoc} */

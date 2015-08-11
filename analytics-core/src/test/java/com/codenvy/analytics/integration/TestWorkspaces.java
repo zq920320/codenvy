@@ -65,14 +65,6 @@ public class TestWorkspaces extends BaseTest {
     }
 
     @Test
-    public void testCreateUniqueWorkspaces() throws Exception {
-        ValueData valueData = getValue(MetricType.CREATED_UNIQUE_WORKSPACES);
-        long l = treatAsLong(valueData);
-
-        assertEquals(l, 3);
-    }
-
-    @Test
     public void testReturningActiveWorkspaces() throws Exception {
         ValueData valueData = getValue(MetricType.RETURNING_ACTIVE_WORKSPACES);
         long l = treatAsLong(valueData);

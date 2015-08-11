@@ -30,7 +30,7 @@ import java.io.IOException;
 public class NewActiveUsers extends CalculatedMetric implements Expandable {
 
     public NewActiveUsers() {
-        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_UNIQUE_USERS});
+        super(MetricType.NEW_ACTIVE_USERS, new MetricType[]{MetricType.CREATED_USERS});
     }
 
     /** {@inheritDoc} */

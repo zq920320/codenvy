@@ -72,7 +72,7 @@
                 <parameter key="description" value="Total Users"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="created_unique_users"/>
+                <parameter key="name" value="created_users"/>
                 <parameter key="description" value="Users - Added"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">

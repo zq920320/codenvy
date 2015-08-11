@@ -30,7 +30,7 @@ import java.io.IOException;
 public class NewActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NewActiveWorkspaces() {
-        super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_UNIQUE_WORKSPACES});
+        super(MetricType.NEW_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_WORKSPACES});
     }
 
     /** {@inheritDoc} */

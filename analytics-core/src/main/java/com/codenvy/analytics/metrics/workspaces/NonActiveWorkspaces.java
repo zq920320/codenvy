@@ -32,7 +32,7 @@ import java.io.IOException;
 public class NonActiveWorkspaces extends CalculatedMetric implements Expandable {
 
     public NonActiveWorkspaces() {
-        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_UNIQUE_WORKSPACES,
+        super(MetricType.NON_ACTIVE_WORKSPACES, new MetricType[]{MetricType.CREATED_WORKSPACES,
                                                                  MetricType.ACTIVE_WORKSPACES});
     }
 

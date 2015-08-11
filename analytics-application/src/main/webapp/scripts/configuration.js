@@ -1757,7 +1757,6 @@ function AnalyticsConfiguration() {
         "im_downloads_install_script": "#ARTIFACTS",
         "im_downloads_codenvy": "#ARTIFACTS",
         "im_on_prem_issued": "#TRIALS",
-        "created_unique_users": "#USERS",
         "new_users_usage_time_greater_1_min": "#USERS",
         "new_users_usage_time_greater_60_min": "#USERS",
         "new_users_gb_hours": "#USERS",

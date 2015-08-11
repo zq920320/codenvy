@@ -105,7 +105,6 @@ com.codenvy.analytics.metrics.projects.DockerConfigurationTime
 
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspaces
 com.codenvy.analytics.metrics.workspaces.CreatedWorkspacesSet
-com.codenvy.analytics.metrics.workspaces.CreatedUniqueWorkspaces
 com.codenvy.analytics.metrics.workspaces.Workspaces
 com.codenvy.analytics.metrics.workspaces.WorkspacesProfilesList
 com.codenvy.analytics.metrics.workspaces.WorkspacesProfiles
@@ -125,7 +124,6 @@ com.codenvy.analytics.metrics.workspaces.UsageTimeByWorkspaces
 
 com.codenvy.analytics.metrics.users.UsersAddedToWorkspacesUsingInvitation
 com.codenvy.analytics.metrics.users.UserInvite
-com.codenvy.analytics.metrics.users.Users
 com.codenvy.analytics.metrics.users.UsersAcceptedInvites
 com.codenvy.analytics.metrics.users.UsersAcceptedInvitesPercent
 com.codenvy.analytics.metrics.users.UsersProfilesList
@@ -140,7 +138,6 @@ com.codenvy.analytics.metrics.users.CompletedProfiles
 com.codenvy.analytics.metrics.users.CreatedUsers
 com.codenvy.analytics.metrics.users.CreatedUsersSet
 com.codenvy.analytics.metrics.users.CreatedUsersList
-com.codenvy.analytics.metrics.users.CreatedUniqueUsers
 com.codenvy.analytics.metrics.users.CreatedUsersFromFactory
 com.codenvy.analytics.metrics.users.CreatedUsersFromAuth
 com.codenvy.analytics.metrics.users.NewUsersUsageTimeGreater1Min

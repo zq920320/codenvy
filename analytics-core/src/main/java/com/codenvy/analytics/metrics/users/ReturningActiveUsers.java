@@ -32,7 +32,7 @@ public class ReturningActiveUsers extends CalculatedMetric implements Expandable
 
     public ReturningActiveUsers() {
         super(MetricType.RETURNING_ACTIVE_USERS, new MetricType[]{MetricType.ACTIVE_USERS,
-                                                                  MetricType.CREATED_UNIQUE_USERS});
+                                                                  MetricType.CREATED_USERS});
     }
 
     /** {@inheritDoc} */

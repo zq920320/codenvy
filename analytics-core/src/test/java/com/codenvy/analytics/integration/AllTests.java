@@ -25,6 +25,7 @@ import org.junit.runners.Suite;
  * @author Anatoliy Bazko
  */
 @RunWith(Suite.class)
-@Suite.SuiteClasses({TestWorkspaces.class})
+@Suite.SuiteClasses({TestWorkspaces.class,
+                     TestUsers.class})
 public class AllTests {
 }
