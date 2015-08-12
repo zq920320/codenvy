@@ -630,9 +630,9 @@
                     }
                 });
             },
-            // Get user email by reset password id
-            confirmSetupPassword: function(success, error) {
-                var confirmSetupPasswordUrl = "/api/password/verify",
+            // Verify reset password id
+            verfySetupPasswordId: function(error) {
+                var verifySetupPasswordIdUrl = "/api/password/verify",
                     id = getQueryParameterByName("id");
                 if (typeof id === 'undefined') {
                     error([
@@ -641,19 +641,16 @@
                     return;
                 }
                 $.ajax({
-                    url: confirmSetupPasswordUrl + "/" + id,
+                    url: verifySetupPasswordIdUrl + "/" + id,
                     type: "GET",
-                    success: function(output, status, xhr) {
-                        success({
-                            email: xhr.responseText
-                        });
-                    },
-                    error: function(xhr /*,status , err*/ ) {
+                    success: function() {
+                     },
+                    error: function(response) {
                         setTimeout(function() {
                             window.location = "/site/recover-password";
                         }, 10000);
                         error([
-                            new AccountError(null, xhr.responseText + ".<br>You will be redirected in 10 sec")
+                            new AccountError(null, getResponseMessage(response) + ".<br>You will be redirected in 10 sec")
                         ]);
                     }
                 });
