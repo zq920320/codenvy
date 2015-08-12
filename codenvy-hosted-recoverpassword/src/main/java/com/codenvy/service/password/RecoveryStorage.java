@@ -17,121 +17,77 @@
  */
 package com.codenvy.service.password;
 
-import javax.annotation.PostConstruct;
-import javax.annotation.PreDestroy;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+
+import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * @author Michail Kuznyetsov
+ */
 @Singleton
-public class RecoveryStorage extends TimerTask {
-    public static final long VALIDATION_MAX_AGE_IN_MILLISECONDS = TimeUnit.HOURS.toMillis(1);
+public class RecoveryStorage {
+    private final Cache<String, String> storage;
 
-    private final ConcurrentMap<String, Map<String, String>> storage;
-    private final Timer                                      timer;
-
-    public RecoveryStorage() {
-        this.storage = new ConcurrentHashMap<>();
-        // Remove all invalid validation data once per hour;
-        this.timer = new Timer("recovery-storage-timer", true);
-
-    }
-
-    @Override
-    public void run() {
-        for (String uuid : storage.keySet()) {
-            if (!isValid(uuid)) {
-                storage.remove(uuid);
-            }
+    @Inject
+    public RecoveryStorage(@Named("password.recovery.expiration_timeout_hours") long validationMaxAge) {
+        if (validationMaxAge <= 0) {
+            throw new IllegalArgumentException("Expiration timeout must not be less or equal 0");
         }
+        this.storage = CacheBuilder.<String, String>newBuilder()
+                                   .expireAfterAccess(validationMaxAge, TimeUnit.HOURS)
+                                   .maximumSize(10000)
+                                   .build();
     }
 
     /**
-     * Verify that data corresponds to uuid are in the storage and it added
-     * not earlier then validationAgeInHours ago. If validationAgeInHours <=
-     * 0, verify that data corresponds to uuid are in the storage only.
+     * Verify that uuid has corresponding user email in the storage
      *
      * @param uuid
-     *         - unique identifier of validation data
-     * @return - true if there is valid data, false otherwise
+     *         unique identifier that points to user email in storage
+     * @return true if there is user email, false otherwise
      */
     public boolean isValid(String uuid) {
-        if (!storage.containsKey(uuid)) {
-            return false;
-        }
-
-        if (VALIDATION_MAX_AGE_IN_MILLISECONDS > 0) {
-            // verify token's age
-            long creationTime = Long.valueOf(storage.get(uuid).get("creation.time"));
-            long currentTime = System.currentTimeMillis();
-
-            return (creationTime + VALIDATION_MAX_AGE_IN_MILLISECONDS) > currentTime;
-        } else {
-            return true;
-        }
+        return storage.getIfPresent(uuid) != null;
     }
 
     /**
-     * Add validation data to storage.
+     * Put user email to storage, and return generated uuid for it.
      *
-     * @return - uuid of stored data
+     * @param userEmail
+     *         user email that needs to be stored
+     * @return uuid related to this email
      */
-    public String setValidationData(String userName) {
+    public String generateRecoverToken(String userEmail) {
         String uuid = UUID.randomUUID().toString();
 
-        Map<String, String> validationData = new HashMap<>();
-
-        validationData.put("user.name", userName);
-        // save start validation time
-        validationData.put("creation.time", Long.toString(System.currentTimeMillis()));
-
-        storage.put(uuid, validationData);
+        storage.put(uuid, userEmail);
 
         return uuid;
     }
 
     /**
-     * Remove recovery data from storage by its uuid.
+     * Remove user email from storage by its uuid.
      *
      * @param uuid
-     *         - unique identifier of validation data
+     *         unique identifier of user email
      */
     public void remove(String uuid) {
-        storage.remove(uuid);
+        storage.invalidate(uuid);
     }
 
     /**
-     * Get map with fields names as keys and fields values as values of the
-     * map.
+     * Get user email from storage by uuid.
      *
      * @param uuid
-     *         - unique identifier of validation data
-     * @return - map with validation's parameters
+     *         unique identifier of user email
+     * @return string with user name
      */
-    public Map<String, String> get(String uuid) {
-        return storage.get(uuid);
-    }
-
-
-    @PostConstruct
-    public void startTimer() {
-        // Remove all invalid validation data once per hour;
-        timer.schedule(this, 1000, TimeUnit.HOURS.toMillis(1));
-    }
-
-    /**
-     * Terminate storage and all stared threads.
-     */
-    @PreDestroy
-    public void suspend() {
-        timer.cancel();
-        storage.clear();
-
+    public String get(String uuid) {
+        return storage.getIfPresent(uuid);
     }
 }
