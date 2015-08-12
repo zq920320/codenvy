@@ -49,7 +49,7 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
 
     @GET
     @Path("callback")
-    public Response callback(@Context UriInfo uriInfo) throws OAuthAuthenticationException {
+    public Response callback() throws OAuthAuthenticationException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
         List<String> errorValues = uriInfo.getQueryParameters().get("error");
