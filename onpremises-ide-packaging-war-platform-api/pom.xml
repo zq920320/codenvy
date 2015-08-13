@@ -146,6 +146,11 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-gae</artifactId>
+            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-google-oauth2</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
@@ -167,11 +172,6 @@
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
-            <version>${codenvy.plugins.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-gae</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
