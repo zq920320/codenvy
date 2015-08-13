@@ -131,5 +131,12 @@
                 <include>codenvy-security.properties</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <outputDirectory>conf</outputDirectory>
+            <directory>${project.build.directory}</directory>
+            <includes>
+                <include>assembly.properties</include>
+            </includes>
+        </fileSet>
     </fileSets>
 </assembly>

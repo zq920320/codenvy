@@ -77,4 +77,13 @@
             </includes>
         </dependencySet>
     </dependencySets>
+    <fileSets>
+        <fileSet>
+            <outputDirectory>conf</outputDirectory>
+            <directory>${project.build.directory}</directory>
+            <includes>
+                <include>assembly.properties</include>
+            </includes>
+        </fileSet>
+    </fileSets>
 </assembly>
