@@ -126,11 +126,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-hosted-runner-docker</artifactId>
-            <version>${codenvy.plugins.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
             <version>${codenvy.plugins.version}</version>
         </dependency>
@@ -273,6 +268,11 @@
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-datasource-server</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-docker-runner</artifactId>
             <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
