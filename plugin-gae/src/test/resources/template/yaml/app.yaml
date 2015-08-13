@@ -1,0 +1,77 @@
+application: codenvy2012
+version: 1
+runtime: python27
+api_version: 1
+threadsafe: true
+
+handlers:
+- url: /favicon\.ico
+  static_files: favicon.ico
+  upload: favicon\.ico
+
+- url: /bootstrap
+  static_dir: bootstrap
+
+- url: /.*
+  script: guestbook.application
+
+libraries:
+- name: webapp2
+  version: latest
+- name: jinja2
+  version: latest
+
+skip_files:
+- ^(.*/)?#.*#$
+- ^(.*/)?.*~$
+- ^(.*/)?.*\.py[co]$
+- ^(.*/)?.*/RCS/.*$
+- ^(.*/)?\..*$
+
+builtins:
+- deferred: on
+- appstats: on
+
+includes:
+- cloud_endpoints.yaml
+- web_interface.yaml
+- admin_interface.yaml
+
+inbound_services:
+- mail
+- warmup
+
+default_expiration: "4d 5h"
+
+admin_console:
+  pages:
+  - name: Blog Comment Admin
+    url: /blog/admin/comments
+  - name: Create a Blog Post
+    url: /blog/admin/newentry
+
+error_handlers:
+- file: default_error.html
+
+- error_code: over_quota
+  file: over_quota.html
+
+libraries:
+- name: PIL
+  version: "1.1.7"
+- name: webob
+  version: "1.1.1"
+
+env_variables:
+  DJANGO_SETTINGS_MODULE: 'myapp.settings'
+
+backends:
+- name: memdb
+  class: B8
+  instances: 5
+- name: crawler
+  instances: 10
+- name: worker
+  options: failfast
+- name: cmdline
+  options: dynamic

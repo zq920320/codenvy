@@ -1,0 +1,26 @@
+[
+  {
+    "displayName": "Google App Engine Java",
+    "category": "Samples - Hello World",
+    "description": "Google App Engine Java project. Illustrates simple examples that use the Search API.",
+    "source": {
+      "type": "git",
+      "location": "https://github.com/codenvy-templates/web-java-gae-simple.git",
+      "parameters": {
+        "branch": "3.1.0",
+        "keepVcs": "false"
+      }
+    },
+    "builders": {
+      "default": "maven"
+    },
+    "runners": {
+            "default": "system:/java/web/gae",
+            "configs": {
+                "recommend": {
+                    "ram": 256
+                }
+            }
+        }
+  }
+]

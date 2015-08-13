@@ -30,6 +30,7 @@
         <module>plugin-projectlocker</module>
         <module>plugin-hosted</module>
         <module>plugin-contribution</module>
+        <module>plugin-gae</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
