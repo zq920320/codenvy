@@ -170,9 +170,9 @@
             <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.plugin-gae</groupId>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-gae</artifactId>
-            <version>${codenvy.plugin.gae.version}</version>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>com.palominolabs.metrics</groupId>
