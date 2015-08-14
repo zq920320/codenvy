@@ -17,11 +17,13 @@
  */
  
 (function(window){
-    define(["jquery", "underscore", "views/accountformbase", "models/account","validation"],
+    define(["jquery", "underscore", "views/accountformbase", "models/account", "handlebars", "text!templates/oauthbtn.html", "validation"],
 
-        function($,_,AccountFormBase,Account){
-
+        function($,_,AccountFormBase,Account, Handlebars, oauthTemplate){
+            var oauthProviderButtons = ["google", "github"]; // the list of oauth provider buttons
             var WSCreateForm = AccountFormBase.extend({
+
+                oauthTemplate : Handlebars.compile(oauthTemplate),
 
                 initialize : function(attributes){
                     //Account.redirectIfUserHasLoginCookie();
@@ -30,23 +32,32 @@
                     }
                     AccountFormBase.prototype.initialize.apply(this,attributes);
                     //bind onclick to Google and GitHub buttons
-                    $(".oauth-button.google").click(function(){
-                        Account.loginWithGoogle("Create WS page", function(url){
-                            window.location = url;
-                        });
-                    });
-
-                    $(".oauth-button.github").click(function(){
-                        Account.loginWithGithub("Create WS page", function(url){
-                            window.location = url;
-                        });
-                    });
-
+                    Account.getOAuthproviders(_.bind(this.constructOAuthElements,this));
                     $("#signIn").click(function(){
                         $.cookie('logged_in', true, {path: "/"});
                         window.location = Account.appendQuery("/site/login");
                     });
 
+                },
+
+                constructOAuthElements : function(deffer){
+                    var self = this;
+                    deffer
+                    .then(function(providers){
+                        _.each(providers,function(provider){
+                            if (oauthProviderButtons.indexOf(provider.name) >= 0){
+                                self.$(".oauth-list").append(
+                                    self.oauthTemplate(provider)
+                                );
+                                // bind action to oauth button
+                                $(".oauth-button." + provider.name).click(function(){
+                                    Account.loginWithOauthProvider(provider, "Create WS page", function(url){
+                                        window.location = url;
+                                    });
+                                });
+                            }
+                        },this);
+                    });
                 },
 
                 __validationRules : function(){

@@ -17,26 +17,18 @@
  */
  
 (function(window){
-    define(["jquery", "underscore", "views/accountformbase", "models/account","validation"],
+    define(["jquery", "underscore", "views/accountformbase", "models/account", "handlebars", "text!templates/oauthbtn.html", "validation"],
 
-        function($,_,AccountFormBase,Account){
-
+        function($,_,AccountFormBase,Account, Handlebars, oauthTemplate){
+            var oauthProviderButtons = ["google", "github"]; // the list of oauth provider buttons
             var SignInForm = AccountFormBase.extend({
 
-                initialize : function(attributes){
-                    AccountFormBase.prototype.initialize.apply(this,attributes);
-                    //bind onclick to Google and GitHub buttons
-                    $(".oauth-button.google").click(function(){
-                        Account.loginWithGoogle("Login page", function(url){
-                            window.location = url;
-                        });
-                    });
+                oauthTemplate : Handlebars.compile(oauthTemplate),
 
-                    $(".oauth-button.github").click(function(){
-                        Account.loginWithGithub("Login page", function(url){
-                            window.location = url;
-                        });
-                    });
+                initialize : function(attributes){
+                    var self = this;
+                    AccountFormBase.prototype.initialize.apply(this,attributes);
+                    Account.getOAuthproviders(_.bind(self.constructOAuthElements,self));
                 },
 
                 __validationRules : function(){
@@ -44,6 +36,26 @@
                     rule.username = {required: true};
                     rule.password = {required: true};
                     return rule;
+                },
+
+                constructOAuthElements : function(deffer){
+                    var self = this;
+                    deffer
+                    .then(function(providers){
+                        _.each(providers,function(provider){
+                            if (oauthProviderButtons.indexOf(provider.name) >= 0){
+                                self.$(".oauth-list").append(
+                                    self.oauthTemplate(provider)
+                                );
+                                // bind action to oauth button
+                                $(".oauth-button." + provider.name).click(function(){
+                                    Account.loginWithOauthProvider(provider, "Login page", function(url){
+                                        window.location = url;
+                                    });
+                                });
+                            }
+                        },this);
+                    });
                 },
 
                 __submit : function(){
