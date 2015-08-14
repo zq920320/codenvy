@@ -11,6 +11,7 @@
 package org.eclipse.che.ide.ext.bitbucket.server.rest;
 
 import org.eclipse.che.api.core.UnauthorizedException;
+import org.eclipse.che.api.git.GitException;
 import org.eclipse.che.ide.commons.ParsingResponseException;
 import org.eclipse.che.ide.ext.bitbucket.server.Bitbucket;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketException;
@@ -21,7 +22,6 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
-import org.eclipse.che.ide.ext.git.server.GitException;
 import org.eclipse.che.ide.ext.ssh.server.SshKey;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStoreException;
