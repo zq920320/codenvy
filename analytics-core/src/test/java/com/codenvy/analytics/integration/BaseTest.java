@@ -28,6 +28,7 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricFilter;
 import com.codenvy.analytics.metrics.MetricType;
 import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
@@ -55,6 +56,7 @@ import static com.codenvy.analytics.Utils.toArray;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.junit.Assert.assertEquals;
 
 /**
  * @author Anatoliy Bazko
@@ -184,6 +186,30 @@ public class BaseTest {
         String json = transport.request("POST", "/auth/login", credentials, null);
         Token token = DtoFactory.getInstance().createDtoFromJson(json, Token.class);
         return token.getValue();
+    }
+
+    protected String getUserNameById(String userId) throws IOException {
+        Context.Builder context = new Context.Builder();
+        context.put(MetricFilter._ID, userId);
+
+        ValueData userProfile = getValue(MetricType.USERS_PROFILES_LIST, context.build());
+        Map<String, Map<String, ValueData>> m = listToMap((ListValueData)userProfile, "aliases");
+
+        assertEquals(m.size(), 1);
+
+        return m.keySet().iterator().next();
+    }
+
+    protected String getWsNameById(String wsId) throws IOException {
+        Context.Builder context = new Context.Builder();
+        context.put(MetricFilter._ID, wsId);
+
+        ValueData wsProfile = getValue(MetricType.WORKSPACES_PROFILES_LIST, context.build());
+        Map<String, Map<String, ValueData>> m = listToMap((ListValueData)wsProfile, "ws_name");
+
+        assertEquals(m.size(), 1);
+
+        return m.keySet().iterator().next();
     }
 
     private class HTTPTransport {
