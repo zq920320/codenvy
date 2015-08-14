@@ -31,6 +31,7 @@
     <inherits name="org.eclipse.che.api.VFS"/>
 
     <inherits name="org.eclipse.che.ide.Commons"/>
+    <inherits name="org.eclipse.che.ide.ext.git.Git"/>
     <inherits name="org.eclipse.che.security.OAuth"/>
 
     <source path="client"/>

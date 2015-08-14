@@ -13,13 +13,15 @@ package com.codenvy.plugin.contribution.vcs.client;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
+import org.eclipse.che.api.git.gwt.client.GitServiceClient;
+import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.api.git.shared.PushResponse;
+import org.eclipse.che.api.git.shared.Remote;
+import org.eclipse.che.api.git.shared.Revision;
+import org.eclipse.che.api.git.shared.Status;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.ext.git.client.GitServiceClient;
-import org.eclipse.che.ide.ext.git.shared.PushResponse;
-import org.eclipse.che.ide.ext.git.shared.Revision;
-import org.eclipse.che.ide.ext.git.shared.Status;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.Unmarshallable;
@@ -191,14 +193,14 @@ public class GitVcsService implements VcsService {
 
     @Override
     public void listRemotes(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<List<Remote>> callback) {
-        final Unmarshallable<Array<org.eclipse.che.ide.ext.git.shared.Remote>> unMarshaller
-                = dtoUnmarshallerFactory.newArrayUnmarshaller(org.eclipse.che.ide.ext.git.shared.Remote.class);
+        final Unmarshallable<Array<org.eclipse.che.api.git.shared.Remote>> unMarshaller
+                = dtoUnmarshallerFactory.newArrayUnmarshaller(org.eclipse.che.api.git.shared.Remote.class);
         service.remoteList(project, null, false,
-                           new AsyncRequestCallback<Array<org.eclipse.che.ide.ext.git.shared.Remote>>(unMarshaller) {
+                           new AsyncRequestCallback<Array<Remote>>(unMarshaller) {
                                @Override
-                               protected void onSuccess(final Array<org.eclipse.che.ide.ext.git.shared.Remote> remotes) {
+                               protected void onSuccess(final Array<Remote> remotes) {
                                    final List<Remote> result = new ArrayList<>();
-                                   for (final org.eclipse.che.ide.ext.git.shared.Remote remote : remotes.asIterable()) {
+                                   for (final Remote remote : remotes.asIterable()) {
                                        result.add(fromGitRemote(remote));
                                    }
                                    callback.onSuccess(result);
@@ -243,14 +245,14 @@ public class GitVcsService implements VcsService {
      *         callback when the operation is done.
      */
     private void listBranches(final ProjectDescriptor project, final String whichBranches, final AsyncCallback<List<Branch>> callback) {
-        final Unmarshallable<Array<org.eclipse.che.ide.ext.git.shared.Branch>> unMarshaller =
-                dtoUnmarshallerFactory.newArrayUnmarshaller(org.eclipse.che.ide.ext.git.shared.Branch.class);
+        final Unmarshallable<Array<Branch>> unMarshaller =
+                dtoUnmarshallerFactory.newArrayUnmarshaller(Branch.class);
         service.branchList(project, whichBranches,
-                           new AsyncRequestCallback<Array<org.eclipse.che.ide.ext.git.shared.Branch>>(unMarshaller) {
+                           new AsyncRequestCallback<Array<Branch>>(unMarshaller) {
                                @Override
-                               protected void onSuccess(final Array<org.eclipse.che.ide.ext.git.shared.Branch> branches) {
+                               protected void onSuccess(final Array<Branch> branches) {
                                    final List<Branch> result = new ArrayList<>();
-                                   for (final org.eclipse.che.ide.ext.git.shared.Branch branch : branches.asIterable()) {
+                                   for (final Branch branch : branches.asIterable()) {
                                        result.add(fromGitBranch(branch));
                                    }
                                    callback.onSuccess(result);
@@ -264,13 +266,13 @@ public class GitVcsService implements VcsService {
     }
 
     /**
-     * Converts a git branch DTO to an abstracted {@link com.codenvy.plugin.contribution.vcs.client.Branch} object.
+     * Converts a git branch DTO to an abstracted {@link org.eclipse.che.api.git.shared.Branch} object.
      *
      * @param gitBranch
      *         the object to convert.
      * @return the converted object.
      */
-    private Branch fromGitBranch(final org.eclipse.che.ide.ext.git.shared.Branch gitBranch) {
+    private Branch fromGitBranch(final Branch gitBranch) {
         final Branch branch = GitVcsService.this.dtoFactory.createDto(Branch.class);
         branch.withActive(gitBranch.isActive()).withRemote(gitBranch.isRemote())
               .withName(gitBranch.getName()).withDisplayName(gitBranch.getDisplayName());
@@ -278,13 +280,13 @@ public class GitVcsService implements VcsService {
     }
 
     /**
-     * Converts a git remote DTO to an abstracted {@link com.codenvy.plugin.contribution.vcs.client.Remote} object.
+     * Converts a git remote DTO to an abstracted {@link org.eclipse.che.api.git.shared.Remote} object.
      *
      * @param gitRemote
      *         the object to convert.
      * @return the converted object.
      */
-    private Remote fromGitRemote(final org.eclipse.che.ide.ext.git.shared.Remote gitRemote) {
+    private Remote fromGitRemote(final Remote gitRemote) {
         final Remote remote = GitVcsService.this.dtoFactory.createDto(Remote.class);
         remote.withName(gitRemote.getName()).withUrl(gitRemote.getUrl());
         return remote;

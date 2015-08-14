@@ -15,11 +15,11 @@ import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.git.impl.nativegit.GitUrl;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketKey;
-import org.eclipse.che.ide.ext.git.server.commons.Util;
-import org.eclipse.che.ide.ext.git.server.nativegit.SshKeyUploader;
 import org.eclipse.che.ide.ext.ssh.server.SshKey;
 
+import org.eclipse.che.ide.ext.ssh.server.SshKeyUploader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +36,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static org.eclipse.che.ide.MimeType.APPLICATION_JSON;
 import static org.eclipse.che.ide.rest.HTTPHeader.ACCEPT;
@@ -53,21 +54,21 @@ import static org.eclipse.che.ide.rest.HTTPStatus.OK;
  * @author Kevin Pollet
  */
 @Singleton
-public class BitbucketKeyUploader extends SshKeyUploader {
-    private static final Logger LOG                 = LoggerFactory.getLogger(BitbucketKeyUploader.class);
-    private static final String OAUTH_PROVIDER_NAME = "bitbucket";
+public class BitbucketKeyUploader implements SshKeyUploader {
+    private static final Logger  LOG                   = LoggerFactory.getLogger(BitbucketKeyUploader.class);
+    private static final Pattern BITBUCKET_URL_PATTERN = Pattern.compile(".*bitbucket\\.org.*");
+    private static final String  OAUTH_PROVIDER_NAME   = "bitbucket";
 
     private final OAuthAuthorizationHeaderProvider authorizationHeaderProvider;
 
     @Inject
     public BitbucketKeyUploader(@Nonnull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
-        super(null);
         this.authorizationHeaderProvider = authorizationHeaderProvider;
     }
 
     @Override
     public boolean match(final String url) {
-        return Util.isSSH(url) && Util.isBitbucket(url);
+        return GitUrl.isSSH(url) && BITBUCKET_URL_PATTERN.matcher(url).matches();
     }
 
     @Override
@@ -84,7 +85,7 @@ public class BitbucketKeyUploader extends SshKeyUploader {
         }
 
         final Map<String, String> postParams = new HashMap<>(2);
-        postParams.put("label", Util.getCodenvyTimeStampKeyLabel());
+        postParams.put("label", GitUrl.getCodenvyTimeStampKeyLabel());
         postParams.put("key", new String(publicKey.getBytes()));
 
         final String postBody = JsonHelper.toJson(postParams);
