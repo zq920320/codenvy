@@ -23,7 +23,7 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.util.List;
 import java.util.Set;
@@ -32,7 +32,7 @@ import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsDouble;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsSet;
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Anatoliy Bazko

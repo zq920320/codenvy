@@ -21,40 +21,29 @@ package com.codenvy.analytics.integration;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.metrics.MetricType;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.junit.runners.Parameterized;
-
-import java.util.Arrays;
+import org.testng.annotations.DataProvider;
+import org.testng.annotations.Test;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
-import static junit.framework.Assert.assertTrue;
+import static org.testng.AssertJUnit.assertTrue;
+
 
 /**
  * @author Anatoliy Bazko
  */
-@RunWith(value = Parameterized.class)
 public class TestActions extends BaseTest {
 
-    private MetricType metricType;
-
-    public TestActions(MetricType metricType) {
-        super();
-        this.metricType = metricType;
-    }
-
-    @Test
-    public void testAction() throws Exception {
-        System.out.println(metricType);
+        @Test(dataProvider = "data")
+        public void testAction(MetricType metricType) throws Exception {
         ValueData valueData = getValue(metricType);
         long l = treatAsLong(valueData);
 
         assertTrue(l > 0);
     }
 
-    @Parameterized.Parameters()
-    public static Iterable<Object[]> getMetricsToTest() {
-        return Arrays.asList(new Object[][]{
+        @DataProvider(name = "data")
+        public static Object[][] data() {
+                return new Object[][]{
                 {MetricType.PROJECT_CONFIGURATION_ACTION},
                 {MetricType.CLOSE_PROJECT_ACTION},
                 {MetricType.DELETE_ITEM_ACTION},
@@ -136,7 +125,6 @@ public class TestActions extends BaseTest {
                 {MetricType.REDIRECT_TO_DASHBOARD_ACTION},
                 {MetricType.CREATE_MAVEN_MODULE_ACTION},
                 {MetricType.QUICK_DOCUMENTATION_ACTION},
-                {MetricType.OPEN_DECLARATION_ACTION},
-        });
+                {MetricType.OPEN_DECLARATION_ACTION}};
     }
 }

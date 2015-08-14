@@ -25,17 +25,17 @@ import com.codenvy.analytics.metrics.Context;
 import com.codenvy.analytics.metrics.MetricType;
 import com.codenvy.analytics.metrics.Parameters;
 
-import org.junit.Test;
+import org.testng.annotations.Test;
 
 import java.util.Map;
 import java.util.Set;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsLong;
 import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsSet;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
+import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertTrue;
+import static org.testng.FileAssert.fail;
 
 /**
  * @author Anatoliy Bazko
