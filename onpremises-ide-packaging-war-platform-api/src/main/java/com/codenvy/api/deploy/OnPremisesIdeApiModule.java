@@ -62,6 +62,7 @@ import org.eclipse.che.api.factory.FactoryAcceptValidatorImpl;
 import org.eclipse.che.api.factory.FactoryCreateValidator;
 import org.eclipse.che.api.factory.FactoryCreateValidatorImpl;
 import org.eclipse.che.api.factory.FactoryService;
+import org.eclipse.che.api.git.GitConnectionFactory;
 import org.eclipse.che.api.runner.RandomRunnerSelectionStrategy;
 import org.eclipse.che.api.runner.RunnerAdminService;
 import org.eclipse.che.api.runner.RunnerSelectionStrategy;
@@ -82,6 +83,9 @@ import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.commons.schedule.executor.ScheduleModule;
 import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
 import org.eclipse.che.everrest.ETagResponseFilter;
+import org.eclipse.che.git.impl.nativegit.NativeGitConnectionFactory;
+import org.eclipse.che.git.impl.nativegit.ssh.SshKeyProvider;
+import org.eclipse.che.git.impl.nativegit.ssh.SshKeyProviderImpl;
 import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
 import org.eclipse.che.ide.ext.java.server.format.FormatService;
 import org.eclipse.che.ide.ext.ssh.server.KeyService;
@@ -112,7 +116,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
     protected void configure() {
         // < Copied from IDE3 api war
         bind(ApiInfoService.class);
-
+        bind(GitConnectionFactory.class).to(NativeGitConnectionFactory.class);
+        bind(SshKeyProvider.class).to(SshKeyProviderImpl.class);
         bind(AuthenticationService.class);
         bind(WorkspaceService.class);
         bind(UserService.class);

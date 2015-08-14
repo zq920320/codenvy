@@ -65,7 +65,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>git.war</outputFileNameMapping>
             <includes>
-                <include>org.eclipse.che.plugin:che-plugin-git-server</include>
+                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-git-server</include>
             </includes>
         </dependencySet>
         <dependencySet>

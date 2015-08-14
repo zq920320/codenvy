@@ -236,6 +236,11 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-git-impl-native</artifactId>
+            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-vfs-impl</artifactId>
             <version>${che.core.version}</version>
         </dependency>
@@ -345,6 +350,11 @@
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-ruby-ext-ruby</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-ssh-git-native</artifactId>
             <version>${che.plugins.version}</version>
         </dependency>
         <dependency>

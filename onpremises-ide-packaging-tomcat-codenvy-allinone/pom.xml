@@ -44,6 +44,12 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
+            <artifactId>cloud-ide-packaging-war-git-server</artifactId>
+            <version>${codenvy.cloud-ide.version}</version>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-builder</artifactId>
             <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
@@ -82,12 +88,6 @@
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-datasource-ssl-socket-factory</artifactId>
             <version>${che.plugins.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-git-server</artifactId>
-            <version>${che.plugins.version}</version>
-            <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
