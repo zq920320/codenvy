@@ -71,7 +71,7 @@ public enum MetricType {
     USERS_ADDED_TO_WORKSPACES_USING_INVITATION,
     COMPLETED_PROFILES,
 
-    // ------- TESTED
+    // <------- TESTED
 
     NEW_ACTIVE_USERS,
     NEW_USERS_USAGE_TIME_GREATER_1_MIN,
