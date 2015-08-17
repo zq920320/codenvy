@@ -32,9 +32,6 @@
     <name>Codenvy Plugin :: Hosted :: Parent</name>
     <modules>
         <module>codenvy-hosted-client-gwt-subscription</module>
-        <module>codenvy-hosted-docker-client</module>
-        <module>codenvy-hosted-runner-docker</module>
-        <module>codenvy-hosted-ext-docker</module>
         <module>codenvy-hosted-ext-permissions</module>
         <module>codenvy-hosted-ext-factory</module>
         <module>codenvy-hosted-ext-dashboard</module>
