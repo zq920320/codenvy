@@ -199,47 +199,27 @@ public class MarketoReportGenerator {
     }
 
     private Map<String, LinkedHashSet<String>> getDuplicatedUsers() throws IOException, ParseException {
-        Map<String, LinkedHashSet<String>> map = new HashMap<>();
+        Map<String, LinkedHashSet<String>> result = new HashMap<>();
 
-        final int pageSize = configurator.getInt(MarketoInitializer.PAGE_SIZE, 10000);
+        Metric metric = MetricFactory.getMetric(MetricType.DUPLICATED_USERS_SET);
+        SetValueData duplicatedUsers = (SetValueData)metric.getValue(Context.EMPTY);
+
         Context.Builder builder = new Context.Builder();
-        builder.put(Parameters.PER_PAGE, pageSize);
         builder.put(Parameters.SORT, "+date");
         builder.put(MetricFilter.REGISTERED_USER, 1);
         Context context = builder.build();
 
-        for (int currentPage = 1; ; currentPage++) {
-            context = context.cloneAndPut(Parameters.PAGE, currentPage);
-
+        for (ValueData duplicatedUser : duplicatedUsers.getAll()) {
+            context = context.cloneAndPut(MetricFilter.ALIASES, duplicatedUser.getAsString());
             List<ValueData> profiles = getUsersProfiles(context);
 
+            LinkedHashSet<String> ids = new LinkedHashSet<>();
             for (ValueData valueData : profiles) {
                 Map<String, ValueData> profile = ((MapValueData)valueData).getAll();
-
-                String userId = profile.get(ID).getAsString();
-                String alias = toArray(profile.get(AbstractMetric.ALIASES))[0];
-
-                if (map.containsKey(alias)) {
-                    map.get(alias).add(userId);
-                } else {
-                    LinkedHashSet<String> ids = new LinkedHashSet<>();
-                    ids.add(userId);
-
-                    map.put(alias, ids);
-                }
+                ids.add(profile.get(ID).getAsString());
             }
 
-            if (profiles.size() < pageSize) {
-                break;
-            }
-        }
-
-        Map<String, LinkedHashSet<String>> result = new HashMap<>();
-
-        for(Map.Entry<String, LinkedHashSet<String>> entry : map.entrySet()) {
-            if (entry.getValue().size() > 1) {
-                result.put(entry.getKey(), entry.getValue());
-            }
+            result.put(duplicatedUser.getAsString(), ids);
         }
 
         return result;

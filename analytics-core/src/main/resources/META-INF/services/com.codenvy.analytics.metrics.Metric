@@ -167,6 +167,7 @@ com.codenvy.analytics.metrics.users.UsageTimeByUsersList
 com.codenvy.analytics.metrics.users.UsageTimeByUsers
 com.codenvy.analytics.metrics.users.UsersAccountsOwnerList
 com.codenvy.analytics.metrics.users.UsersAccountsList
+com.codenvy.analytics.metrics.users.DuplicatedUsersSet
 
 com.codenvy.analytics.metrics.users.UsersLoggedInTypes
 com.codenvy.analytics.metrics.users.UsersLoggedInWithGitHub
