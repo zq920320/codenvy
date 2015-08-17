@@ -282,9 +282,18 @@ body,h1,h2,h3,h4,h5,h6,a{
 	display:inline-block;
 }
 
+.icon-bottom{
+	position: relative;
+	top:-1px;
+	left:0;
+	-webkit-transition:all .5s ease;
+	-moz-transition:all .5s ease;
+	transition:all .5s ease;
+}
+
 .icon-over{
 	position:absolute;
-	top:2px;
+	top:1px;
 	left:0;
 	-webkit-transition:all .5s ease;
 	-moz-transition:all .5s ease;
@@ -462,4 +471,8 @@ body,h1,h2,h3,h4,h5,h6,a{
 
 img.imgcenter {
   margin-top: 20px;
+}
+
+.oauth-button {
+	margin-right: 5px;
 }

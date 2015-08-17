@@ -17,7 +17,7 @@
  */
 (function(window) {
     var _gaq = _gaq || [];
-    define(["jquery", "json", "cookies"], function($, JSON) {
+    define(["jquery", "underscore", "json", "cookies"], function($, _, JSON) {
         /*
             AccountError is used to report errors through error callback function
             (see details below ). Example usage:
@@ -49,28 +49,37 @@
             }
         };
  
-        var loginWithGoogle = function(page, callback) {
+        var loginWithOauthProvider = function(provider, page, callback) {
             if (isWebsocketEnabled()) {
+                // build oauth url
+                var oauthUrl, scope;
+                _.each(provider.links, function(link){
+                    if (link.rel==="Authenticate URL"){
+                        oauthUrl = link.href + "?";
+                        _.each(link.parameters, function(param){
+                            oauthUrl = oauthUrl+ param.name + "=" + param.defaultValue + "&";
+                        });
+                    }
+                });
                 var pageUrl = "&page_url=" + window.location.pathname;
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=google' + pageUrl + window.location.hash);
-                _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
-                var url = "/api/oauth/authenticate?oauth_provider=google&mode=federated_login" + "&scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email" + "&redirect_after_login=" + redirectAfterLogin;
+                var redirectAfterLogin = "&redirect_after_login=" + encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=' + provider.name + pageUrl + window.location.hash);
+                switch (provider.name) {
+                    case "google":
+                        _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
+                        scope = "scope=https://www.googleapis.com/auth/userinfo.profile&scope=https://www.googleapis.com/auth/userinfo.email";
+                        break;
+                    case "github":
+                        _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
+                        scope = "scope=user,repo,write:public_key";
+                        break;
+                }
+                oauthUrl = oauthUrl + scope + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
-                    callback(url);
+                    callback(oauthUrl);
                 }
             }
         };
-        var loginWithGithub = function(page, callback) {
-            if (isWebsocketEnabled()) {
-                var pageUrl = "&page_url=" + window.location.pathname;
-                _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
-                var redirectAfterLogin=encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=github' + pageUrl + window.location.hash);
-                var url = "/api/oauth/authenticate?oauth_provider=github&mode=federated_login&scope=user,repo,write:public_key" + "&redirect_after_login=" + redirectAfterLogin;
-                if (typeof callback !== 'undefined') {
-                    callback(url);
-                }
-            }
-        };
+
         /*
             Every method accepts 0 or more data values and two callbacks (success and error)
 
@@ -431,6 +440,22 @@
                 redirectToUrl(redirect_url);
             });
         };
+        //TODO api returns list of oAuth providers
+        var getOAuthproviders = function(success) {
+            var deferredResult = $.Deferred();
+            var url = "/api/oauth/";
+            $.ajax({
+                url: url,
+                type: "GET"
+            })
+            .success(function(response){
+                success(deferredResult.resolve(response));
+            })
+            .error(function(error){
+                deferredResult.reject(error);
+            });
+            return deferredResult;
+        };
 
         var getResponseMessage = function(response){
             var responseErr;
@@ -456,6 +481,8 @@
             ensureExistenceAccount: ensureExistenceAccount,
             getOwnAccount: getOwnAccount,
             isApiAvailable: isApiAvailable,
+            getOAuthproviders: getOAuthproviders,
+            loginWithOauthProvider: loginWithOauthProvider,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
@@ -588,8 +615,7 @@
                     });
                 }
             },
-            loginWithGoogle: loginWithGoogle,
-            loginWithGithub: loginWithGithub,
+
             createTenant: function(email, domain, error) {
                 var data = {
                     email: email.toLowerCase(),
@@ -630,9 +656,9 @@
                     }
                 });
             },
-            // Get user email by reset password id
-            confirmSetupPassword: function(success, error) {
-                var confirmSetupPasswordUrl = "/api/password/verify",
+            // Verify reset password id
+            verfySetupPasswordId: function(error) {
+                var verifySetupPasswordIdUrl = "/api/password/verify",
                     id = getQueryParameterByName("id");
                 if (typeof id === 'undefined') {
                     error([
@@ -641,19 +667,16 @@
                     return;
                 }
                 $.ajax({
-                    url: confirmSetupPasswordUrl + "/" + id,
+                    url: verifySetupPasswordIdUrl + "/" + id,
                     type: "GET",
-                    success: function(output, status, xhr) {
-                        success({
-                            email: xhr.responseText
-                        });
-                    },
-                    error: function(xhr /*,status , err*/ ) {
+                    success: function() {
+                     },
+                    error: function(response) {
                         setTimeout(function() {
                             window.location = "/site/recover-password";
                         }, 10000);
                         error([
-                            new AccountError(null, xhr.responseText + ".<br>You will be redirected in 10 sec")
+                            new AccountError(null, getResponseMessage(response) + ".<br>You will be redirected in 10 sec")
                         ]);
                     }
                 });

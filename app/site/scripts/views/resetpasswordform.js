@@ -23,10 +23,7 @@ define(["underscore", "views/accountformbase","models/account"],
         var ResetPasswordForm = AccountFormBase.extend({
 
             resolveUserEmail : function(){
-                Account.confirmSetupPassword(
-                    _.bind(function(d){
-                        this.$(".email").html(d.email);
-                    },this),
+                Account.verfySetupPasswordId(
                     _.bind(function(errors){
                         if(errors.length !== 0){
                             this.trigger(
