@@ -333,9 +333,9 @@
                 </executions>
                 <dependencies>
                     <dependency>
-                        <groupId>com.codenvy.plugin-gae</groupId>
-                        <artifactId>codenvy-plugin-gae</artifactId>
-                        <version>${project.version}</version>
+                       <groupId>${project.groupId}</groupId>
+                       <artifactId>${project.artifactId}</artifactId>
+                       <version>${project.version}</version>
                     </dependency>
                 </dependencies>
             </plugin>
