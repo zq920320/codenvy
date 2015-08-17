@@ -20,7 +20,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvi
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.eclipse.che.ide.ext.git.shared.PushResponse;
+import org.eclipse.che.api.git.shared.PushResponse;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;

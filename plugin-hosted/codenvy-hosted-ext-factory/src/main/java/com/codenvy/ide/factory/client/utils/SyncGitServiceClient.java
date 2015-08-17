@@ -17,6 +17,11 @@
  */
 package com.codenvy.ide.factory.client.utils;
 
+import org.eclipse.che.api.git.shared.AddRequest;
+import org.eclipse.che.api.git.shared.CommitRequest;
+import org.eclipse.che.api.git.shared.InitRequest;
+import org.eclipse.che.api.git.shared.Revision;
+import org.eclipse.che.api.git.shared.Status;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
@@ -24,11 +29,6 @@ import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.git.client.GitLocalizationConstant;
-import org.eclipse.che.ide.ext.git.shared.AddRequest;
-import org.eclipse.che.ide.ext.git.shared.CommitRequest;
-import org.eclipse.che.ide.ext.git.shared.InitRequest;
-import org.eclipse.che.ide.ext.git.shared.Revision;
-import org.eclipse.che.ide.ext.git.shared.Status;
 import org.eclipse.che.ide.rest.RestContext;
 
 import javax.annotation.Nonnull;

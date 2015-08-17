@@ -10,11 +10,11 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import com.codenvy.plugin.contribution.vcs.client.Remote;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 

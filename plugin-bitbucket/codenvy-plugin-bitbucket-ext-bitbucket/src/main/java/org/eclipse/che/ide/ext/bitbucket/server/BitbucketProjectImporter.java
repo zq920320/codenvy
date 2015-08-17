@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.bitbucket.server;
 
-import org.eclipse.che.ide.ext.git.server.GitConnectionFactory;
-import org.eclipse.che.ide.ext.git.server.GitProjectImporter;
+import org.eclipse.che.api.git.GitConnectionFactory;
+import org.eclipse.che.api.git.GitProjectImporter;
 import org.eclipse.che.vfs.impl.fs.LocalPathResolver;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;

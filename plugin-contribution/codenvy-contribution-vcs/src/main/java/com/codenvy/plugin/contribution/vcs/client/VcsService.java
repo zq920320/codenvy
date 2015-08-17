@@ -10,8 +10,10 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client;
 
+import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.api.git.shared.PushResponse;
+import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.ide.ext.git.shared.PushResponse;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import javax.annotation.Nonnull;

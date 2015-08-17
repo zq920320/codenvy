@@ -12,11 +12,12 @@ package com.codenvy.plugin.contribution.client.steps;
 
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
-import com.codenvy.plugin.contribution.vcs.client.Remote;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import org.eclipse.che.api.git.shared.Remote;
 
 import javax.annotation.Nonnull;
 import javax.inject.Inject;
