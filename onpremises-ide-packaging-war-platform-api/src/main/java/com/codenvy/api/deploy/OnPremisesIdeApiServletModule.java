@@ -42,7 +42,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/java-name-environment/*",
                "/project-template/*",
                "/builder/*",
-               "/runner/*",
                "/debug-java/*",
                "/async/*",
                "/git/*",
@@ -52,6 +51,8 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/appengine/*",
                "/gae-validator/*",
                "/gae-parameters/*")
+                .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
+        filterRegex("^/runner/(?!processes$).+")
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
         filterRegex("^/workspace/(?!find/|find$|all/|all$|temp/|temp$).+")
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
