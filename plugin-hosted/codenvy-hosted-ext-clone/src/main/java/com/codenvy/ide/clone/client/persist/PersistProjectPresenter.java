@@ -48,7 +48,6 @@ import org.eclipse.che.ide.api.event.ProjectActionEvent;
 import org.eclipse.che.ide.api.event.ProjectActionHandler;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.Config;
@@ -265,16 +264,16 @@ public class PersistProjectPresenter {
                 }
             } else {
                 try {
-                    workspaceServiceClient.getMemberships(new AsyncRequestCallback<Array<MemberDescriptor>>(
-                            dtoUnmarshallerFactory.newArrayUnmarshaller(MemberDescriptor.class)) {
+                    workspaceServiceClient.getMemberships(new AsyncRequestCallback<List<MemberDescriptor>>(
+                            dtoUnmarshallerFactory.newListUnmarshaller(MemberDescriptor.class)) {
                         @Override
-                        protected void onSuccess(Array<MemberDescriptor> result) {
+                        protected void onSuccess(List<MemberDescriptor> result) {
                             persistWorkspaces = new ArrayList<>();
 
                             // add persist
-                            for (int i = 0; i < result.size(); i++) {
-                                if (!result.get(i).getWorkspaceReference().isTemporary()) {
-                                    persistWorkspaces.add(result.get(i).getWorkspaceReference().getName());
+                            for (MemberDescriptor aResult : result) {
+                                if (!aResult.getWorkspaceReference().isTemporary()) {
+                                    persistWorkspaces.add(aResult.getWorkspaceReference().getName());
                                 }
                             }
 
@@ -346,13 +345,13 @@ public class PersistProjectPresenter {
      */
     private void selectWorkspace(final int left, final int top) {
         try {
-            workspaceServiceClient.getMemberships(new AsyncRequestCallback<Array<MemberDescriptor>>(
-                    dtoUnmarshallerFactory.newArrayUnmarshaller(MemberDescriptor.class)) {
+            workspaceServiceClient.getMemberships(new AsyncRequestCallback<List<MemberDescriptor>>(
+                    dtoUnmarshallerFactory.newListUnmarshaller(MemberDescriptor.class)) {
                 @Override
-                protected void onSuccess(Array<MemberDescriptor> result) {
+                protected void onSuccess(List<MemberDescriptor> result) {
                     List<WorkspaceReference> persistWorkspaces = new ArrayList<>();
 
-                    for (MemberDescriptor memberDescriptor : result.asIterable()) {
+                    for (MemberDescriptor memberDescriptor : result) {
                         if (!memberDescriptor.getWorkspaceReference().isTemporary()) {
                             persistWorkspaces.add(memberDescriptor.getWorkspaceReference());
                         }

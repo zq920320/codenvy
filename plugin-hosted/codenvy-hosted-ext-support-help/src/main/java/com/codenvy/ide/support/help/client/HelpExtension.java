@@ -30,11 +30,12 @@ import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
+
+import java.util.List;
 
 
 /**
@@ -86,12 +87,12 @@ public class HelpExtension {
     private void checkPremiumSubscription() {
         final String accountId = Config.getCurrentWorkspace().getAccountId();
         if (accountId != null) {
-            subscriptionServiceClient.getSubscriptions(accountId, new AsyncRequestCallback<Array<SubscriptionDescriptor>>(
-                    dtoUnmarshallerFactory.newArrayUnmarshaller(SubscriptionDescriptor.class)) {
+            subscriptionServiceClient.getSubscriptions(accountId, new AsyncRequestCallback<List<SubscriptionDescriptor>>(
+                    dtoUnmarshallerFactory.newListUnmarshaller(SubscriptionDescriptor.class)) {
 
                 @Override
-                protected void onSuccess(Array<SubscriptionDescriptor> result) {
-                    for (SubscriptionDescriptor subscription : result.asIterable()) {
+                protected void onSuccess(List<SubscriptionDescriptor> result) {
+                    for (SubscriptionDescriptor subscription : result) {
                         if (!("Saas".equals(subscription.getServiceId()) &&
                               "Community".equals(subscription.getProperties().get("Package")))) {
                             addPremiumSupportHelpAction();

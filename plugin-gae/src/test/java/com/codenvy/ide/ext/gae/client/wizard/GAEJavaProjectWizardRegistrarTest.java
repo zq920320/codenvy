@@ -46,6 +46,6 @@ public class GAEJavaProjectWizardRegistrarTest {
 
     @Test
     public void shouldReturnPages() throws Exception {
-        assertThat(wizardRegistrar.getWizardPages().asIterable(), hasItem(gaeJavaPageProvider));
+        assertThat(wizardRegistrar.getWizardPages(), hasItem(gaeJavaPageProvider));
     }
 }

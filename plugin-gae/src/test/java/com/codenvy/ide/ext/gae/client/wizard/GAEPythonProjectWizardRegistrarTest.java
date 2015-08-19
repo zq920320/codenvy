@@ -46,6 +46,6 @@ public class GAEPythonProjectWizardRegistrarTest {
 
     @Test
     public void shouldReturnPages() throws Exception {
-        assertThat(wizardRegistrar.getWizardPages().asIterable(), hasItem(gaeYamlPageProvider));
+        assertThat(wizardRegistrar.getWizardPages(), hasItem(gaeYamlPageProvider));
     }
 }
