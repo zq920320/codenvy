@@ -19,10 +19,10 @@ package com.codenvy.api.resources.client.service;
 
 import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Client for IDE3 Subscription service.
@@ -31,6 +31,6 @@ import javax.annotation.Nonnull;
  */
 public interface ResourcesServiceClient {
     void redistributeResources(@Nonnull String accountId,
-                               @Nonnull Array<UpdateResourcesDescriptor> updateResources,
+                               @Nonnull List<UpdateResourcesDescriptor> updateResources,
                                AsyncRequestCallback<Void> callback);
 }

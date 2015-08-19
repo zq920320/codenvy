@@ -17,6 +17,10 @@
  */
 package com.codenvy.ide.clone.client.persist;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.web.bindery.event.shared.EventBus;
+
 import org.eclipse.che.api.analytics.client.logger.AnalyticsEventLogger;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.project.shared.dto.ProjectReference;
@@ -24,15 +28,13 @@ import org.eclipse.che.ide.api.event.OpenProjectEvent;
 import org.eclipse.che.ide.api.event.RefreshProjectTreeEvent;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.commons.exception.ServerException;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.web.bindery.event.shared.EventBus;
+
+import java.util.List;
 
 /**
  * Performs copy to Named Workspace functionality.
@@ -50,7 +52,7 @@ public class PersistProjectHandler {
 
     private String srcWorkspaceId;
 
-    private Array<ProjectReference> srcWorkspaceProjects;
+    private List<ProjectReference> srcWorkspaceProjects;
 
     private boolean openProjectAfterCloning;
     private String  projectNameToOpen;
@@ -127,10 +129,10 @@ public class PersistProjectHandler {
      */
     private void getSourceWorkspaceProjects() {
         try {
-            projectServiceClient.getProjectsInSpecificWorkspace(srcWorkspaceId, new AsyncRequestCallback<Array<ProjectReference>>(
-                    dtoUnmarshallerFactory.newArrayUnmarshaller(ProjectReference.class)) {
+            projectServiceClient.getProjectsInSpecificWorkspace(srcWorkspaceId, new AsyncRequestCallback<List<ProjectReference>>(
+                    dtoUnmarshallerFactory.newListUnmarshaller(ProjectReference.class)) {
                 @Override
-                protected void onSuccess(Array<ProjectReference> result) {
+                protected void onSuccess(List<ProjectReference> result) {
                     srcWorkspaceProjects = result;
                     openProjectAfterCloning = srcWorkspaceProjects.size() == 1;
                     copyProjects(0);

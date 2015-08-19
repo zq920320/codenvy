@@ -10,16 +10,17 @@
  *******************************************************************************/
 package com.codenvy.ide.ext.gae.client.wizard;
 
-import org.eclipse.che.api.project.shared.dto.ImportProject;
-import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
-import org.eclipse.che.ide.api.wizard.WizardPage;
-import org.eclipse.che.ide.collections.Array;
-import org.eclipse.che.ide.collections.Collections;
 import com.codenvy.ide.ext.gae.client.wizard.yaml.GAEYamlPagePresenter;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
+import org.eclipse.che.api.project.shared.dto.ImportProject;
+import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
+import org.eclipse.che.ide.api.wizard.WizardPage;
+
 import javax.annotation.Nonnull;
+import java.util.ArrayList;
+import java.util.List;
 
 import static com.codenvy.ide.ext.gae.shared.GAEConstants.GAE_PYTHON_ID;
 import static org.eclipse.che.ide.ext.python.shared.ProjectAttributes.PYTHON_CATEGORY;
@@ -30,11 +31,11 @@ import static org.eclipse.che.ide.ext.python.shared.ProjectAttributes.PYTHON_CAT
  * @author Artem Zatsarynnyy
  */
 public class GAEPythonProjectWizardRegistrar implements ProjectWizardRegistrar {
-    private final Array<Provider<? extends WizardPage<ImportProject>>> wizardPages;
+    private final List<Provider<? extends WizardPage<ImportProject>>> wizardPages;
 
     @Inject
     public GAEPythonProjectWizardRegistrar(Provider<GAEYamlPagePresenter> mavenPagePresenter) {
-        wizardPages = Collections.createArray();
+        wizardPages = new ArrayList<>();
         wizardPages.add(mavenPagePresenter);
     }
 
@@ -49,7 +50,7 @@ public class GAEPythonProjectWizardRegistrar implements ProjectWizardRegistrar {
     }
 
     @Nonnull
-    public Array<Provider<? extends WizardPage<ImportProject>>> getWizardPages() {
+    public List<Provider<? extends WizardPage<ImportProject>>> getWizardPages() {
         return wizardPages;
     }
 }
