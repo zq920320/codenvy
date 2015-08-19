@@ -23,7 +23,7 @@
 # Set path to organization service server
 [ -z "${CHE_LOCAL_CONF_DIR}" ] && CHE_LOCAL_CONF_DIR="${CATALINA_HOME}/data/conf"
 
-[ -z "${CODENVY_LOGS_DIR}" ]  && CODENVY_LOGS_DIR="$CATALINA_HOME/logs"
+[ -z "${CHE_LOGS_DIR}" ]  && CHE_LOGS_DIR="$CATALINA_HOME/logs"
 
 
 ANALYTICS_OPTS="-Danalytics.logback.smtp-appender.configuration=${CHE_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
@@ -32,7 +32,7 @@ ANALYTICS_OPTS="-Danalytics.logback.smtp-appender.configuration=${CHE_LOCAL_CONF
 #          -Dcom.sun.management.jmxremote.password.file=${CATALINA_HOME}/conf/jmxremote.password \
 #          -Dcom.sun.management.jmxremote.access.file=${CATALINA_HOME}/conf/jmxremote.access \
 #          -Dcom.sun.management.jmxremote.ssl=false"
-JAVA_OPTS="$JAVA_OPTS -Dcodenvy.logs.dir=${CODENVY_LOGS_DIR}"
+JAVA_OPTS="$JAVA_OPTS -Dche.logs.dir=${CHE_LOGS_DIR}"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
 #REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
