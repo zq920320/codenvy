@@ -21,12 +21,12 @@
 [ -z "${JAVA_OPTS}" ]  && JAVA_OPTS="-Xms256m -Xmx2G -XX:MaxPermSize=256m -XX:+UseCompressedOops"
 
 # Set path to organization service server
-[ -z "${CODENVY_LOCAL_CONF_DIR}" ] && CODENVY_LOCAL_CONF_DIR="${CATALINA_HOME}/data/conf"
+[ -z "${CHE_LOCAL_CONF_DIR}" ] && CHE_LOCAL_CONF_DIR="${CATALINA_HOME}/data/conf"
 
 [ -z "${CODENVY_LOGS_DIR}" ]  && CODENVY_LOGS_DIR="$CATALINA_HOME/logs"
 
 
-ANALYTICS_OPTS="-Danalytics.logback.smtp-appender.configuration=${CODENVY_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
+ANALYTICS_OPTS="-Danalytics.logback.smtp-appender.configuration=${CHE_LOCAL_CONF_DIR}/logback-smtp-appender.xml \
                 -Dcom.codenvy.analytics.logpath=${CATALINA_HOME}/logs"
 #JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
 #          -Dcom.sun.management.jmxremote.password.file=${CATALINA_HOME}/conf/jmxremote.password \
@@ -39,8 +39,8 @@ SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf
 
 export CATALINA_HOME
 export CATALINA_TMPDIR
-export CODENVY_LOCAL_CONF_DIR
+export CHE_LOCAL_CONF_DIR
 export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $QUARTZ_OPTS $REMOTE_DEBUG"
 export CLASSPATH="${CATALINA_HOME}/conf/"
 
-echo "Using LOCAL_CONF_DIR:  $CODENVY_LOCAL_CONF_DIR"
+echo "Using LOCAL_CONF_DIR:  $CHE_LOCAL_CONF_DIR"

@@ -140,9 +140,9 @@ public class Configurator {
             return loadFromResource();
         } catch (IOException e) {
             try {
-                return loadFromFile(System.getenv("CODENVY_LOCAL_CONF_DIR"));
+                return loadFromFile(System.getenv("CHE_LOCAL_CONF_DIR"));
             } catch (IOException e1) {
-                return loadFromFile(System.getProperty("codenvy.local.conf.dir"));
+                return loadFromFile(System.getProperty("che.local.conf.dir"));
             }
         }
     }
