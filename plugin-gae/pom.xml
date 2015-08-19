@@ -26,6 +26,9 @@
     <properties>
         <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
         <gwt.test.skip>true</gwt.test.skip>
+        <!-- Plugin-gae should be compiled via java 1.7 because it is incompatible with java 1.8 -->
+        <maven.compiler.source>1.7</maven.compiler.source>
+        <maven.compiler.target>1.7</maven.compiler.target>
     </properties>
     <dependencies>
         <dependency>
