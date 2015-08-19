@@ -19,10 +19,10 @@ package com.codenvy.api.subscription.gwt.client;
 
 import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * @author Sergii Leschenko
@@ -36,7 +36,7 @@ public interface SubscriptionServiceClient {
      * @param callback
      *         the callback to use for the response
      */
-    void getSubscriptions(@Nonnull String accountId, AsyncRequestCallback<Array<SubscriptionDescriptor>> callback);
+    void getSubscriptions(@Nonnull String accountId, AsyncRequestCallback<List<SubscriptionDescriptor>> callback);
 
     /**
      * Get subscription with specified id of specified account.
@@ -50,6 +50,6 @@ public interface SubscriptionServiceClient {
      */
     void getSubscriptionByServiceId(@Nonnull String accountId,
                                     @Nonnull String serviceId,
-                                    AsyncRequestCallback<Array<SubscriptionDescriptor>> callback);
+                                    AsyncRequestCallback<List<SubscriptionDescriptor>> callback);
 
 }

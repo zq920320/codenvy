@@ -36,13 +36,11 @@ import org.eclipse.che.api.project.shared.dto.ProjectUpdate;
 import org.eclipse.che.api.project.shared.dto.Source;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -148,15 +146,15 @@ public class FactoryProjectImporter {
     }
 
     private void selectAvailableProjectName() {
-        projectServiceClient.getProjects(new AsyncRequestCallback<Array<ProjectReference>>(
-                dtoUnmarshallerFactory.newArrayUnmarshaller(ProjectReference.class)) {
+        projectServiceClient.getProjects(new AsyncRequestCallback<List<ProjectReference>>(
+                dtoUnmarshallerFactory.newListUnmarshaller(ProjectReference.class)) {
             @Override
-            protected void onSuccess(Array<ProjectReference> result) {
+            protected void onSuccess(List<ProjectReference> result) {
                 String projectName = factory.getProject().getName();
 
                 if (!result.isEmpty()) {
                     Set<String> names = new HashSet<>();
-                    for (ProjectReference projectReference : result.asIterable()) {
+                    for (ProjectReference projectReference : result) {
                         names.add(projectReference.getName());
                     }
 

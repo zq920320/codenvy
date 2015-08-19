@@ -30,12 +30,14 @@ import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.preferences.AbstractPreferencePagePresenter;
-import org.eclipse.che.ide.collections.Collections;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.runner.client.RunnerLocalizationConstant;
 import org.eclipse.che.ide.ext.runner.client.tabs.properties.panel.common.Shutdown;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * The presenter for managing user's runners settings,.
@@ -128,7 +130,10 @@ public class RunnerPreferencesPresenter extends AbstractPreferencePagePresenter 
                                                                         .withWorkspaceId(appContext.getWorkspace().getId())
                                                                         .withRunnerTimeout(view.getShutdown().getTimeout());
 
-        resourcesService.redistributeResources(appContext.getWorkspace().getAccountId(), Collections.createArray(updateResourcesDescriptor),
+        List<UpdateResourcesDescriptor> updateResourcesDescriptors = new ArrayList<>();
+        updateResourcesDescriptors.add(updateResourcesDescriptor);
+
+        resourcesService.redistributeResources(appContext.getWorkspace().getAccountId(), updateResourcesDescriptors,
                                                new AsyncRequestCallback<Void>() {
                                                    @Override
                                                    protected void onSuccess(Void result) {
