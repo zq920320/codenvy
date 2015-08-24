@@ -1283,4 +1283,15 @@
             </index>
         </indexes>
     </collection>
+    <collection name="email_validation_send">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="email">
+                <field>email</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

@@ -385,4 +385,10 @@
         <parameter key="EVENT" value="trial-expired"/>
         <parameter key="STORAGE_TABLE" value="trial_expired"/>
     </script>
+    <script name="send_verification_email">
+        <description>The number of invites</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="STORAGE_TABLE" value="email_validation_send"/>
+    </script>
 </scripts>

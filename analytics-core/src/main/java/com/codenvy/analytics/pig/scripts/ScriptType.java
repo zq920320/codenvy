@@ -145,7 +145,8 @@ public enum ScriptType {
     TEST_COMBINE_CLOSEST_EVENTS,
     TEST_CALCULATE_TIME,
     TEST_LOAD_RESOURCES,
-    TEST_FIX_FACTORY_URL;
+    TEST_FIX_FACTORY_URL,
+    SEND_VERIFICATION_EMAIL;
 
 
     /** @return list of mandatory parameters required to be passed into the script */

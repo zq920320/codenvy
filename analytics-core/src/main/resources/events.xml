@@ -535,4 +535,10 @@
             <param>PLAN</param>
         </parameters>
     </event>
+    <event name="singup-validation-email-send">
+        <description>User sent invite</description>
+        <parameters>
+            <param>EMAIL</param>
+        </parameters>
+    </event>
 </events>
