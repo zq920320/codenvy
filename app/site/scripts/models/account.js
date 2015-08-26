@@ -61,8 +61,8 @@
                         });
                     }
                 });
-                var pageUrl = "&page_url=" + window.location.pathname;
-                var redirectAfterLogin = "&redirect_after_login=" + encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + (window.location.search ? '&' : '') + 'oauth_provider=' + provider.name + pageUrl + window.location.hash);
+                //var pageUrl = "&page_url=" + window.location.pathname;
+                var redirectAfterLogin = "&redirect_after_login=" + encodeURIComponent(window.location.origin + "/api/oauth?" + window.location.search.substring(1) + window.location.hash + (window.location.search ? '&' : '') + 'oauth_provider=' + provider.name);
                 switch (provider.name) {
                     case "google":
                         _gaq.push(['_trackEvent', 'Regisration', 'Google registration', page]);
@@ -557,17 +557,13 @@
                 var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
                 authenticate(username, bearertoken)
                 .then(function(){
-                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
-                        return ensureExistenceAccount(accountName) // get existence or create a new account
-                        .then(function(account){
-                                return ensureExistenceWorkspace(workspaceName, account.id);
-                        })
-                        .fail(function(error) {
-                            return $.Deferred().reject(error);
-                        });
-                    }else{
-                        return $.Deferred().resolve();
-                    }
+                    return ensureExistenceAccount(accountName) // get existence or create a new account
+                    .then(function(account){
+                            return ensureExistenceWorkspace(workspaceName, account.id);
+                    })
+                    .fail(function(error) {
+                        return $.Deferred().reject(error);
+                    });
                 })
                 .then(function(){
                     if (!redirect_url){
