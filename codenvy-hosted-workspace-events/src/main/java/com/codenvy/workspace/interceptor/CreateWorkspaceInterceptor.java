@@ -23,6 +23,8 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
@@ -53,6 +55,9 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     WsActivityEventSender wsActivityEventSender;
 
     @Inject
+    WorkspaceDao workspaceDao;
+
+    @Inject
     private UserDao userDao;
 
     @Inject
@@ -81,24 +86,29 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
         if (!sendEmailOnWorkspaceCreated) {
             return result;
         }
-        try {
-            if (!descriptor.isTemporary()) {
-                String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
-                Map<String, String> properties = new HashMap<>();
-                properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
-                properties.put("workspace", descriptor.getName());
-                properties.put("free.gbh", freeGbh);
-                properties.put("free.limit", Long.toString(Math.round(Long.parseLong(freeLimit) / 1000)));
-                mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
-                                          "Welcome To Codenvy",
-                                          MediaType.TEXT_HTML,
-                                          IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
-                                          properties);
 
-                LOG.info("Workspace created message send to {}", creatorEmail);
+        if (!descriptor.isTemporary()) {
+            if (workspaceDao.getByAccount(descriptor.getAccountId()).stream().noneMatch(
+                    workspace -> !workspace.isTemporary() && !workspace.getId().equals(descriptor.getId()))) {
+                try {
+                    String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
+                    Map<String, String> properties = new HashMap<>();
+                    properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+                    properties.put("workspace", descriptor.getName());
+                    properties.put("free.gbh", freeGbh);
+                    properties.put("free.limit", Long.toString(Math.round((float)Long.parseLong(freeLimit) / 1000f)));
+                    mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
+                                              "Welcome To Codenvy",
+                                              MediaType.TEXT_HTML,
+                                              IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)),
+                                              properties);
+
+                    LOG.info("Workspace created message send to {}", creatorEmail);
+
+                } catch (Exception e) {
+                    LOG.warn("Unable to send workspace creation notification email", e);
+                }
             }
-        } catch (Exception e) {
-            LOG.warn("Unable to send workspace creation notification email", e);
         }
         return result;
     }
