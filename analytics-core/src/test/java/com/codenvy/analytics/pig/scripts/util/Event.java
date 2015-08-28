@@ -346,13 +346,22 @@ public class Event {
                                                             String factoryUrl,
                                                             String referrerUrl,
                                                             String orgId,
-                                                            String affiliateId) {
-            return new Builder().withParam("EVENT", "factory-url-accepted")
+                                                            String affiliateId,
+                                                            String wsType,
+                                                            String wsLocation) {
+            Builder event = new Builder().withParam("EVENT", "factory-url-accepted")
                                 .withParam("WS", tempWs)
                                 .withParam("REFERRER", referrerUrl)
                                 .withParam("FACTORY-URL", factoryUrl)
                                 .withParam("ORG-ID", orgId)
-                                .withParam("AFFILIATE-ID", affiliateId);
+                                .withParam("AFFILIATE-ID", affiliateId)
+                                .withParam("WS-TYPE", wsType);
+
+            if (wsLocation != null) {
+                event.withParam("WS-LOCATION", wsLocation);
+            }
+
+            return event;
         }
 
         public static Builder collaborativeSessionStartedEvent(String userId, String ws, String sessionId) {

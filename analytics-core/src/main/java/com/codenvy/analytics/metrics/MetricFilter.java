@@ -73,7 +73,9 @@ public enum MetricFilter {
     LAUNCH_TYPE,
     ARTIFACT,
     VERSION,
-    EXISTS;
+    EXISTS,
+    WS_TYPE,
+    WS_LOCATION;
 
     private boolean isNumeric;
 

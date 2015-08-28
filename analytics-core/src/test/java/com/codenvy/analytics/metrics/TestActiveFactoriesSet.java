@@ -44,9 +44,9 @@ public class TestActiveFactoriesSet extends BaseTest {
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserCreatedEvent("uid1", "a1", "a1").withDate("2013-01-01").withTime("10:00:00,000").build());
 
-        events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "").withDate("2013-01-03").withTime("13:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-3", "factory3", "", "", "").withDate("2013-01-04").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "", "named", "acceptor").withDate("2013-01-03").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-3", "factory3", "", "", "", "named", "acceptor").withDate("2013-01-04").withTime("13:00:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", true).withDate("2013-01-01").withTime("13:01:00").build());
         events.add(Event.Builder.createSessionUsageEvent("a1", "tmp-1", "id1", true).withDate("2013-01-01").withTime("13:02:00").build());

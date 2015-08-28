@@ -41,7 +41,7 @@ public class TestBrokenFactoryUrl extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         // broken event, factory url contains new line character
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1\n", "referrer2", "org3", "affiliate2")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl1\n", "referrer2", "org3", "affiliate2", "named", "acceptor")
                                 .withDate("2013-02-10").withTime("11:00:03").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID4, "tmp-4", "anonymoususer_2")
                                 .withDate("2013-02-10").withTime("12:01:00").build());

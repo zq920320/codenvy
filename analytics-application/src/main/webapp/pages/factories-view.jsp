@@ -80,8 +80,10 @@
                 
                 <div id="show-factories" class="btn-group right" targetWidgets="_all">
                     <button class="btn command-btn" default value="">All Factories</button>
-                    <button class="btn command-btn" value="1">Encoded Factories</button>
-                    <button class="btn command-btn" value="0">Non Encoded Factories</button>
+                    <button class="btn command-btn" value="named+owner">Named + Owner</button>
+                    <button class="btn command-btn" value="named+acceptor">Named + Acceptor</button>
+                    <button class="btn command-btn" value="temp+owner">Temp + Owner</button>
+                    <button class="btn command-btn" value="temp+acceptor">Temp + Acceptor</button>
                 </div>
             </div>
             

@@ -72,19 +72,19 @@ public class TestProductUsageFactoryReferrers extends BaseTest {
 
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1", "named", "acceptor")
                         .withDate("2013-02-10").withTime("08:00:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1", "named", "acceptor")
                         .withDate("2013-02-10").withTime("08:00:01").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
+                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2", "named", "acceptor")
                         .withDate("2013-02-10").withTime("08:00:02").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "http://referrer3", "org4", "affiliate2")
+                        .createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "http://referrer3", "org4", "affiliate2", "named", "acceptor")
                         .withDate("2013-02-10").withTime("08:00:03").build());
 
 

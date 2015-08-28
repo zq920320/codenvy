@@ -40,11 +40,11 @@ public class TestFactoryUsed extends BaseTest {
     public void setUp() throws Exception {
         List<Event> events = new ArrayList<>();
 
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory/?id=1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory/?id=1", "referrer1", "org1", "affiliate1", "named", "acceptor")
                                 .withDate("2013-11-20").withTime("10:00:00").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory/f?id=1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory/f?id=1", "referrer1", "org1", "affiliate1", "named", "acceptor")
                                 .withDate("2013-11-20").withTime("11:00:00").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory?id=1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory/factory?id=1", "referrer1", "org1", "affiliate1", "named", "acceptor")
                                 .withDate("2013-11-20").withTime("12:00:00").build());
 
         File log = LogGenerator.generateLog(events);

@@ -73,9 +73,9 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         events.add(Event.Builder.createWorkspaceCreatedEvent(WID2, "ws2", UID2)
                                 .withDate("2013-11-20").withTime("08:00:00").build());
 
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory1", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID1, "factory1", "referrer1", "org1", "affiliate1", "named", "acceptor")
                                 .withDate("2013-11-20").withTime("11:00:00").build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory2", "referrer1", "org1", "affiliate1")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent(TWID2, "factory2", "referrer1", "org1", "affiliate1", "named", "acceptor")
                                 .withDate("2013-11-20").withTime("11:00:00").build());
 
         events.add(Event.Builder.createUserAddedToWsEvent(AUID1, TWID1, "website").withDate("2013-11-20", "07:10:00").build());

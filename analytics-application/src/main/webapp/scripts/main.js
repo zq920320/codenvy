@@ -168,7 +168,13 @@ function AnalyticsMain() {
         // process show-factories selector
         var selectedShowFactoriesButton = $("#show-factories button.btn-primary");
         if (selectedShowFactoriesButton.doesExist() && selectedShowFactoriesButton.val() != "") {
-            params.encoded_factory = selectedShowFactoriesButton.val();
+            var factoryRoutingFlags = selectedShowFactoriesButton.val();
+            if (factoryRoutingFlags != null) {
+                // extract factory routing attributes from the value of button, in format "<ws_type>+<ws_location>"
+                factoryRoutingFlags = factoryRoutingFlags.split("+");
+                params.ws_type = factoryRoutingFlags[0];
+                params.ws_location = factoryRoutingFlags[1];
+            }
         }
 
         // process show-tasks selector
@@ -343,12 +349,6 @@ function AnalyticsMain() {
         var uiPreferencesButtons = jQuery("#ui-preferences button");
         if (uiPreferencesButtons.doesExist()) {
             setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
-        }
-        
-        // update show encoded selection buttons
-        var showFactoriesButtons = jQuery("#show-factories button");
-        if (showFactoriesButtons.doesExist()) {
-            setPrimaryButtonOnValue(showFactoriesButtons, params["encoded_factory"]);
         }
 
         // update show encoded selection buttons

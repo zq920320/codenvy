@@ -31,7 +31,6 @@ import com.codenvy.analytics.metrics.users.UsersStatisticsList;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -61,7 +60,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(
             Event.Builder
-                .createFactoryUrlAcceptedEvent("tmp-1", TEST_ENCODED_FACTORY_URL, "http://referrer1", "org1", "affiliate1")
+                .createFactoryUrlAcceptedEvent("tmp-1", TEST_ENCODED_FACTORY_URL, "http://referrer1", "org1", "affiliate1", "named", "acceptor")
                 .withDate("2013-02-10").withTime("10:00:00").build());
 
 
@@ -78,7 +77,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
             Event.Builder
-                .createFactoryUrlAcceptedEvent("tmp-2", TEST_FACTORY_URL, "http://referrer2", "org2", "affiliate1")
+                .createFactoryUrlAcceptedEvent("tmp-2", TEST_FACTORY_URL, "http://referrer2", "org2", "affiliate1", "named", "acceptor")
                 .withDate("2013-02-10").withTime("10:20:00").build());
 
 
@@ -110,7 +109,7 @@ public class TestFactoryStatisticsFilteringById extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.CREATED_TEMPORARY_WORKSPACES, MetricType.TEMPORARY_WORKSPACES_CREATED).getParamsAsMap());
         pigServer.execute(ScriptType.CREATED_TEMPORARY_WORKSPACES, builder.build());
-        
+
         DataComputationFeature dataComputationFeature = new DataComputationFeature();
         dataComputationFeature.forceExecute(builder.build());
     }

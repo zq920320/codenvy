@@ -53,15 +53,15 @@ public class TestTopMetrics extends BaseTest {
                                 .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "http://referrer1", "org1", "affiliate1", "named", "acceptor")
                         .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1", "named", "acceptor")
                         .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2")
+                        .createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "http://referrer2", "org3", "affiliate2", "named", "acceptor")
                         .withDate("2013-02-10").withTime("11:00:00").build());
 
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmp-1", "id1", true)

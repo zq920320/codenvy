@@ -1209,8 +1209,7 @@ function AnalyticsConfiguration() {
         factoriesOverview: {
             presenterType: "SummaryTablePresenter",
             modelViewName: "factory_statistics_list",
-            modelMetricName: "factory_statistics",
-            doNotDisplayCSVButton: true
+            modelMetricName: "factory_statistics"
         },
 
         factoryOverview: {
@@ -1451,7 +1450,8 @@ function AnalyticsConfiguration() {
         "factory",
         "referrer",
         "factory_id",
-        "encoded_factory",
+        "ws_type",
+        "ws_location",
         "time_interval",
         "expanded_metric_name",
         "project",

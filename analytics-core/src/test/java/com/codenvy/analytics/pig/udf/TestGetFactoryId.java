@@ -62,13 +62,13 @@ public class TestGetFactoryId extends BaseTest {
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "tmp-5", "anonymousUser_00002").withDate("2013-01-01").withTime("11:00:04,000").build());
         events.add(Event.Builder.createWorkspaceCreatedEvent("wsid5", "tmp-6", "anonymousUser_00002").withDate("2013-01-01").withTime("12:00:04,000").build());
 
-        events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-3", "https://test.com/factory?id=fid001", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-4", "https://test.com/factory?id=fid002", "", "", "").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-1", "factory1", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-2", "factory2", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-3", "https://test.com/factory?id=fid001", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("13:00:00").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-4", "https://test.com/factory?id=fid002", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("13:00:00").build());
 
-        events.add(createFactoryUrlAcceptedEvent("tmp-5", "https://test.com/factory?id=fid003", "", "", "").withDate("2013-01-01").withTime("11:00:10").build());
-        events.add(createFactoryUrlAcceptedEvent("tmp-6", "https://test.com/factory?id=fid004", "", "", "").withDate("2013-01-01").withTime("12:00:10").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-5", "https://test.com/factory?id=fid003", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("11:00:10").build());
+        events.add(createFactoryUrlAcceptedEvent("tmp-6", "https://test.com/factory?id=fid004", "", "", "", "named", "acceptor").withDate("2013-01-01").withTime("12:00:10").build());
 
         File log = LogGenerator.generateLog(events);
 
