@@ -24,6 +24,8 @@ import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.api.workspace.shared.dto.NewWorkspace;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
@@ -42,6 +44,9 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyMapOf;
@@ -75,6 +80,9 @@ public class CreateWorkspaceInterceptorTest {
     private WorkspaceDescriptor workspaceDescriptor;
 
     @Mock
+    private WorkspaceDao workspaceDao;
+
+    @Mock
     private WsActivityEventSender wsActivityEventSender;
 
     @InjectMocks
@@ -90,6 +98,8 @@ public class CreateWorkspaceInterceptorTest {
 
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl(recipient, "askd123123", null, null, false));
+        when(workspaceDescriptor.getAccountId()).thenReturn("acc123");
+        when(workspaceDao.getByAccount(anyString())).thenReturn(Collections.emptyList());
         doNothing().when(wsActivityEventSender).onActivity(anyString(), anyBoolean());
     }
 
@@ -118,6 +128,16 @@ public class CreateWorkspaceInterceptorTest {
     public void shouldNotSendEmailIfWorkspaceiIsTemporary() throws Throwable {
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(workspaceDescriptor.isTemporary()).thenReturn(true);
+        interceptor.invoke(invocation);
+        verifyZeroInteractions(mailSenderClient);
+    }
+
+
+    @Test
+    public void shouldNotSendEmailIfWorkspaceiIsNotFirstInAccount() throws Throwable {
+        when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
+        List<Workspace> otherWs = Arrays.asList(new Workspace().withId("anotherid"));
+        when(workspaceDao.getByAccount(anyString())).thenReturn(otherWs);
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }
