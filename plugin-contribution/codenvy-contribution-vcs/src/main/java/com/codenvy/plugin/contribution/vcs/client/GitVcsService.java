@@ -15,6 +15,7 @@ import com.google.inject.Inject;
 
 import org.eclipse.che.api.git.gwt.client.GitServiceClient;
 import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.api.git.shared.BranchCheckoutRequest;
 import org.eclipse.che.api.git.shared.PushResponse;
 import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.git.shared.Revision;
@@ -70,17 +71,21 @@ public class GitVcsService implements VcsService {
     @Override
     public void checkoutBranch(@Nonnull final ProjectDescriptor project, @Nonnull final String name,
                                final boolean createNew, @Nonnull final AsyncCallback<String> callback) {
-        service.branchCheckout(project, name, null, createNew, new AsyncRequestCallback<String>() {
-            @Override
-            protected void onSuccess(final String branchName) {
-                callback.onSuccess(branchName);
-            }
+        service.branchCheckout(project,
+                               dtoFactory.createDto(BranchCheckoutRequest.class)
+                                         .withName(name)
+                                         .withCreateNew(createNew),
+                               new AsyncRequestCallback<String>() {
+                                   @Override
+                                   protected void onSuccess(final String branchName) {
+                                       callback.onSuccess(branchName);
+                                   }
 
-            @Override
-            protected void onFailure(final Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
+                                   @Override
+                                   protected void onFailure(final Throwable exception) {
+                                       callback.onFailure(exception);
+                                   }
+                               });
     }
 
     @Override
