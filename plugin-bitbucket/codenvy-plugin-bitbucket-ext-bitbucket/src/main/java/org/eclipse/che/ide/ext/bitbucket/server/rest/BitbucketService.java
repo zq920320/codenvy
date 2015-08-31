@@ -10,9 +10,11 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.bitbucket.server.rest;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.git.GitException;
-import org.eclipse.che.ide.commons.ParsingResponseException;
 import org.eclipse.che.ide.ext.bitbucket.server.Bitbucket;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketException;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketKeyUploader;
@@ -37,8 +39,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.io.IOException;
-
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 /**
  * REST service for Bitbucket.
@@ -66,7 +66,7 @@ public class BitbucketService {
     @GET
     @Path("user")
     @Produces(APPLICATION_JSON)
-    public BitbucketUser getUser() throws IOException, BitbucketException, ParsingResponseException {
+    public BitbucketUser getUser() throws IOException, BitbucketException, ServerException {
         return bitbucket.getUser();
     }
 
@@ -78,7 +78,7 @@ public class BitbucketService {
     @Produces(APPLICATION_JSON)
     public BitbucketRepository getRepository(@PathParam("owner") final String owner,
                                              @PathParam("repositorySlug") final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException {
+            throws IOException, BitbucketException, ServerException {
 
         return bitbucket.getRepository(owner, repositorySlug);
     }
@@ -91,7 +91,7 @@ public class BitbucketService {
     @Produces(APPLICATION_JSON)
     public BitbucketRepositories getRepositoryForks(@PathParam("owner") final String owner,
                                                     @PathParam("repositorySlug") final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException {
+            throws IOException, BitbucketException, ServerException {
 
         return bitbucket.getRepositoryForks(owner, repositorySlug);
     }
@@ -106,7 +106,7 @@ public class BitbucketService {
                                                   @PathParam("repositorySlug") final String repositorySlug,
                                                   @QueryParam("forkName") final String forkName,
                                                   @QueryParam("isForkPrivate") @DefaultValue("false") final boolean isForkPrivate)
-            throws IOException, BitbucketException, ParsingResponseException {
+            throws IOException, BitbucketException, ServerException {
 
         return bitbucket.forkRepository(owner, repositorySlug, forkName, isForkPrivate);
     }
@@ -119,7 +119,7 @@ public class BitbucketService {
     @Produces(APPLICATION_JSON)
     public BitbucketPullRequests getRepositoryPullRequests(@PathParam("owner") final String owner,
                                                            @PathParam("repositorySlug") final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException {
+            throws IOException, BitbucketException, ServerException {
 
         return bitbucket.getRepositoryPullRequests(owner, repositorySlug);
     }
@@ -134,7 +134,7 @@ public class BitbucketService {
     public BitbucketPullRequest openPullRequest(@PathParam("owner") final String owner,
                                                 @PathParam("repositorySlug") final String repositorySlug,
                                                 BitbucketPullRequest pullRequest)
-            throws IOException, BitbucketException, ParsingResponseException {
+            throws IOException, BitbucketException, ServerException {
 
         return bitbucket.openPullRequest(owner, repositorySlug, pullRequest);
     }
