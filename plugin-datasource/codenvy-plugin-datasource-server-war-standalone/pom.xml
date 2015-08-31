@@ -18,7 +18,7 @@
         <groupId>com.codenvy.plugin</groupId>
         <version>3.12.2-SNAPSHOT</version>
     </parent>
-    <artifactId>che-plugin-datasource-server-war-standalone</artifactId>
+    <artifactId>codenvy-plugin-datasource-server-war-standalone</artifactId>
     <packaging>war</packaging>
     <name>Codenvy Plugin :: Datasource :: Server WAR</name>
     <description>Standalone WAR packaging for the server-side par of the datasource plugin</description>
