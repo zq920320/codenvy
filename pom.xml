@@ -29,6 +29,7 @@
         <module>plugin-wso2</module>
         <module>plugin-projectlocker</module>
         <!--<module>plugin-contribution</module>-->
+        <module>plugin-datasource</module>
         <module>plugin-hosted</module>
     </modules>
     <scm>
