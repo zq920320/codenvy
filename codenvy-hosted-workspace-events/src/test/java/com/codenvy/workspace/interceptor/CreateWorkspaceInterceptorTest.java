@@ -112,6 +112,7 @@ public class CreateWorkspaceInterceptorTest {
 
     @Test
     public void shouldNotSendEmailIfInvocationToAnotherMethod() throws Throwable {
+        when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(invocation.getMethod()).thenReturn(WorkspaceService.class.getMethod("remove", String.class));
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
@@ -119,6 +120,7 @@ public class CreateWorkspaceInterceptorTest {
 
     @Test
     public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
+        when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         notificationTurnedOn.set(interceptor, false);
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);

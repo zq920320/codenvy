@@ -39,7 +39,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * Intercepts calls to workspace/create() service and sends welcome email.
+ * Intercepts calls to workspace/create() service, updates WS last access time and sends welcome email in necessary.
  *
  * @author Max Shaposhnik
  */
@@ -80,6 +80,9 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
         // Do not send notification if operation is turned off
+        WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+        wsActivityEventSender.onActivity(descriptor.getId(), descriptor.isTemporary());
+
         if (!sendEmailOnWorkspaceCreated) {
             return result;
         }
