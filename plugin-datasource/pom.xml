@@ -29,7 +29,6 @@
         <module>codenvy-plugin-datasource-ext-client-store</module>
         <module>codenvy-plugin-datasource-server</module>
         <module>codenvy-plugin-datasource-ext-client</module>
-        <module>codenvy-plugin-datasource-server-war-sdk</module>
         <module>codenvy-plugin-datasource-server-war-standalone</module>
     </modules>
 </project>
