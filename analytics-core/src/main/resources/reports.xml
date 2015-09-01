@@ -35,6 +35,7 @@
                     <view>project_report</view>
                     <view>factory-timeline</view>
                     <view>analysis</view>
+                    <view>account-report</view>
                 </views>
                 <context-modifier>
                     <class>com.codenvy.analytics.services.reports.DummyContextModifier</class>

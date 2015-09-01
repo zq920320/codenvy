@@ -461,6 +461,18 @@ function AnalyticsConfiguration() {
             }
         },
 
+        accountReport: {
+            widgetLabel: "Account Report",
+            presenterType: "ReportPresenter",
+            modelViewName: "account_report",
+
+            defaultModelParams: {
+                "time_unit": "month"
+            },
+
+            displayLineChart: true  // default is false
+        },
+
         /** for Event View */
         events: {
             widgetLabel: "Events",
@@ -1542,6 +1554,14 @@ function AnalyticsConfiguration() {
         "timeline_product_usage_condition_above_300_min": "#USERS",
         "timeline_product_usage_condition_below_120_min": "#USERS",
         "timeline_product_usage_condition_between_120_and_300_min": "#USERS",
+
+        "users_accounts": "#USERS",
+        "account_creation_type_google": "#USERS",
+        "account_creation_type_github": "#USERS",
+        "account_creation_type_email": "#USERS",
+        "singup_validation_email_send": "#USERS",
+        "singup_validation_email_confirmed": "#USERS",
+        "singup_validation_email_not_confirmed": "#USERS",
 
 
         /** WORKSPACES */
