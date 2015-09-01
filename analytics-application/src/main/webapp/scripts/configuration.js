@@ -1209,7 +1209,8 @@ function AnalyticsConfiguration() {
         factoriesOverview: {
             presenterType: "SummaryTablePresenter",
             modelViewName: "factory_statistics_list",
-            modelMetricName: "factory_statistics"
+            modelMetricName: "factory_statistics",
+            doNotDisplayCSVButton: true
         },
 
         factoryOverview: {

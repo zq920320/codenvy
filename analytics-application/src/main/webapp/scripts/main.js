@@ -322,7 +322,6 @@ function AnalyticsMain() {
 
         // update metric selection buttons
         var metricButtons = jQuery("#metric button");
-
         if (metricButtons.doesExist()) {
             setPrimaryButtonOnValue(metricButtons, params["metric"]);
         }
@@ -351,7 +350,13 @@ function AnalyticsMain() {
             setPrimaryButtonOnValue(uiPreferencesButtons, params["ui_preferences"]);
         }
 
-        // update show encoded selection buttons
+        // update show factories selection buttons
+        var showFactoriesButtons = jQuery("#show-factories button");
+        if (showFactoriesButtons.doesExist()) {
+            setPrimaryButtonOnValue(showFactoriesButtons);
+        }
+
+        // update show tasks selection buttons
         var showTasksButtons = jQuery("#show-tasks button");
         if (showTasksButtons.doesExist()) {
             setPrimaryButtonOnValue(showTasksButtons, params["task_type"]);
