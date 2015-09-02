@@ -80,7 +80,9 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                             CONVERTED_SESSION,
                             ENCODED_FACTORY,
                             ORG_ID,
-                            EDITS_GIGABYTE_RAM_HOURS
+                            EDITS_GIGABYTE_RAM_HOURS,
+                            WS_TYPE,
+                            WS_LOCATION
         };
     }
 
@@ -107,6 +109,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         group.put(RUNS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + RUNS_GIGABYTE_RAM_HOURS));
         group.put(DEBUGS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + DEBUGS_GIGABYTE_RAM_HOURS));
         group.put(EDITS_GIGABYTE_RAM_HOURS, new BasicDBObject("$sum", "$" + EDITS_GIGABYTE_RAM_HOURS));
+        group.put(WS_TYPE, new BasicDBObject("$last", "$" + WS_TYPE));
+        group.put(WS_LOCATION, new BasicDBObject("$last", "$" + WS_LOCATION));
 
         DBObject project = new BasicDBObject();
         project.put(FACTORY, "$_id");
@@ -129,6 +133,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                     Utils.getTruncOperation(DEBUGS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
         project.put(EDITS_GIGABYTE_RAM_HOURS,
                     Utils.getTruncOperation(EDITS_GIGABYTE_RAM_HOURS, TasksList.MAXIMUM_FRACTION_DIGITS));  // trunc to 4 fraction digits
+        project.put(WS_TYPE, 1);
+        project.put(WS_LOCATION, 1);
 
         return new DBObject[]{new BasicDBObject("$match", match),
                               new BasicDBObject("$group", group),
@@ -167,6 +173,8 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
                 items2Return.put(AFFILIATE_ID, getNotNullStringValue(factoryData.get(AFFILIATE_ID)));
             }
 
+            addFactoryRoutingFlags(items2Return);
+
             list2Return.add(new MapValueData(items2Return));
         }
 
@@ -198,6 +206,32 @@ public class FactoryStatisticsList extends AbstractListValueResulted implements 
         }
 
         return result;
+    }
+
+    private void addFactoryRoutingFlags(Map<String, ValueData> items2Return) {
+        ValueData wsTypeData = items2Return.get(WS_TYPE);
+        ValueData wsLocationData = items2Return.get(WS_LOCATION);
+
+        if (wsTypeData != null && wsLocationData != null) {
+            String factoryRoutingFlags = wsTypeData.getAsString() + "+" + wsLocationData.getAsString();
+            items2Return.put(FACTORY_ROUTING_FLAGS, StringValueData.valueOf(factoryRoutingFlags));
+            return;
+        }
+
+        if (wsTypeData != null) {
+            String factoryRoutingFlags = wsTypeData.getAsString();
+            items2Return.put(FACTORY_ROUTING_FLAGS, StringValueData.valueOf(factoryRoutingFlags));
+            return;
+        }
+
+        if (wsLocationData != null) {
+            String factoryRoutingFlags = wsLocationData.getAsString();
+            items2Return.put(FACTORY_ROUTING_FLAGS, StringValueData.valueOf(factoryRoutingFlags));
+            return;
+        }
+
+        String factoryRoutingFlags = "";
+        items2Return.put(FACTORY_ROUTING_FLAGS, StringValueData.valueOf(factoryRoutingFlags));
     }
 
     private ValueData getNotNullStringValue(ValueData valueData) {

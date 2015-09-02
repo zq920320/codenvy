@@ -71,7 +71,8 @@ public class FactoryStatisticsListPrecomputed extends AbstractListValueResulted 
                             ENCODED_FACTORY,
                             ORG_ID,
                             PROJECT_TYPE,
-                            EDITS_GIGABYTE_RAM_HOURS};
+                            EDITS_GIGABYTE_RAM_HOURS,
+                            FACTORY_ROUTING_FLAGS};
     }
 
     /** {@inheritDoc} */

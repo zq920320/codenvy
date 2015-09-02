@@ -254,7 +254,7 @@ public class TestProductUsageTime extends BaseTest {
                                 .withDate("2014-01-01")
                                 .withTime("09:02:01")
                                 .build());
-        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-workspace01", "https://codenvy.com/factory/?id=01", "", "accounty01", "")
+        events.add(Event.Builder.createFactoryUrlAcceptedEvent("tmp-workspace01", "https://codenvy.com/factory/?id=01", "", "accounty01", "", "named", "acceptor")
                                 .withDate("2014-01-01")
                                 .withTime("09:02:02")
                                 .build());

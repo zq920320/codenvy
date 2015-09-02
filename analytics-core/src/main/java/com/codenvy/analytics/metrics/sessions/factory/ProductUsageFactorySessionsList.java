@@ -20,6 +20,7 @@ package com.codenvy.analytics.metrics.sessions.factory;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.MapValueData;
+import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.AbstractListValueResulted;
@@ -76,18 +77,22 @@ public class ProductUsageFactorySessionsList extends AbstractListValueResulted i
 
         List<ValueData> list2Return = new ArrayList<>();
         for (ValueData items : ((ListValueData)valueData).getAll()) {
-            MapValueData prevItems = (MapValueData)items;
-            Map<String, ValueData> items2Return = new HashMap<>(prevItems.getAll());
+            MapValueData initialItems = (MapValueData)items;
+            Map<String, ValueData> items2Return = new HashMap<>(initialItems.getAll());
 
-            long time = ValueDataUtil.treatAsLong(items2Return.get(TIME));
-            long date = ValueDataUtil.treatAsLong(items2Return.get(DATE));
-
-            items2Return.put(END_TIME, LongValueData.valueOf(time + date));
+            addDateTimeItems(items2Return);
 
             list2Return.add(new MapValueData(items2Return));
         }
 
         return new ListValueData(list2Return);
+    }
+
+    public void addDateTimeItems(Map<String, ValueData> items2Return) {
+        long time = ValueDataUtil.treatAsLong(items2Return.get(TIME));
+        long date = ValueDataUtil.treatAsLong(items2Return.get(DATE));
+
+        items2Return.put(END_TIME, LongValueData.valueOf(time + date));
     }
 
 

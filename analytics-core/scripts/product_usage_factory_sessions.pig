@@ -25,7 +25,7 @@ IMPORT 'macros.pig';
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
 
 u1 = LOAD '$STORAGE_URL.$STORAGE_TABLE_ACCEPTED_FACTORIES' using MongoLoaderAcceptedFactories();
-u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId, factory_id AS factoryId;
+u = FOREACH u1 GENERATE ws AS tmpWs, referrer, factory, org_id AS orgId, affiliate_id AS affiliateId, factory_id AS factoryId, ws_type AS wsType, ws_location AS wsLocation;
 
 ---- finds out all imported projects
 i1 = filterByEvent(l, 'ide-usage');
@@ -61,10 +61,18 @@ s2 = FOREACH s1 GENERATE ToDate(startTime) AS dt,
 
 -- founds out the corresponding referrer and factory
 s3 = JOIN s2 BY tmpWs LEFT, u BY tmpWs;
-s4 = FOREACH s3 GENERATE s2::dt AS dt, s2::tmpWs AS tmpWs, s2::tmpUser AS user, s2::delta AS delta, s2::id AS id,
-        (u::tmpWs IS NULL ? '' : u::factory) AS factory, (u::tmpWs IS NULL ? '' : u::referrer) AS referrer,
-        (u::tmpWs IS NULL ? '' : u::orgId) AS orgId,  (u::tmpWs IS NULL ? '' : u::affiliateId) AS affiliateId,
-        (u::tmpWs IS NULL ? '' : u::factoryId) AS factoryId;
+s4 = FOREACH s3 GENERATE s2::dt AS dt,
+                         s2::tmpWs AS tmpWs,
+                         s2::tmpUser AS user,
+                         s2::delta AS delta,
+                         s2::id AS id,
+                         (u::tmpWs IS NULL ? '' : u::factory) AS factory,
+                         (u::tmpWs IS NULL ? '' : u::referrer) AS referrer,
+                         (u::tmpWs IS NULL ? '' : u::orgId) AS orgId,
+                         (u::tmpWs IS NULL ? '' : u::affiliateId) AS affiliateId,
+                         (u::tmpWs IS NULL ? '' : u::factoryId) AS factoryId,
+                         (u::tmpWs IS NULL ? '' : u::wsType) AS wsType,
+                         (u::tmpWs IS NULL ? '' : u::wsLocation) AS wsLocation;
 
 -- founds out if factory session was converted or wasn't
 -- (if importing operation was inside a session)
@@ -72,27 +80,39 @@ s5 = JOIN s4 BY (tmpWs, user) LEFT, d BY (tmpWs, user);
 s = FOREACH s5 GENERATE s4::dt AS dt, s4::delta AS delta, s4::factory AS factory, s4::referrer AS referrer, s4::user AS user,
                         s4::orgId AS orgId, s4::affiliateId AS affiliateId, s4::factoryId AS factoryId, s4::tmpWs AS ws, s4::id AS id,
                         (d::tmpWs IS NULL ? 0
-                                          : (MilliSecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval*60*1000  > 0 ? 1 : 0 )) AS conv;
+                                          : (MilliSecondsBetween(s4::dt, d::dt) + s4::delta + (long) $inactiveInterval*60*1000  > 0 ? 1 : 0 )) AS conv,
+                        s4::wsType AS wsType,
+                        s4::wsLocation AS wsLocation;
 
 -- sessions with events
 k1 = addEventIndicator(s, l,  'run-started', 'run', '$inactiveInterval');
 k = FOREACH k1 GENERATE t::s::dt AS dt, t::s::delta AS delta, t::s::factory AS factory, t::s::referrer AS referrer,
                         t::s::orgId AS orgId, t::s::affiliateId AS affiliateId, t::s::factoryId AS factoryId, t::s::ws AS ws,
-                        t::s::user AS user, t::s::conv AS conv, t::run AS run, t::s::id AS id;
+                        t::s::user AS user, t::s::conv AS conv, t::run AS run, t::s::id AS id,
+                        t::s::wsType AS wsType,
+                        t::s::wsLocation AS wsLocation;
+
 m1 = addEventIndicator(k, l,  'application-created', 'deploy', '$inactiveInterval');
 m = FOREACH m1 GENERATE t::k::dt AS dt, t::k::delta AS delta, t::k::factory AS factory, t::k::referrer AS referrer,
                         t::k::orgId AS orgId, t::k::affiliateId AS affiliateId, t::k::factoryId AS factoryId, t::k::ws AS ws, t::k::id AS id,
-                        t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::deploy AS deploy;
+                        t::k::user AS user, t::k::conv AS conv, t::k::run AS run, t::deploy AS deploy,
+                        t::k::wsType AS wsType,
+                        t::k::wsLocation AS wsLocation;
 
 n1 = addEventIndicator(m, l,  'build-started', 'build', '$inactiveInterval');
 n = FOREACH n1 GENERATE t::m::dt AS dt, t::m::delta AS delta, t::m::factory AS factory, t::m::referrer AS referrer, t::m::id AS id,
                         t::m::orgId AS orgId, t::m::affiliateId AS affiliateId, t::m::factoryId AS factoryId, t::m::ws AS ws,
-                        t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build;
+                        t::m::user AS user, t::m::conv AS conv, t::m::run AS run, t::m::deploy AS deploy, t::build AS build,
+                        t::m::wsType AS wsType,
+                        t::m::wsLocation AS wsLocation;
 
 o1 = addEventIndicator(n, l,  'debug-started', 'debug', '$inactiveInterval');
 o = FOREACH o1 GENERATE t::n::dt AS dt, t::n::delta AS delta, t::n::factory AS factory, t::n::referrer AS referrer, t::n::id AS id,
                         t::n::orgId AS orgId, t::n::affiliateId AS affiliateId, t::n::factoryId AS factoryId, t::n::ws AS ws,
-                        t::n::user AS user, t::n::conv AS conv, t::n::run AS run, t::n::deploy AS deploy, t::n::build AS build, t::debug AS debug;
+                        t::n::user AS user, t::n::conv AS conv, t::n::run AS run, t::n::deploy AS deploy, t::n::build AS build, t::debug AS debug,
+                        t::n::wsType AS wsType,
+                        t::n::wsLocation AS wsLocation;
+
 -- add created temporary session indicator
 w = createdTemporaryWorkspaces(l);
 
@@ -112,21 +132,37 @@ z2 = FOREACH z1 GENERATE (o::ws IS NULL ? w::dt : o::dt) AS dt,
     (o::ws IS NULL ? 0 : o::deploy) AS deploy,
     (o::ws IS NULL ? 0 : o::build) AS build,
     (o::ws IS NULL ? 0 : o::debug) AS debug,
-    (w::ws IS NULL ? 0 : 1) AS ws_created;
+    (w::ws IS NULL ? 0 : 1) AS ws_created,
+    (o::ws IS NULL ? w::wsType : o::wsType) AS wsType,
+    (o::ws IS NULL ? w::wsLocation : o::wsLocation) AS wsLocation;
 
 -- finds the first started sessions and keep indicator only there
 z3 = GROUP z2 BY (ws, user);
 z4 = FOREACH z3 GENERATE group.ws AS ws, group.user AS user, MIN(z2.dt) AS minDT, FLATTEN(z2);
-z5 = FOREACH z4 GENERATE ws, user, z2::dt AS dt, z2::delta AS delta, z2::factory AS factory, z2::id AS id,
-    z2::referrer AS referrer, z2::orgId AS orgId, z2::affiliateId AS affiliateId, z2::factoryId AS factoryId,
-    z2::conv AS conv, z2::run AS run, z2::deploy AS deploy, z2::build AS build, z2::debug AS debug,
-    (z2::dt == minDT ? z2::ws_created : 0) AS ws_created;
-z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, factoryId, conv, run, deploy, debug, build, ws_created, id;
+z5 = FOREACH z4 GENERATE ws,
+                         user,
+                         z2::dt AS dt,
+                         z2::delta AS delta,
+                         z2::factory AS factory,
+                         z2::id AS id,
+                         z2::referrer AS referrer,
+                         z2::orgId AS orgId,
+                         z2::affiliateId AS affiliateId,
+                         z2::factoryId AS factoryId,
+                         z2::conv AS conv,
+                         z2::run AS run,
+                         z2::deploy AS deploy,
+                         z2::build AS build,
+                         z2::debug AS debug,
+                         (z2::dt == minDT ? z2::ws_created : 0) AS ws_created,
+                         z2::wsType AS wsType,
+                         z2::wsLocation AS wsLocation;
+z = FOREACH z5 GENERATE ws, user AS user, dt, delta, factory, referrer, orgId, affiliateId, factoryId, conv, run, deploy, debug, build, ws_created, id, wsType, wsLocation;
 
 -- add user created from factory indicator
 ls1 = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', 'ANY', 'ANY');
 ls2 = usersCreatedFromFactory(ls1);
-ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, factoryId, tmpUser AS tmpUser;
+ls = FOREACH ls2 GENERATE dt, ws, user, factory, referrer, orgId, affiliateId, factoryId, tmpUser AS tmpUser, wsType, wsLocation;
 
 p1 = JOIN z BY (ws, user) FULL, ls BY (ws, tmpUser);
 p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
@@ -145,8 +181,9 @@ p2 = FOREACH p1 GENERATE (z::ws IS NULL ? ls::dt : z::dt) AS dt,
     (z::ws IS NULL ? 0 : z::debug) AS debug,
     (z::ws IS NULL ? 0 : z::build) AS build,
     (z::ws IS NULL ? 0 : z::ws_created) AS ws_created,
-    (ls::ws IS NULL ? 0 : 1) AS user_created;
-
+    (ls::ws IS NULL ? 0 : 1) AS user_created,
+    (z::ws IS NULL ? ls::wsType : z::wsType) AS wsType,
+    (z::ws IS NULL ? ls::wsLocation : z::wsLocation) AS wsLocation;
 
 -- finds the first started sessions and keep indicator only there
 p3 = GROUP p2 BY (ws, user);
@@ -167,6 +204,8 @@ p = FOREACH p4 GENERATE ws,
                         p2::build AS build,
                         p2::debug AS debug,
                         p2::ws_created AS ws_created,
+                        p2::wsType AS wsType,
+                        p2::wsLocation AS wsLocation,
                         (p2::dt == minDT ? p2::user_created : 0) AS user_created,
                         (factoryId IS NULL ? 0 : 1) AS encodedFactory;
 -- Set session id if absent
@@ -198,7 +237,9 @@ result1 = FOREACH r GENERATE id,
                             TOTUPLE('builds_gigabyte_ram_hours', CalculateBuildsGigabyteRamHours(factoryId)),
                             TOTUPLE('runs_gigabyte_ram_hours', CalculateRunsGigabyteRamHours(factoryId)),
                             TOTUPLE('debugs_gigabyte_ram_hours', CalculateDebugsGigabyteRamHours(factoryId)),
-                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId));
+                            TOTUPLE('edits_gigabyte_ram_hours', CalculateEditsGigabyteRamHours(factoryId)),
+                            TOTUPLE('ws_type', wsType),
+                            TOTUPLE('ws_location', wsLocation);
 STORE result1 INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;
 
 -- update exists document joined by session_id: add factory and referrer fields
