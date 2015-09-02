@@ -77,7 +77,11 @@ public class TestConfirmationSingupByEmail extends BaseTest {
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET);
+        Metric metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_SEND);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        assertEquals(4, value.getAsLong());
+
+        metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET);
         SetValueData set = (SetValueData)metric.getValue(builder.build());
         assertEquals(4, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user1@domain.com")));
@@ -86,7 +90,7 @@ public class TestConfirmationSingupByEmail extends BaseTest {
         assertTrue(set.getAll().contains(StringValueData.valueOf("user4@domain.com")));
 
         metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_CONFIRMED);
-        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        value = (LongValueData)metric.getValue(builder.build());
         assertEquals(2, value.getAsLong());
 
         metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED);
