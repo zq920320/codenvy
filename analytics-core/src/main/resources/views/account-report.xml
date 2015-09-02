@@ -22,7 +22,7 @@
     <view time-unit="day,week,month,lifetime" name="account_report" columns="15">
         <section name="account_added">
             <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Account Creation Type"/>
+                <parameter key="section-name" value="Account Added"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="users_accounts"/>
@@ -34,7 +34,7 @@
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Account Creation Type"/>
             </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
+            <!--row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_creation_type_google"/>
                 <parameter key="description" value="From Google OAuth"/>
             </row>
@@ -45,7 +45,7 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_creation_type_email"/>
                 <parameter key="description" value="From Email flow"/>
-            </row>
+            </row-->
         </section>
 
         <section name="email_signups">

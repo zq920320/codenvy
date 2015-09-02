@@ -111,8 +111,7 @@
                  <div class="single-column-gadget">
                     <div class="view">
                         <div class="tables">
-                            <div id="userReport"></div>
-                            <div id="engagementLevels"></div>
+                            <div id="accountReport"></div>
                         </div>
                     </div>
                 </div>
