@@ -111,7 +111,7 @@
             <outputDirectory>lib</outputDirectory>
             <outputFileNameMapping>codenvy-ssl-socket-factory.jar</outputFileNameMapping>
             <includes>
-                <include>org.eclipse.che.plugin:che-plugin-datasource-ssl-socket-factory</include>
+                <include>com.codenvy.plugin:codenvy-plugin-datasource-ssl-socket-factory</include>
             </includes>
         </dependencySet>
         <dependencySet>

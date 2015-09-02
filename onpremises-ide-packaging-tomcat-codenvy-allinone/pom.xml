@@ -85,9 +85,9 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-datasource-ssl-socket-factory</artifactId>
-            <version>${che.plugins.version}</version>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-datasource-ssl-socket-factory</artifactId>
+            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
