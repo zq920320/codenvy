@@ -50,7 +50,7 @@ public class TestUsersCreatedFromFactory extends BaseTest {
         List<Event> events = new ArrayList<>();
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "referrer1", "org1", "affiliate1", "named", "acceptor")
                              .withDate("2013-01-01").withTime("11:00:00").build());
 
         events.add(Event.Builder.createUserAddedToWsEvent("anonymoususer_1", "tmp-1", "website")

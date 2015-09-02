@@ -25,15 +25,19 @@ a2 = extractUrlParam(a1, 'REFERRER', 'referrer');
 a3 = extractUrlParam(a2, 'FACTORY-URL', 'factory');
 a4 = extractOrgAndAffiliateId(a3);
 a5 = extractFactoryId(a4);
-a = FOREACH a5 GENERATE dt,
-                        ws,
-                        user,
-                        ExtractDomain(referrer) AS referrer,
-                        factory,
-                        orgId,
-                        affiliateId,
-                        factoryId,
-                        (factoryId IS NULL ? 0 : 1) AS encodedFactory;
+aWsType = extractParam(a5, 'WS-TYPE', 'wsType');
+aWsLocation = extractParam(aWsType, 'WS-LOCATION', 'wsLocation');
+a = FOREACH aWsLocation GENERATE dt,
+                             ws,
+                             user,
+                             ExtractDomain(referrer) AS referrer,
+                             factory,
+                             orgId,
+                             affiliateId,
+                             factoryId,
+                             (factoryId IS NULL ? 0 : 1) AS encodedFactory,
+                             wsType,
+                             wsLocation;
 
 result = FOREACH a GENERATE UUID(),
                             TOTUPLE('date',
@@ -44,6 +48,8 @@ result = FOREACH a GENERATE UUID(),
                             TOTUPLE('referrer', referrer),
                             TOTUPLE('factory', factory),
                             TOTUPLE('factory_id', factoryId),
-                            TOTUPLE('encoded_factory', encodedFactory);
+                            TOTUPLE('encoded_factory', encodedFactory),
+                            TOTUPLE('ws_type', wsType),
+                            TOTUPLE('ws_location', wsLocation);
 
 STORE result INTO '$STORAGE_URL.$STORAGE_TABLE' USING MongoStorage;

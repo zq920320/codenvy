@@ -87,16 +87,16 @@ public class TestWorkspacesWhereUsersHaveSeveralFactorySessions extends BaseTest
                                 .withDate("2013-02-10").withTime("10:05:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl0", "referrer1", "org1", "affiliate1", "named", "acceptor")
                              .withDate("2013-02-10").withTime("11:00:00").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "referrer2", "org2", "affiliate1", "named", "acceptor")
                              .withDate("2013-02-10").withTime("11:00:01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-3", "factoryUrl1", "referrer2", "org3", "affiliate2", "named", "acceptor")
                              .withDate("2013-02-10").withTime("11:00:02").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "referrer3", "org4", "affiliate2")
+                Event.Builder.createFactoryUrlAcceptedEvent("tmp-4", "factoryUrl0", "referrer3", "org4", "affiliate2", "named", "acceptor")
                              .withDate("2013-02-10").withTime("11:00:03").build());
 
 

@@ -231,7 +231,7 @@ DEFINE extractEventsWithSessionId(X, eventParam) RETURNS Y {
 
 ---------------------------------------------------------------------------------------------
 -- The list of created temporary workspaces
--- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray, wsType : bytearray, wsLocation : bytearray}
 ---------------------------------------------------------------------------------------------
 DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x1 = filterByEvent($X, 'factory-url-accepted');
@@ -239,7 +239,9 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
     x3 = extractUrlParam(x2, 'FACTORY-URL', 'factory');
     x4 = extractOrgAndAffiliateId(x3);
     x5 = extractFactoryId(x4);
-    x = FOREACH x5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
+    xWsType = extractParam(x5, 'WS-TYPE', 'wsType');
+    xWsLocation = extractParam(xWsType, 'WS-LOCATION', 'wsLocation');
+    x = FOREACH xWsLocation GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId, wsType, wsLocation;
 
     -- created temporary workspaces
     w1 = filterByEvent($X, 'workspace-created');
@@ -247,12 +249,13 @@ DEFINE createdTemporaryWorkspaces(X) RETURNS Y {
 
     y1 = JOIN w BY tmpWs, x BY tmpWs;
     $Y = FOREACH y1 GENERATE w::dt AS dt, w::tmpWs AS ws, w::user AS user, x::referrer AS referrer, x::factory AS factory,
-                x::orgId AS orgId, x::affiliateId AS affiliateId, x::factoryId AS factoryId;
+                x::orgId AS orgId, x::affiliateId AS affiliateId, x::factoryId AS factoryId,
+                x::wsType AS wsType, x::wsLocation AS wsLocation;
 };
 
 ---------------------------------------------------------------------------------------------
 -- The list of users created from factory
--- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray}
+-- @return {dt: datetime, user : bytearray, ws: bytearray, orgId : bytearray, affiliateId: bytearray, factory : bytearray, referrer: bytearray, wsType : bytearray, wsLocation : bytearray}
 ---------------------------------------------------------------------------------------------
 DEFINE usersCreatedFromFactory(X) RETURNS Y {
     u1 = filterByEvent($X, 'factory-url-accepted');
@@ -260,7 +263,9 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
     u3 = extractUrlParam(u2, 'FACTORY-URL', 'factory');
     u4 = extractOrgAndAffiliateId(u3);
     u5 = extractFactoryId(u4);
-    u = FOREACH u5 GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId;
+    uWsType = extractParam(u5, 'WS-TYPE', 'wsType');
+    uWsLocation = extractParam(uWsType, 'WS-LOCATION', 'wsLocation');
+    u = FOREACH uWsLocation GENERATE ws AS tmpWs, ExtractDomain(referrer) AS referrer, factory, orgId, affiliateId, factoryId, wsType, wsLocation;
 
     -- finds in which temporary workspaces anonymous users have worked
     x1 = filterByEvent($X, 'user-added-to-ws');
@@ -291,7 +296,8 @@ DEFINE usersCreatedFromFactory(X) RETURNS Y {
 
     r1 = JOIN z BY tmpWs, u BY tmpWs;
     $Y = FOREACH r1 GENERATE z::dt AS dt, z::user AS user, z::tmpWs AS ws, u::referrer AS referrer, u::factory AS factory,
-        u::orgId AS orgId, u::affiliateId AS affiliateId, u::factoryId AS factoryId, z::tmpUser AS tmpUser;
+        u::orgId AS orgId, u::affiliateId AS affiliateId, u::factoryId AS factoryId, z::tmpUser AS tmpUser,
+        u::wsType AS wsType, u::wsLocation AS wsLocation;
 };
 
 ---------------------------------------------------------------------------------------------

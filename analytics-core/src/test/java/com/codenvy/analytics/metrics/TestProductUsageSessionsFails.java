@@ -99,13 +99,13 @@ public class TestProductUsageSessionsFails extends BaseTest {
 
         events.add(Event.Builder.createWorkspaceCreatedEvent(TWID1, "tmpws1", "user1@gmail.com").withDate("2014-01-01").build());
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmpws1", "factory", "referrer", "orgId", "affiliateId").withDate("2014-01-01").build());
+                Event.Builder.createFactoryUrlAcceptedEvent("tmpws1", "factory", "referrer", "orgId", "affiliateId", "named", "acceptor").withDate("2014-01-01").build());
 
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "tmpws2", "1", true).withDate("2014-01-01").withTime("12:00:00").build());
         events.add(Event.Builder.createSessionUsageEvent("user1@gmail.com", "ws1", "2", false).withDate("2014-01-01").withTime("10:00:00").build());
 
         events.add(
-                Event.Builder.createFactoryUrlAcceptedEvent("tmpws3", "factory", "referrer", "orgId", "affiliateId").withDate("2014-01-01").build());
+                Event.Builder.createFactoryUrlAcceptedEvent("tmpws3", "factory", "referrer", "orgId", "affiliateId", "named", "acceptor").withDate("2014-01-01").build());
 
         return LogGenerator.generateLog(events);
     }

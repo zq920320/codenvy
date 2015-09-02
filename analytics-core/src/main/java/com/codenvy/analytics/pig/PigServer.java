@@ -181,7 +181,7 @@ public class PigServer {
         server.registerFunction("MongoLoaderAcceptedFactories",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",
                                              new String[]{"ws: chararray,user: chararray,factory: chararray,referrer: chararray," +
-                                                          "org_id: chararray, affiliate_id: chararray, factory_id: chararray"}));
+                                                          "org_id: chararray, affiliate_id: chararray, factory_id: chararray, ws_type: chararray, ws_location: chararray"}));
 
         server.registerFunction("MongoLoaderTest",
                                 new FuncSpec("com.codenvy.analytics.pig.udf.MongoLoader",

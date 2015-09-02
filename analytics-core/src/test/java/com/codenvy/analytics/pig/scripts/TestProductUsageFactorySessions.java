@@ -39,6 +39,7 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -66,15 +67,15 @@ public class TestProductUsageFactorySessions extends BaseTest {
 
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-1", "factoryUrl1", "http://referrer1", "org1", "affiliate1", "named", "acceptor")
                         .withDate("2013-02-10").withTime("10:00:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1")
+                        .createFactoryUrlAcceptedEvent("tmp-2", "factoryUrl1", "http://referrer2", "org2", "affiliate1", "temp", "owner")
                         .withDate("2013-02-10").withTime("10:20:00").build());
         events.add(
                 Event.Builder
-                        .createFactoryUrlAcceptedEvent("tmp-3", "http://1.com?id=factory3", "http://referrer3", "org3", "affiliate2")
+                        .createFactoryUrlAcceptedEvent("tmp-3", "http://1.com?id=factory3", "http://referrer3", "org3", "affiliate2", "named", null)
                         .withDate("2013-02-10").withTime("11:00:00").build());
 
         events.add(Event.Builder.createFactoryProjectImportedEvent("user1@gmail.com", "tmp-1", "project", "type")
@@ -382,6 +383,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "2400000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
         assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0767");
@@ -399,6 +401,7 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(UsersStatisticsList.SESSIONS).getAsString(), "3");
         assertEquals(summary.get(UsersStatisticsList.TIME).getAsString(), "2400000");
         assertEquals(summary.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(summary.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.BUILDS).getAsString(), "0");
         assertEquals(summary.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
         assertEquals(summary.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0768");
@@ -406,4 +409,106 @@ public class TestProductUsageFactorySessions extends BaseTest {
         assertEquals(summary.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0064");
         assertEquals(summary.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
     }
+
+    @Test
+    public void testFactoryRoutingFlags() throws IOException {
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST);
+        List<ValueData> values = ((ListValueData) metric.getValue(Context.EMPTY)).getAll();
+        assertEquals(values.size(), 2);
+
+        Map<String, ValueData> m = ((MapValueData)values.get(0)).getAll();
+        assertEquals(m.get(AbstractMetric.FACTORY).getAsString(), "http://1.com?id=factory3");
+        assertEquals(m.get(AbstractMetric.FACTORY_ROUTING_FLAGS).getAsString(), "named");
+        assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), "900000");
+        assertEquals(m.get(UsersStatisticsList.RUNS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(m.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0768");
+        assertEquals(m.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0085");
+        assertEquals(m.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0064");
+        assertEquals(m.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
+
+
+        m = ((MapValueData)values.get(1)).getAll();
+        assertEquals(m.get(AbstractMetric.FACTORY).getAsString(), "factoryUrl1");
+        assertEquals(m.get(AbstractMetric.FACTORY_ROUTING_FLAGS).getAsString(), "temp+owner");
+        assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), "2");
+        assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), "1500000");
+        assertEquals(m.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(m.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+    }
+
+    @Test
+    public void testFilteringWsTypeAndLocation() throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.WS_TYPE, "temp");
+        builder.put(MetricFilter.WS_LOCATION, "owner");
+        Context context = builder.build();
+
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST);
+        List<ValueData> values = ((ListValueData) metric.getValue(context)).getAll();
+        assertEquals(values.size(), 1);
+
+        Map<String, ValueData> m = ((MapValueData)values.get(0)).getAll();
+        assertEquals(m.get(AbstractMetric.FACTORY).getAsString(), "factoryUrl1");
+        assertEquals(m.get(AbstractMetric.FACTORY_ROUTING_FLAGS).getAsString(), "temp+owner");
+        assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), "1200000");
+        assertEquals(m.get(UsersStatisticsList.RUNS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(m.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+    }
+
+    @Test
+    public void testFilteringWsType() throws IOException {
+        Context.Builder builder = new Context.Builder();
+        builder.put(MetricFilter.WS_TYPE, "named");
+        Context context = builder.build();
+
+        Metric metric = MetricFactory.getMetric(MetricType.FACTORY_STATISTICS_LIST);
+        List<ValueData> values = ((ListValueData) metric.getValue(context)).getAll();
+        assertEquals(values.size(), 2);
+
+        Map<String, ValueData> m = ((MapValueData)values.get(0)).getAll();
+        assertEquals(m.get(AbstractMetric.FACTORY).getAsString(), "http://1.com?id=factory3");
+        assertEquals(m.get(AbstractMetric.FACTORY_ROUTING_FLAGS).getAsString(), "named");
+        assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), "900000");
+        assertEquals(m.get(UsersStatisticsList.RUNS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(m.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0768");
+        assertEquals(m.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0085");
+        assertEquals(m.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0064");
+        assertEquals(m.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0062");
+
+        m = ((MapValueData)values.get(1)).getAll();
+        assertEquals(m.get(AbstractMetric.FACTORY).getAsString(), "factoryUrl1");
+        assertEquals(m.get(AbstractMetric.FACTORY_ROUTING_FLAGS).getAsString(), "named+acceptor");
+        assertEquals(m.get(UsersStatisticsList.SESSIONS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.TIME).getAsString(), "300000");
+        assertEquals(m.get(UsersStatisticsList.RUNS).getAsString(), "1");
+        assertEquals(m.get(UsersStatisticsList.DEBUGS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.BUILDS).getAsString(), "0");
+        assertEquals(m.get(UsersStatisticsList.DEPLOYS).getAsString(), "0");
+        assertEquals(m.get(AbstractMetric.BUILDS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.RUNS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.DEBUGS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+        assertEquals(m.get(AbstractMetric.EDITS_GIGABYTE_RAM_HOURS).getAsString(), "0.0");
+    }
+
 }

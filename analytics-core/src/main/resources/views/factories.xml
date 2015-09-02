@@ -22,11 +22,11 @@
     <view name="factories" on-demand="true">
         <section name="factories">
             <row class="com.codenvy.analytics.services.view.TitleRow">
-                <parameter key="titles" value="Factory URL,Sessions,Time,Builds,Runs,Debugs,Deploys,Organization"/>
+                <parameter key="titles" value="Factory URL,Type,Sessions,Time,Builds,Runs,Debugs,Deploys,Organization"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="factory_statistics_list"/>
-                <parameter key="fields" value="factory,sessions,time,builds,runs,debugs,deploys,org_id"/>
+                <parameter key="fields" value="factory,factory_routing_flags,sessions,time,builds,runs,debugs,deploys,org_id"/>
                 <parameter key="time-fields" value="time"/>
             </row>
         </section>
