@@ -30,7 +30,7 @@ public class UUIDFrom extends EvalFunc<String> {
     /** {@inheritDoc} */
     @Override
     public String exec(Tuple input) throws IOException {
-        if (input.size() == 0) {
+        if (input.size() == 0 || (input.size() > 0 && input.get(0) == null)) {
             return java.util.UUID.randomUUID().toString();
         } else {
             return exec(input.get(0).toString());
