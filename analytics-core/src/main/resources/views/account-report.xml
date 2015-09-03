@@ -30,11 +30,12 @@
             </row>
         </section>
 
-        <section name="account_creation_type">
+        <!-- TODO [ndp] issue DASHB-716 -->
+        <!--section name="account_creation_type">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Account Creation Type"/>
             </row>
-            <!--row class="com.codenvy.analytics.services.view.MetricRow">
+            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_creation_type_google"/>
                 <parameter key="description" value="From Google OAuth"/>
             </row>
@@ -45,23 +46,23 @@
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="account_creation_type_email"/>
                 <parameter key="description" value="From Email flow"/>
-            </row-->
-        </section>
+            </row>
+        </section-->
 
         <section name="email_signups">
             <row class="com.codenvy.analytics.services.view.DateRow">
                 <parameter key="section-name" value="Email Sign-Ups"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="singup_validation_email_send"/>
+                <parameter key="name" value="signup_validation_email_send"/>
                 <parameter key="description" value="Verification emails sent"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="singup_validation_email_confirmed"/>
+                <parameter key="name" value="signup_validation_email_confirmed"/>
                 <parameter key="description" value="Confirmations received"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="singup_validation_email_not_confirmed"/>
+                <parameter key="name" value="signup_validation_email_not_confirmed"/>
                 <parameter key="description" value="Waiting confirmations"/>
             </row>
         </section>

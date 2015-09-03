@@ -25,9 +25,9 @@ import com.codenvy.analytics.metrics.MetricType;
  * @author Alexander Reshetnyak
  */
 @InternalMetric
-public class SingupValidationEmailSendSet extends AbstractSetValueResulted {
-    public SingupValidationEmailSendSet() {
-        super(MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET, EMAIL);
+public class SignupValidationEmailSendSet extends AbstractSetValueResulted {
+    public SignupValidationEmailSendSet() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET, EMAIL);
     }
 
     /** {@inheritDoc} */

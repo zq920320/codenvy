@@ -1557,12 +1557,12 @@ function AnalyticsConfiguration() {
         "timeline_product_usage_condition_between_120_and_300_min": "#USERS",
 
         "users_accounts": "#USERS",
-        "account_creation_type_google": "#USERS",
-        "account_creation_type_github": "#USERS",
-        "account_creation_type_email": "#USERS",
-        "singup_validation_email_send": "#USERS",
-        "singup_validation_email_confirmed": "#USERS",
-        "singup_validation_email_not_confirmed": "#USERS",
+//        "account_creation_type_google": "#USERS",   // TODO [ndp] issue DASHB-716
+//        "account_creation_type_github": "#USERS",   // TODO [ndp] issue DASHB-716
+//        "account_creation_type_email": "#USERS",    // TODO [ndp] issue DASHB-716
+        "signup_validation_email_send": "#USERS",
+        "signup_validation_email_confirmed": "#USERS",
+        "signup_validation_email_not_confirmed": "#USERS",
 
 
         /** WORKSPACES */

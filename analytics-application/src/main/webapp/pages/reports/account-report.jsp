@@ -100,7 +100,7 @@
                     <button class="btn command-btn" value="table&chart">Table & Chart</button>
                 </div>
 
-                <div id="timely-dd" class="btn-group right" targetWidgets="userReport">
+                <div id="timely-dd" class="btn-group right" targetWidgets="accountReport">
                     <button class="btn command-btn" value="Day">Day</button>
                     <button class="btn command-btn" value="Week">Week</button>
                     <button class="btn command-btn" default value="Month">Month</button>

@@ -17,49 +17,44 @@
  */
 package com.codenvy.analytics.metrics.users;
 
+import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import java.io.IOException;
-import java.util.LinkedHashSet;
-import java.util.Set;
 
 /**
- * @author Alexander Reshetnyak
+ * @author Dmytro Nochevnov
  */
-public class SingupValidationEmailNotConfirmedSet extends CalculatedMetric {
+public class SignupValidationEmailSend extends SignupValidationEmailExpandable {
 
-    public SingupValidationEmailNotConfirmedSet() {
-        super(MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET, new MetricType[]{MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET,
-                                                                                     MetricType.SINGUP_VALIDATION_EMAIL_CONFIRMED_SET});
+    public SignupValidationEmailSend() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_SEND, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET});
     }
 
+    /** {@inheritDoc} */
     @Override
     public ValueData getValue(Context context) throws IOException {
-        SetValueData send = ValueDataUtil.getAsSet(basedMetric[0], context);
-        SetValueData confirmed = ValueDataUtil.getAsSet(basedMetric[1], context);
+        SetValueData sendEmail = ValueDataUtil.getAsSet(basedMetric[0], context);
 
-        Set<ValueData> notConfirmedEmail = new LinkedHashSet<>();
-        for (ValueData sendEmail : send.getAll()) {
-            if (!confirmed.getAll().contains(sendEmail)) {
-                notConfirmedEmail.add(sendEmail);
-            }
-        }
-
-        return new SetValueData(notConfirmedEmail);
+        return new LongValueData(sendEmail.size());
     }
 
+    /** {@inheritDoc} */
     @Override
     public Class<? extends ValueData> getValueDataClass() {
-        return SetValueData.class;
+        return LongValueData.class;
     }
+
 
     @Override
     public String getDescription() {
-        return "Set of users which didn't confirm singup validation email";
+        return "Number of users which was sent validation email";
     }
+
 }

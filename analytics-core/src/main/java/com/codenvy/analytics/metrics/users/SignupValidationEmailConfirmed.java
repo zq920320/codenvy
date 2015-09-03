@@ -23,17 +23,18 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
 import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import java.io.IOException;
 
 /**
- * @author Dmytro Nochevnov
+ * @author Alexander Reshetnyak
  */
-public class SingupValidationEmailSend extends CalculatedMetric {
+public class SignupValidationEmailConfirmed extends SignupValidationEmailExpandable {
 
-    public SingupValidationEmailSend() {
-        super(MetricType.SINGUP_VALIDATION_EMAIL_SEND, new MetricType[]{MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET});
+    public SignupValidationEmailConfirmed() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED_SET});
     }
 
     /** {@inheritDoc} */
@@ -53,6 +54,6 @@ public class SingupValidationEmailSend extends CalculatedMetric {
 
     @Override
     public String getDescription() {
-        return "Number of users which was sent validation email";
+        return "Number of users which confirmed singup validation email";
     }
 }
