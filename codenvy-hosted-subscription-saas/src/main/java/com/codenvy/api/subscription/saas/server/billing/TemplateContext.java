@@ -19,7 +19,6 @@ package com.codenvy.api.subscription.saas.server.billing;
 
 import org.thymeleaf.context.AbstractContext;
 import org.thymeleaf.context.ContextExecutionInfo;
-import org.thymeleaf.context.IContext;
 import org.thymeleaf.context.IContextExecutionInfo;
 
 import java.util.Calendar;
@@ -29,7 +28,7 @@ import java.util.Calendar;
  *
  * @author Max Shaposhnik
  */
-public class TemplateContext extends AbstractContext implements IContext {
+public class TemplateContext extends AbstractContext {
     @Override
     protected IContextExecutionInfo buildContextExecutionInfo(String templateName) {
         final Calendar now = Calendar.getInstance();
