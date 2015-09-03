@@ -18,7 +18,6 @@
 package com.codenvy.api.subscription.saas.server.billing.invoice;
 
 import com.codenvy.api.creditcard.server.CreditCardDao;
-import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
 import com.codenvy.api.subscription.saas.server.billing.TemplateContext;
 import com.codenvy.api.subscription.saas.shared.dto.Charge;
@@ -31,7 +30,6 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.dto.server.DtoFactory;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.templateresolver.ClassLoaderTemplateResolver;
 
@@ -140,7 +138,11 @@ public class InvoiceTemplateProcessor {
         PaymentState state = PaymentState.fromState(invoice.getPaymentState());
         if (state.equals(PaymentState.PAID_SUCCESSFULLY) || state.equals(PaymentState.PAYMENT_FAIL) ||
             state.equals(PaymentState.NOT_REQUIRED)) {
-            cardDao.getCards(invoice.getAccountId()).stream().filter(card -> card.getToken().equals(invoice.getCreditCardId())).findFirst()
+            cardDao.getCards(invoice.getAccountId())
+                   .stream()
+                   .filter(card -> card.getToken()
+                                       .equals(invoice.getCreditCardId()))
+                   .findFirst()
                    .ifPresent(
                            card -> context.setVariable("creditCard", card));
         }

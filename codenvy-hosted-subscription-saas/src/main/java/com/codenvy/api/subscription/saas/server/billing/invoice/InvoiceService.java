@@ -53,6 +53,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
@@ -161,16 +162,11 @@ public class InvoiceService extends Service {
         requiredNotNull(invoiceId, "Invoice id");
         final Invoice invoice = getInvoice(invoiceId);
         StreamingOutput response = outputStream -> {
-            PrintWriter w = new PrintWriter(outputStream);
-            try {
+            try (PrintWriter w = new PrintWriter(outputStream)) {
                 invoiceTemplateProcessor.processTemplate(invoice, w);
             } catch (ServerException | ForbiddenException | NotFoundException e) {
-                w.write(e.getLocalizedMessage());
-            } finally {
-                w.flush();
-                w.close();
+               throw new WebApplicationException(e);
             }
-
         };
         return Response.ok(response).build();
     }
