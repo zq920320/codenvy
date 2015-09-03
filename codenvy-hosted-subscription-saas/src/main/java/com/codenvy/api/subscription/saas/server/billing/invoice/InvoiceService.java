@@ -259,7 +259,10 @@ public class InvoiceService extends Service {
                                             .withTillDate(endPeriod)
                                             .build();
 
-        return billingService.getInvoices(filter).stream().map(this::toDescriptor).collect(Collectors.toList());
+        return billingService.getInvoices(filter)
+                             .stream()
+                             .map(this::toDescriptor)
+                             .collect(Collectors.toList());
     }
 
     /**
