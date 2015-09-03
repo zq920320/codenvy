@@ -37,6 +37,7 @@ import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Intercepts calls to workspace/addMember() service and do some post actions
@@ -93,22 +94,15 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
         }
 
         try {
-            String adminEmail = "";
-            for (Member one : workspaceMembers) {
-                if (one.getRoles().contains("workspace/admin")) {
-                    adminEmail = userDao.getById(one.getUserId()).getEmail();
-                    break;
-                }
-            }
-
-            String accountOwnerEmail = "";
-            for (org.eclipse.che.api.account.server.dao.Member member : accountDao.getMembers(environmentContext.getAccountId())) {
-                if (member.getRoles().contains("account/owner")) {
-                    accountOwnerEmail = userDao.getById(member.getUserId()).getEmail();
-                    break;
-                }
-            }
-
+            Optional<Member> admin = workspaceMembers
+                    .stream()
+                    .filter(member -> member.getRoles().contains("workspace/admin"))
+                    .findFirst();
+            Optional<org.eclipse.che.api.account.server.dao.Member> accountOwner =
+                    accountDao.getMembers(environmentContext.getAccountId())
+                              .stream()
+                              .filter(member -> member.getRoles().contains("account/owner"))
+                              .findFirst();
             String recipientEmail = userDao.getById(memberDescriptor.getUserId()).getEmail();
             String senderUserId = EnvironmentContext.getCurrent().getUser().getId();
             String senderEmail = userDao.getById(senderUserId).getEmail();
@@ -116,8 +110,12 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
             properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
             properties.put("workspace", workspaceReference.getName());
             properties.put("usermail.whoInvited", senderEmail);
-            properties.put("admin.email", adminEmail);
-            properties.put("accountOwner.email", accountOwnerEmail);
+            if (admin.isPresent()) {
+                properties.put("admin.email", userDao.getById(admin.get().getUserId()).getEmail());
+            }
+            if (accountOwner.isPresent()) {
+                properties.put("accountOwner.email", userDao.getById(accountOwner.get().getUserId()).getEmail());
+            }
             mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                       "Codenvy Workspace Invite",
                                       "text/html; charset=utf-8",

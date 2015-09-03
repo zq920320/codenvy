@@ -43,9 +43,6 @@ import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.status;
@@ -58,8 +55,6 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class AddWorkspaceMemberInterceptorTest {
-    private Field notificationTurnedOn;
-
     @Mock
     private MailSenderClient mailSenderClient;
 
@@ -89,9 +84,7 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
-        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnMemberAdded");
-        notificationTurnedOn.setAccessible(true);
-        notificationTurnedOn.set(interceptor, true);
+        setInterceptorPrivateFieldValue("sendEmailOnMemberAdded", true);
 
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
@@ -108,8 +101,8 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldNotSendEmailIfJoinToTemporaryWs() throws Throwable {
-        Method method =
-                WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
+        Method method = WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
+
         when(invocation.proceed()).thenReturn(status(CREATED).entity(memberDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
         when(memberDescriptor.getWorkspaceReference())
@@ -122,7 +115,7 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
-        notificationTurnedOn.set(interceptor, false);
+        setInterceptorPrivateFieldValue("sendEmailOnMemberAdded", false);
         interceptor.invoke(invocation);
 
         verifyZeroInteractions(mailSenderClient);
@@ -130,16 +123,10 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldSendEmail() throws Throwable {
+        setInterceptorPrivateFieldValue("apiEndpoint", "http://dev.box.com/api");
 
         String recipient = "test@user.com";
-        Method method =
-                WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
-        Field f = interceptor.getClass().getDeclaredField("apiEndpoint");
-        f.setAccessible(true);
-        f.set(interceptor, "http://dev.box.com/api");
-        Map<String, String> profileAttributes = new HashMap<>();
-        profileAttributes.put("firstName", "First");
-        profileAttributes.put("lastName", "Last");
+        Method method = WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
 
         when(invocation.proceed()).thenReturn(status(CREATED).entity(memberDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
@@ -150,9 +137,7 @@ public class AddWorkspaceMemberInterceptorTest {
         when(user.getEmail()).thenReturn(recipient);
 
         when(memberDao.getWorkspaceMembers(eq("ws29301"))).thenReturn(Arrays.asList(new Member(), new Member()));
-
-        List<String> accountRole = Arrays.asList("account/owner");
-        when(accountDao.getMembers(eq("AccountID"))).thenReturn(Arrays.asList(new org.eclipse.che.api.account.server.dao.Member().withRoles(accountRole)));
+        when(accountDao.getMembers(eq("AccountID"))).thenReturn(Arrays.asList(new org.eclipse.che.api.account.server.dao.Member()));
 
         interceptor.invoke(invocation);
         verify(mailSenderClient)
@@ -162,14 +147,10 @@ public class AddWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldNotSendEmailOnFirstUser() throws Throwable {
+        setInterceptorPrivateFieldValue("apiEndpoint", "http://dev.box.com/api");
+
         String recipient = "test@user.com";
         Method method = WorkspaceService.class.getMethod("addMember", String.class, NewMembership.class, SecurityContext.class);
-        Field f = interceptor.getClass().getDeclaredField("apiEndpoint");
-        f.setAccessible(true);
-        f.set(interceptor, "http://dev.box.com/api");
-        Map<String, String> profileAttributes = new HashMap<>();
-        profileAttributes.put("firstName", "First");
-        profileAttributes.put("lastName", "Last");
 
         when(invocation.proceed()).thenReturn(status(CREATED).entity(memberDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
@@ -184,5 +165,11 @@ public class AddWorkspaceMemberInterceptorTest {
 
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
+    }
+
+    private void setInterceptorPrivateFieldValue(String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field notificationTurnedOn = interceptor.getClass().getDeclaredField(fieldName);
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, value);
     }
 }

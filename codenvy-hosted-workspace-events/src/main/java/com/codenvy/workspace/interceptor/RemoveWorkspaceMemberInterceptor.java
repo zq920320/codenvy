@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Intercepts calls to workspace/removeMember() service and do some post actions
@@ -84,21 +85,17 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
         String userId = (String)invocation.getArguments()[1];
         String recipientEmail = userDao.getById(userId).getEmail();
         String senderEmail = environmentContext.getUser().getName();
-
-        String accountOwnerEmail = "";
-        for (Member member : accountDao.getMembers(environmentContext.getAccountId())) {
-            if (member.getRoles().contains("account/owner")) {
-                accountOwnerEmail = userDao.getById(member.getUserId()).getEmail();
-                break;
-            }
-        }
-
+        Optional<Member> accountOwner =accountDao.getMembers(environmentContext.getAccountId())
+                                                 .stream()
+                                                 .filter(member -> member.getRoles().contains("account/owner"))
+                                                 .findFirst();
         Map<String, String> properties = new HashMap<>();
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
         properties.put("workspace", ws.getName());
         properties.put("admin.email", senderEmail);
-        properties.put("accountOwner.email", accountOwnerEmail);
-
+        if (accountOwner.isPresent()) {
+            properties.put("accountOwner.email", userDao.getById(accountOwner.get().getUserId()).getEmail());
+        }
         mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                   "Codenvy Workspace Access Removed",
                                   "text/html; charset=utf-8",

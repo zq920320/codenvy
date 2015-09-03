@@ -19,10 +19,14 @@ package com.codenvy.workspace.interceptor;
 
 import com.codenvy.workspace.activity.WsActivityEventSender;
 
+import org.aopalliance.intercept.MethodInvocation;
+import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.user.server.dao.Profile;
-import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
@@ -30,9 +34,6 @@ import org.eclipse.che.api.workspace.shared.dto.NewWorkspace;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.user.UserImpl;
-
-import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -48,24 +49,27 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class CreateWorkspaceInterceptorTest {
-    private Field notificationTurnedOn;
-
     @Mock
     private MailSenderClient mailSenderClient;
 
     @Mock
     private UserDao userDao;
+
+    @Mock
+    private AccountDao accountDao;
 
     @Mock
     private User user;
@@ -92,9 +96,7 @@ public class CreateWorkspaceInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
-        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnWorkspaceCreated");
-        notificationTurnedOn.setAccessible(true);
-        notificationTurnedOn.set(interceptor, true);
+        setInterceptorPrivateFieldValue("sendEmailOnWorkspaceCreated", true);
 
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl(recipient, "askd123123", null, null, false));
@@ -106,7 +108,9 @@ public class CreateWorkspaceInterceptorTest {
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSendEmailIfInvocationThrowsException() throws Throwable {
         when(invocation.proceed()).thenThrow(new ConflictException("conflict"));
+
         interceptor.invoke(invocation);
+
         verifyZeroInteractions(mailSenderClient);
     }
 
@@ -114,15 +118,19 @@ public class CreateWorkspaceInterceptorTest {
     public void shouldNotSendEmailIfInvocationToAnotherMethod() throws Throwable {
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(invocation.getMethod()).thenReturn(WorkspaceService.class.getMethod("remove", String.class));
+
         interceptor.invoke(invocation);
+
         verifyZeroInteractions(mailSenderClient);
     }
 
     @Test
     public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
-        notificationTurnedOn.set(interceptor, false);
+        setInterceptorPrivateFieldValue("sendEmailOnWorkspaceCreated", false);
+
         interceptor.invoke(invocation);
+
         verifyZeroInteractions(mailSenderClient);
     }
 
@@ -130,7 +138,9 @@ public class CreateWorkspaceInterceptorTest {
     public void shouldNotSendEmailIfWorkspaceiIsTemporary() throws Throwable {
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(workspaceDescriptor.isTemporary()).thenReturn(true);
+
         interceptor.invoke(invocation);
+
         verifyZeroInteractions(mailSenderClient);
     }
 
@@ -140,34 +150,43 @@ public class CreateWorkspaceInterceptorTest {
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         List<Workspace> otherWs = Arrays.asList(new Workspace().withId("anotherid"));
         when(workspaceDao.getByAccount(anyString())).thenReturn(otherWs);
+
         interceptor.invoke(invocation);
+
         verifyZeroInteractions(mailSenderClient);
     }
 
     @Test
     public void shouldSendEmail() throws Throwable {
-        Method method =
-                WorkspaceService.class.getMethod("create", NewWorkspace.class, SecurityContext.class);
-        Field f = interceptor.getClass().getDeclaredField("apiEndpoint");
-        f.setAccessible(true);
-        f.set(interceptor, "http://dev.box.com/api");
 
-        Field f2 = interceptor.getClass().getDeclaredField("freeGbh");
-        f2.setAccessible(true);
-        f2.set(interceptor, "10");
+        setInterceptorPrivateFieldValue("apiEndpoint", "http://dev.box.com/api");
+        setInterceptorPrivateFieldValue("freeGbh", "10");
+        setInterceptorPrivateFieldValue("freeLimit", "4096");
 
-        Field f3 = interceptor.getClass().getDeclaredField("freeLimit");
-        f3.setAccessible(true);
-        f3.set(interceptor, "4096");
-
-
+        User accountOwner = mock(User.class);
+        Member member = mock(Member.class);
+        Method method = WorkspaceService.class.getMethod("create", NewWorkspace.class, SecurityContext.class);
         when(invocation.proceed()).thenReturn(Response.ok(workspaceDescriptor).build());
         when(invocation.getMethod()).thenReturn(method);
         when(userDao.getById(anyString())).thenReturn(user);
+        when(workspaceDescriptor.getAccountId()).thenReturn("AccountId");
+        when(member.getRoles()).thenReturn(singletonList("account/owner"));
+        when(member.getUserId()).thenReturn("userId");
+        when(accountDao.getMembers(eq("AccountId"))).thenReturn(singletonList(member));
+        when(userDao.getById("userId")).thenReturn(accountOwner);
         when(user.getEmail()).thenReturn(recipient);
+
         interceptor.invoke(invocation);
+
+        verify(accountOwner).getEmail();
         verify(mailSenderClient)
                 .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html"),
                           anyString(), anyMapOf(String.class, String.class));
+    }
+
+    private void setInterceptorPrivateFieldValue(String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field notificationTurnedOn = interceptor.getClass().getDeclaredField(fieldName);
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, value);
     }
 }

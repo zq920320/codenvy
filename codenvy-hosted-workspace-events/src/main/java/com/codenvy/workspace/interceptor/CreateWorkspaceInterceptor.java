@@ -22,8 +22,9 @@ import com.codenvy.workspace.activity.WsActivityEventSender;
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
@@ -37,6 +38,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Intercepts calls to workspace/create() service, updates WS last access time and sends welcome email in necessary.
@@ -52,10 +54,13 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     private MailSenderClient mailSenderClient;
 
     @Inject
-    WsActivityEventSender wsActivityEventSender;
+    private WsActivityEventSender wsActivityEventSender;
 
     @Inject
-    WorkspaceDao workspaceDao;
+    private WorkspaceDao workspaceDao;
+
+    @Inject
+    private AccountDao accountDao;
 
     @Inject
     private UserDao userDao;
@@ -91,11 +96,18 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
             if (workspaceDao.getByAccount(descriptor.getAccountId()).stream().noneMatch(
                     workspace -> !workspace.isTemporary() && !workspace.getId().equals(descriptor.getId()))) {
                 try {
+                    Optional<Member> accountOwner = accountDao.getMembers(descriptor.getAccountId())
+                                                        .stream()
+                                                        .filter(member -> member.getRoles().contains("account/owner"))
+                                                        .findFirst();
                     String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
                     Map<String, String> properties = new HashMap<>();
                     properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
                     properties.put("workspace", descriptor.getName());
                     properties.put("free.gbh", freeGbh);
+                    if (accountOwner.isPresent()) {
+                        properties.put("email", userDao.getById(accountOwner.get().getUserId()).getEmail());
+                    }
                     properties.put("free.limit", Long.toString(Math.round((float)Long.parseLong(freeLimit) / 1000f)));
                     mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", creatorEmail, null,
                                               "Welcome To Codenvy",
