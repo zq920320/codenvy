@@ -140,20 +140,9 @@ public class InvoiceTemplateProcessor {
         PaymentState state = PaymentState.fromState(invoice.getPaymentState());
         if (state.equals(PaymentState.PAID_SUCCESSFULLY) || state.equals(PaymentState.PAYMENT_FAIL) ||
             state.equals(PaymentState.NOT_REQUIRED)) {
-            for (CreditCard card : cardDao.getCards(invoice.getAccountId())) {
-                if (card.getToken().equals(invoice.getCreditCardId())) {
-                    context.setVariable("creditCard", card);
-                    break;
-                }
-            }
-        } else if (state.equals(PaymentState.CREDIT_CARD_MISSING)) {
-            context.setVariable("creditCard", DtoFactory.getInstance().createDto(CreditCard.class).withType("MISSING")
-                                                        .withNumber("xxxxxxxxxxxxxxxx")
-                                                        .withCardholder("UNKNOWN")
-                                                        .withStreetAddress("")
-                                                        .withCity("")
-                                                        .withState("")
-                                                        .withCountry(""));
+            cardDao.getCards(invoice.getAccountId()).stream().filter(card -> card.getToken().equals(invoice.getCreditCardId())).findFirst()
+                   .ifPresent(
+                           card -> context.setVariable("creditCard", card));
         }
         String templateName = getTemplateName(state);
         templateEngine.process(templateName, context, w);

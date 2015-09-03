@@ -23,6 +23,7 @@ import com.codenvy.api.subscription.saas.server.billing.bonus.Bonus;
 import com.codenvy.api.subscription.saas.server.billing.PaymentState;
 import com.codenvy.api.metrics.server.period.Period;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
+import com.google.common.base.Joiner;
 
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
@@ -31,7 +32,6 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.commons.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -94,7 +94,7 @@ public class SubscriptionMailSender {
         this.invoiceNoChargesSubject = invoiceNoChargesSubject;
         this.invoiceFailedSubject = invoiceFailedSubject;
         this.billingAddress = billingAddress;
-        this.freeLimit = Long.toString(Math.round(freeLimit / 1000));
+        this.freeLimit = Long.toString(Math.round((float)freeLimit / 1000f));
         this.apiEndpoint = apiEndpoint;
         this.accountDao = accountDao;
         this.userDao = userDao;
@@ -231,7 +231,7 @@ public class SubscriptionMailSender {
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
         properties.put("free.limit", freeLimit);
         mailClient.sendMail(billingAddress,
-                            Strings.join(", ", emails.toArray(new String[emails.size()])),
+                            Joiner.on(", ").join(emails),
                             null,
                             subject,
                             mediaType,
@@ -257,7 +257,7 @@ public class SubscriptionMailSender {
 
     private String format(double d)
     {
-        if(d == (long) d)
+        if((d % 1) == 0)
             return String.format("%d",(long)d);
         else
             return String.format("%s",d);

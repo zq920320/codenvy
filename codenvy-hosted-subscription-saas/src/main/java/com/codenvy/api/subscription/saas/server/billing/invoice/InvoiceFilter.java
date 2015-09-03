@@ -48,7 +48,7 @@ public class InvoiceFilter {
     }
 
     public String[] getStates() {
-        return states;
+        return states != null ? states.clone() : null;
     }
 
     public Boolean getIsMailNotSend() {

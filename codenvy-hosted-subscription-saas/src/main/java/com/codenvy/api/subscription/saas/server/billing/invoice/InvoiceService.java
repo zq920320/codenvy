@@ -23,7 +23,6 @@ import com.codenvy.api.subscription.saas.server.billing.BillingService;
 import com.codenvy.api.subscription.saas.shared.dto.Invoice;
 import com.codenvy.api.subscription.saas.shared.dto.InvoiceDescriptor;
 import com.google.common.annotations.Beta;
-import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
@@ -54,20 +53,17 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
-import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.StreamingOutput;
 import javax.ws.rs.core.UriBuilder;
-import java.io.IOException;
-import java.io.OutputStream;
 import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static com.codenvy.api.subscription.saas.server.billing.PaymentState.CREDIT_CARD_MISSING;
 import static com.codenvy.api.subscription.saas.server.billing.PaymentState.PAYMENT_FAIL;
@@ -164,20 +160,17 @@ public class InvoiceService extends Service {
             throws NotFoundException, ServerException, ForbiddenException, BadRequestException {
         requiredNotNull(invoiceId, "Invoice id");
         final Invoice invoice = getInvoice(invoiceId);
-        StreamingOutput response = new StreamingOutput() {
-            @Override
-            public void write(OutputStream outputStream) throws IOException, WebApplicationException {
-                PrintWriter w = new PrintWriter(outputStream);
-                try {
-                    invoiceTemplateProcessor.processTemplate(invoice, w);
-                } catch (ServerException | ForbiddenException | NotFoundException e) {
-                    w.write(e.getLocalizedMessage());
-                } finally {
-                    w.flush();
-                    w.close();
-                }
-
+        StreamingOutput response = outputStream -> {
+            PrintWriter w = new PrintWriter(outputStream);
+            try {
+                invoiceTemplateProcessor.processTemplate(invoice, w);
+            } catch (ServerException | ForbiddenException | NotFoundException e) {
+                w.write(e.getLocalizedMessage());
+            } finally {
+                w.flush();
+                w.close();
             }
+
         };
         return Response.ok(response).build();
     }
@@ -262,7 +255,6 @@ public class InvoiceService extends Service {
             }
         }
 
-        List<InvoiceDescriptor> result = new ArrayList<>();
         InvoiceFilter filter = InvoiceFilter.builder()
                                             .withAccountId(accountId)
                                             .withMaxItems(maxItems)
@@ -271,10 +263,7 @@ public class InvoiceService extends Service {
                                             .withTillDate(endPeriod)
                                             .build();
 
-        for (Invoice invoice : billingService.getInvoices(filter)) {
-            result.add(toDescriptor(invoice));
-        }
-        return result;
+        return billingService.getInvoices(filter).stream().map(this::toDescriptor).collect(Collectors.toList());
     }
 
     /**
