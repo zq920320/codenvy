@@ -208,7 +208,7 @@ public class BearerTokenAuthenticationService {
                                   MediaType.TEXT_HTML,
                                   IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
 
-        LOG.info("EVENT#singup-validation-email-send# EMAIL#{}#", validationData.getEmail());
+        LOG.info("EVENT#signup-validation-email-send# EMAIL#{}#", validationData.getEmail());
         LOG.info("Email validation message send to {}", validationData.getEmail());
 
         return Response.ok().build();
