@@ -39,10 +39,10 @@ import static com.codenvy.analytics.Utils.toArray;
 /**
  * @author Alexander Reshetnyak
  */
-public class SingupValidationEmailConfirmedSet extends CalculatedMetric {
+public class SignupValidationEmailConfirmedSet extends CalculatedMetric {
 
-    public SingupValidationEmailConfirmedSet() {
-        super(MetricType.SINGUP_VALIDATION_EMAIL_CONFIRMED_SET, new MetricType[]{MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET,
+    public SignupValidationEmailConfirmedSet() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED_SET, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET,
                                                                                  MetricType.USERS_PROFILES_LIST});
     }
 

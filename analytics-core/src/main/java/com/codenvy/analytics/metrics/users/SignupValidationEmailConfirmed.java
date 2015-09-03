@@ -30,10 +30,10 @@ import java.io.IOException;
 /**
  * @author Alexander Reshetnyak
  */
-public class SingupValidationEmailNotConfirmed extends CalculatedMetric {
+public class SignupValidationEmailConfirmed extends CalculatedMetric {
 
-    public SingupValidationEmailNotConfirmed() {
-        super(MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED, new MetricType[]{MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET});
+    public SignupValidationEmailConfirmed() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED_SET});
     }
 
     /** {@inheritDoc} */
@@ -49,8 +49,10 @@ public class SingupValidationEmailNotConfirmed extends CalculatedMetric {
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+
     @Override
     public String getDescription() {
-        return "Number of users which didn't confrme singup validation email";
+        return "Number of users which confirmed singup validation email";
     }
 }

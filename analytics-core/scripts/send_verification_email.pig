@@ -19,7 +19,7 @@
 IMPORT 'macros.pig';
 
 l = loadResources('$LOG', '$FROM_DATE', '$TO_DATE', '$USER', '$WS');
-a1 = filterByEvent(l, 'singup-validation-email-send');
+a1 = filterByEvent(l, 'signup-validation-email-send');
 a2 = extractParam(a1, 'EMAIL', email);
 a = FOREACH a2 GENERATE dt, email;
 

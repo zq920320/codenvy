@@ -40,17 +40,17 @@ import static org.testng.AssertJUnit.assertEquals;
 /**
  * @author Alexander Reshetnyak
  */
-public class TestConfirmationSingupByEmail extends BaseTest {
+public class TestConfirmationSignupByEmail extends BaseTest {
 
     @BeforeClass
     public void init() throws Exception {
         File log = LogGenerator.generateLogByStrings(Arrays.asList(new String[]
-            {"127.0.0.1 2013-01-01 00:01:10,791[]  [] []    [][][] - EVENT#singup-validation-email-send# EMAIL#user1@domain.com#",
+            {"127.0.0.1 2013-01-01 00:01:10,791[]  [] []    [][][] - EVENT#signup-validation-email-send# EMAIL#user1@domain.com#",
              "127.0.0.1 2013-01-01 00:04:10,791[]  [] []    [][][] - EVENT#user-created# USER#user1@domain.com# USER-ID#user7me0azc5tgh8gqmx# EMAILS#[]#",
-             "127.0.0.1 2013-01-01 06:00:57,754[]  [] []    [][][] - EVENT#singup-validation-email-send# EMAIL#user2@domain.com#",
-             "127.0.0.1 2013-01-01 07:00:58,755[]  [] []    [][][] - EVENT#singup-validation-email-send# EMAIL#user3@domain.com#",
+             "127.0.0.1 2013-01-01 06:00:57,754[]  [] []    [][][] - EVENT#signup-validation-email-send# EMAIL#user2@domain.com#",
+             "127.0.0.1 2013-01-01 07:00:58,755[]  [] []    [][][] - EVENT#signup-validation-email-send# EMAIL#user3@domain.com#",
              "127.0.0.1 2013-01-01 07:08:58,755[]  [] []    [][][] - EVENT#user-created# USER#user3@domain.com# USER-ID#user04a07xvgry4xvwyb# EMAILS##",
-             "127.0.0.1 2013-01-01 07:00:58,755[]  [] []    [][][] - EVENT#singup-validation-email-send# EMAIL#user4@domain.com#"}));
+             "127.0.0.1 2013-01-01 07:00:58,755[]  [] []    [][][] - EVENT#signup-validation-email-send# EMAIL#user4@domain.com#"}));
 
         computeStatistics(log, "20130101");
     }
@@ -72,12 +72,12 @@ public class TestConfirmationSingupByEmail extends BaseTest {
     }
 
     @Test
-    public void testSingupConfirmation() throws Exception {
+    public void testSignupConfirmation() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_SEND_SET);
+        Metric metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET);
         SetValueData set = (SetValueData)metric.getValue(builder.build());
         assertEquals(4, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user1@domain.com")));
@@ -85,21 +85,21 @@ public class TestConfirmationSingupByEmail extends BaseTest {
         assertTrue(set.getAll().contains(StringValueData.valueOf("user3@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user4@domain.com")));
 
-        metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_CONFIRMED);
+        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED);
         LongValueData value = (LongValueData)metric.getValue(builder.build());
         assertEquals(2, value.getAsLong());
 
-        metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED);
+        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED);
         value = (LongValueData)metric.getValue(builder.build());
         assertEquals(2, value.getAsLong());
 
-        metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_CONFIRMED_SET);
+        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED_SET);
         set = (SetValueData)metric.getValue(builder.build());
         assertEquals(2, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user1@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user3@domain.com")));
 
-        metric = MetricFactory.getMetric(MetricType.SINGUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET);
+        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET);
         set = (SetValueData)metric.getValue(builder.build());
         assertEquals(2, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user2@domain.com")));
