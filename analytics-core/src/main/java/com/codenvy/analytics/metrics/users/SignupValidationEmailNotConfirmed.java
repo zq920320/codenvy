@@ -21,9 +21,7 @@ import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
-import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
-import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import java.io.IOException;
@@ -52,6 +50,6 @@ public class SignupValidationEmailNotConfirmed extends SignupValidationEmailExpa
     }
     @Override
     public String getDescription() {
-        return "Number of users which didn't confrme singup validation email";
+        return "Number of users which didn't confirm signup validation email";
     }
 }
