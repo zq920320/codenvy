@@ -41,9 +41,7 @@ import javax.ws.rs.core.SecurityContext;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Matchers.anyString;
@@ -54,8 +52,6 @@ import static org.mockito.Mockito.when;
 
 @Listeners(value = {MockitoTestNGListener.class})
 public class RemoveWorkspaceMemberInterceptorTest {
-    private Field notificationTurnedOn;
-
     @Mock
     private MailSenderClient mailSenderClient;
 
@@ -85,9 +81,7 @@ public class RemoveWorkspaceMemberInterceptorTest {
 
     @BeforeMethod
     public void setup() throws Exception {
-        notificationTurnedOn = interceptor.getClass().getDeclaredField("sendEmailOnMemberRemoved");
-        notificationTurnedOn.setAccessible(true);
-        notificationTurnedOn.set(interceptor, true);
+        setInterceptorPrivateFieldValue("sendEmailOnMemberRemoved", true);
 
         EnvironmentContext context = EnvironmentContext.getCurrent();
         context.setUser(new UserImpl("test@user2.com", "askd123123", null, null, false));
@@ -96,7 +90,7 @@ public class RemoveWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldNotSendEmailIfNotificationIsTurnedOff() throws Throwable {
-        notificationTurnedOn.set(interceptor, false);
+        setInterceptorPrivateFieldValue("sendEmailOnMemberRemoved", false);
         interceptor.invoke(invocation);
         verifyZeroInteractions(mailSenderClient);
     }
@@ -110,16 +104,10 @@ public class RemoveWorkspaceMemberInterceptorTest {
 
     @Test
     public void shouldSendEmail() throws Throwable {
+        setInterceptorPrivateFieldValue("apiEndpoint", "http://dev.box.com/api");
 
         String recipient = "test@user.com";
-        Method method =
-                WorkspaceService.class.getMethod("removeMember", String.class, String.class, SecurityContext.class);
-        Field f = interceptor.getClass().getDeclaredField("apiEndpoint");
-        f.setAccessible(true);
-        f.set(interceptor, "http://dev.box.com/api");
-        Map<String, String> profileAttributes = new HashMap<>();
-        profileAttributes.put("firstName", "First");
-        profileAttributes.put("lastName", "Last");
+        Method method = WorkspaceService.class.getMethod("removeMember", String.class, String.class, SecurityContext.class);
 
         when(invocation.getMethod()).thenReturn(method);
         when(invocation.getArguments()).thenReturn(new Object[]{"ws123", "user123"});
@@ -127,12 +115,17 @@ public class RemoveWorkspaceMemberInterceptorTest {
         when(user.getEmail()).thenReturn(recipient);
         when(workspaceDao.getById(anyString())).thenReturn(new Workspace().withName("someName"));
 
-        List<String> accountRole = Arrays.asList("account/owner");
-        when(accountDao.getMembers(eq("AccountID"))).thenReturn(Arrays.asList(new Member().withRoles(accountRole)));
+        when(accountDao.getMembers(eq("AccountID"))).thenReturn(Arrays.asList(new Member()));
 
         interceptor.invoke(invocation);
         verify(mailSenderClient)
                 .sendMail(anyString(), eq(recipient), anyString(), anyString(), eq("text/html; charset=utf-8"),
                           anyString(), anyMapOf(String.class, String.class));
+    }
+
+    private void setInterceptorPrivateFieldValue(String fieldName, Object value) throws NoSuchFieldException, IllegalAccessException {
+        Field notificationTurnedOn = interceptor.getClass().getDeclaredField(fieldName);
+        notificationTurnedOn.setAccessible(true);
+        notificationTurnedOn.set(interceptor, value);
     }
 }
