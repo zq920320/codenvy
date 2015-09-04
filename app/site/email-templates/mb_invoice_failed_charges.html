@@ -6,11 +6,11 @@
     <title>Codenvy receipt</title>
 </head>
 <body style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 14px; margin: 0 20 0 0; padding: 0;">
-<span th:inline="text">We're writing to provide you with an electronic invoice for your use of Codenvy - we were unable to charge your credit card([[${creditCard.type}]] ending ...[[${#strings.substring(creditCard.Number,12,16)}]]) for the outstanding balance below.</span><br/>
-
-<span><strong  th:inline="text">You currently owe $[[${#numbers.formatDecimal(invoice.total, 1, 2)}]] and you not be allowed to build or run your projects until the invoice below is paid.</strong> If you wish to pay now you can do so with the <a href="/dashboard">User Dashboard</a>.</span><br/>
+<span th:inline="text">We have been unable to charge your credit card for the outstanding balance of $[[${#numbers.formatDecimal(invoice.total, 1, 2)}]].  Until the balance is paid you won't be able to build or run your projects.
+    <br/>
+    You can regain full usage and quiet your conscience by adding a valid credit card to your account in the User Dashboard.</span><br/>
 <br/>
-<span>If you have any concerns about this receipt please email us at <a href="mailto:account-help@codenvy.com">account-help@codenvy.com</a></span>
+<span>If you believe this is message is in error, please contact us at <a href="mailto:account-help@codenvy.com">account-help@codenvy.com</a></span>
 <p style="font-family: 'Helvetica Neue', 'Helvetica', Helvetica, Arial, sans-serif; box-sizing: border-box; font-size: 13px; margin: 0 0 20px 0; color: #595959;">
     <br/>
     Regards,
