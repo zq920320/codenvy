@@ -150,6 +150,11 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
+            public String readFileContent(String filePath, int startFrom, int limit) throws MachineException {
+                return machine.readFileContent(filePath, startFrom, limit);
+            }
+
+            @Override
             public String getId() {
                 return machine.getId();
             }
@@ -185,8 +190,8 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
-            public boolean isWorkspaceBound() {
-                return machine.isWorkspaceBound();
+            public boolean isDev() {
+                return machine.isDev();
             }
 
             @Override

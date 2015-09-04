@@ -15,12 +15,12 @@ import com.google.inject.Inject;
 
 import org.eclipse.che.api.git.gwt.client.GitServiceClient;
 import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.api.git.shared.BranchCheckoutRequest;
 import org.eclipse.che.api.git.shared.PushResponse;
 import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.git.shared.Revision;
 import org.eclipse.che.api.git.shared.Status;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
@@ -71,17 +71,21 @@ public class GitVcsService implements VcsService {
     @Override
     public void checkoutBranch(@Nonnull final ProjectDescriptor project, @Nonnull final String name,
                                final boolean createNew, @Nonnull final AsyncCallback<String> callback) {
-        service.branchCheckout(project, name, null, createNew, new AsyncRequestCallback<String>() {
-            @Override
-            protected void onSuccess(final String branchName) {
-                callback.onSuccess(branchName);
-            }
+        service.branchCheckout(project,
+                               dtoFactory.createDto(BranchCheckoutRequest.class)
+                                         .withName(name)
+                                         .withCreateNew(createNew),
+                               new AsyncRequestCallback<String>() {
+                                   @Override
+                                   protected void onSuccess(final String branchName) {
+                                       callback.onSuccess(branchName);
+                                   }
 
-            @Override
-            protected void onFailure(final Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
+                                   @Override
+                                   protected void onFailure(final Throwable exception) {
+                                       callback.onFailure(exception);
+                                   }
+                               });
     }
 
     @Override
@@ -193,14 +197,14 @@ public class GitVcsService implements VcsService {
 
     @Override
     public void listRemotes(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<List<Remote>> callback) {
-        final Unmarshallable<Array<org.eclipse.che.api.git.shared.Remote>> unMarshaller
-                = dtoUnmarshallerFactory.newArrayUnmarshaller(org.eclipse.che.api.git.shared.Remote.class);
+        final Unmarshallable<List<Remote>> unMarshaller
+                = dtoUnmarshallerFactory.newListUnmarshaller(org.eclipse.che.api.git.shared.Remote.class);
         service.remoteList(project, null, false,
-                           new AsyncRequestCallback<Array<Remote>>(unMarshaller) {
+                           new AsyncRequestCallback<List<Remote>>(unMarshaller) {
                                @Override
-                               protected void onSuccess(final Array<Remote> remotes) {
+                               protected void onSuccess(final List<Remote> remotes) {
                                    final List<Remote> result = new ArrayList<>();
-                                   for (final Remote remote : remotes.asIterable()) {
+                                   for (final Remote remote : remotes) {
                                        result.add(fromGitRemote(remote));
                                    }
                                    callback.onSuccess(result);
@@ -245,14 +249,14 @@ public class GitVcsService implements VcsService {
      *         callback when the operation is done.
      */
     private void listBranches(final ProjectDescriptor project, final String whichBranches, final AsyncCallback<List<Branch>> callback) {
-        final Unmarshallable<Array<Branch>> unMarshaller =
-                dtoUnmarshallerFactory.newArrayUnmarshaller(Branch.class);
+        final Unmarshallable<List<Branch>> unMarshaller =
+                dtoUnmarshallerFactory.newListUnmarshaller(Branch.class);
         service.branchList(project, whichBranches,
-                           new AsyncRequestCallback<Array<Branch>>(unMarshaller) {
+                           new AsyncRequestCallback<List<Branch>>(unMarshaller) {
                                @Override
-                               protected void onSuccess(final Array<Branch> branches) {
+                               protected void onSuccess(final List<Branch> branches) {
                                    final List<Branch> result = new ArrayList<>();
-                                   for (final Branch branch : branches.asIterable()) {
+                                   for (final Branch branch : branches) {
                                        result.add(fromGitBranch(branch));
                                    }
                                    callback.onSuccess(result);

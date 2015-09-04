@@ -23,12 +23,12 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.api.account.gwt.client.AccountServiceClient;
 import org.eclipse.che.ide.MimeType;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.HTTPHeader;
 
 import javax.annotation.Nonnull;
+import java.util.List;
 
 /**
  * Implementation of {@link AccountServiceClient} service.
@@ -45,7 +45,7 @@ public class ResourcesServiceClientImpl implements ResourcesServiceClient {
     }
 
     @Override
-    public void redistributeResources(@Nonnull String accountId, @Nonnull Array<UpdateResourcesDescriptor> updateResources,
+    public void redistributeResources(@Nonnull String accountId, @Nonnull List<UpdateResourcesDescriptor> updateResources,
                                       AsyncRequestCallback<Void> callback) {
         final String requestUrl = "/api/resources/" + accountId;
         asyncRequestFactory.createPostRequest(requestUrl, updateResources)

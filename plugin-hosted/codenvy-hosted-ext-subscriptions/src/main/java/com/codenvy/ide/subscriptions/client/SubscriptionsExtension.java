@@ -30,11 +30,12 @@ import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.collections.Array;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.ide.workspace.WorkspacePresenter;
+
+import java.util.List;
 
 import static com.codenvy.ide.subscriptions.client.QueueType.DEDICATED;
 import static com.codenvy.ide.subscriptions.client.QueueType.SHARED;
@@ -112,10 +113,10 @@ public class SubscriptionsExtension {
 
     private void checkSaasSubscription() {
         String accountId = appContext.getWorkspace().getAccountId();
-        subscriptionServiceClient.getSubscriptionByServiceId(accountId, "Saas", new AsyncRequestCallback<Array<SubscriptionDescriptor>>(
-                dtoUnmarshallerFactory.newArrayUnmarshaller(SubscriptionDescriptor.class)) {
+        subscriptionServiceClient.getSubscriptionByServiceId(accountId, "Saas", new AsyncRequestCallback<List<SubscriptionDescriptor>>(
+                dtoUnmarshallerFactory.newListUnmarshaller(SubscriptionDescriptor.class)) {
             @Override
-            protected void onSuccess(Array<SubscriptionDescriptor> result) {
+            protected void onSuccess(List<SubscriptionDescriptor> result) {
                 if (result.isEmpty()) {
                     //User did not have subscription. It means that his account is community
                     updateSaasInformation("Community", SHARED);

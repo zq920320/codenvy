@@ -10,12 +10,28 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.bitbucket.server;
 
+import static java.net.URLDecoder.decode;
+import static java.net.URLEncoder.encode;
+import static org.eclipse.che.commons.json.JsonHelper.toJson;
+import static org.eclipse.che.commons.json.JsonNameConventions.CAMEL_UNDERSCORE;
+import static org.eclipse.che.ide.MimeType.APPLICATION_FORM_URLENCODED;
+import static org.eclipse.che.ide.MimeType.APPLICATION_JSON;
+import static org.eclipse.che.ide.ext.bitbucket.shared.Preconditions.checkArgument;
+import static org.eclipse.che.ide.ext.bitbucket.shared.StringHelper.isNullOrEmpty;
+import static org.eclipse.che.ide.rest.HTTPHeader.ACCEPT;
+import static org.eclipse.che.ide.rest.HTTPHeader.AUTHORIZATION;
+import static org.eclipse.che.ide.rest.HTTPHeader.CONTENT_TYPE;
+import static org.eclipse.che.ide.rest.HTTPMethod.GET;
+import static org.eclipse.che.ide.rest.HTTPMethod.POST;
+import static org.eclipse.che.ide.rest.HTTPStatus.CREATED;
+import static org.eclipse.che.ide.rest.HTTPStatus.OK;
+
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.dto.server.DtoFactory;
-import org.eclipse.che.ide.commons.ParsingResponseException;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequestsPage;
@@ -38,22 +54,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import static org.eclipse.che.commons.json.JsonHelper.toJson;
-import static org.eclipse.che.commons.json.JsonNameConventions.CAMEL_UNDERSCORE;
-import static org.eclipse.che.ide.MimeType.APPLICATION_FORM_URLENCODED;
-import static org.eclipse.che.ide.MimeType.APPLICATION_JSON;
-import static org.eclipse.che.ide.ext.bitbucket.shared.Preconditions.checkArgument;
-import static org.eclipse.che.ide.ext.bitbucket.shared.StringHelper.isNullOrEmpty;
-import static org.eclipse.che.ide.rest.HTTPHeader.ACCEPT;
-import static org.eclipse.che.ide.rest.HTTPHeader.AUTHORIZATION;
-import static org.eclipse.che.ide.rest.HTTPHeader.CONTENT_TYPE;
-import static org.eclipse.che.ide.rest.HTTPMethod.GET;
-import static org.eclipse.che.ide.rest.HTTPMethod.POST;
-import static org.eclipse.che.ide.rest.HTTPStatus.CREATED;
-import static org.eclipse.che.ide.rest.HTTPStatus.OK;
-import static java.net.URLDecoder.decode;
-import static java.net.URLEncoder.encode;
 
 /**
  * Contains methods for retrieving data from BITBUCKET and processing it before sending to client side.
@@ -80,10 +80,10 @@ public class Bitbucket {
      *         if any i/o errors occurs.
      * @throws BitbucketException
      *         if Bitbucket server return unexpected or error status for request.
-     * @throws ParsingResponseException
+     * @throws ServerException
      *         if any error occurs when parse.
      */
-    public BitbucketUser getUser() throws IOException, BitbucketException, ParsingResponseException {
+    public BitbucketUser getUser() throws IOException, BitbucketException, ServerException {
         final String response = getJson(BITBUCKET_2_0_API_URL + "/user", OK);
         return parseJsonResponse(response, BitbucketUser.class);
     }
@@ -100,13 +100,13 @@ public class Bitbucket {
      *         if any i/o errors occurs.
      * @throws BitbucketException
      *         if Bitbucket server return unexpected or error status for request.
-     * @throws ParsingResponseException
+     * @throws ServerException
      *         if any error occurs when parse.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
     public BitbucketRepository getRepository(@Nonnull final String owner, @Nonnull final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException, IllegalArgumentException {
+            throws IOException, BitbucketException, ServerException, IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
 
@@ -126,13 +126,13 @@ public class Bitbucket {
      *         if any i/o errors occurs.
      * @throws BitbucketException
      *         if Bitbucket server return unexpected or error status for request.
-     * @throws ParsingResponseException
+     * @throws ServerException
      *         if any error occurs when parse.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
     public BitbucketRepositories getRepositoryForks(@Nonnull final String owner, @Nonnull final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException, IllegalArgumentException {
+            throws IOException, BitbucketException, ServerException, IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
 
@@ -168,7 +168,7 @@ public class Bitbucket {
      *         if any i/o errors occurs.
      * @throws BitbucketException
      *         if Bitbucket server return unexpected or error status for request.
-     * @throws ParsingResponseException
+     * @throws ServerException
      *         if any error occurs when parse.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
@@ -176,8 +176,7 @@ public class Bitbucket {
     public BitbucketRepositoryFork forkRepository(@Nonnull final String owner,
                                                   @Nonnull final String repositorySlug,
                                                   @Nonnull final String forkName,
-                                                  final boolean isForkPrivate)
-            throws IOException, BitbucketException, ParsingResponseException, IllegalArgumentException {
+                                                  final boolean isForkPrivate) throws IOException, BitbucketException, ServerException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
         checkArgument(!isNullOrEmpty(forkName), "forkName");
@@ -201,13 +200,13 @@ public class Bitbucket {
      *         if any i/o errors occurs.
      * @throws BitbucketException
      *         if Bitbucket server return unexpected or error status for request.
-     * @throws ParsingResponseException
+     * @throws ServerException
      *         if any error occurs when parse.
      * @throws IllegalArgumentException
      *         if one parameter is not valid.
      */
     public BitbucketPullRequests getRepositoryPullRequests(@Nonnull final String owner, @Nonnull final String repositorySlug)
-            throws IOException, BitbucketException, ParsingResponseException, IllegalArgumentException {
+            throws ServerException, IOException, BitbucketException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
 
@@ -244,7 +243,7 @@ public class Bitbucket {
     public BitbucketPullRequest openPullRequest(@Nonnull final String owner,
                                                 @Nonnull final String repositorySlug,
                                                 @Nonnull final BitbucketPullRequest pullRequest)
-            throws ParsingResponseException, IOException, BitbucketException {
+            throws ServerException, IOException, BitbucketException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
         checkArgument(pullRequest != null, "pullRequest");
@@ -255,7 +254,7 @@ public class Bitbucket {
     }
 
     private <T> T getBitbucketPage(final String url,
-                                   final Class<T> pageClass) throws IOException, BitbucketException, ParsingResponseException {
+                                   final Class<T> pageClass) throws IOException, BitbucketException, ServerException {
         final String response = getJson(url, OK);
         return parseJsonResponse(response, pageClass);
     }
@@ -326,13 +325,13 @@ public class Bitbucket {
         }
     }
 
-    private <O> O parseJsonResponse(final String json, final Class<O> clazz) throws ParsingResponseException {
+    private <O> O parseJsonResponse(final String json, final Class<O> clazz) throws ServerException {
         try {
 
             return JsonHelper.fromJson(json, clazz, null, CAMEL_UNDERSCORE);
 
         } catch (JsonParseException e) {
-            throw new ParsingResponseException(e);
+            throw new ServerException(e);
         }
     }
 
