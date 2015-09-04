@@ -16,8 +16,8 @@ import org.eclipse.che.api.git.GitException;
 import org.eclipse.che.api.git.shared.GitUser;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
-import org.eclipse.che.git.impl.nativegit.CredentialsProvider;
-import org.eclipse.che.git.impl.nativegit.UserCredential;
+import org.eclipse.che.api.git.CredentialsProvider;
+import org.eclipse.che.api.git.UserCredential;
 import org.eclipse.che.security.oauth1.BitbucketOAuthAuthenticator;
 import org.eclipse.che.security.oauth1.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth1.shared.User;
@@ -30,7 +30,7 @@ import javax.inject.Singleton;
 import java.io.IOException;
 
 /**
- * {@link org.eclipse.che.git.impl.nativegit.CredentialsProvider} implementation for Bitbucket.
+ * {@link CredentialsProvider} implementation for Bitbucket.
  *
  * @author Kevin Pollet
  */
