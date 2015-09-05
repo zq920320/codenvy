@@ -35,6 +35,12 @@
             <version>${codenvy.cloud-ide.version}</version>
             <type>zip</type>
         </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-docker-recipes</artifactId>
+            <version>${che.plugins.version}</version>
+            <type>jar</type>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

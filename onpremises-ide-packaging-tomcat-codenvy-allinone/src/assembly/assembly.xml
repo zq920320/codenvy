@@ -26,6 +26,19 @@
     <includeBaseDirectory>false</includeBaseDirectory>
     <dependencySets>
         <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>true</unpack>
+            <outputDirectory>recipes</outputDirectory>
+            <includes>
+                <include>org.eclipse.che.plugin:che-plugin-docker-recipes</include>
+            </includes>
+            <unpackOptions>
+                <excludes>
+                    <exclude>META-INF/**</exclude>
+                </excludes>
+            </unpackOptions>
+        </dependencySet>
+        <dependencySet>
             <unpack>true</unpack>
             <outputDirectory></outputDirectory>
             <includes>
