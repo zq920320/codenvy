@@ -1128,6 +1128,97 @@
         </indexes>
     </collection>
 
+    <collection name="im_installs_started">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="artifact">
+                <field>artifact</field>
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="version">
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+                <field>date</field>
+            </index>
+            <index name="user_ip">
+                <field>user_ip</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="im_installs_finished_successfully">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="artifact">
+                <field>artifact</field>
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="version">
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+                <field>date</field>
+            </index>
+            <index name="user_ip">
+                <field>user_ip</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
+    <collection name="im_installs_finished_unsuccessfully">
+        <indexes>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="artifact">
+                <field>artifact</field>
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="version">
+                <field>version</field>
+                <field>date</field>
+            </index>
+            <index name="time">
+                <field>time</field>
+                <field>date</field>
+            </index>
+            <index name="user_ip">
+                <field>user_ip</field>
+                <field>date</field>
+            </index>
+            <index name="error_message">
+                <field>error_message</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
+
     <collection name="im_on_prem_issued">
         <indexes>
             <index name="user">

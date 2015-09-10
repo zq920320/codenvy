@@ -103,9 +103,12 @@ public abstract class AbstractMetric implements Metric {
     public static final String WS_TYPE                   = "ws_type";
     public static final String WS_LOCATION               = "ws_location";
 
-    public static final String IM_ARTIFACT = "artifact";
-    public static final String IM_VERSION  = "version";
-    public static final String IM_PLAN     = "plan";
+    public static final String IM_ARTIFACT      = "artifact";
+    public static final String IM_VERSION       = "version";
+    public static final String IM_PLAN          = "plan";
+    public static final String IM_TIME          = "time";
+    public static final String IM_USER_IP       = "user_ip";
+    public static final String IM_ERROR_MESSAGE = "error_message";
 
     private final String metricName;
 

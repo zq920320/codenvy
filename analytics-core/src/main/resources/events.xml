@@ -436,6 +436,37 @@
             <param>VERSION</param>
         </parameters>
     </event>
+    <event name="im-artifact-install-started">
+        <description>Artifact install started</description>
+        <parameters>
+            <param>TIME</param>
+            <param allow-empty-value="true">USER</param>
+            <param>ARTIFACT</param>
+            <param>VERSION</param>
+            <param>USER-IP</param>
+        </parameters>
+    </event>
+    <event name="im-artifact-install-finished-successfully">
+        <description>Artifact install finished successfully</description>
+        <parameters>
+            <param>TIME</param>
+            <param allow-empty-value="true">USER</param>
+            <param>ARTIFACT</param>
+            <param>VERSION</param>
+            <param>USER-IP</param>
+        </parameters>
+    </event>
+    <event name="im-artifact-install-finished-unsuccessfully">
+        <description>Artifact install finished unsuccessfully</description>
+        <parameters>
+            <param>TIME</param>
+            <param allow-empty-value="true">USER</param>
+            <param>ARTIFACT</param>
+            <param>VERSION</param>
+            <param>USER-IP</param>
+            <param>ERROR-MESSAGE</param>
+        </parameters>
+    </event>
     <event name="im-subscription-added">
         <description>Trial subscription obtained</description>
         <parameters>

@@ -6,6 +6,12 @@ com.codenvy.analytics.metrics.im.IMDownloadsCodenvy
 com.codenvy.analytics.metrics.im.IMDownloadsInstallScript
 com.codenvy.analytics.metrics.im.IMOnPremIssuedList
 com.codenvy.analytics.metrics.im.IMOnPremIssued
+com.codenvy.analytics.metrics.im.IMInstallsStartedList
+com.codenvy.analytics.metrics.im.IMInstallsStarted
+com.codenvy.analytics.metrics.im.IMInstallsFinishedSuccessfullyList
+com.codenvy.analytics.metrics.im.IMInstallsFinishedSuccessfully
+com.codenvy.analytics.metrics.im.IMInstallsFinishedUnsuccessfullyList
+com.codenvy.analytics.metrics.im.IMInstallsFinishedUnsuccessfully
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions

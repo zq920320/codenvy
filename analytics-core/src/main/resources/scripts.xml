@@ -293,6 +293,33 @@
         <parameter key="PARAM" value="ARTIFACT"/>
         <parameter key="STORAGE_TABLE" value="im_downloads"/>
     </script>
+
+    <!-- Scripts for install statistics -->
+    <script name="events_by_type">
+        <description>Install started statistics by artifacts</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="im-artifact-install-started"/>
+        <parameter key="PARAM" value="ARTIFACT"/>
+        <parameter key="STORAGE_TABLE" value="im_installs_started"/>
+    </script>
+    <script name="events_by_type">
+        <description>Install finished successfully statistics by artifacts</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="im-artifact-install-finished-successfully"/>
+        <parameter key="PARAM" value="ARTIFACT"/>
+        <parameter key="STORAGE_TABLE" value="im_installs_finished_successfully"/>
+    </script>
+    <script name="events_by_type">
+        <description>Install finished unsuccessfully statistics by artifacts</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="im-artifact-install-finished-unsuccessfully"/>
+        <parameter key="PARAM" value="ARTIFACT"/>
+        <parameter key="STORAGE_TABLE" value="im_installs_finished_unsuccessfully"/>
+    </script>
+
     <script name="events">
         <description>On-prem trial licenses issued</description>
         <parameter key="WS" value="ANY"/>

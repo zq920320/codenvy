@@ -482,5 +482,46 @@ public class Event {
                                 .withParam("PLAN", plan)
                                 .withParam("ACCOUNT", accountId);
         }
+
+        public static Builder createImArtifactInstallStartedEvent(String userId,
+                                                                  long time,
+                                                                  String artifact,
+                                                                  String version,
+                                                                  String userIp) {
+            return new Builder().withParam("EVENT", "im-artifact-install-started")
+                                .withParam("TIME", String.valueOf(time))
+                                .withParam("USER", userId)
+                                .withParam("ARTIFACT", artifact)
+                                .withParam("VERSION", version)
+                                .withParam("USER-IP", userIp);
+        }
+
+        public static Builder createImArtifactInstallFinishedSuccessfullyEvent(String userId,
+                                                                               long time,
+                                                                               String artifact,
+                                                                               String version,
+                                                                               String userIp) {
+            return new Builder().withParam("EVENT", "im-artifact-install-finished-successfully")
+                                .withParam("TIME", String.valueOf(time))
+                                .withParam("USER", userId)
+                                .withParam("ARTIFACT", artifact)
+                                .withParam("VERSION", version)
+                                .withParam("USER-IP", userIp);
+        }
+
+        public static Builder createImArtifactInstallFinishedUnSuccessfullyEvent(String userId,
+                                                                                 long time,
+                                                                                 String artifact,
+                                                                                 String version,
+                                                                                 String userIp,
+                                                                                 String errorMessage) {
+            return new Builder().withParam("EVENT", "im-artifact-install-finished-unsuccessfully")
+                                .withParam("TIME", String.valueOf(time))
+                                .withParam("USER", userId)
+                                .withParam("ARTIFACT", artifact)
+                                .withParam("VERSION", version)
+                                .withParam("USER-IP", userIp)
+                                .withParam("ERROR-MESSAGE", errorMessage);
+        }
     }
 }
