@@ -58,6 +58,9 @@ public class OnPremisesSubscriptionSubscriber implements EventSubscriber<Subscri
     @Override
     public void onEvent(SubscriptionEvent event) {
         Subscription subscription = event.getSubscription();
+        if (!"OnPremises".equals(subscription.getServiceId())){
+            return;
+        }
         String accountId = subscription.getAccountId();
         switch (event.getType()) {
             case ADDED:
