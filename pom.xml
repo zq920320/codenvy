@@ -62,7 +62,6 @@
         <tag>HEAD</tag>
     </scm>
     <properties>
-        <dashboard.classifier>onprem</dashboard.classifier>
         <odyssey.classifier>onprem-se</odyssey.classifier>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
     </properties>
