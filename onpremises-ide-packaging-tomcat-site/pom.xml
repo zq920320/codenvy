@@ -36,12 +36,6 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-user-dashboardv2</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-war-admin-dashboard</artifactId>
             <version>${project.version}</version>
