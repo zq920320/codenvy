@@ -27,12 +27,12 @@ import com.codenvy.analytics.metrics.MetricType;
 import java.io.IOException;
 
 /**
- * @author Alexander Reshetnyak
+ * @author Dmytro Nochevnov
  */
-public class SignupValidationEmailNotConfirmed extends SignupValidationEmailExpandable {
+public class SignupValidationEmailSend extends SignupValidationEmailExpandable {
 
-    public SignupValidationEmailNotConfirmed() {
-        super(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET});
+    public SignupValidationEmailSend() {
+        super(MetricType.SIGNUP_VALIDATION_EMAIL_SEND, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET});
     }
 
     /** {@inheritDoc} */
@@ -48,8 +48,11 @@ public class SignupValidationEmailNotConfirmed extends SignupValidationEmailExpa
     public Class<? extends ValueData> getValueDataClass() {
         return LongValueData.class;
     }
+
+
     @Override
     public String getDescription() {
-        return "Number of users which didn't confirm signup validation email";
+        return "Number of users which was sent validation email";
     }
+
 }

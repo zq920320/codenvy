@@ -18,14 +18,18 @@
 package com.codenvy.analytics.metrics;
 
 import com.codenvy.analytics.BaseTest;
+import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.LongValueData;
+import com.codenvy.analytics.datamodel.MapValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
+import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.services.DataComputationFeature;
 
 import org.quartz.JobExecutionException;
+import org.testng.Assert;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -33,7 +37,10 @@ import java.io.File;
 import java.io.IOException;
 import java.text.ParseException;
 import java.util.Arrays;
+import java.util.List;
 
+import static com.codenvy.analytics.datamodel.ValueDataUtil.treatAsList;
+import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static org.testng.Assert.assertTrue;
 import static org.testng.AssertJUnit.assertEquals;
 
@@ -72,35 +79,73 @@ public class TestConfirmationSignupByEmail extends BaseTest {
     }
 
     @Test
-    public void testSignupConfirmation() throws Exception {
+    public void testSignupValidationEmailSend() throws Exception {
         Context.Builder builder = new Context.Builder();
         builder.put(Parameters.FROM_DATE, "20130101");
         builder.put(Parameters.TO_DATE, "20130101");
 
-        Metric metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET);
+        Metric metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_SEND);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        assertEquals(4, value.getAsLong());
+
+        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(builder.build());
+        List<ValueData> l = treatAsList(expandedValue);
+        Assert.assertEquals(l.size(), 4);
+        assertTrue(l.contains(MapValueData.valueOf("user=user1@domain.com")));
+        assertTrue(l.contains(MapValueData.valueOf("user=user2@domain.com")));
+        assertTrue(l.contains(MapValueData.valueOf("user=user3@domain.com")));
+        assertTrue(l.contains(MapValueData.valueOf("user=user4@domain.com")));
+
+        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_SEND_SET);
         SetValueData set = (SetValueData)metric.getValue(builder.build());
         assertEquals(4, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user1@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user2@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user3@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user4@domain.com")));
+    }
 
-        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED);
+    @Test
+    public void testSignupValidationEmailConfirmed() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED);
         LongValueData value = (LongValueData)metric.getValue(builder.build());
         assertEquals(2, value.getAsLong());
 
-        metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED);
-        value = (LongValueData)metric.getValue(builder.build());
-        assertEquals(2, value.getAsLong());
+        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(builder.build());
+        List<ValueData> l = treatAsList(expandedValue);
+        Assert.assertEquals(l.size(), 2);
+        assertTrue(l.contains(MapValueData.valueOf("user=user1@domain.com")));
+        assertTrue(l.contains(MapValueData.valueOf("user=user3@domain.com")));
 
         metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_CONFIRMED_SET);
-        set = (SetValueData)metric.getValue(builder.build());
+        SetValueData set = (SetValueData)metric.getValue(builder.build());
         assertEquals(2, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user1@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user3@domain.com")));
+    }
+
+    @Test
+    public void testSignupValidationEmailNotConfirmed() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, "20130101");
+        builder.put(Parameters.TO_DATE, "20130101");
+
+        Metric metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED);
+        LongValueData value = (LongValueData)metric.getValue(builder.build());
+        assertEquals(2, value.getAsLong());
+
+        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(builder.build());
+        List<ValueData> l = treatAsList(expandedValue);
+        Assert.assertEquals(l.size(), 2);
+        assertTrue(l.contains(MapValueData.valueOf("user=user2@domain.com")));
+        assertTrue(l.contains(MapValueData.valueOf("user=user4@domain.com")));
 
         metric = MetricFactory.getMetric(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET);
-        set = (SetValueData)metric.getValue(builder.build());
+        SetValueData set = (SetValueData)metric.getValue(builder.build());
         assertEquals(2, set.getAll().size());
         assertTrue(set.getAll().contains(StringValueData.valueOf("user2@domain.com")));
         assertTrue(set.getAll().contains(StringValueData.valueOf("user4@domain.com")));

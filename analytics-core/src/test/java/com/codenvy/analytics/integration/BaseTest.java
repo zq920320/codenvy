@@ -56,7 +56,7 @@ import static com.codenvy.analytics.Utils.toArray;
 import static java.lang.String.format;
 import static java.util.Arrays.asList;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
-import static org.junit.Assert.assertEquals;
+import static org.testng.Assert.assertEquals;
 
 /**
  * @author Anatoliy Bazko

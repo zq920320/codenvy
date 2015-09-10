@@ -23,9 +23,12 @@ import com.codenvy.analytics.metrics.Metric;
 import com.codenvy.analytics.metrics.Summaraziable;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import static java.lang.String.format;
 
 /** @author Anatoliy Bazko */
 public class ValueDataUtil {
@@ -99,5 +102,24 @@ public class ValueDataUtil {
             Map<String, ValueData> m = treatAsMap(valueData.getAll().get(0));
             return m.get(field);
         }
+    }
+
+    /**
+     * Convert SetValueData into the ListValueData consisting of MapValueData elements each of them hold map<String, String> = {keyOfMap => <set_element>}
+     *
+     * For example:
+     * given:  setValue={"email1", "id1"};
+     *         keyOfMap="user".
+     * return: ListValueData={MapValueData 1={"user"=>"email1"},
+     *                        MapValueData 2={"user"=>"id1"}}
+     */
+    public static ListValueData convertToListOfMapValues(SetValueData setValue, String keyOfMap) {
+        List<ValueData> list = new ArrayList<>(setValue.size());
+        for (ValueData value : setValue.getAll()) {
+            MapValueData map = MapValueData.valueOf(format("%s=%s", keyOfMap, value.getAsString()));
+            list.add(map);
+        }
+
+        return ListValueData.valueOf(list);
     }
 }

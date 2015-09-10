@@ -17,39 +17,30 @@
  */
 package com.codenvy.analytics.metrics.users;
 
-import com.codenvy.analytics.datamodel.LongValueData;
 import com.codenvy.analytics.datamodel.SetValueData;
 import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.datamodel.ValueDataUtil;
+import com.codenvy.analytics.metrics.CalculatedMetric;
 import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Expandable;
 import com.codenvy.analytics.metrics.MetricType;
 
 import java.io.IOException;
 
 /**
- * @author Alexander Reshetnyak
+ * @author Dmytro Nochevnov
  */
-public class SignupValidationEmailNotConfirmed extends SignupValidationEmailExpandable {
-
-    public SignupValidationEmailNotConfirmed() {
-        super(MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED, new MetricType[]{MetricType.SIGNUP_VALIDATION_EMAIL_NOT_CONFIRMED_SET});
+public abstract class SignupValidationEmailExpandable extends CalculatedMetric implements Expandable {
+    public SignupValidationEmailExpandable(MetricType signupValidationEmailConfirmed, MetricType[] metricTypes) {
+        super(signupValidationEmailConfirmed, metricTypes);
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public ValueData getValue(Context context) throws IOException {
-        SetValueData sendEmail = ValueDataUtil.getAsSet(basedMetric[0], context);
-
-        return new LongValueData(sendEmail.size());
+    @Override public String getExpandedField() {
+        return USER;
     }
 
-    /** {@inheritDoc} */
-    @Override
-    public Class<? extends ValueData> getValueDataClass() {
-        return LongValueData.class;
-    }
-    @Override
-    public String getDescription() {
-        return "Number of users which didn't confirm signup validation email";
+    @Override public ValueData getExpandedValue(Context context) throws IOException {
+        SetValueData setValue = ValueDataUtil.getAsSet(basedMetric[0], context);
+        return ValueDataUtil.convertToListOfMapValues(setValue, getExpandedField());
     }
 }

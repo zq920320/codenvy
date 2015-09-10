@@ -173,10 +173,12 @@ com.codenvy.analytics.metrics.users.UsageTimeByUsersList
 com.codenvy.analytics.metrics.users.UsageTimeByUsers
 com.codenvy.analytics.metrics.users.UsersAccountsOwnerList
 com.codenvy.analytics.metrics.users.UsersAccountsList
+com.codenvy.analytics.metrics.users.UsersAccounts
 com.codenvy.analytics.metrics.users.DuplicatedUsersSet
 com.codenvy.analytics.metrics.users.SignupValidationEmailSendSet
 com.codenvy.analytics.metrics.users.SignupValidationEmailConfirmedSet
 com.codenvy.analytics.metrics.users.SignupValidationEmailNotConfirmedSet
+com.codenvy.analytics.metrics.users.SignupValidationEmailSend
 com.codenvy.analytics.metrics.users.SignupValidationEmailConfirmed
 com.codenvy.analytics.metrics.users.SignupValidationEmailNotConfirmed
 

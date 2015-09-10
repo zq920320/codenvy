@@ -32,6 +32,7 @@ import com.codenvy.analytics.pig.scripts.util.LogGenerator;
 import com.codenvy.analytics.pig.udf.UUIDFrom;
 
 import org.eclipse.che.commons.lang.NameGenerator;
+import org.testng.AssertJUnit;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -42,6 +43,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsList;
+import static com.codenvy.analytics.datamodel.ValueDataUtil.getAsLong;
 import static com.codenvy.analytics.metrics.MetricFactory.getMetric;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
@@ -92,6 +94,15 @@ public class TestUsersAccounts extends BaseTest {
         builder.put(Parameters.TO_DATE, date);
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_ACCOUNTS, MetricType.USERS_ACCOUNTS_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_ACCOUNTS, builder.build());
+    }
+
+    @Test
+    public void testUsersAccounts() throws Exception {
+        computeData("20130101");
+        computeData("20130102");
+
+        LongValueData value = getAsLong(getMetric(MetricType.USERS_ACCOUNTS), Context.EMPTY);
+        AssertJUnit.assertEquals(6, value.getAsLong());
     }
 
     @Test
