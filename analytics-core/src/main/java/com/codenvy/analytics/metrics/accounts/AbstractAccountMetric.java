@@ -68,7 +68,7 @@ public abstract class AbstractAccountMetric extends AbstractMetric {
     public static final String PATH_WORKSPACES_MEMBERS = "/workspace/{workspaceId}/members";
     public static final String PARAM_WORKSPACE_ID      = "{workspaceId}";
 
-    public static final String PATH_ACCOUNT_SUBSCRIPTIONS = "/account/{id}/subscriptions";
+    public static final String PATH_ACCOUNT_SUBSCRIPTIONS = "/subscription/find/account?id={id}";
     public static final String PARAM_ID                   = "{id}";
 
     public static final String PATH_USER = "/user";
