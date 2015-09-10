@@ -211,7 +211,7 @@ public class FactoryProjectImporter {
         attributes.put(Constants.FACTORY_ID_ATTRIBUTE_NAME, Collections.singletonList(factory.getId()));
         ProjectUpdate update = dtoFactory.createDto(ProjectUpdate.class)
                                          .withType(projectDescriptor.getType())
-                                         .withMixinTypes(projectDescriptor.getMixins())
+                                         .withMixins(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
                                          .withContentRoot(projectDescriptor.getContentRoot())
                                          .withMixinTypes(projectDescriptor.getMixins())
