@@ -140,7 +140,7 @@ public class MongoDataStorage {
         MongodConfigBuilder mongodConfigBuilder = new MongodConfigBuilder();
         mongodConfigBuilder.net(new Net(12000, false));
         mongodConfigBuilder.replication(new Storage(getDir("database"), null, 0));
-        mongodConfigBuilder.version(Version.V2_5_4);
+        mongodConfigBuilder.version(Version.V3_1_6);
 
         RuntimeConfigBuilder runtimeConfigBuilder = new RuntimeConfigBuilder().defaults(Command.MongoD);
 

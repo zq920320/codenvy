@@ -270,7 +270,8 @@ public class CollectionsManagement {
     }
 
     private static boolean isIndexNotFoundExceptionType(MongoException me) {
-        return me.getCode() == -1 && me.getMessage().contains("index not found");
+        // because of different mongo versions
+        return (me.getCode() == -1 || me.getCode() == 27) && me.getMessage().contains("index not found");
     }
 
     public void removeAnonymousUsers(Context clauses, int skipLastDays) throws ParseException {

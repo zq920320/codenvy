@@ -41,7 +41,7 @@ import com.codenvy.analytics.metrics.users.NonActiveUsers;
 import com.codenvy.analytics.metrics.users.UsersProfilesList;
 import com.codenvy.analytics.metrics.workspaces.AbstractWorkspacesProfile;
 import com.codenvy.analytics.metrics.workspaces.NonActiveWorkspaces;
-import com.mongodb.AggregationOutput;
+import com.mongodb.AggregationOptions;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -108,9 +108,18 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                AggregationOptions.Builder builder = AggregationOptions.builder();
+                builder.allowDiskUse(true);
+                AggregationOptions aggregationOptions = builder.build();
+
                 DBObject[] dbOperations = MongoDataLoader.this.getDBOperations(metric, clauses);
-                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
-                return aggregation.results().iterator();
+
+                List<DBObject> ops = new ArrayList<>(dbOperations.length + 1);
+                ops.add(filter);
+                ops.addAll(Arrays.asList(dbOperations));
+
+
+                return dbCollection.aggregate(ops, aggregationOptions);
             }
         });
     }
@@ -158,9 +167,18 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                AggregationOptions.Builder builder = AggregationOptions.builder();
+                builder.allowDiskUse(true);
+                AggregationOptions aggregationOptions = builder.build();
+
                 DBObject[] dbOperations = getExpandedDBOperations((ReadBasedExpandable)metric, clauses);
-                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
-                return aggregation.results().iterator();
+
+                List<DBObject> ops = new ArrayList<>(dbOperations.length + 1);
+                ops.add(filter);
+                ops.addAll(Arrays.asList(dbOperations));
+
+
+                return dbCollection.aggregate(ops, aggregationOptions);
             }
         });
     }
@@ -178,9 +196,17 @@ public class MongoDataLoader implements DataLoader {
 
             @Override
             public Iterator<DBObject> iterator(ReadBasedMetric metric, Context clauses, DBCollection dbCollection, DBObject filter) {
+                AggregationOptions.Builder builder = AggregationOptions.builder();
+                builder.allowDiskUse(true);
+                AggregationOptions aggregationOptions = builder.build();
+
                 DBObject[] dbOperations = ((ReadBasedSummariziable)metric).getSpecificSummarizedDBOperations(clauses);
-                AggregationOutput aggregation = dbCollection.aggregate(filter, dbOperations);
-                return aggregation.results().iterator();
+
+                List<DBObject> ops = new ArrayList<>(dbOperations.length + 1);
+                ops.add(filter);
+                ops.addAll(Arrays.asList(dbOperations));
+
+                return dbCollection.aggregate(ops, aggregationOptions);
             }
         });
     }
@@ -195,7 +221,7 @@ public class MongoDataLoader implements DataLoader {
             Iterator<DBObject> iterator = action.iterator(metric, clauses, dbCollection, filter);
             return action.createdValueData(metric, iterator);
         } catch (Exception e) {
-            throw new IOException("Metric computation error: " + metric.getName(), e);
+                throw new IOException("Metric computation error: " + metric.getName(), e);
         }
     }
 
