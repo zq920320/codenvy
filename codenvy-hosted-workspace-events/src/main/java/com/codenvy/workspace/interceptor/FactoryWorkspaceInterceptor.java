@@ -27,12 +27,8 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.factory.FactoryService;
 import org.eclipse.che.api.factory.dto.Factory;
 */
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.api.workspace.shared.dto.NewWorkspace;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.user.server.dao.MembershipDao;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.user.User;
@@ -60,13 +56,13 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
     private String apiEndPoint;
 
     @Inject
-    WorkspaceDao workspaceDao;
+    WorkspaceManager workspaceManager;
 
     @Inject
     AccountDao accountDao;
 
     @Inject
-    MemberDao memberDao;
+    MembershipDao membershipDao;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -91,11 +87,11 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
                                                                                              : inbound.getAccountId();
 
         if (factoryWorkspace == null || factoryWorkspace.getType() == null || factoryWorkspace.getType().equals("named")) {
-            for (Workspace ws : workspaceDao.getByAccount(ownerAccountId)) {
+            for (Workspace ws : workspaceManager.getByAccount(ownerAccountId)) {
                 if (!ws.isTemporary() && ws.getAttributes().containsKey("sourceFactoryId") &&
                     ws.getAttributes().get("sourceFactoryId").equals(sourceFactoryId)) {
                     try {
-                        Member member = memberDao.getWorkspaceMember(ws.getId(), currentUser.getId());
+                        Member member = membershipDao.getWorkspaceMember(ws.getId(), currentUser.getId());
                         if (member.getRoles().contains("workspace/developer")) {
                             return Response.ok(DtoFactory.getInstance().createDto(WorkspaceDescriptor.class).withId(ws.getId())
                                                          .withAccountId(ws.getAccountId())
@@ -151,20 +147,20 @@ public class FactoryWorkspaceInterceptor implements MethodInterceptor {
         WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
 
         if (needAddOwner) {
-            memberDao.create(new Member().withWorkspaceId(descriptor.getId())
+            membershipDao.create(new Member().withWorkspaceId(descriptor.getId())
                                          .withUserId(factory.getCreator().getUserId())
                                          .withRoles(Arrays.asList("workspace/admin")));
         }
 
         if (!descriptor.isTemporary()) {
-            memberDao.create(new Member().withWorkspaceId(descriptor.getId())
+            membershipDao.create(new Member().withWorkspaceId(descriptor.getId())
                                          .withUserId(currentUser.getId())
                                          .withRoles(Arrays.asList("workspace/developer")));
         }
         if (needLockWorkspace) {
-            Workspace toLock = workspaceDao.getById(descriptor.getId());
+            Workspace toLock = workspaceManager.getById(descriptor.getId());
             toLock.getAttributes().put("codenvy:resources_locked", Boolean.TRUE.toString());
-            workspaceDao.update(toLock);
+            workspaceManager.update(toLock);
         }
        */
         return result;

@@ -21,7 +21,6 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
-import static org.testng.Assert.*;
 
 import org.everrest.test.mock.MockHttpServletRequest;
 import org.mockito.Answers;

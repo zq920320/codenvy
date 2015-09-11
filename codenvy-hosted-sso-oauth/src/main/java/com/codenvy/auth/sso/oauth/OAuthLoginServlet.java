@@ -20,13 +20,13 @@ package com.codenvy.auth.sso.oauth;
 import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import com.codenvy.auth.sso.server.InputDataException;
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
@@ -59,15 +59,11 @@ public class OAuthLoginServlet extends HttpServlet {
     @Inject
     private UserDao                          userDao;
     @Inject
-    private MemberDao                        memberDao;
-    @Inject
-    private WorkspaceDao                     workspaceDao;
+    private WorkspaceManager                 workspaceManager;
     @Inject
     private OAuthAuthenticatorProvider       authenticatorProvider;
     @Inject
     private BearerTokenAuthenticationHandler handler;
-    @Inject
-    private WorkspaceNameProposer            wsNameProposer;
     @Inject
     private InputDataValidator               inputDataValidator;
     @Named("auth.sso.create_workspace_page_url")
@@ -101,7 +97,8 @@ public class OAuthLoginServlet extends HttpServlet {
 
         if (username.contains("+")) {
             req.setAttribute("errorMessage", "Username with '+' is not allowed for registration");
-            req.getRequestDispatcher("/login.html").forward(req, resp);
+            req.getRequestDispatcher("/login.html")
+               .forward(req, resp);
             return;
         }
 
@@ -114,7 +111,8 @@ public class OAuthLoginServlet extends HttpServlet {
         }
 
         final OAuthToken token = authenticator.getToken(username);
-        if (token == null || token.getToken().isEmpty()) {
+        if (token == null || token.getToken()
+                                  .isEmpty()) {
             LOG.error("Unable obtain email address for user {} ", username);
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable obtain email address for user " + username);
             return;
@@ -122,7 +120,8 @@ public class OAuthLoginServlet extends HttpServlet {
 
         if (isUserHasPersistentTenants(username)) {
             // send user on login
-            URI uri = UriBuilder.fromUri(createWorkspacePage).replaceQuery(req.getQueryString())
+            URI uri = UriBuilder.fromUri(createWorkspacePage)
+                                .replaceQuery(req.getQueryString())
                                 .replaceQueryParam("signature")
                                 .replaceQueryParam("oauth_provider")
                                 .replaceQueryParam("oauthbearertoken")
@@ -160,14 +159,14 @@ public class OAuthLoginServlet extends HttpServlet {
     private boolean isUserHasPersistentTenants(String username) throws IOException {
         try {
             User user = userDao.getByAlias(username);
-            for (Member member : memberDao.getUserRelationships(user.getId())) {
-                if (!workspaceDao.getById(member.getWorkspaceId()).isTemporary()) {
+            for (UsersWorkspace ws : workspaceManager.getWorkspaces(user.getId())) {
+                if (!ws.isTemporary()) {
                     return true;
                 }
             }
         } catch (NotFoundException e) {
             //ok
-        } catch (ServerException e) {
+        } catch (ServerException | BadRequestException e) {
             throw new IOException(e.getLocalizedMessage(), e);
         }
         return false;

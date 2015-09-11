@@ -69,10 +69,10 @@ import static org.mockito.Mockito.when;
 public class FactoryWorkspaceInterceptorTest {
     /*
     @Mock
-    private WorkspaceDao workspaceDao;
+    private WorkspaceDao workspaceManager;
 
     @Mock
-    private MemberDao memberDao;
+    private MemberDao membershipDao;
 
     @Mock
     private AccountDao accountDao;
@@ -146,7 +146,7 @@ public class FactoryWorkspaceInterceptorTest {
 
         interceptor.invoke(invocation);
 
-        verify(memberDao).create(any(Member.class));
+        verify(membershipDao).create(any(Member.class));
     }
 
     @Test
@@ -159,12 +159,12 @@ public class FactoryWorkspaceInterceptorTest {
         when(factory.getWorkspace()).thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome"));
         when(accountDao.getById(anyString())).thenReturn(ownerAcc);
-        when(workspaceDao.getById(anyString()))
+        when(workspaceManager.getById(anyString()))
                 .thenReturn(new org.eclipse.che.api.workspace.server.dao.Workspace().withAttributes(new HashMap<String, String>()));
 
         interceptor.invoke(invocation);
 
-        verify(workspaceDao).update(argThat(new ArgumentMatcher<org.eclipse.che.api.workspace.server.dao.Workspace>() {
+        verify(workspaceManager).update(argThat(new ArgumentMatcher<org.eclipse.che.api.workspace.server.dao.Workspace>() {
             @Override
             public boolean matches(Object o) {
                 org.eclipse.che.api.workspace.server.dao.Workspace workspace = (org.eclipse.che.api.workspace.server.dao.Workspace)o;
@@ -182,12 +182,12 @@ public class FactoryWorkspaceInterceptorTest {
         when(factory.getWorkspace())
                 .thenReturn(DtoFactory.getInstance().createDto(Workspace.class).withLocation("owner").withType("named"));
         when(factory.getCreator()).thenReturn(DtoFactory.getInstance().createDto(Author.class).withUserId("somesome").withAccountId("acc"));
-        when(memberDao.getWorkspaceMember(anyString(), anyString())).thenReturn(
+        when(membershipDao.getWorkspaceMember(anyString(), anyString())).thenReturn(
                 new Member().withRoles(Arrays.asList("workspace/developer")));
 
         org.eclipse.che.api.workspace.server.dao.Workspace ws = new org.eclipse.che.api.workspace.server.dao.Workspace().withId("testId");
         ws.getAttributes().put("sourceFactoryId", SOURCE_FACTORY_ID);
-        when(workspaceDao.getByAccount(anyString())).thenReturn(Arrays.asList(ws));
+        when(workspaceManager.getByAccount(anyString())).thenReturn(Arrays.asList(ws));
 
         Object result = interceptor.invoke(invocation);
 

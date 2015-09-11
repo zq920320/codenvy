@@ -17,7 +17,7 @@
  */
 package com.codenvy.auth.sso.client.filter;
 
-import junit.framework.Assert;
+import org.junit.Assert;
 
 import org.everrest.test.mock.MockHttpServletRequest;
 import org.testng.annotations.DataProvider;

@@ -19,11 +19,11 @@ package com.codenvy.service.http;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -47,7 +47,7 @@ import java.util.concurrent.TimeUnit;
 public class WorkspaceInfoCache {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceInfoCache.class);
 
-    private final LoadingCache<Key, WorkspaceDescriptor> workspaceCache;
+    private final LoadingCache<Key, UsersWorkspace> workspaceCache;
 
 
     @Inject
@@ -67,7 +67,7 @@ public class WorkspaceInfoCache {
      * @throws ServerException
      * @throws NotFoundException
      */
-    public WorkspaceDescriptor getByName(String wsName) throws ServerException, NotFoundException {
+    public UsersWorkspace getByName(String wsName) throws ServerException, NotFoundException {
         try {
             return doGet(new Key(wsName, false));
         } catch (ExecutionException e) {
@@ -87,7 +87,7 @@ public class WorkspaceInfoCache {
      * @throws ServerException
      * @throws NotFoundException
      */
-    public WorkspaceDescriptor getById(String id) throws ServerException, NotFoundException {
+    public UsersWorkspace getById(String id) throws ServerException, NotFoundException {
         try {
             return doGet(new Key(id, true));
         } catch (ExecutionException e) {
@@ -121,8 +121,8 @@ public class WorkspaceInfoCache {
         workspaceCache.invalidate(new Key(wsName, false));
     }
 
-    private WorkspaceDescriptor doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
-        WorkspaceDescriptor workspace = workspaceCache.get(key);
+    private UsersWorkspace doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
+        UsersWorkspace workspace = workspaceCache.get(key);
         if (workspace.isTemporary()) {
             if (workspace.getAttributes().containsKey("allowAnyoneAddMember")) {
                 return workspace;
@@ -136,7 +136,7 @@ public class WorkspaceInfoCache {
 
     }
 
-    public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, WorkspaceDescriptor> {
+    public abstract static class WorkspaceCacheLoader extends CacheLoader<Key, UsersWorkspace> {
 
     }
 
@@ -145,24 +145,17 @@ public class WorkspaceInfoCache {
      */
     public static class DaoWorkspaceCacheLoader extends WorkspaceCacheLoader {
         @Inject
-        WorkspaceDao dao;
+        WorkspaceManager manager;
 
         @Override
-        public WorkspaceDescriptor load(Key key) throws Exception {
-            LOG.debug("Load {} from dao ", key.key);
+        public UsersWorkspace load(Key key) throws Exception {
+            LOG.debug("Load {} from manager ", key.key);
             try {
-                Workspace ws;
                 if (key.isUuid) {
-                    ws = dao.getById(key.key);
+                    return manager.getWorkspace(key.key);
                 } else {
-                    ws = dao.getByName(key.key);
+                    return manager.get(key.key);
                 }
-                return DtoFactory.getInstance().createDto(WorkspaceDescriptor.class)
-                                 .withId(ws.getId())
-                                 .withName(ws.getName())
-                                 .withAccountId(ws.getAccountId())
-                                 .withTemporary(ws.isTemporary())
-                                 .withAttributes(ws.getAttributes());
             } catch (Exception e) {
                 LOG.debug(e.getLocalizedMessage(), e);
                 throw e;
@@ -180,22 +173,25 @@ public class WorkspaceInfoCache {
         String apiEndpoint;
 
         @Override
-        public WorkspaceDescriptor load(Key key) throws Exception {
-            LOG.debug("Load {} from dao ", key.key);
+        public UsersWorkspace load(Key key) throws Exception {
+            LOG.debug("Load {} from manager ", key.key);
             try {
-                Link getWorkspaceLink = null;
+                Link getWorkspaceLink;
                 if (key.isUuid) {
-
                     getWorkspaceLink =
-                            DtoFactory.getInstance().createDto(Link.class).withMethod("GET")
+                            DtoFactory.getInstance()
+                                      .createDto(Link.class)
+                                      .withMethod("GET")
                                       .withHref(apiEndpoint + "/workspace/" + key.key);
                 } else {
                     getWorkspaceLink =
-                            DtoFactory.getInstance().createDto(Link.class).withMethod("GET")
+                            DtoFactory.getInstance()
+                                      .createDto(Link.class)
+                                      .withMethod("GET")
                                       .withHref(apiEndpoint + "/workspace?name=" + key.key);
                 }
 
-                return HttpJsonHelper.request(WorkspaceDescriptor.class, getWorkspaceLink);
+                return HttpJsonHelper.request(UsersWorkspaceDto.class, getWorkspaceLink);
             } catch (Exception e) {
                 LOG.warn("Not able to get information for {} - {}", key.key, key.isUuid);
                 LOG.debug(e.getLocalizedMessage(), e);
@@ -221,9 +217,8 @@ public class WorkspaceInfoCache {
             Key key1 = (Key)o;
 
             if (isUuid != key1.isUuid) return false;
-            if (!key.equals(key1.key)) return false;
+            return key.equals(key1.key);
 
-            return true;
         }
 
         @Override

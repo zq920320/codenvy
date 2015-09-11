@@ -17,19 +17,20 @@
  */
 package com.codenvy.auth.sso.server;
 
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
+import org.eclipse.che.api.user.server.dao.MembershipDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
+
 import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
 
 
 import javax.inject.Inject;
 import java.io.IOException;
-import java.util.List;
 
 /**
  * @author Sergii Kabashniuk
@@ -40,39 +41,40 @@ public class OrgServiceWorkspaceValidator implements WorkspaceCreationValidator 
     private UserDao userDao;
 
     @Inject
-    private MemberDao memberDao;
+    private MembershipDao membershipDao;
 
     @Inject
-    private WorkspaceDao workspaceDao;
+    private WorkspaceManager workspaceManager;
 
     @Override
     public void ensureUserCreationAllowed(String email, String workspaceName) throws IOException {
         try {
-            User user;
+            User user = null;
             try {
                 user = userDao.getByAlias(email);
-
-                List<Member> memberships = memberDao.getUserRelationships(user.getId());
                 try {
-                    for (Member member : memberships) {
-                        if (member.getRoles().contains("workspace/admin") &&
-                            !workspaceDao.getById(member.getWorkspaceId()).isTemporary()) {
-                            throw new IOException("You are the owner of another persistent workspace.");
+                    for (UsersWorkspace ws : workspaceManager.getWorkspaces(user.getId())) {
+                        if (!ws.isTemporary()) {
+                                throw new IOException("You are the owner of another persistent workspace.");
                         }
                     }
-                } catch (NotFoundException e) {
-                    throw new IOException(e.getLocalizedMessage(), e);
+                } catch (BadRequestException e) {
+                    throw new IOException(e.getLocalizedMessage(), e); //TODO: refactor interface exception
                 }
             } catch (NotFoundException e) {
                 //ok
             }
 
+            if (user == null) {
+                return;
+            }
             try {
-                workspaceDao.getByName(workspaceName);
-
+                workspaceManager.getWorkspace(workspaceName, user.getId());
                 throw new IOException("This workspace name is reserved, please choose another name.");
             } catch (NotFoundException e) {
                 //ok
+            } catch (BadRequestException e) {
+                throw new IOException(e.getLocalizedMessage(), e); //TODO: refactor interface exception
             }
         } catch (ServerException e) {
             throw new IOException(e.getLocalizedMessage(), e);

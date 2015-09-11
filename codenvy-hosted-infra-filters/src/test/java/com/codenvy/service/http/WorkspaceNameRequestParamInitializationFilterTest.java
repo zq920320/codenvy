@@ -26,7 +26,7 @@ import static org.testng.Assert.assertEquals;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.everrest.test.mock.MockHttpServletRequest;
@@ -52,9 +52,9 @@ import java.lang.reflect.Field;
 @Listeners(value = MockitoTestNGListener.class)
 public class WorkspaceNameRequestParamInitializationFilterTest {
     @Mock
-    WorkspaceInfoCache  cache;
+    WorkspaceInfoCache cache;
     @Mock
-    WorkspaceDescriptor descriptor;
+    UsersWorkspace     workspace;
 
     @Mock
     FilterChain         chain;
@@ -83,19 +83,24 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
         Mockito.doAnswer(new Answer() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
-                assertEquals(EnvironmentContext.getCurrent().getWorkspaceName(), "myWorkspace");
-                assertEquals(EnvironmentContext.getCurrent().getWorkspaceId(), "wsId");
-                assertEquals(EnvironmentContext.getCurrent().getAccountId(), "ac-123123");
+                assertEquals(EnvironmentContext.getCurrent()
+                                               .getWorkspaceName(), "myWorkspace");
+                assertEquals(EnvironmentContext.getCurrent()
+                                               .getWorkspaceId(), "wsId");
+                assertEquals(EnvironmentContext.getCurrent()
+                                               .getAccountId(), "ac-123123");
 
                 return null;
             }
-        }).when(chain).doFilter(any(ServletRequest.class), any(ServletResponse.class));
+        })
+               .when(chain)
+               .doFilter(any(ServletRequest.class), any(ServletResponse.class));
 
         //given
-        when(cache.getByName(eq("myWorkspace"))).thenReturn(descriptor);
-        when(descriptor.getName()).thenReturn("myWorkspace");
-        when(descriptor.getId()).thenReturn("wsId");
-        when(descriptor.getAccountId()).thenReturn("ac-123123");
+        when(cache.getByName(eq("myWorkspace"))).thenReturn(workspace);
+        when(workspace.getName()).thenReturn("myWorkspace");
+        when(workspace.getId()).thenReturn("wsId");
+        when(workspace.getAccountId()).thenReturn("ac-123123");
 
 
         ServletRequest request =

@@ -26,6 +26,7 @@ import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
@@ -85,18 +86,18 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
         // Do not send notification if operation is turned off
-        WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
-        wsActivityEventSender.onActivity(descriptor.getId(), descriptor.isTemporary());
-
         if (!sendEmailOnWorkspaceCreated) {
             return result;
         }
-        WorkspaceDescriptor descriptor = (WorkspaceDescriptor)((Response)result).getEntity();
+        UsersWorkspaceDto descriptor = (UsersWorkspaceDto)((Response)result).getEntity();
         wsActivityEventSender.onActivity(descriptor.getId(), descriptor.isTemporary());
 
         if (!descriptor.isTemporary()) {
-            if (workspaceDao.getByAccount(descriptor.getAccountId()).stream().noneMatch(
-                    workspace -> !workspace.isTemporary() && !workspace.getId().equals(descriptor.getId()))) {
+            if (workspaceDao.getByAccount(descriptor.getAccountId())
+                            .stream()
+                            .noneMatch(
+                                    workspace -> !workspace.isTemporary() && !workspace.getId()
+                                                                                       .equals(descriptor.getId()))) {
                 try {
                     Optional<Member> accountOwner = accountDao.getMembers(descriptor.getAccountId())
                                                         .stream()

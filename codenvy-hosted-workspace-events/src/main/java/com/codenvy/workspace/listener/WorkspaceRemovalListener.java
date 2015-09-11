@@ -17,15 +17,16 @@
  */
 package com.codenvy.workspace.listener;
 
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.user.server.dao.MembershipDao;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.user.shared.model.Membership;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import com.codenvy.workspace.event.StopWsEvent;
 import com.google.common.cache.RemovalListener;
 import com.google.common.cache.RemovalNotification;
@@ -34,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
@@ -47,21 +49,21 @@ import static java.lang.Boolean.parseBoolean;
 public class WorkspaceRemovalListener implements RemovalListener<String, Boolean> {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceRemovalListener.class);
 
-    private final EventService  eventService;
-    private final WorkspaceDao  workspaceDao;
-    private final MemberDao     memberDao;
-    private final UserDao       userDao;
-    private final PreferenceDao preferenceDao;
+    private final EventService     eventService;
+    private final WorkspaceManager workspaceManager;
+    private final MembershipDao    membershipDao;
+    private final UserDao          userDao;
+    private final PreferenceDao    preferenceDao;
 
     @Inject
     public WorkspaceRemovalListener(EventService eventService,
-                                    WorkspaceDao workspaceDao,
-                                    MemberDao memberDao,
+                                    WorkspaceManager workspaceManager,
+                                    MembershipDao membershipDao,
                                     UserDao userDao,
                                     PreferenceDao preferenceDao) {
         this.eventService = eventService;
-        this.workspaceDao = workspaceDao;
-        this.memberDao = memberDao;
+        this.workspaceManager = workspaceManager;
+        this.membershipDao = membershipDao;
         this.userDao = userDao;
         this.preferenceDao = preferenceDao;
     }
@@ -72,17 +74,20 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
             if (notification.getValue()) {
                 try {
                     String wsId = notification.getKey();
-                    final List<Member> members;
+                    final List<Membership> memberships = new ArrayList<>();
                     try {
-                        members = memberDao.getWorkspaceMembers(wsId);
-                        workspaceDao.remove(wsId);
+                        memberships.addAll(membershipDao.getAllMemberships("workspace", wsId));
+                        workspaceManager.removeWorkspace(wsId);
                     } catch (NotFoundException e) {
                         return;
+                    } catch (BadRequestException e) {
+                        LOG.error("Cannot remove workspace {}", wsId);
                     }
 
-                    for (Member member : members) {
+                    for (Membership member : memberships) {
                         final Map<String, String> preferences = preferenceDao.getPreferences(member.getUserId());
-                        if (parseBoolean(preferences.get("temporary")) && memberDao.getUserRelationships(member.getUserId()).isEmpty()) {
+                        if (parseBoolean(preferences.get("temporary")) && membershipDao.getMemberships(member.getUserId(), "workspace")
+                                                                                       .isEmpty()) {
                             userDao.remove(member.getUserId());
                         }
                     }

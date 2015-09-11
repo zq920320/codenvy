@@ -19,7 +19,6 @@ package com.codenvy.auth.sso.server;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 
@@ -29,7 +28,7 @@ import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
+import org.eclipse.che.api.user.server.dao.MembershipDao;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +60,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
 
     private final UserDao                   userDao;
     private final AccountDao                accountDao;
-    private final MemberDao                 memberDao;
+    private final MembershipDao             membershipDao;
     private final PreferenceDao             preferenceDao;
     private final InitialLdapContextFactory contextFactory;
     private final String                    containerDn;
@@ -73,7 +72,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     @Inject
     public OrgServiceRolesExtractor(UserDao userDao,
                                     AccountDao accountDao,
-                                    MemberDao memberDao,
+                                    MembershipDao membershipDao,
                                     PreferenceDao preferenceDao,
                                     @Named("user.ldap.user_container_dn") String userContainerDn,
                                     @Named("user.ldap.user_dn") String userDn,
@@ -83,7 +82,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     InitialLdapContextFactory contextFactory) {
         this.userDao = userDao;
         this.accountDao = accountDao;
-        this.memberDao = memberDao;
+        this.membershipDao = membershipDao;
         this.preferenceDao = preferenceDao;
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
@@ -120,17 +119,17 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             if (accountId != null) {
                 Account account = accountDao.getById(accountId);
                 if (account != null) {
-                    for (Member accountMember : accountDao.getMembers(accountId)) {
-                        if (accountMember.getUserId().equals(user.getId()))
-                            userRoles.addAll(accountMember.getRoles());
-                    }
+                    accountDao.getMembers(accountId)
+                              .stream()
+                              .filter(accountMember -> accountMember.getUserId().equals(user.getId()))
+                              .forEach(accountMember -> userRoles.addAll(accountMember.getRoles()));
                 }
             }
 
-            for (org.eclipse.che.api.workspace.server.dao.Member workspaceMember : memberDao.getUserRelationships(user.getId())) {
-                if (workspaceMember.getWorkspaceId().equals(workspaceId))
-                    userRoles.addAll(workspaceMember.getRoles());
-            }
+            membershipDao.getMemberships(user.getId())
+                         .stream()
+                         .filter(membership -> membership.getSubjectId().equals(workspaceId))
+                         .forEach(membership -> userRoles.addAll(membership.getRoles()));
             return userRoles;
         } catch (NotFoundException e) {
             return emptySet();

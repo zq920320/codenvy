@@ -21,11 +21,10 @@ import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
+import org.eclipse.che.api.user.server.dao.MembershipDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceReference;
+import org.eclipse.che.api.user.shared.model.Membership;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
 import org.slf4j.Logger;
@@ -62,7 +61,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     private AccountDao accountDao;
 
     @Inject
-    private MemberDao memberDao;
+    private MembershipDao membershipDao;
 
     @Inject
     @Named("api.endpoint")
@@ -86,7 +85,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
         if (workspaceReference.isTemporary()) {
             return result;
         }
-        List<Member> workspaceMembers = memberDao.getWorkspaceMembers(workspaceReference.getId());
+        List<Membership> workspaceMembers = membershipDao.getAllMemberships("workspace", workspaceReference.getId());
 
         // Do not send notification on joining of first member
         if (workspaceMembers.size() < 2) {
@@ -94,18 +93,24 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
         }
 
         try {
-            Optional<Member> admin = workspaceMembers
+            Optional<Membership> admin = workspaceMembers
                     .stream()
-                    .filter(member -> member.getRoles().contains("workspace/admin"))
+                    .filter(membership -> membership.getRoles()
+                                                    .contains("workspace/admin"))
                     .findFirst();
             Optional<org.eclipse.che.api.account.server.dao.Member> accountOwner =
                     accountDao.getMembers(environmentContext.getAccountId())
                               .stream()
-                              .filter(member -> member.getRoles().contains("account/owner"))
+                              .filter(member -> member.getRoles()
+                                                      .contains("account/owner"))
                               .findFirst();
-            String recipientEmail = userDao.getById(memberDescriptor.getUserId()).getEmail();
-            String senderUserId = EnvironmentContext.getCurrent().getUser().getId();
-            String senderEmail = userDao.getById(senderUserId).getEmail();
+            String recipientEmail = userDao.getById(memberDescriptor.getUserId())
+                                           .getEmail();
+            String senderUserId = EnvironmentContext.getCurrent()
+                                                    .getUser()
+                                                    .getId();
+            String senderEmail = userDao.getById(senderUserId)
+                                        .getEmail();
             Map<String, String> properties = new HashMap<>();
             properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
             properties.put("workspace", workspaceReference.getName());
