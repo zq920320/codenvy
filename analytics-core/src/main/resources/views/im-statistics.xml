@@ -62,6 +62,10 @@
                 <parameter key="name" value="im_on_prem_issued"/>
                 <parameter key="description" value="Number of on-prem trial licenses issued"/>
             </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="cdec_first_login"/>
+                <parameter key="description" value="Number of first logins"/>
+            </row>
         </section>
         <section name="im_analysis">
             <row class="com.codenvy.analytics.services.view.DateRow">

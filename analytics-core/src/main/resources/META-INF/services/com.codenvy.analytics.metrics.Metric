@@ -12,6 +12,7 @@ com.codenvy.analytics.metrics.im.IMInstallsFinishedSuccessfullyList
 com.codenvy.analytics.metrics.im.IMInstallsFinishedSuccessfully
 com.codenvy.analytics.metrics.im.IMInstallsFinishedUnsuccessfullyList
 com.codenvy.analytics.metrics.im.IMInstallsFinishedUnsuccessfully
+com.codenvy.analytics.metrics.im.CdecFirstLogin
 
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsList
 com.codenvy.analytics.metrics.sessions.ProductUsageSessions
