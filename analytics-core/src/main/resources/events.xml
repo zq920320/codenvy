@@ -514,6 +514,21 @@
             <param>ACCOUNT</param>
         </parameters>
     </event>
+    <event name="account-add-member">
+        <description>Add member to account</description>
+        <parameters>
+            <param>ACCOUNT-ID</param>
+            <param>USER-ID</param>
+            <param>ROLES</param>
+        </parameters>
+    </event>
+    <event name="account-remove-member">
+        <description>Add member to account</description>
+        <parameters>
+            <param>ACCOUNT-ID</param>
+            <param>USER-ID</param>
+        </parameters>
+    </event>
     <event name="account-locked">
         <description>Account placed in lockdown</description>
         <parameters>
