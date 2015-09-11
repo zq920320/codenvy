@@ -19,7 +19,7 @@ package com.codenvy.cloudide.maintenance;
 
 import org.eclipse.che.commons.lang.IoUtil;
 
-import javax.annotation.Nullable;
+import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
