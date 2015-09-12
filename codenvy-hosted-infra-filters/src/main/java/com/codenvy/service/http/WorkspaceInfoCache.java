@@ -24,6 +24,7 @@ import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
+
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
@@ -35,6 +36,7 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -67,9 +69,9 @@ public class WorkspaceInfoCache {
      * @throws ServerException
      * @throws NotFoundException
      */
-    public UsersWorkspace getByName(String wsName) throws ServerException, NotFoundException {
+    public UsersWorkspace getByName(String wsName, String wsOwner) throws ServerException, NotFoundException {
         try {
-            return doGet(new Key(wsName, false));
+            return doGet(new Key(wsName, wsOwner, false));
         } catch (ExecutionException e) {
             if (e.getCause() instanceof NotFoundException) {
                 throw ((NotFoundException)e.getCause());
@@ -89,7 +91,7 @@ public class WorkspaceInfoCache {
      */
     public UsersWorkspace getById(String id) throws ServerException, NotFoundException {
         try {
-            return doGet(new Key(id, true));
+            return doGet(new Key(id, null, true));
         } catch (ExecutionException e) {
             if (e.getCause() instanceof NotFoundException) {
                 throw ((NotFoundException)e.getCause());
@@ -108,7 +110,7 @@ public class WorkspaceInfoCache {
      *         - id of workspace to remove.
      */
     public void removeById(String id) {
-        workspaceCache.invalidate(new Key(id, true));
+        workspaceCache.invalidate(new Key(id, null, true));
     }
 
     /**
@@ -117,8 +119,8 @@ public class WorkspaceInfoCache {
      * @param wsName
      *         - name workspace to remove
      */
-    public void removeByName(String wsName) {
-        workspaceCache.invalidate(new Key(wsName, false));
+    public void removeByName(String wsName, String wsOwner) {
+        workspaceCache.invalidate(new Key(wsName, wsName, false));
     }
 
     private UsersWorkspace doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
@@ -128,8 +130,9 @@ public class WorkspaceInfoCache {
                 return workspace;
             }
             workspaceCache.invalidate(key);
-            workspaceCache
-                    .invalidate(key.isUuid ? new Key(workspace.getName(), false) : new Key(workspace.getId(), true));
+            workspaceCache.invalidate(key.isUuid ?
+                                      new Key(workspace.getName(), null, false) :
+                                      new Key(workspace.getId(), workspace.getOwner(), true));
             workspace = workspaceCache.get(key);
         }
         return workspace;
@@ -143,7 +146,7 @@ public class WorkspaceInfoCache {
     /**
      * Cacheloader that gets Workspace from DAO
      */
-    public static class DaoWorkspaceCacheLoader extends WorkspaceCacheLoader {
+    public static class ManagerCacheLoader extends WorkspaceCacheLoader {
         @Inject
         WorkspaceManager manager;
 
@@ -154,7 +157,7 @@ public class WorkspaceInfoCache {
                 if (key.isUuid) {
                     return manager.getWorkspace(key.key);
                 } else {
-                    return manager.get(key.key);
+                    return manager.getWorkspace(key.key, key.userId);
                 }
             } catch (Exception e) {
                 LOG.debug(e.getLocalizedMessage(), e);
@@ -200,32 +203,38 @@ public class WorkspaceInfoCache {
         }
     }
 
-    private class Key {
+    private static final class Key {
         final String  key;
+        final String  userId;
         final boolean isUuid;
 
-        private Key(String key, boolean isUuid) {
+        private Key(String key, String userId, boolean isUuid) {
             this.key = key;
+            this.userId = userId;
             this.isUuid = isUuid;
         }
 
         @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-
-            Key key1 = (Key)o;
-
-            if (isUuid != key1.isUuid) return false;
-            return key.equals(key1.key);
-
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (!(obj instanceof Key)) {
+                return false;
+            }
+            final Key other = (Key)obj;
+            return isUuid == other.isUuid &&
+                   Objects.equals(key, other.key) &&
+                   Objects.equals(userId, other.userId);
         }
 
         @Override
         public int hashCode() {
-            int result = key.hashCode();
-            result = 31 * result + (isUuid ? 1 : 0);
-            return result;
+            int hash = 7;
+            hash = hash * 31 + Objects.hashCode(key);
+            hash = hash * 31 + Objects.hashCode(userId);
+            hash = hash * 31 + Boolean.hashCode(isUuid);
+            return hash;
         }
     }
 }

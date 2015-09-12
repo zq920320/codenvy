@@ -33,6 +33,8 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import java.io.IOException;
 
+//TODO fix it, the place of workspace-name or id is undefined for now
+
 /**
  * Initialization filter takes workspace name from query param
  *
@@ -69,7 +71,7 @@ public class WorkspaceNameRequestParamInitializationFilter extends WorkspaceEnvi
     protected UsersWorkspace getWorkspaceFromRequest(ServletRequest request) {
         String workspaceName = request.getParameter("name");
         try {
-            return cache.getByName(workspaceName);
+            return cache.getByName(workspaceName, null);
         } catch (NotFoundException ignored) {
         } catch (ServerException e) {
             LOG.warn(e.getLocalizedMessage(), e);

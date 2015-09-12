@@ -49,7 +49,7 @@ public class InterceptorModule extends AbstractModule {
                         names("addMember"),
                         addWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        names("create")),
+                        names("create"),
                         factoryWorkspaceInterceptor, createWorkspaceInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceManager.class),
                         names("createWorkspace"),

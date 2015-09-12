@@ -17,15 +17,15 @@
  */
 package com.codenvy.workspace.event;
 
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.notification.EventOrigin;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 
 /**
  * @author Sergii Leschenko
  */
 @EventOrigin("workspace")
 public class CreateWorkspaceEvent extends WorkspaceEvent {
-    public CreateWorkspaceEvent(Workspace workspace) {
+    public CreateWorkspaceEvent(UsersWorkspace workspace) {
         super(ChangeType.CREATED, workspace);
     }
 }

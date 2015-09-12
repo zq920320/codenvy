@@ -20,7 +20,6 @@ package com.codenvy.workspace.listener;
 import org.eclipse.che.api.core.notification.EventService;
 /*import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.internal.RunnerEvent;*/
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.mockito.Mock;

@@ -18,10 +18,13 @@
 package com.codenvy.workspace.listener;
 
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
+
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.codenvy.workspace.event.StopWsEvent;
 
+import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -67,9 +70,10 @@ public class VfsStopSubscriberTest {
         subscriber.subscribe();
 
         // when
-        eventService.publish(new DeleteWorkspaceEvent(new Workspace().withId("id")
-                                                                     .withTemporary(true)
-                                                                     .withName("name")));
+        eventService.publish(new DeleteWorkspaceEvent(DtoFactory.newDto(UsersWorkspaceDto.class)
+                                                                .withId("id")
+                                                                .withTemporary(true)
+                                                                .withName("name")));
 
         // then
         verify(vfsCleanupPerformer, timeout(500)).unregisterProvider("id");

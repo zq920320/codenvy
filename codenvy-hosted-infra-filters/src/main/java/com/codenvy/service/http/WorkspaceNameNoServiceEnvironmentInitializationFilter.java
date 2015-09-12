@@ -30,6 +30,8 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 
+//TODO fix it, the place of workspace-name or id is undefined for now
+
 /**
  * Set information about workspace in request by following path:
  * <p/>
@@ -52,7 +54,7 @@ public class WorkspaceNameNoServiceEnvironmentInitializationFilter extends Works
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);
         try {
-            return cache.getByName(pathParts[2]);
+            return cache.getByName(pathParts[2], null);
         } catch (NotFoundException e) {
             return null;
         } catch (ServerException e) {

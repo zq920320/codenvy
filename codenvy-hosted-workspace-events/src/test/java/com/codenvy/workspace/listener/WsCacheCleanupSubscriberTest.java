@@ -20,10 +20,12 @@ package com.codenvy.workspace.listener;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
+
 import com.codenvy.service.http.WorkspaceInfoCache;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -62,12 +64,13 @@ public class WsCacheCleanupSubscriberTest {
         wsCacheCleanupSubscriber.subscribe();
 
         // when
-        eventService.publish(new DeleteWorkspaceEvent(new Workspace().withId(ID)
-                                                                     .withTemporary(true)
-                                                                     .withName(NAME)));
+        eventService.publish(new DeleteWorkspaceEvent(DtoFactory.newDto(UsersWorkspaceDto.class)
+                                                                .withId(ID)
+                                                                .withName(NAME)
+                                                                .withOwner("owner")));
 
         //then
-        verify(workspaceInfoCache, timeout(500)).removeByName(NAME);
+        verify(workspaceInfoCache, timeout(500)).removeByName(NAME, "owner");
         verify(workspaceInfoCache).removeById(ID);
     }
 }

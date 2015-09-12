@@ -27,11 +27,6 @@ import org.eclipse.che.api.factory.dto.Factory;
 import org.eclipse.che.api.factory.dto.Workspace;
 */
 import org.eclipse.che.api.workspace.server.WorkspaceService;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
-import org.eclipse.che.api.workspace.shared.dto.NewWorkspace;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.user.UserImpl;

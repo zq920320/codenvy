@@ -17,9 +17,9 @@
  */
 package com.codenvy.workspace.listener;
 
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.codenvy.workspace.event.StopWsEvent;
 
@@ -64,7 +64,7 @@ public class VfsStopSubscriber {
         this.deleteWsEventSubscriber = new EventSubscriber<DeleteWorkspaceEvent>() {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
-                Workspace removedWorkspace = event.getWorkspace();
+                UsersWorkspace removedWorkspace = event.getWorkspace();
                 String id = removedWorkspace.getId();
                 try {
                     LOG.info("Unregister vfs. Workspace id:{}", id);
