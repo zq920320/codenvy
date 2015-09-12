@@ -52,9 +52,9 @@ import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -418,7 +418,7 @@ public class SubscriptionService extends Service {
      */
     private SubscriptionDescriptor toDescriptor(Subscription subscription,
                                                 final SecurityContext securityContext,
-                                                @Nonnull final Set<String> resolvedRoles) {
+                                                @NotNull final Set<String> resolvedRoles) {
         List<Link> links = new ArrayList<>(2);
         // community subscriptions should not use urls
         final UriBuilder uriBuilder = getServiceContext().getServiceUriBuilder();
