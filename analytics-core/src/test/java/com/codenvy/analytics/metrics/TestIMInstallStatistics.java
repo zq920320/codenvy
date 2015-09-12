@@ -24,7 +24,6 @@ import com.codenvy.analytics.datamodel.ValueData;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
-
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
@@ -58,7 +57,7 @@ public class TestIMInstallStatistics extends BaseTest {
         events.add(Event.Builder.createImArtifactInstallFinishedSuccessfullyEvent("user2", dateToMillis("2013-01-01 11:00:00"), "codenvy", "3.5.1", "88.88.88.89")
                                 .withDate("2013-01-01", "11:00:00").build());
 
-        events.add(Event.Builder.createImArtifactInstallFinishedUnSuccessfullyEvent("user3", dateToMillis("2013-01-01 10:30:00"), "codenvy", "3.5.5", "88.88.88.90", "Connection broken...")
+        events.add(Event.Builder.createImArtifactInstallFinishedUnSuccessfullyEvent("user3", dateToMillis("2013-01-01 10:30:00"), "codenvy", "3.5.5", "88.88.88.90", "Binaries+to+install+codenvy%3A3.11.9.1%23S+not+found")
                                 .withDate("2013-01-01", "10:30:00").build());
 
         File log = LogGenerator.generateLog(events);
@@ -143,6 +142,6 @@ public class TestIMInstallStatistics extends BaseTest {
         assertEquals(data.get("artifact"), StringValueData.valueOf("codenvy"));
         assertEquals(data.get("version"), StringValueData.valueOf("3.5.5"));
         assertEquals(data.get("user_ip"), StringValueData.valueOf("88.88.88.90"));
-        assertEquals(data.get("error_message"), StringValueData.valueOf("Connection broken..."));
+        assertEquals(data.get("error_message"), StringValueData.valueOf("Binaries to install codenvy:3.11.9.1#S not found"));
     }
 }

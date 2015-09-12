@@ -27,7 +27,6 @@ import com.mongodb.BasicDBObject;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClientURI;
-
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.WritableComparable;
 import org.apache.hadoop.mapreduce.Job;
@@ -43,19 +42,27 @@ import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import static com.codenvy.analytics.Utils.fetchEncodedPairs;
 import static com.codenvy.analytics.Utils.isAnonymousUser;
 import static com.codenvy.analytics.Utils.isTemporaryWorkspace;
 import static com.codenvy.analytics.Utils.toArray;
+import static java.net.URLDecoder.decode;
 
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 public class MongoStorage extends StoreFunc {
 
-    private static final Logger LOG              = LoggerFactory.getLogger(MongoStorage.class);
-    private static final String SERVER_URL_PARAM = "server.url";
+    private static final Logger             LOG                 = LoggerFactory.getLogger(MongoStorage.class);
+    private static final String             SERVER_URL_PARAM    = "server.url";
+    private static final String             ALIASES_PARAM       = "aliases";
+    private static final String             ROLES_PARAM         = "roles";
+    private static final String             PARAMETERS_PARAM    = "parameters";
+    private static final String             ERROR_MESSAGE_PARAM = "error-message";
+    private static final Collection<String> ENCODED_PARAMETERS  = Arrays.asList(ERROR_MESSAGE_PARAM);
 
     private RecordWriter writer;
 
@@ -193,7 +200,16 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'parameters' and false otherwise
          */
         private boolean isParameters(String key) {
-            return key.equalsIgnoreCase("parameters");
+            return key.equalsIgnoreCase(PARAMETERS_PARAM);
+        }
+
+        /**
+         * The parameter which contains URL encoded value.
+         *
+         * @return true if key belongs to list of encoded parameters
+         */
+        private boolean isEncodedParameter(String key) {
+            return ENCODED_PARAMETERS.contains(key.toLowerCase());
         }
 
         /**
@@ -202,7 +218,7 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'aliases' and false otherwise
          */
         private boolean isAliases(String key) {
-            return key.equalsIgnoreCase("aliases");
+            return key.equalsIgnoreCase(ALIASES_PARAM);
         }
 
         /**
@@ -211,7 +227,7 @@ public class MongoStorage extends StoreFunc {
          * @return true if key equals to 'roles' and false otherwise
          */
         private boolean isRoles(String key) {
-            return key.equalsIgnoreCase("roles");
+            return key.equalsIgnoreCase(ROLES_PARAM);
         }
 
         /**
@@ -228,6 +244,10 @@ public class MongoStorage extends StoreFunc {
                 if (isParameters(key)) {
                     putKeyValuePairs(dbObject, String.valueOf(data));
                 } else {
+                    if (isEncodedParameter(key)) {
+                        data = decode(String.valueOf(data), "UTF-8");
+                    }
+
                     put(dbObject, key, data);
                 }
             }
