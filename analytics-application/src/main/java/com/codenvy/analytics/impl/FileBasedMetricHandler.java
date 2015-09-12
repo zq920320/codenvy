@@ -31,6 +31,8 @@ import org.eclipse.che.api.analytics.shared.dto.MetricInfoListDTO;
 import org.eclipse.che.api.analytics.shared.dto.MetricValueDTO;
 import org.eclipse.che.api.analytics.shared.dto.MetricValueListDTO;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriInfo;
@@ -51,6 +53,7 @@ import static com.codenvy.analytics.util.MetricDTOFactory.createMetricDTO;
  */
 @Singleton
 public class FileBasedMetricHandler implements MetricHandler {
+    private static final Logger LOG = LoggerFactory.getLogger(FileBasedMetricHandler.class);
 
     /** {@inheritDoc} */
     @Override
@@ -194,6 +197,7 @@ public class FileBasedMetricHandler implements MetricHandler {
             metricValueDTO.setValue(vd.getAsString());
             return metricValueDTO;
         } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
             throw new IllegalStateException("Inappropriate metric state or metric context to evaluate metric ");
         }
     }
