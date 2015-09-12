@@ -19,10 +19,10 @@ package com.codenvy.analytics.pig.scripts;
 
 import com.codenvy.analytics.services.configuration.XmlConfigurationManager;
 
-import org.eclipse.che.commons.annotation.Nullable;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.Collection;
@@ -138,7 +138,7 @@ public class EventsHolder {
      * @throws IllegalArgumentException
      *         if event doesn't exist into configuration
      */
-    @NotNull
+    @Nonnull
     public String getDescription(String eventName) throws IllegalArgumentException {
         if (eventsMap.containsKey(eventName)) {
             return eventsMap.get(eventName).getDescription();
