@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-datasource-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.12.2-SNAPSHOT</version>
+        <version>4.0-M2-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-plugin-datasource-ext-client</artifactId>
     <name>Codenvy Plugin :: Datasource :: Client</name>
@@ -55,11 +55,6 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-ide-jseditor</artifactId>
             <version>${che.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-runner-ext-runner</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.gwt.gwtmockito</groupId>

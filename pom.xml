@@ -20,7 +20,7 @@
     </parent>
     <groupId>com.codenvy.plugin</groupId>
     <artifactId>codenvy-plugin-parent</artifactId>
-    <version>4.0.0-SNAPSHOT</version>
+    <version>4.0-M2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Plugin Parent</name>
     <modules>
@@ -29,7 +29,7 @@
         <module>plugin-wso2</module>
         <module>plugin-projectlocker</module>
         <!--<module>plugin-contribution</module>-->
-        <module>plugin-datasource</module>
+        <!-- module>plugin-datasource</module-->
         <module>plugin-hosted</module>
     </modules>
     <scm>
