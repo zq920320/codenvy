@@ -23,6 +23,8 @@ package com.codenvy.auth.sso.oauth;
  */
 
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
+
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticationService;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
@@ -49,7 +51,7 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
 
     @GET
     @Path("callback")
-    public Response callback() throws OAuthAuthenticationException {
+    public Response callback() throws OAuthAuthenticationException, BadRequestException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
         List<String> errorValues = uriInfo.getQueryParameters().get("error");
