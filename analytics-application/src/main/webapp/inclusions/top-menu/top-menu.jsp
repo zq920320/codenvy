@@ -63,36 +63,14 @@
                     </ul>
                 </div>
             </div>
-
-            <div class="right">
-               <div class="nav">
-                   <div>             
-                       <a href="#" onClick = "analytics.util.processUserLogOut()" class="logout"></a>
-                   </div>
-               </div>
-            </div>
-           
-            <div class="right">
-                <div class="nav">                    
+            <img src="/analytics/images/user.png" height="24px" />
+            <div class="left">
+                <div class="nav">
                     <div>
-                        <button id="topmenu-user"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></button>
+                         <button id="topmenu-user"><%= FrontEndUtil.getFirstAndLastName(request.getUserPrincipal())%></button>
                     </div>
                     <ul class="dropdown-menu">
                         <li><a href="/analytics/pages/user-view.jsp?user=<%= FrontEndUtil.getCurrentUserId(request)%>">My data</a></li>
-                        <% if (request.isUserInRole("user")) { %>
-                            <li><a href="/analytics/pages/current-user-accounts-view.jsp">Organization</a></li>
-                        <% } %>
-                        <li><a href="#" onclick="analytics.util.processUserLogOut()">Logout</a></li>
-                    </ul>                   
-               </div>
-            </div>
-            
-            <div class="right">
-                <div class="nav">
-                    <div>
-                        <button id="topmenu-preferences">Data Universe</button>
-                    </div>
-                    <ul class="dropdown-menu">
                         <li>
                             <ul id="data-universe" targetWidgets="_all">
                                 <li><a class="command-btn" default>Data for all workspaces</a></li>
@@ -102,10 +80,9 @@
                                 <li><a class="command-btn" value="account/owner">Data for workspaces where I am an account/owner</a></li>
                             </ul>
                         </li>
+                        <li><a href="#" onclick="analytics.util.processUserLogOut()">Logout</a></li>
                     </ul>
                 </div>
-
-                <img src="/analytics/images/user.png" height="24px" />
             </div>
         </div>
     </div>
