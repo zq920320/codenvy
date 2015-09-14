@@ -17,11 +17,11 @@
 package com.codenvy.auth.sso.server.ldap;
 
 
+import org.eclipse.che.commons.annotation.Nullable;
 import org.ietf.jgss.GSSCredential;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nullable;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;

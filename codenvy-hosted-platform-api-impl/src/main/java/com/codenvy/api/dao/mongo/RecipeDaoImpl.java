@@ -27,7 +27,6 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.DuplicateKeyException;
 import com.mongodb.MongoException;
 import com.mongodb.WriteResult;
 
@@ -41,8 +40,8 @@ import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.shared.Group;
 import org.eclipse.che.api.machine.shared.ManagedRecipe;
 import org.eclipse.che.api.machine.shared.Permissions;
+import org.eclipse.che.commons.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;

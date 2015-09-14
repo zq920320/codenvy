@@ -17,7 +17,8 @@
  */
 package com.codenvy.api.dao.ldap;
 
-import javax.annotation.Nullable;
+import org.eclipse.che.commons.annotation.Nullable;
+
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;

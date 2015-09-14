@@ -35,8 +35,8 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.machine.shared.ManagedCommand;
 import org.eclipse.che.api.machine.server.command.CommandImpl;
 import org.eclipse.che.api.machine.server.dao.CommandDao;
+import org.eclipse.che.commons.annotation.Nullable;
 
-import javax.annotation.Nullable;
 import javax.inject.Named;
 import java.util.List;
 
