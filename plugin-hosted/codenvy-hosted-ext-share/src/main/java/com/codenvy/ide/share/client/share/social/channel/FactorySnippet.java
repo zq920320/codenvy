@@ -33,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
 
@@ -55,16 +55,16 @@ public class FactorySnippet extends SharingChannel {
     private final FactoryServiceClient     factoryServiceClient;
     private final NotificationManager      notificationManager;
 
-    public FactorySnippet(@Nonnull SVGResource icon,
-                          @Nonnull String label,
-                          @Nonnull String title,
-                          @Nonnull String type,
-                          @Nonnull ShareResources resources,
-                          @Nonnull ClipboardButtonBuilder clipboardButtonBuilder,
-                          @Nonnull CoreLocalizationConstant coreLocale,
+    public FactorySnippet(@NotNull SVGResource icon,
+                          @NotNull String label,
+                          @NotNull String title,
+                          @NotNull String type,
+                          @NotNull ShareResources resources,
+                          @NotNull ClipboardButtonBuilder clipboardButtonBuilder,
+                          @NotNull CoreLocalizationConstant coreLocale,
                           ClickHandler clickHandler,
-                          @Nonnull FactoryServiceClient factoryServiceClient,
-                          @Nonnull NotificationManager notificationManager) {
+                          @NotNull FactoryServiceClient factoryServiceClient,
+                          @NotNull NotificationManager notificationManager) {
         super(icon, label, clickHandler);
 
         this.title = title;
@@ -77,7 +77,7 @@ public class FactorySnippet extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull Widget element, @Nonnull final String... params) {
+    public void decorateWidget(@NotNull Widget element, @NotNull final String... params) {
         element.addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
@@ -97,7 +97,7 @@ public class FactorySnippet extends SharingChannel {
         }, ClickEvent.getType());
     }
 
-    private void handleError(@Nonnull Throwable e) {
+    private void handleError(@NotNull Throwable e) {
         final Notification notification = new Notification(e.getMessage(), ERROR);
         notificationManager.showNotification(notification);
     }

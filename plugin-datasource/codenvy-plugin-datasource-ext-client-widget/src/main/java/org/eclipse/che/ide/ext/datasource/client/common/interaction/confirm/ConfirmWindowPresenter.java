@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.datasource.client.common.interaction.confirm;
 
-import javax.annotation.Nullable;
+import org.eclipse.che.commons.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.che.ide.ext.datasource.client.common.interaction.CancelCallback;

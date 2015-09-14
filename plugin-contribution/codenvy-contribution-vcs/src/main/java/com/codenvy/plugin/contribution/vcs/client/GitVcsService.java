@@ -28,7 +28,7 @@ import org.eclipse.che.ide.rest.Unmarshallable;
 import org.eclipse.che.ide.websocket.WebSocketException;
 import org.eclipse.che.ide.websocket.rest.RequestCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -44,17 +44,17 @@ public class GitVcsService implements VcsService {
     private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
 
     @Inject
-    public GitVcsService(@Nonnull final DtoFactory dtoFactory,
-                         @Nonnull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                         @Nonnull final GitServiceClient service) {
+    public GitVcsService(@NotNull final DtoFactory dtoFactory,
+                         @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                         @NotNull final GitServiceClient service) {
         this.dtoFactory = dtoFactory;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.service = service;
     }
 
     @Override
-    public void addRemote(@Nonnull final ProjectDescriptor project, @Nonnull final String remote, @Nonnull final String remoteUrl,
-                          @Nonnull final AsyncCallback<Void> callback) {
+    public void addRemote(@NotNull final ProjectDescriptor project, @NotNull final String remote, @NotNull final String remoteUrl,
+                          @NotNull final AsyncCallback<Void> callback) {
         service.remoteAdd(project, remote, remoteUrl, new AsyncRequestCallback<String>() {
             @Override
             protected void onSuccess(final String notUsed) {
@@ -69,8 +69,8 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void checkoutBranch(@Nonnull final ProjectDescriptor project, @Nonnull final String name,
-                               final boolean createNew, @Nonnull final AsyncCallback<String> callback) {
+    public void checkoutBranch(@NotNull final ProjectDescriptor project, @NotNull final String name,
+                               final boolean createNew, @NotNull final AsyncCallback<String> callback) {
         service.branchCheckout(project,
                                dtoFactory.createDto(BranchCheckoutRequest.class)
                                          .withName(name)
@@ -89,8 +89,8 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void commit(@Nonnull final ProjectDescriptor project, final boolean includeUntracked, @Nonnull final String commitMessage,
-                       @Nonnull final AsyncCallback<Void> callback) {
+    public void commit(@NotNull final ProjectDescriptor project, final boolean includeUntracked, @NotNull final String commitMessage,
+                       @NotNull final AsyncCallback<Void> callback) {
         try {
 
             service.add(project, !includeUntracked, null, new RequestCallback<Void>() {
@@ -122,8 +122,8 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void deleteRemote(@Nonnull final ProjectDescriptor project, @Nonnull final String remote,
-                             @Nonnull final AsyncCallback<Void> callback) {
+    public void deleteRemote(@NotNull final ProjectDescriptor project, @NotNull final String remote,
+                             @NotNull final AsyncCallback<Void> callback) {
         service.remoteDelete(project, remote, new AsyncRequestCallback<String>() {
             @Override
             protected void onSuccess(final String notUsed) {
@@ -138,7 +138,7 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void getBranchName(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<String> callback) {
+    public void getBranchName(@NotNull final ProjectDescriptor project, @NotNull final AsyncCallback<String> callback) {
         service.status(project, new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
             @Override
             protected void onSuccess(final Status status) {
@@ -153,7 +153,7 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void hasUncommittedChanges(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<Boolean> callback) {
+    public void hasUncommittedChanges(@NotNull final ProjectDescriptor project, @NotNull final AsyncCallback<Boolean> callback) {
         service.status(project, new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
             @Override
             protected void onSuccess(final Status status) {
@@ -168,8 +168,8 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void isLocalBranchWithName(@Nonnull final ProjectDescriptor project, @Nonnull final String branchName,
-                                      @Nonnull final AsyncCallback<Boolean> callback) {
+    public void isLocalBranchWithName(@NotNull final ProjectDescriptor project, @NotNull final String branchName,
+                                      @NotNull final AsyncCallback<Boolean> callback) {
 
         listLocalBranches(project, new AsyncCallback<List<Branch>>() {
             @Override
@@ -191,12 +191,12 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void listLocalBranches(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<List<Branch>> callback) {
+    public void listLocalBranches(@NotNull final ProjectDescriptor project, @NotNull final AsyncCallback<List<Branch>> callback) {
         listBranches(project, null, callback);
     }
 
     @Override
-    public void listRemotes(@Nonnull final ProjectDescriptor project, @Nonnull final AsyncCallback<List<Remote>> callback) {
+    public void listRemotes(@NotNull final ProjectDescriptor project, @NotNull final AsyncCallback<List<Remote>> callback) {
         final Unmarshallable<List<Remote>> unMarshaller
                 = dtoUnmarshallerFactory.newListUnmarshaller(org.eclipse.che.api.git.shared.Remote.class);
         service.remoteList(project, null, false,
@@ -218,8 +218,8 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void pushBranch(@Nonnull final ProjectDescriptor project, @Nonnull final String remote,
-                           @Nonnull final String localBranchName, @Nonnull final AsyncCallback<PushResponse> callback) {
+    public void pushBranch(@NotNull final ProjectDescriptor project, @NotNull final String remote,
+                           @NotNull final String localBranchName, @NotNull final AsyncCallback<PushResponse> callback) {
         service.push(project, Arrays.asList(localBranchName), remote, true, new AsyncRequestCallback<PushResponse>() {
             @Override
             protected void onSuccess(final PushResponse result) {

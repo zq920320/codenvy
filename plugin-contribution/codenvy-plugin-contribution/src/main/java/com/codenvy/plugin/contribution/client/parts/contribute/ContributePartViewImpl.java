@@ -35,7 +35,7 @@ import org.eclipse.che.ide.ui.buttonLoader.ButtonLoaderResources;
 import org.vectomatic.dom.svg.ui.SVGImage;
 import org.vectomatic.dom.svg.ui.SVGPushButton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,11 +113,11 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     private String contributeButtonText;
 
     @Inject
-    public ContributePartViewImpl(@Nonnull final PartStackUIResources partStackUIResources,
-                                  @Nonnull final ContributeMessages messages,
-                                  @Nonnull final ContributeResources resources,
-                                  @Nonnull final ButtonLoaderResources buttonLoaderResources,
-                                  @Nonnull final ContributePartViewUiBinder uiBinder) {
+    public ContributePartViewImpl(@NotNull final PartStackUIResources partStackUIResources,
+                                  @NotNull final ContributeMessages messages,
+                                  @NotNull final ContributeResources resources,
+                                  @NotNull final ButtonLoaderResources buttonLoaderResources,
+                                  @NotNull final ContributePartViewUiBinder uiBinder) {
         super(partStackUIResources);
 
         this.messages = messages;

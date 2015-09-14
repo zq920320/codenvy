@@ -16,7 +16,7 @@ import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -35,8 +35,8 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void addRemote(@Nonnull ProjectDescriptor project, @Nonnull String remote, @Nonnull String remoteUrl,
-                   @Nonnull AsyncCallback<Void> callback);
+    void addRemote(@NotNull ProjectDescriptor project, @NotNull String remote, @NotNull String remoteUrl,
+                   @NotNull AsyncCallback<Void> callback);
 
     /**
      * Checkout a branch of the given project.
@@ -50,8 +50,8 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void checkoutBranch(@Nonnull ProjectDescriptor project, @Nonnull String branchName, boolean createNew,
-                        @Nonnull AsyncCallback<String> callback);
+    void checkoutBranch(@NotNull ProjectDescriptor project, @NotNull String branchName, boolean createNew,
+                        @NotNull AsyncCallback<String> callback);
 
     /**
      * Commits the current changes of the given project.
@@ -65,8 +65,8 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void commit(@Nonnull ProjectDescriptor project, boolean includeUntracked, @Nonnull String commitMessage,
-                @Nonnull AsyncCallback<Void> callback);
+    void commit(@NotNull ProjectDescriptor project, boolean includeUntracked, @NotNull String commitMessage,
+                @NotNull AsyncCallback<Void> callback);
 
     /**
      * Removes a remote to the project VCS metadata.
@@ -78,7 +78,7 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void deleteRemote(@Nonnull ProjectDescriptor project, @Nonnull String remote, @Nonnull AsyncCallback<Void> callback);
+    void deleteRemote(@NotNull ProjectDescriptor project, @NotNull String remote, @NotNull AsyncCallback<Void> callback);
 
     /**
      * Get the current branch for the project.
@@ -88,7 +88,7 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void getBranchName(@Nonnull ProjectDescriptor project, @Nonnull AsyncCallback<String> callback);
+    void getBranchName(@NotNull ProjectDescriptor project, @NotNull AsyncCallback<String> callback);
 
     /**
      * Returns if the given project has uncommitted changes.
@@ -98,7 +98,7 @@ public interface VcsService {
      * @param callback
      *         what to do if the project has uncommitted changes.
      */
-    void hasUncommittedChanges(@Nonnull ProjectDescriptor project, @Nonnull AsyncCallback<Boolean> callback);
+    void hasUncommittedChanges(@NotNull ProjectDescriptor project, @NotNull AsyncCallback<Boolean> callback);
 
     /**
      * Returns if a local branch with the given name exists in the given project.
@@ -110,7 +110,7 @@ public interface VcsService {
      * @param callback
      *         callback called when operation is done.
      */
-    void isLocalBranchWithName(@Nonnull ProjectDescriptor project, @Nonnull String branchName, @Nonnull AsyncCallback<Boolean> callback);
+    void isLocalBranchWithName(@NotNull ProjectDescriptor project, @NotNull String branchName, @NotNull AsyncCallback<Boolean> callback);
 
     /**
      * List the local branches.
@@ -120,7 +120,7 @@ public interface VcsService {
      * @param callback
      *         what to do with the branches list.
      */
-    void listLocalBranches(@Nonnull ProjectDescriptor project, @Nonnull AsyncCallback<List<Branch>> callback);
+    void listLocalBranches(@NotNull ProjectDescriptor project, @NotNull AsyncCallback<List<Branch>> callback);
 
     /**
      * List remotes.
@@ -130,7 +130,7 @@ public interface VcsService {
      * @param callback
      *         what to do with the remotes list
      */
-    void listRemotes(@Nonnull ProjectDescriptor project, @Nonnull AsyncCallback<List<Remote>> callback);
+    void listRemotes(@NotNull ProjectDescriptor project, @NotNull AsyncCallback<List<Remote>> callback);
 
     /**
      * Push a local branch to the given remote.
@@ -144,6 +144,6 @@ public interface VcsService {
      * @param callback
      *         callback when the operation is done.
      */
-    void pushBranch(@Nonnull ProjectDescriptor project, @Nonnull String remote, @Nonnull String localBranchNameToPush,
-                    @Nonnull AsyncCallback<PushResponse> callback);
+    void pushBranch(@NotNull ProjectDescriptor project, @NotNull String remote, @NotNull String localBranchNameToPush,
+                    @NotNull AsyncCallback<PushResponse> callback);
 }

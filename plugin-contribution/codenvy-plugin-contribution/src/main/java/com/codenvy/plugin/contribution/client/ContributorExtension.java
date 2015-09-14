@@ -36,7 +36,7 @@ import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.Unmarshallable;
 import org.eclipse.che.ide.util.loging.Log;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.List;
@@ -67,18 +67,18 @@ public class ContributorExtension implements ProjectActionHandler {
     private final VcsHostingServiceProvider vcsHostingServiceProvider;
 
     @Inject
-    public ContributorExtension(@Nonnull final EventBus eventBus,
-                                @Nonnull final ContributeMessages messages,
-                                @Nonnull final ContributeResources resources,
-                                @Nonnull final AppContext appContext,
-                                @Nonnull final NotificationHelper notificationHelper,
-                                @Nonnull final ContributePartPresenter contributePartPresenter,
-                                @Nonnull final ProjectServiceClient projectService,
-                                @Nonnull final DtoFactory dtoFactory,
-                                @Nonnull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                                @Nonnull final ContributorWorkflow workflow,
-                                @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider) {
+    public ContributorExtension(@NotNull final EventBus eventBus,
+                                @NotNull final ContributeMessages messages,
+                                @NotNull final ContributeResources resources,
+                                @NotNull final AppContext appContext,
+                                @NotNull final NotificationHelper notificationHelper,
+                                @NotNull final ContributePartPresenter contributePartPresenter,
+                                @NotNull final ProjectServiceClient projectService,
+                                @NotNull final DtoFactory dtoFactory,
+                                @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                                @NotNull final ContributorWorkflow workflow,
+                                @NotNull final VcsServiceProvider vcsServiceProvider,
+                                @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider) {
         this.messages = messages;
         this.workflow = workflow;
         this.appContext = appContext;

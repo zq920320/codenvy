@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.datasource.client.newdatasource.connector;
 
-import javax.annotation.Nullable;
+import org.eclipse.che.commons.annotation.Nullable;
 
 import com.google.gwt.core.client.GWT;
 import org.eclipse.che.ide.ext.datasource.client.DatasourceUiResources;

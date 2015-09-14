@@ -21,7 +21,7 @@ import com.codenvy.ide.ext.gae.client.utils.GAEUtil;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Action for deploying application via Google App Engine.
@@ -52,7 +52,7 @@ public class DeployApplicationAction extends Action {
 
     /** {@inheritDoc} */
     @Override
-    public void update(@Nonnull ActionEvent event) {
+    public void update(@NotNull ActionEvent event) {
         boolean visible = false;
 
         CurrentProject currentProject = appContext.getCurrentProject();
@@ -66,7 +66,7 @@ public class DeployApplicationAction extends Action {
 
     /** {@inheritDoc} */
     @Override
-    public void actionPerformed(@Nonnull ActionEvent actionEvent) {
+    public void actionPerformed(@NotNull ActionEvent actionEvent) {
         eventLogger.log(this);
         presenter.showDialog();
     }

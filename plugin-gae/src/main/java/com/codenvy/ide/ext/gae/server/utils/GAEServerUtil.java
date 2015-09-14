@@ -14,7 +14,7 @@ import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.vfs.server.VirtualFile;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * The utility class. It contains different methods which are needed in a few places in the extension.
@@ -33,7 +33,7 @@ public interface GAEServerUtil {
      * @throws ApiException
      *         if some problem happens with reading/writing operation
      */
-    void setApplicationIdToWebAppEngine(@Nonnull VirtualFile webAppEngine, @Nonnull String applicationId) throws ApiException;
+    void setApplicationIdToWebAppEngine(@NotNull VirtualFile webAppEngine, @NotNull String applicationId) throws ApiException;
 
     /**
      * Sets application id into app.yaml.
@@ -45,7 +45,7 @@ public interface GAEServerUtil {
      * @throws ApiException
      *         if some problem happens with reading/writing operation
      */
-    void setApplicationIdToAppYaml(@Nonnull VirtualFile appYaml, @Nonnull String applicationId) throws ApiException;
+    void setApplicationIdToAppYaml(@NotNull VirtualFile appYaml, @NotNull String applicationId) throws ApiException;
 
     /**
      * Gets application id from app.yaml.
@@ -56,8 +56,8 @@ public interface GAEServerUtil {
      * @throws ApiException
      *         if some problem happens with reading/writing operation
      */
-    @Nonnull
-    String getApplicationIdFromAppYaml(@Nonnull VirtualFile appYaml) throws ApiException;
+    @NotNull
+    String getApplicationIdFromAppYaml(@NotNull VirtualFile appYaml) throws ApiException;
 
     /**
      * Gets application id from appengine-web.xml.
@@ -68,6 +68,6 @@ public interface GAEServerUtil {
      * @throws ApiException
      *         if some problem happens with reading/writing operation
      */
-    @Nonnull
-    String getApplicationIdFromWebAppEngine(@Nonnull VirtualFile webAppEngine) throws ApiException;
+    @NotNull
+    String getApplicationIdFromWebAppEngine(@NotNull VirtualFile webAppEngine) throws ApiException;
 }

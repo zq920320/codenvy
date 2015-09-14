@@ -25,7 +25,7 @@ import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 
@@ -45,9 +45,9 @@ public class PushBranchOnForkStep implements Step {
     private final DialogFactory             dialogFactory;
 
     @Inject
-    public PushBranchOnForkStep(@Nonnull final GenerateReviewFactoryStep generateReviewFactoryStep,
-                                @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
+    public PushBranchOnForkStep(@NotNull final GenerateReviewFactoryStep generateReviewFactoryStep,
+                                @NotNull final VcsServiceProvider vcsServiceProvider,
+                                @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
                                 @NotNull final ContributeMessages messages,
                                 @NotNull final DialogFactory dialogFactory) {
         this.generateReviewFactoryStep = generateReviewFactoryStep;
@@ -58,7 +58,7 @@ public class PushBranchOnForkStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final String upstreamRepositoryOwner = context.getUpstreamRepositoryOwner();
         final String upstreamRepositoryName = context.getUpstreamRepositoryName();

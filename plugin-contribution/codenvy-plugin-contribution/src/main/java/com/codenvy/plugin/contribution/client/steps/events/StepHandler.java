@@ -12,7 +12,7 @@ package com.codenvy.plugin.contribution.client.steps.events;
 
 import com.google.gwt.event.shared.EventHandler;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Handler for step event.
@@ -26,7 +26,7 @@ public interface StepHandler extends EventHandler {
      * @param event
      *         the step event.
      */
-    void onStepDone(@Nonnull StepEvent event);
+    void onStepDone(@NotNull StepEvent event);
 
     /**
      * Called when a step is in error.
@@ -34,5 +34,5 @@ public interface StepHandler extends EventHandler {
      * @param event
      *         the step event.
      */
-    void onStepError(@Nonnull StepEvent event);
+    void onStepError(@NotNull StepEvent event);
 }

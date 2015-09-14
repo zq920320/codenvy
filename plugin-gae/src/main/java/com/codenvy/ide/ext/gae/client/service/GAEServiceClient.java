@@ -20,8 +20,8 @@ import com.codenvy.ide.ext.gae.shared.GAEMavenInfo;
 import com.codenvy.ide.ext.gae.shared.YamlParameterInfo;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * Client service for managing Google App Engine.
@@ -43,7 +43,7 @@ public interface GAEServiceClient {
      * @param callback
      *         callback which need send in request
      */
-    void update(@Nonnull String projectPath, @Nullable String bin, @Nonnull GAERequestCallback<ApplicationInfo> callback);
+    void update(@NotNull String projectPath, @Nullable String bin, @NotNull GAERequestCallback<ApplicationInfo> callback);
 
     /**
      * Creates and sends GET request on server to get info about current user.If user is not logged we redirect on special
@@ -52,7 +52,7 @@ public interface GAEServiceClient {
      * @param callback
      *         callback which need send in request
      */
-    void getLoggedUser(@Nonnull GAEAsyncRequestCallback<OAuthToken> callback);
+    void getLoggedUser(@NotNull GAEAsyncRequestCallback<OAuthToken> callback);
 
     /**
      * Method send request to special service {@link GAEParametersService} to get parameters
@@ -63,7 +63,7 @@ public interface GAEServiceClient {
      * @param callback
      *         need to send response with parameters
      */
-    void readGAEMavenParameters(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<GAEMavenInfo> callback);
+    void readGAEMavenParameters(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<GAEMavenInfo> callback);
 
     /**
      * Method send request to special service {@link GAEParametersService} to get parameters from .yaml file (applicationId) about GAE
@@ -74,7 +74,7 @@ public interface GAEServiceClient {
      * @param callback
      *         need to send response with parameters
      */
-    void readGAEYamlParameters(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<YamlParameterInfo> callback);
+    void readGAEYamlParameters(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<YamlParameterInfo> callback);
 
     /**
      * Method send request to special service {@link GAEValidateService} to validate current project.
@@ -84,6 +84,6 @@ public interface GAEServiceClient {
      * @param callback
      *         need to send response with validation info
      */
-    void validateProject(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<Void> callback);
+    void validateProject(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<Void> callback);
 
 }

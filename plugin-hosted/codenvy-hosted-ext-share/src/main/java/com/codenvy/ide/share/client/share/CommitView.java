@@ -19,7 +19,7 @@ package com.codenvy.ide.share.client.share;
 
 import org.eclipse.che.ide.api.mvp.View;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * View for committing uncommitted project changes.
@@ -63,7 +63,7 @@ public interface CommitView extends View<CommitView.ActionDelegate> {
      *
      * @return the current commit description.
      */
-    @Nonnull
+    @NotNull
     String getCommitDescription();
 
     /**

@@ -19,7 +19,7 @@ package com.codenvy.ide.share.client.share.social;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static java.util.Collections.unmodifiableList;
@@ -45,10 +45,10 @@ public abstract class Item {
      * @param sharingChannels
      *         the {@link SharingChannel} list.
      */
-    public Item(@Nonnull String name,
-                @Nonnull SVGResource icon,
-                @Nonnull String label,
-                @Nonnull List<SharingChannel> sharingChannels) {
+    public Item(@NotNull String name,
+                @NotNull SVGResource icon,
+                @NotNull String label,
+                @NotNull List<SharingChannel> sharingChannels) {
         this.name = name;
         this.icon = icon;
         this.label = label;
@@ -61,7 +61,7 @@ public abstract class Item {
      * @return the item name, never {@code null}.
      */
     public
-    @Nonnull
+    @NotNull
     String getName() {
         return name;
     }
@@ -72,7 +72,7 @@ public abstract class Item {
      * @return the item icon, never {@code null}.
      */
     public
-    @Nonnull
+    @NotNull
     SVGResource getIcon() {
         return icon;
     }
@@ -83,7 +83,7 @@ public abstract class Item {
      * @return the item label, never {@code null}.
      */
     public
-    @Nonnull
+    @NotNull
     String getLabel() {
         return label;
     }
@@ -94,7 +94,7 @@ public abstract class Item {
      * @return the item {@link SharingChannel}, never {@code null}.
      */
     public
-    @Nonnull
+    @NotNull
     List<SharingChannel> getSharingChannels() {
         return unmodifiableList(sharingChannels);
     }

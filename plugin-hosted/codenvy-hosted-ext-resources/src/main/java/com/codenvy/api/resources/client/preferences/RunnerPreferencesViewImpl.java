@@ -30,7 +30,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.eclipse.che.ide.ext.runner.client.tabs.properties.panel.common.Shutdown;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Ann Shumilova
@@ -74,12 +74,12 @@ public class RunnerPreferencesViewImpl implements RunnerPreferencesView {
     }
 
     @Override
-    public void selectShutdown(@Nonnull Shutdown shutdown) {
+    public void selectShutdown(@NotNull Shutdown shutdown) {
         this.shutdownField.setItemSelected(shutdown.ordinal(), true);
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public Shutdown getShutdown() {
         String value = shutdownField.getValue(shutdownField.getSelectedIndex());

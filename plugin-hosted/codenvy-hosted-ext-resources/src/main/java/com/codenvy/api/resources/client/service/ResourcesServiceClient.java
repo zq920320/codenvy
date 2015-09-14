@@ -21,7 +21,7 @@ import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -30,7 +30,7 @@ import java.util.List;
  * @author Sergii Leschenko
  */
 public interface ResourcesServiceClient {
-    void redistributeResources(@Nonnull String accountId,
-                               @Nonnull List<UpdateResourcesDescriptor> updateResources,
+    void redistributeResources(@NotNull String accountId,
+                               @NotNull List<UpdateResourcesDescriptor> updateResources,
                                AsyncRequestCallback<Void> callback);
 }

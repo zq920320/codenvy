@@ -35,8 +35,8 @@ import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.util.Config;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import java.util.List;
 
 /**
@@ -143,7 +143,7 @@ public class PermissionsPartPresenter extends BasePresenter implements Permissio
     }
 
     @Override
-    @Nonnull
+    @NotNull
     public IsWidget getView() {
         return view;
     }

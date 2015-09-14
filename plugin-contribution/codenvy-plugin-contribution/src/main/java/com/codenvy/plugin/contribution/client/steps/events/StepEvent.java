@@ -12,7 +12,7 @@ package com.codenvy.plugin.contribution.client.steps.events;
 
 import com.google.gwt.event.shared.GwtEvent;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Event sent when a step is done or in error.
@@ -26,11 +26,11 @@ public class StepEvent extends GwtEvent<StepHandler> {
     private final boolean success;
     private final String  message;
 
-    public StepEvent(@Nonnull final Step step, final boolean success) {
+    public StepEvent(@NotNull final Step step, final boolean success) {
         this(step, success, null);
     }
 
-    public StepEvent(@Nonnull final Step step, final boolean success, final String message) {
+    public StepEvent(@NotNull final Step step, final boolean success, final String message) {
         this.step = step;
         this.success = success;
         this.message = message;
@@ -42,7 +42,7 @@ public class StepEvent extends GwtEvent<StepHandler> {
     }
 
     @Override
-    protected void dispatch(@Nonnull final StepHandler handler) {
+    protected void dispatch(@NotNull final StepHandler handler) {
         if (success) {
             handler.onStepDone(this);
 

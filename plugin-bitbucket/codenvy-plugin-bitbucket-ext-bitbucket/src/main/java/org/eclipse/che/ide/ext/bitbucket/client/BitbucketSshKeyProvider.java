@@ -25,7 +25,7 @@ import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
 import org.eclipse.che.ide.util.Config;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -49,11 +49,11 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
     private       String                        userId;
 
     @Inject
-    public BitbucketSshKeyProvider(@Nonnull final BitbucketClientService bitbucketService,
-                                   @Nonnull @Named("restContext") final String baseUrl,
-                                   @Nonnull final BitbucketLocalizationConstant constant,
-                                   @Nonnull final NotificationManager notificationManager,
-                                   @Nonnull final DialogFactory dialogFactory) {
+    public BitbucketSshKeyProvider(@NotNull final BitbucketClientService bitbucketService,
+                                   @NotNull @Named("restContext") final String baseUrl,
+                                   @NotNull final BitbucketLocalizationConstant constant,
+                                   @NotNull final NotificationManager notificationManager,
+                                   @NotNull final DialogFactory dialogFactory) {
 
         this.bitbucketService = bitbucketService;
         this.baseUrl = baseUrl;

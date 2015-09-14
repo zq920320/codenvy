@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * View representation of GAE wizard.
@@ -53,7 +53,7 @@ public class GAEYamlPageViewImpl extends Composite implements GAEYamlPageView {
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public String getGaeAppIdValue() {
         return gaeAppId.getText();
@@ -61,7 +61,7 @@ public class GAEYamlPageViewImpl extends Composite implements GAEYamlPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setGaeApplicationId(@Nonnull String applicationId) {
+    public void setGaeApplicationId(@NotNull String applicationId) {
         gaeAppId.setText(applicationId);
     }
 
@@ -83,7 +83,7 @@ public class GAEYamlPageViewImpl extends Composite implements GAEYamlPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setDelegate(@Nonnull ActionDelegate delegate) {
+    public void setDelegate(@NotNull ActionDelegate delegate) {
         this.delegate = delegate;
     }
 

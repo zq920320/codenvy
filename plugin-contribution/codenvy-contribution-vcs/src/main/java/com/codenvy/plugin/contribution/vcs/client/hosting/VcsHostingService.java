@@ -17,7 +17,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.ide.api.app.CurrentUser;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Represents a repository host
@@ -30,7 +30,7 @@ public interface VcsHostingService {
      *
      * @return the VCS Host name never {@code null}.
      */
-    @Nonnull
+    @NotNull
     String getName();
 
     /**
@@ -40,7 +40,7 @@ public interface VcsHostingService {
      *         the remote url to check.
      * @return {@code true} if the given remote url is hosted by this service, {@code false} otherwise.
      */
-    boolean isHostRemoteUrl(@Nonnull String remoteUrl);
+    boolean isHostRemoteUrl(@NotNull String remoteUrl);
 
     /**
      * Get a pull request by qualified name.
@@ -56,11 +56,11 @@ public interface VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    void getPullRequest(@Nonnull String owner,
-                        @Nonnull String repository,
-                        @Nonnull String username,
-                        @Nonnull String branchName,
-                        @Nonnull AsyncCallback<PullRequest> callback);
+    void getPullRequest(@NotNull String owner,
+                        @NotNull String repository,
+                        @NotNull String username,
+                        @NotNull String branchName,
+                        @NotNull AsyncCallback<PullRequest> callback);
 
     /**
      * Creates a pull request.
@@ -84,15 +84,15 @@ public interface VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    void createPullRequest(@Nonnull String owner,
-                           @Nonnull String repository,
-                           @Nonnull String username,
-                           @Nonnull String headRepository,
-                           @Nonnull String headBranchName,
-                           @Nonnull String baseBranchName,
-                           @Nonnull String title,
-                           @Nonnull String body,
-                           @Nonnull AsyncCallback<PullRequest> callback);
+    void createPullRequest(@NotNull String owner,
+                           @NotNull String repository,
+                           @NotNull String username,
+                           @NotNull String headRepository,
+                           @NotNull String headBranchName,
+                           @NotNull String baseBranchName,
+                           @NotNull String title,
+                           @NotNull String body,
+                           @NotNull AsyncCallback<PullRequest> callback);
 
     /**
      * Forks the given repository for the current user.
@@ -104,7 +104,7 @@ public interface VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    void fork(@Nonnull String owner, @Nonnull String repository, @Nonnull AsyncCallback<Repository> callback);
+    void fork(@NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
 
     /**
      * Returns the information of the given repository.
@@ -114,7 +114,7 @@ public interface VcsHostingService {
      * @param repository
      *         the repository name.
      */
-    void getRepository(@Nonnull String owner, @Nonnull String repository, @Nonnull AsyncCallback<Repository> callback);
+    void getRepository(@NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
 
     /**
      * Returns the repository name from the given url.
@@ -123,8 +123,8 @@ public interface VcsHostingService {
      *         the url.
      * @return the repository name, never {@code null}.
      */
-    @Nonnull
-    String getRepositoryNameFromUrl(@Nonnull String url);
+    @NotNull
+    String getRepositoryNameFromUrl(@NotNull String url);
 
     /**
      * Returns the repository owner from the given url.
@@ -133,8 +133,8 @@ public interface VcsHostingService {
      *         the url.
      * @return the repository owner, never {@code null}.
      */
-    @Nonnull
-    String getRepositoryOwnerFromUrl(@Nonnull String url);
+    @NotNull
+    String getRepositoryOwnerFromUrl(@NotNull String url);
 
     /**
      * Returns the repository fork of the given user.
@@ -148,7 +148,7 @@ public interface VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    void getUserFork(@Nonnull String user, @Nonnull String owner, @Nonnull String repository, @Nonnull AsyncCallback<Repository> callback);
+    void getUserFork(@NotNull String user, @NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
 
     /**
      * Returns the user information on the repository host.
@@ -156,7 +156,7 @@ public interface VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    void getUserInfo(@Nonnull AsyncCallback<HostUser> callback);
+    void getUserInfo(@NotNull AsyncCallback<HostUser> callback);
 
     /**
      * Makes the remote SSH url for the given username and repository.
@@ -167,8 +167,8 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url, never {@code null}.
      */
-    @Nonnull
-    String makeSSHRemoteUrl(@Nonnull String username, @Nonnull String repository);
+    @NotNull
+    String makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the remote HTTP url for the given username and repository.
@@ -179,8 +179,8 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url, never {@code null}.
      */
-    @Nonnull
-    String makeHttpRemoteUrl(@Nonnull String username, @Nonnull String repository);
+    @NotNull
+    String makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the pull request url for the given username, repository and pull request number.
@@ -193,8 +193,8 @@ public interface VcsHostingService {
      *         the pull request number.
      * @return the remote url, never {@code null}.
      */
-    @Nonnull
-    String makePullRequestUrl(@Nonnull String username, @Nonnull String repository, @Nonnull String pullRequestNumber);
+    @NotNull
+    String makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
 
     /**
      * Use the VCS hosting comment markup language to format the review factory URL.
@@ -203,8 +203,8 @@ public interface VcsHostingService {
      *         the review factory URL to format.
      * @return the formatted review factory URL.
      */
-    @Nonnull
-    String formatReviewFactoryUrl(@Nonnull String reviewFactoryUrl);
+    @NotNull
+    String formatReviewFactoryUrl(@NotNull String reviewFactoryUrl);
 
     /**
      * Authenticate on the hosting service.
@@ -214,5 +214,5 @@ public interface VcsHostingService {
      * @param callback
      *         what to do once authentication is done
      */
-    void authenticate(@Nonnull CurrentUser user, @Nonnull AsyncCallback<HostUser> callback);
+    void authenticate(@NotNull CurrentUser user, @NotNull AsyncCallback<HostUser> callback);
 }

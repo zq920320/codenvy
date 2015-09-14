@@ -13,7 +13,7 @@ package com.codenvy.ide.ext.gae;
 import org.eclipse.che.api.vfs.server.ContentStream;
 import com.google.gwt.http.client.RequestCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -41,9 +41,9 @@ public class TestUtil {
      *         method input parameters
      * @throws Exception
      */
-    public static <T extends RequestCallback> void invokeOnSuccessCallbackMethod(@Nonnull Class<?> clazz,
-                                                                                 @Nonnull T callback,
-                                                                                 @Nonnull Object... parameters) throws Exception {
+    public static <T extends RequestCallback> void invokeOnSuccessCallbackMethod(@NotNull Class<?> clazz,
+                                                                                 @NotNull T callback,
+                                                                                 @NotNull Object... parameters) throws Exception {
 
         //noinspection NonJREEmulationClassesInClientCode
         Method onSuccess = clazz.getDeclaredMethod(ON_SUCCESS_METHOD, Object.class);
@@ -64,9 +64,9 @@ public class TestUtil {
      *         generic type of callback object
      * @throws Exception
      */
-    public static <T extends RequestCallback> void invokeOnFailureCallbackMethod(@Nonnull Class<?> clazz,
-                                                                                 @Nonnull T callback,
-                                                                                 @Nonnull Throwable throwable) throws Exception {
+    public static <T extends RequestCallback> void invokeOnFailureCallbackMethod(@NotNull Class<?> clazz,
+                                                                                 @NotNull T callback,
+                                                                                 @NotNull Throwable throwable) throws Exception {
         //noinspection NonJREEmulationClassesInClientCode
         Method onFailure = clazz.getDeclaredMethod(ON_FAILURE_METHOD, Throwable.class);
         onFailure.setAccessible(true);
@@ -85,8 +85,8 @@ public class TestUtil {
      * @return value of field
      * @throws Exception
      */
-    @Nonnull
-    public static Object getFieldValueByName(@Nonnull Class<?> clazz, @Nonnull Object object, @Nonnull String fieldName) throws Exception {
+    @NotNull
+    public static Object getFieldValueByName(@NotNull Class<?> clazz, @NotNull Object object, @NotNull String fieldName) throws Exception {
 
         Field field = clazz.getDeclaredField(fieldName);
         field.setAccessible(true);
@@ -103,8 +103,8 @@ public class TestUtil {
      *         path to resource
      * @return instance {@link ContentStream}
      */
-    @Nonnull
-    public static ContentStream getContent(@Nonnull Class<?> clazz, @Nonnull String pathToResource) {
+    @NotNull
+    public static ContentStream getContent(@NotNull Class<?> clazz, @NotNull String pathToResource) {
         InputStream resourceStream = clazz.getResourceAsStream(pathToResource);
         return new ContentStream(null, resourceStream, null);
     }

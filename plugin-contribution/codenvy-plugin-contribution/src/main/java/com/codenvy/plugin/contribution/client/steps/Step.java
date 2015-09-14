@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.client.steps;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Contract for a step in the contribution workflow.
@@ -22,5 +22,5 @@ public interface Step {
      * @param workflow
      *         the contributors workflow.
      */
-    void execute(@Nonnull final ContributorWorkflow workflow);
+    void execute(@NotNull final ContributorWorkflow workflow);
 }

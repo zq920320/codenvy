@@ -15,7 +15,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.ide.dto.DtoFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Provider;
 
@@ -34,10 +34,10 @@ public class ContributorWorkflow {
     private       Step              step;
 
     @Inject
-    public ContributorWorkflow(@Nonnull final Provider<Context> contextProvider,
-                               @Nonnull final EventBus eventBus,
-                               @Nonnull final AuthorizeCodenvyOnVCSHostStep authorizeCodenvyOnVCSHostStep,
-                               @Nonnull final DtoFactory dtoFactory) {
+    public ContributorWorkflow(@NotNull final Provider<Context> contextProvider,
+                               @NotNull final EventBus eventBus,
+                               @NotNull final AuthorizeCodenvyOnVCSHostStep authorizeCodenvyOnVCSHostStep,
+                               @NotNull final DtoFactory dtoFactory) {
         this.contextProvider = contextProvider;
         this.eventBus = eventBus;
         this.dtoFactory = dtoFactory;
@@ -66,7 +66,7 @@ public class ContributorWorkflow {
      * @param currentStep
      *         the current step.
      */
-    public void setStep(@Nonnull final Step currentStep) {
+    public void setStep(@NotNull final Step currentStep) {
         this.step = currentStep;
     }
 
@@ -75,7 +75,7 @@ public class ContributorWorkflow {
      *
      * @return the contributor workflow context object.
      */
-    @Nonnull
+    @NotNull
     public Context getContext() {
         return context;
     }
@@ -85,7 +85,7 @@ public class ContributorWorkflow {
      *
      * @return the contributor workflow configuration object.
      */
-    @Nonnull
+    @NotNull
     public Configuration getConfiguration() {
         return configuration;
     }
@@ -96,7 +96,7 @@ public class ContributorWorkflow {
      * @param step
      *         the successfully done step.
      */
-    void fireStepDoneEvent(@Nonnull final StepEvent.Step step) {
+    void fireStepDoneEvent(@NotNull final StepEvent.Step step) {
         eventBus.fireEvent(new StepEvent(step, true));
     }
 
@@ -106,7 +106,7 @@ public class ContributorWorkflow {
      * @param step
      *         the step in error.
      */
-    void fireStepErrorEvent(@Nonnull final StepEvent.Step step) {
+    void fireStepErrorEvent(@NotNull final StepEvent.Step step) {
         fireStepErrorEvent(step, null);
     }
 
@@ -118,7 +118,7 @@ public class ContributorWorkflow {
      * @param errorMessage
      *         the error message.
      */
-    void fireStepErrorEvent(@Nonnull final StepEvent.Step step, final String errorMessage) {
+    void fireStepErrorEvent(@NotNull final StepEvent.Step step, final String errorMessage) {
         eventBus.fireEvent(new StepEvent(step, false, errorMessage));
     }
 }

@@ -14,8 +14,8 @@ import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 import static com.codenvy.ide.ext.gae.shared.GAEConstants.GAE_JAVA_ID;
 import static com.codenvy.ide.ext.gae.shared.GAEConstants.GAE_PHP_ID;
@@ -32,7 +32,7 @@ public class GAEUtilImpl implements GAEUtil {
 
     /** {@inheritDoc} */
     @Override
-    public boolean isAppEngineProject(@Nonnull CurrentProject project) {
+    public boolean isAppEngineProject(@NotNull CurrentProject project) {
         String type = project.getProjectDescription().getType();
         return GAE_JAVA_ID.equals(type) || GAE_PYTHON_ID.equals(type) || GAE_PHP_ID.equals(type);
     }
@@ -54,7 +54,7 @@ public class GAEUtilImpl implements GAEUtil {
 
     /** {@inheritDoc} */
     @Override
-    public boolean isCorrectAppId(@Nonnull String appId) {
+    public boolean isCorrectAppId(@NotNull String appId) {
         return appId.matches(APP_ENGINE_APP_ID_MATCHER);
     }
 

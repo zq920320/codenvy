@@ -41,7 +41,7 @@ import com.google.inject.Inject;
 
 import org.vectomatic.dom.svg.ui.SVGImage;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Singleton;
 import java.util.List;
 
@@ -140,7 +140,7 @@ public class ShareActionViewImpl implements ShareActionView {
     }
 
     @Override
-    public void showItemsToShareDropDown(@Nonnull List<Item> itemsToShare) {
+    public void showItemsToShareDropDown(@NotNull List<Item> itemsToShare) {
         initializePopup();
 
         dropDown.removeStyleName(resources.shareCSS().shareDropDownWithHeader());
@@ -165,7 +165,7 @@ public class ShareActionViewImpl implements ShareActionView {
     }
 
     @Override
-    public void showSharingChannelsDropDown(@Nonnull Item item, @Nonnull String... params) {
+    public void showSharingChannelsDropDown(@NotNull Item item, @NotNull String... params) {
         initializePopup();
 
         dropDown.addStyleName(resources.shareCSS().shareDropDownWithHeader());

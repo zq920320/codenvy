@@ -64,7 +64,7 @@ import com.google.inject.Inject;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -179,7 +179,7 @@ public class ShareAction extends Action implements CustomComponentAction, Action
     }
 
     @Override
-    public void onItemToShareClick(@Nonnull final Item item) {
+    public void onItemToShareClick(@NotNull final Item item) {
         final CurrentProject currentProject = context.getCurrentProject();
         if (currentProject != null) {
 
@@ -354,7 +354,7 @@ public class ShareAction extends Action implements CustomComponentAction, Action
         }
     }
 
-    private Snippet newSnippet(@Nonnull SVGResource icon, @Nonnull String label, @Nonnull String title, @Nonnull String type) {
+    private Snippet newSnippet(@NotNull SVGResource icon, @NotNull String label, @NotNull String title, @NotNull String type) {
         return new Snippet(icon, label, title, type, onSharingChannelClickHandler, resources, clipboardButtonBuilder, coreLocale);
     }
 
@@ -383,8 +383,8 @@ public class ShareAction extends Action implements CustomComponentAction, Action
         }
     }
 
-    private FactorySnippet newFactorySnippet(@Nonnull SVGResource icon, @Nonnull String label, @Nonnull String title,
-                                             @Nonnull String type) {
+    private FactorySnippet newFactorySnippet(@NotNull SVGResource icon, @NotNull String label, @NotNull String title,
+                                             @NotNull String type) {
         return new FactorySnippet(icon, label, title, type, resources, clipboardButtonBuilder, coreLocale, onSharingChannelClickHandler,
                                   factoryServiceClient, notificationManager);
     }

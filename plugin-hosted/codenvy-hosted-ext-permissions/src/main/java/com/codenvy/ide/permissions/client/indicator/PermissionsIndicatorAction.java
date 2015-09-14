@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 
@@ -158,7 +158,7 @@ public class PermissionsIndicatorAction extends Action implements CustomComponen
      *         the {@link java.lang.String} to search.
      * @return {@code true} if found, {@code false} otherwise.
      */
-    private boolean containsIgnoreCase(@Nonnull List<String> list, String string) {
+    private boolean containsIgnoreCase(@NotNull List<String> list, String string) {
         for (String oneString : list) {
             if (oneString.equalsIgnoreCase(string)) {
                 return true;

@@ -14,7 +14,7 @@ package com.codenvy.ide.ext.gae.client.confirm;
 import org.eclipse.che.ide.api.mvp.View;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * The abstract view that represents the create application visual part.
@@ -32,7 +32,7 @@ public interface ConfirmView extends View<ConfirmView.ActionDelegate> {
      * @param title
      *         text of title
      */
-    void setActionButtonTitle(@Nonnull String title);
+    void setActionButtonTitle(@NotNull String title);
 
     /**
      * Adds new style name for the subtitle label.
@@ -40,7 +40,7 @@ public interface ConfirmView extends View<ConfirmView.ActionDelegate> {
      * @param styleName
      *         the name of style
      */
-    void addSubtitleStyleName(@Nonnull String styleName);
+    void addSubtitleStyleName(@NotNull String styleName);
 
     /**
      * Opens new window for creating project.
@@ -48,7 +48,7 @@ public interface ConfirmView extends View<ConfirmView.ActionDelegate> {
      * @param url
      *         url which allows open window for adding project id and other parameters
      */
-    void windowOpen(@Nonnull String url);
+    void windowOpen(@NotNull String url);
 
     /** Shows create application window. */
     void show();
@@ -62,9 +62,9 @@ public interface ConfirmView extends View<ConfirmView.ActionDelegate> {
      * @param instructions
      *         messages for the user
      */
-    void setUserInstructions(@Nonnull String instructions);
+    void setUserInstructions(@NotNull String instructions);
 
-    void setSubtitle(@Nonnull String subtitle);
+    void setSubtitle(@NotNull String subtitle);
 
     interface ActionDelegate {
 

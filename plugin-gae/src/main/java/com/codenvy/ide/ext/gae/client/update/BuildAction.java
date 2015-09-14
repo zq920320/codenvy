@@ -29,7 +29,7 @@ import org.eclipse.che.ide.websocket.events.MessageHandler;
 import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
 import com.google.inject.Inject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.api.builder.BuildStatus.SUCCESSFUL;
 import static org.eclipse.che.api.builder.internal.Constants.LINK_REL_DOWNLOAD_RESULT;
@@ -85,7 +85,7 @@ public class BuildAction {
      * @param updateGAECallback
      *         callback which need to return info about build
      */
-    public void perform(@Nonnull ProjectDescriptor activeProject, @Nonnull UpdateGAECallback updateGAECallback) {
+    public void perform(@NotNull ProjectDescriptor activeProject, @NotNull UpdateGAECallback updateGAECallback) {
         this.updateGAECallback = updateGAECallback;
 
         if (isBuildInProgress) {
@@ -95,7 +95,7 @@ public class BuildAction {
         }
     }
 
-    private void buildProject(@Nonnull final ProjectDescriptor activeProject) {
+    private void buildProject(@NotNull final ProjectDescriptor activeProject) {
         lastBuildTaskDescriptor = null;
         buildContext.setBuilding(true);
 
@@ -117,7 +117,7 @@ public class BuildAction {
                     }
                 }, new FailureCallback() {
                     @Override
-                    public void onFailure(@Nonnull Throwable reason) {
+                    public void onFailure(@NotNull Throwable reason) {
                         updateGAECallback.onFailure(reason.getMessage());
                     }
                 });
@@ -125,8 +125,8 @@ public class BuildAction {
         builderService.build(activeProject.getPath(), buildTaskDescriptorCallback);
     }
 
-    @Nonnull
-    private String getLink(@Nonnull BuildTaskDescriptor descriptor, @Nonnull String rel) {
+    @NotNull
+    private String getLink(@NotNull BuildTaskDescriptor descriptor, @NotNull String rel) {
         for (Link link : descriptor.getLinks()) {
             if (link.getRel().equalsIgnoreCase(rel)) {
                 return link.getHref();
@@ -136,8 +136,8 @@ public class BuildAction {
         return "";
     }
 
-    private void startCheckingStatus(@Nonnull final BuildTaskDescriptor buildTaskDescriptor,
-                                     @Nonnull final ProjectDescriptor activeProject) {
+    private void startCheckingStatus(@NotNull final BuildTaskDescriptor buildTaskDescriptor,
+                                     @NotNull final ProjectDescriptor activeProject) {
         buildStatusHandler =
                 new SubscriptionHandler<BuildTaskDescriptor>(dtoUnmarshallerFactory.newWSUnmarshaller(BuildTaskDescriptor.class)) {
                     @Override
@@ -163,7 +163,7 @@ public class BuildAction {
         }
     }
 
-    private void unsubscribeBuildStatusHandler(@Nonnull BuildTaskDescriptor buildTaskDescriptor, @Nonnull MessageHandler handler) {
+    private void unsubscribeBuildStatusHandler(@NotNull BuildTaskDescriptor buildTaskDescriptor, @NotNull MessageHandler handler) {
         try {
             messageBus.unsubscribe(BUILD_STATUS_CHANNEL + buildTaskDescriptor.getTaskId(), handler);
         } catch (WebSocketException e) {
@@ -172,7 +172,7 @@ public class BuildAction {
     }
 
     /** Process changing build status. */
-    private void onBuildStatusUpdated(@Nonnull BuildStatus status, @Nonnull ProjectDescriptor activeProject) {
+    private void onBuildStatusUpdated(@NotNull BuildStatus status, @NotNull ProjectDescriptor activeProject) {
         switch (status) {
             case SUCCESSFUL:
                 updateGAECallback.onSuccess(getLink(lastBuildTaskDescriptor, LINK_REL_DOWNLOAD_RESULT));

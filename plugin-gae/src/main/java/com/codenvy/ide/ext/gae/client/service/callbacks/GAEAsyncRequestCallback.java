@@ -17,8 +17,8 @@ import com.codenvy.ide.ext.gae.client.GAELocalizationConstant;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.Unmarshallable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * Class to receive a response from a remote procedure call.
@@ -35,33 +35,33 @@ public class GAEAsyncRequestCallback<T> extends AsyncRequestCallback<T> {
     private final SuccessCallback<T>      successCallback;
     private final FailureCallback         failureCallback;
 
-    public GAEAsyncRequestCallback(@Nonnull NotificationManager notificationManager,
-                                   @Nonnull GAELocalizationConstant locale,
-                                   @Nonnull SuccessCallback<T> successCallback) {
+    public GAEAsyncRequestCallback(@NotNull NotificationManager notificationManager,
+                                   @NotNull GAELocalizationConstant locale,
+                                   @NotNull SuccessCallback<T> successCallback) {
 
         this(notificationManager, locale, successCallback, null);
     }
 
-    public GAEAsyncRequestCallback(@Nonnull NotificationManager notificationManager,
-                                   @Nonnull GAELocalizationConstant locale,
+    public GAEAsyncRequestCallback(@NotNull NotificationManager notificationManager,
+                                   @NotNull GAELocalizationConstant locale,
                                    @Nullable Unmarshallable<T> unmarshaller,
-                                   @Nonnull SuccessCallback<T> successCallback) {
+                                   @NotNull SuccessCallback<T> successCallback) {
 
         this(notificationManager, locale, unmarshaller, successCallback, null);
     }
 
-    public GAEAsyncRequestCallback(@Nonnull NotificationManager notificationManager,
-                                   @Nonnull GAELocalizationConstant locale,
-                                   @Nonnull SuccessCallback<T> successCallback,
+    public GAEAsyncRequestCallback(@NotNull NotificationManager notificationManager,
+                                   @NotNull GAELocalizationConstant locale,
+                                   @NotNull SuccessCallback<T> successCallback,
                                    @Nullable FailureCallback failureCallback) {
 
         this(notificationManager, locale, null, successCallback, failureCallback);
     }
 
-    public GAEAsyncRequestCallback(@Nonnull NotificationManager notificationManager,
-                                   @Nonnull GAELocalizationConstant locale,
+    public GAEAsyncRequestCallback(@NotNull NotificationManager notificationManager,
+                                   @NotNull GAELocalizationConstant locale,
                                    @Nullable Unmarshallable<T> unmarshaller,
-                                   @Nonnull SuccessCallback<T> successCallback,
+                                   @NotNull SuccessCallback<T> successCallback,
                                    @Nullable FailureCallback failureCallback) {
 
         super(unmarshaller);
@@ -73,13 +73,13 @@ public class GAEAsyncRequestCallback<T> extends AsyncRequestCallback<T> {
 
     /** {@inheritDoc} */
     @Override
-    protected void onSuccess(@Nonnull T result) {
+    protected void onSuccess(@NotNull T result) {
         successCallback.onSuccess(result);
     }
 
     /** {@inheritDoc} */
     @Override
-    protected void onFailure(@Nonnull Throwable exception) {
+    protected void onFailure(@NotNull Throwable exception) {
         if (failureCallback != null) {
             failureCallback.onFailure(exception);
             return;

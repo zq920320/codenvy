@@ -14,7 +14,7 @@ import org.eclipse.che.api.project.server.FolderEntry;
 import org.eclipse.che.api.project.server.ValueProvider;
 import com.codenvy.ide.ext.gae.server.projecttype.valueprovider.AppEngineValueProvider;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Factory that uses for creating value provider projects.
@@ -29,6 +29,6 @@ public interface AppEngineValueProviderFactory {
      *         project from which need to get app engine value
      * @return an instance of  {@link AppEngineValueProvider}
      */
-    @Nonnull
-    ValueProvider createAppEngineValueProvider(@Nonnull FolderEntry projectFolder);
+    @NotNull
+    ValueProvider createAppEngineValueProvider(@NotNull FolderEntry projectFolder);
 }

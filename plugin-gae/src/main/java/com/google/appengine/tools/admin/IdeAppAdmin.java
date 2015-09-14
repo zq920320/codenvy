@@ -13,7 +13,7 @@ package com.google.appengine.tools.admin;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.PrintWriter;
 import java.io.Writer;
 
@@ -57,7 +57,7 @@ public class IdeAppAdmin extends AppAdminImpl {
             // do nothing
         }
 
-        public void write(@Nonnull char[] cBuf, int off, int len) {
+        public void write(@NotNull char[] cBuf, int off, int len) {
             // do nothing
         }
     }

@@ -13,7 +13,7 @@ package com.codenvy.ide.ext.gae.client.wizard.yaml;
 import org.eclipse.che.ide.api.mvp.View;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Interface describes methods which allow get and set special values parameters on view.
@@ -28,7 +28,7 @@ public interface GAEYamlPageView extends View<GAEYamlPageView.ActionDelegate> {
      *
      * @return value of group id
      */
-    @Nonnull
+    @NotNull
     String getGaeAppIdValue();
 
     /**
@@ -37,7 +37,7 @@ public interface GAEYamlPageView extends View<GAEYamlPageView.ActionDelegate> {
      * @param applicationId
      *         application id value which need set
      */
-    void setGaeApplicationId(@Nonnull String applicationId);
+    void setGaeApplicationId(@NotNull String applicationId);
 
     /**
      * Sets spacial colour border around the place on view in which application id is set.

@@ -18,7 +18,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.assistedinject.Assisted;
 import com.google.inject.assistedinject.AssistedInject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 public class WaitForkOnRemoteStep implements Step {
     private static final int POLL_FREQUENCY_MS = 1000;
@@ -28,14 +28,14 @@ public class WaitForkOnRemoteStep implements Step {
     private       Timer                     timer;
 
     @AssistedInject
-    public WaitForkOnRemoteStep(@Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                @Nonnull final @Assisted Step nextStep) {
+    public WaitForkOnRemoteStep(@NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                @NotNull final @Assisted Step nextStep) {
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.nextStep = nextStep;
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         if (timer == null) {
             timer = new Timer() {
                 @Override

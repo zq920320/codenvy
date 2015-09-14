@@ -21,7 +21,7 @@ import com.google.inject.ImplementedBy;
 import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.ext.runner.client.tabs.properties.panel.common.Shutdown;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Ann Shumilova
@@ -35,10 +35,10 @@ public interface RunnerPreferencesView extends View<RunnerPreferencesView.Action
      * @param shutdown
      *         value that needs to be chosen
      */
-    void selectShutdown(@Nonnull Shutdown shutdown);
+    void selectShutdown(@NotNull Shutdown shutdown);
 
     /** @return chosen value of Shutdown field */
-    @Nonnull
+    @NotNull
     Shutdown getShutdown();
 
     /**

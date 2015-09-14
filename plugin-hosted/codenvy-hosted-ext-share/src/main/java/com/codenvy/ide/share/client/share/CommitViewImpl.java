@@ -31,7 +31,7 @@ import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * UI for {@link CommitView}.
@@ -95,7 +95,7 @@ public class CommitViewImpl extends Window implements CommitView {
         hide();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getCommitDescription() {
         return commitDescription.getText();

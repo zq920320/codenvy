@@ -17,7 +17,7 @@ import org.eclipse.che.ide.util.loging.Log;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.Command;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Version of the wizard that can be configured with values.
@@ -106,6 +106,6 @@ public class InitializableWizard<T> extends AbstractWizard<T> {
     }
 
     @Override
-    public void complete(@Nonnull CompleteCallback callback) {
+    public void complete(@NotNull CompleteCallback callback) {
     }
 }

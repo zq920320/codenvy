@@ -13,7 +13,7 @@ package com.codenvy.plugin.contribution.client.utils;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.factory.dto.Factory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Helper providing methods to work with factory.
@@ -36,7 +36,7 @@ public final class FactoryHelper {
      *         the factory.
      * @return the create project url or {@code null} if none.
      */
-    public static String getCreateProjectRelUrl(@Nonnull Factory factory) {
+    public static String getCreateProjectRelUrl(@NotNull Factory factory) {
         for (final Link oneLink : factory.getLinks()) {
             if (CREATE_PROJECT_LINK_RELATION_NAME.equals(oneLink.getRel())) {
                 return oneLink.getHref();

@@ -20,7 +20,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.PrintWriter;
 import java.util.List;
@@ -239,7 +239,7 @@ public class YamlApplicationTest {
     }
 
     private class DummyYamlApplication extends YamlApplication {
-        public DummyYamlApplication(@Nonnull File applicationDirectory, @Nonnull String sourceLanguage) {
+        public DummyYamlApplication(@NotNull File applicationDirectory, @NotNull String sourceLanguage) {
             super(applicationDirectory, sourceLanguage);
         }
     }

@@ -19,7 +19,7 @@ import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.util.loging.Log;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.api.notification.Notification.Status.FINISHED;
 import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
@@ -39,7 +39,7 @@ public final class NotificationHelper {
     private final ContributeMessages messages;
 
     @Inject
-    protected NotificationHelper(@Nonnull final NotificationManager notificationManager, @Nonnull final ContributeMessages messages) {
+    protected NotificationHelper(@NotNull final NotificationManager notificationManager, @NotNull final ContributeMessages messages) {
         this.notificationManager = notificationManager;
         this.messages = messages;
     }
@@ -50,7 +50,7 @@ public final class NotificationHelper {
      * @param message
      *         the info message.
      */
-    public void showInfo(@Nonnull final String message) {
+    public void showInfo(@NotNull final String message) {
         showNotification(new Notification(message, INFO));
     }
 
@@ -60,7 +60,7 @@ public final class NotificationHelper {
      * @param message
      *         the warning message.
      */
-    public void showWarning(@Nonnull final String message) {
+    public void showWarning(@NotNull final String message) {
         showNotification(new Notification(message, WARNING));
     }
 
@@ -72,7 +72,7 @@ public final class NotificationHelper {
      * @param message
      *         the error message.
      */
-    public void showError(@Nonnull final Class<?> cls, @Nonnull final String message) {
+    public void showError(@NotNull final Class<?> cls, @NotNull final String message) {
         showError(cls, new Exception(message));
     }
 
@@ -84,14 +84,14 @@ public final class NotificationHelper {
      * @param exception
      *         exception to handle.
      */
-    public void showError(@Nonnull final Class<?> cls, @Nonnull final Throwable exception) {
+    public void showError(@NotNull final Class<?> cls, @NotNull final Throwable exception) {
         showError(cls, exception.getMessage(), exception);
     }
 
     /**
      * Log the exception, display the error message in the notification.
      */
-    public void showError(@Nonnull final Class<?> cls, @Nonnull final String errorMessage, @Nonnull final Throwable exception) {
+    public void showError(@NotNull final Class<?> cls, @NotNull final String errorMessage, @NotNull final Throwable exception) {
         // workaround IDEX-2381
         final String jsonMessage = ensureJson(errorMessage);
         showNotification(new Notification(jsonMessage, ERROR));
@@ -116,7 +116,7 @@ public final class NotificationHelper {
      * @param notification
      *         notification to display.
      */
-    public void showNotification(@Nonnull final Notification notification) {
+    public void showNotification(@NotNull final Notification notification) {
         notification.setMessage(messages.notificationMessagePrefix(notification.getMessage()));
         notificationManager.showNotification(notification);
     }
@@ -131,9 +131,9 @@ public final class NotificationHelper {
      * @param notification
      *         the notification to finish.
      */
-    public void finishNotificationWithError(@Nonnull final Class<?> cls,
-                                            @Nonnull final String message,
-                                            @Nonnull final Notification notification) {
+    public void finishNotificationWithError(@NotNull final Class<?> cls,
+                                            @NotNull final String message,
+                                            @NotNull final Notification notification) {
         finishNotificationWithError(cls, new Exception(message), notification);
     }
 
@@ -147,9 +147,9 @@ public final class NotificationHelper {
      * @param notification
      *         the notification to finish.
      */
-    public void finishNotificationWithError(@Nonnull final Class<?> cls,
-                                            @Nonnull final Throwable exception,
-                                            @Nonnull final Notification notification) {
+    public void finishNotificationWithError(@NotNull final Class<?> cls,
+                                            @NotNull final Throwable exception,
+                                            @NotNull final Notification notification) {
         notification.setType(ERROR);
         finishNotification(exception.getMessage(), notification);
         Log.error(cls, exception);
@@ -163,7 +163,7 @@ public final class NotificationHelper {
      * @param notification
      *         the notification to finish.
      */
-    public void finishNotificationWithWarning(@Nonnull final String message, @Nonnull final Notification notification) {
+    public void finishNotificationWithWarning(@NotNull final String message, @NotNull final Notification notification) {
         notification.setType(WARNING);
         finishNotification(message, notification);
     }
@@ -176,7 +176,7 @@ public final class NotificationHelper {
      * @param notification
      *         the notification to finish.
      */
-    public void finishNotification(@Nonnull final String message, @Nonnull final Notification notification) {
+    public void finishNotification(@NotNull final String message, @NotNull final Notification notification) {
         notification.setMessage(messages.notificationMessagePrefix(message));
         notification.setStatus(FINISHED);
     }

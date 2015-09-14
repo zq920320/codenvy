@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Exception raised when a pull request already exists for a branch.
@@ -27,7 +27,7 @@ public class PullRequestAlreadyExistsException extends Exception {
      * @param headBranch
      *         the head branch name.
      */
-    public PullRequestAlreadyExistsException(@Nonnull final String headBranch) {
+    public PullRequestAlreadyExistsException(@NotNull final String headBranch) {
         super("A pull request for " + headBranch + " already exists");
     }
 }

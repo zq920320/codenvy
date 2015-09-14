@@ -37,8 +37,8 @@ import com.google.inject.Inject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
@@ -96,8 +96,8 @@ public class AppEngineClient {
      * @throws ApiException
      *         if some problem happens with virtual file system
      */
-    @Nonnull
-    public ApplicationInfo update(@Nonnull String wsId, @Nonnull String projectPath, @Nullable URL binaries, @Nonnull String userId)
+    @NotNull
+    public ApplicationInfo update(@NotNull String wsId, @NotNull String projectPath, @Nullable URL binaries, @NotNull String userId)
             throws IOException, ApiException {
         IdeAppAdmin admin;
 
@@ -130,8 +130,8 @@ public class AppEngineClient {
         }
     }
 
-    @Nonnull
-    private IdeAppAdmin createApplicationAdmin(@Nonnull GenericApplication application, @Nonnull String userId) throws IOException {
+    @NotNull
+    private IdeAppAdmin createApplicationAdmin(@NotNull GenericApplication application, @NotNull String userId) throws IOException {
         ConnectOptions options = new ConnectOptions();
 
         OAuthToken token = oauthTokenProvider.getToken("google", userId);
@@ -144,8 +144,8 @@ public class AppEngineClient {
         return appAdminFactory.createIdeAppAdmin(options, application);
     }
 
-    @Nonnull
-    private YamlApplication createYamlApplication(@Nonnull String wsId, @Nonnull String projectPath) throws IOException,
+    @NotNull
+    private YamlApplication createYamlApplication(@NotNull String wsId, @NotNull String projectPath) throws IOException,
                                                                                                             ApiException {
         Project project = projectManager.getProject(wsId, projectPath);
         ProjectType type = getApplicationType(project);
@@ -159,8 +159,8 @@ public class AppEngineClient {
         return isPythonApp ? applicationFactory.createPythonApplication(appDir) : applicationFactory.createPHPApplication(appDir);
     }
 
-    @Nonnull
-    private ProjectType getApplicationType(@Nonnull Project project) throws IOException, ApiException {
+    @NotNull
+    private ProjectType getApplicationType(@NotNull Project project) throws IOException, ApiException {
         VirtualFileEntry app = project.getBaseFolder().getChild("app.yaml");
         if (app == null) {
             throw new RuntimeException("Unable determine type of application.");

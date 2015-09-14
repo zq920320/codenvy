@@ -22,7 +22,7 @@ import com.google.gwt.user.client.ui.TextBox;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * View representation of GAE wizard.
@@ -60,7 +60,7 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public String getGroupIdValue() {
         return groupId.getText();
@@ -68,12 +68,12 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setGroupIdValue(@Nonnull String groupIdValue) {
+    public void setGroupIdValue(@NotNull String groupIdValue) {
         groupId.setText(groupIdValue);
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public String getArtifactIdValue() {
         return artifactId.getText();
@@ -81,12 +81,12 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setArtifactIdValue(@Nonnull String artifactIdValue) {
+    public void setArtifactIdValue(@NotNull String artifactIdValue) {
         artifactId.setText(artifactIdValue);
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public String getVersionValue() {
         return version.getText();
@@ -94,12 +94,12 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setVersion(@Nonnull String versionValue) {
+    public void setVersion(@NotNull String versionValue) {
         version.setText(versionValue);
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
     public String getGaeAppIdValue() {
         return gaeAppId.getText();
@@ -107,7 +107,7 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setGaeApplicationId(@Nonnull String applicationId) {
+    public void setGaeApplicationId(@NotNull String applicationId) {
         gaeAppId.setText(applicationId);
     }
 
@@ -117,7 +117,7 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
         applyStyle(groupId, isCorrect);
     }
 
-    private void applyStyle(@Nonnull TextBox textBox, boolean isCorrect) {
+    private void applyStyle(@NotNull TextBox textBox, boolean isCorrect) {
         if (isCorrect) {
             textBox.addStyleName(resource.gaeCSS().wizardIncorrectValueBorder());
         } else {
@@ -151,7 +151,7 @@ public class GAEJavaPageViewImpl extends Composite implements GAEJavaPageView {
 
     /** {@inheritDoc} */
     @Override
-    public void setDelegate(@Nonnull ActionDelegate delegate) {
+    public void setDelegate(@NotNull ActionDelegate delegate) {
         this.delegate = delegate;
     }
 
