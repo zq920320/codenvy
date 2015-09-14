@@ -27,7 +27,7 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.HTTPHeader;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -45,7 +45,7 @@ public class ResourcesServiceClientImpl implements ResourcesServiceClient {
     }
 
     @Override
-    public void redistributeResources(@Nonnull String accountId, @Nonnull List<UpdateResourcesDescriptor> updateResources,
+    public void redistributeResources(@NotNull String accountId, @NotNull List<UpdateResourcesDescriptor> updateResources,
                                       AsyncRequestCallback<Void> callback) {
         final String requestUrl = "/api/resources/" + accountId;
         asyncRequestFactory.createPostRequest(requestUrl, updateResources)

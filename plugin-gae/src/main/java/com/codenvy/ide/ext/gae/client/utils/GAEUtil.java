@@ -14,8 +14,8 @@ import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * The utility class for GAE extension. It contains different methods which are needed in a few places in the extension.
@@ -34,7 +34,7 @@ public interface GAEUtil {
      *         project that needs to be analyzed
      * @return <code>true</code> if a given project is GAE project, and <code>false</code> otherwise
      */
-    boolean isAppEngineProject(@Nonnull CurrentProject project);
+    boolean isAppEngineProject(@NotNull CurrentProject project);
 
     /**
      * Returns whether a user is authorized in GAE. It analyzes a given token and try to find a credential for GAE.
@@ -53,5 +53,5 @@ public interface GAEUtil {
      *         application ID that needs to be validated
      * @return <code>true</code> if a given application ID is valid, and <code>false</code> otherwise
      */
-    boolean isCorrectAppId(@Nonnull String appId);
+    boolean isCorrectAppId(@NotNull String appId);
 }

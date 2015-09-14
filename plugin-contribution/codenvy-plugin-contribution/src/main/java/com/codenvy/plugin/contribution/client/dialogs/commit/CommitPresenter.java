@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter.CommitActionHandler.CommitAction.CANCEL;
 import static com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter.CommitActionHandler.CommitAction.CONTINUE;
@@ -39,10 +39,10 @@ public class CommitPresenter implements CommitView.ActionDelegate {
     private       CommitActionHandler handler;
 
     @Inject
-    public CommitPresenter(@Nonnull final CommitView view,
-                           @Nonnull final AppContext appContext,
-                           @Nonnull final VcsServiceProvider vcsServiceProvider,
-                           @Nonnull final NotificationHelper notificationHelper) {
+    public CommitPresenter(@NotNull final CommitView view,
+                           @NotNull final AppContext appContext,
+                           @NotNull final VcsServiceProvider vcsServiceProvider,
+                           @NotNull final NotificationHelper notificationHelper) {
         this.view = view;
         this.appContext = appContext;
         this.vcsServiceProvider = vcsServiceProvider;
@@ -57,7 +57,7 @@ public class CommitPresenter implements CommitView.ActionDelegate {
      * @param commitDescription
      *         the default commit description.
      */
-    public void showView(@Nonnull String commitDescription) {
+    public void showView(@NotNull String commitDescription) {
         view.show(commitDescription);
     }
 

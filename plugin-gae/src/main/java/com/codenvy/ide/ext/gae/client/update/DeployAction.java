@@ -20,8 +20,8 @@ import com.codenvy.ide.ext.gae.client.service.callbacks.SuccessCallback;
 import com.codenvy.ide.ext.gae.shared.ApplicationInfo;
 import com.google.inject.Inject;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * Class contains business logic related to deploying of project.
@@ -57,9 +57,9 @@ public class DeployAction {
      * @param updateGAECallback
      *         callback which need to return deploy info
      */
-    public void perform(@Nonnull ProjectDescriptor activeProject,
+    public void perform(@NotNull ProjectDescriptor activeProject,
                         @Nullable String binariesUrl,
-                        @Nonnull final UpdateGAECallback updateGAECallback) {
+                        @NotNull final UpdateGAECallback updateGAECallback) {
 
         GAERequestCallback<ApplicationInfo> callback =
                 requestCallBackFactory.build(ApplicationInfo.class, new SuccessCallback<ApplicationInfo>() {
@@ -72,7 +72,7 @@ public class DeployAction {
                     }
                 }, new FailureCallback() {
                     @Override
-                    public void onFailure(@Nonnull Throwable reason) {
+                    public void onFailure(@NotNull Throwable reason) {
                         String message = reason.getMessage();
 
                         if (message.contains(APP_NOT_EXIST) || message.contains(DO_NOT_HAVE_PERMISSION)) {

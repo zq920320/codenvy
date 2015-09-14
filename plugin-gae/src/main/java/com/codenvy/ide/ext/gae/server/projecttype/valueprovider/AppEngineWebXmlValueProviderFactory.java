@@ -17,7 +17,7 @@ import com.codenvy.ide.ext.gae.server.inject.factories.AppEngineValueProviderFac
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Factory allows get instance of special value provider using special name.
@@ -36,7 +36,7 @@ public class AppEngineWebXmlValueProviderFactory implements ValueProviderFactory
 
     /** {@inheritDoc} */
     @Override
-    public ValueProvider newInstance(@Nonnull FolderEntry projectFolder) {
+    public ValueProvider newInstance(@NotNull FolderEntry projectFolder) {
         return valueProviderFactory.createAppEngineValueProvider(projectFolder);
     }
 

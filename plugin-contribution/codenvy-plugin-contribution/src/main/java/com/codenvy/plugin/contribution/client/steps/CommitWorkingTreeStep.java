@@ -15,7 +15,7 @@ import com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter;
 import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter.CommitActionHandler.CommitAction.CANCEL;
@@ -33,10 +33,10 @@ public class CommitWorkingTreeStep implements Step {
     private final Step               createForkStep;
 
     @Inject
-    public CommitWorkingTreeStep(@Nonnull final CommitPresenter commitPresenter,
-                                 @Nonnull final ContributeMessages messages,
-                                 @Nonnull final NotificationHelper notificationHelper,
-                                 @Nonnull final CreateForkStep createForkStep) {
+    public CommitWorkingTreeStep(@NotNull final CommitPresenter commitPresenter,
+                                 @NotNull final ContributeMessages messages,
+                                 @NotNull final NotificationHelper notificationHelper,
+                                 @NotNull final CreateForkStep createForkStep) {
         this.commitPresenter = commitPresenter;
         this.messages = messages;
         this.notificationHelper = notificationHelper;
@@ -44,7 +44,7 @@ public class CommitWorkingTreeStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Configuration configuration = workflow.getConfiguration();
 
         commitPresenter.setCommitActionHandler(new CommitPresenter.CommitActionHandler() {

@@ -12,7 +12,7 @@ package org.eclipse.che.security.oauth1;
 
 import org.eclipse.che.security.oauth1.shared.User;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -27,13 +27,13 @@ import javax.mail.internet.InternetAddress;
 @Singleton
 public class BitbucketOAuthAuthenticator extends OAuthAuthenticator {
     @Inject
-    public BitbucketOAuthAuthenticator(@Nonnull @Named("oauth.bitbucket.clientid") String clientId,
-                                       @Nonnull @Named("oauth.bitbucket.clientsecret") String clientSecret,
-                                       @Nonnull @Named("oauth.bitbucket.authuri") String authUri,
-                                       @Nonnull @Named("oauth.bitbucket.requesttokenuri") String requestTokenUri,
-                                       @Nonnull @Named("oauth.bitbucket.requestaccesstokenuri") String requestAccessTokenUri,
-                                       @Nonnull @Named("oauth.bitbucket.verifyaccesstokenuri") String verifyAccessTokenUri,
-                                       @Nonnull @Named("oauth.bitbucket.redirecturis") String redirectUri) {
+    public BitbucketOAuthAuthenticator(@NotNull @Named("oauth.bitbucket.clientid") String clientId,
+                                       @NotNull @Named("oauth.bitbucket.clientsecret") String clientSecret,
+                                       @NotNull @Named("oauth.bitbucket.authuri") String authUri,
+                                       @NotNull @Named("oauth.bitbucket.requesttokenuri") String requestTokenUri,
+                                       @NotNull @Named("oauth.bitbucket.requestaccesstokenuri") String requestAccessTokenUri,
+                                       @NotNull @Named("oauth.bitbucket.verifyaccesstokenuri") String verifyAccessTokenUri,
+                                       @NotNull @Named("oauth.bitbucket.redirecturis") String redirectUri) {
         super(clientId,
               clientSecret,
               authUri,

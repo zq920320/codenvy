@@ -21,7 +21,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -69,7 +69,7 @@ public class GAERequestCallBackFactoryTest {
         assertThat(fieldsValues.get(FAILURE_FIELD_NAME), nullValue());
     }
 
-    private Map<String, Object> getFieldsValues(@Nonnull RequestCallback requestCallback) throws Exception {
+    private Map<String, Object> getFieldsValues(@NotNull RequestCallback requestCallback) throws Exception {
         Map<String, Object> fieldsValues = new HashMap<>();
 
         Class clazz = requestCallback.getClass();
@@ -82,7 +82,7 @@ public class GAERequestCallBackFactoryTest {
         return fieldsValues;
     }
 
-    private void assertGeneralFieldsValues(@Nonnull Map<String, Object> fieldsValues) {
+    private void assertGeneralFieldsValues(@NotNull Map<String, Object> fieldsValues) {
         assertSame(fieldsValues.get(NOTIFICATION_MANAGER_FIELD_NAME), notificationManager);
         assertSame(fieldsValues.get(SUCCESS_FIELD_NAME), successCallback);
         assertSame(fieldsValues.get(UNMARSHALLER_FIELD_NAME), unmarshallable);

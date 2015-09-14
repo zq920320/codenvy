@@ -13,7 +13,7 @@ package com.codenvy.plugin.contribution.client.steps.events;
 import com.codenvy.plugin.contribution.client.steps.Context;
 import com.google.gwt.event.shared.GwtEvent;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * @author Kevin Pollet
@@ -24,7 +24,7 @@ public class ContextPropertyChangeEvent extends GwtEvent<ContextPropertyChangeHa
     private final Context         context;
     private final ContextProperty contextProperty;
 
-    public ContextPropertyChangeEvent(@Nonnull final Context context, @Nonnull final ContextProperty contextProperty) {
+    public ContextPropertyChangeEvent(@NotNull final Context context, @NotNull final ContextProperty contextProperty) {
         this.context = context;
         this.contextProperty = contextProperty;
     }

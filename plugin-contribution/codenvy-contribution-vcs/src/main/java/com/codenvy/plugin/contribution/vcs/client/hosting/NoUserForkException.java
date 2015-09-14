@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Exception raised when trying to get a fork of a repository for a user and no fork being found.
@@ -25,7 +25,7 @@ public class NoUserForkException extends Exception {
      * @param user
      *         the user.
      */
-    public NoUserForkException(@Nonnull final String user) {
+    public NoUserForkException(@NotNull final String user) {
         super("No fork for user: " + user);
     }
 }

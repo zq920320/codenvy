@@ -29,7 +29,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Snippet sharing channel.
@@ -43,14 +43,14 @@ public class Snippet extends SharingChannel {
     private final ClipboardButtonBuilder   clipboardButtonBuilder;
     private final CoreLocalizationConstant coreLocale;
 
-    public Snippet(@Nonnull SVGResource icon,
-                   @Nonnull String label,
-                   @Nonnull String title,
-                   @Nonnull String snippetTemplate,
+    public Snippet(@NotNull SVGResource icon,
+                   @NotNull String label,
+                   @NotNull String title,
+                   @NotNull String snippetTemplate,
                    ClickHandler clickHandler,
-                   @Nonnull ShareResources resources,
-                   @Nonnull ClipboardButtonBuilder clipboardButtonBuilder,
-                   @Nonnull CoreLocalizationConstant coreLocale) {
+                   @NotNull ShareResources resources,
+                   @NotNull ClipboardButtonBuilder clipboardButtonBuilder,
+                   @NotNull CoreLocalizationConstant coreLocale) {
         super(icon, label, clickHandler);
 
         this.title = title;
@@ -61,7 +61,7 @@ public class Snippet extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull Widget element, @Nonnull final String... params) {
+    public void decorateWidget(@NotNull Widget element, @NotNull final String... params) {
         element.addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

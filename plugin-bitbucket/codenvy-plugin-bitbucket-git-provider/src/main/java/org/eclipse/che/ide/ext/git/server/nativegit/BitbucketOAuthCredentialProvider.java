@@ -24,7 +24,7 @@ import org.eclipse.che.security.oauth1.shared.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class BitbucketOAuthCredentialProvider implements CredentialsProvider {
     private final BitbucketOAuthAuthenticator oAuthAuthenticator;
 
     @Inject
-    public BitbucketOAuthCredentialProvider(@Nonnull final BitbucketOAuthAuthenticator oAuthAuthenticator) {
+    public BitbucketOAuthCredentialProvider(@NotNull final BitbucketOAuthAuthenticator oAuthAuthenticator) {
         this.oAuthAuthenticator = oAuthAuthenticator;
     }
 

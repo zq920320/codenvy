@@ -24,7 +24,7 @@ import com.google.gwt.user.client.ui.LayoutPanel;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Provides a graphical representation which allows user to create GAE project.
@@ -88,7 +88,7 @@ public class ConfirmViewImpl extends Window implements ConfirmView {
         getFooter().add(cancelButton);
     }
 
-    private Button createButton(@Nonnull Resources resources, @Nonnull ClickHandler clickHandler) {
+    private Button createButton(@NotNull Resources resources, @NotNull ClickHandler clickHandler) {
         Button button = new Button();
 
         button.addStyleName(resources.centerPanelCss().alignBtn());
@@ -118,31 +118,31 @@ public class ConfirmViewImpl extends Window implements ConfirmView {
 
     /** {@inheritDoc} */
     @Override
-    public void setActionButtonTitle(@Nonnull String title) {
+    public void setActionButtonTitle(@NotNull String title) {
         actionButton.setText(title);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void addSubtitleStyleName(@Nonnull String styleName) {
+    public void addSubtitleStyleName(@NotNull String styleName) {
         subTitleLabel.addStyleName(styleName);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void windowOpen(@Nonnull String url) {
+    public void windowOpen(@NotNull String url) {
         com.google.gwt.user.client.Window.open(url, "_blank", "");
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setUserInstructions(@Nonnull String instructions) {
+    public void setUserInstructions(@NotNull String instructions) {
         instructionLabel.setText(instructions);
     }
 
     /** {@inheritDoc} */
     @Override
-    public void setSubtitle(@Nonnull String subtitle) {
+    public void setSubtitle(@NotNull String subtitle) {
         subTitleLabel.setText(subtitle);
     }
 }

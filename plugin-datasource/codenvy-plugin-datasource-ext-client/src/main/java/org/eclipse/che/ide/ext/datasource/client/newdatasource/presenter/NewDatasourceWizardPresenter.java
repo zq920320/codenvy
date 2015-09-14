@@ -35,7 +35,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-import javax.annotation.Nullable;
+import org.eclipse.che.commons.annotation.Nullable;
 
 public class NewDatasourceWizardPresenter implements InitializableWizardDialog<DatabaseConfigurationDTO>,
                                                      Wizard.UpdateDelegate, NewDatasourceWizardHeadView.ActionDelegate,

@@ -15,7 +15,7 @@ import com.google.appengine.repackaged.net.sourceforge.yamlbeans.YamlReader;
 import com.google.appengine.repackaged.net.sourceforge.yamlbeans.YamlWriter;
 import com.google.apphosting.utils.config.AppEngineConfigException;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.io.Reader;
 import java.io.StringWriter;
@@ -73,8 +73,8 @@ public class YamlAppInfo {
      * @throws IOException
      *         if some problem happens with reading/writing operation
      */
-    @Nonnull
-    public static YamlAppInfo parse(@Nonnull Reader reader) throws IOException {
+    @NotNull
+    public static YamlAppInfo parse(@NotNull Reader reader) throws IOException {
         YamlReader yamlReader = new YamlReader(reader);
         try {
             return yamlReader.read(YamlAppInfo.class);
@@ -90,7 +90,7 @@ public class YamlAppInfo {
      *
      * @return string format of configuration
      */
-    @Nonnull
+    @NotNull
     public String toYaml() {
         if (skip_files == null) {
             skip_files = DEFAULT_SKIP_FILES;

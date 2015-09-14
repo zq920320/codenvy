@@ -16,7 +16,7 @@ import org.eclipse.che.vfs.impl.fs.LocalPathResolver;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * {@link BitbucketProjectImporter} implementation for Bitbucket.
@@ -26,8 +26,8 @@ import javax.annotation.Nonnull;
 @Singleton
 public class BitbucketProjectImporter extends GitProjectImporter {
     @Inject
-    public BitbucketProjectImporter(@Nonnull final GitConnectionFactory gitConnectionFactory,
-                                    @Nonnull final LocalPathResolver localPathResolver) {
+    public BitbucketProjectImporter(@NotNull final GitConnectionFactory gitConnectionFactory,
+                                    @NotNull final LocalPathResolver localPathResolver) {
 
         super(gitConnectionFactory, localPathResolver);
     }

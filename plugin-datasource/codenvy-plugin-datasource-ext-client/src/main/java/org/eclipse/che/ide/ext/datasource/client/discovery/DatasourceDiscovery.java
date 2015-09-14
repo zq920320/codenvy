@@ -30,7 +30,7 @@ import org.eclipse.che.ide.util.loging.Log;
 import com.google.gwt.http.client.RequestException;
 import com.google.web.bindery.event.shared.EventBus;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -67,7 +67,7 @@ public class DatasourceDiscovery {
     protected void configureProcessRunEventHandler() {
         eventBus.addHandler(RunnerApplicationStatusEvent.TYPE, new RunnerApplicationStatusEventHandler() {
             @Override
-            public void onRunnerStatusChanged(@Nonnull Runner runner) {
+            public void onRunnerStatusChanged(@NotNull Runner runner) {
                 ApplicationProcessDescriptor descriptor = runner.getDescriptor();
                 if (descriptor == null) {
                     return;
@@ -88,7 +88,7 @@ public class DatasourceDiscovery {
         });
     }
 
-    private void addDatasource(@Nonnull ApplicationProcessDescriptor applicationProcessDescriptor) {
+    private void addDatasource(@NotNull ApplicationProcessDescriptor applicationProcessDescriptor) {
         PortMapping portMapping = applicationProcessDescriptor.getPortMapping();
         CurrentProject currentProject = appContext.getCurrentProject();
         if (portMapping == null || currentProject == null) {

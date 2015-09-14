@@ -17,7 +17,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvi
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.CREATE_FORK;
@@ -31,16 +31,16 @@ public class CreateForkStep implements Step {
     private final Step                      checkoutBranchToPushStep;
 
     @Inject
-    public CreateForkStep(@Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                          @Nonnull final ContributeMessages messages,
-                          @Nonnull final CheckoutBranchToPushStep checkoutBranchToPushStep) {
+    public CreateForkStep(@NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                          @NotNull final ContributeMessages messages,
+                          @NotNull final CheckoutBranchToPushStep checkoutBranchToPushStep) {
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.messages = messages;
         this.checkoutBranchToPushStep = checkoutBranchToPushStep;
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final String originRepositoryOwner = context.getOriginRepositoryOwner();
         final String originRepositoryName = context.getOriginRepositoryName();

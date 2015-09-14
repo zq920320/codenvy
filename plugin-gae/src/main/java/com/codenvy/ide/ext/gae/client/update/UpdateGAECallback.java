@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.ide.ext.gae.client.update;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Callback is used for returning information about updating of project.
@@ -25,7 +25,7 @@ public interface UpdateGAECallback {
      * @param message
      *         info message about build or deploy
      */
-    void onSuccess(@Nonnull String message);
+    void onSuccess(@NotNull String message);
 
     /**
      * Method is called when build or deploy operation are failed.
@@ -33,6 +33,6 @@ public interface UpdateGAECallback {
      * @param errorMessage
      *         info error message
      */
-    void onFailure(@Nonnull String errorMessage);
+    void onFailure(@NotNull String errorMessage);
 
 }

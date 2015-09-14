@@ -16,7 +16,7 @@ import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.CHECKOUT_BRANCH_TO_PUSH;
@@ -37,11 +37,11 @@ public class CheckoutBranchToPushStep implements Step {
     private final NotificationHelper notificationHelper;
 
     @Inject
-    public CheckoutBranchToPushStep(@Nonnull final AddForkRemoteStep addForkRemoteStep,
-                                    @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                    @Nonnull final ContributeMessages messages,
-                                    @Nonnull final NotificationHelper notificationHelper,
-                                    @Nonnull final WaitForkOnRemoteStepFactory waitRemoteStepFactory) {
+    public CheckoutBranchToPushStep(@NotNull final AddForkRemoteStep addForkRemoteStep,
+                                    @NotNull final VcsServiceProvider vcsServiceProvider,
+                                    @NotNull final ContributeMessages messages,
+                                    @NotNull final NotificationHelper notificationHelper,
+                                    @NotNull final WaitForkOnRemoteStepFactory waitRemoteStepFactory) {
         this.addForkRemoteStep = waitRemoteStepFactory.create(addForkRemoteStep);
         this.vcsServiceProvider = vcsServiceProvider;
         this.messages = messages;
@@ -49,7 +49,7 @@ public class CheckoutBranchToPushStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
         final String contributionBranchName = workflow.getConfiguration().getContributionBranchName();

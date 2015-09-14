@@ -16,8 +16,8 @@ import org.eclipse.che.ide.websocket.rest.Unmarshallable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * The factory that is used for creating callback for GAE extension.
@@ -45,7 +45,7 @@ public class GAERequestCallBackFactory {
      *         unmarshaller which need to convert JSON object to JAVA object
      * @return an instance {@link GAERequestCallback}
      */
-    public <T> GAERequestCallback<T> build(@Nonnull Unmarshallable<T> unmarshallable, @Nonnull SuccessCallback<T> successCallback) {
+    public <T> GAERequestCallback<T> build(@NotNull Unmarshallable<T> unmarshallable, @NotNull SuccessCallback<T> successCallback) {
         return new GAERequestCallback<>(notificationManager, unmarshallable, successCallback);
     }
 
@@ -58,7 +58,7 @@ public class GAERequestCallBackFactory {
      *         callback which contains method which is called when operation is success
      * @return an instance {@link GAERequestCallback}
      */
-    public <T> GAERequestCallback<T> build(@Nonnull Class<T> clazz, @Nonnull SuccessCallback<T> successCallback) {
+    public <T> GAERequestCallback<T> build(@NotNull Class<T> clazz, @NotNull SuccessCallback<T> successCallback) {
         Unmarshallable<T> unmarshallable = dtoUnmarshallerFactory.newWSUnmarshaller(clazz);
 
         return new GAERequestCallback<>(notificationManager, unmarshallable, successCallback);
@@ -77,9 +77,9 @@ public class GAERequestCallBackFactory {
      *         callback which contains method which is called when operation is fail
      * @return an instance {@link GAERequestCallback}
      */
-    public <T> GAERequestCallback build(@Nonnull NotificationManager notificationManager,
+    public <T> GAERequestCallback build(@NotNull NotificationManager notificationManager,
                                         @Nullable Unmarshallable<T> unmarshallable,
-                                        @Nonnull SuccessCallback<T> successCallback,
+                                        @NotNull SuccessCallback<T> successCallback,
                                         @Nullable FailureCallback failureCallback) {
 
         return new GAERequestCallback<>(notificationManager, unmarshallable, successCallback, failureCallback);
@@ -96,9 +96,9 @@ public class GAERequestCallBackFactory {
      *         callback which contains method which is called when operation is failed
      * @return an instance {@link GAERequestCallback}
      */
-    public <T> GAERequestCallback<T> build(@Nonnull Class<T> clazz,
-                                           @Nonnull SuccessCallback<T> successCallback,
-                                           @Nonnull FailureCallback failureCallback) {
+    public <T> GAERequestCallback<T> build(@NotNull Class<T> clazz,
+                                           @NotNull SuccessCallback<T> successCallback,
+                                           @NotNull FailureCallback failureCallback) {
         Unmarshallable<T> unmarshallable = dtoUnmarshallerFactory.newWSUnmarshaller(clazz);
 
         return new GAERequestCallback<>(notificationManager, unmarshallable, successCallback, failureCallback);

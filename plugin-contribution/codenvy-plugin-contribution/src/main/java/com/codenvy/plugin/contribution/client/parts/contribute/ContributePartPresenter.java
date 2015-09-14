@@ -41,8 +41,8 @@ import org.eclipse.che.ide.ui.dialogs.InputCallback;
 import org.eclipse.che.ide.ui.dialogs.input.InputValidator;
 import org.eclipse.che.ide.util.loging.Log;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -71,17 +71,17 @@ public class ContributePartPresenter extends BasePresenter
     private       boolean                   updateMode;
 
     @Inject
-    public ContributePartPresenter(@Nonnull final ContributePartView view,
-                                   @Nonnull final ContributeMessages messages,
-                                   @Nonnull final WorkspaceAgent workspaceAgent,
-                                   @Nonnull final EventBus eventBus,
-                                   @Nonnull final ContributorWorkflow workflow,
-                                   @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                   @Nonnull final CommitWorkingTreeStep commitWorkingTreeStep,
-                                   @Nonnull final AppContext appContext,
-                                   @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                   @Nonnull final NotificationHelper notificationHelper,
-                                   @Nonnull final DialogFactory dialogFactory) {
+    public ContributePartPresenter(@NotNull final ContributePartView view,
+                                   @NotNull final ContributeMessages messages,
+                                   @NotNull final WorkspaceAgent workspaceAgent,
+                                   @NotNull final EventBus eventBus,
+                                   @NotNull final ContributorWorkflow workflow,
+                                   @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                   @NotNull final CommitWorkingTreeStep commitWorkingTreeStep,
+                                   @NotNull final AppContext appContext,
+                                   @NotNull final VcsServiceProvider vcsServiceProvider,
+                                   @NotNull final NotificationHelper notificationHelper,
+                                   @NotNull final DialogFactory dialogFactory) {
         this.view = view;
         this.workspaceAgent = workspaceAgent;
         this.workflow = workflow;
@@ -244,7 +244,7 @@ public class ContributePartPresenter extends BasePresenter
         container.setWidget(view.asWidget());
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTitle() {
         return messages.contributePartTitle();
@@ -268,7 +268,7 @@ public class ContributePartPresenter extends BasePresenter
     }
 
     @Override
-    public void onStepDone(@Nonnull final StepEvent event) {
+    public void onStepDone(@NotNull final StepEvent event) {
         switch (event.getStep()) {
             case CREATE_FORK: {
                 if (!updateMode) {
@@ -314,7 +314,7 @@ public class ContributePartPresenter extends BasePresenter
     }
 
     @Override
-    public void onStepError(@Nonnull final StepEvent event) {
+    public void onStepError(@NotNull final StepEvent event) {
         switch (event.getStep()) {
             case COMMIT_WORKING_TREE: {
                 view.hideStatusSection();

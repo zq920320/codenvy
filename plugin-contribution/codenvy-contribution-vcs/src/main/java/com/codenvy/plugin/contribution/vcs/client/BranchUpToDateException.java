@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Exception raised when the branch pushed is up to date.
@@ -27,7 +27,7 @@ public class BranchUpToDateException extends Exception {
      * @param branchName
      *         the branch name.
      */
-    public BranchUpToDateException(@Nonnull final String branchName) {
+    public BranchUpToDateException(@NotNull final String branchName) {
         super("Branch '" + branchName + "' is up-to-date");
     }
 }

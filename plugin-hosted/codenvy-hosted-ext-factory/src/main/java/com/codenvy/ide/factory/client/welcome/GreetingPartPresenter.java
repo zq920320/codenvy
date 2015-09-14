@@ -48,8 +48,8 @@ import org.eclipse.che.ide.api.preferences.PreferencesManager;
 import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import javax.validation.constraints.NotNull;
 import java.util.Map;
 
@@ -112,7 +112,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getTitle() {
         return title != null ? title : DEFAULT_TITLE;

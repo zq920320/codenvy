@@ -19,7 +19,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.git.shared.Remote;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.List;
 
@@ -38,10 +38,10 @@ public class AddForkRemoteStep implements Step {
     private final VcsHostingServiceProvider vcsHostingServiceProvider;
 
     @Inject
-    public AddForkRemoteStep(@Nonnull final VcsServiceProvider vcsServiceProvider,
-                             @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                             @Nonnull final PushBranchOnForkStep pushBranchOnForkStep,
-                             @Nonnull final ContributeMessages messages) {
+    public AddForkRemoteStep(@NotNull final VcsServiceProvider vcsServiceProvider,
+                             @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                             @NotNull final PushBranchOnForkStep pushBranchOnForkStep,
+                             @NotNull final ContributeMessages messages) {
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.pushBranchOnForkStep = pushBranchOnForkStep;
@@ -49,7 +49,7 @@ public class AddForkRemoteStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final String originRepositoryOwner = context.getOriginRepositoryOwner();
         final String originRepositoryName = context.getOriginRepositoryName();

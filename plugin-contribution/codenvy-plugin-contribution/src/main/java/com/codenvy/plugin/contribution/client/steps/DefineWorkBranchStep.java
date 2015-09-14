@@ -21,7 +21,7 @@ import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.Notification;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.Date;
 
@@ -50,10 +50,10 @@ public class DefineWorkBranchStep implements Step {
     private final AppContext         appContext;
 
     @Inject
-    public DefineWorkBranchStep(@Nonnull final ContributeMessages messages,
-                                @Nonnull final NotificationHelper notificationHelper,
-                                @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                @Nonnull final AppContext appContext) {
+    public DefineWorkBranchStep(@NotNull final ContributeMessages messages,
+                                @NotNull final NotificationHelper notificationHelper,
+                                @NotNull final VcsServiceProvider vcsServiceProvider,
+                                @NotNull final AppContext appContext) {
         this.messages = messages;
         this.notificationHelper = notificationHelper;
         this.vcsServiceProvider = vcsServiceProvider;
@@ -61,7 +61,7 @@ public class DefineWorkBranchStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final ProjectDescriptor project = appContext.getCurrentProject().getRootProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();

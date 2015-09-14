@@ -17,7 +17,7 @@ import org.eclipse.che.ide.rest.Unmarshallable;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * The factory that is used for creating callback for GAE extension.
@@ -50,7 +50,7 @@ public class GAEAsyncCallbackFactory {
      *         callback which contains method which is called when operation is success
      * @return an instance {@link GAEAsyncRequestCallback}
      */
-    public <T> GAEAsyncRequestCallback<T> build(@Nonnull SuccessCallback<T> successCallback) {
+    public <T> GAEAsyncRequestCallback<T> build(@NotNull SuccessCallback<T> successCallback) {
         return new GAEAsyncRequestCallback<>(notificationManager, locale, successCallback);
     }
 
@@ -63,7 +63,7 @@ public class GAEAsyncCallbackFactory {
      *         callback which contains method which is called when operation is fail
      * @return an instance {@link GAEAsyncRequestCallback}
      */
-    public <T> GAEAsyncRequestCallback<T> build(@Nonnull SuccessCallback<T> successCallback, @Nonnull FailureCallback failureCallback) {
+    public <T> GAEAsyncRequestCallback<T> build(@NotNull SuccessCallback<T> successCallback, @NotNull FailureCallback failureCallback) {
         return new GAEAsyncRequestCallback<>(notificationManager, locale, successCallback, failureCallback);
     }
 
@@ -76,7 +76,7 @@ public class GAEAsyncCallbackFactory {
      *         callback which contains method which is called when operation is success
      * @return an instance {@link GAEAsyncRequestCallback}
      */
-    public <T> GAEAsyncRequestCallback<T> build(@Nonnull Unmarshallable<T> unmarshallable, @Nonnull SuccessCallback<T> successCallback) {
+    public <T> GAEAsyncRequestCallback<T> build(@NotNull Unmarshallable<T> unmarshallable, @NotNull SuccessCallback<T> successCallback) {
         return new GAEAsyncRequestCallback<>(notificationManager, locale, unmarshallable, successCallback);
     }
 
@@ -89,7 +89,7 @@ public class GAEAsyncCallbackFactory {
      *         callback which contains method which is called when operation is success
      * @return an instance {@link GAEAsyncRequestCallback}
      */
-    public <T> GAEAsyncRequestCallback<T> build(@Nonnull Class<T> clazz, @Nonnull SuccessCallback<T> successCallback) {
+    public <T> GAEAsyncRequestCallback<T> build(@NotNull Class<T> clazz, @NotNull SuccessCallback<T> successCallback) {
         Unmarshallable<T> unmarshallable = dtoUnmarshallerFactory.newUnmarshaller(clazz);
 
         return build(unmarshallable, successCallback);
@@ -108,9 +108,9 @@ public class GAEAsyncCallbackFactory {
      *         generic parameter
      * @return an instance {@link GAEAsyncRequestCallback}
      */
-    public <T> GAEAsyncRequestCallback<T> build(@Nonnull Class<T> clazz,
-                                                @Nonnull SuccessCallback<T> successCallback,
-                                                @Nonnull FailureCallback failureCallback) {
+    public <T> GAEAsyncRequestCallback<T> build(@NotNull Class<T> clazz,
+                                                @NotNull SuccessCallback<T> successCallback,
+                                                @NotNull FailureCallback failureCallback) {
         Unmarshallable<T> unmarshallable = dtoUnmarshallerFactory.newUnmarshaller(clazz);
 
         return new GAEAsyncRequestCallback<>(notificationManager, locale, unmarshallable, successCallback, failureCallback);

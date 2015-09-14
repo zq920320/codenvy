@@ -13,7 +13,7 @@ package com.codenvy.ide.ext.gae.client.wizard.java;
 import org.eclipse.che.ide.api.mvp.View;
 import com.google.inject.ImplementedBy;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Interface describes methods which allow get and set special values parameters on view.
@@ -28,7 +28,7 @@ public interface GAEJavaPageView extends View<GAEJavaPageView.ActionDelegate> {
      *
      * @return value of group id
      */
-    @Nonnull
+    @NotNull
     String getGroupIdValue();
 
     /**
@@ -37,14 +37,14 @@ public interface GAEJavaPageView extends View<GAEJavaPageView.ActionDelegate> {
      * @param groupIdValue
      *         value which need set
      */
-    void setGroupIdValue(@Nonnull String groupIdValue);
+    void setGroupIdValue(@NotNull String groupIdValue);
 
     /**
      * Returns value of artifact id from special place on view.
      *
      * @return value of artifact id
      */
-    @Nonnull
+    @NotNull
     String getArtifactIdValue();
 
     /**
@@ -53,14 +53,14 @@ public interface GAEJavaPageView extends View<GAEJavaPageView.ActionDelegate> {
      * @param artifactIdValue
      *         value which need set
      */
-    void setArtifactIdValue(@Nonnull String artifactIdValue);
+    void setArtifactIdValue(@NotNull String artifactIdValue);
 
     /**
      * Returns value of version from special place on view.
      *
      * @return value of version
      */
-    @Nonnull
+    @NotNull
     String getVersionValue();
 
     /**
@@ -69,14 +69,14 @@ public interface GAEJavaPageView extends View<GAEJavaPageView.ActionDelegate> {
      * @param versionValue
      *         value which need set
      */
-    void setVersion(@Nonnull String versionValue);
+    void setVersion(@NotNull String versionValue);
 
     /**
      * Returns value of application id, which need to create gae project, from special place on view.
      *
      * @return value of group id
      */
-    @Nonnull
+    @NotNull
     String getGaeAppIdValue();
 
     /**
@@ -85,7 +85,7 @@ public interface GAEJavaPageView extends View<GAEJavaPageView.ActionDelegate> {
      * @param applicationId
      *         application id value which need set
      */
-    void setGaeApplicationId(@Nonnull String applicationId);
+    void setGaeApplicationId(@NotNull String applicationId);
 
     /**
      * Sets spacial colour border around the place on view in which group id is set.

@@ -24,7 +24,7 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.AsyncRequestLoader;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.ext.bitbucket.shared.Preconditions.checkArgument;
 import static org.eclipse.che.ide.ext.bitbucket.shared.StringHelper.isNullOrEmpty;
@@ -46,9 +46,9 @@ public class BitbucketClientService {
     private final AsyncRequestFactory asyncRequestFactory;
 
     @Inject
-    protected BitbucketClientService(@Nonnull @Named("restContext") final String baseUrl,
-                                     @Nonnull final AsyncRequestLoader loader,
-                                     @Nonnull final AsyncRequestFactory asyncRequestFactory) {
+    protected BitbucketClientService(@NotNull @Named("restContext") final String baseUrl,
+                                     @NotNull final AsyncRequestLoader loader,
+                                     @NotNull final AsyncRequestFactory asyncRequestFactory) {
         this.baseUrl = baseUrl + BITBUCKET;
         this.loader = loader;
         this.asyncRequestFactory = asyncRequestFactory;
@@ -62,7 +62,7 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void getUser(@Nonnull AsyncRequestCallback<BitbucketUser> callback) throws IllegalArgumentException {
+    public void getUser(@NotNull AsyncRequestCallback<BitbucketUser> callback) throws IllegalArgumentException {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + USER;
@@ -81,9 +81,9 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void getRepository(@Nonnull final String owner,
-                              @Nonnull final String repositorySlug,
-                              @Nonnull final AsyncRequestCallback<BitbucketRepository> callback) throws IllegalArgumentException {
+    public void getRepository(@NotNull final String owner,
+                              @NotNull final String repositorySlug,
+                              @NotNull final AsyncRequestCallback<BitbucketRepository> callback) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
@@ -104,9 +104,9 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void getRepositoryForks(@Nonnull final String owner,
-                                   @Nonnull final String repositorySlug,
-                                   @Nonnull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
+    public void getRepositoryForks(@NotNull final String owner,
+                                   @NotNull final String repositorySlug,
+                                   @NotNull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
@@ -131,11 +131,11 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void forkRepository(@Nonnull final String owner,
-                               @Nonnull final String repositorySlug,
-                               @Nonnull final String forkName,
+    public void forkRepository(@NotNull final String owner,
+                               @NotNull final String repositorySlug,
+                               @NotNull final String forkName,
                                final boolean isForkPrivate,
-                               @Nonnull final AsyncRequestCallback<BitbucketRepositoryFork> callback) throws IllegalArgumentException {
+                               @NotNull final AsyncRequestCallback<BitbucketRepositoryFork> callback) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(forkName != null && !isNullOrEmpty(forkName), "forkName");
@@ -159,9 +159,9 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void getRepositoryPullRequests(@Nonnull final String owner,
-                                          @Nonnull final String repositorySlug,
-                                          @Nonnull final AsyncRequestCallback<BitbucketPullRequests> callback)
+    public void getRepositoryPullRequests(@NotNull final String owner,
+                                          @NotNull final String repositorySlug,
+                                          @NotNull final AsyncRequestCallback<BitbucketPullRequests> callback)
             throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
@@ -185,10 +185,10 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void openPullRequest(@Nonnull final String owner,
-                                @Nonnull final String repositorySlug,
-                                @Nonnull final BitbucketPullRequest pullRequest,
-                                @Nonnull final AsyncRequestCallback<BitbucketPullRequest> callback) throws IllegalArgumentException {
+    public void openPullRequest(@NotNull final String owner,
+                                @NotNull final String repositorySlug,
+                                @NotNull final BitbucketPullRequest pullRequest,
+                                @NotNull final AsyncRequestCallback<BitbucketPullRequest> callback) throws IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
         checkArgument(pullRequest != null, "pullRequest");
@@ -208,8 +208,8 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void getRepositories(@Nonnull final String owner,
-                                @Nonnull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
+    public void getRepositories(@NotNull final String owner,
+                                @NotNull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(callback != null, "callback");
 
@@ -225,7 +225,7 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public void generateAndUploadSSHKey(@Nonnull AsyncRequestCallback<Void> callback) throws IllegalArgumentException {
+    public void generateAndUploadSSHKey(@NotNull AsyncRequestCallback<Void> callback) throws IllegalArgumentException {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + SSH_KEYS;

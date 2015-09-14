@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Exception raised when a pull request is created with no commits.
@@ -29,7 +29,7 @@ public class NoCommitsInPullRequestException extends Exception {
      * @param baseBranch
      *         the base branch name.
      */
-    public NoCommitsInPullRequestException(@Nonnull final String headBranch, @Nonnull final String baseBranch) {
+    public NoCommitsInPullRequestException(@NotNull final String headBranch, @NotNull final String baseBranch) {
         super("No commits between " + baseBranch + " and " + headBranch);
     }
 }

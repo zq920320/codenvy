@@ -25,7 +25,7 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.HTTPHeader;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -42,7 +42,7 @@ public class SubscriptionServiceClientImpl implements SubscriptionServiceClient 
 
     /** {@inheritDoc} */
     @Override
-    public void getSubscriptions(@Nonnull String accountId, AsyncRequestCallback<List<SubscriptionDescriptor>> callback) {
+    public void getSubscriptions(@NotNull String accountId, AsyncRequestCallback<List<SubscriptionDescriptor>> callback) {
         final String requestUrl = "/api/subscription/find/account?id=" + accountId;
         asyncRequestFactory.createGetRequest(requestUrl)
                            .header(HTTPHeader.ACCEPT, MimeType.APPLICATION_JSON)
@@ -50,8 +50,8 @@ public class SubscriptionServiceClientImpl implements SubscriptionServiceClient 
     }
 
     @Override
-    public void getSubscriptionByServiceId(@Nonnull String accountId,
-                                           @Nonnull String serviceId,
+    public void getSubscriptionByServiceId(@NotNull String accountId,
+                                           @NotNull String serviceId,
                                            AsyncRequestCallback<List<SubscriptionDescriptor>> callback) {
         final String requestUrl = "/api/subscription/find/account?id=" + accountId + "&service=" + serviceId;
         asyncRequestFactory.createGetRequest(requestUrl)

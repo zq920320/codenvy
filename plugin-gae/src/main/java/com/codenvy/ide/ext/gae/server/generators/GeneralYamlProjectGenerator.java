@@ -22,7 +22,7 @@ import com.codenvy.ide.ext.gae.server.utils.GAEServerUtil;
 
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.util.Map;
 
@@ -40,7 +40,7 @@ public abstract class GeneralYamlProjectGenerator implements CreateProjectHandle
     private final String        projectId;
     private final GAEServerUtil gaeUtil;
 
-    public GeneralYamlProjectGenerator(@Nonnull String projectId, @Nonnull GAEServerUtil gaeUtil) {
+    public GeneralYamlProjectGenerator(@NotNull String projectId, @NotNull GAEServerUtil gaeUtil) {
         this.projectId = projectId;
         this.gaeUtil = gaeUtil;
     }
@@ -62,8 +62,8 @@ public abstract class GeneralYamlProjectGenerator implements CreateProjectHandle
      * @throws ServerException
      * @throws ForbiddenException
      */
-    protected void applyYamlApplicationId(@Nonnull FolderEntry baseFolder,
-                                          @Nonnull Map<String, AttributeValue> attributes) throws ApiException {
+    protected void applyYamlApplicationId(@NotNull FolderEntry baseFolder,
+                                          @NotNull Map<String, AttributeValue> attributes) throws ApiException {
         AttributeValue applicationId = attributes.get(APPLICATION_ID);
 
         if (applicationId == null) {
@@ -87,10 +87,10 @@ public abstract class GeneralYamlProjectGenerator implements CreateProjectHandle
      *         type of created file
      * @throws ServerException
      */
-    protected void createFile(@Nonnull FolderEntry baseFolder,
-                              @Nonnull String fileName,
-                              @Nonnull String pathToContent,
-                              @Nonnull String type) throws ServerException {
+    protected void createFile(@NotNull FolderEntry baseFolder,
+                              @NotNull String fileName,
+                              @NotNull String pathToContent,
+                              @NotNull String type) throws ServerException {
         try {
             baseFolder.createFile(fileName, IOUtils.toByteArray(getClass().getResourceAsStream(pathToContent)), type);
         } catch (ApiException | IOException e) {

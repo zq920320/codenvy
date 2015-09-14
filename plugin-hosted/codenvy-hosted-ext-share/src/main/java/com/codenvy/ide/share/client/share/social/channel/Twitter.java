@@ -25,7 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static com.google.gwt.http.client.URL.encodeQueryString;
 
@@ -37,9 +37,9 @@ import static com.google.gwt.http.client.URL.encodeQueryString;
 public class Twitter extends SharingChannel {
     private final String messageTemplate;
 
-    public Twitter(@Nonnull String messageTemplate,
-                   @Nonnull ShareResources resources,
-                   @Nonnull ShareLocalizationConstant locale,
+    public Twitter(@NotNull String messageTemplate,
+                   @NotNull ShareResources resources,
+                   @NotNull ShareLocalizationConstant locale,
                    ClickHandler clickHandler) {
         super(resources.twitter(), locale.socialShareChannelTwitterText(), clickHandler);
 
@@ -47,7 +47,7 @@ public class Twitter extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull Widget element, @Nonnull final String... params) {
+    public void decorateWidget(@NotNull Widget element, @NotNull final String... params) {
         element.addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

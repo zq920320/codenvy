@@ -24,7 +24,7 @@ import com.codenvy.ide.ext.gae.server.AppEngineClient;
 import com.codenvy.ide.ext.gae.server.utils.GAEServerUtil;
 import com.codenvy.ide.ext.gae.shared.ApplicationInfo;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -87,7 +87,7 @@ public class AppEngineService {
         return client.update(wsId, projectPath, bin, getUserId());
     }
 
-    @Nonnull
+    @NotNull
     private String getUserId() {
         return EnvironmentContext.getCurrent().getUser().getId();
     }
@@ -132,9 +132,9 @@ public class AppEngineService {
      * @param appId
      *         application's id
      */
-    private void changeAppEngXml(@Nonnull MountPoint mountPoint,
-                                 @Nonnull String path,
-                                 @Nonnull String appId) throws ApiException, IOException {
+    private void changeAppEngXml(@NotNull MountPoint mountPoint,
+                                 @NotNull String path,
+                                 @NotNull String appId) throws ApiException, IOException {
         VirtualFile fileAppEngineWebXml = mountPoint.getVirtualFile(path + separator + APP_ENGINE_WEB_XML_PATH);
         gaeServerUtil.setApplicationIdToWebAppEngine(fileAppEngineWebXml, appId);
     }
@@ -149,9 +149,9 @@ public class AppEngineService {
      * @param appId
      *         application's id
      */
-    private void changeAppEngYaml(@Nonnull MountPoint mountPoint,
-                                  @Nonnull String path,
-                                  @Nonnull String appId) throws ApiException, IOException {
+    private void changeAppEngYaml(@NotNull MountPoint mountPoint,
+                                  @NotNull String path,
+                                  @NotNull String appId) throws ApiException, IOException {
         VirtualFile fileAppEngYaml = mountPoint.getVirtualFile(path + separator + APP_YAML);
         gaeServerUtil.setApplicationIdToAppYaml(fileAppEngYaml, appId);
     }

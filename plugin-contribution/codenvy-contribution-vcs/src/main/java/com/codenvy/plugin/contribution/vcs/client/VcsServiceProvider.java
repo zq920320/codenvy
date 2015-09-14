@@ -13,7 +13,7 @@ package com.codenvy.plugin.contribution.vcs.client;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static org.eclipse.che.ide.ext.git.client.GitRepositoryInitializer.isGitRepository;
@@ -28,7 +28,7 @@ public class VcsServiceProvider {
     private final GitVcsService gitVcsService;
 
     @Inject
-    public VcsServiceProvider(@Nonnull final AppContext appContext, @Nonnull final GitVcsService gitVcsService) {
+    public VcsServiceProvider(@NotNull final AppContext appContext, @NotNull final GitVcsService gitVcsService) {
         this.appContext = appContext;
         this.gitVcsService = gitVcsService;
     }
