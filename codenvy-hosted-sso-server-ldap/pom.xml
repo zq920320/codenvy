@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>4.0-M2-SNAPSHOT</version>
+        <version>4.0.0-M2-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-sso-server-ldap</artifactId>
     <packaging>jar</packaging>
