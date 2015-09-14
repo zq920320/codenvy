@@ -73,22 +73,19 @@ public class WorkspaceFsBackupScheduler {
             for (final MachineImpl state : machineManager.getMachinesStates()) {
                 final String machineId = state.getId();
 
-                if (state.isWorkspaceBound() &&
+                if (//state.isWorkspaceBound() &&
                     state.getStatus() == MachineStatus.RUNNING &&
                     isTimeToBackup(machineId)) {
 
-                    executor.execute(new Runnable() {
-                        @Override
-                        public void run() {
-                            try {
-                                final InstanceNode node = machineManager.getMachine(machineId).getNode();
+                    executor.execute(() -> {
+                        try {
+                            final InstanceNode node = machineManager.getMachine(machineId).getNode();
 
-                                backupManager.backupWorkspace(state.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
+                            backupManager.backupWorkspace(state.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
 
-                                lastMachineSynchronizationTime.put(machineId, System.currentTimeMillis());
-                            } catch (ServerException | NotFoundException e) {
-                                LOG.error(e.getLocalizedMessage(), e);
-                            }
+                            lastMachineSynchronizationTime.put(machineId, System.currentTimeMillis());
+                        } catch (ServerException | NotFoundException e) {
+                            LOG.error(e.getLocalizedMessage(), e);
                         }
                     });
                 }

@@ -155,6 +155,11 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
+            public void copy(Instance instance, String sourcePath, String targetPath, boolean overwrite) throws MachineException {
+                machine.copy(instance, sourcePath, targetPath, overwrite);
+            }
+
+            @Override
             public String getId() {
                 return machine.getId();
             }
