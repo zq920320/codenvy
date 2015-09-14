@@ -30,10 +30,8 @@ import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.api.workspace.server.dao.Member;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
+import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -61,6 +59,8 @@ import java.util.Set;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
+//TODO fix it after account refactoring, memberships refactoring
+
 /**
  * LDAP based implementation of {@code UserDao}.
  *
@@ -76,7 +76,7 @@ public class UserDaoImpl implements UserDao {
     private final String                    oldUserDn;
     private final EventService              eventService;
     private final AccountDao                accountDao;
-    private final MemberDao                 memberDao;
+    //    private final MemberDao                 memberDao;
     private final UserProfileDao            profileDao;
     private final WorkspaceDao              workspaceDao;
     private final PreferenceDao             preferenceDao;
@@ -94,7 +94,7 @@ public class UserDaoImpl implements UserDao {
      */
     @Inject
     public UserDaoImpl(AccountDao accountDao,
-                       MemberDao memberDao,
+//                       MemberDao memberDao,
                        UserProfileDao profileDao,
                        WorkspaceDao workspaceDao,
                        PreferenceDao preferenceDao,
@@ -111,7 +111,7 @@ public class UserDaoImpl implements UserDao {
         this.mapper = userAttributesMapper;
         this.eventService = eventService;
         this.accountDao = accountDao;
-        this.memberDao = memberDao;
+//        this.memberDao = memberDao;
         this.profileDao = profileDao;
         this.workspaceDao = workspaceDao;
         this.preferenceDao = preferenceDao;
@@ -241,17 +241,17 @@ public class UserDaoImpl implements UserDao {
         for (Account account : accountDao.getByOwner(id)) {
             //if user is last account owner we should remove account
             if (isOnlyOneOwner(account.getId())) {
-                if (workspaceDao.getByAccount(account.getId()).isEmpty()) {
-                    accountsToRemove.add(account);
-                } else {
-                    throw new ConflictException(format("Account %s has related workspaces", account.getId()));
-                }
+//                if (workspaceDao.getByAccount(account.getId()).isEmpty()) {
+//                    accountsToRemove.add(account);
+//                } else {
+//                    throw new ConflictException(format("Account %s has related workspaces", account.getId()));
+//                }
             }
         }
         //remove user relationships with workspaces
-        for (Member member : memberDao.getUserRelationships(id)) {
-            memberDao.remove(member);
-        }
+//        for (Member member : memberDao.getUserRelationships(id)) {
+//            memberDao.remove(member);
+//        }
         //remove user relationships with accounts
         for (org.eclipse.che.api.account.server.dao.Member member : accountDao.getByMember(id)) {
             accountDao.removeMember(member);

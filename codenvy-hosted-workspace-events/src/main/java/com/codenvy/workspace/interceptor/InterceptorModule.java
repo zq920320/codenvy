@@ -20,8 +20,8 @@ package com.codenvy.workspace.interceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.matcher.Matchers;
 
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 
 import static org.eclipse.che.inject.Matchers.names;
 
@@ -49,10 +49,10 @@ public class InterceptorModule extends AbstractModule {
                         names("addMember"),
                         addWorkspaceMemberInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        names("createTemporary").or(names("create")),
-                        factoryWorkspaceInterceptor, createWorkspaceInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceDao.class),
                         names("create"),
+                        factoryWorkspaceInterceptor, createWorkspaceInterceptor);
+        bindInterceptor(Matchers.subclassesOf(WorkspaceManager.class),
+                        names("createWorkspace"),
                         factoryResourcesInterceptor);
         bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
                         names("removeMember"),

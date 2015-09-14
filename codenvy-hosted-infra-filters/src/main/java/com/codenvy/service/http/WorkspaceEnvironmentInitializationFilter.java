@@ -17,7 +17,7 @@
  */
 package com.codenvy.service.http;
 
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.slf4j.Logger;
@@ -55,12 +55,12 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         try {
-            final WorkspaceDescriptor workspace = getWorkspaceFromRequest(request);
+            final UsersWorkspace workspace = getWorkspaceFromRequest(request);
             if (workspace != null) {
                 final EnvironmentContext env = EnvironmentContext.getCurrent();
                 env.setWorkspaceName(workspace.getName());
                 env.setWorkspaceId(workspace.getId());
-                env.setAccountId(workspace.getAccountId());
+//                env.setAccountId(workspace.getAccountId());
                 env.setWorkspaceTemporary(workspace.isTemporary());
                 LOG.debug("Set environment context - workspace name: {}, workspace id: {}, account id:{} , is temporary: {}",
                           env.getWorkspaceName(),
@@ -77,7 +77,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
     }
 
     /**
-     * Retrieves {@link WorkspaceDescriptor} from {@code request} if possible, otherwise returns {@code null}
+     * Retrieves {@link UsersWorkspace} from {@code request} if possible, otherwise returns {@code null}
      * <p/>
      * When method returns {@code null} then {@link #workspaceNotFoundHandler(ServletRequest, ServletResponse, FilterChain)}
      * will be invoked with default behaviour, if default behaviour is not appropriate - override handler method as well
@@ -86,7 +86,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
      *         current filter request
      * @return workspace descriptor or {@code null}
      */
-    protected abstract WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request);
+    protected abstract UsersWorkspace getWorkspaceFromRequest(ServletRequest request);
 
     /**
      * Will be invoked when {@link #getWorkspaceFromRequest(ServletRequest)} returns {@code null}.

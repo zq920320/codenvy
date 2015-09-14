@@ -19,15 +19,14 @@ package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.rest.HttpJsonHelper;
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-/*
+  /*
 import org.eclipse.che.api.factory.FactoryService;
 import org.eclipse.che.api.factory.dto.Factory;
 import org.eclipse.che.api.factory.dto.WorkspaceResources;
-import org.eclipse.che.api.runner.internal.Constants;
 */
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
 
@@ -60,14 +59,14 @@ public class FactoryResourcesInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        /*
-        Workspace inbound = (Workspace)invocation.getArguments()[0];
+
+        WorkspaceConfig inbound = (WorkspaceConfig)invocation.getArguments()[0];
 
         //Workspace created without factory
         if (!inbound.getAttributes().containsKey("sourceFactoryId")) {
             return invocation.proceed();
         }
-
+        /*
         String getFactoryUrl = fromUri(apiEndPoint).path(FactoryService.class)
                                                    .path(FactoryService.class, "getFactory")
                                                    .build(inbound.getAttributes().get("sourceFactoryId"))

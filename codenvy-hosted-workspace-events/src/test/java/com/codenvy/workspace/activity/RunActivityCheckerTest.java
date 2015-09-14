@@ -24,7 +24,6 @@ import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 import org.eclipse.che.api.runner.dto.RunRequest;
 */
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;

@@ -19,8 +19,8 @@ package com.codenvy.service.http;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.dto.server.DtoFactory;
 
 import org.slf4j.Logger;
@@ -52,7 +52,7 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
     private WorkspaceInfoCache cache;
 
     @Override
-    protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) {
+    protected UsersWorkspace getWorkspaceFromRequest(ServletRequest request) {
         HttpServletRequest httpRequest = (HttpServletRequest)request;
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);

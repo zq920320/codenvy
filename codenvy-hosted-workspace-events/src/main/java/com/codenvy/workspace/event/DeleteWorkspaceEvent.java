@@ -17,15 +17,15 @@
  */
 package com.codenvy.workspace.event;
 
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.notification.EventOrigin;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
 
 /**
  * @author Sergii Leschenko 
  */
 @EventOrigin("workspace")
 public class DeleteWorkspaceEvent extends WorkspaceEvent {
-    public DeleteWorkspaceEvent(Workspace workspace) {
+    public DeleteWorkspaceEvent(UsersWorkspace workspace) {
         super(ChangeType.DELETED, workspace);
     }
 }

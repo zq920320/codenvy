@@ -23,8 +23,6 @@ import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.MemberDao;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -63,10 +61,6 @@ public class CreateUserWithCapturedProfileInfoTest {
     @Mock
     private ServletConfig                          servletConfig;
     @Mock
-    private MemberDao                              memberDao;
-    @Mock
-    private WorkspaceDao                           workspaceDao;
-    @Mock
     private AccountDao                             accountDao;
     @Mock
     private MailSenderClient                       mailSenderClient;
@@ -74,8 +68,6 @@ public class CreateUserWithCapturedProfileInfoTest {
     private OAuthAuthenticatorProvider             authenticatorProvider;
     @Mock
     private BearerTokenAuthenticationHandler       handler;
-    @Mock
-    private WorkspaceNameProposer                  wsNameProposer;
     @Mock
     private org.eclipse.che.security.oauth.shared.User googleUser;
     @Mock

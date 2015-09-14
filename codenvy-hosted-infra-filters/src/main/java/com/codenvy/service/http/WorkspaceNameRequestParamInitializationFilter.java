@@ -19,8 +19,7 @@ package com.codenvy.service.http;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
-import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,9 +31,9 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.MediaType;
 import java.io.IOException;
+
+//TODO fix it, the place of workspace-name or id is undefined for now
 
 /**
  * Initialization filter takes workspace name from query param
@@ -69,11 +68,11 @@ public class WorkspaceNameRequestParamInitializationFilter extends WorkspaceEnvi
     }
 
 
-    protected WorkspaceDescriptor getWorkspaceFromRequest(ServletRequest request) {
+    protected UsersWorkspace getWorkspaceFromRequest(ServletRequest request) {
         String workspaceName = request.getParameter("name");
         try {
-            return cache.getByName(workspaceName);
-        } catch (NotFoundException e) {
+            return cache.getByName(workspaceName, null);
+        } catch (NotFoundException ignored) {
         } catch (ServerException e) {
             LOG.warn(e.getLocalizedMessage(), e);
         }

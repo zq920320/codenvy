@@ -22,9 +22,9 @@ import org.aopalliance.intercept.MethodInvocation;
 import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.dao.Workspace;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.IoUtil;
 import org.slf4j.Logger;
@@ -59,7 +59,7 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
     private AccountDao accountDao;
 
     @Inject
-    private WorkspaceDao workspaceDao;
+    private WorkspaceManager workspaceManager;
 
     @Inject
     @Named("api.endpoint")
@@ -78,23 +78,28 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
         }
         EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
         String workspaceId = (String)invocation.getArguments()[0];
-        Workspace ws = workspaceDao.getById(workspaceId);
+        UsersWorkspace ws = workspaceManager.getWorkspace(workspaceId);
         if (ws.isTemporary()) {
             return result;
         }
         String userId = (String)invocation.getArguments()[1];
-        String recipientEmail = userDao.getById(userId).getEmail();
-        String senderEmail = environmentContext.getUser().getName();
-        Optional<Member> accountOwner =accountDao.getMembers(environmentContext.getAccountId())
-                                                 .stream()
-                                                 .filter(member -> member.getRoles().contains("account/owner"))
-                                                 .findFirst();
+        String recipientEmail = userDao.getById(userId)
+                                       .getEmail();
+        String senderEmail = environmentContext.getUser()
+                                               .getName();
+        Optional<Member> accountOwner = accountDao.getMembers(environmentContext.getAccountId())
+                                                  .stream()
+                                                  .filter(member -> member.getRoles()
+                                                                          .contains("account/owner"))
+                                                  .findFirst();
         Map<String, String> properties = new HashMap<>();
         properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
         properties.put("workspace", ws.getName());
         properties.put("admin.email", senderEmail);
         if (accountOwner.isPresent()) {
-            properties.put("accountOwner.email", userDao.getById(accountOwner.get().getUserId()).getEmail());
+            properties.put("accountOwner.email", userDao.getById(accountOwner.get()
+                                                                             .getUserId())
+                                                        .getEmail());
         }
         mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
                                   "Codenvy Workspace Access Removed",

@@ -33,7 +33,6 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.workspace.server.dao.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -101,12 +100,12 @@ public class AccountDaoImpl implements AccountDao {
 
     private final DBCollection accountCollection;
     private final DBCollection memberCollection;
-    private final WorkspaceDao workspaceDao;
+//    private final WorkspaceDao workspaceDao;
     private final EventService eventService;
 
     @Inject
     public AccountDaoImpl(@Named("mongo.db.organization") DB db,
-                          WorkspaceDao workspaceDao,
+//                          WorkspaceDao workspaceDao,
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(MEMBER_COLLECTION) String memberCollectionName,
                           EventService eventService) {
@@ -117,7 +116,6 @@ public class AccountDaoImpl implements AccountDao {
         accountCollection.createIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
         memberCollection = db.getCollection(memberCollectionName);
         memberCollection.createIndex(new BasicDBObject("members.accountId", 1));
-        this.workspaceDao = workspaceDao;
     }
 
     @Override
@@ -196,9 +194,9 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void remove(String id) throws ConflictException, NotFoundException, ServerException {
         //check account doesn't have associated workspaces
-        if (!workspaceDao.getByAccount(id).isEmpty()) {
-            throw new ConflictException("It is not possible to remove account having associated workspaces");
-        }
+//        if (!workspaceDao.getByAccount(id).isEmpty()) {
+//            throw new ConflictException("It is not possible to remove account having associated workspaces");
+//        }
         try {
             //Removing members
             for (Member member : getMembers(id)) {

@@ -25,7 +25,6 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 */
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,7 +47,7 @@ public class RunActivityChecker {
     private final WorkspaceInfoCache    workspaceInfoCache;
 
     @Inject
-    public RunActivityChecker(RunQueue runQueue,
+    public RunActivityChecker(RunQueue runQueue,]
                               WsActivityEventSender wsActivityEventSender,
                               WorkspaceInfoCache workspaceInfoCache) {
         this.runQueue = runQueue;

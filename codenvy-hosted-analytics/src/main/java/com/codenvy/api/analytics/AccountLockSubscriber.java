@@ -17,54 +17,54 @@
  */
 package com.codenvy.api.analytics;
 
-import com.codenvy.api.subscription.saas.server.AccountLockEvent;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 
+//TODO fix it after account refactoring
+
 /**
  * @author Anatoliy Bazko
  */
 @Singleton
-public class AccountLockSubscriber implements EventSubscriber<AccountLockEvent> {
-    private static final Logger LOG = LoggerFactory.getLogger(AccountLockSubscriber.class);
-
-    private final EventService eventService;
-
-    @Inject
-    public AccountLockSubscriber(EventService eventService) {
-        this.eventService = eventService;
-    }
-
-    @PostConstruct
-    private void subscribe() {
-        eventService.subscribe(this);
-    }
-
-    @PreDestroy
-    private void unsubscribe() {
-        eventService.unsubscribe(this);
-    }
-
-    /** {@inheritDoc} */
-    @Override
-    public void onEvent(AccountLockEvent event) {
-        switch (event.getType()) {
-            case ACCOUNT_LOCKED:
-                LOG.info("EVENT#account-locked# ACCOUNT#{}#", event.getAccount());
-                break;
-
-            case ACCOUNT_UNLOCKED:
-                LOG.info("EVENT#account-unlocked# ACCOUNT#{}#", event.getAccount());
-                break;
-            default:
-        }
-    }
+public class AccountLockSubscriber /* implements EventSubscriber<AccountLockEvent> */ {
+//    private static final Logger LOG = LoggerFactory.getLogger(AccountLockSubscriber.class);
+//
+//    private final EventService eventService;
+//
+//    @Inject
+//    public AccountLockSubscriber(EventService eventService) {
+//        this.eventService = eventService;
+//    }
+//
+//    @PostConstruct
+//    private void subscribe() {
+//        eventService.subscribe(this);
+//    }
+//
+//    @PreDestroy
+//    private void unsubscribe() {
+//        eventService.unsubscribe(this);
+//    }
+//
+//    /** {@inheritDoc} */
+//    @Override
+//    public void onEvent(AccountLockEvent event) {
+//        switch (event.getType()) {
+//            case ACCOUNT_LOCKED:
+//                LOG.info("EVENT#account-locked# ACCOUNT#{}#", event.getAccount());
+//                break;
+//
+//            case ACCOUNT_UNLOCKED:
+//                LOG.info("EVENT#account-unlocked# ACCOUNT#{}#", event.getAccount());
+//                break;
+//            default:
+//        }
+//    }
 }

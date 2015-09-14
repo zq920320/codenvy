@@ -21,7 +21,6 @@ package com.codenvy.auth.sso.server.interceptor;
  * @author Sergii Kabashniuk
  */
 
-import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
 import com.codenvy.auth.sso.server.ticket.RolesInvalidator;
 import org.eclipse.che.commons.env.EnvironmentContext;
 
@@ -32,6 +31,8 @@ import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.ws.rs.core.Response;
+
+//TODO fix it after memberships refactoring
 
 /**
  * Intercepts calls to workspace/addMember() service and do some post actions
@@ -51,23 +52,24 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
-        Object result = invocation.proceed();
-        if ("addMember".equals(invocation.getMethod().getName())) {
-            MemberDescriptor descriptor = (MemberDescriptor)((Response)result).getEntity();
-            EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
-
-            try {
-                //TODO fix accountid get, its a hack.
-                rolesInvalidator.invalidateRoles(descriptor.getUserId(), descriptor.getWorkspaceReference().getId(),
-                                                 environmentContext.getAccountId());
-                LOG.info("Roles for user {} invalidated", descriptor.getUserId());
-
-
-            } catch (Exception e) {
-                LOG.warn("Unable to invalidate user roles", e);
-            }
-        }
-        return result;
+//        Object result = invocation.proceed();
+//        if ("addMember".equals(invocation.getMethod().getName())) {
+//            MemberDescriptor descriptor = (MemberDescriptor)((Response)result).getEntity();
+//            EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
+//
+//            try {
+//                //TODO fix accountid get, its a hack.
+//                rolesInvalidator.invalidateRoles(descriptor.getUserId(), descriptor.getWorkspaceReference().getId(),
+//                                                 environmentContext.getAccountId());
+//                LOG.info("Roles for user {} invalidated", descriptor.getUserId());
+//
+//
+//            } catch (Exception e) {
+//                LOG.warn("Unable to invalidate user roles", e);
+//            }
+//        }
+//        return result;
+        return null;
     }
 
 }

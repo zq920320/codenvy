@@ -17,7 +17,7 @@
  */
 package com.codenvy.workspace.event;
 
-import org.eclipse.che.api.workspace.server.dao.Workspace;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 
 /** @author Sergii Leschenko */
 public abstract class WorkspaceEvent {
@@ -42,10 +42,10 @@ public abstract class WorkspaceEvent {
 
     }
 
-    private final ChangeType type;
-    private final Workspace  workspace;
+    private final ChangeType     type;
+    private final UsersWorkspace workspace;
 
-    protected WorkspaceEvent(ChangeType type, Workspace workspace) {
+    protected WorkspaceEvent(ChangeType type, UsersWorkspace workspace) {
         this.type = type;
         this.workspace = workspace;
     }
@@ -54,7 +54,7 @@ public abstract class WorkspaceEvent {
         return type;
     }
 
-    public Workspace getWorkspace() {
+    public UsersWorkspace getWorkspace() {
         return workspace;
     }
 }

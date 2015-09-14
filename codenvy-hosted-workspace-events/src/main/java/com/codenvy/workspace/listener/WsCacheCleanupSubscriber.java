@@ -45,7 +45,7 @@ public class WsCacheCleanupSubscriber {
             @Override
             public void onEvent(DeleteWorkspaceEvent event) {
                 cache.removeById(event.getWorkspace().getId());
-                cache.removeByName(event.getWorkspace().getName());
+                cache.removeByName(event.getWorkspace().getName(), event.getWorkspace().getOwner());
             }
         };
     }
