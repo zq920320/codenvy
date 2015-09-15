@@ -147,7 +147,7 @@
     <script name="events_by_type">
         <description>User's authentication types</description>
         <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="USER" value="ANY"/>  <!-- anonymous users can't log into Codenvy through sso. There could be only registered in Codenvy users, or users logged using sysldap or ldap -->
         <parameter key="EVENT" value="user-sso-logged-in"/>
         <parameter key="PARAM" value="USING"/>
         <parameter key="STORAGE_TABLE" value="users_logged_in_types"/>

@@ -28,9 +28,10 @@ import java.io.IOException;
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @OmitFilters({MetricFilter.WS_ID, MetricFilter.PERSISTENT_WS})
 public class UsersLoggedInWithForm extends AbstractActiveEntities {
-    public static final String JAAS  = "jaas";
-    public static final String ORG   = "org";
-    public static final String EMAIL = "email";
+    public static final String JAAS    = "jaas";
+    public static final String ORG     = "org";
+    public static final String EMAIL   = "email";
+    public static final String SYSLDAP = "sysldap";
 
     public UsersLoggedInWithForm() {
         super(MetricType.USERS_LOGGED_IN_WITH_FORM, MetricType.USERS_LOGGED_IN_TYPES, USER);
@@ -40,7 +41,7 @@ public class UsersLoggedInWithForm extends AbstractActiveEntities {
     @Override
     public Context applySpecificFilter(Context clauses) throws IOException {
         Context.Builder builder = new Context.Builder(clauses);
-        builder.put(MetricFilter.EXISTS, new String[]{JAAS, ORG, EMAIL});
+        builder.put(MetricFilter.EXISTS, new String[]{JAAS, ORG, EMAIL, SYSLDAP});
         return builder.build();
     }
 
