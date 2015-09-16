@@ -119,6 +119,18 @@
                 <parameter key="name" value="new_users_on_prem_trial_licenses"/>
                 <parameter key="description" value="New Users Trial Licenses"/>
             </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="im_installs_started"/>
+                <parameter key="description" value="Number of on-prem Codenvy installs started"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="im_installs_finished_successfully"/>
+                <parameter key="description" value="Number of on-prem Codenvy installs finished successfully"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="im_installs_finished_unsuccessfully"/>
+                <parameter key="description" value="Number of on-prem Codenvy installs finished unsuccessfully"/>
+            </row>
         </section>
     </view>
 </display>
