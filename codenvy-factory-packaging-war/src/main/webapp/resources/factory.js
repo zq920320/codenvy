@@ -55,7 +55,7 @@ if (!window["codenvy-factories"]) {
                 var script = scripts.item(i);
                 try {
                     var src = script.getAttribute("src");
-                    if (src && src.indexOf("resources/factory.js") >= 0) {
+                    if ((src && src.indexOf("resources/factory.js") >= 0) || (src && src.indexOf("site/factory.js") >= 0)) {
                         if (script.src.indexOf("/factory.js?") >= 0) {
                             ButtonInjector.injectEncoded(script);
                         } else {
