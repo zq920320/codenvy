@@ -30,7 +30,6 @@ import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerException;
 import org.eclipse.che.plugin.docker.client.InitialAuthConfig;
-import org.eclipse.che.plugin.docker.client.LogMessageProcessor;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
@@ -153,10 +152,10 @@ public class SwarmDockerConnector extends DockerConnector {
     }
 
     @Override
-    public void startContainer(final String container, HostConfig hostConfig, LogMessageProcessor startContainerLogProcessor)
+    public void startContainer(final String container, HostConfig hostConfig)
             throws IOException {
         final Node node = inspectContainerDirectly(container).getNode();
-        doStartContainer(container, hostConfig, startContainerLogProcessor, addrToUri(node.getAddr()));
+        doStartContainer(container, hostConfig, addrToUri(node.getAddr()));
 
         final long containerStartTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - containerStartTime < WAIT_CONTAINER_AVAILABILITY_TIMEOUT_MILLISECONDS) {
