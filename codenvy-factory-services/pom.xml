@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-factory-parent</artifactId>
         <groupId>com.codenvy.factory</groupId>
-        <version>3.12.5</version>
+        <version>3.12.6-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-factory-services</artifactId>
     <packaging>jar</packaging>
