@@ -17,13 +17,13 @@
  */
 package com.codenvy.machine.backup;
 
+import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.server.spi.InstanceNode;
 import org.eclipse.che.api.machine.shared.MachineStatus;
-import org.eclipse.che.api.machine.shared.Recipe;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
