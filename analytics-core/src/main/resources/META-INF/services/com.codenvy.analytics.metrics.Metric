@@ -194,6 +194,10 @@ com.codenvy.analytics.metrics.users.UsersLoggedInWithGooglePercent
 com.codenvy.analytics.metrics.users.UsersLoggedInWithFormPercent
 com.codenvy.analytics.metrics.users.UsersLoggedInWithSysldapPercent
 
+com.codenvy.analytics.metrics.users.UsersCreatedFromGitHub
+com.codenvy.analytics.metrics.users.UsersCreatedFromGoogle
+com.codenvy.analytics.metrics.users.UsersCreatedFromEmail
+
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBelow1Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween1And10Min
 com.codenvy.analytics.metrics.sessions.ProductUsageSessionsBetween10And60Min
