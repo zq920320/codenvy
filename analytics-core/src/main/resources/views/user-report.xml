@@ -102,6 +102,24 @@
                 <parameter key="description" value="Form Auth"/>
             </row>
         </section>
+
+        <section name="user_creation_type">
+            <row class="com.codenvy.analytics.services.view.DateRow">
+                <parameter key="section-name" value="User Creation Type"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_created_from_google"/>
+                <parameter key="description" value="From Google OAuth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_created_from_github"/>
+                <parameter key="description" value="From GitHub OAuth"/>
+            </row>
+            <row class="com.codenvy.analytics.services.view.MetricRow">
+                <parameter key="name" value="users_created_from_email"/>
+                <parameter key="description" value="From Email flow"/>
+            </row>
+        </section>
     </view>
 
     <view name="engagement_levels" columns="7">
