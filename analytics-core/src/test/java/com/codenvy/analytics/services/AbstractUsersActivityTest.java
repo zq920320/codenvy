@@ -66,7 +66,7 @@ public abstract class AbstractUsersActivityTest extends BaseTest {
         executeScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_WORKSPACES_SET, date);
         executeScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES, date);
         executeScript(ScriptType.TASKS, MetricType.TASKS_LIST, date);
-        executeScript(ScriptType.EVENTS, MetricType.CREATED_USERS_SET, date);
+        executeScript(ScriptType.CREATED_USERS, MetricType.CREATED_USERS_SET, date);
         doIntegrity(date);
     }
 

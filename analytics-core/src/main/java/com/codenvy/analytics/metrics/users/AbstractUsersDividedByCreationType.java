@@ -24,6 +24,10 @@ import com.codenvy.analytics.metrics.MetricType;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DBObject;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 /**
  * @author Dmytro Nochevnov
  */
@@ -33,40 +37,41 @@ public abstract class AbstractUsersDividedByCreationType extends AbstractActiveE
     private String creationType;
 
     public AbstractUsersDividedByCreationType(MetricType metric, String creationType) {
-        super(metric, MetricType.USERS_LOGGED_IN_TYPES, USER);
+        super(metric, MetricType.CREATED_USERS, USER);
         this.creationType = creationType;
     }
 
     @Override
     public DBObject[] getSpecificDBOperations(Context clauses) {
+        List<DBObject> operations = getMiddleDBOperations();
+
         DBObject count = new BasicDBObject();
         count.put(ID, null);
         count.put(USER, new BasicDBObject("$sum", 1));
 
-        DBObject[] dbOperation = getSpecificExpandedDBOperations(clauses);
-        dbOperation[dbOperation.length - 1] = new BasicDBObject("$group", count);  // replace $project with $group with count number of documents
+        operations.add(new BasicDBObject("$group", count));
 
-        return dbOperation;
+        return operations.toArray(new DBObject[0]);
     }
 
     @Override
     public DBObject[] getSpecificExpandedDBOperations(Context clauses) {
-        DBObject sort = new BasicDBObject();
-        sort.put(DATE, 1);
+        List<DBObject> operations = getMiddleDBOperations();
 
-        DBObject group = new BasicDBObject();
-        group.put(ID, "$" + USER);
-        group.put(USING, new BasicDBObject("$first", "$" + USING));
-        group.put(DATE, new BasicDBObject("$first", "$" + DATE));
+        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+        operations.add(new BasicDBObject("$project", projection));
 
+        return operations.toArray(new DBObject[0]);
+    }
+
+    private List<DBObject> getMiddleDBOperations() {
         DBObject match = new BasicDBObject();
         match.put(USING, creationType);
 
-        DBObject projection = new BasicDBObject(getExpandedField(), "$_id");
+        DBObject group = new BasicDBObject();
+        group.put(ID, "$" + USER);
 
-        return new DBObject[]{new BasicDBObject("$sort", sort),
-                              new BasicDBObject("$group", group),
-                              new BasicDBObject("$match", match),
-                              new BasicDBObject("$project", projection)};
+        return new ArrayList<>(Arrays.asList(new DBObject[]{new BasicDBObject("$match", match),
+                                                            new BasicDBObject("$group", group)}));
     }
 }

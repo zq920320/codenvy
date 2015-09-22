@@ -44,6 +44,7 @@ import static org.testng.Assert.assertTrue;
 /** @author Dmytro Nochevnov */
 public class TestUsersDividedByCreationType extends BaseTest {
 
+    public static final String TEST_DATE_BEFORE = "20130101";
     public static final String TEST_DATE = "20130102";
     public static final String TEST_USER1 = "user1@gmail.com";
     public static final String TEST_USER2 = "user2@gmail.com";
@@ -58,20 +59,19 @@ public class TestUsersDividedByCreationType extends BaseTest {
         addRegisteredUser(UID3, TEST_USER3);
         addRegisteredUser(UID4, TEST_USER4);
 
-
         List<Event> events = new ArrayList<>();
         events.add(Event.Builder.createUserCreatedEvent(UID1, TEST_USER1, TEST_USER1)
                                 .withDate("2013-01-02", "09:00:00").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER1, UsersLoggedInWithGoogle.GOOGLE)
                                 .withDate("2013-01-02", "10:00:00").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER1, UsersLoggedInWithGoogle.GOOGLE)
+        events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER1, UsersLoggedInWithForm.JAAS)
                                 .withDate("2013-01-02", "11:00:00").build());
 
         events.add(Event.Builder.createUserCreatedEvent(UID2, TEST_USER2, TEST_USER2)
                                 .withDate("2013-01-01", "09:00:02").build());
         events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER2, UsersLoggedInWithGoogle.GOOGLE)
-                                .withDate("2013-01-02", "10:00:01").build());
-        events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER2, UsersLoggedInWithForm.JAAS)
+                                .withDate("2013-01-01", "10:00:01").build());
+        events.add(Event.Builder.createUserSSOLoggedInEvent(TEST_USER2, UsersLoggedInWithGitHub.GITHUB)
                                 .withDate("2013-01-02", "10:00:02").build());
 
         events.add(Event.Builder.createUserSSOLoggedInEvent(USER, UsersLoggedInWithForm.SYSLDAP)
@@ -96,16 +96,15 @@ public class TestUsersDividedByCreationType extends BaseTest {
         File log = LogGenerator.generateLog(events);
 
         Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, TEST_DATE_BEFORE);
+        builder.put(Parameters.TO_DATE, TEST_DATE_BEFORE);
+        builder.put(Parameters.LOG, log.getAbsolutePath());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS, MetricType.CREATED_USERS).getParamsAsMap());
+        pigServer.execute(ScriptType.CREATED_USERS, builder.build());
+
         builder.put(Parameters.FROM_DATE, TEST_DATE);
         builder.put(Parameters.TO_DATE, TEST_DATE);
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
-
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.USERS_LOGGED_IN_TYPES).getParamsAsMap());
-        builder.put(Parameters.LOG, log.getAbsolutePath());
-        pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
+        pigServer.execute(ScriptType.CREATED_USERS, builder.build());
     }
 
     @Test
@@ -131,20 +130,20 @@ public class TestUsersDividedByCreationType extends BaseTest {
         assertTrue(m.containsKey(UID2), "Actual value: " + m.toString());
     }
 
-//    @Test
-//    public void testUsersCreatedFromGoogleMetricAtCertainDay() throws Exception {
-//        Context.Builder builder = new Context.Builder();
-//        builder.put(Parameters.FROM_DATE, TEST_DATE);
-//        builder.put(Parameters.TO_DATE, TEST_DATE);
-//
-//        Metric metric = MetricFactory.getMetric(MetricType.USERS_CREATED_FROM_GOOGLE);
-//        assertEquals(metric.getValue(builder.build()).getAsString(), "2");
-//
-//        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(Context.EMPTY);
-//        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.USER);
-//        assertEquals(m.size(), 1);
-//        assertTrue(m.containsKey(UID2), "Actual value: " + m.toString());
-//    }
+    @Test
+    public void testUsersCreatedFromGoogleMetricAtCertainDay() throws Exception {
+        Context.Builder builder = new Context.Builder();
+        builder.put(Parameters.FROM_DATE, TEST_DATE);
+        builder.put(Parameters.TO_DATE, TEST_DATE);
+
+        Metric metric = MetricFactory.getMetric(MetricType.USERS_CREATED_FROM_GOOGLE);
+        assertEquals(metric.getValue(builder.build()).getAsString(), "1");
+
+        ListValueData expandedValue = (ListValueData)((Expandable)metric).getExpandedValue(builder.build());
+        Map<String, Map<String, ValueData>> m = listToMap(expandedValue, AbstractMetric.USER);
+        assertEquals(m.size(), 1);
+        assertTrue(m.containsKey(UID1), "Actual value: " + m.toString());
+    }
 
     @Test
     public void testUsersCreatedFromGitHubMetric() throws Exception {

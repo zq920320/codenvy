@@ -64,8 +64,8 @@ public class TestCreatedList extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.USERS_PROFILES, MetricType.USERS_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.USERS_PROFILES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS_SET).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS, MetricType.CREATED_USERS_SET).getParamsAsMap());
+        pigServer.execute(ScriptType.CREATED_USERS, builder.build());
     }
 
     @Test

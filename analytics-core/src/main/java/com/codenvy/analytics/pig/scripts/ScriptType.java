@@ -146,7 +146,8 @@ public enum ScriptType {
     TEST_CALCULATE_TIME,
     TEST_LOAD_RESOURCES,
     TEST_FIX_FACTORY_URL,
-    SEND_VERIFICATION_EMAIL;
+    SEND_VERIFICATION_EMAIL,
+    CREATED_USERS;
 
 
     /** @return list of mandatory parameters required to be passed into the script */

@@ -541,8 +541,8 @@ public class TestAnalysisView extends BaseTest {
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.USER_INVITE).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS, MetricType.CREATED_USERS).getParamsAsMap());
+        pigServer.execute(ScriptType.CREATED_USERS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACTIVE_ENTITIES, MetricType.ACTIVE_USERS_SET).getParamsAsMap());
         pigServer.execute(ScriptType.ACTIVE_ENTITIES, builder.build());

@@ -46,13 +46,6 @@
         <parameter key="STORAGE_TABLE" value="destroyed_workspaces"/>
     </script>
     <script name="events">
-        <description>The number of created registered users</description>
-        <parameter key="WS" value="ANY"/>
-        <parameter key="USER" value="REGISTERED"/>
-        <parameter key="EVENT" value="user-created"/>
-        <parameter key="STORAGE_TABLE" value="created_users"/>
-    </script>
-    <script name="events">
         <description>The number of removed registered users</description>
         <parameter key="WS" value="ANY"/>
         <parameter key="USER" value="REGISTERED"/>
@@ -151,6 +144,12 @@
         <parameter key="EVENT" value="user-sso-logged-in"/>
         <parameter key="PARAM" value="USING"/>
         <parameter key="STORAGE_TABLE" value="users_logged_in_types"/>
+    </script>
+    <script name="created_users">
+        <description>The number of created registered users</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="REGISTERED"/>
+        <parameter key="STORAGE_TABLE" value="created_users"/>
     </script>
     <script name="events_by_type">
         <description>How users were added to workspaces</description>

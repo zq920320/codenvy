@@ -128,8 +128,8 @@ public class TestExpandedMetric extends AbstractTestExpandedMetric {
         builder.putAll(scriptsManager.getScript(ScriptType.WORKSPACES_PROFILES, MetricType.WORKSPACES_PROFILES_LIST).getParamsAsMap());
         pigServer.execute(ScriptType.WORKSPACES_PROFILES, builder.build());
 
-        builder.putAll(scriptsManager.getScript(ScriptType.EVENTS, MetricType.CREATED_USERS).getParamsAsMap());
-        pigServer.execute(ScriptType.EVENTS, builder.build());
+        builder.putAll(scriptsManager.getScript(ScriptType.CREATED_USERS, MetricType.CREATED_USERS).getParamsAsMap());
+        pigServer.execute(ScriptType.CREATED_USERS, builder.build());
 
         builder.putAll(scriptsManager.getScript(ScriptType.ACCEPTED_FACTORIES, MetricType.FACTORIES_ACCEPTED).getParamsAsMap());
         pigServer.execute(ScriptType.ACCEPTED_FACTORIES, builder.build());
