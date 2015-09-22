@@ -41,9 +41,6 @@ public class OrgServiceWorkspaceValidator implements WorkspaceCreationValidator 
     private UserDao userDao;
 
     @Inject
-    private MembershipDao membershipDao;
-
-    @Inject
     private WorkspaceManager workspaceManager;
 
     @Override
