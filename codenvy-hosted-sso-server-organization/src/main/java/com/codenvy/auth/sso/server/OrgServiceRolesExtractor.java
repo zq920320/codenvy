@@ -28,7 +28,6 @@ import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.user.server.dao.MembershipDao;
 
 import org.eclipse.che.commons.annotation.Nullable;
 import org.slf4j.Logger;
@@ -60,7 +59,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
 
     private final UserDao                   userDao;
     private final AccountDao                accountDao;
-    private final MembershipDao             membershipDao;
     private final PreferenceDao             preferenceDao;
     private final InitialLdapContextFactory contextFactory;
     private final String                    containerDn;
@@ -72,7 +70,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     @Inject
     public OrgServiceRolesExtractor(UserDao userDao,
                                     AccountDao accountDao,
-                                    MembershipDao membershipDao,
                                     PreferenceDao preferenceDao,
                                     @Named("user.ldap.user_container_dn") String userContainerDn,
                                     @Named("user.ldap.user_dn") String userDn,
@@ -82,7 +79,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     InitialLdapContextFactory contextFactory) {
         this.userDao = userDao;
         this.accountDao = accountDao;
-        this.membershipDao = membershipDao;
         this.preferenceDao = preferenceDao;
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
@@ -126,10 +122,10 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                 }
             }
 
-            membershipDao.getMemberships(user.getId())
-                         .stream()
-                         .filter(membership -> membership.getSubjectId().equals(workspaceId))
-                         .forEach(membership -> userRoles.addAll(membership.getRoles()));
+//            membershipDao.getMemberships(user.getId())
+//                         .stream()
+//                         .filter(membership -> membership.getSubjectId().equals(workspaceId))
+//                         .forEach(membership -> userRoles.addAll(membership.getRoles()));
             return userRoles;
         } catch (NotFoundException e) {
             return emptySet();

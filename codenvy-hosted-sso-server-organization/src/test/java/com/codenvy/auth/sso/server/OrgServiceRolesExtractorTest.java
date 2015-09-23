@@ -23,7 +23,6 @@ import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.user.server.dao.MembershipDao;
 import org.eclipse.che.api.user.server.dao.MembershipDo;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
@@ -63,8 +62,6 @@ public class OrgServiceRolesExtractorTest {
     @Mock
     AccountDao               accountDao;
     @Mock
-    MembershipDao            membershipDao;
-    @Mock
     PreferenceDao            preferenceDao;
     @InjectMocks
     OrgServiceRolesExtractor extractor;
@@ -86,7 +83,6 @@ public class OrgServiceRolesExtractorTest {
 
     @Test
     public void shouldSkipLdapRoleCheckWhenAllowedRoleIsNull() throws ServerException {
-        when(membershipDao.getMemberships(ticket.getPrincipal().getId())).thenReturn(Collections.<Membership>emptyList());
 
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), singleton("user"));
     }
@@ -95,7 +91,6 @@ public class OrgServiceRolesExtractorTest {
     public void shouldReturnEmptySetWhenLdapRolesDoNotContainAllowedRole() throws Exception {
         final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(userDao,
                                                                                     accountDao,
-                                                                                    membershipDao,
                                                                                     preferenceDao,
                                                                                     null,
                                                                                     null,
@@ -112,7 +107,6 @@ public class OrgServiceRolesExtractorTest {
     public void shouldReturnNormalUserRolesWhenLdapRolesContainAllowedRole() throws Exception {
         final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(userDao,
                                                                                     accountDao,
-                                                                                    membershipDao,
                                                                                     preferenceDao,
                                                                                     null,
                                                                                     null,
@@ -151,9 +145,9 @@ public class OrgServiceRolesExtractorTest {
                                                        null,
                                                        "wsId",
                                                        null);
-        when(membershipDao.getMemberships(ticket.getPrincipal().getId())).thenReturn(asList(membership));
 
-        final HashSet<String> expectedRoles = new HashSet<>(asList("user", "workspace/developer", "workspace/admin"));
+        //final HashSet<String> expectedRoles = new HashSet<>(asList("user", "workspace/developer", "workspace/admin"));
+        final HashSet<String> expectedRoles = new HashSet<>(asList("user"));
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), expectedRoles);
     }
 
