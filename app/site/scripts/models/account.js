@@ -237,7 +237,7 @@
 
         var getWorkspaces = function() {
             var deferredResult = $.Deferred();
-            var url = "/api/workspace/all";
+            var url = "/api/workspace";
             $.ajax({
                 url: url,
                 type: "GET",
@@ -282,7 +282,7 @@
 
         var ensureExistenceWorkspace = function(workspaceName, accountId) {
             var deferredResult = $.Deferred();
-            var url = "/api/workspace/all";
+            var url = "/api/workspace";
             $.ajax({
                 url: url,
                 type: "GET",
