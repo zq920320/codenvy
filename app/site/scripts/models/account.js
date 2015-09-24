@@ -280,42 +280,6 @@
             return deferredResult;
         };
 
-        var ensureExistenceWorkspace = function(workspaceName, accountId) {
-            var deferredResult = $.Deferred();
-            var url = "/api/workspace";
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(workspace) {
-                    if (!workspace.length){
-                        // user has no workspace
-                        var workspaceID;
-                        createWorkspace(workspaceName,accountId)
-                        .then(function(workspace){
-                           workspaceID = workspace.id; // store workspace id
-                            return getUserInfo();
-                        })
-                        .then(function(user){
-                            return addMemberToWorkspace(workspaceID,user.id)
-                            .then(function(){
-                                deferredResult.resolve();
-                            });
-                        })
-                        .fail(function(error){
-                            deferredResult.reject(error);
-                        });
-                    } else{
-                        deferredResult.resolve();
-                    }
-
-                },
-                error: function(error) {
-                    deferredResult.reject(error);
-                }
-            });
-            return deferredResult;
-        };
-
         var createAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
@@ -337,27 +301,6 @@
             return deferredResult;
         };
 
-        var createWorkspace = function(workspace, accountId) {
-            var deferredResult = $.Deferred();
-            var url = "/api/workspace";
-            var data = {
-                name: workspace,
-                accountId: accountId
-            };
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: JSON.stringify(data),
-                contentType: "application/json"
-            })
-            .success(function(ws){
-                deferredResult.resolve(ws);//return ws
-            })
-            .error(function(error){
-                deferredResult.reject(error);
-            });
-            return deferredResult;
-        };
 
         var login = function(email, password) {
             if (isWebsocketEnabled()) {
@@ -375,43 +318,6 @@
             }
         };
 
-        var getUserInfo = function() {
-            var deferredResult = $.Deferred();
-            var url = "/api/user";
-            $.ajax({
-                url: url,
-                type: "GET"
-            })
-            .success(function(response){
-                deferredResult.resolve(response);
-            })
-            .error(function(error){
-                deferredResult.reject(error);
-            });
-            return deferredResult;
-        };
-
-        var addMemberToWorkspace = function(workspaceId, userId) {
-            var deferredResult = $.Deferred();
-            var url = "/api/workspace/" + workspaceId + "/members";
-            var data = {
-                userId: userId,
-                roles: []
-            };
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: JSON.stringify(data),
-                contentType: "application/json"
-            })
-            .success(function(response){
-                deferredResult.resolve(response);
-            })
-            .error(function(error){
-                deferredResult.reject(error);
-            });
-            return deferredResult;
-        };
         var redirectToUrl = function(url) {
             window.location = url;
         };
@@ -553,39 +459,9 @@
             },
 
             // signup, oAuth login,
-            processCreate: function(username, bearertoken, workspaceName, redirect_url, error) {
-                var accountName = (username.indexOf('@')>=0?username.substring(0, username.indexOf('@')):username).replace(/[\W]/g,'_').toLowerCase() + bearertoken.substring(0,6);
-                authenticate(username, bearertoken)
-                .then(function(){
-                    if (getQueryParameterByName("page_url") !== "/site/login" ){ // Skip account/workspace creation if user comes from Login page
-                        return ensureExistenceAccount(accountName) // get existence or create a new account
-                        .then(function(account){
-                                return ensureExistenceWorkspace(workspaceName, account.id);
-                        })
-                        .fail(function(error) {
-                            return $.Deferred().reject(error);
-                        });
-                    }else{
-                        return $.Deferred().resolve();
-                    }
-                })
-                .then(function(){
-                    if (!redirect_url){
-                        return navigateToLocation()
-                        .fail(function(error){
-                            return $.Deferred().reject(error);
-                        });
-                    } else {
-                        redirectToUrl(redirect_url);
-                    }
-                })
-                .fail(function(response) {
-                    if (response){
-                        error([
-                            new AccountError(null, getResponseMessage(response))
-                        ]);
-                    }
-                });
+            processCreate: function(username, bearertoken) {
+                authenticate(username, bearertoken);
+                redirectToUrl("/ws/");
             },
 
             adminLogin: function(email, password, redirect_url, error) {
