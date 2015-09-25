@@ -21,44 +21,43 @@ import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
+
+import org.bson.codecs.Codec;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.configuration.CodecRegistry;
 
 import javax.inject.Provider;
 import javax.inject.Singleton;
+
+import java.util.ArrayList;
+import java.util.Set;
 
 import static com.mongodb.MongoCredential.createCredential;
 import static java.util.Collections.singletonList;
 
 /**
- * Provides single instance of database to all consumers.
+ * Provides {@link MongoDatabase} instance.
+ *
+ * @author Eugene Voevodin
  */
+public class MongoDatabaseProvider implements Provider<MongoDatabase> {
 
-@Singleton
-public class MongoDatabaseProvider implements Provider<DB> {
-    private final String dbUrl;
-    private final String dbName;
-    private final String username;
-    private final String password;
+    private final MongoDatabase database;
 
-    private volatile DB db;
-
-    public MongoDatabaseProvider(String dbUrl, String dbName, String username, String password) {
-        this.dbUrl = dbUrl;
-        this.dbName = dbName;
-        this.username = username;
-        this.password = password;
+    public MongoDatabaseProvider(String dbUrl,
+                                 String dbName,
+                                 String username,
+                                 String password,
+                                 Set<CodecProvider> codecProviders) {
+        final MongoCredential credential = createCredential(username, dbName, password.toCharArray());
+        final MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
+        database = mongoClient.getDatabase(dbName).withCodecRegistry(CodecRegistries.fromProviders(new ArrayList<>(codecProviders)));
     }
 
     @Override
-    public DB get() {
-        if (db == null) {
-            synchronized (this) {
-                if (db == null) {
-                    MongoCredential credential = createCredential(username, dbName, password.toCharArray());
-                    MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
-                    db = mongoClient.getDB(dbName);
-                }
-            }
-        }
-        return db;
+    public MongoDatabase get() {
+        return database;
     }
 }

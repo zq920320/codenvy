@@ -20,14 +20,19 @@ package com.codenvy.api.dao.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
+import org.bson.Document;
 import org.testng.annotations.Test;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
 import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
+import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
+import static com.codenvy.api.dao.mongo.MongoUtil.mapAsDocumentsList;
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 
@@ -66,5 +71,31 @@ public class MongoUtilTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void shouldThrowExceptionWhenArgumentIsNotBasicDBList() {
         asMap(new Object());
+    }
+
+    @Test
+    public void testMapAsDocumentsList() throws Exception {
+        final Map<String, String> source = new HashMap<>(4);
+        source.put("key1", "value1");
+        source.put("key2", "value2");
+
+        final List<Document> result = mapAsDocumentsList(source);
+
+        assertEquals(result.size(), 2);
+        assertEquals(result.get(0), new Document("name", "key1").append("value", "value1"));
+        assertEquals(result.get(1), new Document("name", "key2").append("value", "value2"));
+    }
+
+    @Test
+    public void testDocumentsListAsMap() throws Exception {
+        final List<Document> source = new ArrayList<>(2);
+        source.add(new Document("name", "key1").append("value", "value1"));
+        source.add(new Document("name", "key2").append("value", "value2"));
+
+        final Map<String, String> result = documentsListAsMap(source);
+
+        assertEquals(result.size(), 2);
+        assertEquals(result.get("key1"), "value1");
+        assertEquals(result.get("key2"), "value2");
     }
 }

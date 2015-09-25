@@ -21,6 +21,7 @@ import com.github.fakemongo.Fongo;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.MongoClient;
+import com.mongodb.client.MongoDatabase;
 
 
 /**
@@ -32,9 +33,10 @@ public class BaseDaoTest {
 
     private static final String DB_NAME = "test1";
 
-    protected DBCollection collection;
-    protected MongoClient  client;
-    protected DB           db;
+    protected DBCollection  collection;
+    protected MongoClient   client;
+    protected DB            db;
+    protected MongoDatabase database;
 
     public void setUp(String collectionName) {
         final Fongo fongo = new Fongo("test server");

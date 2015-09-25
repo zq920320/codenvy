@@ -20,7 +20,6 @@ package com.codenvy.api.dao.util;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import com.codenvy.api.dao.mongo.MongoDatabaseProvider;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
