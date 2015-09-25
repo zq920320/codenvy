@@ -20,10 +20,15 @@ package com.codenvy.api.dao.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
+import org.bson.Document;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
 
 /**
  * @author Eugene Voevodin
@@ -56,6 +61,51 @@ public final class MongoUtil {
             map.put(attribute.getString("name"), attribute.getString("value"));
         }
         return map;
+    }
+
+    /**
+     * Converts list of documents to a map.
+     *
+     * <pre>
+     *     List of documents:
+     *     [
+     *          {
+     *              "name" : "attribute1",
+     *              "value" : "value1"
+     *          },
+     *          {
+     *              "name" : "attribute2",
+     *              "value" : "value2"
+     *          }
+     *     ]
+     *
+     *     Will be converted to map:
+     *     {
+     *         "attribute1" : "value1",
+     *         "attribute2" : "value2"
+     *     }
+     * </pre>
+     *
+     * @param documents
+     *         list of documents
+     * @return map view of given list
+     * @see #mapAsDocumentsList(Map)
+     */
+    public static Map<String, String> documentsListAsMap(List<Document> documents) {
+        return documents.stream().collect(toMap(d -> d.getString("name"), d -> d.getString("value")));
+    }
+
+    /**
+     * Converts map to list of documents.
+     *
+     * @return list representation of given map
+     * @see #documentsListAsMap(List)
+     */
+    public static List<Document> mapAsDocumentsList(Map<String, ?> map) {
+        return map.entrySet()
+                  .stream()
+                  .map(entry -> new Document("name", entry.getKey()).append("value", entry.getValue()))
+                  .collect(toList());
     }
 
     public static List<String> asStringList(Object src) {

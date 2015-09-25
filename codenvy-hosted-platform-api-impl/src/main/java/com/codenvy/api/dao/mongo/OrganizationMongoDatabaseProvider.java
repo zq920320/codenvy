@@ -17,36 +17,27 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.mongodb.DB;
-import com.mongodb.MongoClient;
+import org.bson.codecs.configuration.CodecProvider;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Provider;
 import javax.inject.Singleton;
-import java.net.UnknownHostException;
+import java.util.Set;
 
 /**
- * Provides single instance of database to all consumers.
+ * Provides {@link com.mongodb.client.MongoDatabase} single instance for <i>organization</i> database.
+ *
+ * @author Eugene Voevodin
  */
 @Singleton
 public class OrganizationMongoDatabaseProvider extends MongoDatabaseProvider {
 
-    protected static final String DB_URL      = "organization.storage.db.url";
-    protected static final String DB_NAME     = "organization.storage.db.name";
-    protected static final String DB_USERNAME = "organization.storage.db.username";
-    protected static final String DB_PASSWORD = "organization.storage.db.password";
-
     @Inject
-    public OrganizationMongoDatabaseProvider(@Named(DB_URL) String dbUrl,
-                                             @Named(DB_NAME) String dbName,
-                                             @Named(DB_USERNAME) String username,
-                                             @Named(DB_PASSWORD) String password) {
-        super(dbUrl, dbName, username, password);
-    }
-
-    @Override
-    public DB get() {
-        return super.get();
+    public OrganizationMongoDatabaseProvider(@Named("organization.storage.db.url") String dbUrl,
+                                             @Named("organization.storage.db.name") String dbName,
+                                             @Named("organization.storage.db.username") String username,
+                                             @Named("organization.storage.db.password") String password,
+                                             Set<CodecProvider> codecProviders) {
+        super(dbUrl, dbName, username, password, codecProviders);
     }
 }

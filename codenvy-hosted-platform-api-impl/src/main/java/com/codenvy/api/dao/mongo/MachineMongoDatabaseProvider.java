@@ -17,32 +17,27 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.mongodb.DB;
+import org.bson.codecs.configuration.CodecProvider;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.Set;
 
 /**
- * Provides single instance of database to all consumers.
+ * Provides {@link com.mongodb.client.MongoDatabase} single instance for <i>machines</i> database.
+ *
+ * @author Eugene Voevodin
  */
 @Singleton
 public class MachineMongoDatabaseProvider extends MongoDatabaseProvider {
-    protected static final String DB_URL      = "storage.machine.db.url";
-    protected static final String DB_NAME     = "storage.machine.db.name";
-    protected static final String DB_USERNAME = "storage.machine.db.username";
-    protected static final String DB_PASSWORD = "storage.machine.db.password";
 
     @Inject
-    public MachineMongoDatabaseProvider(@Named(DB_URL) String dbUrl,
-                                        @Named(DB_NAME) String dbName,
-                                        @Named(DB_USERNAME) String username,
-                                        @Named(DB_PASSWORD) String password) {
-        super(dbUrl, dbName, username, password);
-    }
-
-    @Override
-    public DB get() {
-        return super.get();
+    public MachineMongoDatabaseProvider(@Named("storage.machine.db.url") String dbUrl,
+                                        @Named("storage.machine.db.name") String dbName,
+                                        @Named("storage.machine.db.username") String username,
+                                        @Named("storage.machine.db.password") String password,
+                                        Set<CodecProvider> codecProviders) {
+        super(dbUrl, dbName, username, password, codecProviders);
     }
 }
