@@ -17,18 +17,12 @@
  */
 package com.codenvy.auth.sso.server;
 
-import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
 
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
-import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.api.user.server.dao.UserDao;
-
 import org.eclipse.che.commons.annotation.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -57,8 +51,8 @@ import static java.util.Collections.emptySet;
 public class OrgServiceRolesExtractor implements RolesExtractor {
     private static final Logger LOG = LoggerFactory.getLogger(OrgServiceRolesExtractor.class);
 
-    private final UserDao                   userDao;
-    private final AccountDao                accountDao;
+//    private final UserDao                   userDao;
+//    private final AccountDao                accountDao;
     private final PreferenceDao             preferenceDao;
     private final InitialLdapContextFactory contextFactory;
     private final String                    containerDn;
@@ -68,8 +62,9 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     private final String                    allowedRole;
 
     @Inject
-    public OrgServiceRolesExtractor(UserDao userDao,
-                                    AccountDao accountDao,
+    public OrgServiceRolesExtractor(
+                                    //UserDao userDao,
+                                    //AccountDao accountDao,
                                     PreferenceDao preferenceDao,
                                     @Named("user.ldap.user_container_dn") String userContainerDn,
                                     @Named("user.ldap.user_dn") String userDn,
@@ -77,8 +72,8 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                                     @Nullable @Named("user.ldap.attr.role_name") String roleAttrName,
                                     @Nullable @Named("user.ldap.allowed_role") String allowedRole,
                                     InitialLdapContextFactory contextFactory) {
-        this.userDao = userDao;
-        this.accountDao = accountDao;
+//        this.userDao = userDao;
+//        this.accountDao = accountDao;
         this.preferenceDao = preferenceDao;
         this.roleAttrName = roleAttrName;
         this.allowedRole = allowedRole;
@@ -110,17 +105,17 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                 userRoles.add("user");
             }
 
-            User user = userDao.getById(ticket.getPrincipal().getId());
+//            User user = userDao.getById(ticket.getPrincipal().getId());
 
-            if (accountId != null) {
-                Account account = accountDao.getById(accountId);
-                if (account != null) {
-                    accountDao.getMembers(accountId)
-                              .stream()
-                              .filter(accountMember -> accountMember.getUserId().equals(user.getId()))
-                              .forEach(accountMember -> userRoles.addAll(accountMember.getRoles()));
-                }
-            }
+//            if (accountId != null) {
+//                Account account = accountDao.getById(accountId);
+//                if (account != null) {
+//                    accountDao.getMembers(accountId)
+//                              .stream()
+//                              .filter(accountMember -> accountMember.getUserId().equals(user.getId()))
+//                              .forEach(accountMember -> userRoles.addAll(accountMember.getRoles()));
+//                }
+//            }
 
 //            membershipDao.getMemberships(user.getId())
 //                         .stream()
