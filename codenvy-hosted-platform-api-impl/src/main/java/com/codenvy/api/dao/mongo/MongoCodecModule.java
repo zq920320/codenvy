@@ -23,6 +23,7 @@ import com.google.inject.multibindings.Multibinder;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
 import org.eclipse.che.inject.DynaModule;
 
 /**
@@ -45,7 +46,10 @@ public class MongoCodecModule extends AbstractModule {
         binder.addBinding().toInstance(new CodecProvider() {
             @Override
             public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
-                return (Codec<T>)new UsersWorkspaceImplCodec(registry);
+                if (clazz == UsersWorkspaceImpl.class) {
+                    return (Codec<T>)new UsersWorkspaceImplCodec(registry);
+                }
+                return null;
             }
         });
     }

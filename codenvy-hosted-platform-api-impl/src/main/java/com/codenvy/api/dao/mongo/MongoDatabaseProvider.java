@@ -17,25 +17,22 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.mongodb.DB;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoCredential;
 import com.mongodb.ServerAddress;
 import com.mongodb.client.MongoDatabase;
 
-import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistries;
-import org.bson.codecs.configuration.CodecRegistry;
 
 import javax.inject.Provider;
-import javax.inject.Singleton;
 
 import java.util.ArrayList;
 import java.util.Set;
 
 import static com.mongodb.MongoCredential.createCredential;
 import static java.util.Collections.singletonList;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 /**
  * Provides {@link MongoDatabase} instance.
@@ -53,7 +50,9 @@ public class MongoDatabaseProvider implements Provider<MongoDatabase> {
                                  Set<CodecProvider> codecProviders) {
         final MongoCredential credential = createCredential(username, dbName, password.toCharArray());
         final MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
-        database = mongoClient.getDatabase(dbName).withCodecRegistry(CodecRegistries.fromProviders(new ArrayList<>(codecProviders)));
+        database = mongoClient.getDatabase(dbName)
+                              .withCodecRegistry(fromRegistries(CodecRegistries.fromProviders(new ArrayList<>(codecProviders)),
+                                                                MongoClient.getDefaultCodecRegistry()));
     }
 
     @Override
