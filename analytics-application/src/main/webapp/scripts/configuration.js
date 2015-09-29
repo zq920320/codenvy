@@ -1562,11 +1562,6 @@ function AnalyticsConfiguration() {
         "users_created_from_github": "#USERS",
         "users_created_from_email": "#USERS",
 
-        "signup_validation_email_send": "#USERS",
-        "signup_validation_email_confirmed": "#USERS",
-        "signup_validation_email_not_confirmed": "#USERS",
-
-
         /** WORKSPACES */
         "active_workspaces": "#WORKSPACES",
         "created_workspaces": "#WORKSPACES",
@@ -1777,6 +1772,7 @@ function AnalyticsConfiguration() {
         "tasks_stopped_normally": "#TASKS",
         "tasks_stopped_by_timeout": "#TASKS",
 
+
         "im_downloads_install_script": "#ARTIFACTS",
         "im_downloads_codenvy": "#ARTIFACTS",
         "im_on_prem_issued": "#TRIALS",
@@ -1792,7 +1788,11 @@ function AnalyticsConfiguration() {
 
         /** DEFAULT */
         "total_factories": "#DEFAULT",  // isn't 'FACTORIES' because total factory = created factory, and there could be no some created factories in 'product_usage_factory_sessions_list' collection
-        "created_factories": "#DEFAULT"  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
+        "created_factories": "#DEFAULT",  // isn't 'FACTORIES' because there could be no some created factories in 'product_usage_factory_sessions_list' collection
+        "signup_validation_email_send": "#DEFAULT",  // isn't 'USERS' because the user's id is unknown at this stage of signup
+        "signup_validation_email_confirmed": "#DEFAULT",  // isn't 'USERS' because we couldn't work around user_id because the <signup_validation_email_not_confirmed> = <signup_validation_email_send> - <signup_validation_email_confirmed>
+        "signup_validation_email_not_confirmed": "#DEFAULT"  // isn't 'USERS' because the user's id is unknown at this stage of signup
+
     };
     var mapDrillDownPageTypeToAddress = {
         "#DEFAULT": defaultDrillDownPageAddress,
