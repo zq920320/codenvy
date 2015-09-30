@@ -26,7 +26,7 @@ import org.eclipse.che.inject.DynaModule;
 /**
  * @author Alexander Garagatyi
  */
-@DynaModule
+// not a dyna module, install manually
 public class MachineRouterModule extends AbstractModule {
     @Override
     protected void configure() {
