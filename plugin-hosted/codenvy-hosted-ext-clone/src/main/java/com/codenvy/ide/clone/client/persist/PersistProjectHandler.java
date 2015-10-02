@@ -25,10 +25,10 @@ import org.eclipse.che.api.analytics.client.logger.AnalyticsEventLogger;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.project.shared.dto.ProjectReference;
 import org.eclipse.che.ide.api.event.OpenProjectEvent;
-import org.eclipse.che.ide.api.event.RefreshProjectTreeEvent;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.ServerException;
+import org.eclipse.che.ide.part.explorer.project.ProjectExplorerPresenter;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.Config;
@@ -44,11 +44,12 @@ import java.util.List;
 @Singleton
 public class PersistProjectHandler {
 
-    private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
-    private final NotificationManager    notificationManager;
-    private final EventBus               eventBus;
-    private final ProjectServiceClient   projectServiceClient;
-    private final AnalyticsEventLogger   eventLogger;
+    private final DtoUnmarshallerFactory   dtoUnmarshallerFactory;
+    private final NotificationManager      notificationManager;
+    private final EventBus                 eventBus;
+    private final ProjectServiceClient     projectServiceClient;
+    private final AnalyticsEventLogger     eventLogger;
+    private final ProjectExplorerPresenter projectExplorer;
 
     private String srcWorkspaceId;
 
@@ -65,12 +66,14 @@ public class PersistProjectHandler {
                                  NotificationManager notificationManager,
                                  EventBus eventBus,
                                  ProjectServiceClient projectServiceClient,
-                                 AnalyticsEventLogger eventLogger) {
+                                 AnalyticsEventLogger eventLogger,
+                                 ProjectExplorerPresenter projectExplorer) {
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.notificationManager = notificationManager;
         this.eventBus = eventBus;
         this.projectServiceClient = projectServiceClient;
         this.eventLogger = eventLogger;
+        this.projectExplorer = projectExplorer;
     }
 
     /**
@@ -159,7 +162,7 @@ public class PersistProjectHandler {
             if (openProjectAfterCloning) {
                 eventBus.fireEvent(new OpenProjectEvent(projectNameToOpen));
             } else {
-                eventBus.fireEvent(new RefreshProjectTreeEvent());
+                projectExplorer.reloadChildren();
             }
             return;
         }

@@ -26,4 +26,5 @@
     <inherits name="com.google.gwt.inject.Inject"/>
 
     <inherits name="org.eclipse.che.ide.Commons"/>
+    <inherits name="org.eclipse.che.ide.Core"/>
 </module>

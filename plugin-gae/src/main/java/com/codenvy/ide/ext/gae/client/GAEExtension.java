@@ -10,23 +10,18 @@
  *******************************************************************************/
 package com.codenvy.ide.ext.gae.client;
 
+import com.codenvy.ide.ext.gae.client.actions.DeployApplicationAction;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.constraints.Anchor;
 import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.api.project.tree.TreeStructureProviderRegistry;
-import com.codenvy.ide.ext.gae.client.actions.DeployApplicationAction;
-
-import org.eclipse.che.ide.debug.Debugger;
 import org.eclipse.che.ide.debug.DebuggerManager;
 import org.eclipse.che.ide.ext.java.jdi.client.debug.DebuggerPresenter;
-import org.eclipse.che.ide.extension.maven.client.projecttree.MavenProjectTreeStructureProvider;
-import org.eclipse.che.ide.extension.maven.shared.MavenAttributes;
-
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
 import static com.codenvy.ide.ext.gae.shared.GAEConstants.GAE_JAVA_ID;
 
@@ -44,12 +39,6 @@ import static com.codenvy.ide.ext.gae.shared.GAEConstants.GAE_JAVA_ID;
 public class GAEExtension {
 
     private static final String GIT_GROUP_MAIN_MENU = "git";
-
-    // use Maven project tree for 'Google App Engine Project (GAEJava)'
-    @Inject
-    public void setUpJavaProjectTree(TreeStructureProviderRegistry treeStructureProviderRegistry) {
-        treeStructureProviderRegistry.associateProjectTypeToTreeProvider(GAE_JAVA_ID, MavenProjectTreeStructureProvider.ID);
-    }
 
     @Inject
     public void setUpActions(GAELocalizationConstant locale,

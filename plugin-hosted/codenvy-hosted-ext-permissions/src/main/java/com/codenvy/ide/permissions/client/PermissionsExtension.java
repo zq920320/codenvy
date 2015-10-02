@@ -74,13 +74,18 @@ public class PermissionsExtension implements ProjectActionHandler {
     }
 
     @Override
-    public void onProjectOpened(ProjectActionEvent event) {
+    public void onProjectReady(ProjectActionEvent event) {
         actionManager.registerAction(PERMISSIONS_INDICATOR_ACTION_ID, permissionsIndicatorAction);
 
         if (rightMainMenuGroup != null) {
             rightMainMenuGroup.add(permissionsIndicatorAction, new Constraints(BEFORE, PRIVACY_ACTION_ID));
             rightMainMenuGroup.add(Separator.getInstance(), new Constraints(AFTER, PERMISSIONS_INDICATOR_ACTION_ID));
         }
+    }
+
+    @Override
+    public void onProjectOpened(ProjectActionEvent event) {
+
     }
 
     @Override

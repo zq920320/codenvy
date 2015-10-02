@@ -75,6 +75,11 @@ public class PermissionsPartPresenter extends BasePresenter implements Permissio
 
     @Override
     public void onProjectOpened(ProjectActionEvent event) {
+
+    }
+
+    @Override
+    public void onProjectReady(ProjectActionEvent event) {
         project = event.getProject();
 
         checkProjectPermissions();
