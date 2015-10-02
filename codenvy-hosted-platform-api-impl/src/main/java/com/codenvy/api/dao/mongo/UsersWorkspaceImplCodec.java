@@ -70,7 +70,6 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         final List<CommandImpl> commands = commandDocuments.stream()
                                                            .map(d -> new CommandImpl(d.getString("name"),
                                                                                      d.getString("commandLine"),
-                                                                                     d.getString("visibility"),
                                                                                      d.getString("type"),
                                                                                      d.getString("workingDir")))
                                                            .collect(toList());
@@ -113,7 +112,6 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                              .stream()
                                              .map(command -> new Document().append("name", command.getName())
                                                                            .append("commandLine", command.getCommandLine())
-                                                                           .append("visibility", command.getVisibility())
                                                                            .append("type", command.getType())
                                                                            .append("workingDir", command.getWorkingDir()))
                                              .collect(toList()));

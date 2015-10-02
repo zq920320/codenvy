@@ -294,7 +294,6 @@ public class WorkspaceDaoImplTest {
 
             assertEquals(document.getString("name"), command.getName(), "Command name");
             assertEquals(document.getString("commandLine"), command.getCommandLine(), "Command line");
-            assertEquals(document.getString("visibility"), command.getVisibility(), "Command visibility");
             assertEquals(document.getString("workingDir"), command.getWorkingDir(), "Command working");
             assertEquals(document.getString("type"), command.getType(), "Command type");
         }
@@ -471,9 +470,9 @@ public class WorkspaceDaoImplTest {
 
         // commands
         final List<CommandImpl> commands = new ArrayList<>(3);
-        commands.add(new CommandImpl("MCI", "mvn clean install", "public", "maven", "/path/to/workingDir"));
-        commands.add(new CommandImpl("bower install", "bower install", "public", "bower", "/path/to/workingDir"));
-        commands.add(new CommandImpl("build without tests", "mvn clean install -Dmaven.test.skip", "public", "maven", "/path"));
+        commands.add(new CommandImpl("MCI", "mvn clean install", "maven", "/path/to/workingDir"));
+        commands.add(new CommandImpl("bower install", "bower install", "bower", "/path/to/workingDir"));
+        commands.add(new CommandImpl("build without tests", "mvn clean install -Dmaven.test.skip", "maven", "/path"));
 
         // attributes
         final Map<String, String> attributes = new HashMap<>(8);
