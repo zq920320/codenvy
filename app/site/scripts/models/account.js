@@ -241,8 +241,8 @@
             $.ajax({
                 url: url,
                 type: "GET",
-                success: function(workspaces) {
-                        deferredResult.resolve(workspaces[0]); //returns first available workspace
+                success: function(workspace) {
+                        deferredResult.resolve(workspace); //returns first available workspace
                 },
                 error: function(error) {
                     deferredResult.reject(error);
@@ -333,7 +333,7 @@
                     redirectToUrl("/site/auth/no-workspaces-found");
                     return $.Deferred().reject();
                 } else {
-                    return $.Deferred().resolve(workspace.workspaceReference.id);
+                    return $.Deferred().resolve(workspace.id);
                 }
             })
             .then(function(){
