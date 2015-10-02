@@ -104,6 +104,8 @@ import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.ServiceBindingHelper;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
  *
@@ -259,7 +261,9 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         ),
                         new UriStartFromRequestFilter("/api/analytics/public-metric"),
                         new UriStartFromRequestFilter("/api/docs"),
-                        new RegexpRequestFilter("^/api/builder/(\\w+)/download/(.+)$")
+                        new RegexpRequestFilter("^/api/builder/(\\w+)/download/(.+)$"),
+                        new ConjunctionRequestFilter(new UriStartFromRequestFilter("/api/oauth/authenticate"),
+                                                     r -> isNullOrEmpty(r.getParameter("userId")))
                 )
                                             );
 
