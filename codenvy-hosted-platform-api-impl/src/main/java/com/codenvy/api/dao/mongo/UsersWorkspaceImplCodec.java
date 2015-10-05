@@ -152,7 +152,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         final SourceStorageImpl storage = new SourceStorageImpl(storageDocument.getString("type"),
                                                                 storageDocument.getString("location"),
                                                                 documentsListAsMap((List<Document>)storageDocument.get("parameters")));
-        projectConfig.setSourceStorage(storage);
+        projectConfig.setStorage(storage);
         return projectConfig;
     }
 
@@ -163,7 +163,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                 .append("description", project.getDescription())
                                                 .append("mixinTypes", project.getMixinTypes())
                                                 .append("attributes", mapAsDocumentsList(project.getAttributes()));
-        final SourceStorage sourceStorage = project.getSourceStorage();
+        final SourceStorage sourceStorage = project.getStorage();
         if (sourceStorage != null) {
             document.append("sourceStorage", new Document().append("type", sourceStorage.getType())
                                                            .append("location", sourceStorage.getLocation())

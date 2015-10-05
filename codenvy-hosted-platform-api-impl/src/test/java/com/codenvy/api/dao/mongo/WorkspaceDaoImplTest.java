@@ -322,15 +322,15 @@ public class WorkspaceDaoImplTest {
                 assertEquals(project.getAttributes().get(attrName), attrValue, "Attribute values");
             }
 
-            if (project.getSourceStorage() != null) {
+            if (project.getStorage() != null) {
                 final Document source = (Document)projDoc.get("sourceStorage");
 
                 assertNotNull(source);
-                assertEquals(source.getString("type"), project.getSourceStorage().getType(), "Source type");
-                assertEquals(source.getString("location"), project.getSourceStorage().getLocation(), "Source location");
+                assertEquals(source.getString("type"), project.getStorage().getType(), "Source type");
+                assertEquals(source.getString("location"), project.getStorage().getLocation(), "Source location");
 
                 final List<Document> parameters = (List<Document>)source.get("parameters");
-                assertEquals(documentsListAsMap(parameters), project.getSourceStorage().getParameters(), "Source parameters");
+                assertEquals(documentsListAsMap(parameters), project.getStorage().getParameters(), "Source parameters");
             }
         }
 
@@ -464,7 +464,7 @@ public class WorkspaceDaoImplTest {
         final Map<String, String> sourceParameters = new HashMap<>(4);
         sourceParameters.put("source-parameter-1", "value1");
         sourceParameters.put("source-parameter-2", "value2");
-        project1.setSourceStorage(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
+        project1.setStorage(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
 
         final List<ProjectConfigImpl> projects = singletonList(project1);
 
