@@ -17,6 +17,7 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -59,8 +60,6 @@ public class UserDaoTest extends BaseTest {
     @Mock
     AccountDao     accountDao;
     @Mock
-    WorkspaceDao   workspaceDao;
-    @Mock
     PreferenceDao  preferenceDao;
 
     UserDaoImpl               userDao;
@@ -82,7 +81,6 @@ public class UserDaoTest extends BaseTest {
         mapper = spy(new UserAttributesMapper());
         userDao = new UserDaoImpl(accountDao,
                                   profileDao,
-                                  workspaceDao,
                                   preferenceDao,
                                   factory,
                                   "dc=codenvy;dc=com",
@@ -373,46 +371,45 @@ public class UserDaoTest extends BaseTest {
         userDao.getById("valid");
     }
 
-//    @Test
-//    public void shouldRemoveUserAndAllDependentEntries() throws Exception {
-//        //given
-//        //prepare user
-//        final User testUser = users[0];
-//
-//        //prepare account
-//        final Account testAccount = new Account().withId("account_id");
-//        when(accountDao.getByOwner(testUser.getId())).thenReturn(singletonList(testAccount));
-//
-//        //prepare account members
-//        final org.eclipse.che.api.account.server.dao.Member accountMember = new org.eclipse.che.api.account.server.dao.Member();
-//        accountMember.withUserId(testUser.getId())
-//                     .withAccountId(testAccount.getId())
-//                     .withRoles(singletonList("account/owner"));
-//        when(accountDao.getMembers(testAccount.getId())).thenReturn(singletonList(accountMember));
-//        when(accountDao.getByMember(testUser.getId())).thenReturn(singletonList(accountMember));
-//
-//        //prepare workspace members
+    @Test
+    public void shouldRemoveUserAndAllDependentEntries() throws Exception {
+        //given
+        //prepare user
+        final User testUser = users[0];
+
+        //prepare account
+        final Account testAccount = new Account().withId("account_id");
+        when(accountDao.getByOwner(testUser.getId())).thenReturn(singletonList(testAccount));
+
+        //prepare account members
+        final org.eclipse.che.api.account.server.dao.Member accountMember = new org.eclipse.che.api.account.server.dao.Member();
+        accountMember.withUserId(testUser.getId())
+                     .withAccountId(testAccount.getId())
+                     .withRoles(singletonList("account/owner"));
+        when(accountDao.getMembers(testAccount.getId())).thenReturn(singletonList(accountMember));
+        when(accountDao.getByMember(testUser.getId())).thenReturn(singletonList(accountMember));
+
+//        prepare workspace members
 //        final Member workspaceMember = new Member().withUserId(testUser.getId())
 //                                                   .withWorkspaceId("test_workspace_id")
 //                                                   .withRoles(singletonList("workspace/developer"));
 //        when(memberDao.getUserRelationships(testUser.getId())).thenReturn(singletonList(workspaceMember));
-//
-//        //when
-//        userDao.remove(testUser.getId());
-//
-//        //then
-//        try {
-//            userDao.getById(testUser.getId());
-//            fail("User was not removed");
-//        } catch (NotFoundException ignored) {
-//            //user was removed successfully
-//        }
-//        verify(accountDao).remove(testAccount.getId());
-//        verify(accountDao).removeMember(accountMember);
-//        verify(memberDao).remove(workspaceMember);
-//        verify(profileDao).remove(testUser.getId());
-//        verify(preferenceDao).remove(testUser.getId());
-//    }
+
+        //when
+        userDao.remove(testUser.getId());
+
+        //then
+        try {
+            userDao.getById(testUser.getId());
+            fail("User was not removed");
+        } catch (NotFoundException ignored) {
+            //user was removed successfully
+        }
+        verify(accountDao).remove(testAccount.getId());
+        verify(accountDao).removeMember(accountMember);
+        verify(profileDao).remove(testUser.getId());
+        verify(preferenceDao).remove(testUser.getId());
+    }
 
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldThrowNotFoundExceptionWhenUserDoesNotExist() throws Exception {
