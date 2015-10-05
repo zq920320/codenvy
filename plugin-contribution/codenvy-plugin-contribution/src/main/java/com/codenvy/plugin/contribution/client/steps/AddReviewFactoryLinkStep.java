@@ -16,7 +16,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.ADD_REVIEW_FACTORY_LINK;
@@ -33,10 +33,10 @@ public class AddReviewFactoryLinkStep implements Step {
     private final NotificationHelper        notificationHelper;
 
     @Inject
-    public AddReviewFactoryLinkStep(@Nonnull final IssuePullRequestStep issuePullRequestStep,
-                                    @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                    @Nonnull final ContributeMessages messages,
-                                    @Nonnull final NotificationHelper notificationHelper) {
+    public AddReviewFactoryLinkStep(@NotNull final IssuePullRequestStep issuePullRequestStep,
+                                    @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                    @NotNull final ContributeMessages messages,
+                                    @NotNull final NotificationHelper notificationHelper) {
         this.issuePullRequestStep = issuePullRequestStep;
         this.messages = messages;
         this.notificationHelper = notificationHelper;
@@ -44,7 +44,7 @@ public class AddReviewFactoryLinkStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final String reviewFactoryUrl = workflow.getContext().getReviewFactoryUrl();
         if (reviewFactoryUrl == null) {
             notificationHelper.showWarning(messages.stepAddReviewFactoryLinkErrorAddingReviewFactoryLink());

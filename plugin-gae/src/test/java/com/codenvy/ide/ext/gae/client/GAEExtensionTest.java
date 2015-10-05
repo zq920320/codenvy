@@ -16,10 +16,8 @@ import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.project.tree.TreeStructureProviderRegistry;
 import com.codenvy.ide.ext.gae.client.actions.DeployApplicationAction;
 
-import org.eclipse.che.ide.debug.Debugger;
 import org.eclipse.che.ide.debug.DebuggerManager;
 import org.eclipse.che.ide.ext.java.jdi.client.debug.DebuggerPresenter;
-import org.eclipse.che.ide.extension.maven.client.projecttree.MavenProjectTreeStructureProvider;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwtmockito.GwtMockitoTestRunner;
 
@@ -68,12 +66,6 @@ public class GAEExtensionTest {
     @Before
     public void setUp() throws Exception {
         when(actionManager.getAction(IdeActions.GROUP_MAIN_MENU)).thenReturn(mainActionGroup);
-    }
-
-    @Test
-    public void projectTreeShouldBeSetUp() throws Exception {
-        extension.setUpJavaProjectTree(treeStructureProviderRegistry);
-        verify(treeStructureProviderRegistry).associateProjectTypeToTreeProvider(GAE_JAVA_ID, MavenProjectTreeStructureProvider.ID);
     }
 
     @Test

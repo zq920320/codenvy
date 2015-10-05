@@ -39,7 +39,7 @@ import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.HTTPMethod;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.HashMap;
 import java.util.Map;
@@ -68,15 +68,15 @@ public class GenerateReviewFactoryStep implements Step {
     private final NotificationHelper        notificationHelper;
 
     @Inject
-    public GenerateReviewFactoryStep(@Nonnull final AddReviewFactoryLinkStep addReviewFactoryLinkStep,
-                                     @Nonnull final ApiUrlTemplate apiUrlTemplate,
-                                     @Nonnull final ContributeMessages messages,
-                                     @Nonnull final DtoFactory dtoFactory,
-                                     @Nonnull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                                     @Nonnull final AsyncRequestFactory asyncRequestFactory,
-                                     @Nonnull final AppContext appContext,
-                                     @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                     @Nonnull final NotificationHelper notificationHelper) {
+    public GenerateReviewFactoryStep(@NotNull final AddReviewFactoryLinkStep addReviewFactoryLinkStep,
+                                     @NotNull final ApiUrlTemplate apiUrlTemplate,
+                                     @NotNull final ContributeMessages messages,
+                                     @NotNull final DtoFactory dtoFactory,
+                                     @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                                     @NotNull final AsyncRequestFactory asyncRequestFactory,
+                                     @NotNull final AppContext appContext,
+                                     @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                     @NotNull final NotificationHelper notificationHelper) {
         this.addReviewFactoryLinkStep = addReviewFactoryLinkStep;
         this.apiTemplate = apiUrlTemplate;
         this.messages = messages;
@@ -107,7 +107,7 @@ public class GenerateReviewFactoryStep implements Step {
     }-*/;
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         createFactory(workflow.getContext(), new AsyncCallback<Factory>() {
             @Override
             public void onSuccess(final Factory factory) {

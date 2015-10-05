@@ -30,7 +30,7 @@ import com.codenvy.ide.ext.gae.client.utils.GAEUtil;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.api.notification.Notification.Status;
 import static org.eclipse.che.ide.api.notification.Notification.Status.FINISHED;
@@ -100,26 +100,26 @@ public class UpdateApplicationPresenter implements ConfirmView.ActionDelegate, O
 
         this.buildCallBack = new UpdateGAECallback() {
             @Override
-            public void onSuccess(@Nonnull String message) {
+            public void onSuccess(@NotNull String message) {
                 showNotification(PROGRESS, INFO, locale.deployStarted(activeProject.getName()));
 
                 deployAction.perform(activeProject, message, deployCallBack);
             }
 
             @Override
-            public void onFailure(@Nonnull String errorMessage) {
+            public void onFailure(@NotNull String errorMessage) {
                 showNotification(FINISHED, ERROR, errorMessage);
             }
         };
 
         this.deployCallBack = new UpdateGAECallback() {
             @Override
-            public void onSuccess(@Nonnull String message) {
+            public void onSuccess(@NotNull String message) {
                 showNotification(FINISHED, INFO, locale.deploySuccess(message));
             }
 
             @Override
-            public void onFailure(@Nonnull String errorMessage) {
+            public void onFailure(@NotNull String errorMessage) {
                 showNotification(FINISHED, ERROR, locale.deployError(errorMessage));
             }
         };
@@ -148,7 +148,7 @@ public class UpdateApplicationPresenter implements ConfirmView.ActionDelegate, O
             }
         }, new FailureCallback() {
             @Override
-            public void onFailure(@Nonnull Throwable reason) {
+            public void onFailure(@NotNull Throwable reason) {
                 String message = reason.getMessage();
 
                 switch (message) {
@@ -212,7 +212,7 @@ public class UpdateApplicationPresenter implements ConfirmView.ActionDelegate, O
         view.close();
     }
 
-    private void showNotification(@Nonnull Status status, @Nonnull Type type, @Nonnull String message) {
+    private void showNotification(@NotNull Status status, @NotNull Type type, @NotNull String message) {
         if (notification == null) {
             notification = new Notification(message, type, status);
             notificationManager.showNotification(notification);

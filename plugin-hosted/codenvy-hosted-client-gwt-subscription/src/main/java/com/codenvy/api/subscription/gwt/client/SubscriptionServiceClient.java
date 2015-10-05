@@ -21,7 +21,7 @@ import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -36,7 +36,7 @@ public interface SubscriptionServiceClient {
      * @param callback
      *         the callback to use for the response
      */
-    void getSubscriptions(@Nonnull String accountId, AsyncRequestCallback<List<SubscriptionDescriptor>> callback);
+    void getSubscriptions(@NotNull String accountId, AsyncRequestCallback<List<SubscriptionDescriptor>> callback);
 
     /**
      * Get subscription with specified id of specified account.
@@ -48,8 +48,8 @@ public interface SubscriptionServiceClient {
      * @param callback
      *         the callback to use for the response
      */
-    void getSubscriptionByServiceId(@Nonnull String accountId,
-                                    @Nonnull String serviceId,
+    void getSubscriptionByServiceId(@NotNull String accountId,
+                                    @NotNull String serviceId,
                                     AsyncRequestCallback<List<SubscriptionDescriptor>> callback);
 
 }

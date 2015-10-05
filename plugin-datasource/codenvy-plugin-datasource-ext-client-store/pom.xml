@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-datasource-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>3.12.2-SNAPSHOT</version>
+        <version>4.0-M2-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-plugin-datasource-ext-client-store</artifactId>
     <name>Codenvy Plugin :: Datasource :: Client Store</name>
@@ -30,6 +30,12 @@
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
             <version>${com.google.code.guice.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guava</artifactId>
+                    <groupId>com.google.guava</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
@@ -37,15 +43,20 @@
             <version>${che.core.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-runner-ext-runner</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
             <groupId>com.google.gwt.inject</groupId>
             <artifactId>gin</artifactId>
             <version>${com.google.gwt.gin.version}</version>
             <scope>provided</scope>
+            <exclusions>
+                <exclusion>
+                    <artifactId>guice</artifactId>
+                    <groupId>com.google.inject</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>guice-assistedinject</artifactId>
+                    <groupId>com.google.inject.extensions</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
     <build>

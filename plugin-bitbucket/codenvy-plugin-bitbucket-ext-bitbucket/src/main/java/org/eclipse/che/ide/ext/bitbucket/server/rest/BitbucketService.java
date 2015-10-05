@@ -29,7 +29,7 @@ import org.eclipse.che.ide.ext.ssh.server.SshKey;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
 import org.eclipse.che.ide.ext.ssh.server.SshKeyStoreException;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
@@ -53,9 +53,9 @@ public class BitbucketService {
     private final SshKeyStore          sshKeyStore;
 
     @Inject
-    public BitbucketService(@Nonnull final Bitbucket bitbucket,
-                            @Nonnull final BitbucketKeyUploader bitbucketKeyUploader,
-                            @Nonnull final SshKeyStore sshKeyStore) {
+    public BitbucketService(@NotNull final Bitbucket bitbucket,
+                            @NotNull final BitbucketKeyUploader bitbucketKeyUploader,
+                            @NotNull final SshKeyStore sshKeyStore) {
         this.bitbucket = bitbucket;
         this.bitbucketKeyUploader = bitbucketKeyUploader;
         this.sshKeyStore = sshKeyStore;

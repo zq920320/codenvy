@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.Widget;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Sharing channel.
@@ -43,7 +43,7 @@ public abstract class SharingChannel {
      * @param clickHandler
      *         handler called when the sharing channel is clicked.
      */
-    public SharingChannel(@Nonnull SVGResource icon, @Nonnull String label, ClickHandler clickHandler) {
+    public SharingChannel(@NotNull SVGResource icon, @NotNull String label, ClickHandler clickHandler) {
         this.icon = icon;
         this.label = label;
         this.clickHandler = clickHandler;
@@ -55,7 +55,7 @@ public abstract class SharingChannel {
      * @return the sharing channel icon.
      */
     public
-    @Nonnull
+    @NotNull
     SVGResource getIcon() {
         return icon;
     }
@@ -66,7 +66,7 @@ public abstract class SharingChannel {
      * @return the sharing channel label.
      */
     public
-    @Nonnull
+    @NotNull
     String getLabel() {
         return label;
     }
@@ -79,7 +79,7 @@ public abstract class SharingChannel {
      * @param params
      *         parameters used for decoration.
      */
-    public final void decorate(@Nonnull Widget element, @Nonnull String... params) {
+    public final void decorate(@NotNull Widget element, @NotNull String... params) {
         if (clickHandler != null) {
             element.addDomHandler(clickHandler, ClickEvent.getType());
         }
@@ -94,7 +94,7 @@ public abstract class SharingChannel {
      * @param params
      *         parameters used for decoration.
      */
-    protected void decorateWidget(@Nonnull Widget element, @Nonnull String... params) {
+    protected void decorateWidget(@NotNull Widget element, @NotNull String... params) {
     }
 
     /**
@@ -106,7 +106,7 @@ public abstract class SharingChannel {
      *         the template parameters.
      * @return the rendered template.
      */
-    protected String render(@Nonnull String template, String... params) {
+    protected String render(@NotNull String template, String... params) {
         String renderedTemplate = template;
         if (params != null) {
             for (int i = 0; i < params.length; i++) {

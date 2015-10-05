@@ -23,7 +23,7 @@ import com.codenvy.ide.share.client.share.social.SharingChannel;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.user.client.ui.Widget;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Email sharing channel.
@@ -37,6 +37,6 @@ public class Email extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull Widget element, @Nonnull String... params) {
+    public void decorateWidget(@NotNull Widget element, @NotNull String... params) {
     }
 }

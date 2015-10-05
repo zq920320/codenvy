@@ -26,7 +26,7 @@ import org.eclipse.che.ide.maven.tools.Model;
 import org.eclipse.che.ide.maven.tools.Parent;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -120,23 +120,23 @@ public class GAEParametersService {
         return gaeYamlInfo;
     }
 
-    private VirtualFile getProjectFolder(@Nonnull String projectPath) throws ForbiddenException, NotFoundException, ServerException {
+    private VirtualFile getProjectFolder(@NotNull String projectPath) throws ForbiddenException, NotFoundException, ServerException {
         VirtualFileEntry fileEntry = projectManager.getProjectsRoot(wsId).getChild(projectPath);
         if (fileEntry != null)
             return fileEntry.getVirtualFile();
         else throw new NotFoundException(String.format("Project %s not found in %s workspace ", projectPath, wsId));
     }
 
-    @Nonnull
-    private String getApplicationIdFromYaml(@Nonnull VirtualFile yamlFile) throws ApiException, IOException {
+    @NotNull
+    private String getApplicationIdFromYaml(@NotNull VirtualFile yamlFile) throws ApiException, IOException {
         try (InputStream inputStream = yamlFile.getContent().getStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
             return YamlAppInfo.parse(reader).application;
         }
     }
 
-    @Nonnull
-    private String getWebAppEngineParameters(@Nonnull VirtualFile projectFolder) throws ApiException, IOException {
+    @NotNull
+    private String getWebAppEngineParameters(@NotNull VirtualFile projectFolder) throws ApiException, IOException {
 
         VirtualFile appEngineWebXml = projectFolder.getChild(APP_ENGINE_WEB_XML_PATH);
 

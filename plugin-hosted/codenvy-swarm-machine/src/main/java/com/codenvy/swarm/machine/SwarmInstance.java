@@ -21,12 +21,13 @@ import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
+import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.server.spi.InstanceMetadata;
-import org.eclipse.che.api.machine.shared.Recipe;
 import org.eclipse.che.plugin.docker.machine.DockerInstance;
+import org.eclipse.che.plugin.docker.machine.DockerInstanceStopDetector;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
 import org.eclipse.che.plugin.docker.machine.DockerNode;
 
@@ -58,7 +59,8 @@ public class SwarmInstance extends DockerInstance {
                          @Assisted DockerNode node,
                          @Assisted Recipe recipe,
                          @Assisted LineConsumer outputConsumer,
-                         @Assisted int memorySizeMB) {
+                         @Assisted int memorySizeMB,
+                         DockerInstanceStopDetector dockerInstanceStopDetector) {
         super(docker,
               registry,
               dockerMachineFactory,
@@ -71,7 +73,8 @@ public class SwarmInstance extends DockerInstance {
               node,
               outputConsumer,
               recipe,
-              memorySizeMB);
+              memorySizeMB,
+              dockerInstanceStopDetector);
         this.docker = docker;
         this.container = container;
     }

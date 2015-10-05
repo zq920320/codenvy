@@ -23,7 +23,7 @@ import com.google.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -45,7 +45,7 @@ public class GAEServerUtilImpl implements GAEServerUtil {
 
     /** {@inheritDoc} */
     @Override
-    public void setApplicationIdToWebAppEngine(@Nonnull VirtualFile file, @Nonnull String applicationId) throws ApiException {
+    public void setApplicationIdToWebAppEngine(@NotNull VirtualFile file, @NotNull String applicationId) throws ApiException {
         try {
             XMLTree webXmlTree = XMLTree.from(file.getContent().getStream());
             webXmlTree.updateText(APPLICATION_ID_XPATH, applicationId);
@@ -57,7 +57,7 @@ public class GAEServerUtilImpl implements GAEServerUtil {
 
     /** {@inheritDoc} */
     @Override
-    public void setApplicationIdToAppYaml(@Nonnull VirtualFile file, @Nonnull String applicationId) throws ApiException {
+    public void setApplicationIdToAppYaml(@NotNull VirtualFile file, @NotNull String applicationId) throws ApiException {
         try {
             String content = IOUtils.toString(file.getContent().getStream());
             String newContent = PATTERN_YAML.matcher(content).replaceFirst("application: " + applicationId);
@@ -68,9 +68,9 @@ public class GAEServerUtilImpl implements GAEServerUtil {
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
-    public String getApplicationIdFromAppYaml(@Nonnull VirtualFile appYaml) throws ApiException {
+    public String getApplicationIdFromAppYaml(@NotNull VirtualFile appYaml) throws ApiException {
 
         try (InputStream inputStream = appYaml.getContent().getStream();
              BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -86,9 +86,9 @@ public class GAEServerUtilImpl implements GAEServerUtil {
     }
 
     /** {@inheritDoc} */
-    @Nonnull
+    @NotNull
     @Override
-    public String getApplicationIdFromWebAppEngine(@Nonnull VirtualFile webAppEngine) throws ApiException {
+    public String getApplicationIdFromWebAppEngine(@NotNull VirtualFile webAppEngine) throws ApiException {
         try {
             String appId = XMLTree.from(webAppEngine.getContent().getStream()).getSingleText(APPLICATION_ID_XPATH);
             return appId == null ? "" : appId;

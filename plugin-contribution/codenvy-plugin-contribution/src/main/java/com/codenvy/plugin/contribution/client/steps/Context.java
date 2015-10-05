@@ -15,7 +15,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.Objects;
 
@@ -72,7 +72,7 @@ public class Context {
     private String forkedRepositoryName;
 
     @Inject
-    public Context(@Nonnull final EventBus eventBus) {
+    public Context(@NotNull final EventBus eventBus) {
         this.eventBus = eventBus;
     }
 

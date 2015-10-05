@@ -15,7 +15,7 @@ import static com.google.gwt.user.client.ui.HasHorizontalAlignment.ALIGN_LEFT;
 import java.util.Collection;
 import java.util.List;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.che.ide.api.notification.Notification;
@@ -497,7 +497,7 @@ public class SqlRequestLauncherPresenter implements NestablePresenter,
     }
 
     @Override
-    public void onClose(@Nonnull final AsyncCallback<Void> callback) {
+    public void onClose(@NotNull final AsyncCallback<Void> callback) {
         this.textEditor.onClose(new AsyncCallback<Void>() {
             @Override
             public void onFailure(Throwable throwable) {

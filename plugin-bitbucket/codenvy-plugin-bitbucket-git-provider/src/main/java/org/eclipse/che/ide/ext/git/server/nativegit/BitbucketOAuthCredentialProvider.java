@@ -16,21 +16,21 @@ import org.eclipse.che.api.git.GitException;
 import org.eclipse.che.api.git.shared.GitUser;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
-import org.eclipse.che.git.impl.nativegit.CredentialsProvider;
-import org.eclipse.che.git.impl.nativegit.UserCredential;
+import org.eclipse.che.api.git.CredentialsProvider;
+import org.eclipse.che.api.git.UserCredential;
 import org.eclipse.che.security.oauth1.BitbucketOAuthAuthenticator;
 import org.eclipse.che.security.oauth1.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth1.shared.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
 
 /**
- * {@link org.eclipse.che.git.impl.nativegit.CredentialsProvider} implementation for Bitbucket.
+ * {@link CredentialsProvider} implementation for Bitbucket.
  *
  * @author Kevin Pollet
  */
@@ -42,7 +42,7 @@ public class BitbucketOAuthCredentialProvider implements CredentialsProvider {
     private final BitbucketOAuthAuthenticator oAuthAuthenticator;
 
     @Inject
-    public BitbucketOAuthCredentialProvider(@Nonnull final BitbucketOAuthAuthenticator oAuthAuthenticator) {
+    public BitbucketOAuthCredentialProvider(@NotNull final BitbucketOAuthAuthenticator oAuthAuthenticator) {
         this.oAuthAuthenticator = oAuthAuthenticator;
     }
 

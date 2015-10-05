@@ -24,7 +24,7 @@ import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
@@ -47,12 +47,12 @@ public class InitializeWorkflowContextStep implements Step {
     private final Step                      defineWorkBranchStep;
 
     @Inject
-    public InitializeWorkflowContextStep(@Nonnull final VcsServiceProvider vcsServiceProvider,
-                                         @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                         @Nonnull final AppContext appContext,
-                                         @Nonnull final NotificationHelper notificationHelper,
-                                         @Nonnull final ContributeMessages messages,
-                                         @Nonnull final DefineWorkBranchStep defineWorkBranchStep) {
+    public InitializeWorkflowContextStep(@NotNull final VcsServiceProvider vcsServiceProvider,
+                                         @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                         @NotNull final AppContext appContext,
+                                         @NotNull final NotificationHelper notificationHelper,
+                                         @NotNull final ContributeMessages messages,
+                                         @NotNull final DefineWorkBranchStep defineWorkBranchStep) {
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.appContext = appContext;
@@ -62,7 +62,7 @@ public class InitializeWorkflowContextStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final CurrentProject currentProject = appContext.getCurrentProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();

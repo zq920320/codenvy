@@ -38,7 +38,7 @@ import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -68,12 +68,12 @@ public class GitHubHostingService implements VcsHostingService {
     private final String                  baseUrl;
 
     @Inject
-    public GitHubHostingService(@Nonnull @RestContext final String baseUrl,
-                                @Nonnull final AppContext appContext,
-                                @Nonnull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                                @Nonnull final DtoFactory dtoFactory,
-                                @Nonnull final GitHubClientService gitHubClientService,
-                                @Nonnull final GitHubTemplates templates) {
+    public GitHubHostingService(@NotNull @RestContext final String baseUrl,
+                                @NotNull final AppContext appContext,
+                                @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                                @NotNull final DtoFactory dtoFactory,
+                                @NotNull final GitHubClientService gitHubClientService,
+                                @NotNull final GitHubTemplates templates) {
         this.appContext = appContext;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.dtoFactory = dtoFactory;
@@ -83,7 +83,7 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getUserInfo(@Nonnull final AsyncCallback<HostUser> callback) {
+    public void getUserInfo(@NotNull final AsyncCallback<HostUser> callback) {
         gitHubClientService.getUserInfo(new AsyncRequestCallback<GitHubUser>(dtoUnmarshallerFactory.newUnmarshaller(GitHubUser.class)) {
             @Override
             protected void onSuccess(final GitHubUser gitHubUser) {
@@ -108,7 +108,7 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getRepository(@Nonnull String owner, @Nonnull String repository, @Nonnull final AsyncCallback<Repository> callback) {
+    public void getRepository(@NotNull String owner, @NotNull String repository, @NotNull final AsyncCallback<Repository> callback) {
         gitHubClientService.getRepository(owner, repository, new AsyncRequestCallback<GitHubRepository>(
                 dtoUnmarshallerFactory.newUnmarshaller(GitHubRepository.class)) {
             @Override
@@ -123,9 +123,9 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getRepositoryNameFromUrl(@Nonnull final String url) {
+    public String getRepositoryNameFromUrl(@NotNull final String url) {
         final String urlWithoutGitHubPrefix = removeGithubPrefix(url);
 
         final String namePart = REPOSITORY_NAME_OWNER_PATTERN.exec(urlWithoutGitHubPrefix).getGroup(2);
@@ -136,9 +136,9 @@ public class GitHubHostingService implements VcsHostingService {
         }
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getRepositoryOwnerFromUrl(@Nonnull final String url) {
+    public String getRepositoryOwnerFromUrl(@NotNull final String url) {
         final String urlWithoutGitHubPrefix = removeGithubPrefix(url);
 
         return REPOSITORY_NAME_OWNER_PATTERN.exec(urlWithoutGitHubPrefix).getGroup(1);
@@ -159,7 +159,7 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void fork(@Nonnull final String owner, @Nonnull final String repository, @Nonnull final AsyncCallback<Repository> callback) {
+    public void fork(@NotNull final String owner, @NotNull final String repository, @NotNull final AsyncCallback<Repository> callback) {
         gitHubClientService.fork(owner, repository, new AsyncRequestCallback<GitHubRepository>(
                 dtoUnmarshallerFactory.newUnmarshaller(GitHubRepository.class)) {
             @Override
@@ -179,51 +179,51 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makeSSHRemoteUrl(@Nonnull final String username, @Nonnull final String repository) {
+    public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
         return templates.sshUrlTemplate(username, repository);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makeHttpRemoteUrl(@Nonnull final String username, @Nonnull final String repository) {
+    public String makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
         return templates.httpUrlTemplate(username, repository);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makePullRequestUrl(@Nonnull final String username, @Nonnull final String repository,
-                                     @Nonnull final String pullRequestNumber) {
+    public String makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
+                                     @NotNull final String pullRequestNumber) {
         return templates.pullRequestUrlTemplate(username, repository, pullRequestNumber);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String formatReviewFactoryUrl(@Nonnull final String reviewFactoryUrl) {
+    public String formatReviewFactoryUrl(@NotNull final String reviewFactoryUrl) {
         final String protocol = Window.Location.getProtocol();
         final String host = Window.Location.getHost();
 
         return templates.formattedReviewFactoryUrlTemplate(protocol, host, reviewFactoryUrl);
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "GitHub";
     }
 
     @Override
-    public boolean isHostRemoteUrl(@Nonnull final String remoteUrl) {
+    public boolean isHostRemoteUrl(@NotNull final String remoteUrl) {
         return remoteUrl.startsWith(SSH_URL_PREFIX) || remoteUrl.startsWith(HTTPS_URL_PREFIX);
     }
 
     @Override
-    public void getPullRequest(@Nonnull final String owner,
-                               @Nonnull final String repository,
-                               @Nonnull final String username,
-                               @Nonnull final String branchName,
-                               @Nonnull final AsyncCallback<PullRequest> callback) {
+    public void getPullRequest(@NotNull final String owner,
+                               @NotNull final String repository,
+                               @NotNull final String username,
+                               @NotNull final String branchName,
+                               @NotNull final AsyncCallback<PullRequest> callback) {
 
         final String qualifiedBranchName = username + ":" + branchName;
 
@@ -256,9 +256,9 @@ public class GitHubHostingService implements VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    private void getPullRequests(@Nonnull final String owner,
-                                 @Nonnull final String repository,
-                                 @Nonnull final AsyncCallback<List<PullRequest>> callback) {
+    private void getPullRequests(@NotNull final String owner,
+                                 @NotNull final String repository,
+                                 @NotNull final AsyncCallback<List<PullRequest>> callback) {
 
         gitHubClientService.getPullRequests(owner, repository, new AsyncRequestCallback<GitHubPullRequestList>(
                 dtoUnmarshallerFactory.newUnmarshaller(GitHubPullRequestList.class)) {
@@ -288,15 +288,15 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void createPullRequest(@Nonnull final String owner,
-                                  @Nonnull final String repository,
-                                  @Nonnull final String username,
-                                  @Nonnull final String headRepository,
-                                  @Nonnull final String headBranchName,
-                                  @Nonnull final String baseBranchName,
-                                  @Nonnull final String title,
-                                  @Nonnull final String body,
-                                  @Nonnull final AsyncCallback<PullRequest> callback) {
+    public void createPullRequest(@NotNull final String owner,
+                                  @NotNull final String repository,
+                                  @NotNull final String username,
+                                  @NotNull final String headRepository,
+                                  @NotNull final String headBranchName,
+                                  @NotNull final String baseBranchName,
+                                  @NotNull final String title,
+                                  @NotNull final String body,
+                                  @NotNull final AsyncCallback<PullRequest> callback) {
 
         final String qualifiedHeadBranchName = username + ":" + headBranchName;
         final GitHubPullRequestCreationInput input = dtoFactory.createDto(GitHubPullRequestCreationInput.class)
@@ -333,10 +333,10 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getUserFork(@Nonnull final String user,
-                            @Nonnull final String owner,
-                            @Nonnull final String repository,
-                            @Nonnull final AsyncCallback<Repository> callback) {
+    public void getUserFork(@NotNull final String user,
+                            @NotNull final String owner,
+                            @NotNull final String repository,
+                            @NotNull final AsyncCallback<Repository> callback) {
 
         getForks(owner, repository, new AsyncCallback<List<Repository>>() {
 
@@ -368,9 +368,9 @@ public class GitHubHostingService implements VcsHostingService {
      * @param callback
      *         callback called when operation is done.
      */
-    private void getForks(@Nonnull final String owner,
-                          @Nonnull final String repository,
-                          @Nonnull final AsyncCallback<List<Repository>> callback) {
+    private void getForks(@NotNull final String owner,
+                          @NotNull final String repository,
+                          @NotNull final AsyncCallback<List<Repository>> callback) {
 
         gitHubClientService.getForks(owner, repository, new AsyncRequestCallback<GitHubRepositoryList>(
                 dtoUnmarshallerFactory.newUnmarshaller(GitHubRepositoryList.class)) {
@@ -461,7 +461,7 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void authenticate(@Nonnull final CurrentUser currentUser, @Nonnull final AsyncCallback<HostUser> callback) {
+    public void authenticate(@NotNull final CurrentUser currentUser, @NotNull final AsyncCallback<HostUser> callback) {
         final WorkspaceDescriptor workspace = this.appContext.getWorkspace();
         if (workspace == null) {
             callback.onFailure(new Exception("Error accessing current workspace"));

@@ -20,7 +20,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.AUTHORIZE_CODENVY_ON_VCS_HOST;
@@ -38,11 +38,11 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
     private final ContributeMessages        messages;
 
     @Inject
-    public AuthorizeCodenvyOnVCSHostStep(@Nonnull final InitializeWorkflowContextStep initializeWorkflowContextStep,
-                                         @Nonnull final NotificationHelper notificationHelper,
-                                         @Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                         @Nonnull final AppContext appContext,
-                                         @Nonnull final ContributeMessages messages) {
+    public AuthorizeCodenvyOnVCSHostStep(@NotNull final InitializeWorkflowContextStep initializeWorkflowContextStep,
+                                         @NotNull final NotificationHelper notificationHelper,
+                                         @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                         @NotNull final AppContext appContext,
+                                         @NotNull final ContributeMessages messages) {
         this.initializeWorkflowContextStep = initializeWorkflowContextStep;
         this.notificationHelper = notificationHelper;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
@@ -51,7 +51,7 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
             @Override
             public void onFailure(final Throwable exception) {

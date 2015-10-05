@@ -20,6 +20,7 @@ package com.codenvy.ide.factory.client.utils;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.accept.Authenticator;
 import com.codenvy.ide.factory.shared.Constants;
+import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
@@ -191,6 +192,8 @@ public class FactoryProjectImporter {
                                                 .withSource(factory.getSource())
                                                 .withProject(factory.getProject());
 
+        setUpContentRoot();
+
         projectServiceClient.importProject(factory.getProject().getName(), true, importProject,
                                            new AsyncRequestCallback<ImportResponse>(
                                                    dtoUnmarshallerFactory.newUnmarshaller(ImportResponse.class)) {
@@ -215,6 +218,26 @@ public class FactoryProjectImporter {
                                                    }
                                                }
                                            });
+    }
+
+    private void setUpContentRoot() {
+        Map<String, String> parameters = factory.getSource().getProject().getParameters();
+
+        if (!parameters.containsKey("keepDirectory")) {
+            return;
+        }
+
+        final String directory = parameters.get("keepDirectory");
+
+        if (Strings.isNullOrEmpty(directory)) {
+            return;
+        }
+
+        factory.getProject().setContentRoot(directory);
+
+        if (Strings.isNullOrEmpty(factory.getProject().getType())) {
+            factory.getProject().setType("blank");
+        }
     }
 
     private void rerunWithAuthImport() {

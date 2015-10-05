@@ -18,7 +18,7 @@ import org.eclipse.che.api.project.shared.dto.ImportProject;
 import org.eclipse.che.ide.api.project.type.wizard.ProjectWizardRegistrar;
 import org.eclipse.che.ide.api.wizard.WizardPage;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -39,17 +39,17 @@ public class GAEPythonProjectWizardRegistrar implements ProjectWizardRegistrar {
         wizardPages.add(mavenPagePresenter);
     }
 
-    @Nonnull
+    @NotNull
     public String getProjectTypeId() {
         return GAE_PYTHON_ID;
     }
 
-    @Nonnull
+    @NotNull
     public String getCategory() {
         return PYTHON_CATEGORY;
     }
 
-    @Nonnull
+    @NotNull
     public List<Provider<? extends WizardPage<ImportProject>>> getWizardPages() {
         return wizardPages;
     }

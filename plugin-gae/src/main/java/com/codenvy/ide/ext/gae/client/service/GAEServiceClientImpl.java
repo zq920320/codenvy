@@ -27,8 +27,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 import static org.eclipse.che.ide.MimeType.APPLICATION_JSON;
 import static org.eclipse.che.ide.rest.HTTPHeader.ACCEPT;
@@ -76,7 +76,7 @@ public class GAEServiceClientImpl implements GAEServiceClient {
 
     /** {@inheritDoc} */
     @Override
-    public void update(@Nonnull String projectPath, @Nullable String bin, @Nonnull GAERequestCallback<ApplicationInfo> callback) {
+    public void update(@NotNull String projectPath, @Nullable String bin, @NotNull GAERequestCallback<ApplicationInfo> callback) {
         String url = pathToWorkSpace + "/update";
 
         boolean isBinExist = bin != null && !bin.isEmpty();
@@ -96,7 +96,7 @@ public class GAEServiceClientImpl implements GAEServiceClient {
 
     /** {@inheritDoc} */
     @Override
-    public void getLoggedUser(@Nonnull GAEAsyncRequestCallback<OAuthToken> callback) {
+    public void getLoggedUser(@NotNull GAEAsyncRequestCallback<OAuthToken> callback) {
         String url = pathToUser;
 
         asyncRequestFactory.createGetRequest(url).loader(loader).send(callback);
@@ -104,7 +104,7 @@ public class GAEServiceClientImpl implements GAEServiceClient {
 
     /** {@inheritDoc} */
     @Override
-    public void readGAEMavenParameters(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<GAEMavenInfo> callback) {
+    public void readGAEMavenParameters(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<GAEMavenInfo> callback) {
         String requestUrl = restContext + pathToGAEMavenService + "/read/maven?projectpath=" + projectPath;
 
         asyncRequestFactory.createGetRequest(requestUrl).header(ACCEPT, APPLICATION_JSON).loader(loader).send(callback);
@@ -112,7 +112,7 @@ public class GAEServiceClientImpl implements GAEServiceClient {
 
     /** {@inheritDoc} */
     @Override
-    public void readGAEYamlParameters(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<YamlParameterInfo> callback) {
+    public void readGAEYamlParameters(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<YamlParameterInfo> callback) {
         String requestUrl = restContext + pathToGAEMavenService + "/read/yaml?projectpath=" + projectPath;
 
         asyncRequestFactory.createGetRequest(requestUrl).header(ACCEPT, APPLICATION_JSON).loader(loader).send(callback);
@@ -120,7 +120,7 @@ public class GAEServiceClientImpl implements GAEServiceClient {
 
     /** {@inheritDoc} */
     @Override
-    public void validateProject(@Nonnull String projectPath, @Nonnull GAEAsyncRequestCallback<Void> callback) {
+    public void validateProject(@NotNull String projectPath, @NotNull GAEAsyncRequestCallback<Void> callback) {
         String requestUrl = restContext + pathToValidator + "/validate?projectpath=" + projectPath;
 
         asyncRequestFactory.createGetRequest(requestUrl).header(ACCEPT, APPLICATION_JSON).loader(loader).send(callback);

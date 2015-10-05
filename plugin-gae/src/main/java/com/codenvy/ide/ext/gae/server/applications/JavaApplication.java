@@ -32,7 +32,7 @@ import org.eclipse.che.commons.lang.IoUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -68,8 +68,8 @@ public class JavaApplication implements GenericApplication {
         this.delegate = Application.readApplication(path);
     }
 
-    @Nonnull
-    private File getApplicationBinaries(@Nonnull URL url) throws IOException {
+    @NotNull
+    private File getApplicationBinaries(@NotNull URL url) throws IOException {
         File tempFile = downloadFile(null, "ide-appengine", null, url);
 
         Path appPath = Paths.get(tempFile.getParentFile().getPath(), tempFile.getName() + "_dir");

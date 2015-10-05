@@ -85,28 +85,29 @@ public class HelpExtension {
     }
 
     private void checkPremiumSubscription() {
-        final String accountId = Config.getCurrentWorkspace().getAccountId();
-        if (accountId != null) {
-            subscriptionServiceClient.getSubscriptions(accountId, new AsyncRequestCallback<List<SubscriptionDescriptor>>(
-                    dtoUnmarshallerFactory.newListUnmarshaller(SubscriptionDescriptor.class)) {
-
-                @Override
-                protected void onSuccess(List<SubscriptionDescriptor> result) {
-                    for (SubscriptionDescriptor subscription : result) {
-                        if (!("Saas".equals(subscription.getServiceId()) &&
-                              "Community".equals(subscription.getProperties().get("Package")))) {
-                            addPremiumSupportHelpAction();
-                            return;
-                        }
-                    }
-                }
-
-                @Override
-                protected void onFailure(Throwable exception) {
-                    //User hasn't permission to account
-                }
-            });
-        }
+        // TODO: fixme account
+//        final String accountId = Config.getCurrentWorkspace().getAccountId();
+//        if (accountId != null) {
+//            subscriptionServiceClient.getSubscriptions(accountId, new AsyncRequestCallback<List<SubscriptionDescriptor>>(
+//                    dtoUnmarshallerFactory.newListUnmarshaller(SubscriptionDescriptor.class)) {
+//
+//                @Override
+//                protected void onSuccess(List<SubscriptionDescriptor> result) {
+//                    for (SubscriptionDescriptor subscription : result) {
+//                        if (!("Saas".equals(subscription.getServiceId()) &&
+//                              "Community".equals(subscription.getProperties().get("Package")))) {
+//                            addPremiumSupportHelpAction();
+//                            return;
+//                        }
+//                    }
+//                }
+//
+//                @Override
+//                protected void onFailure(Throwable exception) {
+//                    //User hasn't permission to account
+//                }
+//            });
+//        }
     }
 
     private void addDefaultHelpAction() {

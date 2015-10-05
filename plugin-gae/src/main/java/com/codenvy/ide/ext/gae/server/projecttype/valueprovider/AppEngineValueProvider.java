@@ -20,8 +20,8 @@ import com.codenvy.ide.ext.gae.server.utils.GAEServerUtil;
 import com.google.inject.Inject;
 import com.google.inject.assistedinject.Assisted;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import java.util.Arrays;
 import java.util.List;
 
@@ -47,7 +47,7 @@ public class AppEngineValueProvider implements ValueProvider {
 
     /** {@inheritDoc} */
     @Override
-    @Nonnull
+    @NotNull
     public List<String> getValues(String attributeName) throws ValueStorageException {
         try {
             VirtualFile appEngineWebXml = getConfigurationFile(APP_ENGINE_WEB_XML_PATH);
@@ -71,7 +71,7 @@ public class AppEngineValueProvider implements ValueProvider {
 
     /** {@inheritDoc} */
     @Override
-    public void setValues(@Nonnull String attributeName, @Nonnull List<String> value) throws ValueStorageException {
+    public void setValues(@NotNull String attributeName, @NotNull List<String> value) throws ValueStorageException {
         if (value.isEmpty()) {
             return;
         }
@@ -89,7 +89,7 @@ public class AppEngineValueProvider implements ValueProvider {
         applyApplicationId(appId);
     }
 
-    private void applyApplicationId(@Nonnull String appId) throws ValueStorageException {
+    private void applyApplicationId(@NotNull String appId) throws ValueStorageException {
         try {
             VirtualFile appEngineWeb = getConfigurationFile(APP_ENGINE_WEB_XML_PATH);
             if (appEngineWeb != null) {
@@ -110,7 +110,7 @@ public class AppEngineValueProvider implements ValueProvider {
     }
 
     @Nullable
-    private VirtualFile getConfigurationFile(@Nonnull String path) throws ApiException {
+    private VirtualFile getConfigurationFile(@NotNull String path) throws ApiException {
         VirtualFile projectFolder = project.getVirtualFile();
         return projectFolder.getChild(path);
     }

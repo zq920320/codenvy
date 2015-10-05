@@ -14,7 +14,7 @@ import com.codenvy.ide.ext.gae.server.applications.JavaApplication;
 import com.codenvy.ide.ext.gae.server.applications.yaml.PHPApplication;
 import com.codenvy.ide.ext.gae.server.applications.yaml.PythonApplication;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.File;
 import java.net.URL;
 
@@ -33,8 +33,8 @@ public interface ApplicationFactory {
      *         directory where a project is located
      * @return an instance of  {@link PythonApplication}
      */
-    @Nonnull
-    PythonApplication createPythonApplication(@Nonnull File applicationDirectory);
+    @NotNull
+    PythonApplication createPythonApplication(@NotNull File applicationDirectory);
 
     /**
      * Create an instance of {@link PHPApplication} from given root directory.
@@ -43,8 +43,8 @@ public interface ApplicationFactory {
      *         directory where a project is located
      * @return an instance of  {@link PHPApplication}
      */
-    @Nonnull
-    PHPApplication createPHPApplication(@Nonnull File applicationDirectory);
+    @NotNull
+    PHPApplication createPHPApplication(@NotNull File applicationDirectory);
 
     /**
      * Create an instance of {@link JavaApplication} using url to binaries.
@@ -53,7 +53,7 @@ public interface ApplicationFactory {
      *         path to directory which contains binaries of project
      * @return an instance of  {@link JavaApplication}
      */
-    @Nonnull
-    JavaApplication createJavaApplication(@Nonnull URL url);
+    @NotNull
+    JavaApplication createJavaApplication(@NotNull URL url);
 
 }

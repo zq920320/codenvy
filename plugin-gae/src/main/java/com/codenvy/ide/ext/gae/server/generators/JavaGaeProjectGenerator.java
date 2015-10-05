@@ -26,7 +26,7 @@ import com.google.inject.Singleton;
 
 import org.apache.commons.io.IOUtils;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Map;
@@ -65,7 +65,7 @@ public class JavaGaeProjectGenerator implements CreateProjectHandler {
     }
 
     @Override
-    public void onCreateProject(@Nonnull FolderEntry baseFolder, Map<String, AttributeValue> attributes, Map<String, String> options)
+    public void onCreateProject(@NotNull FolderEntry baseFolder, Map<String, AttributeValue> attributes, Map<String, String> options)
             throws ForbiddenException, ConflictException, ServerException {
         generateProject(baseFolder, attributes);
     }
@@ -76,7 +76,7 @@ public class JavaGaeProjectGenerator implements CreateProjectHandler {
         return GAE_JAVA_ID;
     }
 
-    private void generateProject(@Nonnull FolderEntry baseFolder, Map<String, AttributeValue> attributes) throws ForbiddenException,
+    private void generateProject(@NotNull FolderEntry baseFolder, Map<String, AttributeValue> attributes) throws ForbiddenException,
                                                                                                                  ConflictException,
                                                                                                                  ServerException {
         baseFolder.createFolder(SOURCE_FOLDER);
@@ -97,7 +97,7 @@ public class JavaGaeProjectGenerator implements CreateProjectHandler {
         }
     }
 
-    private void applyPomConfiguration(@Nonnull FolderEntry baseFolder, @Nonnull Map<String, AttributeValue> attributes)
+    private void applyPomConfiguration(@NotNull FolderEntry baseFolder, @NotNull Map<String, AttributeValue> attributes)
             throws ApiException, IOException {
         VirtualFile pomFile = baseFolder.getChild(POM).getVirtualFile();
         XMLTree pomTree = XMLTree.from(pomFile.getContent().getStream());
@@ -120,7 +120,7 @@ public class JavaGaeProjectGenerator implements CreateProjectHandler {
         pomFile.updateContent(new ByteArrayInputStream(pomTree.getBytes()), null);
     }
 
-    private void applyApplicationId(@Nonnull FolderEntry webFolder, @Nonnull Map<String, AttributeValue> attributes)
+    private void applyApplicationId(@NotNull FolderEntry webFolder, @NotNull Map<String, AttributeValue> attributes)
             throws ApiException, IOException {
         AttributeValue applicationId = attributes.get(APPLICATION_ID);
         if (applicationId == null) {

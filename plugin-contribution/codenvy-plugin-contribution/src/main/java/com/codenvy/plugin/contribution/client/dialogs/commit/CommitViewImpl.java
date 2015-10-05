@@ -25,7 +25,7 @@ import com.google.inject.Inject;
 
 import org.eclipse.che.ide.ui.window.Window;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * UI for {@link CommitView}.
@@ -88,7 +88,7 @@ public class CommitViewImpl extends Window implements CommitView {
     }
 
     @Override
-    public void show(@Nonnull String commitDescription) {
+    public void show(@NotNull String commitDescription) {
         this.commitDescription.setText(commitDescription);
         new Timer() {
             @Override
@@ -104,7 +104,7 @@ public class CommitViewImpl extends Window implements CommitView {
         hide();
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getCommitDescription() {
         return commitDescription.getText();

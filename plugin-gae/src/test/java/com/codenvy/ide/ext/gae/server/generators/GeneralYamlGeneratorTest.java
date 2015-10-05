@@ -26,7 +26,7 @@ import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -129,8 +129,8 @@ public class GeneralYamlGeneratorTest {
 
     private class DummyGenerator extends GeneralYamlProjectGenerator {
 
-        public DummyGenerator(@Nonnull String projectId,
-                              @Nonnull GAEServerUtil gaeUtil) {
+        public DummyGenerator(@NotNull String projectId,
+                              @NotNull GAEServerUtil gaeUtil) {
             super(projectId, gaeUtil);
         }
 

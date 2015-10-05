@@ -25,16 +25,15 @@ import com.google.common.io.CharStreams;
 
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
-import org.eclipse.che.plugin.docker.client.AuthConfigs;
 import org.eclipse.che.plugin.docker.client.DockerCertificates;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerException;
 import org.eclipse.che.plugin.docker.client.InitialAuthConfig;
-import org.eclipse.che.plugin.docker.client.LogMessageProcessor;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
+import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
 import org.eclipse.che.plugin.docker.client.json.ContainerCreated;
 import org.eclipse.che.plugin.docker.client.json.HostConfig;
@@ -89,7 +88,7 @@ public class SwarmDockerConnector extends DockerConnector {
     private SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration) {
         this(connectorConfiguration.getDockerDaemonUri(),
              connectorConfiguration.getDockerCertificates(),
-             connectorConfiguration.getInitialAuthConfig(),
+             connectorConfiguration.getAuthConfigs(),
              new RandomNodeSelectionStrategy(),
              "http");
     }
@@ -122,9 +121,10 @@ public class SwarmDockerConnector extends DockerConnector {
     @Override
     protected String buildImage(String repository,
                                 File tar,
-                                ProgressMonitor progressMonitor) throws IOException, InterruptedException {
+                                ProgressMonitor progressMonitor,
+                                AuthConfigs authConfigs) throws IOException, InterruptedException {
         final DockerNode node = strategy.select(getAvailableNodes());
-        return doBuildImage(repository, tar, progressMonitor, addrToUri(node.getAddr()));
+        return doBuildImage(repository, tar, progressMonitor, addrToUri(node.getAddr()), authConfigs);
     }
 
     @Override
@@ -152,10 +152,10 @@ public class SwarmDockerConnector extends DockerConnector {
     }
 
     @Override
-    public void startContainer(final String container, HostConfig hostConfig, LogMessageProcessor startContainerLogProcessor)
+    public void startContainer(final String container, HostConfig hostConfig)
             throws IOException {
         final Node node = inspectContainerDirectly(container).getNode();
-        doStartContainer(container, hostConfig, startContainerLogProcessor, addrToUri(node.getAddr()));
+        doStartContainer(container, hostConfig, addrToUri(node.getAddr()));
 
         final long containerStartTime = System.currentTimeMillis();
         while (System.currentTimeMillis() - containerStartTime < WAIT_CONTAINER_AVAILABILITY_TIMEOUT_MILLISECONDS) {

@@ -24,7 +24,7 @@ import org.eclipse.che.ide.ext.datasource.client.store.DatasourceManager;
 import org.eclipse.che.ide.ext.datasource.shared.DatabaseConfigurationDTO;
 import org.eclipse.che.ide.util.loging.Log;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.Map;
 
 public class NewDatasourceWizard extends AbstractWizard<DatabaseConfigurationDTO> {
@@ -46,7 +46,7 @@ public class NewDatasourceWizard extends AbstractWizard<DatabaseConfigurationDTO
     }
 
     @Override
-    public void complete(@Nonnull final CompleteCallback callback) {
+    public void complete(@NotNull final CompleteCallback callback) {
         Log.debug(AbstractNewDatasourceConnectorPage.class, "Adding datasource with id " + dataObject.getDatasourceId());
         datasourceManager.add(dataObject);
 

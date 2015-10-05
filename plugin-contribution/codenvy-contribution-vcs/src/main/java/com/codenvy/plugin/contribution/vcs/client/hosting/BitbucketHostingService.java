@@ -39,7 +39,7 @@ import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Named;
 
@@ -79,12 +79,12 @@ public class BitbucketHostingService implements VcsHostingService {
     private final String                  baseUrl;
 
     @Inject
-    public BitbucketHostingService(@Nonnull final AppContext appContext,
-                                   @Nonnull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                                   @Nonnull final DtoFactory dtoFactory,
-                                   @Nonnull final BitbucketClientService bitbucketClientService,
-                                   @Nonnull final BitBucketTemplates templates,
-                                   @Nonnull @RestContext final String baseUrl) {
+    public BitbucketHostingService(@NotNull final AppContext appContext,
+                                   @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                                   @NotNull final DtoFactory dtoFactory,
+                                   @NotNull final BitbucketClientService bitbucketClientService,
+                                   @NotNull final BitBucketTemplates templates,
+                                   @NotNull @RestContext final String baseUrl) {
         this.appContext = appContext;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.dtoFactory = dtoFactory;
@@ -93,23 +93,23 @@ public class BitbucketHostingService implements VcsHostingService {
         this.baseUrl = baseUrl;
     }
 
-    @Nonnull
+    @NotNull
     @Override
     public String getName() {
         return "Bitbucket";
     }
 
     @Override
-    public boolean isHostRemoteUrl(@Nonnull final String remoteUrl) {
+    public boolean isHostRemoteUrl(@NotNull final String remoteUrl) {
         return SSH_URL_REGEXP.test(remoteUrl) || HTTPS_URL_REGEXP.test(remoteUrl);
     }
 
     @Override
-    public void getPullRequest(@Nonnull final String owner,
-                               @Nonnull final String repository,
-                               @Nonnull final String username,
-                               @Nonnull final String branchName,
-                               @Nonnull final AsyncCallback<PullRequest> callback) {
+    public void getPullRequest(@NotNull final String owner,
+                               @NotNull final String repository,
+                               @NotNull final String username,
+                               @NotNull final String branchName,
+                               @NotNull final AsyncCallback<PullRequest> callback) {
 
         final Unmarshallable<BitbucketPullRequests> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequests.class);
 
@@ -142,15 +142,15 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void createPullRequest(@Nonnull final String owner,
-                                  @Nonnull final String repository,
-                                  @Nonnull final String username,
-                                  @Nonnull final String headRepository,
-                                  @Nonnull final String headBranchName,
-                                  @Nonnull final String baseBranchName,
-                                  @Nonnull final String title,
-                                  @Nonnull final String body,
-                                  @Nonnull final AsyncCallback<PullRequest> callback) {
+    public void createPullRequest(@NotNull final String owner,
+                                  @NotNull final String repository,
+                                  @NotNull final String username,
+                                  @NotNull final String headRepository,
+                                  @NotNull final String headBranchName,
+                                  @NotNull final String baseBranchName,
+                                  @NotNull final String title,
+                                  @NotNull final String body,
+                                  @NotNull final AsyncCallback<PullRequest> callback) {
 
         final Unmarshallable<BitbucketPullRequest> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequest.class);
 
@@ -198,7 +198,7 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void fork(@Nonnull final String owner, @Nonnull final String repository, @Nonnull final AsyncCallback<Repository> callback) {
+    public void fork(@NotNull final String owner, @NotNull final String repository, @NotNull final AsyncCallback<Repository> callback) {
         getRepository(owner, repository, new AsyncCallback<Repository>() {
             @Override
             public void onFailure(final Throwable exception) {
@@ -226,8 +226,8 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
-    private void fork(@Nonnull final String owner,
-                      @Nonnull final String repository,
+    private void fork(@NotNull final String owner,
+                      @NotNull final String repository,
                       final int number,
                       final boolean isForkPrivate,
                       final AsyncCallback<BitbucketRepositoryFork> callback) {
@@ -264,9 +264,9 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getRepository(@Nonnull final String owner,
-                              @Nonnull final String repository,
-                              @Nonnull final AsyncCallback<Repository> callback) {
+    public void getRepository(@NotNull final String owner,
+                              @NotNull final String repository,
+                              @NotNull final AsyncCallback<Repository> callback) {
 
         final Unmarshallable<BitbucketRepository> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepository.class);
 
@@ -283,18 +283,18 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getRepositoryNameFromUrl(@Nonnull final String url) {
+    public String getRepositoryNameFromUrl(@NotNull final String url) {
         if (SSH_URL_REGEXP.test(url)) {
             return SSH_URL_REGEXP.exec(url).getGroup(2);
         }
         return HTTPS_URL_REGEXP.exec(url).getGroup(2);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String getRepositoryOwnerFromUrl(@Nonnull final String url) {
+    public String getRepositoryOwnerFromUrl(@NotNull final String url) {
         if (SSH_URL_REGEXP.test(url)) {
             return SSH_URL_REGEXP.exec(url).getGroup(1);
         }
@@ -302,10 +302,10 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getUserFork(@Nonnull final String user,
-                            @Nonnull final String owner,
-                            @Nonnull final String repository,
-                            @Nonnull final AsyncCallback<Repository> callback) {
+    public void getUserFork(@NotNull final String user,
+                            @NotNull final String owner,
+                            @NotNull final String repository,
+                            @NotNull final AsyncCallback<Repository> callback) {
 
         final Unmarshallable<BitbucketRepositories> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepositories.class);
 
@@ -332,7 +332,7 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void getUserInfo(@Nonnull final AsyncCallback<HostUser> callback) {
+    public void getUserInfo(@NotNull final AsyncCallback<HostUser> callback) {
         final Unmarshallable<BitbucketUser> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketUser.class);
 
         bitbucketClientService.getUser(new AsyncRequestCallback<BitbucketUser>(unmarshaller) {
@@ -354,29 +354,29 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makeSSHRemoteUrl(@Nonnull final String username, @Nonnull final String repository) {
+    public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
         return templates.sshUrlTemplate(username, repository);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makeHttpRemoteUrl(@Nonnull final String username, @Nonnull final String repository) {
+    public String makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
         return templates.httpUrlTemplate(username, repository);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String makePullRequestUrl(@Nonnull final String username,
-                                     @Nonnull final String repository,
-                                     @Nonnull final String pullRequestNumber) {
+    public String makePullRequestUrl(@NotNull final String username,
+                                     @NotNull final String repository,
+                                     @NotNull final String pullRequestNumber) {
         return templates.pullRequestUrlTemplate(username, repository, pullRequestNumber);
     }
 
-    @Nonnull
+    @NotNull
     @Override
-    public String formatReviewFactoryUrl(@Nonnull final String reviewFactoryUrl) {
+    public String formatReviewFactoryUrl(@NotNull final String reviewFactoryUrl) {
         final String protocol = Window.Location.getProtocol();
         final String host = Window.Location.getHost();
 
@@ -384,7 +384,7 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
-    public void authenticate(@Nonnull final CurrentUser user, @Nonnull final AsyncCallback<HostUser> callback) {
+    public void authenticate(@NotNull final CurrentUser user, @NotNull final AsyncCallback<HostUser> callback) {
         final WorkspaceDescriptor workspace = this.appContext.getWorkspace();
         if (workspace == null) {
             callback.onFailure(new Exception("Error accessing current workspace"));
@@ -478,7 +478,7 @@ public class BitbucketHostingService implements VcsHostingService {
      *         the {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository}.
      * @return the HTTPS clone url from the clone links or {@code null} if none.
      */
-    private String getCloneHttpsUrl(@Nonnull final BitbucketRepository bitbucketRepository) {
+    private String getCloneHttpsUrl(@NotNull final BitbucketRepository bitbucketRepository) {
         if (bitbucketRepository.getLinks() != null && bitbucketRepository.getLinks().getClone() != null) {
             for (final BitbucketLink oneCloneLink : bitbucketRepository.getLinks().getClone()) {
                 if (oneCloneLink.getName() != null && "https".equals(oneCloneLink.getName())) {

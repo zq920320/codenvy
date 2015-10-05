@@ -23,7 +23,7 @@ import org.eclipse.che.ide.ext.ssh.server.SshKeyUploader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.BufferedReader;
@@ -62,7 +62,7 @@ public class BitbucketKeyUploader implements SshKeyUploader {
     private final OAuthAuthorizationHeaderProvider authorizationHeaderProvider;
 
     @Inject
-    public BitbucketKeyUploader(@Nonnull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
+    public BitbucketKeyUploader(@NotNull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
         this.authorizationHeaderProvider = authorizationHeaderProvider;
     }
 

@@ -21,7 +21,7 @@ import org.eclipse.che.ide.api.mvp.View;
 import com.codenvy.ide.share.client.share.social.Item;
 import com.codenvy.ide.share.client.share.social.SharingChannel;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.List;
 
 /**
@@ -53,7 +53,7 @@ public interface ShareActionView extends View<ShareActionView.ActionDelegate> {
          * @param item
          *         the clicked item never {@code null}.
          */
-        void onItemToShareClick(@Nonnull Item item);
+        void onItemToShareClick(@NotNull Item item);
 
         /**
          * Called when the sharing channel back button is clicked.
@@ -84,7 +84,7 @@ public interface ShareActionView extends View<ShareActionView.ActionDelegate> {
      * @param itemsToShare
      *         the {@link Item} to share list, must not be {@code null}.
      */
-    void showItemsToShareDropDown(@Nonnull List<Item> itemsToShare);
+    void showItemsToShareDropDown(@NotNull List<Item> itemsToShare);
 
     /**
      * Show the sharing channels dropdown for the given {@link Item}.
@@ -95,7 +95,7 @@ public interface ShareActionView extends View<ShareActionView.ActionDelegate> {
      *         parameters map passed to {@link SharingChannel#decorateWidget(com.google.gwt.user.client.ui.Widget,
      *         String...)}, must not be {@code null}
      */
-    void showSharingChannelsDropDown(@Nonnull Item item, @Nonnull String... params);
+    void showSharingChannelsDropDown(@NotNull Item item, @NotNull String... params);
 
     /**
      * Hide the share dropdown.

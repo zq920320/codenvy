@@ -19,7 +19,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvi
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.ISSUE_PULL_REQUEST;
@@ -34,14 +34,14 @@ public class IssuePullRequestStep implements Step {
     private final ContributeMessages        messages;
 
     @Inject
-    public IssuePullRequestStep(@Nonnull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                @Nonnull final ContributeMessages messages) {
+    public IssuePullRequestStep(@NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                @NotNull final ContributeMessages messages) {
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.messages = messages;
     }
 
     @Override
-    public void execute(@Nonnull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final Configuration configuration = workflow.getConfiguration();
         final String upstreamRepositoryOwner = context.getUpstreamRepositoryOwner();

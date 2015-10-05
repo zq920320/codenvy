@@ -31,8 +31,8 @@ import com.google.apphosting.utils.config.IndexesXml;
 import com.google.apphosting.utils.config.QueueXml;
 import com.google.apphosting.utils.config.QueueYamlReader;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
@@ -68,7 +68,7 @@ public abstract class YamlApplication implements GenericApplication {
     private final BackendsXml          backendsXml;
     private       String               appInfoString;
 
-    public YamlApplication(@Nonnull File applicationDirectory, @Nonnull String sourceLanguage) {
+    public YamlApplication(@NotNull File applicationDirectory, @NotNull String sourceLanguage) {
         this.applicationDirectory = applicationDirectory;
         applicationDirectoryPath = applicationDirectory.getAbsolutePath();
 
@@ -101,7 +101,7 @@ public abstract class YamlApplication implements GenericApplication {
      * @return an instance with YAML configuration
      */
     @Nullable
-    public static IndexesXml readIndexYaml(@Nonnull String path) {
+    public static IndexesXml readIndexYaml(@NotNull String path) {
         Path indexFilePath = Paths.get(path);
         if (!Files.exists(indexFilePath)) {
             return null;
@@ -146,8 +146,8 @@ public abstract class YamlApplication implements GenericApplication {
      *         path where YAML file is located
      * @return an instance with YAML configuration
      */
-    @Nonnull
-    public static YamlAppInfo readAppYaml(@Nonnull String path) {
+    @NotNull
+    public static YamlAppInfo readAppYaml(@NotNull String path) {
         Reader fileReader = null;
         try {
             fileReader = new FileReader(path);
@@ -391,7 +391,7 @@ public abstract class YamlApplication implements GenericApplication {
         private final String errorCode;
         private final String mimeType;
 
-        public ErrorHandlerImpl(@Nonnull String file, @Nonnull String errorCode, @Nonnull String mimeType) {
+        public ErrorHandlerImpl(@NotNull String file, @NotNull String errorCode, @NotNull String mimeType) {
             this.file = file;
             this.errorCode = errorCode;
             this.mimeType = mimeType;

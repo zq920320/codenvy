@@ -13,7 +13,7 @@ package com.codenvy.ide.ext.gae.server.inject.factories;
 import com.google.appengine.tools.admin.GenericApplication;
 import com.google.appengine.tools.admin.IdeAppAdmin;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 import static com.google.appengine.tools.admin.AppAdminFactory.ConnectOptions;
 
@@ -33,6 +33,6 @@ public interface IdeAppAdminFactory {
      *         application which is used for creating ide application admin
      * @return an instance of  {@link IdeAppAdmin}
      */
-    @Nonnull
-    IdeAppAdmin createIdeAppAdmin(@Nonnull ConnectOptions options, @Nonnull GenericApplication genericApplication);
+    @NotNull
+    IdeAppAdmin createIdeAppAdmin(@NotNull ConnectOptions options, @NotNull GenericApplication genericApplication);
 }

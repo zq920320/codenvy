@@ -26,7 +26,7 @@ import com.google.gwt.http.client.UrlBuilder;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.Widget;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Facebook sharing channel.
@@ -38,9 +38,9 @@ public class Facebook extends SharingChannel {
     private final String                    messageTemplate;
     private final ShareLocalizationConstant locale;
 
-    public Facebook(@Nonnull String messageTemplate,
-                    @Nonnull ShareResources resources,
-                    @Nonnull ShareLocalizationConstant locale,
+    public Facebook(@NotNull String messageTemplate,
+                    @NotNull ShareResources resources,
+                    @NotNull ShareLocalizationConstant locale,
                     ClickHandler clickHandler) {
         super(resources.facebook(), locale.socialShareChannelFacebookText(), clickHandler);
 
@@ -53,7 +53,7 @@ public class Facebook extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull Widget element, @Nonnull final String... params) {
+    public void decorateWidget(@NotNull Widget element, @NotNull final String... params) {
         element.addDomHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {

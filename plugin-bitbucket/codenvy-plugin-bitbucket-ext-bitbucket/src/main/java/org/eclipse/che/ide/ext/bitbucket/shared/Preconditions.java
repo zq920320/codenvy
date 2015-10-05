@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.bitbucket.shared;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Ensure parameter preconditions.
@@ -34,7 +34,7 @@ public final class Preconditions {
      * @throws IllegalArgumentException
      *         if the given expression is {@code false}.
      */
-    public static void checkArgument(final boolean expression, @Nonnull final String parameterName) throws IllegalArgumentException {
+    public static void checkArgument(final boolean expression, @NotNull final String parameterName) throws IllegalArgumentException {
         if (!expression) {
             throw new IllegalArgumentException("'" + parameterName + "' parameter is not valid");
         }

@@ -23,7 +23,7 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
@@ -117,7 +117,7 @@ public class GAEJavaPagePresenter extends AbstractWizardPage<ImportProject> impl
 
     /** {@inheritDoc} */
     @Override
-    public void go(@Nonnull AcceptsOneWidget container) {
+    public void go(@NotNull AcceptsOneWidget container) {
         container.setWidget(view);
 
         view.setFocusToApplicationIdField();
@@ -156,7 +156,7 @@ public class GAEJavaPagePresenter extends AbstractWizardPage<ImportProject> impl
     }
 
     /** Reads single value of attribute from data-object. */
-    @Nonnull
+    @NotNull
     private String getAttributeValue(String attributeId) {
         Map<String, List<String>> attributes = dataObject.getProject().getAttributes();
         List<String> values = attributes.get(attributeId);
@@ -167,7 +167,7 @@ public class GAEJavaPagePresenter extends AbstractWizardPage<ImportProject> impl
     }
 
     /** Sets single value of attribute of data-object. */
-    private void setAttribute(@Nonnull String attrId, @Nonnull String value) {
+    private void setAttribute(@NotNull String attrId, @NotNull String value) {
         Map<String, List<String>> attributes = dataObject.getProject().getAttributes();
         attributes.put(attrId, Arrays.asList(value));
     }

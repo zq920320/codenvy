@@ -31,8 +31,8 @@ import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.git.client.GitLocalizationConstant;
 import org.eclipse.che.ide.rest.RestContext;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.util.ArrayList;
@@ -85,7 +85,7 @@ public class SyncGitServiceClient {
      * @param project
      *         project (root of GIT repository)
      */
-    public native void init(@Nonnull ProjectDescriptor project) /*-{
+    public native void init(@NotNull ProjectDescriptor project) /*-{
         var instance = this;
         try {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
@@ -118,7 +118,7 @@ public class SyncGitServiceClient {
      * @param project
      *         project (root of GIT repository)
      */
-    public native Status status(@Nonnull ProjectDescriptor project) /*-{
+    public native Status status(@NotNull ProjectDescriptor project) /*-{
         var instance = this;
         try {
             var statusClass = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::statusClass;
@@ -156,7 +156,7 @@ public class SyncGitServiceClient {
      * @param filePattern
      *         pattern of the files to be added, default is "." (all files are added)
      */
-    public native void add(@Nonnull ProjectDescriptor project, boolean update, @Nullable List<String> filePattern) /*-{
+    public native void add(@NotNull ProjectDescriptor project, boolean update, @Nullable List<String> filePattern) /*-{
         var instance = this;
         try {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
@@ -192,7 +192,7 @@ public class SyncGitServiceClient {
      * @param amend
      *         indicates that previous commit must be overwritten
      */
-    public native Revision commit(@Nonnull ProjectDescriptor project, @Nonnull String message, boolean all, boolean amend) /*-{
+    public native Revision commit(@NotNull ProjectDescriptor project, @NotNull String message, boolean all, boolean amend) /*-{
         var instance = this;
         try {
             var dtoFactory = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::dtoFactory;
@@ -236,7 +236,7 @@ public class SyncGitServiceClient {
         }
     }
 
-    private String createCommitRequest(@Nonnull String message, boolean all, boolean amend) {
+    private String createCommitRequest(@NotNull String message, boolean all, boolean amend) {
         final CommitRequest commitRequest = dtoFactory.createDto(CommitRequest.class).withMessage(message).withAmend(amend).withAll(all);
         return dtoFactory.toJson(commitRequest);
     }

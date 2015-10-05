@@ -21,11 +21,12 @@ import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.machine.SwarmInstance;
 import com.google.inject.assistedinject.Assisted;
 
+import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.impl.ServerImpl;
-import org.eclipse.che.api.machine.shared.Recipe;
 import org.eclipse.che.api.machine.shared.Server;
+import org.eclipse.che.plugin.docker.machine.DockerInstanceStopDetector;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
 import org.eclipse.che.plugin.docker.machine.DockerNode;
 
@@ -59,7 +60,8 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
                                                @Assisted LineConsumer outputConsumer,
                                                RouterRulesRegistry routerRulesRegistry,
                                                @Assisted Recipe recipe,
-                                               @Assisted int memorySizeMB) {
+                                               @Assisted int memorySizeMB,
+                                               DockerInstanceStopDetector dockerInstanceStopDetector) {
         super(docker,
               registry,
               dockerMachineFactory,
@@ -72,7 +74,8 @@ public class PredictableMachineServerUrlInstance extends SwarmInstance {
               node,
               recipe,
               outputConsumer,
-              memorySizeMB);
+              memorySizeMB,
+              dockerInstanceStopDetector);
         this.routerRulesRegistry = routerRulesRegistry;
         this.machineId = machineId;
     }

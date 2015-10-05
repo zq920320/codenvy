@@ -25,7 +25,7 @@ import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.logical.shared.AttachEvent;
 import com.google.gwt.user.client.ui.Widget;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 /**
  * Google plus sharing channel.
@@ -35,9 +35,9 @@ import javax.annotation.Nonnull;
 public class GooglePlus extends SharingChannel {
     private final String messageTemplate;
 
-    public GooglePlus(@Nonnull String messageTemplate,
-                      @Nonnull ShareResources resources,
-                      @Nonnull ShareLocalizationConstant locale,
+    public GooglePlus(@NotNull String messageTemplate,
+                      @NotNull ShareResources resources,
+                      @NotNull ShareLocalizationConstant locale,
                       ClickHandler clickHandler) {
         super(resources.googlePlus(), locale.socialShareChannelGooglePlusText(), clickHandler);
 
@@ -45,7 +45,7 @@ public class GooglePlus extends SharingChannel {
     }
 
     @Override
-    public void decorateWidget(@Nonnull final Widget element, @Nonnull String... params) {
+    public void decorateWidget(@NotNull final Widget element, @NotNull String... params) {
         element.getElement().addClassName("g-interactivepost");
         element.getElement().setAttribute("data-clientid", "625433458903-524olpl81vfgkjf00579bafavujnlv1g.apps.googleusercontent.com");
         element.getElement().setAttribute("data-prefilltext", render(messageTemplate, params));

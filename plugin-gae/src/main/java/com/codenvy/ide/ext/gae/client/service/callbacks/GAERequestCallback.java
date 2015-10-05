@@ -14,8 +14,8 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.websocket.rest.RequestCallback;
 import org.eclipse.che.ide.websocket.rest.Unmarshallable;
 
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
+import javax.validation.constraints.NotNull;
+import org.eclipse.che.commons.annotation.Nullable;
 
 /**
  * Class to receive a response from a remote procedure call.
@@ -29,9 +29,9 @@ public class GAERequestCallback<T> extends RequestCallback<T> {
     private SuccessCallback<T>  successCallback;
     private NotificationManager notificationManager;
 
-    public GAERequestCallback(@Nonnull NotificationManager notificationManager,
+    public GAERequestCallback(@NotNull NotificationManager notificationManager,
                               @Nullable Unmarshallable<T> unmarshallable,
-                              @Nonnull SuccessCallback<T> successCallback,
+                              @NotNull SuccessCallback<T> successCallback,
                               @Nullable FailureCallback failureCallback) {
 
         this(notificationManager, unmarshallable, successCallback);
@@ -40,16 +40,16 @@ public class GAERequestCallback<T> extends RequestCallback<T> {
         this.failureCallback = failureCallback;
     }
 
-    public GAERequestCallback(@Nonnull NotificationManager notificationManager,
+    public GAERequestCallback(@NotNull NotificationManager notificationManager,
                               @Nullable Unmarshallable<T> unmarshallable,
-                              @Nonnull SuccessCallback<T> successCallback) {
+                              @NotNull SuccessCallback<T> successCallback) {
 
         this(unmarshallable, successCallback);
         this.notificationManager = notificationManager;
         this.successCallback = successCallback;
     }
 
-    public GAERequestCallback(@Nullable Unmarshallable<T> unmarshallable, @Nonnull SuccessCallback<T> successCallback) {
+    public GAERequestCallback(@Nullable Unmarshallable<T> unmarshallable, @NotNull SuccessCallback<T> successCallback) {
 
         super(unmarshallable);
         this.successCallback = successCallback;

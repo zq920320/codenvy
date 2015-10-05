@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.review.client;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
@@ -26,9 +26,9 @@ public class ReviewExtension implements ProjectActionHandler {
     private final ReviewMessages messages;
 
     @Inject
-    public ReviewExtension(@Nonnull final EventBus eventBus,
-                           @Nonnull final ReviewMessages messages,
-                           @Nonnull final ReviewResources resources) {
+    public ReviewExtension(@NotNull final EventBus eventBus,
+                           @NotNull final ReviewMessages messages,
+                           @NotNull final ReviewResources resources) {
         this.messages = messages;
 
         eventBus.addHandler(ProjectActionEvent.TYPE, this);

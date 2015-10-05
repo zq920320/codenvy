@@ -22,7 +22,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -74,7 +74,7 @@ public class GAEAsyncCallbackFactoryTest {
         assertThat(fieldsValues.get(FAILURE_FIELD_NAME), nullValue());
     }
 
-    private Map<String, Object> getFieldsValues(@Nonnull RequestCallback requestCallback) throws Exception {
+    private Map<String, Object> getFieldsValues(@NotNull RequestCallback requestCallback) throws Exception {
         Map<String, Object> fieldsValues = new HashMap<>();
 
         Class clazz = requestCallback.getClass();
@@ -100,7 +100,7 @@ public class GAEAsyncCallbackFactoryTest {
 
     }
 
-    private void assertGeneralFieldsValues(@Nonnull Map<String, Object> fieldsValues) {
+    private void assertGeneralFieldsValues(@NotNull Map<String, Object> fieldsValues) {
         assertSame(fieldsValues.get(NOTIFICATION_MANAGER_FIELD_NAME), notificationManager);
         assertSame(fieldsValues.get(LOCALE_FIELD_NAME), locale);
         assertSame(fieldsValues.get(SUCCESS_FIELD_NAME), successCallback);

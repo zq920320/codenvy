@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 
 public class NoPullRequestException extends Exception {
 
@@ -22,7 +22,7 @@ public class NoPullRequestException extends Exception {
      * @param branchName
      *         the branch name.
      */
-    public NoPullRequestException(@Nonnull final String branchName) {
+    public NoPullRequestException(@NotNull final String branchName) {
         super("No Pull Request for branch " + branchName);
     }
 }

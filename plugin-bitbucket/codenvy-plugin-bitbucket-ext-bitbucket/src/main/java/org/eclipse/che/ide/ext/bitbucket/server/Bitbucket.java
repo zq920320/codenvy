@@ -41,7 +41,7 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.io.BufferedWriter;
 import java.io.ByteArrayOutputStream;
@@ -68,7 +68,7 @@ public class Bitbucket {
     private final OAuthAuthorizationHeaderProvider authorizationHeaderProvider;
 
     @Inject
-    public Bitbucket(@Nonnull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
+    public Bitbucket(@NotNull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
         this.authorizationHeaderProvider = authorizationHeaderProvider;
     }
 
@@ -105,7 +105,7 @@ public class Bitbucket {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketRepository getRepository(@Nonnull final String owner, @Nonnull final String repositorySlug)
+    public BitbucketRepository getRepository(@NotNull final String owner, @NotNull final String repositorySlug)
             throws IOException, BitbucketException, ServerException, IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -131,7 +131,7 @@ public class Bitbucket {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketRepositories getRepositoryForks(@Nonnull final String owner, @Nonnull final String repositorySlug)
+    public BitbucketRepositories getRepositoryForks(@NotNull final String owner, @NotNull final String repositorySlug)
             throws IOException, BitbucketException, ServerException, IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -173,9 +173,9 @@ public class Bitbucket {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketRepositoryFork forkRepository(@Nonnull final String owner,
-                                                  @Nonnull final String repositorySlug,
-                                                  @Nonnull final String forkName,
+    public BitbucketRepositoryFork forkRepository(@NotNull final String owner,
+                                                  @NotNull final String repositorySlug,
+                                                  @NotNull final String forkName,
                                                   final boolean isForkPrivate) throws IOException, BitbucketException, ServerException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -205,7 +205,7 @@ public class Bitbucket {
      * @throws IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketPullRequests getRepositoryPullRequests(@Nonnull final String owner, @Nonnull final String repositorySlug)
+    public BitbucketPullRequests getRepositoryPullRequests(@NotNull final String owner, @NotNull final String repositorySlug)
             throws ServerException, IOException, BitbucketException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -240,9 +240,9 @@ public class Bitbucket {
      *         the {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest} to open, cannot be {@code null}.
      * @return the opened {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest}.
      */
-    public BitbucketPullRequest openPullRequest(@Nonnull final String owner,
-                                                @Nonnull final String repositorySlug,
-                                                @Nonnull final BitbucketPullRequest pullRequest)
+    public BitbucketPullRequest openPullRequest(@NotNull final String owner,
+                                                @NotNull final String repositorySlug,
+                                                @NotNull final BitbucketPullRequest pullRequest)
             throws ServerException, IOException, BitbucketException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");

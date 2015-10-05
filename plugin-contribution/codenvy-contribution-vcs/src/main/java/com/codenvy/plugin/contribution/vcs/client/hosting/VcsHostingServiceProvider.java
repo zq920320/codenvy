@@ -18,7 +18,7 @@ import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
-import javax.annotation.Nonnull;
+import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
@@ -37,9 +37,9 @@ public class VcsHostingServiceProvider {
 
 
     @Inject
-    public VcsHostingServiceProvider(@Nonnull final AppContext appContext,
-                                     @Nonnull final VcsServiceProvider vcsServiceProvider,
-                                     @Nonnull final Set<VcsHostingService> vcsHostingServices) {
+    public VcsHostingServiceProvider(@NotNull final AppContext appContext,
+                                     @NotNull final VcsServiceProvider vcsServiceProvider,
+                                     @NotNull final Set<VcsHostingService> vcsHostingServices) {
         this.appContext = appContext;
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServices = vcsHostingServices;
@@ -53,7 +53,7 @@ public class VcsHostingServiceProvider {
      *         the callback called when the {@link com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService} implementation is
      *         retrieved.
      */
-    public void getVcsHostingService(@Nonnull final AsyncCallback<VcsHostingService> callback) {
+    public void getVcsHostingService(@NotNull final AsyncCallback<VcsHostingService> callback) {
         final CurrentProject currentProject = appContext.getCurrentProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
 
