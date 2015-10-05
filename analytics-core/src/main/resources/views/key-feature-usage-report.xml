@@ -146,10 +146,6 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="save_all_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="show_about_action"/>
                 <parameter key="description"/>
             </row>
