@@ -32,7 +32,9 @@ import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,13 +42,16 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
 import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
+import static com.codenvy.api.dao.mongo.MongoUtil.asStringList;
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 
 /**
  * Implementation of {@link AccountDao} based on MongoDB storage.
@@ -81,7 +86,8 @@ import static java.lang.String.format;
  *              "value" : "value..."
  *          }
  *          ...
- *      ]
+ *      ],
+ *      "workspaces" : [ "workspace123", "workspace234" ]
  * }
  *
  *
@@ -100,20 +106,22 @@ public class AccountDaoImpl implements AccountDao {
 
     private final DBCollection accountCollection;
     private final DBCollection memberCollection;
-//    private final WorkspaceDao workspaceDao;
+    private final WorkspaceDao workspaceDao;
     private final EventService eventService;
 
     @Inject
     public AccountDaoImpl(@Named("mongo.db.organization") DB db,
-//                          WorkspaceDao workspaceDao,
+                          WorkspaceDao workspaceDao,
                           @Named(ACCOUNT_COLLECTION) String accountCollectionName,
                           @Named(MEMBER_COLLECTION) String memberCollectionName,
                           EventService eventService) {
         this.eventService = eventService;
+        this.workspaceDao = workspaceDao;
         accountCollection = db.getCollection(accountCollectionName);
         accountCollection.createIndex(new BasicDBObject("id", 1), new BasicDBObject("unique", true));
         accountCollection.createIndex(new BasicDBObject("name", 1));
         accountCollection.createIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
+        accountCollection.createIndex(new BasicDBObject("workspaces", 1), new BasicDBObject("unique", true));
         memberCollection = db.getCollection(memberCollectionName);
         memberCollection.createIndex(new BasicDBObject("members.accountId", 1));
     }
@@ -194,9 +202,9 @@ public class AccountDaoImpl implements AccountDao {
     @Override
     public void remove(String id) throws ConflictException, NotFoundException, ServerException {
         //check account doesn't have associated workspaces
-//        if (!workspaceDao.getByAccount(id).isEmpty()) {
-//            throw new ConflictException("It is not possible to remove account having associated workspaces");
-//        }
+        if (!getById(id).getWorkspaces().isEmpty()) {
+            throw new ConflictException("Impossible to remove account with associated workspaces");
+        }
         try {
             //Removing members
             for (Member member : getMembers(id)) {
@@ -242,6 +250,15 @@ public class AccountDaoImpl implements AccountDao {
             throw new ServerException("It is not possible to retrieve members");
         }
         return result;
+    }
+
+    @Override
+    public Account getByWorkspace(String workspaceId) throws NotFoundException, ServerException {
+        DBObject document = accountCollection.findOne(new BasicDBObject("workspaces", workspaceId));
+        if (document == null) {
+            throw new NotFoundException("Account with workspace '" + workspaceId + "' was not found");
+        }
+        return toAccount(document);
     }
 
     @Override
@@ -346,11 +363,22 @@ public class AccountDaoImpl implements AccountDao {
     /**
      * Converts database object to account ready-to-use object
      */
-    Account toAccount(Object dbObject) {
-        final BasicDBObject accountObject = (BasicDBObject)dbObject;
+    Account toAccount(Object dbObject) throws NotFoundException, ServerException {
+        BasicDBObject accountObject = (BasicDBObject)dbObject;
+        List<String> workspaceIds;
+        if (accountObject.get("workspaces") == null) {
+            workspaceIds = Collections.emptyList();
+        } else {
+            workspaceIds = asStringList(accountObject.get("workspaces"));
+        }
+        List<UsersWorkspace> workspaces = new ArrayList<>(workspaceIds.size());
+        for (String workspaceId : workspaceIds) {
+            workspaces.add(workspaceDao.get(workspaceId));
+        }
         return new Account().withId(accountObject.getString("id"))
                             .withName(accountObject.getString("name"))
-                            .withAttributes(asMap(accountObject.get("attributes")));
+                            .withAttributes(asMap(accountObject.get("attributes")))
+                            .withWorkspaces(workspaces);
     }
 
     /**
@@ -374,6 +402,10 @@ public class AccountDaoImpl implements AccountDao {
     DBObject toDBObject(Account account) {
         return new BasicDBObject().append("id", account.getId())
                                   .append("name", account.getName())
+                                  .append("workspaces", asDBList(account.getWorkspaces()
+                                                                        .stream()
+                                                                        .map(UsersWorkspace::getId)
+                                                                        .collect(toList())))
                                   .append("attributes", asDBList(account.getAttributes()));
     }
 }

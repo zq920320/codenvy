@@ -59,7 +59,7 @@ import java.util.Set;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 
-//TODO fix it after account refactoring, memberships refactoring
+//TODO fix it memberships refactoring
 
 /**
  * LDAP based implementation of {@code UserDao}.
@@ -78,7 +78,6 @@ public class UserDaoImpl implements UserDao {
     private final AccountDao                accountDao;
     //    private final MemberDao                 memberDao;
     private final UserProfileDao            profileDao;
-    private final WorkspaceDao              workspaceDao;
     private final PreferenceDao             preferenceDao;
     private final UserAttributesMapper      mapper;
     private final InitialLdapContextFactory contextFactory;
@@ -96,7 +95,6 @@ public class UserDaoImpl implements UserDao {
     public UserDaoImpl(AccountDao accountDao,
 //                       MemberDao memberDao,
                        UserProfileDao profileDao,
-                       WorkspaceDao workspaceDao,
                        PreferenceDao preferenceDao,
                        InitialLdapContextFactory contextFactory,
                        @Named("user.ldap.user_container_dn") String userContainerDn,
@@ -113,7 +111,6 @@ public class UserDaoImpl implements UserDao {
         this.accountDao = accountDao;
 //        this.memberDao = memberDao;
         this.profileDao = profileDao;
-        this.workspaceDao = workspaceDao;
         this.preferenceDao = preferenceDao;
         final StringBuilder sb = new StringBuilder();
         for (String objectClass : userAttributesMapper.userObjectClasses) {
@@ -241,11 +238,11 @@ public class UserDaoImpl implements UserDao {
         for (Account account : accountDao.getByOwner(id)) {
             //if user is last account owner we should remove account
             if (isOnlyOneOwner(account.getId())) {
-//                if (workspaceDao.getByAccount(account.getId()).isEmpty()) {
-//                    accountsToRemove.add(account);
-//                } else {
-//                    throw new ConflictException(format("Account %s has related workspaces", account.getId()));
-//                }
+                if (account.getWorkspaces().isEmpty()) {
+                    accountsToRemove.add(account);
+                } else {
+                    throw new ConflictException(format("Account %s has related workspaces", account.getId()));
+                }
             }
         }
         //remove user relationships with workspaces
