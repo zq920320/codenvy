@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -29,11 +28,8 @@ import com.mongodb.WriteResult;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.machine.server.exception.SnapshotException;
-import org.eclipse.che.api.machine.server.impl.ProjectBindingImpl;
 import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
-import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.server.spi.InstanceKey;
-import org.eclipse.che.api.machine.shared.ProjectBinding;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,12 +86,9 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
     }
 
     @Override
-    public List<SnapshotImpl> findSnapshots(String owner, String workspaceId, ProjectBinding project) throws SnapshotException {
+    public List<SnapshotImpl> findSnapshots(String owner, String workspaceId) throws SnapshotException {
         BasicDBObject query = new BasicDBObject("owner", owner);
         query.append("workspaceId", workspaceId);
-        if (project != null) {
-            query.append("projectBindings.path", project.getPath());
-        }
 
         try (DBCursor snapshots = machineCollection.find(query)) {
             final ArrayList<SnapshotImpl> result = new ArrayList<>();
@@ -119,48 +112,32 @@ public class MongoSnapshotDaoImpl implements SnapshotDao {
             }
         } catch (MongoException me) {
             LOG.error(me.getMessage(), me);
-            throw new SnapshotException ("It is not possible to remove snapshot");
+            throw new SnapshotException("It is not possible to remove snapshot");
         }
     }
 
     private SnapshotImpl toSnapshot(DBObject object) {
         final BasicDBObject snapshotObject = (BasicDBObject)object;
-        final BasicDBList projectBindingsObject = (BasicDBList)snapshotObject.get("projectBindings");
-        final List<ProjectBinding> projectBindings = new ArrayList<>(projectBindingsObject.size());
-        for (Object projectBinding : projectBindingsObject) {
-            projectBindings.add(new ProjectBindingImpl().withPath(((BasicDBObject)projectBinding).getString("path")));
-        }
 
         return new SnapshotImpl(snapshotObject.getString("_id"),
-                            snapshotObject.getString("instanceType"),
-                            new RecipeImpl().withScript(((BasicDBObject)snapshotObject.get("recipe")).getString("script"))
-                                            .withType(((BasicDBObject)snapshotObject.get("recipe")).getString("type")),
-                            new InstanceKeyImpl(MongoUtil.asMap(snapshotObject.get("instanceKey"))),
-                            snapshotObject.getString("owner"),
-                            snapshotObject.getLong("creationDate"),
-                            snapshotObject.getString("workspaceId"),
-                            projectBindings,
-                            snapshotObject.getString("description"),
-                            snapshotObject.getBoolean("isWorkspaceBound"));
+                                snapshotObject.getString("instanceType"),
+                                new InstanceKeyImpl(MongoUtil.asMap(snapshotObject.get("instanceKey"))),
+                                snapshotObject.getString("owner"),
+                                snapshotObject.getLong("creationDate"),
+                                snapshotObject.getString("workspaceId"),
+                                snapshotObject.getString("description"),
+                                snapshotObject.getBoolean("isWorkspaceBound"));
     }
 
     private DBObject toDBObject(SnapshotImpl snapshot) {
-        final BasicDBList projectBindings = new BasicDBList();
-        for (ProjectBinding projectBinding : snapshot.getProjects()) {
-            projectBindings.add(new BasicDBObject("path", projectBinding.getPath()));
-        }
-
         return new BasicDBObject().append("_id", snapshot.getId())
                                   .append("instanceType", snapshot.getType())
                                   .append("instanceKey", MongoUtil.asDBList(snapshot.getInstanceKey().getFields()))
                                   .append("owner", snapshot.getOwner())
-                                  .append("recipe", new BasicDBObject().append("script", snapshot.getRecipe().getScript())
-                                                                       .append("type", snapshot.getRecipe().getType()))
                                   .append("workspaceId", snapshot.getWorkspaceId())
-                                  .append("projectBindings", projectBindings)
                                   .append("creationDate", snapshot.getCreationDate())
                                   .append("description", snapshot.getDescription())
-                                  .append("isWorkspaceBound", snapshot.isWorkspaceBound());
+                                  .append("isWorkspaceBound", snapshot.isDev());
     }
 
     private static class InstanceKeyImpl implements InstanceKey {
