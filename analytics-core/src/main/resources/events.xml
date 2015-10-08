@@ -569,8 +569,7 @@
         <description>Trial subscription started</description>
         <parameters>
             <param>ACCOUNT</param>
-            <param>SERVICE</param>
-            <param>PLAN</param>
+            <param>SERVICE</param><param>PLAN</param>
         </parameters>
     </event>
     <event name="trial-expired">
@@ -585,6 +584,13 @@
         <description>User sent invite</description>
         <parameters>
             <param>EMAIL</param>
+        </parameters>
+    </event>
+    <event name="cdec-first-login">
+        <description>CDEC first login</description>
+        <parameters>
+            <param>TIME</param>
+            <param allow-empty-value="true">USER</param>
         </parameters>
     </event>
 </events>

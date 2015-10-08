@@ -154,7 +154,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project2");
         assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "spring");
-        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:14:00").getTime()));
+        assertEquals(m.get("date"), LongValueData.valueOf(dateToMillis("2013-01-01 10:14:00")));
         assertEquals(m.get("user").getAsString(), UID1);
         assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "0");
@@ -171,7 +171,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project1");
         assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "jar");
-        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
+        assertEquals(m.get("date"), LongValueData.valueOf(dateToMillis("2013-01-01 10:00:00")));
         assertEquals(m.get("user").getAsString(), UID1);
         assertEquals(m.get("builds").getAsString(), "1");
         assertEquals(m.get("runs").getAsString(), "1");
@@ -200,7 +200,7 @@ public class TestProjectsStatistics extends BaseTest {
         assertEquals(m.get("project").getAsString(), "project1");
         assertEquals(m.get("ws").getAsString(), WID1);
         assertEquals(m.get("project_type").getAsString(), "jar");
-        assertEquals(m.get("date"), LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()));
+        assertEquals(m.get("date"), LongValueData.valueOf(dateToMillis("2013-01-01 10:00:00")));
         assertEquals(m.get("user").getAsString(), UID1);
 
         assertEquals(m.get("builds").getAsString(), "1");

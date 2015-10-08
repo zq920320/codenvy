@@ -523,5 +523,14 @@ public class Event {
                                 .withParam("USER-IP", userIp)
                                 .withParam("ERROR-MESSAGE", errorMessage);
         }
+
+        public static Builder createCdecFirstLoginEvent(String userId,
+                                                        long time,
+                                                        String userIp) {
+            return new Builder().withParam("EVENT", "cdec-first-login")
+                                .withParam("TIME", String.valueOf(time))
+                                .withParam("USER", userId)
+                                .withParam("USER-IP", userIp);
+        }
     }
 }

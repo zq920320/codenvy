@@ -1385,4 +1385,19 @@
             </index>
         </indexes>
     </collection>
+    <collection name="cdec_first_login">
+        <indexes>
+            <index name="date">
+                <field>date</field>
+            </index>
+            <index name="user">
+                <field>user</field>
+                <field>date</field>
+            </index>
+            <index name="user_ip">
+                <field>user_ip</field>
+                <field>date</field>
+            </index>
+        </indexes>
+    </collection>
 </collections>

@@ -67,8 +67,8 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
         assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
         assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("1"));
-        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:00:00").getTime()));
-        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:10:00").getTime()));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(dateToMillis("2014-01-01 10:00:00")));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(dateToMillis("2014-01-01 10:10:00")));
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
         data = m.get("user2");
@@ -77,8 +77,8 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
         assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
         assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("2"));
-        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 23:55:00").getTime()));
-        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-02 00:05:00").getTime()));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(dateToMillis("2014-01-01 23:55:00")));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(dateToMillis("2014-01-02 00:05:00")));
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
         data = m.get("user3");
@@ -88,8 +88,8 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf(""));
         assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(60000));
         assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("3"));
-        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:00:00").getTime()));
-        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:01:00").getTime()));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(dateToMillis("2014-01-01 10:00:00")));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(dateToMillis("2014-01-01 10:01:00")));
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(60000));
     }
 
@@ -110,8 +110,8 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
         assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(608000));
         assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("sid1"));
-        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 09:02:02").getTime()));
-        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 09:12:10").getTime()));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(dateToMillis("2014-01-01 09:02:02")));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(dateToMillis("2014-01-01 09:12:10")));
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
 
         data = ((MapValueData)l.getAll().get(1)).getAll();
@@ -120,8 +120,8 @@ public class TestProductUsageTime extends BaseTest {
         assertEquals(data.get(AbstractMetric.DOMAIN), StringValueData.valueOf("gmail.com"));
         assertEquals(data.get(AbstractMetric.TIME), LongValueData.valueOf(600000));
         assertEquals(data.get(AbstractMetric.SESSION_ID), StringValueData.valueOf("sid2"));
-        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:02:00").getTime()));
-        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(fullDateFormat.parse("2014-01-01 10:12:00").getTime()));
+        assertEquals(data.get(AbstractMetric.DATE), LongValueData.valueOf(dateToMillis("2014-01-01 10:02:00")));
+        assertEquals(data.get(AbstractMetric.END_TIME), LongValueData.valueOf(dateToMillis("2014-01-01 10:12:00")));
         assertEquals(data.get(AbstractMetric.LOGOUT_INTERVAL), LongValueData.valueOf(0));
     }
 

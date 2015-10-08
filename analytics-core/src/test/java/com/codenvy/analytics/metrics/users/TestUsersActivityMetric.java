@@ -345,14 +345,14 @@ public class TestUsersActivityMetric extends BaseTest {
 
         assertEquals(value.size(), 6);
 
-        long startTime = fullDateFormat.parse("2013-11-01 19:00:00").getTime();
+        long startTime = dateToMillis("2013-11-01 19:00:00");
 
         assertItem(value,
                    0,
                    "ide-opened",
                    null,
                    null,
-                   fullDateFormat.parse("2013-11-01 19:00:00").getTime(),
+                   dateToMillis("2013-11-01 19:00:00"),
                    0,
                    0);
 

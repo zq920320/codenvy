@@ -93,19 +93,19 @@ public class TestProjectsList extends BaseTest {
         assertEquals(StringValueData.valueOf("jar"), p.get("project_type"));
         assertEquals(StringValueData.valueOf(WID1), p.get("ws"));
         assertEquals(StringValueData.valueOf(UID1), p.get("user"));
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), p.get("date"));
+        assertEquals(LongValueData.valueOf(dateToMillis("2013-01-01 10:00:00")), p.get("date"));
 
         p = m.get("project2");
         assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
         assertEquals(StringValueData.valueOf(WID2), p.get("ws"));
         assertEquals(StringValueData.valueOf(UID1), p.get("user"));
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), p.get("date"));
+        assertEquals(LongValueData.valueOf(dateToMillis("2013-01-01 10:00:01")), p.get("date"));
 
         p = m.get("project3");
         assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
         assertEquals(StringValueData.valueOf(WID3), p.get("ws"));
         assertEquals(StringValueData.valueOf(UID3), p.get("user"));
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:02").getTime()), p.get("date"));
+        assertEquals(LongValueData.valueOf(dateToMillis("2013-01-01 10:00:02")), p.get("date"));
     }
 
     @Test
@@ -127,13 +127,13 @@ public class TestProjectsList extends BaseTest {
         assertEquals(StringValueData.valueOf("jar"), p.get("project_type"));
         assertEquals(StringValueData.valueOf(WID1), p.get("ws"));
         assertEquals(StringValueData.valueOf(UID1), p.get("user"));
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:00").getTime()), p.get("date"));
+        assertEquals(LongValueData.valueOf(dateToMillis("2013-01-01 10:00:00")), p.get("date"));
 
         p = m.get("project2");
         assertEquals(StringValueData.valueOf("war"), p.get("project_type"));
         assertEquals(StringValueData.valueOf(WID2), p.get("ws"));
         assertEquals(StringValueData.valueOf(UID1), p.get("user"));
-        assertEquals(LongValueData.valueOf(fullDateFormat.parse("2013-01-01 10:00:01").getTime()), p.get("date"));
+        assertEquals(LongValueData.valueOf(dateToMillis("2013-01-01 10:00:01")), p.get("date"));
     }
 
     @Test

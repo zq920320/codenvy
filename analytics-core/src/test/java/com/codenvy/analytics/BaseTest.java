@@ -43,6 +43,7 @@ import org.testng.annotations.BeforeClass;
 
 import java.io.IOException;
 import java.text.DateFormat;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -173,5 +174,9 @@ public class BaseTest {
 
         TasksIntegrity integrity = new TasksIntegrity(collectionsManagement);
         integrity.doCompute(context);
+    }
+
+    protected long dateToMillis(String date) throws ParseException {
+        return fullDateFormat.parse(date).getTime();
     }
 }

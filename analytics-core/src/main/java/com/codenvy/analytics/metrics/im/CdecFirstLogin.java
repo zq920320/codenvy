@@ -36,6 +36,6 @@ public class CdecFirstLogin extends AbstractLongValueResulted {
     /** {@inheritDoc} */
     @Override
     public String getDescription() {
-        return "The Number of first logins";
+        return "The number of first logins into the Admin Dashboard on Codenvy On-Prem";
     }
 }

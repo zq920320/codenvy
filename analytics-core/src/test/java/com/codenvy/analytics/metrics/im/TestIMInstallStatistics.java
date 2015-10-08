@@ -15,12 +15,17 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.analytics.metrics;
+package com.codenvy.analytics.metrics.im;
 
 import com.codenvy.analytics.BaseTest;
 import com.codenvy.analytics.datamodel.ListValueData;
 import com.codenvy.analytics.datamodel.StringValueData;
 import com.codenvy.analytics.datamodel.ValueData;
+import com.codenvy.analytics.metrics.Context;
+import com.codenvy.analytics.metrics.Metric;
+import com.codenvy.analytics.metrics.MetricFactory;
+import com.codenvy.analytics.metrics.MetricType;
+import com.codenvy.analytics.metrics.Parameters;
 import com.codenvy.analytics.pig.scripts.ScriptType;
 import com.codenvy.analytics.pig.scripts.util.Event;
 import com.codenvy.analytics.pig.scripts.util.LogGenerator;
@@ -28,7 +33,6 @@ import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
 
 import java.io.File;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -75,10 +79,6 @@ public class TestIMInstallStatistics extends BaseTest {
 
         builder.putAll(scriptsManager.getScript(ScriptType.EVENTS_BY_TYPE, MetricType.IM_INSTALLS_FINISHED_UNSUCCESSFULLY).getParamsAsMap());
         pigServer.execute(ScriptType.EVENTS_BY_TYPE, builder.build());
-    }
-
-    private long dateToMillis(String date) throws ParseException {
-        return fullDateFormat.parse(date).getTime();
     }
 
     @Test

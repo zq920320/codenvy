@@ -97,10 +97,10 @@ public class TestUsersProfiles extends BaseTest {
         assertTrue(m.containsKey(UID3));
         assertTrue(m.containsKey(AUID1));
 
-        assertProfile(m.get(UID1), "f1", "l1", "company1", "phone", "job", "[u1@u.com]", fullDateFormat.parse("2013-01-01 10:00:00").getTime());
-        assertProfile(m.get(UID2), "f2", "l2", "company3", "", "", "[u2@u.com]", fullDateFormat.parse("2013-01-01 10:00:00").getTime());
-        assertProfile(m.get(UID3), "f3", "l3", "company3 :)", "", "", "[u3@u.com]", fullDateFormat.parse("2013-01-01 10:00:00").getTime());
-        assertProfile(m.get(AUID1), null, null, null, null, null, "[anonymoususer_1]", fullDateFormat.parse("2013-01-01 10:00:00").getTime());
+        assertProfile(m.get(UID1), "f1", "l1", "company1", "phone", "job", "[u1@u.com]", dateToMillis("2013-01-01 10:00:00"));
+        assertProfile(m.get(UID2), "f2", "l2", "company3", "", "", "[u2@u.com]", dateToMillis("2013-01-01 10:00:00"));
+        assertProfile(m.get(UID3), "f3", "l3", "company3 :)", "", "", "[u3@u.com]", dateToMillis("2013-01-01 10:00:00"));
+        assertProfile(m.get(AUID1), null, null, null, null, null, "[anonymoususer_1]", dateToMillis("2013-01-01 10:00:00"));
     }
 
     private void assertProfile(Map<String, ValueData> profile,

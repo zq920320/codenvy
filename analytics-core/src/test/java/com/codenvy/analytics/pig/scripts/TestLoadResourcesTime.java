@@ -93,7 +93,7 @@ public class TestLoadResourcesTime extends BaseTest {
         if (ws.equals("ws1")) {
             assertEquals(time, "1357034400000");
         } else if (ws.equals("ws2")) {
-            assertEquals(Long.parseLong(time), fullDateFormat.parse("2013-01-01 10:10:10").getTime()); // default time @see Event.toString()
+            assertEquals(Long.parseLong(time), dateToMillis("2013-01-01 10:10:10")); // default time @see Event.toString()
         } else {
             fail(ws + " unknown");
         }

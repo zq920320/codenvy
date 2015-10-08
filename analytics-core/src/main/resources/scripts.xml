@@ -327,6 +327,14 @@
         <parameter key="STORAGE_TABLE" value="im_on_prem_issued"/>
     </script>
 
+    <script name="events">
+        <description>CDEC first login</description>
+        <parameter key="WS" value="ANY"/>
+        <parameter key="USER" value="ANY"/>
+        <parameter key="EVENT" value="cdec-first-login"/>
+        <parameter key="STORAGE_TABLE" value="cdec_first_login"/>
+    </script>
+
     <!-- Trial and subscription events -->
     <script name="events">
         <description>On-prem trial licenses issued</description>
