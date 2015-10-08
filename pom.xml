@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy.onpremises</groupId>
     <artifactId>onpremises-ide-parent</artifactId>
-    <version>3.13.0</version>
+    <version>3.13.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Onpremises IDE :: Parent</name>
     <modules>
@@ -59,7 +59,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/onpremises.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/onpremises.git</developerConnection>
-        <tag>3.13.0</tag>
+        <tag>HEAD</tag>
     </scm>
     <properties>
         <odyssey.classifier>onprem-se</odyssey.classifier>
