@@ -23,15 +23,14 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy.che.depmgt</groupId>
-        <version>3.13.0-SNAPSHOT</version>
+        <version>4.0.0-M3-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy.factory</groupId>
     <artifactId>codenvy-factory-parent</artifactId>
-    <version>3.13.0-SNAPSHOT</version>
+    <version>4.0.0-M3-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Factory :: Parent</name>
     <modules>
-        <module>codenvy-factory-services</module>
         <module>codenvy-factory-packaging-war</module>
         <module>codenvy-factory-storage-mongo</module>
     </modules>

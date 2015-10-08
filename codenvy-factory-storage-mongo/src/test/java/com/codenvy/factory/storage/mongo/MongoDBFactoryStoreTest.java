@@ -19,28 +19,32 @@ package com.codenvy.factory.storage.mongo;
 
 
 import com.github.fakemongo.Fongo;
-import com.mongodb.BasicDBObject;
 import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.MongoClient;
-import com.mongodb.ServerAddress;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
 
+import org.bson.Document;
+import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.factory.FactoryBuilder;
-import org.eclipse.che.api.factory.FactoryImage;
-import org.eclipse.che.api.factory.dto.Action;
-import org.eclipse.che.api.factory.dto.Author;
-import org.eclipse.che.api.factory.dto.Factory;
-import org.eclipse.che.api.factory.dto.Ide;
-import org.eclipse.che.api.factory.dto.OnAppLoaded;
-import org.eclipse.che.api.factory.dto.OnProjectOpened;
-import org.eclipse.che.api.project.shared.dto.ImportSourceDescriptor;
-import org.eclipse.che.api.project.shared.dto.NewProject;
-import org.eclipse.che.api.project.shared.dto.RunnerConfiguration;
-import org.eclipse.che.api.project.shared.dto.RunnersDescriptor;
-import org.eclipse.che.api.project.shared.dto.Source;
+import org.eclipse.che.api.factory.server.FactoryImage;
+import org.eclipse.che.api.factory.shared.dto.Action;
+import org.eclipse.che.api.factory.shared.dto.Author;
+import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Ide;
+import org.eclipse.che.api.factory.shared.dto.OnAppLoaded;
+import org.eclipse.che.api.factory.shared.dto.OnProjectOpened;
+import org.eclipse.che.api.workspace.shared.dto.CommandDto;
+import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
+import org.eclipse.che.api.workspace.shared.dto.MachineConfigDto;
+import org.eclipse.che.api.workspace.shared.dto.MachineSourceDto;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.api.workspace.shared.dto.RecipeDto;
+import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
+import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -48,14 +52,17 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -69,23 +76,23 @@ public class MongoDBFactoryStoreTest {
 
     private static final String DB_NAME   = "test1";
     private static final String COLL_NAME = "factory1";
-    private DBCollection   collection;
-    private MongoClient    client;
-    private MongoDBFactoryStore   store;
-    private FactoryBuilder factoryBuilder;
+    private MongoCollection<Document> collection;
+    private MongoDBFactoryStore       store;
 
     @BeforeMethod
     public void setUp() throws Exception {
         Fongo fongo = new Fongo("test server");
-        client = fongo.getMongo();
-        collection = client.getDB(DB_NAME).getCollection(COLL_NAME);
-        store = new MongoDBFactoryStore(collection);
+        final CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
+        final MongoDatabase database = fongo.getDatabase(DB_NAME).withCodecRegistry(defaultRegistry);
+        collection = database.getCollection(COLL_NAME, Document.class);
+        store = new MongoDBFactoryStore(database, COLL_NAME);
     }
+
 
     @Test
     public void testSaveFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
-        factory.setV("2.1");
+        factory.setV("4.0");
 
         factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
                                      .withName("someAuthor")
@@ -93,22 +100,48 @@ public class MongoDBFactoryStoreTest {
                                      .withCreated(777777777L)
                                      .withEmail("test@test.com"));
 
-
-        Map<String, RunnerConfiguration> mapConfigs = new HashMap<>();
-        RunnerConfiguration runnerConfiguration = DtoFactory.getInstance().createDto(RunnerConfiguration.class);
-        mapConfigs.put("this.is.my.project$configuration", runnerConfiguration);
-        RunnersDescriptor runnersDescriptor = DtoFactory.getInstance().createDto(RunnersDescriptor.class).withConfigs(mapConfigs);
-
-        factory.setProject(DtoFactory.getInstance().createDto(NewProject.class)
-                                     .withName("projectName")
-                                     .withType("maven")
-                                     .withDescription("Description of project")
-                                     .withRunners(runnersDescriptor));
-
-        factory.setSource(DtoFactory.getInstance().createDto(Source.class)
-                                    .withProject(DtoFactory.getInstance().createDto(ImportSourceDescriptor.class)
-                                                           .withType("git")
-                                                           .withLocation("gitUrl")));
+        factory.setWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
+                                       .withProjects(Collections.singletonList(DtoFactory.getInstance().createDto(
+                                               ProjectConfigDto.class)
+                                                                                         .withStorage(
+                                                                                                 DtoFactory.getInstance().createDto(
+                                                                                                         SourceStorageDto.class)
+                                                                                                           .withType("git")
+                                                                                                           .withLocation("location"))
+                                                                                         .withType("type")
+                                                                                         .withAttributes(
+                                                                                                 singletonMap("key",
+                                                                                                              singletonList("value")))
+                                                                                         .withDescription("description")
+                                                                                         .withName("name")
+                                                                                         .withPath("/path")))
+                                       .withAttributes(singletonMap("key", "value"))
+                                       .withCommands(singletonList(DtoFactory.getInstance().createDto(CommandDto.class)
+                                                                             .withName("command1")
+                                                                             .withType("maven")
+                                                                             .withCommandLine("mvn test")))
+                                       .withDefaultEnvName("env1")
+                                       .withEnvironments(singletonMap("test", DtoFactory.getInstance().createDto(EnvironmentDto.class)
+                                                                                        .withName("test")
+                                                                                        .withMachineConfigs(singletonList(
+                                                                                                DtoFactory.getInstance().createDto(
+                                                                                                        MachineConfigDto.class)
+                                                                                                          .withName("name")
+                                                                                                          .withType("docker")
+                                                                                                          .withDev(true)
+                                                                                                          .withSource(
+                                                                                                                  DtoFactory.getInstance()
+                                                                                                                            .createDto(
+                                                                                                                                    MachineSourceDto.class)
+                                                                                                                            .withType(
+                                                                                                                                    "git")
+                                                                                                                            .withLocation(
+                                                                                                                                    "https://github.com/123/test.git"))))
+                                                                                        .withRecipe(DtoFactory.getInstance().createDto(
+                                                                                                RecipeDto.class)
+                                                                                                              .withType("sometype")
+                                                                                                              .withScript(
+                                                                                                                      "some script")))));
 
         Ide ide = DtoFactory.getInstance().createDto(Ide.class)
                             .withOnAppLoaded(DtoFactory.getInstance().createDto(OnAppLoaded.class))
@@ -146,6 +179,7 @@ public class MongoDBFactoryStoreTest {
         assertEquals(result, factory);
     }
 
+
     /**
      * Checks we can't save a null factory
      * Expects a server exception
@@ -161,16 +195,15 @@ public class MongoDBFactoryStoreTest {
     public void testRemoveFactory() throws Exception {
 
         String id = "123412341";
-        DBObject obj = new BasicDBObject("_id", id).append("key", "value");
-        collection.insert(obj);
+        Document obj = new Document("_id", id).append("key", "value");
+        collection.insertOne(obj);
 
         store.removeFactory(id);
 
-        DBObject query = new BasicDBObject();
-        query.put("_id", id);
-        assertNull(collection.findOne(query));
+        assertNull(collection.find(new Document("_id", id)).first());
 
     }
+
 
     @Test
     public void testGetFactoryImages() throws Exception {
@@ -186,21 +219,19 @@ public class MongoDBFactoryStoreTest {
         image.setImageData(b);
         images.add(image);
 
-        List<DBObject> imageList = new ArrayList<>();
-        for (FactoryImage one : images) {
-            imageList.add(new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
-                                                    .add("type", one.getMediaType())
-                                                    .add("data", one.getImageData()).get());
-        }
+        List<DBObject> imageList =
+                images.stream().map(one -> new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
+                                                                     .add("type", one.getMediaType())
+                                                                     .add("data", one.getImageData()).get()).collect(Collectors.toList());
 
-        BasicDBObjectBuilder factoryURLbuilder = new BasicDBObjectBuilder();
+        Document factoryBuilder = new Document();
 
-        BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
-        factoryDatabuilder.add("_id", id);
-        factoryDatabuilder.add("factoryurl", factoryURLbuilder.get());
-        factoryDatabuilder.add("images", imageList);
+        Document factoryData = new Document();
+        factoryData.append("_id", id);
+        factoryData.append("factory", factoryBuilder);
+        factoryData.append("images", imageList);
 
-        collection.save(factoryDatabuilder.get());
+        collection.insertOne(factoryData);
 
         Set<FactoryImage> newImages = store.getFactoryImages(id, null);
         assertNotNull(newImages);
@@ -211,46 +242,51 @@ public class MongoDBFactoryStoreTest {
         assertEquals(newImage.getImageData(), image.getImageData());
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testGetFactoryByAttributes() throws Exception {
 
         Set<FactoryImage> images = new HashSet<>();
 
-        Factory factoryUrl1 = DtoFactory.getInstance().createDto(Factory.class)
+        Factory factory1 = DtoFactory.getInstance().createDto(Factory.class)
                                         .withCreator(DtoFactory.getInstance().createDto(Author.class)
                                                                .withUserId("userOK"));
 
-        Factory factoryUrl2 = DtoFactory.getInstance().createDto(Factory.class)
+        Factory factory2 = DtoFactory.getInstance().createDto(Factory.class)
                                         .withCreator(DtoFactory.getInstance().createDto(Author.class)
                                                                .withUserId("userOK"))
-                                        .withProject(DtoFactory.getInstance().createDto(NewProject.class)
-                                                               .withName("projectName"));
+                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
+                                                                 .withName("wsName"));
 
-        Factory factoryUrl3 = DtoFactory.getInstance().createDto(Factory.class)
+        Factory factory3 = DtoFactory.getInstance().createDto(Factory.class)
                                         .withCreator(DtoFactory.getInstance().createDto(Author.class)
                                                                .withUserId("userOK"))
-                                        .withProject(DtoFactory.getInstance().createDto(NewProject.class)
-                                                               .withName("projectName")
-                                                               .withType("projectType"));
+                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
+                                                                 .withName("wsName")
+                                                                 .withProjects(Collections.singletonList(
+                                                                         DtoFactory.newDto(ProjectConfigDto.class)
+                                                                                   .withType("projectType"))));
 
-        store.saveFactory(factoryUrl1, images);
-        store.saveFactory(factoryUrl2, images);
-        store.saveFactory(factoryUrl3, images);
 
-        assertEquals(3, store.findByAttribute(Pair.of("creator.userId", "userOK")).size());
-        assertEquals(2, store.findByAttribute(Pair.of("project.name", "projectName")).size());
-        assertEquals(1, store.findByAttribute(Pair.of("project.name", "projectName"), Pair.of("project.type", "projectType")).size());
-        assertEquals(1, store.findByAttribute(Pair.of("creator.userId", "userOK"), Pair.of("project.type", "projectType")).size());
+        store.saveFactory(factory1, images);
+        store.saveFactory(factory2, images);
+        store.saveFactory(factory3, images);
+
+        assertEquals(store.findByAttribute(Pair.of("creator.userId", "userOK")).size(), 3);
+        assertEquals(store.findByAttribute(Pair.of("workspace.name", "wsName")).size(), 2);
+        assertEquals(store.findByAttribute(Pair.of("workspace.name", "wsName"), Pair.of("workspace.projects.type", "projectType")).size(), 1);
+        assertEquals(store.findByAttribute(Pair.of("creator.userId", "userOK"), Pair.of("workspace.projects.type", "projectType")).size(), 1);
     }
 
     /**
      * Checks that we can update a factory that has images and images are unchanged after the update
      * @throws Exception if there is failure
      */
+
     @Test
     public void testUpdateFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
-        factory.setV("2.1");
+        factory.setV("4.0");
 
         factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
                                      .withName("Florent")
@@ -258,20 +294,16 @@ public class MongoDBFactoryStoreTest {
                                      .withCreated(System.currentTimeMillis())
                                      .withEmail("test@codenvy.com"));
 
-        factory.setProject(DtoFactory.getInstance().createDto(NewProject.class)
-                                     .withName("projectName")
-                                     .withType("AngularJS")
-                                     .withDescription("Description of project"));
+        factory.setWorkspace(DtoFactory.newDto(WorkspaceConfigDto.class)
+                                       .withName("wsName")
+                                       .withProjects(Collections.singletonList(DtoFactory.newDto(ProjectConfigDto.class).withStorage(DtoFactory.newDto(
+                                               SourceStorageDto.class).withLocation("gitUrlInitial")))));
 
-        factory.setSource(DtoFactory.getInstance().createDto(Source.class)
-                                    .withProject(DtoFactory.getInstance().createDto(ImportSourceDescriptor.class)
-                                                           .withType("git")
-                                                           .withLocation("gitUrl")));
 
 
         // new Factory
         Factory updatedFactory = DtoFactory.getInstance().clone(factory);
-        updatedFactory.getSource().getProject().setLocation("gitUrlChanged");
+        updatedFactory.getWorkspace().getProjects().get(0).getStorage().setLocation("gitUrlChanged");
 
 
         Set<FactoryImage> images = new HashSet<>();
@@ -289,13 +321,13 @@ public class MongoDBFactoryStoreTest {
         store.updateFactory(id, updatedFactory);
 
 
-        DBObject query = new BasicDBObject("_id", id);
-        DBObject res = (DBObject)collection.findOne(query).get("factoryurl");
+        FindIterable<Document> list = collection.find(new Document("_id", id));
+        Document res = list.first().get("factory", Document.class);
 
         Factory result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Factory.class);
 
         // check factory has been modified
-        assertEquals(result.getSource().getProject().getLocation(), "gitUrlChanged");
+        assertEquals(result.getWorkspace().getProjects().get(0).getStorage().getLocation(), "gitUrlChanged");
 
 
         // check images have not been modified
@@ -313,6 +345,7 @@ public class MongoDBFactoryStoreTest {
      * Check that exception is thrown when using an unknown id
      * @throws Exception the NotFoundException expectd one
      */
+
     @Test(expectedExceptions = NotFoundException.class)
     public void testUpdateUnknownFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
@@ -323,8 +356,8 @@ public class MongoDBFactoryStoreTest {
 
         // now update factory
         store.updateFactory("1234", updatedFactory);
-
     }
+
 
     /**
      * Check encoding with dot

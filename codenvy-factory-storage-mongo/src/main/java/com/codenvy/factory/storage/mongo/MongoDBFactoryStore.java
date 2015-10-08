@@ -18,25 +18,19 @@
 package com.codenvy.factory.storage.mongo;
 
 
-import com.mongodb.BasicDBList;
-import com.mongodb.BasicDBObject;
-import com.mongodb.BasicDBObjectBuilder;
-import com.mongodb.DB;
-import com.mongodb.DBCollection;
-import com.mongodb.DBCursor;
-import com.mongodb.DBObject;
-import com.mongodb.MongoClient;
-import com.mongodb.MongoCredential;
-import com.mongodb.ServerAddress;
-import com.mongodb.util.JSON;
+import com.mongodb.client.FindIterable;
+import com.mongodb.client.MongoCollection;
+import com.mongodb.client.MongoDatabase;
+import com.mongodb.client.model.IndexOptions;
 
+import org.bson.Document;
 import org.bson.types.Binary;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.factory.FactoryImage;
-import org.eclipse.che.api.factory.FactoryStore;
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.server.FactoryImage;
+import org.eclipse.che.api.factory.server.FactoryStore;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -47,16 +41,14 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.net.UnknownHostException;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import static com.mongodb.MongoCredential.createCredential;
+import static com.mongodb.client.model.Filters.eq;
 import static java.lang.String.format;
-import static java.util.Collections.singletonList;
 
 /**
  * Implementation of the MongoDB factory storage.
@@ -65,14 +57,6 @@ import static java.util.Collections.singletonList;
 @Singleton
 public class MongoDBFactoryStore implements FactoryStore {
     private static final Logger LOG = LoggerFactory.getLogger(MongoDBFactoryStore.class);
-
-    private static final String HOST       = "factory.mongo.host";
-    private static final String PORT       = "factory.mongo.port";
-    private static final String DATABASE   = "factory.mongo.database";
-    private static final String COLLECTION = "factory.mongo.collection";
-    private static final String USERNAME   = "factory.mongo.username";
-    private static final String PASSWORD   = "factory.mongo.password";
-
 
     /**
      * Escaped dot character as suggested by MongoDB
@@ -84,118 +68,96 @@ public class MongoDBFactoryStore implements FactoryStore {
      */
     protected static final char ESCAPED_DOLLAR = '\uFF04';
 
-    DBCollection factories;
+    private final MongoCollection<Document> factories;
 
-    //TODO use database provider
     @Inject
-    public MongoDBFactoryStore(@Named(HOST) String host, @Named(PORT) int port, @Named(DATABASE) String dbName,
-                               @Named(COLLECTION) String collectionName, @Named(USERNAME) String username,
-                               @Named(PASSWORD) String password) {
-        MongoClient mongoClient;
-        DB db;
-        if (dbName == null || dbName.isEmpty() || collectionName == null || collectionName.isEmpty()) {
-            throw new RuntimeException("Parameters 'database' and 'collection' can't be null or empty.");
-        }
-
-        final List<MongoCredential> credentials = new ArrayList<>(1);
-        if (username != null && password != null) {
-            credentials.add(createCredential(username, dbName, password.toCharArray()));
-        }
-        mongoClient = new MongoClient(new ServerAddress(host, port), credentials);
-        db = mongoClient.getDB(dbName);
-        factories = db.getCollection(collectionName);
+    public MongoDBFactoryStore(@Named("mongo.db.factory") MongoDatabase db,
+                               @Named("factory.storage.db.collection") String collectionName) {
+        factories = db.getCollection(collectionName, Document.class);
+        factories.createIndex(new Document("_id", 1), new IndexOptions().unique(true));
     }
 
-    MongoDBFactoryStore(DBCollection factories) {
-        this.factories = factories;
-    }
 
     @Override
-    public String saveFactory(Factory factoryUrl, Set<FactoryImage> images) throws ApiException {
+    public String saveFactory(Factory factory, Set<FactoryImage> images) throws ApiException {
 
-        if (factoryUrl == null) {
+        if (factory == null) {
             throw new ServerException("The factory shouldn't be null");
         }
-
-        factoryUrl.setId(NameGenerator.generate("", 16));
-
-        List<DBObject> imageList = new ArrayList<>();
-        for (FactoryImage one : images) {
-            imageList.add(new BasicDBObjectBuilder().add("name", one.getName())
-                                                    .add("type", one.getMediaType())
-                                                    .add("data", one.getImageData()).get());
-        }
-
-        BasicDBObjectBuilder factoryDatabuilder = new BasicDBObjectBuilder();
-        factoryDatabuilder.add("_id", factoryUrl.getId());
-        factoryDatabuilder.add("factoryurl", JSON.parse(encode(DtoFactory.getInstance().toJson(factoryUrl))));
-        factoryDatabuilder.add("images", imageList);
-
-        factories.save(factoryDatabuilder.get());
-        return factoryUrl.getId();
+        factory.setId(NameGenerator.generate("", 16));
+        final List<Document> imageList = images.stream().map(one -> new Document().append("name", one.getName())
+                                                                                  .append("type", one.getMediaType())
+                                                                                  .append("data", one.getImageData()))
+                                         .collect(Collectors.toList());
+        Document factoryDocument = new Document("_id", factory.getId()).append("factory",
+                                                                               Document.parse(encode(DtoFactory.getInstance().toJson(factory))))
+                                                                       .append("images", imageList);
+        factories.insertOne(factoryDocument);
+        return factory.getId();
     }
 
     @Override
-    public void removeFactory(String id) throws ApiException {
-        factories.remove(new BasicDBObject("_id", id));
+    public void removeFactory(String factoryId) throws ApiException {
+        if (factories.deleteOne(new Document("_id", factoryId)).getDeletedCount() == 0) {
+            throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
+        }
     }
 
     @Override
-    public Factory getFactory(String id) throws ApiException {
-        DBObject res = factories.findOne(new BasicDBObject("_id", id));
-        if (res == null) {
-            return null;
+    public Factory getFactory(String factoryId) throws ApiException {
+        final FindIterable<Document> findIt = factories.find(new Document("_id", factoryId));
+        if (findIt.first() == null) {
+            throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
+        Document res =  findIt.first();
 
         // Processing factory
-        Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(decode(res.get("factoryurl").toString()), Factory.class);
+        Factory factory = DtoFactory.getInstance().createDtoFromJson(decode(res.get("factory", Document.class).toJson()), Factory.class);
 
-        factoryUrl.setId((String)res.get("_id"));
+        factory.setId((String)res.get("_id"));
 
-        return factoryUrl;
+        return factory;
     }
 
     @Override
     public List<Factory> findByAttribute(Pair<String, String>... attributes) throws ApiException {
         List<Factory> result = new ArrayList<>();
-        BasicDBObject query = new BasicDBObject();
+        Document query = new Document();
         for (Pair<String, String> one : attributes) {
-            query.append(format("factoryurl.%s", one.first), one.second);
+            query.append(format("factory.%s", one.first), one.second);
         }
-        DBCursor cursor = factories.find(query);
-        for (DBObject one : cursor) {
-            Factory factoryUrl = DtoFactory.getInstance().createDtoFromJson(decode(one.get("factoryurl").toString()), Factory.class);
-            factoryUrl.setId((String)one.get("_id"));
-            result.add(factoryUrl);
+        final FindIterable<Document> findIt = factories.find(query);
+        for (Document one : findIt) {
+            Factory factory =
+                    DtoFactory.getInstance().createDtoFromJson(decode(one.get("factory", Document.class).toJson()), Factory.class);
+            factory.setId((String)one.get("_id"));
+            result.add(factory);
         }
         return result;
     }
 
     @Override
     public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws ApiException {
+        final FindIterable<Document> findIt = factories.find(new Document("_id", factoryId));
+        Document res =  findIt.first();
+        if (res == null) {
+            throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
+        }
         Set<FactoryImage> images = new HashSet<>();
 
-        DBObject res = factories.findOne(new BasicDBObject("_id", factoryId));
-        if (res == null) {
-            return Collections.emptySet();
-        }
-
-        BasicDBList imagesAsDbObject = (BasicDBList)res.get("images");
-        for (Object obj : imagesAsDbObject) {
-            BasicDBObject dbobj = (BasicDBObject)obj;
+        for (Document obj : (List<Document>)res.get("images")) {
             try {
-                if (imageId == null || dbobj.get("name").equals(imageId)) {
+                if (imageId == null || obj.get("name").equals(imageId)) {
                     FactoryImage image = new FactoryImage();
-                    image.setName((String)dbobj.get("name"));
-                    image.setMediaType((String)dbobj.get("type"));
-                    image.setImageData(((Binary)dbobj.get("data")).getData());
+                    image.setName((String)obj.get("name"));
+                    image.setMediaType((String)obj.get("type"));
+                    image.setImageData(((Binary)obj.get("data")).getData());
                     images.add(image);
                 }
             } catch (IOException e) {
-                LOG.error("Wrong image data found for image " + dbobj.get("name"), e);
+                LOG.error("Wrong image data found for image " + obj.get("name"), e);
             }
         }
-
         return images;
     }
 
@@ -215,28 +177,23 @@ public class MongoDBFactoryStore implements FactoryStore {
      */
     @Override
     public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ServerException {
-
         if (factory == null) {
-            throw new ServerException("The factory shouldn't be null");
+            throw new ServerException("The factory replacement shouldn't be null");
         }
 
-        DBObject query = new BasicDBObject("_id", factoryId);
-        long res = factories.count(query);
-        if (res == 0) {
-            throw new NotFoundException(format("The factory with ID %s has not been found.", factoryId));
-        }
         final Factory clonedFactory = DtoFactory.getInstance().clone(factory);
         clonedFactory.setId(factoryId);
 
-        BasicDBObject factoryReplacement = new BasicDBObject("$set",
-                                                             new BasicDBObject("factoryurl",
-                                                                               JSON.parse(encode(DtoFactory.getInstance()
-                                                                                                           .toJson(clonedFactory)))));
+        Document factoryReplacement = new Document("$set",
+                                                   new Document("factory", Document.parse(
+                                                           encode(DtoFactory.getInstance()
+                                                                            .toJson(clonedFactory)))));
 
-        factories.update(query, factoryReplacement);
-
+        if (factories.findOneAndUpdate(eq("_id", factoryId), factoryReplacement) == null) {
+            throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
+        }
         // return the factory ID
-        return factory.getId();
+        return clonedFactory.getId();
     }
 
     /**
