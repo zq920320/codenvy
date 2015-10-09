@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2012] - [2015] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>maven-depmgt-pom</artifactId>
+        <groupId>com.codenvy.che.depmgt</groupId>
+        <version>4.0.0-M3-SNAPSHOT</version>
+    </parent>
+    <groupId>com.codenvy.onpremises</groupId>
+    <artifactId>onpremises-ide-parent</artifactId>
+    <version>4.0.0-M3-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Onpremises IDE :: Parent</name>
+    <modules>
+        <!--<module>onpremises-ide-plugin-onpremises</module>-->
+
+
+
+
+        <!--<module>cloud-ide-packaging-war-website-codenvy</module>-->
+        <!--<module>cloud-ide-packaging-war-webroot-codenvy</module>-->
+        <!--
+        <module>cloud-ide-packaging-war-factory</module>
+        -->
+        <module>onpremises-ide-packaging-war-platform-api</module>
+        <!--<module>cloud-ide-packaging-war-user-dashboard</module>-->
+        <!--<module>onpremises-ide-packaging-war-admin-dashboard</module>-->
+        <module>onpremises-ide-compiling-war-ide-codenvy</module>
+        <!--<module>cloud-ide-packaging-war-next-ide-codenvy</module>-->
+        <!--<module>cloud-ide-packaging-war-next-ide-resources-codenvy</module>-->
+        <!--<module>cloud-ide-packaging-war-machine-runner</module>-->
+        <!--<module>cloud-ide-packaging-war-ext-server</module>-->
+        <module>onpremises-ide-packaging-tomcat-site</module>
+        <module>onpremises-ide-packaging-tomcat-api</module>
+        <module>onpremises-ide-packaging-tomcat-machine-runner</module>
+        <module>onpremises-ide-packaging-tomcat-ext-server</module>
+        <module>onpremises-ide-packaging-tomcat-codenvy-allinone</module>
+        <module>onpremises-ide-packaging-tomcat-im</module>
+    </modules>
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/onpremises.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/onpremises.git</developerConnection>
+        <tag>HEAD</tag>
+    </scm>
+    <properties>
+        <codenvy.cloud-ide.version>4.0.0-M3-SNAPSHOT</codenvy.cloud-ide.version>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <odyssey.classifier>onprem-se</odyssey.classifier>
+        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
+    </properties>
+</project>
