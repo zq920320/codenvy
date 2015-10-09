@@ -17,11 +17,6 @@
  */
 package com.codenvy.auth.sso.oauth;
 
-/**
- *  RESTful wrapper for OAuthAuthenticator.
- * @author Sergii Kabashniuk
- */
-
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 
 import org.eclipse.che.api.core.BadRequestException;
@@ -32,6 +27,7 @@ import org.eclipse.che.security.oauth.OAuthAuthenticator;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.UnsupportedEncodingException;
@@ -43,7 +39,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-
+/**
+ * RESTful wrapper for OAuthAuthenticator.
+ *
+ * @author Sergii Kabashniuk
+ */
 @Path("oauth")
 public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
     @Inject
@@ -51,10 +51,10 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
 
     @GET
     @Path("callback")
-    public Response callback() throws OAuthAuthenticationException, BadRequestException {
+    @Override
+    public Response callback(@QueryParam("errorValues") List<String> errorValues) throws OAuthAuthenticationException, BadRequestException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
-        List<String> errorValues = uriInfo.getQueryParameters().get("error");
         if (errorValues != null && errorValues.contains("access_denied")) {
             return Response.temporaryRedirect(
                     uriInfo.getRequestUriBuilder().replacePath(errorPage).replaceQuery(null).build()).build();
