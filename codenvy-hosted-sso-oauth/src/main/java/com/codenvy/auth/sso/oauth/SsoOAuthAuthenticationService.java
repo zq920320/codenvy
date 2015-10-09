@@ -23,6 +23,9 @@ package com.codenvy.auth.sso.oauth;
  */
 
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
+
+import org.eclipse.che.api.core.BadRequestException;
+import org.eclipse.che.api.core.rest.annotations.Required;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticationService;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
@@ -30,6 +33,7 @@ import org.eclipse.che.security.oauth.OAuthAuthenticator;
 import javax.inject.Inject;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriBuilder;
 import java.io.UnsupportedEncodingException;
@@ -49,10 +53,10 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
 
     @GET
     @Path("callback")
-    public Response callback() throws OAuthAuthenticationException {
+    @Override
+    public Response callback(@QueryParam("errorValues") List<String> errorValues) throws OAuthAuthenticationException, BadRequestException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
-        List<String> errorValues = uriInfo.getQueryParameters().get("error");
         if (errorValues != null && errorValues.contains("access_denied")) {
             return Response.temporaryRedirect(
                     uriInfo.getRequestUriBuilder().replacePath(errorPage).replaceQuery(null).build()).build();
