@@ -87,7 +87,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         factory.setId(NameGenerator.generate("", 16));
         final List<Document> imageList = images.stream().map(one -> new Document().append("name", one.getName())
                                                                                   .append("type", one.getMediaType())
-                                                                                  .append("data", one.getImageData()))
+                                                                                  .append("data", new Binary(one.getImageData())))
                                          .collect(Collectors.toList());
         Document factoryDocument = new Document("_id", factory.getId()).append("factory",
                                                                                Document.parse(encode(DtoFactory.getInstance().toJson(factory))))

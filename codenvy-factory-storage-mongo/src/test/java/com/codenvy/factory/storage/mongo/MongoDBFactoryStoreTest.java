@@ -27,7 +27,8 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 
 import org.bson.Document;
-import org.bson.codecs.configuration.CodecRegistry;
+import org.bson.codecs.BinaryCodec;
+import org.bson.codecs.configuration.CodecRegistries;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.server.FactoryImage;
@@ -63,6 +64,7 @@ import java.util.stream.Collectors;
 
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
@@ -82,8 +84,9 @@ public class MongoDBFactoryStoreTest {
     @BeforeMethod
     public void setUp() throws Exception {
         Fongo fongo = new Fongo("test server");
-        final CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
-        final MongoDatabase database = fongo.getDatabase(DB_NAME).withCodecRegistry(defaultRegistry);
+        final MongoDatabase database = fongo.getDatabase(DB_NAME).withCodecRegistry(fromRegistries(
+                CodecRegistries.fromCodecs(new BinaryCodec()),
+                MongoClient.getDefaultCodecRegistry()));
         collection = database.getCollection(COLL_NAME, Document.class);
         store = new MongoDBFactoryStore(database, COLL_NAME);
     }
