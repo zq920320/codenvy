@@ -24,7 +24,6 @@ import org.eclipse.che.api.core.rest.permission.Operation;
 import org.eclipse.che.api.core.rest.permission.PermissionManager;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.Map;
 
@@ -57,7 +56,7 @@ public class WorkspacePermissionManager implements PermissionManager {
 
         final String accountId = params.get("accountId");
 
-        if (START_WORKSPACE.equals(operation)) {
+        if (START_WORKSPACE.equals(operation) && accountId != null && !accountId.isEmpty()) {
             if (accountDao.getMembers(accountId)
                           .stream()
                           .noneMatch(member -> userId.equals(member.getUserId()) && member.getRoles().contains("account/owner"))) {
