@@ -17,8 +17,6 @@
  */
 package com.codenvy.api.deploy;
 
-// TODO remove it after account is established
-
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.permission.Operation;
@@ -26,6 +24,8 @@ import org.eclipse.che.api.core.rest.permission.PermissionManager;
 
 import javax.inject.Singleton;
 import java.util.Map;
+
+// TODO remove it after account is established
 
 /**
  * Dummy implementation of permission manager.
@@ -38,4 +38,3 @@ public class DummyPermissionManager implements PermissionManager {
     public void checkPermission(Operation operation, String s, Map<String, String> map) throws ForbiddenException, ServerException {
     }
 }
-

@@ -63,7 +63,9 @@ import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.server.recipe.PermissionsChecker;
 import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
+import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
+import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
 import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.UserProfileService;
 import org.eclipse.che.api.user.server.UserService;
@@ -92,6 +94,9 @@ import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.ServiceBindingHelper;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Provider;
 import javax.inject.Singleton;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
@@ -228,7 +233,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
 //        bind(FactoryStore.class).to(InMemoryFactoryStore.class);
         bind(RecipeDao.class).to(RecipeDaoImpl.class);
-
+        bind(RecipeLoader.class);
+        Multibinder<String> recipeBinder = Multibinder.newSetBinder(binder(), String.class, Names.named("predefined.recipe.path"));
+        recipeBinder.addBinding().toProvider(RecipeProvider.class);
+        recipeBinder.addBinding().toInstance("predefined-recipes.json");
 
         bind(WorkspaceManager.class);
         /*

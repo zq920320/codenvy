@@ -78,7 +78,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>machine-runner.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-machine-runner</include>
+                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-machine-runner</include>
             </includes>
         </dependencySet>
         <dependencySet>

@@ -34,102 +34,45 @@
     <inherits name='com.google.gwt.user.theme.standard.Standard'/>
     <!-- <inherits name='com.google.gwt.user.theme.chrome.Chrome'/> -->
     <!-- <inherits name='com.google.gwt.user.theme.dark.Dark'/>     -->
-    <!-- Other module inherits                                      -->
-    <inherits name='org.eclipse.che.ide.ext.help.HelpAboutExtension'/>
+
+    <!-- Core module inherits                                       -->
     <inherits name='org.eclipse.che.ide.Api'/>
     <inherits name="org.eclipse.che.ide.Core"/>
-    <inherits name='org.eclipse.che.ide.ext.web.Web'/>
-    <inherits name='org.eclipse.che.ide.ext.java.Java'/>
+    <inherits name="org.eclipse.che.ide.ui.CodenvyUI"/>
 
-    <!--inherits name='org.eclipse.che.ide.jseditor.java.JsJavaEditor'/>
-    <inherits name='org.eclipse.che.ide.extension.ant.Ant'/>
+    <!-- Extensions                                                 -->
+    <inherits name='org.eclipse.che.ide.ext.help.HelpAboutExtension'/>
+    <inherits name='org.eclipse.che.ide.ext.web.Web'/>
     <inherits name='org.eclipse.che.ide.ext.java.jdi.JavaRuntimeExtension'/>
-    <inherits name='org.eclipse.che.ide.extension.builder.Builder'/>
-    <inherits name='org.eclipse.che.ide.ext.runner.Runner'/>
-    -->
     <inherits name='org.eclipse.che.ide.extension.machine.Machine'/>
     <inherits name='org.eclipse.che.ide.extension.maven.Maven'/>
     <inherits name='org.eclipse.che.ide.ext.git.Git'/>
-    <!--
-    <inherits name='org.eclipse.che.ide.ext.svn.Subversion'/>
-    -->
     <inherits name='org.eclipse.che.ide.ext.github.GitHub'/>
-    <inherits name='org.eclipse.che.ide.ext.bitbucket.Bitbucket'/>
     <inherits name='org.eclipse.che.ide.ext.ssh.Ssh'/>
-    <!--
-    <inherits name='org.eclipse.che.ide.ext.datasource.Datasource'/>
-    <inherits name='com.codenvy.ide.ext.gae.GAE'/>
-    <inherits name='com.codenvy.ide.factory.Factory'/>
-    <inherits name='com.codenvy.ide.clone.Clone'/>
-    <inherits name='com.codenvy.ide.share.Share'/>
-    <inherits name='com.codenvy.ide.dashboard.Dashboard'/>
-    <inherits name="com.codenvy.ide.permissions.Permissions"/>
-    <inherits name="com.codenvy.ide.subscriptions.Subscriptions"/>
-    <inherits name='com.codenvy.ide.support.help.SupportHelp'/>
-    -->
-    <inherits name='com.codenvy.ide.profile.Profile'/>
-    <inherits name='com.codenvy.ide.hosted.Hosted'/>
-    <!--
-    <inherits name='com.codenvy.docker.Docker'/>
-    <inherits name='com.codenvy.api.resources.Resources'/>
-    -->
+    <inherits name='org.eclipse.che.ide.editor.orion.OrionEditor'/>
+    <inherits name="org.eclipse.che.ide.orion.OrionCompare"/>
 
-    <!-- Platform API GWT clients -->
+    <inherits name='org.eclipse.che.plugin.docker.client.dto.Dto'/>
+
+    <!-- Platform API GWT client dependencies                       -->
+    <inherits name='org.eclipse.che.api.Analytics'/>
     <inherits name='org.eclipse.che.api.Core'/>
-    <!--
-    <inherits name='org.eclipse.che.api.Builder'/>
-    -->
     <inherits name='org.eclipse.che.api.Machine'/>
     <inherits name='org.eclipse.che.api.Git'/>
     <inherits name='org.eclipse.che.api.Project'/>
-    <!--
-    <inherits name='org.eclipse.che.api.Runner'/>
-    -->
     <inherits name='org.eclipse.che.api.User'/>
-    <inherits name='org.eclipse.che.api.VFS'/>
-    <inherits name='org.eclipse.che.api.Analytics'/>
-    <!--
-    <inherits name='org.eclipse.che.api.Factory'/>
-    -->
-
-    <inherits name="org.eclipse.che.ide.ui.CodenvyUI"/>
-    <inherits name="org.eclipse.che.api.Project"/>
-    <inherits name="org.eclipse.che.api.Workspace"/>
     <inherits name='org.eclipse.che.api.Account'/>
+    <!--inherits name='org.eclipse.che.api.Factory'/-->
+    <inherits name='org.eclipse.che.api.VFS'/>
+    <inherits name="org.eclipse.che.api.Workspace"/>
+    <inherits name='org.eclipse.che.plugin.docker.ext.client.Docker'/>
+
+    <!--Hosted specific -->
+    <inherits name='com.codenvy.ide.profile.Profile'/>
+    <inherits name='com.codenvy.ide.hosted.Hosted'/>
     <!--
     <inherits name='com.codenvy.api.subscription.Subscription'/>
     -->
-    <inherits name='org.eclipse.che.plugin.docker.client.dto.Dto'/>
-    <inherits name='org.eclipse.che.plugin.docker.ext.client.Docker'/>
-    <!-- Javascript & AngularJS plugins -->
-    <!--
-    <inherits name="org.eclipse.che.plugin.angularjs.completion.dto.Completion"/>
-    <inherits name="org.eclipse.che.plugin.angularjs.core.client.AngularJS"/>
-    <inherits name="org.eclipse.che.plugin.bower.client.Bower"/>
-    <inherits name="org.eclipse.che.plugin.grunt.client.Grunt"/>
-    <inherits name="org.eclipse.che.plugin.npm.client.Npm"/>
-    <inherits name="org.eclipse.che.plugin.yeoman.client.Yeoman"/>
-    -->
-
-    <!-- Guided Tour plugin -->
-    <!--
-    <inherits name="org.eclipse.che.plugin.tour.client.Tour"/>
-    -->
-
-    <!-- Workflow Contribution plugin -->
-    <!--
-    <inherits name="com.codenvy.plugin.contribution.Contributor"/>
-    -->
-
-    <!--
-    <inherits name="org.eclipse.che.ide.ext.php.PHP"/>
-    <inherits name="org.eclipse.che.ide.ext.cpp.CPP"/>
-    <inherits name="org.eclipse.che.ide.ext.ruby.Ruby"/>
-    <inherits name="org.eclipse.che.ide.ext.python.Python"/>
-    <inherits name="org.eclipse.che.ide.ext.go.Go"/>
-    -->
-
-    <inherits name='org.eclipse.che.ide.editor.orion.OrionEditor'/>
 
     <stylesheet src="IDE.css"/>
 
@@ -139,9 +82,4 @@
     <!-- Specify the paths for translatable code                    -->
     <source path='client'/>
     <source path='shared'/>
-    <!--
-            Cross-site iframe linker is needed to generate compilation-mappings.txt.
-            The file is used to determine JavaScript file to be loaded.
-        -->
-    <add-linker name="xsiframe"/>
 </module>

@@ -72,9 +72,9 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <outputDirectory>webapps</outputDirectory>
-            <outputFileNameMapping>ws.war</outputFileNameMapping>
+            <outputFileNameMapping>dashboard.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-next-ide-codenvy</include>
+                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-user-dashboard</include>
             </includes>
         </dependencySet>
         <dependencySet>
