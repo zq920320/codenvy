@@ -111,14 +111,16 @@ public class WorkspaceDaoImplTest {
         final UsersWorkspaceImpl workspace = createWorkspace();
 
         workspaceDao.create(workspace);
+        workspace.setName("anotherName");// to prevent same name restriction
         workspaceDao.create(workspace);
     }
 
     @Test(expectedExceptions = ConflictException.class)
     public void testCreateWorkspaceWhenWorkspaceWithSuchNameAndOwnerAlreadyExists() throws Exception {
-        final MongoDatabase db = mockDatabase(col -> doThrow(mock(MongoWriteException.class)).when(col).insertOne(any()));
+        final UsersWorkspaceImpl workspace = createWorkspace();
 
-        new WorkspaceDaoImpl(db, "workspaces").create(createWorkspace());
+        workspaceDao.create(workspace);
+        workspaceDao.create(workspace);
     }
 
     @Test(expectedExceptions = ServerException.class)
@@ -482,7 +484,7 @@ public class WorkspaceDaoImplTest {
 
         return UsersWorkspaceImpl.builder()
                                  .setId(generate("workspace", 16))
-                                 .setName("test-workspace-name")
+                                 .setName(generate("workspace-name", 8))
                                  .setDescription("This is test workspace")
                                  .setOwner("user123")
                                  .setAttributes(attributes)
