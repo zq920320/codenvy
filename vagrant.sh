@@ -234,7 +234,7 @@ fi
 if [ ${MULTI_SERVER} == false ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
   cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
-  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
+  cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
   # Open folder for AIO env
   cd ../deployment-onprem/puppet
 else
