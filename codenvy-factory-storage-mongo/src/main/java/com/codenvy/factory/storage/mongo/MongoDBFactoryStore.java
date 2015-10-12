@@ -52,7 +52,7 @@ import static com.mongodb.client.model.Filters.eq;
 import static java.lang.String.format;
 
 /**
- * Implementation of the MongoDB factory storage.
+ * MongoDB implementation of {@link FactoryStore}
  */
 
 @Singleton

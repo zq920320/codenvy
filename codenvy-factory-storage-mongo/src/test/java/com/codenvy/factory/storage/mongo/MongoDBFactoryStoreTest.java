@@ -25,6 +25,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
+import com.mongodb.util.JSON;
 
 import org.bson.Document;
 import org.bson.codecs.BinaryCodec;
@@ -72,6 +73,7 @@ import static org.testng.Assert.assertTrue;
 
 
 /**
+ * Tests for {@link MongoDBFactoryStore}
  *
  */
 public class MongoDBFactoryStoreTest {
@@ -196,7 +198,6 @@ public class MongoDBFactoryStoreTest {
 
     @Test
     public void testRemoveFactory() throws Exception {
-
         String id = "123412341";
         Document obj = new Document("_id", id).append("key", "value");
         collection.insertOne(obj);
@@ -204,13 +205,11 @@ public class MongoDBFactoryStoreTest {
         store.removeFactory(id);
 
         assertNull(collection.find(new Document("_id", id)).first());
-
     }
 
 
     @Test
     public void testGetFactoryImages() throws Exception {
-
         String id = "testid1234314";
 
         Set<FactoryImage> images = new HashSet<>();
@@ -285,8 +284,7 @@ public class MongoDBFactoryStoreTest {
      * Checks that we can update a factory that has images and images are unchanged after the update
      * @throws Exception if there is failure
      */
-
-    @Test(enabled = false)  // TODO: enable me
+    @Test
     public void testUpdateFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
         factory.setV("4.0");
@@ -327,7 +325,7 @@ public class MongoDBFactoryStoreTest {
         FindIterable<Document> list = collection.find(new Document("_id", id));
         Document res = list.first().get("factory", Document.class);
 
-        Factory result = DtoFactory.getInstance().createDtoFromJson(res.toString(), Factory.class);
+        Factory result = DtoFactory.getInstance().createDtoFromJson(JSON.serialize(res), Factory.class);
 
         // check factory has been modified
         assertEquals(result.getWorkspace().getProjects().get(0).getStorage().getLocation(), "gitUrlChanged");
@@ -346,10 +344,9 @@ public class MongoDBFactoryStoreTest {
 
     /**
      * Check that exception is thrown when using an unknown id
-     * @throws Exception the NotFoundException expectd one
+     * @throws Exception the NotFoundException expected one
      */
-
-    @Test(enabled = false, expectedExceptions = NotFoundException.class)// TODO: enable me
+    @Test(expectedExceptions = NotFoundException.class)
     public void testUpdateUnknownFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
         factory.setV("2.1");
