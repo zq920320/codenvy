@@ -59,6 +59,7 @@ import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
+import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.server.recipe.PermissionsChecker;
 import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
@@ -401,5 +402,9 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                           .to(Key.get(String.class, Names.named("api.endpoint")));
 
 //        install(new com.codenvy.router.MachineRouterModule());
+
+        // TODO rebind to WorkspacePermissionManager after account is established
+        bind(PermissionManager.class).annotatedWith(Names.named("service.workspace.permission_manager"))
+                                     .to(DummyPermissionManager.class);
     }
 }
