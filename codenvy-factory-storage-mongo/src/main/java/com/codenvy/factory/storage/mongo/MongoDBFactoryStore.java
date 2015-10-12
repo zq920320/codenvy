@@ -22,6 +22,7 @@ import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
+import com.mongodb.util.JSON;
 
 import org.bson.Document;
 import org.bson.types.Binary;
@@ -110,9 +111,10 @@ public class MongoDBFactoryStore implements FactoryStore {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
         Document res =  findIt.first();
+        String decoded = decode(JSON.serialize(res.get("factory", Document.class)));
 
         // Processing factory
-        Factory factory = DtoFactory.getInstance().createDtoFromJson(decode(res.get("factory", Document.class).toJson()), Factory.class);
+        Factory factory = DtoFactory.getInstance().createDtoFromJson(decoded, Factory.class);
 
         factory.setId((String)res.get("_id"));
 
@@ -185,7 +187,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         clonedFactory.setId(factoryId);
 
         Document factoryReplacement = new Document("$set",
-                                                   new Document("factory", Document.parse(
+                                                   new Document("factory", JSON.parse(
                                                            encode(DtoFactory.getInstance()
                                                                             .toJson(clonedFactory)))));
 
