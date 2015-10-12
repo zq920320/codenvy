@@ -56,7 +56,7 @@ public class WorkspacePermissionManager implements PermissionManager {
 
         final String accountId = params.get("accountId");
 
-        if (START_WORKSPACE.equals(operation) && accountId != null && !accountId.isEmpty()) {
+        if (START_WORKSPACE.equals(operation)) {
             if (accountDao.getMembers(accountId)
                           .stream()
                           .noneMatch(member -> userId.equals(member.getUserId()) && member.getRoles().contains("account/owner"))) {
