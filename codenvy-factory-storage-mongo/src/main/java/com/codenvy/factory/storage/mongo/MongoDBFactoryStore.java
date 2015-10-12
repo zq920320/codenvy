@@ -130,8 +130,9 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
         final FindIterable<Document> findIt = factories.find(query);
         for (Document one : findIt) {
+            String decoded = decode(JSON.serialize(one.get("factory", Document.class)));
             Factory factory =
-                    DtoFactory.getInstance().createDtoFromJson(decode(one.get("factory", Document.class).toJson()), Factory.class);
+                    DtoFactory.getInstance().createDtoFromJson(decoded, Factory.class);
             factory.setId((String)one.get("_id"));
             result.add(factory);
         }
