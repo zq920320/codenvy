@@ -27,8 +27,8 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.event.ProjectActionEvent;
-import org.eclipse.che.ide.api.event.ProjectActionHandler;
+import org.eclipse.che.ide.api.event.project.ProjectReadyEvent;
+import org.eclipse.che.ide.api.event.project.ProjectReadyHandler;
 import org.eclipse.che.ide.api.parts.PartPresenter;
 import org.eclipse.che.ide.api.parts.PartStackType;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
@@ -45,7 +45,7 @@ import java.util.List;
  * @author Vitaliy Guliy
  */
 @Singleton
-public class PermissionsPartPresenter extends BasePresenter implements PermissionsPartView.ActionDelegate, ProjectActionHandler {
+public class PermissionsPartPresenter extends BasePresenter implements PermissionsPartView.ActionDelegate, ProjectReadyHandler {
 
     private final PermissionsPartView             view;
     private final WorkspaceAgent                  workspaceAgent;
@@ -66,20 +66,16 @@ public class PermissionsPartPresenter extends BasePresenter implements Permissio
         this.appContext = appContext;
 
         view.setDelegate(this);
-        eventBus.addHandler(ProjectActionEvent.TYPE, this);
+        eventBus.addHandler(ProjectReadyEvent.TYPE, this);
     }
 
     public void process() {
         permissions = null;
     }
 
-    @Override
-    public void onProjectOpened(ProjectActionEvent event) {
-
-    }
 
     @Override
-    public void onProjectReady(ProjectActionEvent event) {
+    public void onProjectReady(ProjectReadyEvent event) {
         project = event.getProject();
 
         checkProjectPermissions();
@@ -87,9 +83,6 @@ public class PermissionsPartPresenter extends BasePresenter implements Permissio
         showPanel();
     }
 
-    @Override
-    public void onProjectClosing(ProjectActionEvent event) {
-    }
 
     private void checkProjectPermissions() {
         // Workspace is not set and project is not opened
@@ -106,13 +99,7 @@ public class PermissionsPartPresenter extends BasePresenter implements Permissio
     }
 
 
-    @Override
-    public void onProjectClosed(ProjectActionEvent event) {
-        project = null;
-        permissions = null;
 
-        hidePanel();
-    }
 
     private void showPanel() {
         workspaceAgent.openPart(this, PartStackType.NAVIGATION);
