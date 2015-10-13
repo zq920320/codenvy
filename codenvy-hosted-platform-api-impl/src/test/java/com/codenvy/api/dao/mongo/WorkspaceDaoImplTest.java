@@ -234,7 +234,9 @@ public class WorkspaceDaoImplTest {
     public void testGetWorkspacesByOwner() throws Exception {
         final UsersWorkspaceImpl workspace = createWorkspace();
         final UsersWorkspaceImpl workspace2 = createWorkspace();
+        workspace2.setName(workspace.getName() + '2');
         final UsersWorkspaceImpl workspace3 = new UsersWorkspaceImpl(workspace, generate("ws", 16), workspace.getOwner() + '2');
+        workspace3.setName(workspace.getName() + '3');
         collection.insertMany(asList(workspace, workspace2, workspace3));
 
         final List<UsersWorkspaceImpl> result = workspaceDao.getByOwner(workspace.getOwner());
@@ -484,7 +486,7 @@ public class WorkspaceDaoImplTest {
 
         return UsersWorkspaceImpl.builder()
                                  .setId(generate("workspace", 16))
-                                 .setName(generate("workspace-name", 8))
+                                 .setName("workspace-name")
                                  .setDescription("This is test workspace")
                                  .setOwner("user123")
                                  .setAttributes(attributes)

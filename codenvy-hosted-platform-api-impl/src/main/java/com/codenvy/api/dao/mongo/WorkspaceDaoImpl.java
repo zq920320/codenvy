@@ -168,7 +168,6 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
                                                workspace.getName(),
                                                workspace.getOwner()));
         } catch (MongoException mongoEx) {
-            System.out.println(mongoEx);
             throw new ServerException(mongoEx.getMessage(), mongoEx);
         }
         return workspace;
