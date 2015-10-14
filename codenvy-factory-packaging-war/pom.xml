@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-factory-parent</artifactId>
         <groupId>com.codenvy.factory</groupId>
-        <version>4.0.0-M3</version>
+        <version>4.0.0-M4-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-factory-packaging-war</artifactId>
     <packaging>war</packaging>
