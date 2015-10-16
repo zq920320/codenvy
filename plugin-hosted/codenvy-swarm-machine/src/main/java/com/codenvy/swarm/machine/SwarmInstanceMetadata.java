@@ -19,14 +19,13 @@ package com.codenvy.swarm.machine;
 
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 
-import org.eclipse.che.api.machine.server.exception.MachineException;
-import org.eclipse.che.api.machine.server.spi.InstanceMetadata;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
+import org.eclipse.che.plugin.docker.machine.DockerNode;
 
 import java.util.Map;
 
 /**
- * Swarm implementation of {@link InstanceMetadata}
+ * Swarm implementation of {@link org.eclipse.che.api.core.model.machine.MachineMetadata}
  *
  * @author Alexander Garagatyi
  */
@@ -34,8 +33,8 @@ public class SwarmInstanceMetadata extends DockerInstanceMetadata {
 
     private final SwarmContainerInfo info;
 
-    public SwarmInstanceMetadata(SwarmContainerInfo containerInfo) throws MachineException {
-        super(containerInfo);
+    public SwarmInstanceMetadata(SwarmContainerInfo containerInfo, DockerNode dockerNode) {
+        super(containerInfo, dockerNode);
         info = containerInfo;
     }
 
@@ -49,10 +48,5 @@ public class SwarmInstanceMetadata extends DockerInstanceMetadata {
         dockerProperties.put("node.name", info.getNode().getName());
 
         return dockerProperties;
-    }
-
-    @Override
-    public String toJson() {
-        return info.toString();
     }
 }
