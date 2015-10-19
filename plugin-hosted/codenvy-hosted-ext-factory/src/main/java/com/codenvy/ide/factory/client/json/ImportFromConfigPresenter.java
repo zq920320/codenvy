@@ -17,9 +17,9 @@
  */
 package com.codenvy.ide.factory.client.json;
 
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.ide.api.event.OpenProjectEvent;
+import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.dto.DtoFactory;
@@ -65,7 +65,7 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
                 importNotification.setMessage(factoryLocalization.clonedSource());
                 importNotification.setType(Notification.Type.INFO);
                 importNotification.setStatus(Notification.Status.FINISHED);
-                eventBus.fireEvent(new OpenProjectEvent(result.getName()));
+                eventBus.fireEvent(new OpenProjectEvent(result));
             }
 
             @Override

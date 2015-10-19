@@ -32,7 +32,6 @@ import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
 import com.google.gwt.user.client.Window;
-import com.google.inject.name.Named;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;

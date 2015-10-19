@@ -43,4 +43,6 @@ public interface GreetingPartView extends View<GreetingPartView.ActionDelegate> 
      */
     void showGreeting(String url);
 
+    void setVisible(boolean visible);
+
 }

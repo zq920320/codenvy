@@ -17,28 +17,23 @@
  */
 package com.codenvy.ide.factory.client.accept;
 
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
 import org.eclipse.che.api.workspace.gwt.client.WorkspaceServiceClient;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.event.ConfigureProjectEvent;
-import org.eclipse.che.ide.api.event.OpenProjectEvent;
+import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.utils.FactoryProjectImporter;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
-import org.eclipse.che.ide.rest.AsyncRequestCallback;
-import org.eclipse.che.ide.util.Config;
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
 import javax.inject.Inject;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Sergii Leschenko
@@ -88,33 +83,9 @@ public class AcceptFactoryHandler {
         Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
             @Override
             public void execute() {
-                prepareWorkspace(factory);
+                startImporting(factory);
             }
         });
-    }
-
-    private void prepareWorkspace(final Factory factory) {
-        if (Config.getCurrentWorkspace().isTemporary() && factory.getProject() != null
-            && "public".equals(factory.getProject().getVisibility())) {
-
-            Map<String, String> attributes = new HashMap<>();
-            attributes.put("allowAnyoneAddMember", "true");
-
-            workspaceServiceClient.updateAttributes(attributes, new AsyncRequestCallback<WorkspaceDescriptor>() {
-                @Override
-                protected void onSuccess(WorkspaceDescriptor result) {
-                    startImporting(factory);
-                }
-
-                @Override
-                protected void onFailure(Throwable exception) {
-                    notification.setMessage(exception.getMessage());
-                    notification.setType(Notification.Type.ERROR);
-                }
-            });
-        } else {
-            startImporting(factory);
-        }
     }
 
     private void startImporting(final Factory factory) {
@@ -132,7 +103,7 @@ public class AcceptFactoryHandler {
                                                       notification.setStatus(Notification.Status.FINISHED);
                                                       notification.setMessage(factoryLocalization.clonedSource());
 
-                                                      eventBus.fireEvent(new OpenProjectEvent(projectDescriptor.getName()));
+                                                      eventBus.fireEvent(new OpenProjectEvent(projectDescriptor));
 
                                                       if (!projectDescriptor.getProblems().isEmpty()) {
                                                           eventBus.fireEvent(new ConfigureProjectEvent(projectDescriptor));

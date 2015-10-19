@@ -20,21 +20,17 @@ package com.codenvy.ide.factory.client.utils;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.accept.Authenticator;
 import com.codenvy.ide.factory.shared.Constants;
-import com.google.common.base.Strings;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.project.shared.dto.ImportProject;
 import org.eclipse.che.api.project.shared.dto.ImportResponse;
-import org.eclipse.che.api.project.shared.dto.ImportSourceDescriptor;
-import org.eclipse.che.api.project.shared.dto.NewProject;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.project.shared.dto.ProjectReference;
 import org.eclipse.che.api.project.shared.dto.ProjectUpdate;
-import org.eclipse.che.api.project.shared.dto.Source;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
@@ -43,20 +39,14 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 /**
  * @author Sergii Leschenko
  * @author Valeriy Svydenko
  */
 public class FactoryProjectImporter {
-    public static final String DEFAULT_PROJECT_NAME       = "Unnamed";
-    public static final String DEFAULT_PROJECT_VISIBILITY = "private";
-    public static final String DEFAULT_KEEP_VCS           = "false";
 
     private final ProjectServiceClient                projectServiceClient;
     private final DtoUnmarshallerFactory              dtoUnmarshallerFactory;
@@ -90,174 +80,67 @@ public class FactoryProjectImporter {
         this.notification = notification;
         this.factory = factory;
 
-        prepareFactory();
-
-        if (isValidFactoryJson(factory)) {
-            selectAvailableProjectName();
-        }
+        importProjects();
     }
 
-    private void prepareFactory() {
-        if (factory.getProject() == null) {
-            factory.setProject(dtoFactory.createDto(NewProject.class)
-                                         .withName(DEFAULT_PROJECT_NAME)
-                                         .withVisibility(DEFAULT_PROJECT_VISIBILITY));
-        } else {
-            if (factory.getProject().getName() == null) {
-                factory.getProject().setName(DEFAULT_PROJECT_NAME);
-            }
-
-            if (factory.getProject().getVisibility() == null) {
-                factory.getProject().setVisibility(DEFAULT_PROJECT_VISIBILITY);
-            }
-        }
-
-        if (!factory.getProject().getMixinTypes().contains(Constants.FACTORY_PROJECT_TYPE_ID)) {
-            factory.getProject().getMixinTypes().add(Constants.FACTORY_PROJECT_TYPE_ID);
-        }
-
-        //setting keepVcs to true by default
-        if (factory.getSource() == null) {
-            factory.setSource(dtoFactory.createDto(Source.class));
-        }
-
-        if (factory.getSource().getProject() == null) {
-            factory.getSource().setProject(dtoFactory.createDto(ImportSourceDescriptor.class));
-        }
-
-        if (factory.getSource().getProject().getParameters() == null) {
-            factory.getSource().getProject().setParameters(new HashMap<String, String>());
-            factory.getSource().getProject().getParameters().put("keepVcs", DEFAULT_KEEP_VCS);
-        } else if (factory.getSource().getProject().getParameters().get("keepVcs") == null) {
-            factory.getSource().getProject().getParameters().put("keepVcs", DEFAULT_KEEP_VCS);
-        }
-    }
-
-    private boolean isValidFactoryJson(Factory factory) {
-        if (factory != null) {
-            if (factory.getSource() != null) {
-                return true;
-            } else {
-                callback.onFailure(new Exception("Config file doesn't contain information about source provider"));
-            }
-        } else {
-            callback.onFailure(new Exception("Config file is missed"));
-        }
-        return false;
-    }
-
-    private void selectAvailableProjectName() {
-        projectServiceClient.getProjects(new AsyncRequestCallback<List<ProjectReference>>(
-                dtoUnmarshallerFactory.newListUnmarshaller(ProjectReference.class)) {
-            @Override
-            protected void onSuccess(List<ProjectReference> result) {
-                String projectName = factory.getProject().getName();
-
-                if (!result.isEmpty()) {
-                    Set<String> names = new HashSet<>();
-                    for (ProjectReference projectReference : result) {
-                        names.add(projectReference.getName());
-                    }
-
-                    if (names.contains(projectName)) {
-                        projectName += "-";
-
-                        int postfixCounter = 1;
-                        while (names.contains(projectName + postfixCounter)) {
-                            ++postfixCounter;
-                        }
-
-                        projectName += postfixCounter;
-                        factory.getProject().setName(projectName);
-                    }
-                }
-
-                importProject();
-            }
-
-            @Override
-            protected void onFailure(Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
-    }
 
     /**
      * Imports source to project
      */
-    private void importProject() {
-        notification.setMessage(localization.cloningSource());
-        notificationSubscriber.subscribe(factory.getProject().getName(), notification);
-        ImportProject importProject = dtoFactory.createDto(ImportProject.class)
-                                                .withSource(factory.getSource())
-                                                .withProject(factory.getProject());
-
-        setUpContentRoot();
-
-        projectServiceClient.importProject(factory.getProject().getName(), true, importProject,
-                                           new AsyncRequestCallback<ImportResponse>(
-                                                   dtoUnmarshallerFactory.newUnmarshaller(ImportResponse.class)) {
-                                               @Override
-                                               protected void onSuccess(ImportResponse importedProject) {
-                                                   if (importedProject.getProjectDescriptor().getMixins()
-                                                                      .contains(Constants.FACTORY_PROJECT_TYPE_ID)) {
-                                                       updateProjectAttributes(importedProject.getProjectDescriptor());
-                                                   } else {
-                                                       callback.onSuccess(importedProject.getProjectDescriptor());
-                                                   }
-                                               }
-
-                                               @Override
-                                               protected void onFailure(Throwable exception) {
-                                                   if (exception instanceof UnauthorizedException) {
-                                                       rerunWithAuthImport();
-                                                   } else {
-                                                       callback.onFailure(new Exception("Unable to import source of project. " + dtoFactory
-                                                               .createDtoFromJson(exception.getMessage(), ServiceError.class)
-                                                               .getMessage()));
-                                                   }
-                                               }
-                                           });
+    private void importProjects() {
+//        for (ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
+//            notification.setMessage(localization.cloningSource());
+//            notificationSubscriber.subscribe(projectConfig.getName(), notification);
+//            ImportProject importProject = dtoFactory.createDto(ImportProject.class)
+//                                                    .withSource(factory.getSource())
+//                                                    .withProject(factory.getProject());
+//
+//            projectServiceClient.importProject(factory.getProject().getName(), true, importProject,
+//                                               new AsyncRequestCallback<ImportResponse>(
+//                                                       dtoUnmarshallerFactory.newUnmarshaller(ImportResponse.class)) {
+//                                                   @Override
+//                                                   protected void onSuccess(ImportResponse importedProject) {
+//                                                       if (importedProject.getProjectDescriptor().getMixins()
+//                                                                          .contains(Constants.FACTORY_PROJECT_TYPE_ID)) {
+//                                                           updateProjectAttributes(importedProject.getProjectDescriptor());
+//                                                       } else {
+//                                                           callback.onSuccess(importedProject.getProjectDescriptor());
+//                                                       }
+//                                                   }
+//
+//                                                   @Override
+//                                                   protected void onFailure(Throwable exception) {
+//                                                       if (exception instanceof UnauthorizedException) {
+//                                                           rerunWithAuthImport();
+//                                                       } else {
+//                                                           callback.onFailure(
+//                                                                   new Exception("Unable to import source of project. " + dtoFactory
+//                                                                           .createDtoFromJson(exception.getMessage(), ServiceError.class)
+//                                                                           .getMessage()));
+//                                                       }
+//                                                   }
+//                                               });
+//        }
     }
 
-    private void setUpContentRoot() {
-        Map<String, String> parameters = factory.getSource().getProject().getParameters();
-
-        if (!parameters.containsKey("keepDirectory")) {
-            return;
-        }
-
-        final String directory = parameters.get("keepDirectory");
-
-        if (Strings.isNullOrEmpty(directory)) {
-            return;
-        }
-
-        factory.getProject().setContentRoot(directory);
-
-        if (Strings.isNullOrEmpty(factory.getProject().getType())) {
-            factory.getProject().setType("blank");
-        }
-    }
-
-    private void rerunWithAuthImport() {
-        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
-        authenticator.showOAuthWindow(factory.getSource().getProject().getLocation(),
-                                      new Authenticator.AuthCallback() {
-                                          @Override
-                                          public void onAuthenticated() {
-                                              notification.setMessage(localization.oauthSuccess());
-                                              importProject();
-                                          }
-
-                                          @Override
-                                          public void onError(String message) {
-                                              notification.setMessage(localization.oauthFailed() + " " + message);
-                                              notification.setType(Notification.Type.ERROR);
-                                              notification.setStatus(Notification.Status.FINISHED);
-                                          }
-                                      });
-    }
+//    private void rerunWithAuthImport() {
+//        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
+//        authenticator.showOAuthWindow(factory.getSource().getProject().getLocation(),
+//                                      new Authenticator.AuthCallback() {
+//                                          @Override
+//                                          public void onAuthenticated() {
+//                                              notification.setMessage(localization.oauthSuccess());
+//                                              importProjects();
+//                                          }
+//
+//                                          @Override
+//                                          public void onError(String message) {
+//                                              notification.setMessage(localization.oauthFailed() + " " + message);
+//                                              notification.setType(Notification.Type.ERROR);
+//                                              notification.setStatus(Notification.Status.FINISHED);
+//                                          }
+//                                      });
+//    }
 
     private void updateProjectAttributes(ProjectDescriptor projectDescriptor) {
         Map<String, List<String>> attributes = projectDescriptor.getAttributes();
@@ -266,9 +149,9 @@ public class FactoryProjectImporter {
                                          .withType(projectDescriptor.getType())
                                          .withMixinTypes(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
-                                         .withBuilders(projectDescriptor.getBuilders())
-                                         .withDescription(projectDescriptor.getDescription())
-                                         .withRunners(projectDescriptor.getRunners());
+                                         .withContentRoot(projectDescriptor.getContentRoot())
+                                         .withMixinTypes(projectDescriptor.getMixins())
+                                         .withDescription(projectDescriptor.getDescription());
         projectServiceClient.updateProject(projectDescriptor.getPath(), update,
                                            new AsyncRequestCallback<ProjectDescriptor>(
                                                    dtoUnmarshallerFactory.newUnmarshaller(ProjectDescriptor.class)) {
