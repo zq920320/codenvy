@@ -29,6 +29,7 @@ import com.codenvy.api.dao.mongo.OrganizationMongoDatabaseProvider;
 import com.codenvy.api.dao.mongo.RecipeDaoImpl;
 import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 import com.codenvy.api.dao.util.ProfileMigrator;
+import com.codenvy.api.factory.FactoryMongoDatabaseProvider;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -59,12 +60,17 @@ import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
+import org.eclipse.che.api.factory.server.FactoryAcceptValidator;
+import org.eclipse.che.api.factory.server.FactoryCreateValidator;
+import org.eclipse.che.api.factory.server.FactoryEditValidator;
+import org.eclipse.che.api.factory.server.FactoryService;
 import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.server.recipe.PermissionsChecker;
 import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
+import org.eclipse.che.api.project.server.handlers.ProjectHandler;
 import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
 import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.UserProfileService;
@@ -209,14 +215,21 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(MongoDatabase.class).annotatedWith(Names.named("mongo.db.organization"))
                                  .toProvider(OrganizationMongoDatabaseProvider.class);
 
+        bind(MongoDatabase.class).annotatedWith(Names.named("mongo.db.factory"))
+                                 .toProvider(FactoryMongoDatabaseProvider.class);
 
-        /*
-        bind(org.eclipse.che.api.factory.FactoryStore.class).to(com.codenvy.factory.storage.mongo.MongoDBFactoryStore.class);
-        bind(FactoryAcceptValidator.class).to(FactoryAcceptValidatorImpl.class);
-        bind(FactoryCreateValidator.class).to(FactoryCreateValidatorImpl.class);
+
+
+        bind(org.eclipse.che.api.factory.server.FactoryStore.class).to(com.codenvy.factory.storage.mongo.MongoDBFactoryStore.class);
+        bind(FactoryAcceptValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryAcceptValidatorImpl.class);
+        bind(FactoryCreateValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryCreateValidatorImpl.class);
+        bind(FactoryEditValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryEditValidatorImpl.class);
         bind(FactoryService.class);
-        bind(com.codenvy.ide.factory.server.MessageService.class);
-        */
+        //bind(com.codenvy.ide.factory.server.MessageService.class);
+
+        Multibinder<ProjectHandler> projectHandlerMultibinder =
+                Multibinder.newSetBinder(binder(), org.eclipse.che.api.project.server.handlers.ProjectHandler.class);
+
 
         //user-workspace-account
         bind(PasswordEncryptor.class).toInstance(new SSHAPasswordEncryptor());

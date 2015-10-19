@@ -44,18 +44,12 @@
             <artifactId>cloud-ide-listeners</artifactId>
             <version>${codenvy.cloud-ide.version}</version>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-services</artifactId>
-            <version>${codenvy.factory.version}</version>
-        </dependency>
         <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-storage-mongo</artifactId>
             <version>${codenvy.factory.version}</version>
         </dependency>
-
+        <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-analytics</artifactId>

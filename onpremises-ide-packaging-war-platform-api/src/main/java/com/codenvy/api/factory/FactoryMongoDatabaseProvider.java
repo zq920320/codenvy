@@ -17,35 +17,49 @@
  */
 package com.codenvy.api.factory;
 
-import com.codenvy.api.dao.mongo.MongoDBProvider;
-import com.codenvy.api.dao.mongo.MongoDatabaseProvider;
-import com.mongodb.DB;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoCredential;
+import com.mongodb.ServerAddress;
+import com.mongodb.client.MongoDatabase;
+
+import org.bson.codecs.BinaryCodec;
+import org.bson.codecs.configuration.CodecProvider;
+import org.bson.codecs.configuration.CodecRegistries;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.inject.Singleton;
+import javax.inject.Provider;
+import java.util.ArrayList;
+import java.util.Set;
+
+import static com.mongodb.MongoCredential.createCredential;
+import static java.util.Collections.singletonList;
+import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
 /**
- * Provides single instance of database to all consumers.
+ * Database provider for factory storage
+ * @author Max Shaposhnik
+ *
+ *
  */
-@Singleton
-public class FactoryMongoDatabaseProvider extends MongoDBProvider {
-
-    protected static final String DB_URL      = "factory.mongo.url";
-    protected static final String DB_NAME     = "factory.mongo.database";
-    protected static final String DB_USERNAME = "factory.mongo.username";
-    protected static final String DB_PASSWORD = "factory.mongo.password";
+public class FactoryMongoDatabaseProvider implements Provider<MongoDatabase> {
+    private final MongoDatabase database;
 
     @Inject
-    public FactoryMongoDatabaseProvider(@Named(DB_URL) String dbUrl,
-                                        @Named(DB_NAME) String dbName,
-                                        @Named(DB_USERNAME) String username,
-                                        @Named(DB_PASSWORD) String password) {
-        super(dbUrl, dbName, username, password);
+    public FactoryMongoDatabaseProvider(@Named("factory.storage.db.url") String dbUrl,
+                                        @Named("factory.storage.db.name") String dbName,
+                                        @Named("factory.storage.db.username") String username,
+                                        @Named("factory.storage.db.password") String password,
+                                        Set<CodecProvider> codecProviders) {
+        final MongoCredential credential = createCredential(username, dbName, password.toCharArray());
+        final MongoClient mongoClient = new MongoClient(new ServerAddress(dbUrl), singletonList(credential));
+        database = mongoClient.getDatabase(dbName)
+                              .withCodecRegistry(fromRegistries(CodecRegistries.fromProviders(new ArrayList<>(codecProviders)),
+                                                                MongoClient.getDefaultCodecRegistry()));
     }
 
     @Override
-    public DB get() {
-        return super.get();
+    public MongoDatabase get() {
+        return database;
     }
 }
