@@ -35,8 +35,10 @@ import com.google.web.bindery.event.shared.HandlerRegistration;
 
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.constraints.Constraints;
-import org.eclipse.che.ide.api.event.ProjectActionEvent;
-import org.eclipse.che.ide.api.event.ProjectActionHandler;
+import org.eclipse.che.ide.api.event.project.CloseCurrentProjectEvent;
+import org.eclipse.che.ide.api.event.project.CloseCurrentProjectHandler;
+import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
+import org.eclipse.che.ide.api.event.project.OpenProjectHandler;
 import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
@@ -50,7 +52,9 @@ import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
 import org.eclipse.che.commons.annotation.Nullable;
-import javax.validation.constraints.NotNull;
+
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -68,7 +72,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
     private final GreetingPartView    view;
     private final PreferencesManager  preferencesManager;
 
-    private HandlerRegistration projectActionHandler;
+    private List<HandlerRegistration> projectActionHandlers;
 
     private boolean performed = false;
 
@@ -86,6 +90,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         this.workspaceAgent = workspaceAgent;
         this.appContext = appContext;
         this.preferencesManager = preferencesManager;
+        this.projectActionHandlers = new ArrayList<>();
         this.eventBus = eventBus;
 
         view.setDelegate(this);
@@ -94,22 +99,25 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
     public void process() {
         //show default greeting in persistent workspaces after opening of project
         if (!appContext.getWorkspace().isTemporary()) {
-            projectActionHandler = eventBus.addHandler(ProjectActionEvent.TYPE, new ProjectActionHandler() {
+            projectActionHandlers.add(eventBus.addHandler(OpenProjectEvent.TYPE, new OpenProjectHandler() {
                 @Override
-                public void onProjectOpened(final ProjectActionEvent event) {
+                public void onProjectOpened(OpenProjectEvent event) {
                     showGreeting();
                 }
-
+            }));
+            projectActionHandlers.add(eventBus.addHandler(CloseCurrentProjectEvent.TYPE, new CloseCurrentProjectHandler() {
                 @Override
-                public void onProjectClosing(ProjectActionEvent event) {
-                }
-
-                @Override
-                public void onProjectClosed(ProjectActionEvent event) {
+                public void onCloseCurrentProject(CloseCurrentProjectEvent event) {
                     hideGreeting();
                 }
-            });
+            }));
         }
+    }
+
+    /** {@inheritDoc} */
+    @Override
+    public void setVisible(boolean visible) {
+        view.setVisible(visible);
     }
 
     @NotNull
@@ -146,8 +154,10 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         }
         performed = true;
 
-        if (projectActionHandler != null) {
-            projectActionHandler.removeHandler();
+        if (!projectActionHandlers.isEmpty()) {
+            for (HandlerRegistration projectActionHandler : projectActionHandlers) {
+                projectActionHandler.removeHandler();
+            }
         }
 
         if (appContext.getCurrentUser().isUserPermanent()) {
@@ -176,8 +186,10 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         performed = true;
 
         // Remove project action handler only when workspace is temporary
-        if (appContext.getWorkspace().isTemporary() && projectActionHandler != null) {
-            projectActionHandler.removeHandler();
+        if (appContext.getWorkspace().isTemporary() && !projectActionHandlers.isEmpty()) {
+            for (HandlerRegistration projectActionHandler : projectActionHandlers) {
+                projectActionHandler.removeHandler();
+            }
         }
 
         // checking whether welcome is enabled for persistent workspace.
@@ -195,12 +207,9 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         //Fetch visibility of project from context
         if (appContext.getCurrentProject() != null && appContext.getCurrentProject().getRootProject() != null) {
             projectVisibility = appContext.getCurrentProject().getRootProject().getVisibility();
-        } else if (appContext.getFactory() != null && appContext.getFactory().getProject() != null) {
-            projectVisibility = appContext.getFactory().getProject().getVisibility();
-
-            if (projectVisibility == null) {
-                projectVisibility = "private";
-            }
+        }
+        if (projectVisibility == null) {
+            projectVisibility = "private";
         }
 
         if ("private".equals(projectVisibility)) {

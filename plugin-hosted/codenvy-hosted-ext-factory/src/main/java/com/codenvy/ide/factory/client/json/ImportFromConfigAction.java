@@ -19,12 +19,10 @@ package com.codenvy.ide.factory.client.json;
 
 import org.eclipse.che.api.analytics.client.logger.AnalyticsEventLogger;
 import org.eclipse.che.api.workspace.gwt.client.WorkspaceServiceClient;
-import org.eclipse.che.api.workspace.shared.dto.MemberDescriptor;
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.FactoryResources;
-import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -51,19 +49,19 @@ public class ImportFromConfigAction extends Action {
         super(locale.importFromConfigurationName(), locale.importFromConfigurationDescription(), null, resources.importConfig());
         this.presenter = presenter;
 
-        workspaceServiceClient.getMembership(workspaceId, new AsyncRequestCallback<MemberDescriptor>(
-                dtoUnmarshallerFactory.newUnmarshaller(MemberDescriptor.class)) {
-            @Override
-            protected void onSuccess(MemberDescriptor result) {
-                //do nothing user has roles in this workspace and widget enabled by default
-            }
-
-            @Override
-            protected void onFailure(Throwable exception) {
-                //user hasn't roles in this current workspace
-                getTemplatePresentation().setEnabled(false);
-            }
-        });
+//        workspaceServiceClient.getMembership(workspaceId, new AsyncRequestCallback<MemberDescriptor>(
+//                dtoUnmarshallerFactory.newUnmarshaller(MemberDescriptor.class)) {
+//            @Override
+//            protected void onSuccess(MemberDescriptor result) {
+//                //do nothing user has roles in this workspace and widget enabled by default
+//            }
+//
+//            @Override
+//            protected void onFailure(Throwable exception) {
+//                //user hasn't roles in this current workspace
+//                getTemplatePresentation().setEnabled(false);
+//            }
+//        });
 
         this.eventLogger = eventLogger;
     }
