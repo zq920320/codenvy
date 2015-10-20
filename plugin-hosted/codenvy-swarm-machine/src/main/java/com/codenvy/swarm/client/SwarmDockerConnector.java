@@ -231,6 +231,7 @@ public class SwarmDockerConnector extends DockerConnector {
      * [2] -> ["Containers", "number of containers"]
      * [3] -> ["Reserved CPUs", "number of free/reserved CPUs"]
      * [4] -> ["Reserved Memory", "number of free/reserved Memory"]
+     * [5] -> ["Labels", "executiondriver=native-0.2, kernel..."]
      *
      * Example:
      *
@@ -239,10 +240,12 @@ public class SwarmDockerConnector extends DockerConnector {
      * [2] -> ["Containers", "14"]
      * [3] -> ["Reserved CPUs", "0/2"]
      * [4] -> ["Reserved Memory", "0 b / 3.79GiB"]
-     * [5] -> ["swarm2.codenvy.com", "192.168.1.2:2375"]
-     * [6] -> ["Containers", "9"]
-     * [7] -> ["Reserved CPUs", "0/2"]
-     * [8] -> ["Reserved Memory", "0 b / 3.79GiB"]
+     * [5] -> ["Labels", "executiondriver=native-0.2, kernel..."]
+     * [6] -> ["swarm2.codenvy.com", "192.168.1.2:2375"]
+     * [7] -> ["Containers", "9"]
+     * [8] -> ["Reserved CPUs", "0/2"]
+     * [9] -> ["Reserved Memory", "0 b / 3.79GiB"]
+     * [10] -> ["Labels", "executiondriver=native-0.2, kernel..."]
      * </pre>
      */
     private List<DockerNode> getAvailableNodes() throws IOException {
@@ -258,7 +261,7 @@ public class SwarmDockerConnector extends DockerConnector {
         }
         final ArrayList<DockerNode> nodes = new ArrayList<>(count);
         for (int i = 0; i < count; ++i) {
-            final String[] node = driverStatus[i * 4 + startsFrom];
+            final String[] node = driverStatus[i * 5 + startsFrom];
             nodes.add(new DockerNode(node[0], node[1]));
         }
         return nodes;
