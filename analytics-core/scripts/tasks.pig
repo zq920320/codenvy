@@ -120,7 +120,7 @@ runs_started = FOREACH runs_started GENERATE UUIDFrom(id),
                                               TOTUPLE('launch_type', launch_type),
                                               TOTUPLE('factory_id', GetFactoryId(ws));
 
-run_usage = filterByEvent(l, 'build-usage');
+run_usage = filterByEvent(l, 'run-usage');
 run_usage = extractParam(run_usage, 'ID', id);
 run_usage = extractParam(run_usage, 'MEMORY', memory_mb);
 run_usage = FOREACH run_usage GENERATE dt,
