@@ -22,6 +22,8 @@ import com.codenvy.analytics.Configurator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
@@ -45,6 +47,7 @@ public class CSVFileHolder {
     private static final long CSV_REPORT_LIVE_TIME          = 60 * 60 * 1000; // Live time of csv file is one hour.
 
     private final File csvReportFolder;
+    private final Thread cleaner;
 
     @Inject
     public CSVFileHolder(Configurator configurator) {
@@ -59,9 +62,18 @@ public class CSVFileHolder {
 
         cleanAll();
 
-        Thread cleaner = new Cleaner();
+        cleaner = new Cleaner();
         cleaner.setDaemon(true);
+    }
+
+    @PostConstruct
+    public void init() {
         cleaner.start();
+    }
+
+    @PreDestroy
+    public void destroy() {
+        cleaner.interrupt();
     }
 
     public File createNewFile() throws IOException {
