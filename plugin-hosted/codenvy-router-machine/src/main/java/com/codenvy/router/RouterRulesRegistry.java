@@ -63,7 +63,7 @@ public class RouterRulesRegistry {
     }
 
     public void addRule(String machineId, RoutingRule routingRule) {
-        routingRules.putIfAbsent(machineId, new LinkedList<RoutingRule>());
+        routingRules.putIfAbsent(machineId, new LinkedList<>());
 
         routingRules.get(machineId).add(routingRule);
 

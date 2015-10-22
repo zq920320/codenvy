@@ -22,7 +22,7 @@ import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.machine.server.MachineRegistry;
 import org.eclipse.che.api.machine.server.exception.MachineException;
-import org.eclipse.che.api.machine.shared.Server;
+import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.shared.dto.event.MachineStatusEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,7 +32,6 @@ import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import java.util.Map;
 
 /**
  * Listens events about machines and adds/removes machine routing rules to routing registry
@@ -98,20 +97,23 @@ public class RouterListener implements EventSubscriber<MachineStatusEvent> {
     private void addRouting(String machineId) {
         try {
             // this class require appropriate implementation of Instance
-            final PredictableMachineServerUrlInstance machine = (PredictableMachineServerUrlInstance)registry.get(machineId);
-            for (Map.Entry<String, Server> serverInMachine : machine.getServersWithRealAddress().entrySet()) {
-                if (!serverInMachine.getKey().contains("/")) {
-                    final String[] serverHostPort = serverInMachine.getValue().getAddress().split(":", 2);
-                    routerRulesRegistry.addRule(machineId, new RoutingRule(serverHostPort[0],
-                                                                           Integer.parseInt(serverHostPort[1]),
-                                                                           Integer.parseInt(serverInMachine.getKey()),
-                                                                           String.format(machineServerRoutingPattern,
-                                                                                         serverInMachine.getKey(),
-                                                                                         serverHostPort[0],
-                                                                                         serverHostPort[1],
-                                                                                         machineId)));
-                }
-            }
+            final Instance machine = registry.get(machineId);
+            machine.getMetadata()
+                   .getServers()
+                   .entrySet()
+                   .stream()
+                   .filter(serverInMachine -> !serverInMachine.getKey().contains("/")) // it means tcp, because udp will have /udp in key
+                   .forEach(serverInMachine -> {
+                       final String[] serverHostPort = serverInMachine.getValue().getAddress().split(":", 2);
+                       routerRulesRegistry.addRule(machineId, new RoutingRule(serverHostPort[0],
+                                                                              Integer.parseInt(serverHostPort[1]),
+                                                                              Integer.parseInt(serverInMachine.getKey()),
+                                                                              String.format(machineServerRoutingPattern,
+                                                                                            serverInMachine.getKey(),
+                                                                                            serverHostPort[0],
+                                                                                            serverHostPort[1],
+                                                                                            machineId)));
+                   });
             // TODO add url with machine name, 80 port, terminal
         } catch (NotFoundException | MachineException e) {
             LOG.error(e.getLocalizedMessage(), e);

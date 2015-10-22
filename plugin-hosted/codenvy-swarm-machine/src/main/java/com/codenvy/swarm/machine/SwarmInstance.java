@@ -21,15 +21,16 @@ import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
-import org.eclipse.che.api.core.model.machine.Recipe;
+import org.eclipse.che.api.core.model.machine.MachineMetadata;
+import org.eclipse.che.api.core.model.machine.MachineState;
 import org.eclipse.che.api.core.util.LineConsumer;
-import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.spi.Instance;
-import org.eclipse.che.api.machine.server.spi.InstanceMetadata;
 import org.eclipse.che.plugin.docker.machine.DockerInstance;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceStopDetector;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
 import org.eclipse.che.plugin.docker.machine.DockerNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -41,8 +42,11 @@ import java.io.IOException;
  * @author Alexander Garagatyi
  */
 public class SwarmInstance extends DockerInstance {
+    private static final Logger LOG = LoggerFactory.getLogger(SwarmInstance.class);
+
     private final SwarmDockerConnector docker;
     private final String               container;
+    private final DockerNode           dockerNode;
 
     private SwarmContainerInfo containerInfo;
 
@@ -50,45 +54,35 @@ public class SwarmInstance extends DockerInstance {
     public SwarmInstance(SwarmDockerConnector docker,
                          @Named("machine.docker.registry") String registry,
                          DockerMachineFactory dockerMachineFactory,
-                         @Assisted("machineId") String machineId,
-                         @Assisted("workspaceId") String workspaceId,
-                         @Assisted boolean workspaceIsBound,
-                         @Assisted("creator") String creator,
-                         @Assisted("displayName") String displayName,
+                         @Assisted MachineState machineState,
                          @Assisted("container") String container,
                          @Assisted DockerNode node,
-                         @Assisted Recipe recipe,
                          @Assisted LineConsumer outputConsumer,
-                         @Assisted int memorySizeMB,
                          DockerInstanceStopDetector dockerInstanceStopDetector) {
         super(docker,
               registry,
               dockerMachineFactory,
-              machineId,
-              workspaceId,
-              workspaceIsBound,
-              creator,
-              displayName,
+              machineState,
               container,
               node,
               outputConsumer,
-              recipe,
-              memorySizeMB,
               dockerInstanceStopDetector);
         this.docker = docker;
         this.container = container;
+        this.dockerNode = node;
     }
 
     @Override
-    public InstanceMetadata getMetadata() throws MachineException {
+    public MachineMetadata getMetadata() {
         try {
             if (containerInfo == null) {
                 containerInfo = docker.inspectContainer(container);
             }
 
-            return new SwarmInstanceMetadata(containerInfo);
+            return new SwarmInstanceMetadata(containerInfo, dockerNode);
         } catch (IOException e) {
-            throw new MachineException(e.getLocalizedMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
+            return null;
         }
     }
 }
