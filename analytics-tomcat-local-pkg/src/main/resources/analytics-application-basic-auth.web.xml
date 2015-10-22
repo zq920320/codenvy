@@ -28,7 +28,7 @@
 
     <context-param>
         <param-name>org.everrest.asynchronous</param-name>
-        <param-value>0</param-value>
+        <param-value>false</param-value>
     </context-param>
 
     <listener>

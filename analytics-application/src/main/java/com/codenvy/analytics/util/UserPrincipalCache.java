@@ -165,7 +165,7 @@ public class UserPrincipalCache {
                 }
             }
 
-            LOG.warn("CacheCleaner thread is stopped");
+            LOG.info("CacheCleaner is stopped");
         }
     }
 }

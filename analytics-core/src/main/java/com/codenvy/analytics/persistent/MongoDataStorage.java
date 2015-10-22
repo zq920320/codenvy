@@ -40,6 +40,7 @@ import com.mongodb.WriteConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
@@ -72,6 +73,8 @@ public class MongoDataStorage {
 
     private final Configurator configurator;
 
+    private MongodExecutable mongoExe;
+
     @Inject
     public MongoDataStorage(Configurator configurator) throws IOException, URISyntaxException {
         this.configurator = configurator;
@@ -90,6 +93,14 @@ public class MongoDataStorage {
         this.mongoDb = client.getDB(uri.getDatabase());
         this.mongoDb.setWriteConcern(WriteConcern.ACKNOWLEDGED);
         this.mongoDb.setReadPreference(ReadPreference.primaryPreferred());
+    }
+
+    @PreDestroy
+    public void destroy() {
+        getDb().getMongo().close();
+        if (mongoExe != null) {
+            mongoExe.stop();
+        }
     }
 
     /**
@@ -145,7 +156,7 @@ public class MongoDataStorage {
         RuntimeConfigBuilder runtimeConfigBuilder = new RuntimeConfigBuilder().defaults(Command.MongoD);
 
         MongodStarter starter = MongodStarter.getInstance(runtimeConfigBuilder.build());
-        final MongodExecutable mongoExe = starter.prepare(mongodConfigBuilder.build());
+        mongoExe = starter.prepare(mongodConfigBuilder.build());
 
         try {
             mongoExe.start();
@@ -153,14 +164,6 @@ public class MongoDataStorage {
         } catch (IOException e) {
             throw new IllegalStateException(e);
         }
-
-        Runtime.getRuntime().addShutdownHook(new Thread() {
-            @Override
-            public void run() {
-                mongoExe.stop();
-                LOG.info("Embedded MongoDB is stopped");
-            }
-        });
     }
 
     private String getDir(String dirName) {

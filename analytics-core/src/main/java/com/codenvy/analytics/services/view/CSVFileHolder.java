@@ -100,7 +100,7 @@ public class CSVFileHolder {
 
     private class Cleaner extends Thread {
         private Cleaner() {
-            super("Report cleaner");
+            super("ReportCleaner");
             LOG.info(getName() + " thread is started, report directory " + csvReportFolder.getAbsolutePath());
         }
 
@@ -117,7 +117,7 @@ public class CSVFileHolder {
                 }
             }
 
-            LOG.info("Report cleaner stopped working.");
+            LOG.info("ReportCleaner is stopped.");
         }
     }
 }

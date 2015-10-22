@@ -25,6 +25,12 @@
          metadata-complete="true">
 
     <display-name>Analytics Application</display-name>
+
+    <context-param>
+        <param-name>org.everrest.asynchronous</param-name>
+        <param-value>false</param-value>
+    </context-param>
+
     <listener>
         <listener-class>org.eclipse.che.inject.CodenvyBootstrap</listener-class>
     </listener>

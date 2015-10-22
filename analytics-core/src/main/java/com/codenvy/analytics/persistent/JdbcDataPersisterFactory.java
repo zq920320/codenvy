@@ -19,14 +19,23 @@ package com.codenvy.analytics.persistent;
 
 import com.codenvy.analytics.Configurator;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.lang.reflect.InvocationTargetException;
+import java.sql.Driver;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Enumeration;
 
 /** @author <a href="mailto:abazko@codenvy.com">Anatoliy Bazko</a> */
 @Singleton
 public class JdbcDataPersisterFactory {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcDataPersisterFactory.class);
 
     private static final String URL      = "analytics.jdbc.url";
     private static final String USER     = "analytics.jdbc.user";
@@ -65,6 +74,20 @@ public class JdbcDataPersisterFactory {
             throw new IllegalStateException("Driver for " + url + " not found");
         }
     }
+
+    @PreDestroy
+    public void destroy() {
+        Enumeration<Driver> drivers = DriverManager.getDrivers();
+        while (drivers.hasMoreElements()) {
+            Driver driver = drivers.nextElement();
+            try {
+                DriverManager.deregisterDriver(driver);
+            } catch (SQLException e) {
+                LOG.error(e.getMessage(), e);
+            }
+        }
+    }
+
 
     public DataPersister getDataPersister() {
         return dataPersister;
