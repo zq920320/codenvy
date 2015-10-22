@@ -54,6 +54,7 @@
         <module>codenvy-hosted-sso-oauth</module>
         <module>codenvy-hosted-sso-server-ldap</module>
         <module>codenvy-hosted-sso-server-organization</module>
+        <module>codenvy-hosted-api-docs</module>
         <!-- module>codenvy-hosted-analytics</module-->
     </modules>
     <scm>
