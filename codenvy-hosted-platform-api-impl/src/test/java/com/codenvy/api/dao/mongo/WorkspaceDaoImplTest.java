@@ -32,11 +32,13 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
+import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
-import org.eclipse.che.api.workspace.server.model.impl.CommandImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
-import org.eclipse.che.api.workspace.server.model.impl.MachineConfigImpl;
-import org.eclipse.che.api.workspace.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -298,7 +300,6 @@ public class WorkspaceDaoImplTest {
 
             assertEquals(document.getString("name"), command.getName(), "Command name");
             assertEquals(document.getString("commandLine"), command.getCommandLine(), "Command line");
-            assertEquals(document.getString("workingDir"), command.getWorkingDir(), "Command working");
             assertEquals(document.getString("type"), command.getType(), "Command type");
         }
 
@@ -326,15 +327,15 @@ public class WorkspaceDaoImplTest {
                 assertEquals(project.getAttributes().get(attrName), attrValue, "Attribute values");
             }
 
-            if (project.getStorage() != null) {
+            if (project.getSource() != null) {
                 final Document source = (Document)projDoc.get("sourceStorage");
 
                 assertNotNull(source);
-                assertEquals(source.getString("type"), project.getStorage().getType(), "Source type");
-                assertEquals(source.getString("location"), project.getStorage().getLocation(), "Source location");
+                assertEquals(source.getString("type"), project.getSource().getType(), "Source type");
+                assertEquals(source.getString("location"), project.getSource().getLocation(), "Source location");
 
                 final List<Document> parameters = (List<Document>)source.get("parameters");
-                assertEquals(documentsListAsMap(parameters), project.getStorage().getParameters(), "Source parameters");
+                assertEquals(documentsListAsMap(parameters), project.getSource().getParameters(), "Source parameters");
             }
         }
 
@@ -342,7 +343,7 @@ public class WorkspaceDaoImplTest {
         final Map<String, Document> environments = (Map<String, Document>)result.get("environments");
         assertEquals(environments.size(), workspace.getEnvironments().size());
         for (Map.Entry<String, Document> envEntry : environments.entrySet()) {
-            final EnvironmentImpl environment = workspace.getEnvironments().get(envEntry.getKey());
+            final EnvironmentStateImpl environment = workspace.getEnvironments().get(envEntry.getKey());
             final Document envDoc = envEntry.getValue();
 
             assertEquals(envDoc.getString("name"), environment.getName());
@@ -362,14 +363,16 @@ public class WorkspaceDaoImplTest {
                 assertEquals(machineDoc.getBoolean("isDev"), Boolean.valueOf(machine.isDev()));
                 assertEquals(machineDoc.getString("name"), machine.getName(), "Machine name");
                 assertEquals(machineDoc.getString("type"), machine.getType(), "Machine type");
-                assertEquals(machineDoc.getInteger("memorySize"), Integer.valueOf(machine.getMemorySize()), "Memory size");
-                assertEquals(machineDoc.getString("outputChannel"), machine.getOutputChannel(), "Machine output channel");
-                assertEquals(machineDoc.getString("statusChannel"), machine.getStatusChannel(), "Machine status channel");
                 if (machine.getSource() != null) {
                     final Document sourceDoc = machineDoc.get("source", Document.class);
 
                     assertEquals(sourceDoc.getString("type"), machine.getSource().getType(), "Machine source type");
                     assertEquals(sourceDoc.getString("location"), machine.getSource().getLocation(), "Machine source location");
+                }
+                if (machine.getLimits() != null) {
+                    final Document limitsDoc = machineDoc.get("limits", Document.class);
+
+                    assertEquals(limitsDoc.getInteger("memorySize", 0), machine.getLimits().getMemory(), "Machine RAM limit");
                 }
             }
         }
@@ -434,16 +437,12 @@ public class WorkspaceDaoImplTest {
                                                                     "dev-machine",
                                                                     "machine-type",
                                                                     machineSource,
-                                                                    512,
-                                                                    "output-channel",
-                                                                    "status-channel");
+                                                                    new LimitsImpl(512));
         final MachineConfigImpl machineCfg2 = new MachineConfigImpl(false,
                                                                     "non-dev-machine",
                                                                     "machine-type-2",
                                                                     machineSource,
-                                                                    2048,
-                                                                    "output-channel-2",
-                                                                    "status-channel-2");
+                                                                    new LimitsImpl(2048));
 
         final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
         final EnvironmentImpl env2 = new EnvironmentImpl("my-environment-2", recipe, singletonList(machineCfg1));
@@ -474,9 +473,9 @@ public class WorkspaceDaoImplTest {
 
         // commands
         final List<CommandImpl> commands = new ArrayList<>(3);
-        commands.add(new CommandImpl("MCI", "mvn clean install", "maven", "/path/to/workingDir"));
-        commands.add(new CommandImpl("bower install", "bower install", "bower", "/path/to/workingDir"));
-        commands.add(new CommandImpl("build without tests", "mvn clean install -Dmaven.test.skip", "maven", "/path"));
+        commands.add(new CommandImpl("MCI", "mvn clean install", "maven"));
+        commands.add(new CommandImpl("bower install", "bower install", "bower"));
+        commands.add(new CommandImpl("build without tests", "mvn clean install -Dmaven.test.skip", "maven"));
 
         // attributes
         final Map<String, String> attributes = new HashMap<>(8);

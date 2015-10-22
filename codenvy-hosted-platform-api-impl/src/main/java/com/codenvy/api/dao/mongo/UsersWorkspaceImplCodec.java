@@ -24,14 +24,17 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.eclipse.che.api.core.model.machine.Limits;
 import org.eclipse.che.api.core.model.machine.MachineSource;
 import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.core.model.project.SourceStorage;
+import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
+import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
-import org.eclipse.che.api.workspace.server.model.impl.CommandImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
-import org.eclipse.che.api.workspace.server.model.impl.MachineConfigImpl;
-import org.eclipse.che.api.workspace.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -70,8 +73,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         final List<CommandImpl> commands = commandDocuments.stream()
                                                            .map(d -> new CommandImpl(d.getString("name"),
                                                                                      d.getString("commandLine"),
-                                                                                     d.getString("type"),
-                                                                                     d.getString("workingDir")))
+                                                                                     d.getString("type")))
                                                            .collect(toList());
 
         @SuppressWarnings("unchecked") // 'projects' field is always list
@@ -112,8 +114,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                              .stream()
                                              .map(command -> new Document().append("name", command.getName())
                                                                            .append("commandLine", command.getCommandLine())
-                                                                           .append("type", command.getType())
-                                                                           .append("workingDir", command.getWorkingDir()))
+                                                                           .append("type", command.getType()))
                                              .collect(toList()));
         document.append("projects", workspace.getProjects()
                                              .stream()
@@ -163,7 +164,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                 .append("description", project.getDescription())
                                                 .append("mixinTypes", project.getMixinTypes())
                                                 .append("attributes", mapAsDocumentsList(project.getAttributes()));
-        final SourceStorage sourceStorage = project.getStorage();
+        final SourceStorage sourceStorage = project.getSource();
         if (sourceStorage != null) {
             document.append("sourceStorage", new Document().append("type", sourceStorage.getType())
                                                            .append("location", sourceStorage.getLocation())
@@ -188,7 +189,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         return new EnvironmentImpl(document.getString("name"), recipe, machineConfigs);
     }
 
-    private static Document asDocument(EnvironmentImpl environment) {
+    private static Document asDocument(EnvironmentStateImpl environment) {
         final Document document = new Document();
 
         final Recipe recipe = environment.getRecipe();
@@ -210,25 +211,29 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         if (sourceDocument != null) {
             source = new MachineSourceImpl(sourceDocument.getString("type"), sourceDocument.getString("location"));
         }
+        LimitsImpl limits = null;
+        final Document limitsDocument = document.get("limits", Document.class);
+        if (limitsDocument != null) {
+            limits = new LimitsImpl(limitsDocument.getInteger("memorySize", 0));
+        }
         return new MachineConfigImpl(document.getBoolean("isDev"),
                                      document.getString("name"),
                                      document.getString("type"),
                                      source,
-                                     document.getInteger("memorySize"),
-                                     document.getString("outputChannel"),
-                                     document.getString("statusChannel"));
+                                     limits);
     }
 
     private static Document asDocument(MachineConfigImpl config) {
         final Document document = new Document().append("isDev", config.isDev())
                                                 .append("name", config.getName())
-                                                .append("type", config.getType())
-                                                .append("outputChannel", config.getOutputChannel())
-                                                .append("statusChannel", config.getStatusChannel())
-                                                .append("memorySize", config.getMemorySize());
+                                                .append("type", config.getType());
         final MachineSource source = config.getSource();
         if (source != null) {
             document.append("source", new Document("type", source.getType()).append("location", source.getLocation()));
+        }
+        final Limits limits = config.getLimits();
+        if (limits != null) {
+            document.append("limits", new Document("memorySize", limits.getMemory()));
         }
         return document;
     }
