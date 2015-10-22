@@ -60,18 +60,18 @@ import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
+import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.factory.server.FactoryAcceptValidator;
 import org.eclipse.che.api.factory.server.FactoryCreateValidator;
 import org.eclipse.che.api.factory.server.FactoryEditValidator;
 import org.eclipse.che.api.factory.server.FactoryService;
-import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.server.recipe.PermissionsChecker;
 import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
-import org.eclipse.che.api.project.server.handlers.ProjectHandler;
 import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
+import org.eclipse.che.api.project.server.handlers.ProjectHandler;
 import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.UserProfileService;
 import org.eclipse.che.api.user.server.UserService;
@@ -99,11 +99,6 @@ import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.ServiceBindingHelper;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.inject.Provider;
-import javax.inject.Singleton;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.eclipse.che.inject.Matchers.names;
@@ -370,8 +365,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new ScheduleModule());
         */
         bind(org.eclipse.che.api.machine.server.MachineService.class);
-        bind(org.eclipse.che.api.workspace.server.MachineClient.class).to(org.eclipse.che.api.machine.server.MachineClientImpl.class).in(
-                Singleton.class);
         bind(org.eclipse.che.api.machine.server.dao.SnapshotDao.class).to(com.codenvy.api.dao.mongo.MongoSnapshotDaoImpl.class);
         bind(com.mongodb.DB.class).annotatedWith(Names.named("mongo.db.machine"))
                                   .toProvider(com.codenvy.api.dao.mongo.MachineMongoDBProvider.class);
@@ -427,5 +420,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         // TODO rebind to WorkspacePermissionManager after account is established
         bind(PermissionManager.class).annotatedWith(Names.named("service.workspace.permission_manager"))
                                      .to(DummyPermissionManager.class);
+
+        bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
     }
 }
