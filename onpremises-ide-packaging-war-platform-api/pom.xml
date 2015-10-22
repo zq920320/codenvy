@@ -61,6 +61,11 @@
             <artifactId>codenvy-hosted-api-creditcard</artifactId>
             <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-api-docs</artifactId>
+            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
@@ -230,11 +235,6 @@
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-core</artifactId>
-            <version>${che.core.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-docs</artifactId>
             <version>${che.core.version}</version>
         </dependency>
         <!-- tmp DAO impls -->
