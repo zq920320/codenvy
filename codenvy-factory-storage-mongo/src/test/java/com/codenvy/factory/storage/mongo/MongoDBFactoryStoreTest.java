@@ -17,7 +17,6 @@
  */
 package com.codenvy.factory.storage.mongo;
 
-
 import com.github.fakemongo.Fongo;
 import com.mongodb.BasicDBObjectBuilder;
 import com.mongodb.DBObject;
@@ -39,10 +38,10 @@ import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.factory.shared.dto.Ide;
 import org.eclipse.che.api.factory.shared.dto.OnAppLoaded;
 import org.eclipse.che.api.factory.shared.dto.OnProjectOpened;
-import org.eclipse.che.api.workspace.shared.dto.CommandDto;
+import org.eclipse.che.api.machine.shared.dto.CommandDto;
+import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
+import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
-import org.eclipse.che.api.workspace.shared.dto.MachineConfigDto;
-import org.eclipse.che.api.workspace.shared.dto.MachineSourceDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.RecipeDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
@@ -66,11 +65,11 @@ import java.util.stream.Collectors;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
-
 
 /**
  * Tests for {@link MongoDBFactoryStore}
@@ -108,7 +107,7 @@ public class MongoDBFactoryStoreTest {
         factory.setWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
                                        .withProjects(Collections.singletonList(DtoFactory.getInstance().createDto(
                                                ProjectConfigDto.class)
-                                                                                         .withStorage(
+                                                                                         .withSource(
                                                                                                  DtoFactory.getInstance().createDto(
                                                                                                          SourceStorageDto.class)
                                                                                                            .withType("git")
@@ -266,7 +265,7 @@ public class MongoDBFactoryStoreTest {
                                         .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
                                                                  .withName("wsName")
                                                                  .withProjects(Collections.singletonList(
-                                                                         DtoFactory.newDto(ProjectConfigDto.class)
+                                                                         newDto(ProjectConfigDto.class)
                                                                                    .withType("projectType"))));
 
 
@@ -295,16 +294,16 @@ public class MongoDBFactoryStoreTest {
                                      .withCreated(System.currentTimeMillis())
                                      .withEmail("test@codenvy.com"));
 
-        factory.setWorkspace(DtoFactory.newDto(WorkspaceConfigDto.class)
+        factory.setWorkspace(newDto(WorkspaceConfigDto.class)
                                        .withName("wsName")
-                                       .withProjects(Collections.singletonList(DtoFactory.newDto(ProjectConfigDto.class).withStorage(DtoFactory.newDto(
-                                               SourceStorageDto.class).withLocation("gitUrlInitial")))));
+                                       .withProjects(Collections.singletonList(newDto(ProjectConfigDto.class).withSource(
+                                               newDto(SourceStorageDto.class).withLocation("gitUrlInitial")))));
 
 
 
         // new Factory
         Factory updatedFactory = DtoFactory.getInstance().clone(factory);
-        updatedFactory.getWorkspace().getProjects().get(0).getStorage().setLocation("gitUrlChanged");
+        updatedFactory.getWorkspace().getProjects().get(0).getSource().setLocation("gitUrlChanged");
 
 
         Set<FactoryImage> images = new HashSet<>();
@@ -328,7 +327,7 @@ public class MongoDBFactoryStoreTest {
         Factory result = DtoFactory.getInstance().createDtoFromJson(JSON.serialize(res), Factory.class);
 
         // check factory has been modified
-        assertEquals(result.getWorkspace().getProjects().get(0).getStorage().getLocation(), "gitUrlChanged");
+        assertEquals(result.getWorkspace().getProjects().get(0).getSource().getLocation(), "gitUrlChanged");
 
 
         // check images have not been modified
