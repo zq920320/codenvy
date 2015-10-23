@@ -38,7 +38,7 @@ public class TestActions extends BaseTest {
         ValueData valueData = getValue(metricType);
         long l = treatAsLong(valueData);
 
-        assertTrue(l > 0);
+        assertTrue(metricType.toString(), l > 0);
     }
 
         @DataProvider(name = "data")
