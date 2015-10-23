@@ -328,7 +328,7 @@ public class WorkspaceDaoImplTest {
             }
 
             if (project.getSource() != null) {
-                final Document source = (Document)projDoc.get("sourceStorage");
+                final Document source = (Document)projDoc.get("source");
 
                 assertNotNull(source);
                 assertEquals(source.getString("type"), project.getSource().getType(), "Source type");
@@ -372,7 +372,7 @@ public class WorkspaceDaoImplTest {
                 if (machine.getLimits() != null) {
                     final Document limitsDoc = machineDoc.get("limits", Document.class);
 
-                    assertEquals(limitsDoc.getInteger("memorySize", 0), machine.getLimits().getMemory(), "Machine RAM limit");
+                    assertEquals(limitsDoc.getInteger("memory", 0), machine.getLimits().getMemory(), "Machine RAM limit");
                 }
             }
         }
