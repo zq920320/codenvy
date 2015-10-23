@@ -150,10 +150,12 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                               .collect(toMap(d -> d.getString("name"), d -> (List<String>)d.get("value"))));
 
         final Document storageDocument = document.get("sourceStorage", Document.class);
-        final SourceStorageImpl storage = new SourceStorageImpl(storageDocument.getString("type"),
-                                                                storageDocument.getString("location"),
-                                                                documentsListAsMap((List<Document>)storageDocument.get("parameters")));
-        projectConfig.setStorage(storage);
+        if (storageDocument != null) {
+            final SourceStorageImpl storage = new SourceStorageImpl(storageDocument.getString("type"),
+                                                                    storageDocument.getString("location"),
+                                                                    documentsListAsMap((List<Document>)storageDocument.get("parameters")));
+            projectConfig.setStorage(storage);
+        }
         return projectConfig;
     }
 
