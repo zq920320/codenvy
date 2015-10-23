@@ -149,11 +149,11 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         projectConfig.setAttributes(attributes.stream()
                                               .collect(toMap(d -> d.getString("name"), d -> (List<String>)d.get("value"))));
 
-        final Document storageDocument = document.get("sourceStorage", Document.class);
-        if (storageDocument != null) {
-            final SourceStorageImpl storage = new SourceStorageImpl(storageDocument.getString("type"),
-                                                                    storageDocument.getString("location"),
-                                                                    documentsListAsMap((List<Document>)storageDocument.get("parameters")));
+        final Document sourceDocument = document.get("source", Document.class);
+        if (sourceDocument != null) {
+            final SourceStorageImpl storage = new SourceStorageImpl(sourceDocument.getString("type"),
+                                                                    sourceDocument.getString("location"),
+                                                                    documentsListAsMap((List<Document>)sourceDocument.get("parameters")));
             projectConfig.setStorage(storage);
         }
         return projectConfig;
@@ -168,7 +168,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                 .append("attributes", mapAsDocumentsList(project.getAttributes()));
         final SourceStorage sourceStorage = project.getSource();
         if (sourceStorage != null) {
-            document.append("sourceStorage", new Document().append("type", sourceStorage.getType())
+            document.append("source", new Document().append("type", sourceStorage.getType())
                                                            .append("location", sourceStorage.getLocation())
                                                            .append("parameters", mapAsDocumentsList(sourceStorage.getParameters())));
         }
@@ -216,7 +216,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         LimitsImpl limits = null;
         final Document limitsDocument = document.get("limits", Document.class);
         if (limitsDocument != null) {
-            limits = new LimitsImpl(limitsDocument.getInteger("memorySize", 0));
+            limits = new LimitsImpl(limitsDocument.getInteger("memory", 0));
         }
         return new MachineConfigImpl(document.getBoolean("isDev"),
                                      document.getString("name"),
@@ -235,7 +235,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         }
         final Limits limits = config.getLimits();
         if (limits != null) {
-            document.append("limits", new Document("memorySize", limits.getMemory()));
+            document.append("limits", new Document("memory", limits.getMemory()));
         }
         return document;
     }

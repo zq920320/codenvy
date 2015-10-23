@@ -59,9 +59,7 @@ import static java.util.Objects.requireNonNull;
  *          {
  *              "name" : "mci",
  *              "commandLine" : "maven clean install",
- *              "visibility" : "public",
- *              "type" : "maven",
- *              "workingDir" : "/projects/workspace123"
+ *              "type" : "maven"
  *          }
  *      ],
  *      "projects" : [
@@ -70,7 +68,7 @@ import static java.util.Objects.requireNonNull;
  *              "path" : "/path/to/project",
  *              "description" : "This is project description",
  *              "type" : "project-type",
- *              "sourceStorage" : {
+ *              "source" : {
  *                  "type" : "storage-type",
  *                  "location" : "storage-location",
  *                  "parameters" : [
@@ -101,9 +99,9 @@ import static java.util.Objects.requireNonNull;
  *                      "isDev" : true,
  *                      "name" : "dev",
  *                      "type" : "machine-type",
- *                      "memorySize" : 512,
- *                      "outputChannel" : "channel-123",
- *                      "statusChannel" : "status-channel-123"
+ *                      "limits" : {
+ *                          memory : 512
+ *                      },
  *                      "source" : {
  *                          "type" : "recipe",
  *                          "location" : "recipe-url"
