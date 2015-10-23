@@ -40,7 +40,7 @@ import com.mongodb.WriteConcern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.PreDestroy;
+import javax.annotation.PostConstruct;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
@@ -95,9 +95,9 @@ public class MongoDataStorage {
         this.mongoDb.setReadPreference(ReadPreference.primaryPreferred());
     }
 
-    @PreDestroy
-    public void destroy() {
-        getDb().getMongo().close();
+    @PostConstruct
+    public void init() {
+        mongoDb.getMongo().close();
         if (mongoExe != null) {
             mongoExe.stop();
         }

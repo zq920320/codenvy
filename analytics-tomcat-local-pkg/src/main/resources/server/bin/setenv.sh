@@ -33,13 +33,12 @@ JMX_OPTS="-Dcom.sun.management.jmxremote.authenticate=true \
           -Dcom.sun.management.jmxremote.ssl=false"
 JAVA_OPTS="$JAVA_OPTS -Dche.logs.dir=${CHE_LOGS_DIR}"
 QUARTZ_OPTS="-Dorg.terracotta.quartz.skipUpdateCheck=true"
-REMOTE_DEBUG="-Xdebug -Xrunjdwp:transport=dt_socket,address=8000,server=y,suspend=n"
 SECURITY_OPTS="-Djava.security.auth.login.config=${CATALINA_HOME}/conf/jaas.conf"
 
 export CATALINA_HOME
 export CATALINA_TMPDIR
 export CHE_LOCAL_CONF_DIR
-export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $REMOTE_DEBUG $QUARTZ_OPTS"
+export JAVA_OPTS="$JAVA_OPTS $SECURITY_OPTS $ANALYTICS_OPTS $JMX_OPTS $QUARTZ_OPTS"
 export CLASSPATH="${CATALINA_HOME}/conf/"
 
 echo "Using LOCAL_CONF_DIR:  $CHE_LOCAL_CONF_DIR"

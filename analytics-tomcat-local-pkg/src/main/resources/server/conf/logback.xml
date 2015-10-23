@@ -41,7 +41,7 @@
         </encoder>
     </appender>
 
-    <logger name="org.apache.catalina.loader.WebappClassLoader" level="OFF"/>
+    <logger name="org.apache.catalina.loader.WebappClassLoaderBase" level="OFF"/>
     <logger name="com.codenvy.analytics.metrics.ReadBasedMetric" level="DEBUG"/>
 
     <include file="${analytics.logback.smtp-appender.configuration}"/>

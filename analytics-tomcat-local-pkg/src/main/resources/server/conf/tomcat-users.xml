@@ -29,5 +29,4 @@
     <role rolename="user"/>
     <role rolename="system/admin"/>
     <user username="admin@codenvy.com" password="admin" roles="user,system/admin"/>
-    <user username="userxef7ws6rh8xe33gb" password="admin" roles="user"/>
 </tomcat-users>
