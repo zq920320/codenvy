@@ -28,7 +28,7 @@ import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.plugin.docker.machine.DockerInstance;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceStopDetector;
 import org.eclipse.che.plugin.docker.machine.DockerMachineFactory;
-import org.eclipse.che.plugin.docker.machine.DockerNode;
+import org.eclipse.che.plugin.docker.machine.node.DockerNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

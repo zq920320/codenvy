@@ -73,7 +73,7 @@ public class WorkspaceFsBackupScheduler {
             for (final MachineStateImpl state : machineManager.getMachinesStates()) {
                 final String machineId = state.getId();
 
-                if (//state.isWorkspaceBound() &&
+                if (state.isDev() &&
                     state.getStatus() == MachineStatus.RUNNING &&
                     isTimeToBackup(machineId)) {
 
