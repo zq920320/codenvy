@@ -51,7 +51,6 @@
         <!--<module>cloud-ide-packaging-war-ext-server</module>-->
         <module>onpremises-ide-packaging-tomcat-site</module>
         <module>onpremises-ide-packaging-tomcat-api</module>
-        <module>onpremises-ide-packaging-tomcat-machine-runner</module>
         <module>onpremises-ide-packaging-tomcat-ext-server</module>
         <module>onpremises-ide-packaging-tomcat-codenvy-allinone</module>
         <module>onpremises-ide-packaging-tomcat-im</module>
