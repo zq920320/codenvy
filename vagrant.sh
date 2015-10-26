@@ -243,10 +243,6 @@ else
   # Copy tomcats for multi-server environment
   cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
   cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
-  cp -f onpremises-ide-packaging-tomcat-next-runner/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-next-runner.zip
-  cp -f onpremises-ide-packaging-tomcat-next-builder/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-next-builder.zip
-  cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
-  cp -f onpremises-ide-packaging-tomcat-next-codeassistant/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-next-codeassistant.zip
   cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/analytics-tomcat.zip
   cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-ext-server.zip
 
@@ -269,9 +265,6 @@ TOMCAT_ERRORS=false
 if [ ${MULTI_SERVER} == true ]; then
   checkThatTomcatStartsWithoutErrors "analytics"
   checkThatTomcatStartsWithoutErrors "api"
-  checkThatTomcatStartsWithoutErrors "runner"
-  checkThatTomcatStartsWithoutErrors "builder"
-  checkThatTomcatStartsWithoutErrors "datasource"
 else
   checkThatTomcatStartsWithoutErrors ""
 fi

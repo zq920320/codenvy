@@ -103,7 +103,6 @@ import org.everrest.guice.ServiceBindingHelper;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.eclipse.che.inject.Matchers.names;
 
-
 /*
 import com.codenvy.api.metrics.server.MetricModule;
 import com.codenvy.api.resources.server.ResourcesManager;
@@ -397,8 +396,12 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                    com.codenvy.swarm.machine.SwarmInstance.class)
                         .implement(org.eclipse.che.api.machine.server.spi.InstanceProcess.class,
                                    org.eclipse.che.plugin.docker.machine.DockerProcess.class)
-                        .implement(org.eclipse.che.plugin.docker.machine.DockerNode.class, com.codenvy.machine.RemoteDockerNode.class)
+                        .implement(org.eclipse.che.plugin.docker.machine.node.DockerNode.class,
+                                   com.codenvy.machine.RemoteDockerNode.class)
                         .build(org.eclipse.che.plugin.docker.machine.DockerMachineFactory.class));
+
+        bind(org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider.class)
+                .to(com.codenvy.machine.RemoteWorkspaceFolderPathProvider.class);
 
         Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
                 Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
