@@ -56,40 +56,20 @@ selectTomcatToUpload() {
          doUploadTomcat ${API} ${SERVER}/${SCOPE}
       ;;
      "runner")
-         RUNNER=`ls onpremises-ide-packaging-tomcat-runner/target/onpremises-ide-packaging-tomcat-runner-*.zip`
-         doUploadTomcat ${RUNNER} ${SERVER}/${SCOPE}
-      ;;
-     "builder")
-         BUILDER=`ls onpremises-ide-packaging-tomcat-builder/target/onpremises-ide-packaging-tomcat-builder-*.zip`
-         doUploadTomcat ${BUILDER} ${SERVER}/${SCOPE}
+         EXT_SERVER=`ls onpremises-ide-packaging-tomcat-ext-server/target/onpremises-ide-packaging-tomcat-ext-server-*.zip`
+         doUploadTomcat ${EXT_SERVER} ${SERVER}/${SCOPE}
       ;;
      "site")
          SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
          doUploadTomcat ${SITE} ${SERVER}/${SCOPE}
       ;;
-     "datasource")
-         DATASOURCE=`ls onpremises-ide-packaging-tomcat-datasource-plugin/target/onpremises-ide-packaging-tomcat-datasource-plugin-*.zip`
-         doUploadTomcat ${DATASOURCE} ${SERVER}/${SCOPE}
-      ;;
-     "codeassistant")
-         CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-codeassistant/target/onpremises-ide-packaging-tomcat-codeassistant-*.zip`
-         doUploadTomcat ${CODEASSISTANT} ${SERVER}/${SCOPE}
-      ;;
      "all")
          API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
          SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
-         RUNNER=`ls onpremises-ide-packaging-tomcat-machine-runner/target/onpremises-ide-packaging-tomcat-machine-runner-*.zip`
          EXT_SERVER=`ls onpremises-ide-packaging-tomcat-ext-server/target/onpremises-ide-packaging-tomcat-ext-server-*.zip`
-         #BUILDER=`ls onpremises-ide-packaging-tomcat-next-builder/target/onpremises-ide-packaging-tomcat-next-builder-*.zip`
-         #DATASOURCE=`ls onpremises-ide-packaging-tomcat-datasource-plugin/target/onpremises-ide-packaging-tomcat-datasource-plugin-*.zip`
-         #CODEASSISTANT=`ls onpremises-ide-packaging-tomcat-next-codeassistant/target/onpremises-ide-packaging-tomcat-next-codeassistant-*.zip`
          doUploadTomcat ${API} ${SERVER}/api
          doUploadTomcat ${SITE} ${SERVER}/site
-         doUploadTomcat ${RUNNER} ${SERVER}/runner
          doUploadTomcat ${EXT_SERVER} ${SERVER}/runner
-         #doUploadTomcat ${BUILDER} ${SERVER}/builder
-         #doUploadTomcat ${DATASOURCE} ${SERVER}/datasource
-         #doUploadTomcat ${CODEASSISTANT} ${SERVER}/codeassistant
       ;;
    esac
 }
@@ -121,8 +101,8 @@ doBuild() {
 PUPPET_DNS=puppet-master.codenvycorp.com
 DATE=`date '+%y%m%d-%H%M%S'`
 CLOUD_IDE_HOME=`pwd`
-SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, runner, builder, site, datasource, codeassistant, all\e[0m"
-SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod\e[0m"
+SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, site, all\e[0m"
+SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod, machine\e[0m"
 #checking possible scope values
 case "$1" in
    "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "demo" | "nightly" | "dev" | "machine" )
@@ -143,7 +123,7 @@ case "${SERVER}" in
    ;;
    *)
       case "$2" in
-         "site" | "api" | "all" | "builder" | "runner" | "datasource" | "codeassistant" | "aio" | "ext-server")
+         "site" | "api" | "all" | "aio" | "ext-server")
             if [[ "$2" != "aio" || "$SERVER" == "prod" ]]; then
                 echo "Selected '$2' as scope for update"
                 SCOPE=$2
