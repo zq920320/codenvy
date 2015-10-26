@@ -20,7 +20,7 @@ package com.codenvy.swarm.machine;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 
 import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
-import org.eclipse.che.plugin.docker.machine.DockerNode;
+import org.eclipse.che.plugin.docker.machine.node.DockerNode;
 
 import java.util.Map;
 

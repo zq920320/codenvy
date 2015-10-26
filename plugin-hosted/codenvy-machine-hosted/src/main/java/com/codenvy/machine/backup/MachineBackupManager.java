@@ -18,7 +18,6 @@
 package com.codenvy.machine.backup;
 
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.util.Cancellable;
 import org.eclipse.che.api.core.util.CommandLine;
 import org.eclipse.che.api.core.util.ListLineConsumer;
 import org.eclipse.che.api.core.util.ProcessUtil;
@@ -53,13 +52,13 @@ public class MachineBackupManager {
     @Inject
     public MachineBackupManager(@Named("machine.backup.backup_script") String backupScript,
                                 @Named("machine.backup.restore_script") String restoreScript,
-                                @Named("machine.backup.backup_duration_second") int maxBackupDuration,
-                                @Named("machine.backup.restore_duration_second") int restoreDuration,
+                                @Named("machine.backup.backup_duration_second") int maxBackupDurationSec,
+                                @Named("machine.backup.restore_duration_second") int restoreDurationSec,
                                 WorkspaceHashLocalFSMountStrategy mountStrategy) {
         this.backupScript = backupScript;
         this.restoreScript = restoreScript;
-        this.maxBackupDuration = maxBackupDuration;
-        this.restoreDuration = restoreDuration;
+        this.maxBackupDuration = maxBackupDurationSec;
+        this.restoreDuration = restoreDurationSec;
         this.mountStrategy = mountStrategy;
     }
 
@@ -73,12 +72,37 @@ public class MachineBackupManager {
      * @param workspaceId
      *         id of workspace that should be backed up
      */
-    public void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress) throws ServerException {
+    public void backupWorkspace(final String workspaceId,
+                                final String srcPath,
+                                final String srcAddress) throws ServerException {
+        backupWorkspace(workspaceId, srcPath, srcAddress, false);
+    }
+
+    /**
+     * Copies workspace files from machine's host to backup storage and remove all files from the source.
+     *
+     * @param srcPath
+     *         path to folder that should be backed up
+     * @param srcAddress
+     *         address of the server from which workspace files should be backed up
+     * @param workspaceId
+     *         id of workspace that should be backed up
+     */
+    public void backupWorkspaceAndCleanup(final String workspaceId,
+                                          final String srcPath,
+                                          final String srcAddress) throws ServerException {
+        backupWorkspace(workspaceId, srcPath, srcAddress, true);
+    }
+
+    private void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress, boolean removeSourceOnSuccess)
+            throws ServerException {
         final File destPath = mountStrategy.getMountPath(workspaceId);
 
-        final String srcPathWithTrailingSlash = srcPath.endsWith("/") ? srcPath : srcPath + '/';
-
-        CommandLine commandLine = new CommandLine(backupScript, srcPathWithTrailingSlash, srcAddress, destPath.toString());
+        CommandLine commandLine = new CommandLine(backupScript,
+                                                  srcPath,
+                                                  srcAddress,
+                                                  destPath.toString(),
+                                                  Boolean.toString(removeSourceOnSuccess));
 
         try {
             execute(commandLine.asArray(), maxBackupDuration);
@@ -98,12 +122,19 @@ public class MachineBackupManager {
      *         address of the server where workspace should be copied to
      * @throws ServerException
      */
-    public void restoreWorkspaceBackup(final String workspaceId, final String destPath, final String destAddress) throws ServerException {
+    public void restoreWorkspaceBackup(final String workspaceId,
+                                       final String destPath,
+                                       final String userId,
+                                       final String groupId,
+                                       final String destAddress) throws ServerException {
         final String srcPath = mountStrategy.getMountPath(workspaceId).toString();
 
-        final String srcPathWithTrailingSlash = srcPath.endsWith("/") ? srcPath : srcPath + '/';
-
-        CommandLine commandLine = new CommandLine(restoreScript, srcPathWithTrailingSlash, destPath, destAddress);
+        CommandLine commandLine = new CommandLine(restoreScript,
+                                                  srcPath,
+                                                  destPath,
+                                                  destAddress,
+                                                  userId,
+                                                  groupId);
 
         try {
             execute(commandLine.asArray(), restoreDuration);
@@ -123,12 +154,9 @@ public class MachineBackupManager {
             final Process process = pb.start();
 
             final ValueHolder<Boolean> isTimeoutExceeded = new ValueHolder<>(false);
-            watcher.start(new Cancellable() {
-                @Override
-                public void cancel() throws Exception {
-                    isTimeoutExceeded.set(true);
-                    ProcessUtil.kill(process);
-                }
+            watcher.start(() -> {
+                isTimeoutExceeded.set(true);
+                ProcessUtil.kill(process);
             });
 
             // consume logs until process ends

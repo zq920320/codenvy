@@ -18,26 +18,24 @@
 package com.codenvy.machine;
 
 import com.codenvy.machine.backup.MachineBackupManager;
-import com.codenvy.machine.dto.MachineCopyProjectRequest;
 import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
-import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.eclipse.che.api.core.util.ValueHolder;
 import org.eclipse.che.api.machine.server.exception.MachineException;
-import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
-import org.eclipse.che.plugin.docker.machine.DockerNode;
+import org.eclipse.che.plugin.docker.client.Exec;
+import org.eclipse.che.plugin.docker.client.LogMessage;
+import org.eclipse.che.plugin.docker.machine.node.DockerNode;
+import org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.UriBuilder;
-import java.io.File;
 import java.io.IOException;
-import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -49,19 +47,26 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class RemoteDockerNode implements DockerNode {
     private static final Logger LOG = getLogger(RemoteDockerNode.class);
 
-    private final MachineBackupManager              backupManager;
+    private final String               workspaceId;
+    private final MachineBackupManager backupManager;
+    private final DockerConnector      dockerConnector;
+    private final String               containerId;
 
     private final String hostProjectsFolder;
     private final String nodeLocation;
 
     @Inject
-    public RemoteDockerNode(@Named("machine.project.location") String machineProjectsDir,
-                            DockerConnector dockerConnector,
-                            @Assisted String containerId,
-                            MachineBackupManager backupManager) throws MachineException {
+    public RemoteDockerNode(DockerConnector dockerConnector,
+                            @Assisted("container") String containerId,
+                            @Assisted("workspace") String workspaceId,
+                            MachineBackupManager backupManager,
+                            WorkspaceFolderPathProvider workspaceFolderPathProvider) throws MachineException {
+        this.workspaceId = workspaceId;
         this.backupManager = backupManager;
+        this.dockerConnector = dockerConnector;
+        this.containerId = containerId;
 
-        this.hostProjectsFolder = new File(machineProjectsDir, containerId).toString();
+        this.hostProjectsFolder = workspaceFolderPathProvider.getPath(workspaceId);
 
         String nodeLocation = "127.0.0.1";
         if (dockerConnector instanceof SwarmDockerConnector) {
@@ -76,40 +81,47 @@ public class RemoteDockerNode implements DockerNode {
             }
         }
         this.nodeLocation = nodeLocation;
-
-        // We have to create folder, see https://github.com/docker/docker/issues/12061
-        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/folder/")
-                                  .path(hostProjectsFolder)
-                                  .host(nodeLocation)
-                                  .port(8080)
-                                  .scheme("http")
-                                  .build();
-
-        try {
-            HttpJsonHelper.request(null, uri.toString(), "POST", null);
-        } catch (IOException | ApiException e) {
-            throw new MachineException(e.getLocalizedMessage());
-        }
     }
 
     @Override
-    public void bindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
+    public void bindWorkspace() throws MachineException {
         try {
-            backupManager.restoreWorkspaceBackup(workspaceId, hostProjectsFolder, nodeLocation);
+            final Exec exec = dockerConnector.createExec(containerId, false, "/bin/sh", "-c", "id -u && id -g");
+            final List<String> ownerIds = new ArrayList<>(2);
+            final ValueHolder<String> error = new ValueHolder<>();
+            dockerConnector.startExec(exec.getId(), message -> {
+                if (message.getType() == LogMessage.Type.STDOUT) {
+                    ownerIds.add(message.getContent());
+                } else {
+                    LOG.error("Can't detect container user ids to chown backed up workspace " + workspaceId + "files. " + message);
+                    error.set("Can't detect container user ids to chown backed up workspace " + workspaceId + "files");
+                }
+            });
+
+            if (error.get() != null) {
+                throw new MachineException(error.get());
+            }
+
+            backupManager.restoreWorkspaceBackup(workspaceId,
+                                                 hostProjectsFolder,
+                                                 ownerIds.get(0),
+                                                 ownerIds.get(1),
+                                                 nodeLocation);
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new MachineException("Can't restore workspace file system");
         } catch (ServerException e) {
             throw new MachineException(e.getLocalizedMessage(), e);
         }
     }
 
     @Override
-    public void unbindWorkspace(String workspaceId, String hostProjectsFolder) throws MachineException {
+    public void unbindWorkspace() throws MachineException {
         try {
-            backupManager.backupWorkspace(workspaceId, hostProjectsFolder, nodeLocation);
+            backupManager.backupWorkspaceAndCleanup(workspaceId, hostProjectsFolder, nodeLocation);
         } catch (ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
-
-        removeSources();
     }
 
     @Override
@@ -120,23 +132,5 @@ public class RemoteDockerNode implements DockerNode {
     @Override
     public String getHost() {
         return nodeLocation;
-    }
-
-    private void removeSources() throws MachineException {
-        final MachineCopyProjectRequest bindingConf = DtoFactory.getInstance().createDto(MachineCopyProjectRequest.class)
-                                                                .withHostFolder(hostProjectsFolder);
-
-        final URI uri = UriBuilder.fromUri("/machine-runner/internal/machine/binding")
-                                  .host(nodeLocation)
-                                  .port(8080)
-                                  .scheme("http")
-                                  .build();
-
-        try {
-            HttpJsonHelper.request(null, uri.toString(), "DELETE", bindingConf);
-        } catch (IOException | ApiException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new MachineException("Source unbinding failed. " + e.getLocalizedMessage());
-        }
     }
 }
