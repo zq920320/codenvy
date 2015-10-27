@@ -35,12 +35,18 @@ import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.ext.ssh.client.SshKeyService;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+import org.eclipse.che.ide.ui.dialogs.CancelCallback;
+import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
+import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+
+import static com.codenvy.ide.factory.client.accept.Authenticator.AuthCallback;
 
 /**
  * @author Sergii Leschenko
@@ -53,12 +59,13 @@ public class FactoryProjectImporter {
     private final FactoryLocalizationConstant         localization;
     private final DtoFactory                          dtoFactory;
     private final Authenticator                       authenticator;
+    private final DialogFactory                       dialogFactory;
+    private final SshKeyService                       sshKeyService;
     private final ImportProjectNotificationSubscriber notificationSubscriber;
 
     private Factory                          factory;
     private Notification                     notification;
     private AsyncCallback<ProjectDescriptor> callback;
-
 
     @Inject
     public FactoryProjectImporter(ProjectServiceClient projectServiceClient,
@@ -66,12 +73,16 @@ public class FactoryProjectImporter {
                                   FactoryLocalizationConstant localization,
                                   Authenticator authenticator,
                                   DtoFactory dtoFactory,
+                                  DialogFactory dialogFactory,
+                                  SshKeyService sshKeyService,
                                   ImportProjectNotificationSubscriber notificationSubscriber) {
         this.projectServiceClient = projectServiceClient;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.localization = localization;
         this.dtoFactory = dtoFactory;
         this.authenticator = authenticator;
+        this.dialogFactory = dialogFactory;
+        this.sshKeyService = sshKeyService;
         this.notificationSubscriber = notificationSubscriber;
     }
 
@@ -111,7 +122,20 @@ public class FactoryProjectImporter {
 //                                                   @Override
 //                                                   protected void onFailure(Throwable exception) {
 //                                                       if (exception instanceof UnauthorizedException) {
-//                                                           rerunWithAuthImport();
+//                                                           authenticate(new AuthCallback() {
+//                                                               @Override
+//                                                               public void onAuthenticated() {
+//                                                                   notification.setMessage(localization.oauthSuccess());
+//                                                                   importProjects();
+//                                                               }
+//
+//                                                               @Override
+//                                                               public void onError(String message) {
+//                                                                   handleError(message);
+//                                                               }
+//                                                           });
+//                                                       } else if (exception.getMessage().contains("Unable get private ssh key")) {
+//                                                           askGenerateSSH();
 //                                                       } else {
 //                                                           callback.onFailure(
 //                                                                   new Exception("Unable to import source of project. " + dtoFactory
@@ -123,23 +147,63 @@ public class FactoryProjectImporter {
 //        }
     }
 
-//    private void rerunWithAuthImport() {
-//        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
-//        authenticator.showOAuthWindow(factory.getSource().getProject().getLocation(),
-//                                      new Authenticator.AuthCallback() {
-//                                          @Override
-//                                          public void onAuthenticated() {
-//                                              notification.setMessage(localization.oauthSuccess());
-//                                              importProjects();
-//                                          }
+//    private void handleError(String message) {
+//        notification.setMessage(localization.oauthFailed() + " " + message);
+//        notification.setType(Notification.Type.ERROR);
+//        notification.setStatus(Notification.Status.FINISHED);
+//    }
 //
-//                                          @Override
-//                                          public void onError(String message) {
-//                                              notification.setMessage(localization.oauthFailed() + " " + message);
-//                                              notification.setType(Notification.Type.ERROR);
-//                                              notification.setStatus(Notification.Status.FINISHED);
-//                                          }
-//                                      });
+//    private void askGenerateSSH() {
+//        dialogFactory.createConfirmDialog(localization.dialogSshNotFoundTitle(),
+//                                          localization.dialogSshNotFoundText(),
+//                                          new ConfirmCallback() {
+//                                              @Override
+//                                              public void accepted() {
+//                                                  generateSSHAndImportProject();
+//                                              }
+//                                          },
+//                                          new CancelCallback() {
+//                                              @Override
+//                                              public void cancelled() {
+//                                                  callback.onFailure(new Exception("Unable to import source of project. "));
+//                                              }
+//                                          }).show();
+//    }
+//
+//    private void generateSSHAndImportProject() {
+//        String location = factory.getSource().getProject().getLocation();
+//        String host = location.substring(location.indexOf("@") + 1, location.lastIndexOf(":"));
+//        sshKeyService.generateKey(host, new AsyncRequestCallback<Void>() {
+//            @Override
+//            protected void onSuccess(Void result) {
+//                notification.setMessage(localization.notificationSshGeneratedSuccessfully());
+//                importProjects();
+//            }
+//
+//            @Override
+//            protected void onFailure(Throwable exception) {
+//                if (exception instanceof UnauthorizedException) {
+//                    authenticate(new AuthCallback() {
+//                        @Override
+//                        public void onAuthenticated() {
+//                            generateSSHAndImportProject();
+//                        }
+//
+//                        @Override
+//                        public void onError(String message) {
+//                            handleError(message);
+//                        }
+//                    });
+//                } else {
+//                    callback.onFailure(new Exception("Unable to import source of project. "));
+//                }
+//            }
+//        });
+//    }
+//
+//    private void authenticate(final AuthCallback callback) {
+//        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
+//        authenticator.showOAuthWindow(factory.getSource().getProject().getLocation(), callback);
 //    }
 
     private void updateProjectAttributes(ProjectDescriptor projectDescriptor) {

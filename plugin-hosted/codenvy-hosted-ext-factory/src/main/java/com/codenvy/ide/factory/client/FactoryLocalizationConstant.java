@@ -60,6 +60,15 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("accept.canceled.required.authorize")
     String canceledRequiredAuthorize();
 
+    @Key("accept.dialog.ssh.not.found.title")
+    String dialogSshNotFoundTitle();
+
+    @Key("accept.dialog.ssh.not.found.text")
+    String dialogSshNotFoundText();
+
+    @Key("accept.notification.ssh.generated.successfully")
+    String notificationSshGeneratedSuccessfully();
+
     /* ***************************************************************************************************************
      *
      * Importing from Config File
