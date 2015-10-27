@@ -25,11 +25,9 @@ import com.google.common.io.CharStreams;
 
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
-import org.eclipse.che.plugin.docker.client.DockerCertificates;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerException;
-import org.eclipse.che.plugin.docker.client.InitialAuthConfig;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
@@ -73,26 +71,12 @@ public class SwarmDockerConnector extends DockerConnector {
     //TODO should it be done in other way?
     private final String                nodeDaemonScheme;
 
-    public SwarmDockerConnector(URI swarmManagerUri,
-                                DockerCertificates dockerCertificates,
-                                InitialAuthConfig initialAuthConfig,
-                                String dockerHostIp,
-                                NodeSelectionStrategy strategy,
-                                String nodeDaemonUrisScheme) {
-        super(swarmManagerUri, dockerCertificates, initialAuthConfig, dockerHostIp);
-        this.swarmManagerUri = swarmManagerUri;
-        this.strategy = strategy;
-        this.nodeDaemonScheme = nodeDaemonUrisScheme;
-    }
-
     @Inject
-    private SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration) {
-        this(connectorConfiguration.getDockerDaemonUri(),
-             connectorConfiguration.getDockerCertificates(),
-             connectorConfiguration.getAuthConfigs(),
-             connectorConfiguration.getDockerHostIp(),
-             new RandomNodeSelectionStrategy(),
-             "http");
+    public SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration) {
+        super(connectorConfiguration);
+        this.swarmManagerUri = connectorConfiguration.getDockerDaemonUri();
+        this.strategy = new RandomNodeSelectionStrategy();
+        this.nodeDaemonScheme = "http";
     }
 
     @Override
