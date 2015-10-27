@@ -76,9 +76,10 @@ public class SwarmDockerConnector extends DockerConnector {
     public SwarmDockerConnector(URI swarmManagerUri,
                                 DockerCertificates dockerCertificates,
                                 InitialAuthConfig initialAuthConfig,
+                                String dockerHostIp,
                                 NodeSelectionStrategy strategy,
                                 String nodeDaemonUrisScheme) {
-        super(swarmManagerUri, dockerCertificates, initialAuthConfig);
+        super(swarmManagerUri, dockerCertificates, initialAuthConfig, dockerHostIp);
         this.swarmManagerUri = swarmManagerUri;
         this.strategy = strategy;
         this.nodeDaemonScheme = nodeDaemonUrisScheme;
@@ -89,6 +90,7 @@ public class SwarmDockerConnector extends DockerConnector {
         this(connectorConfiguration.getDockerDaemonUri(),
              connectorConfiguration.getDockerCertificates(),
              connectorConfiguration.getAuthConfigs(),
+             connectorConfiguration.getDockerHostIp(),
              new RandomNodeSelectionStrategy(),
              "http");
     }
