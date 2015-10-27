@@ -99,6 +99,12 @@ public class BitbucketHostingService implements VcsHostingService {
         return "Bitbucket";
     }
 
+    @NotNull
+    @Override
+    public String getHost() {
+        return "bitbucket.org";
+    }
+
     @Override
     public boolean isHostRemoteUrl(@NotNull final String remoteUrl) {
         return SSH_URL_REGEXP.test(remoteUrl) || HTTPS_URL_REGEXP.test(remoteUrl);

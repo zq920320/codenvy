@@ -34,6 +34,14 @@ public interface VcsHostingService {
     String getName();
 
     /**
+     * Returns the VCS Host.
+     *
+     * @return the VCS Host never {@code null}.
+     */
+    @NotNull
+    String getHost();
+
+    /**
      * Checks if the given remote URL is hosted by this service.
      *
      * @param remoteUrl

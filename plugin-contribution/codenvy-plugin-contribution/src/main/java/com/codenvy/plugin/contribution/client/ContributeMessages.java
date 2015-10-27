@@ -106,6 +106,12 @@ public interface ContributeMessages extends Messages {
     @Key("contribute.part.configure.contribution.dialog.new.branch.error.branch.exists")
     String contributePartConfigureContributionDialogNewBranchErrorBranchExists(String branchName);
 
+    @Key("contribute.part.configure.contribution.dialog.ssh.not.found.title")
+    String contributePartConfigureContributionDialogSshNotFoundTitle();
+
+    @Key("contribute.part.configure.contribution.dialog.ssh.not.found.text")
+    String contributePartConfigureContributionDialogSshNotFoundText();
+
     /*
      * Commit dialog
      */

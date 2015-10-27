@@ -21,13 +21,14 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.git.shared.PushResponse;
+import org.eclipse.che.ide.ext.ssh.client.SshKeyService;
+import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
-import javax.validation.constraints.NotNull;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.PUSH_BRANCH_ON_FORK;
 
@@ -43,18 +44,21 @@ public class PushBranchOnForkStep implements Step {
     private final VcsHostingServiceProvider vcsHostingServiceProvider;
     private final ContributeMessages        messages;
     private final DialogFactory             dialogFactory;
+    private final SshKeyService             sshKeyService;
 
     @Inject
     public PushBranchOnForkStep(@NotNull final GenerateReviewFactoryStep generateReviewFactoryStep,
                                 @NotNull final VcsServiceProvider vcsServiceProvider,
                                 @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
                                 @NotNull final ContributeMessages messages,
-                                @NotNull final DialogFactory dialogFactory) {
+                                @NotNull final DialogFactory dialogFactory,
+                                @NotNull final SshKeyService sshKeyService) {
         this.generateReviewFactoryStep = generateReviewFactoryStep;
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.messages = messages;
         this.dialogFactory = dialogFactory;
+        this.sshKeyService = sshKeyService;
     }
 
     @Override
@@ -132,15 +136,60 @@ public class PushBranchOnForkStep implements Step {
 
                                   @Override
                                   public void onFailure(final Throwable exception) {
-                                      final String errorMessage;
                                       if (exception instanceof BranchUpToDateException) {
-                                          errorMessage = messages.stepPushBranchErrorBranchUpToDate();
+                                          workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, messages.stepPushBranchErrorBranchUpToDate());
+                                      } else if (exception.getMessage().contains("Unable get private ssh key")) {
+                                          askGenerateSSH(workflow, context);
                                       } else {
-                                          errorMessage = messages.stepPushBranchErrorPushingBranch(exception.getMessage());
+                                          workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK,
+                                                                      messages.stepPushBranchErrorPushingBranch(exception.getMessage()));
                                       }
-
-                                      workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, errorMessage);
                                   }
                               });
+    }
+
+    private void askGenerateSSH(final ContributorWorkflow workflow, final Context context) {
+        final ConfirmCallback okCallback = new ConfirmCallback() {
+            @Override
+            public void accepted() {
+                vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
+                    @Override
+                    public void onFailure(Throwable throwable) {
+                        workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, throwable.getMessage());
+                    }
+
+                    @Override
+                    public void onSuccess(VcsHostingService vcsHostingService) {
+                        generateSSHAndPushBranch(workflow, context, vcsHostingService.getHost());
+                    }
+                });
+            }
+        };
+
+        final CancelCallback cancelCallback = new CancelCallback() {
+            @Override
+            public void cancelled() {
+                workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, messages.stepPushBranchCanceling());
+            }
+        };
+
+        dialogFactory.createConfirmDialog(messages.contributePartConfigureContributionDialogSshNotFoundTitle(),
+                                          messages.contributePartConfigureContributionDialogSshNotFoundText(),
+                                          okCallback,
+                                          cancelCallback).show();
+    }
+
+    private void generateSSHAndPushBranch(final ContributorWorkflow workflow, final Context context, String host) {
+        sshKeyService.generateKey(host, new AsyncRequestCallback<Void>() {
+            @Override
+            protected void onSuccess(Void result) {
+                pushBranch(workflow, context);
+            }
+
+            @Override
+            protected void onFailure(Throwable exception) {
+                workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, exception.getMessage());
+            }
+        });
     }
 }

@@ -213,6 +213,12 @@ public class GitHubHostingService implements VcsHostingService {
         return "GitHub";
     }
 
+    @NotNull
+    @Override
+    public String getHost() {
+        return "github.com";
+    }
+
     @Override
     public boolean isHostRemoteUrl(@NotNull final String remoteUrl) {
         return remoteUrl.startsWith(SSH_URL_PREFIX) || remoteUrl.startsWith(HTTPS_URL_PREFIX);
