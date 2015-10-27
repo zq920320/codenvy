@@ -460,8 +460,18 @@
 
             // signup, oAuth login,
             processCreate: function(username, bearertoken) {
-                authenticate(username, bearertoken);
-                redirectToUrl("/ws/");
+                authenticate(username, bearertoken)
+                .then(function(){
+                    redirectToUrl("/ws/");
+                })
+                .fail(function(response) {
+                        if (response){
+                            error([
+                                new AccountError(null, getResponseMessage(response))
+                            ]);
+                        }
+                    }
+                );
             },
 
             adminLogin: function(email, password, redirect_url, error) {
