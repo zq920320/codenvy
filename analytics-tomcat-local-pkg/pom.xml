@@ -32,58 +32,36 @@
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-classic</artifactId>
-            <version>${ch.qos.logback.version}</version>
         </dependency>
         <dependency>
             <groupId>ch.qos.logback</groupId>
             <artifactId>logback-core</artifactId>
-            <version>${ch.qos.logback.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.analytics</groupId>
             <artifactId>analytics-application</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.resources</groupId>
             <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
-            <version>${version.resource-bundle}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>javax.mail</groupId>
             <artifactId>mail</artifactId>
-            <version>${javax.mail.version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina-jmx-remote</artifactId>
-            <version>${org.apache.tomcat.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>tomcat-coyote</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-catalina</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>tomcat-juli</artifactId>
-                    <groupId>org.apache.tomcat</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>jul-to-slf4j</artifactId>
-            <version>${org.slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>${org.slf4j.version}</version>
         </dependency>
     </dependencies>
     <profiles>
