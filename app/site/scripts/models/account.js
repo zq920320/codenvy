@@ -459,7 +459,7 @@
             },
 
             // signup, oAuth login,
-            processCreate: function(username, bearertoken) {
+            processCreate: function(username, bearertoken, error) {
                 authenticate(username, bearertoken)
                 .then(function(){
                     redirectToUrl("/ws/");

@@ -23,15 +23,11 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
             
             initialize : function(){
                 var username = Account.getQueryParameterByName("username"),
-                    bearertoken = Account.getQueryParameterByName("bearertoken"),
-                    workspaceName = Account.getQueryParameterByName("workspace"),
-                    redirect_url = Account.getQueryParameterByName("redirect_url");
+                    bearertoken = Account.getQueryParameterByName("bearertoken");
                 if (username && bearertoken) {
                     Account.processCreate(
                         username,
                         bearertoken,
-                        workspaceName,
-                        redirect_url,
                         _.bind(function(errors){
 
                             if(errors.length !== 0){
