@@ -32,31 +32,38 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-filters</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>codenvy-hosted-infra-filters</artifactId>
-                    <groupId>com.codenvy.hosted-infrastructure</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>che-core-api-core</artifactId>
-                    <groupId>org.eclipse.che.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>codenvy-security-sso-client</artifactId>
-                    <groupId>com.codenvy.security</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-listeners</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-client</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-annotations</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.dashboard</groupId>
@@ -67,25 +74,26 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet.version}</version>
             <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockitong</groupId>
             <artifactId>mockitong</artifactId>
-            <version>${org.mockitong.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${org.testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -112,6 +120,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy-dependencies</id>
                         <phase>generate-sources</phase>

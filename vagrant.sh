@@ -245,7 +245,7 @@ else
   cp -f onpremises-ide-packaging-tomcat-builder/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-builder.zip
   cp -f onpremises-ide-packaging-tomcat-datasource-plugin/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-datasource-plugin.zip
   cp -f onpremises-ide-packaging-tomcat-codeassistant/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-codeassistant.zip
-  cp -f onpremises-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
+  cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-packaging-tomcat-im.zip
   cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/analytics-tomcat-pkg.zip
 
 

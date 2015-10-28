@@ -33,72 +33,60 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-datasource-plugin</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-git-server</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-builder</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-codeassistant</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-runner</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-tomcat-site</artifactId>
-            <version>${project.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-datasource-ssl-socket-factory</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-docker-recipes</artifactId>
-            <version>${che.plugins.version}</version>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${jdbc.postgresql-driver.version}</version>
         </dependency>
     </dependencies>
     <build>
