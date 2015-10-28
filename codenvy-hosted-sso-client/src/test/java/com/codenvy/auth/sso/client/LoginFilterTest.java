@@ -556,7 +556,7 @@ public class LoginFilterTest {
 
         //then
         verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
-        assertEquals(new String(bos.toByteArray()), "{\"message\":\"Provided t13f is invalid\"}");
+        assertEquals(new String(bos.toByteArray()), "{\"message\":\"Provided token t13f is invalid\"}");
         Assert.assertTrue(bos.size() > 0);
     }
 
@@ -578,7 +578,7 @@ public class LoginFilterTest {
 
         //then
         verify(response).setStatus(HttpServletResponse.SC_FORBIDDEN);
-        assertEquals(new String(bos.toByteArray()), "{\"message\":\"Provided t13f is invalid\"}");
+        assertEquals(new String(bos.toByteArray()), "{\"message\":\"Provided token t13f is invalid\"}");
         Assert.assertTrue(bos.size() > 0);
     }
 

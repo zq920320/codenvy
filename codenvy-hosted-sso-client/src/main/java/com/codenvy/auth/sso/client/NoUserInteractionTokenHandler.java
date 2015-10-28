@@ -49,9 +49,9 @@ public class NoUserInteractionTokenHandler extends DefaultTokenHandler {
                    ServletException {
         response.setStatus(HttpServletResponse.SC_FORBIDDEN);
         response.setContentType(MediaType.APPLICATION_JSON);
-        try (PrintWriter writer = response.getWriter();) {
+        try (PrintWriter writer = response.getWriter()) {
             writer.write(DtoFactory.getInstance()
-                                   .toJson(new UnauthorizedException("Provided " + token + " is invalid").getServiceError()));
+                                   .toJson(new UnauthorizedException("Provided token " + token + " is invalid").getServiceError()));
         }
     }
 
