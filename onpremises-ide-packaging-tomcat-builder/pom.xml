@@ -32,7 +32,6 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-tomcat-next-builder</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>

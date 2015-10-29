@@ -32,8 +32,11 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-tomcat-datasource-plugin</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.jayway.restassured</groupId>
+            <artifactId>rest-assured</artifactId>
         </dependency>
     </dependencies>
     <build>

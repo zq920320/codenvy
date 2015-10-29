@@ -32,42 +32,23 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-filters</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>codenvy-hosted-infra-filters</artifactId>
-                    <groupId>com.codenvy.hosted-infrastructure</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>che-core-api-core</artifactId>
-                    <groupId>org.eclipse.che.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>codenvy-hosted-sso-client</artifactId>
-                    <groupId>com.codenvy.hosted-infrastructure</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-compiling-war-ide-codenvy</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.google.code.gson</groupId>
-            <artifactId>gson</artifactId>
-            <version>${com.googlecode.gson.version}</version>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-inject</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet.version}</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>
@@ -81,6 +62,18 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>

@@ -33,37 +33,31 @@
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-git-server</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.resources</groupId>
             <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
-            <version>${version.resource-bundle}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${jdbc.postgresql-driver.version}</version>
         </dependency>
     </dependencies>
     <build>
