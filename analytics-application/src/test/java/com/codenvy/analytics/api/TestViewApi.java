@@ -49,7 +49,6 @@ import com.codenvy.analytics.services.view.CSVReportPersister;
 import com.codenvy.analytics.services.view.DisplayConfiguration;
 import com.codenvy.analytics.services.view.ViewBuilder;
 import com.codenvy.analytics.services.view.ViewData;
-import com.google.common.io.ByteStreams;
 
 import org.apache.commons.io.IOUtils;
 import org.mockito.ArgumentCaptor;
@@ -219,7 +218,7 @@ public class TestViewApi extends BaseTest {
             fixedLog.createNewFile();
 
             try (OutputStream out = new BufferedOutputStream(new FileOutputStream(fixedLog))) {
-                String resourceAsString = new String(ByteStreams.toByteArray(in), "UTF-8");
+                String resourceAsString = new String(IOUtils.toByteArray(in), "UTF-8");
                 resourceAsString = resourceAsString.replace(originalDate, newDate);
 
                 byte[] buf = resourceAsString.getBytes("UTF-8");
