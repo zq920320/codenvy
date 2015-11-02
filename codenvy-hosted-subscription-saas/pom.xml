@@ -142,10 +142,6 @@
         </dependency>
         <dependency>
             <groupId>org.everrest</groupId>
-            <artifactId>everrest-core</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.everrest</groupId>
             <artifactId>everrest-websockets</artifactId>
         </dependency>
         <dependency>
@@ -209,6 +205,11 @@
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-assured</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.everrest</groupId>
+            <artifactId>everrest-core</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->
