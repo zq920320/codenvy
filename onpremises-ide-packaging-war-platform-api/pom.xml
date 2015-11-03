@@ -30,365 +30,352 @@
     <name>Onpremises IDE :: WAR    :: IDE :: API</name>
     <dependencies>
         <dependency>
+            <groupId>aopalliance</groupId>
+            <artifactId>aopalliance</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.codahale.metrics</groupId>
             <artifactId>metrics-servlets</artifactId>
-            <version>${com.codahale.metrics.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-filters</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-listeners</artifactId>
-            <version>${codenvy.cloud-ide.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.factory</groupId>
             <artifactId>codenvy-factory-storage-mongo</artifactId>
-            <version>${codenvy.factory.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-analytics</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-creditcard</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-docs</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-resources</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-infra-filters</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-metrics</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-platform-api-impl</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-recoverpassword</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-client</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-oauth</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server-ldap</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server-organization</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <!--dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-subscription-saas</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-workspace-events</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-machine-hosted</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <!-- disabled due to git -->
         <!--dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-git-provider</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency-->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-google-oauth2</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <!--dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-projectlocker-git-provider</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency-->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-projectlocker-oauth2</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <!--dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-git-provider</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency-->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.plugin-gae</groupId>
             <artifactId>codenvy-plugin-gae</artifactId>
-            <version>${codenvy.plugin.gae.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
             <artifactId>codenvy-hosted-ext-factory</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin-hosted</groupId>
             <artifactId>codenvy-hosted-runner-docker</artifactId>
-            <version>${codenvy.plugin.hosted.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-router-machine</artifactId>
-            <version>${codenvy.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-swarm-machine</artifactId>
-            <version>${codenvy.plugins.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-assistedinject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-multibindings</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
         </dependency>
         <dependency>
             <groupId>com.palominolabs.metrics</groupId>
             <artifactId>metrics-guice</artifactId>
-            <version>${com.codahale.metrics.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>guice</artifactId>
-                    <groupId>com.google.inject</groupId>
-                </exclusion>
-            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-account</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-analytics</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-auth</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-builder</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-core</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <!-- tmp DAO impls -->
         <!--dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-infrastructure-local</artifactId>
-            <version>${che.core.version}</version>
         </dependency-->
         <!--
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-factory</artifactId>
-            <version>${che.core.version}</version>
-        </dependency>
         -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-factory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-machine</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-project</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <!--
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-runner</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-user</artifactId>
-            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-vfs</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-workspace</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-env</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-inject</artifactId>
-            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-lang</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-schedule</artifactId>
-            <version>${che.core.version}</version>
         </dependency>
         <!--dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-git-impl-native</artifactId>
-            <version>${che.core.version}</version>
         </dependency-->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-vfs-impl</artifactId>
-            <version>${che.core.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-docker-client</artifactId>
         </dependency>
         <!-- AngularJS Server Side Dependency -->
         <!--
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>angularjs-api-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>angularjs-core-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>angularjs-template-angular-seed</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>angularjs-template-gulp-angularjs-starter</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>angularjs-template-yeoman</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-cpp-ext-cpp</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-datasource-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-docker-runner</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         -->
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-git-provider-che</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency-->
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-github-ext-github</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency-->
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-docker-machine</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-github-oauth2</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-github-provider-github</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency-->
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-lang-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-maven</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency-->
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-ssh-git-native</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-go-ext-go</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-ant</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-debugger-java</artifactId>
-            <version>${che.plugins.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>tools</artifactId>
@@ -399,7 +386,6 @@
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-java</artifactId>
-            <version>${che.plugins.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>org.eclipse.jdt.core</artifactId>
@@ -410,95 +396,95 @@
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-maven</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-php-ext-php</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-python-ext-python</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-ruby-ext-ruby</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-ssh-git-native</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-svn-ext-subversion</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-tour-server</artifactId>
-            <version>${che.plugins.version}</version>
         </dependency>
         -->
         <dependency>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
-            <version>3.9.0.v20130604-1421</version>
         </dependency>
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-core</artifactId>
-            <version>${org.everrest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.everrest</groupId>
+            <artifactId>everrest-integration-guice</artifactId>
         </dependency>
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-websockets</artifactId>
-            <version>${org.everrest.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mongodb</groupId>
+            <artifactId>mongo-java-driver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <version>${javax.servlet.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-catalina</artifactId>
-            <version>${org.apache.tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-coyote</artifactId>
-            <version>${org.apache.tomcat.version}</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-test</artifactId>
-            <version>${org.everrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
             <scope>test</scope>
         </dependency>
         <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
-            <version>${org.mockito.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.mockitong</groupId>
             <artifactId>mockitong</artifactId>
-            <version>${org.mockitong.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
-            <version>${org.testng.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -545,6 +531,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <execution>
+                        <id>analyze</id>
+                        <configuration>
+                            <skip>true</skip>
+                        </configuration>
+                    </execution>
                     <execution>
                         <id>copy-clear-tomcat</id>
                         <phase>generate-sources</phase>
