@@ -27,8 +27,13 @@ import org.eclipse.che.ide.ext.git.client.GitRepositoryInitializer;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.FactoryResources;
 import com.codenvy.ide.factory.client.utils.SyncGitServiceClient;
+
+import org.eclipse.che.ide.ui.dialogs.CancelCallback;
+import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
+import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
+
 import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 
@@ -39,20 +44,25 @@ import javax.inject.Singleton;
  */
 @Singleton
 public class ExportConfigAction extends Action {
-    private final AppContext           appContext;
-    private final AnalyticsEventLogger eventLogger;
-    private final SyncGitServiceClient gitService;
+    private final FactoryLocalizationConstant locale;
+    private final AppContext                  appContext;
+    private final AnalyticsEventLogger        eventLogger;
+    private final SyncGitServiceClient        gitService;
+    private final DialogFactory               dialogFactory;
 
     @Inject
     public ExportConfigAction(FactoryLocalizationConstant locale,
                               AppContext appContext,
                               AnalyticsEventLogger eventLogger,
                               FactoryResources resources,
-                              SyncGitServiceClient gitService) {
+                              SyncGitServiceClient gitService,
+                              DialogFactory dialogFactory) {
         super(locale.exportConfigName(), locale.exportConfigDescription(), null, resources.exportConfig());
+        this.locale = locale;
         this.appContext = appContext;
         this.eventLogger = eventLogger;
         this.gitService = gitService;
+        this.dialogFactory = dialogFactory;
     }
 
     /** {@inheritDoc} */
@@ -62,19 +72,38 @@ public class ExportConfigAction extends Action {
 
         //Ensures that project is open
         if (appContext.getCurrentProject() == null || appContext.getCurrentProject().getRootProject() == null) {
-            Log.error(getClass(), "Open the project before export config");
+            Log.error(getClass(), locale.exportConfigErrorMessage());
             return;
         }
 
         final ProjectDescriptor currentProject = appContext.getCurrentProject().getRootProject();
 
-        if (!GitRepositoryInitializer.isGitRepository(currentProject)) {
-            gitService.init(currentProject);
-        }
+        if (!GitRepositoryInitializer.isGitRepository(currentProject) &&
+            !currentProject.getAttributes().containsKey("svn.repository.url")) {
+            dialogFactory.createConfirmDialog(locale.exportConfigDialogNotUnderVcsTitle(),
+                                              locale.exportConfigDialogNotUnderVcsText(),
+                                              new ConfirmCallback() {
+                                                  @Override
+                                                  public void accepted() {
+                                                      gitService.init(currentProject);
+                                                      exportConfig(currentProject.getName());
+                                                  }
+                                              },
+                                              new CancelCallback() {
+                                                  @Override
+                                                  public void cancelled() {
+                                                      //Do nothing
+                                                  }
+                                              }).show();
 
+        } else {
+            exportConfig(currentProject.getName());
+        }
+    }
+
+    private void exportConfig(String projectName) {
         final String currentWorkspaceId = Config.getWorkspaceId();
-        final String currentProjectName = currentProject.getName();
-        String downloadConfigLink = "/api/factory/" + currentWorkspaceId + "/" + currentProjectName;
+        String downloadConfigLink = "/api/factory/" + currentWorkspaceId + "/" + projectName;
         Window.open(downloadConfigLink, "Download Config", "");
     }
 

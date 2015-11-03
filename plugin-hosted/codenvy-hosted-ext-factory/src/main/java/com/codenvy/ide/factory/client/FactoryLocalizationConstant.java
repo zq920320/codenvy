@@ -105,6 +105,15 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("export.config.view.description")
     String exportConfigDescription();
 
+    @Key("export.config.error.message")
+    String exportConfigErrorMessage();
+
+    @Key("export.config.dialog.not.under.vcs.title")
+    String exportConfigDialogNotUnderVcsTitle();
+
+    @Key("export.config.dialog.not.under.vcs.text")
+    String exportConfigDialogNotUnderVcsText();
+
     /* ***************************************************************************************************************
      *
      * Welcome
