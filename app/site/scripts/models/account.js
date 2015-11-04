@@ -48,7 +48,7 @@
                 return decodeURIComponent(results[1].replace(/\+/g, " "));
             }
         };
- 
+
         var loginWithOauthProvider = function(provider, page, callback) {
             if (isWebsocketEnabled()) {
                 // build oauth url
@@ -149,7 +149,7 @@
             }
             return ownAccount;
         };
-        // Verify api response. Returns false if response does not contain "implementationVendor" field 
+        // Verify api response. Returns false if response does not contain "implementationVendor" field
         var isApiAvailable = function(){
             var deferredResult = $.Deferred();
             var url = "/api/";
@@ -443,7 +443,7 @@
                         return navigateToLocation()
                         .fail(function(error){
                             return $.Deferred().reject(error);
-                        });    
+                        });
                     } else {
                         redirectToUrl(redirect_url);
                     }
@@ -483,7 +483,7 @@
                         realm: "sysldap"
                     };
                     if (!redirect_url){
-                        redirect_url = "/site/private/select-tenant?" + window.location.search.substring(1);
+                        redirect_url = "/dashboard?" + window.location.search.substring(1);
                     }
                     $.ajax({
                         url: loginUrl,
