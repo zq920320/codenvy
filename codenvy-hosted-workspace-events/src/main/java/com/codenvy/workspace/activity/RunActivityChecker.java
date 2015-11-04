@@ -25,7 +25,6 @@ import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.runner.RunQueue;
 import org.eclipse.che.api.runner.RunQueueTask;
 */
-import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -32,7 +32,6 @@ import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.user.User;
-import org.eclipse.che.dto.server.DtoFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
