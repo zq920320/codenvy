@@ -18,10 +18,8 @@
 package com.codenvy.router;
 
 import com.google.inject.AbstractModule;
-import com.google.inject.assistedinject.FactoryModuleBuilder;
 
 import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.inject.DynaModule;
 
 /**
  * @author Alexander Garagatyi
