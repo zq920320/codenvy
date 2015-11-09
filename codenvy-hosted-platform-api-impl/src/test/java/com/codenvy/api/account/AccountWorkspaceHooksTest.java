@@ -38,6 +38,7 @@ import java.util.ArrayList;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.RETURNS_MOCKS;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -76,34 +77,34 @@ public class AccountWorkspaceHooksTest {
 
     @Test(expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "Workspace start rejected. " +
-                                            "Impossible to determine account for workspace '.+', user '.+' is owner of zero or several accounts. " +
+                                            "Impossible to determine account for workspace '.*', user '.*' is owner of zero or several accounts. " +
                                             "Specify account identifier!")
     public void rejectWorkspaceStartWithNotRegisteredWorkspaceAndNullAccountIdAndMultipleUserAccounts() throws Exception {
-        UsersWorkspace workspace = mock(UsersWorkspace.class);
+        UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
         when(accountDao.getByOwner(currentUser.getId())).thenReturn(asList(mock(Account.class), mock(Account.class)));
 
-        workspaceHooks.beforeStart(workspace, null);
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), null);
     }
 
     @Test
     public void allowWorkspaceStartWithNotRegisteredWorkspaceAndNullAccountIdAndSingleUserAccount() throws Exception {
-        UsersWorkspace workspace = mock(UsersWorkspace.class);
+        UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
         when(accountDao.getByOwner(currentUser.getId())).thenReturn(singletonList(mock(Account.class)));
 
-        workspaceHooks.beforeStart(workspace, null);
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), null);
 
         verify(accountDao).update(any());
     }
 
     @Test
     public void allowWorkspaceStartWithAccountIdWhichIsEqualToWorkspacesAccount() throws Exception {
-        UsersWorkspace workspace = mock(UsersWorkspace.class);
+        UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         Account account = new Account().withId("account123");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
-        workspaceHooks.beforeStart(workspace, "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), "account123");
 
         verify(accountDao, never()).update(any());
     }
@@ -113,19 +114,19 @@ public class AccountWorkspaceHooksTest {
                                             "Workspace is already added to account '.+' " +
                                             "which is different from specified one '.+'")
     public void rejectWorkspaceStartWithAccountIdWhichIsNotEqualToWorkspacesAccount() throws Exception {
-        UsersWorkspace workspace = mock(UsersWorkspace.class);
+        UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         Account account = new Account().withId("321account");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
-        workspaceHooks.beforeStart(workspace, "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), "account123");
     }
 
     @Test
     public void allowWorkspaceStartWithIdOfAccountWhichOwnedByCurrentUser() throws Exception {
-        UsersWorkspace workspace = mock(UsersWorkspace.class);
+        UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
 
-        workspaceHooks.beforeStart(workspace, "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), "account123");
     }
 
     @Test
@@ -150,5 +151,15 @@ public class AccountWorkspaceHooksTest {
         workspaceHooks.afterRemove(workspace.getId());
 
         verify(accountDao, never()).update(any());
+    }
+
+    @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "Expected non-null environment name")
+    public void shouldThrowNullPointerExceptionInBeforeStartWithNullEnvName() throws Exception {
+        workspaceHooks.beforeStart(mock(UsersWorkspace.class), null, "account");
+    }
+
+    @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "Expected non-null workspace")
+    public void shouldThrowNullPointerExceptionInBeforeStartWithNullWorkspace() throws Exception {
+        workspaceHooks.beforeStart(null, "envName", "account");
     }
 }
