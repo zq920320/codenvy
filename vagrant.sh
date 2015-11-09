@@ -118,6 +118,9 @@ parseParameters() {
       --multi)
         MULTI_SERVER=true
         ;;
+      --scalable-aio)
+        SCALABLE_AIO=true
+        ;;
       --dp)
         MAKE_PULL_IN_DEPLOYMENT=false
         ;;
@@ -207,6 +210,7 @@ MULTI_SERVER=false
 MAKE_PULL_IN_DEPLOYMENT=true
 MAKE_CHECKOUT_DEPLOYMENT=true
 OS_CENTOS6=false
+SCALABLE_AIO=false
 #
 
 # parse parameters specified by user
@@ -232,22 +236,38 @@ if [ ${OS_CENTOS6} == true ]; then
   export OS_CENTOS6="true"
 fi
 
-if [ ${MULTI_SERVER} == false ]; then
-  # Copy all-in-one tomcat zip to puppet folder for subsequent update
-  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
-  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-ext-server.zip
-  cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
-  # Open folder for AIO env
-  cd ../deployment-onprem/puppet
-else
+if [ ${MULTI_SERVER} == true ]; then
   # Copy tomcats for multi-server environment
   cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
   cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
   cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/analytics-tomcat.zip
   cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
 
   # Open folder for multi server env
-  cd ../deployment-onprem/puppet/vagrant-multi-vm-env
+  cd ../deployment/puppet/vagrant-multi-vm-env
+
+elif [ ${SCALABLE_AIO} == true ]; then
+  # Copy all-in-one tomcat zip to puppet folder for subsequent update
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
+
+  # Open folder for AIO env
+  cd ../deployment/puppet/vagrant-scalable-aio
+
+else
+  # Copy all-in-one tomcat zip to puppet folder for subsequent update
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
+
+  # Open folder for AIO env
+  cd ../deployment-onprem/puppet
 fi
 
 # Destroy existing VM if user set corresponding parameter
@@ -263,8 +283,9 @@ vagrant provision
 TOMCAT_ERRORS=false
 # Check tomcat logs for errors
 if [ ${MULTI_SERVER} == true ]; then
-  checkThatTomcatStartsWithoutErrors "analytics"
   checkThatTomcatStartsWithoutErrors "api"
+  checkThatTomcatStartsWithoutErrors "site"
+  checkThatTomcatStartsWithoutErrors "analytics"
 else
   checkThatTomcatStartsWithoutErrors ""
 fi

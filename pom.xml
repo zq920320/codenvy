@@ -53,6 +53,7 @@
         <module>onpremises-ide-packaging-tomcat-api</module>
         <module>onpremises-ide-packaging-tomcat-ext-server</module>
         <module>onpremises-ide-packaging-tomcat-codenvy-allinone</module>
+        <module>onpremises-ide-packaging-zip-terminal</module>
         <module>onpremises-ide-packaging-tomcat-im</module>
     </modules>
     <scm>
