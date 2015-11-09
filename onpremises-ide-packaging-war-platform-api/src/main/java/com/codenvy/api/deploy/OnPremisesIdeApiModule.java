@@ -82,12 +82,12 @@ import org.eclipse.che.api.vfs.server.VirtualFileFilter;
 import org.eclipse.che.api.vfs.server.search.SearcherProvider;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.event.WorkspaceMessenger;
 import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.eclipse.che.commons.schedule.executor.ScheduleModule;
 import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
 import org.eclipse.che.everrest.ETagResponseFilter;
 import org.eclipse.che.inject.DynaModule;
-import org.eclipse.che.plugin.docker.machine.ext.DockerMachineExtServerLauncher;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
@@ -246,6 +246,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         recipeBinder.addBinding().toInstance("predefined-recipes.json");
 
         bind(WorkspaceManager.class);
+        bind(WorkspaceMessenger.class).asEagerSingleton();
         /*
         bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
         */
@@ -411,9 +412,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerExtServerModule());
 
         bind(com.codenvy.machine.backup.WorkspaceFsBackupScheduler.class).asEagerSingleton();
-
-        bindConstant().annotatedWith(Names.named(DockerMachineExtServerLauncher.START_EXT_SERVER_COMMAND))
-                      .to("mkdir -p ~/che && unzip /mnt/che/ext-server.zip -d ~/che/ext-server && ~/che/ext-server/bin/catalina.sh start");
 
         bind(String.class).annotatedWith(Names.named("machine.docker.che_api.endpoint"))
                           .to(Key.get(String.class, Names.named("api.endpoint")));

@@ -32,14 +32,12 @@
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
-            <version>${codenvy.hosted-infrastructure.version}</version>
             <type>war</type>
         </dependency>
         <!-- Cloud IDE dependency -->
         <!--<dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <version>${project.version}</version>
             <type>war</type>
         </dependency>-->
         <dependency>
@@ -51,13 +49,11 @@
         <dependency>
             <groupId>com.codenvy.resources</groupId>
             <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
-            <version>${version.resource-bundle}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>${jdbc.postgresql-driver.version}</version>
         </dependency>
     </dependencies>
     <build>

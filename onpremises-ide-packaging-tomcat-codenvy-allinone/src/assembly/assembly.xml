@@ -72,19 +72,6 @@
                 <include>org.postgresql:postgresql</include>
             </includes>
         </dependencySet>
-        <dependencySet>
-            <useProjectArtifact>false</useProjectArtifact>
-            <unpack>true</unpack>
-            <outputDirectory>web-terminal</outputDirectory>
-            <includes>
-                <include>org.eclipse.che.terminal:che-websocket-terminal</include>
-            </includes>
-            <unpackOptions>
-                <excludes>
-                    <exclude>META-INF/**</exclude>
-                </excludes>
-            </unpackOptions>
-        </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
