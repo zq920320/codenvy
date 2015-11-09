@@ -17,8 +17,7 @@
  */
 package com.codenvy.api.dao.authentication;
 
-import org.apache.commons.codec.binary.Base64;
-
+import java.util.Base64;
 import javax.inject.Singleton;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
@@ -47,7 +46,7 @@ public class SSHAPasswordEncryptor implements PasswordEncryptor {
             System.arraycopy(md.digest(buff), 0, res, 0, 20);
             System.arraycopy(salt, 0, res, 20, salt.length);
 
-            return (SSHA_PREFIX + Base64.encodeBase64String(res)).getBytes();
+            return (SSHA_PREFIX + Base64.getEncoder().encodeToString(res)).getBytes();
         } catch (NoSuchAlgorithmException e) {
             throw new RuntimeException(e.getLocalizedMessage());
         }
