@@ -22,11 +22,18 @@ import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.action.CustomComponentAction;
 import org.eclipse.che.ide.api.action.Presentation;
+import org.eclipse.che.ide.api.action.permits.ResourcesLockedActionPermit;
+import org.eclipse.che.ide.api.app.AppContext;
+
+import com.codenvy.ide.subscriptions.client.permits.ResourcesAvailabilityChangeEvent;
+import com.codenvy.ide.subscriptions.client.permits.ResourcesAvailabilityChangeHandler;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 /**
  * Show additional content for redirect.
@@ -37,21 +44,57 @@ public class RedirectLinkAction extends Action implements CustomComponentAction 
     private final FlowPanel            panel;
     private final AnalyticsEventLogger eventLogger;
 
-    private Element link;
-    private Element displayedLink;
-
-
     @Inject
-    public RedirectLinkAction(SubscriptionsResources resources, AnalyticsEventLogger eventLogger) {
+    public RedirectLinkAction(AppContext appContext,
+                              EventBus eventBus,
+                              SubscriptionsResources resources,
+                              AnalyticsEventLogger eventLogger,
+                              ResourcesLockedActionPermit resourcesLockedActionPermit,
+                              final SubscriptionPanelLocalizationConstant locale) {
+
+        this.eventLogger = eventLogger;
+
         panel = new FlowPanel();
         panel.addStyleName(resources.subscriptionsCSS().panel());
         panel.addStyleName(resources.subscriptionsCSS().centerContent());
 
-        this.eventLogger = eventLogger;
+        final boolean isUserPermanent = appContext.getCurrentUser().isUserPermanent();
+        if (!isUserPermanent) {
+            setLinkToPanel(locale.createAccountActionTitle(), Window.Location.getHref() + "?login", true);
+        } else {
+            if (resourcesLockedActionPermit.isWorkspaceLocked()) {
+                setLinkToPanel(locale.lockDownModeTitle(), locale.lockDownModeUrl(), true);
+            }
+            eventBus.addHandler(ResourcesAvailabilityChangeEvent.TYPE, new ResourcesAvailabilityChangeHandler() {
+                                    @Override
+                                    public void onResourcesAvailabilityChange(boolean resourcesAvailable) {
+                                        if (resourcesAvailable) {
+                                            panel.clear();
+                                        } else {
+                                            setLinkToPanel(locale.lockDownModeTitle(), locale.lockDownModeUrl(), true);
+                                        }
+                                    }
+                                }
+                               );
+        }
+    }
+    
+    @Override
+    public void actionPerformed(ActionEvent e) {
+        eventLogger.log(this);
+    }
+
+    @Override
+    public Widget createCustomComponent(Presentation presentation) {
+        return panel;
+    }
+
+    @Override
+    public void update(ActionEvent e) {
     }
 
     /**
-     * Update additional content element
+     * Set link element to panel
      *
      * @param content
      *         text that should be shown
@@ -60,12 +103,15 @@ public class RedirectLinkAction extends Action implements CustomComponentAction 
      * @param mustBeOpenedInCurrentWindow
      *         indicates if link must be opened in current window only
      */
-    public void updateLinkElement(String content, String url, boolean mustBeOpenedInCurrentWindow) {
+    private void setLinkToPanel(String content, String url, boolean mustBeOpenedInCurrentWindow) {
+        Element link;
         if (mustBeOpenedInCurrentWindow) {
             link = getJavaScriptLink(content, url);
         } else {
             link = getHtmlLink(content, url);
         }
+        panel.clear();
+        panel.getElement().appendChild(link);
     }
 
     /**
@@ -97,31 +143,5 @@ public class RedirectLinkAction extends Action implements CustomComponentAction 
         a.setPropertyString("text", prompt);
         a.setPropertyString("href", url);
         return a;
-    }
-
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        eventLogger.log(this);
-    }
-
-    @Override
-    public Widget createCustomComponent(Presentation presentation) {
-        return panel;
-    }
-
-    @Override
-    public void update(ActionEvent e) {
-        if(link == null) {
-            panel.clear();
-            displayedLink = null;
-        } else {
-            if (!link.equals(displayedLink)) {
-                panel.clear();
-                panel.getElement().appendChild(link);
-                displayedLink = link;
-            }
-        }
-        e.getPresentation().setVisible(panel.getElement().getChildCount()>0);
     }
 }

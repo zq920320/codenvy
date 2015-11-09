@@ -19,6 +19,7 @@ package com.codenvy.ide.subscriptions.client.permits;
 
 
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.account.gwt.client.AccountServiceClient;
 import org.eclipse.che.api.account.server.Constants;
@@ -43,6 +44,7 @@ import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
  */
 public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPermit {
     private final MessageBus             messageBus;
+    private final EventBus               eventBus;
     private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
     private final String                 accountLockChangeChanel;
     private final String                 workspaceLockChangeChanel;
@@ -53,9 +55,11 @@ public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPer
     @Inject
     public ResourcesLockedActionPermitImpl(MessageBus messageBus,
                                            AppContext appContext,
+                                           final EventBus eventBus,
                                            AccountServiceClient accountServiceClient,
                                            DtoUnmarshallerFactory dtoUnmarshallerFactory) {
         this.messageBus = messageBus;
+        this.eventBus = eventBus;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
 
         this.isAccountLocked = false;
@@ -72,6 +76,9 @@ public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPer
                     isWorkspaceLocked = true;
                 } else if (workspace.getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
                     isWorkspaceLocked = true;
+                }
+                if (isWorkspaceLocked) {
+                    eventBus.fireEvent(new ResourcesAvailabilityChangeEvent(false));
                 }
             }
 
@@ -141,6 +148,7 @@ public class ResourcesLockedActionPermitImpl implements ResourcesLockedActionPer
         @Override
         protected void onMessageReceived(WorkspaceLockDetails workspaceLockDetails) {
             isWorkspaceLocked = workspaceLockDetails.isLocked();
+            eventBus.fireEvent(new ResourcesAvailabilityChangeEvent(!isWorkspaceLocked));
         }
 
         @Override

@@ -23,7 +23,6 @@ import com.google.gwt.user.client.Window;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import org.eclipse.che.api.account.server.Constants;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
@@ -65,7 +64,6 @@ public class SubscriptionsExtension {
                                   RedirectLinkAction redirectLinkAction,
                                   SubscriptionIndicatorAction subscriptionIndicatorAction,
                                   QueueTypeIndicatorAction queueTypeIndicatorAction,
-                                  SubscriptionPanelLocalizationConstant locale,
                                   SubscriptionServiceClient subscriptionServiceClient) {
 
         resources.subscriptionsCSS().ensureInjected();
@@ -93,17 +91,8 @@ public class SubscriptionsExtension {
         DefaultActionGroup leftBottomToolbarGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_LEFT_STATUS_PANEL);
         leftBottomToolbarGroup.add(subscriptionIndicatorAction, Constraints.LAST);
 
-        if (appContext.getWorkspace().getAttributes().containsKey(Constants.RESOURCES_LOCKED_PROPERTY)) {
-            redirectLinkAction.updateLinkElement(locale.lockDownModeTitle(), locale.lockDownModeUrl(), true);
-        }
-
         if (appContext.getWorkspace().isTemporary()) {
             queueTypeIndicatorAction.setQueueType(SHARED);
-
-            if (!appContext.getCurrentUser().isUserPermanent()) {
-                redirectLinkAction.updateLinkElement(locale.createAccountActionTitle(),
-                                                     Window.Location.getHref() + "?login", true);
-            }
         } else {
             checkSaasSubscription();
         }
