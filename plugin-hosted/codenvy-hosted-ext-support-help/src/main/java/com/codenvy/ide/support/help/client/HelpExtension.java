@@ -32,7 +32,6 @@ import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.extension.Extension;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
-import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.List;

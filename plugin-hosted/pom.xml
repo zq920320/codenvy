@@ -39,7 +39,7 @@
         -->
         <module>codenvy-swarm-machine</module>
         <module>codenvy-hosted-ext-permissions</module>
-        
+
         <module>codenvy-hosted-ext-factory</module>
         <!--
         <module>codenvy-ext-subscriptions</module>
