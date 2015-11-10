@@ -302,10 +302,6 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="open_welcome_page_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="permissions_action"/>
                 <parameter key="description"/>
             </row>

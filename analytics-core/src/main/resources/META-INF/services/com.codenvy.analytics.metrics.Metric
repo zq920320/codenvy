@@ -349,7 +349,6 @@ com.codenvy.analytics.metrics.ide_usage.extensions.maven.CreateMavenModuleAction
 com.codenvy.analytics.metrics.ide_usage.extensions.java.OpenDeclarationAction
 com.codenvy.analytics.metrics.ide_usage.OpenSelectedFileAction
 com.codenvy.analytics.metrics.ide_usage.extensions.java.QuickDocumentationAction
-com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.RedirectLinkAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.RedirectToDashboardAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.ShareAction
 com.codenvy.analytics.metrics.ide_usage.ShowHiddenFilesAction
