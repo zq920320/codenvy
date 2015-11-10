@@ -214,7 +214,7 @@ public class FactoryProjectImporter {
                                          .withMixins(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
                                          .withContentRoot(projectDescriptor.getContentRoot())
-                                         .withMixinTypes(projectDescriptor.getMixins())
+                                         .withMixins(projectDescriptor.getMixins())
                                          .withDescription(projectDescriptor.getDescription());
         projectServiceClient.updateProject(projectDescriptor.getPath(), update,
                                            new AsyncRequestCallback<ProjectDescriptor>(
