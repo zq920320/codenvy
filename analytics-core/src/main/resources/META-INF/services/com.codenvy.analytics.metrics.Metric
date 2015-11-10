@@ -319,7 +319,6 @@ com.codenvy.analytics.metrics.ide_usage.extensions.java.NewPackageAction
 com.codenvy.analytics.metrics.ide_usage.NewProjectAction
 com.codenvy.analytics.metrics.ide_usage.extensions.datasource.NewSqlFileAction
 com.codenvy.analytics.metrics.ide_usage.NewXmlFileAction
-com.codenvy.analytics.metrics.ide_usage.extensions.npm.NpmInstallAction
 com.codenvy.analytics.metrics.ide_usage.OpenProjectAction
 com.codenvy.analytics.metrics.ide_usage.extensions.permissions.PermissionsAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.PullAction
@@ -333,7 +332,6 @@ com.codenvy.analytics.metrics.ide_usage.RenameItemAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ResetFilesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ResetToCommitAction
 com.codenvy.analytics.metrics.ide_usage.extensions.runner.RunAction
-com.codenvy.analytics.metrics.ide_usage.SaveAction
 com.codenvy.analytics.metrics.ide_usage.ShowAboutAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ShowBranchesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.git.ShowGitUrlAction
@@ -348,21 +346,13 @@ com.codenvy.analytics.metrics.ide_usage.UploadFileAction
 com.codenvy.analytics.metrics.ide_usage.ShowHiddenFilesAction
 com.codenvy.analytics.metrics.ide_usage.extensions.builder.BrowseTargetFolderAction
 com.codenvy.analytics.metrics.ide_usage.extensions.maven.CreateMavenModuleAction
-com.codenvy.analytics.metrics.ide_usage.extensions.support.CreateSupportTicketAction
-com.codenvy.analytics.metrics.ide_usage.FindReplaceAction
-com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.MemoryIndicatorAction
 com.codenvy.analytics.metrics.ide_usage.extensions.java.OpenDeclarationAction
 com.codenvy.analytics.metrics.ide_usage.OpenSelectedFileAction
-com.codenvy.analytics.metrics.ide_usage.extensions.factory.OpenWelcomePageAction
-com.codenvy.analytics.metrics.ide_usage.extensions.permissions.PermissionsIndicatorAction
-com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.QueueTypeIndicatorAction
 com.codenvy.analytics.metrics.ide_usage.extensions.java.QuickDocumentationAction
 com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.RedirectLinkAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.RedirectToDashboardAction
-com.codenvy.analytics.metrics.ide_usage.extensions.support.RedirectToEngineerChatChannelAction
 com.codenvy.analytics.metrics.ide_usage.extensions.factory.ShareAction
 com.codenvy.analytics.metrics.ide_usage.ShowHiddenFilesAction
-com.codenvy.analytics.metrics.ide_usage.extensions.subscriptions.SubscriptionIndicatorAction
 
 com.codenvy.analytics.metrics.subscription.CreditCardAdded
 com.codenvy.analytics.metrics.subscription.CreditCardRemoved

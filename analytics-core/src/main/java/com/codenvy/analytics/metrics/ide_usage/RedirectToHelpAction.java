@@ -25,7 +25,8 @@ import com.codenvy.analytics.metrics.MetricType;
 public class RedirectToHelpAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.RedirectToHelpAction",
-            "org.eclipse.che.ide.actions.RedirectToHelpAction"
+            "org.eclipse.che.ide.actions.RedirectToHelpAction",
+            "org.eclipse.che.ide.ext.help.client.RedirectToHelpAction"
     };
 
     public RedirectToHelpAction() {

@@ -25,7 +25,8 @@ import com.codenvy.analytics.metrics.MetricType;
 public class RedirectToForumsAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.RedirectToForumsAction",
-            "org.eclipse.che.ide.actions.RedirectToForumsAction"
+            "org.eclipse.che.ide.actions.RedirectToForumsAction",
+            "org.eclipse.che.ide.ext.help.client.RedirectToForumsAction"
     };
 
     public RedirectToForumsAction() {

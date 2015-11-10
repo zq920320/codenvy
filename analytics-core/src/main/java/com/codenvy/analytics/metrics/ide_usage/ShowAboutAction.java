@@ -25,7 +25,8 @@ import com.codenvy.analytics.metrics.MetricType;
 public class ShowAboutAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.ShowAboutAction",
-            "org.eclipse.che.ide.actions.ShowAboutAction"
+            "org.eclipse.che.ide.actions.ShowAboutAction",
+            "org.eclipse.che.ide.ext.help.client.about.ShowAboutAction"
     };
 
     public ShowAboutAction() {

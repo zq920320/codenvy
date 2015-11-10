@@ -57,10 +57,6 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="find_replace_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="formatter_action"/>
                 <parameter key="description"/>
             </row>
@@ -139,10 +135,6 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="run_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="save_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -302,10 +294,6 @@
                 <parameter key="section-name" value="Factory Plugin Features"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="create_support_ticket_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="export_config_action"/>
                 <parameter key="description"/>
             </row>
@@ -314,15 +302,7 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="memory_indicator_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="open_welcome_page_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="permissions_indicator_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
@@ -330,27 +310,11 @@
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="queue_type_indicator_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="redirect_link_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="redirect_to_dashboard_action"/>
                 <parameter key="description"/>
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="redirect_to_engineer_chat_channel_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="share_action"/>
-                <parameter key="description"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="subscription_indicator_action"/>
                 <parameter key="description"/>
             </row>
         </section>
@@ -361,16 +325,6 @@
             </row>
             <row class="com.codenvy.analytics.services.view.MetricRow">
                 <parameter key="name" value="custom_grunt_run_action"/>
-                <parameter key="description"/>
-            </row>
-        </section>
-
-        <section name="plugin_npm">
-            <row class="com.codenvy.analytics.services.view.DateRow">
-                <parameter key="section-name" value="Npm Plugin Features"/>
-            </row>
-            <row class="com.codenvy.analytics.services.view.MetricRow">
-                <parameter key="name" value="npm_install_action"/>
                 <parameter key="description"/>
             </row>
         </section>

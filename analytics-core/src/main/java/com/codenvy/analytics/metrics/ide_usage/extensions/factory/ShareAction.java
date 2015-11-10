@@ -26,7 +26,8 @@ import com.codenvy.analytics.metrics.ide_usage.AbstractIdeUsage;
 public class ShareAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.factory.client.privacy.ShareAction",
-            "com.codenvy.ide.factory.client.share.ShareAction"
+            "com.codenvy.ide.factory.client.share.ShareAction",
+            "com.codenvy.ide.share.client.share.ShareAction"
     };
 
     public ShareAction() {

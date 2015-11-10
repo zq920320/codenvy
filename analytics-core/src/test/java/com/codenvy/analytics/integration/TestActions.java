@@ -33,17 +33,17 @@ import static org.testng.AssertJUnit.assertTrue;
  */
 public class TestActions extends BaseTest {
 
-        @Test(dataProvider = "data")
-        public void testAction(MetricType metricType) throws Exception {
+    @Test(dataProvider = "data")
+    public void testAction(MetricType metricType) throws Exception {
         ValueData valueData = getValue(metricType);
         long l = treatAsLong(valueData);
 
         assertTrue(metricType.toString(), l > 0);
     }
 
-        @DataProvider(name = "data")
-        public static Object[][] data() {
-                return new Object[][]{
+    @DataProvider(name = "data")
+    public static Object[][] data() {
+        return new Object[][]{
                 {MetricType.PROJECT_CONFIGURATION_ACTION},
                 {MetricType.CLOSE_PROJECT_ACTION},
                 {MetricType.DELETE_ITEM_ACTION},
@@ -59,7 +59,6 @@ public class TestActions extends BaseTest {
                 {MetricType.REDIRECT_TO_HELP_ACTION},
                 {MetricType.REDO_ACTION},
                 {MetricType.RENAME_ITEM_ACTION},
-                {MetricType.SAVE_ACTION},
                 {MetricType.SHOW_ABOUT_ACTION},
                 {MetricType.SHOW_PREFERENCES_ACTION},
                 {MetricType.UNDO_ACTION},
@@ -108,18 +107,9 @@ public class TestActions extends BaseTest {
                 {MetricType.UPDATE_DEPENDENCY_ACTION},
                 {MetricType.SHOW_HIDDEN_FILES_ACTION},
                 {MetricType.OPEN_SELECTED_FILE_ACTION},
-                {MetricType.FIND_REPLACE_ACTION},
                 {MetricType.BROWSE_TARGET_FOLDER_ACTION},
-                {MetricType.CREATE_SUPPORT_TICKET_ACTION},
-                {MetricType.REDIRECT_TO_ENGINEER_CHAT_CHANNEL_ACTION},
-                {MetricType.SUBSCRIPTION_INDICATOR_ACTION},
-                {MetricType.REDIRECT_LINK_ACTION},
-                {MetricType.QUEUE_TYPE_INDICATOR_ACTION},
-                {MetricType.MEMORY_INDICATOR_ACTION},
-                {MetricType.PERMISSIONS_INDICATOR_ACTION},
-                {MetricType.OPEN_WELCOME_PAGE_ACTION},
-                {MetricType.SHARE_ACTION},
                 {MetricType.REDIRECT_TO_DASHBOARD_ACTION},
+                {MetricType.SHARE_ACTION},
                 {MetricType.CREATE_MAVEN_MODULE_ACTION},
                 {MetricType.QUICK_DOCUMENTATION_ACTION},
                 {MetricType.OPEN_DECLARATION_ACTION}};

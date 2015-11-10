@@ -25,7 +25,8 @@ import com.codenvy.analytics.metrics.MetricType;
 public class RedirectToFeedbackAction extends AbstractIdeUsage {
     public static final String[] SOURCE = {
             "com.codenvy.ide.actions.RedirectToFeedbackAction",
-            "org.eclipse.che.ide.actions.RedirectToFeedbackAction"
+            "org.eclipse.che.ide.actions.RedirectToFeedbackAction",
+            "org.eclipse.che.ide.ext.help.client.RedirectToFeedbackAction"
     };
 
     public RedirectToFeedbackAction() {
