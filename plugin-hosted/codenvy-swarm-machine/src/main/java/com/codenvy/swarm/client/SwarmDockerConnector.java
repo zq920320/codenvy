@@ -30,6 +30,7 @@ import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerException;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
+import org.eclipse.che.plugin.docker.client.connection.DockerConnectionFactory;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
 import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
@@ -66,14 +67,17 @@ public class SwarmDockerConnector extends DockerConnector {
      */
     private static final long WAIT_CONTAINER_AVAILABILITY_TIMEOUT_MILLISECONDS = 40000;
 
-    private final URI                   swarmManagerUri;
-    private final NodeSelectionStrategy strategy;
+    private final URI                     swarmManagerUri;
+    private final NodeSelectionStrategy   strategy;
     //TODO should it be done in other way?
-    private final String                nodeDaemonScheme;
+    private final String                  nodeDaemonScheme;
+    private final DockerConnectionFactory connectionFactory;
 
     @Inject
-    public SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration) {
-        super(connectorConfiguration);
+    public SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration,
+                                DockerConnectionFactory connectionFactory) {
+        super(connectorConfiguration, connectionFactory);
+        this.connectionFactory = connectionFactory;
         this.swarmManagerUri = connectorConfiguration.getDockerDaemonUri();
         this.strategy = new RandomNodeSelectionStrategy();
         this.nodeDaemonScheme = "http";
@@ -168,9 +172,10 @@ public class SwarmDockerConnector extends DockerConnector {
 
     @Override
     protected SwarmContainerInfo doInspectContainer(String container, URI dockerDaemonUri) throws IOException {
-        final DockerConnection connection = openConnection(dockerDaemonUri);
-        try {
-            final DockerResponse response = connection.method("GET").path(String.format("/containers/%s/json", container)).request();
+        try (final DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
+                                                                  .method("GET")
+                                                                  .path("/containers/" + container + "/json")) {
+            final DockerResponse response = connection.request();
             final int status = response.getStatus();
             if (200 != status) {
                 final String msg = CharStreams.toString(new InputStreamReader(response.getInputStream()));
@@ -179,8 +184,6 @@ public class SwarmDockerConnector extends DockerConnector {
             return JsonHelper.fromJson(response.getInputStream(), SwarmContainerInfo.class, null, FIRST_LETTER_LOWERCASE);
         } catch (JsonParseException e) {
             throw new IOException(e.getMessage(), e);
-        } finally {
-            connection.close();
         }
     }
 
