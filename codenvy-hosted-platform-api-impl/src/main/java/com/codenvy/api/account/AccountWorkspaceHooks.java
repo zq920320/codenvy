@@ -36,6 +36,7 @@ import javax.validation.constraints.NotNull;
 import java.util.List;
 
 import static java.lang.String.format;
+import static java.util.Objects.requireNonNull;
 
 /**
  * Rejects/Allows {@link WorkspaceManager} operations.
@@ -75,9 +76,11 @@ public class AccountWorkspaceHooks implements WorkspaceHooks {
      * </pre>
      */
     @Override
-    public void beforeStart(@NotNull UsersWorkspace workspace, @Nullable String accountId) throws NotFoundException,
-                                                                                                  ForbiddenException,
-                                                                                                  ServerException {
+    public void beforeStart(@NotNull UsersWorkspace workspace,
+                            @NotNull String envName,
+                            @Nullable String accountId) throws NotFoundException, ForbiddenException, ServerException {
+        requireNonNull(envName, "Expected non-null environment name");
+        requireNonNull(workspace, "Expected non-null workspace");
         User currentUser = EnvironmentContext.getCurrent().getUser();
         if (accountId == null) {
             // check if account is already specified for given workspace
