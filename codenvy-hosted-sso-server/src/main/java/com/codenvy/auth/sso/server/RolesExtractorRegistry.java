@@ -51,8 +51,6 @@ public class RolesExtractorRegistry {
      */
     public Set<String> getRoles(AccessTicket ticket, String workspaceId, String accountId) {
         Set<String> userRoles = new HashSet<>();
-        userRoles.add("system/manager");
-        userRoles.add("system/admin");
         for (RolesExtractor rolesExtractor : rolesExtractors) {
             userRoles.addAll(rolesExtractor.extractRoles(ticket, workspaceId, accountId));
         }

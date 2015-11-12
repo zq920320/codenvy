@@ -47,6 +47,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
+import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -82,7 +83,15 @@ public class OrgServiceRolesExtractorTest {
     }
 
     @Test
-    public void shouldSkipLdapRoleCheckWhenAllowedRoleIsNull() throws ServerException {
+    public void shouldSkipLdapRoleCheckWhenAllowedRoleIsNull() throws Exception {
+        final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(preferenceDao,
+                                                                                    null,
+                                                                                    null,
+                                                                                    null,
+                                                                                    "employeeType",
+                                                                                    null,
+                                                                                    null));
+        doReturn(Collections.<String>emptySet()).when(extractor).getRoles(ticket.getPrincipal().getId());
 
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), singleton("user"));
     }
@@ -122,7 +131,15 @@ public class OrgServiceRolesExtractorTest {
 
     @Test
     public void shouldReturnTempUserRoleWhenPreferencesContainTemporaryAttribute() throws Exception {
+        final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(preferenceDao,
+                                                                                    null,
+                                                                                    null,
+                                                                                    null,
+                                                                                    "employeeType",
+                                                                                    null,
+                                                                                    null));
         when(preferenceDao.getPreferences(ticket.getPrincipal().getId())).thenReturn(singletonMap("temporary", "true"));
+        doReturn(Collections.<String>emptySet()).when(extractor).getRoles(ticket.getPrincipal().getId());
 
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), singleton("temp_user"));
     }
@@ -140,6 +157,14 @@ public class OrgServiceRolesExtractorTest {
 
     @Test
     public void shouldReturnWorkspaceRolesWithUserRoleWhenUserHasAccessToWorkspace() throws Exception {
+        final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(preferenceDao,
+                                                                                    null,
+                                                                                    null,
+                                                                                    null,
+                                                                                    "employeeType",
+                                                                                    null,
+                                                                                    null));
+        doReturn(Collections.<String>emptySet()).when(extractor).getRoles(ticket.getPrincipal().getId());
         final Membership membership = new MembershipDo("workspace",
                                                        asList("workspace/admin", "workspace/developer"),
                                                        null,
@@ -172,5 +197,21 @@ public class OrgServiceRolesExtractorTest {
         final AccessTicket ticket = new AccessTicket("token", mock(UserImpl.class), "sysldap");
 
         assertTrue(extractor.extractRoles(ticket, null, null).isEmpty());
+    }
+
+    @Test
+    public void shouldReturnSystemAdminAndManagerRolesIfGetRolesMethodReturnsIt() throws Exception {
+        final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(preferenceDao,
+                                                                                    null,
+                                                                                    null,
+                                                                                    null,
+                                                                                    "employeeType",
+                                                                                    null,
+                                                                                    null));
+        doReturn(new HashSet<>(asList("system/admin", "system/manager", "fake"))).when(extractor).getRoles(ticket.getPrincipal().getId());
+
+        assertTrue(extractor.extractRoles(ticket, "wsId", "accId").contains("system/admin"));
+        assertTrue(extractor.extractRoles(ticket, "wsId", "accId").contains("system/manager"));
+        assertFalse(extractor.extractRoles(ticket, "wsId", "accId").contains("fake"));
     }
 }

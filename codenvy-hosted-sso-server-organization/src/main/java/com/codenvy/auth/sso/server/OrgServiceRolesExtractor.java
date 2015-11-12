@@ -91,8 +91,8 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
             return emptySet();
         }
         try {
-
-            if (allowedRole != null && !getRoles(ticket.getPrincipal().getId()).contains(allowedRole)) {
+            final Set<String> ldapRoles = getRoles(ticket.getPrincipal().getId());
+            if (allowedRole != null && !ldapRoles.contains(allowedRole)) {
                 return emptySet();
             }
 
@@ -103,6 +103,13 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                 userRoles.add("temp_user");
             } else {
                 userRoles.add("user");
+            }
+
+            if (ldapRoles.contains("system/admin")) {
+                userRoles.add("system/admin");
+            }
+            if (ldapRoles.contains("system/manager")) {
+                userRoles.add("system/manager");
             }
 
 //            User user = userDao.getById(ticket.getPrincipal().getId());
