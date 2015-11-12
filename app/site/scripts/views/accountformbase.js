@@ -37,7 +37,7 @@ define(["jquery","models/account","views/form","validation"],
 
             settings : {
                 noDomainErrorMessage : "Please specify a workspace name",
-                noEmailErrorMessage : "Please provide an email address",
+                noEmailErrorMessage : "Please provide a user name",
                 noPasswordErrorMessage : "Please provide your password",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
                 invalidEmailErrorMessage : "Emails with '+' and '/' are not allowed",
