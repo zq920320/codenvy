@@ -72,21 +72,13 @@
                 __validationRules : function(){
                     var rule = {};
                     rule.password = {required: true};
-                    if (Account.isAuthtypeLdap()){
-                        rule.email = {required: true};
-                    } else {
-                        rule.email = {
-                            required: true,
-                            checkEmail : true,
-                            email: true
-                        };
-                    }
+                    rule.username = {required: true};
                     return rule;
                 },
 
                 __submit : function(){
                     Account.processLogin(
-                            $(this.el).find("input[name='email']").val(),
+                            $(this.el).find("input[name='username']").val(),
                             $(this.el).find("input[name='password']").val(),
                             Account.getQueryParameterByName('redirect_url'),
                             _.bind(function(errors){
