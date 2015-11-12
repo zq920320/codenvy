@@ -63,27 +63,25 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         OAuthAuthenticator oauth = getAuthenticator(providerName);
         final List<String> scopes = params.get("scope");
         final String userId = oauth.callback(requestUrl, scopes == null ? Collections.<String>emptyList() : scopes);
-        final String redirectAfterLogin = getParameter(params, "redirect_after_login");
+        String redirectAfterLogin = getParameter(params, "redirect_after_login");
+        try {
+            redirectAfterLogin = URLDecoder.decode(redirectAfterLogin, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            throw new OAuthAuthenticationException(e.getLocalizedMessage(), e);
+        }
         final String mode = getParameter(params, "mode");
         //federated_login left for backward compatibility
         if ("sso".equals(mode) || "federated_login".equals(mode)) {
+            Map<String, String> payload = new HashMap<>(2);
+            payload.put("provider", providerName);
+            payload.put("username", userId);
 
-
-            try {
-
-                Map<String, String> payload = new HashMap<>(2);
-                payload.put("provider", providerName);
-                payload.put("username", userId);
-
-                return Response.temporaryRedirect(
-                        UriBuilder.fromUri(URLDecoder.decode(redirectAfterLogin, "UTF-8"))
-                                  .queryParam("username", userId)
-                                  .queryParam("oauthbearertoken", authenticationHandler.generateBearerToken(userId, payload))
-                                  .build())
-                               .build();
-            } catch (UnsupportedEncodingException e) {
-                throw new OAuthAuthenticationException(e.getLocalizedMessage(), e);
-            }
+            return Response.temporaryRedirect(
+                    UriBuilder.fromUri(redirectAfterLogin)
+                              .queryParam("username", userId)
+                              .queryParam("oauthbearertoken", authenticationHandler.generateBearerToken(userId, payload))
+                              .build())
+                           .build();
 
         }
         return Response.temporaryRedirect(URI.create(redirectAfterLogin)).build();
