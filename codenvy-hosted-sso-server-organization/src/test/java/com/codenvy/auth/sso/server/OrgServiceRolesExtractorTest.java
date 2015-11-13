@@ -18,6 +18,7 @@
 package com.codenvy.auth.sso.server;
 
 import com.codenvy.api.dao.authentication.AccessTicket;
+import com.codenvy.api.dao.ldap.InitialLdapContextFactory;
 
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
@@ -36,12 +37,16 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import javax.naming.directory.Attributes;
+import javax.naming.ldap.InitialLdapContext;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.Set;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singleton;
 import static java.util.Collections.singletonMap;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
@@ -115,15 +120,15 @@ public class OrgServiceRolesExtractorTest {
     @Test
     public void shouldReturnNormalUserRolesWhenLdapRolesContainAllowedRole() throws Exception {
         final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(
-                                                                                    //userDao,
-                                                                                    //accountDao,
-                                                                                    preferenceDao,
-                                                                                    null,
-                                                                                    null,
-                                                                                    null,
-                                                                                    "member",
-                                                                                    "codenvy-user",
-                                                                                    null));
+                //userDao,
+                //accountDao,
+                preferenceDao,
+                null,
+                null,
+                null,
+                "member",
+                "codenvy-user",
+                null));
         doReturn(singleton("codenvy-user")).when(extractor).getRoles(ticket.getPrincipal().getId());
 
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), singleton("user"));
@@ -213,5 +218,32 @@ public class OrgServiceRolesExtractorTest {
         assertTrue(extractor.extractRoles(ticket, "wsId", "accId").contains("system/admin"));
         assertTrue(extractor.extractRoles(ticket, "wsId", "accId").contains("system/manager"));
         assertFalse(extractor.extractRoles(ticket, "wsId", "accId").contains("fake"));
+    }
+
+    @Test
+    public void getRolesShouldReturnEmptySetIfLdapDoesNotContainRolesAttribute() throws Exception {
+        // given
+        final Attributes attrsMock = mock(Attributes.class);
+        when(attrsMock.get(anyString())).thenReturn(null);
+
+        final InitialLdapContext contextMock = mock(InitialLdapContext.class);
+        when(contextMock.getAttributes(anyString())).thenReturn(attrsMock);
+
+        final InitialLdapContextFactory contextFactory = mock(InitialLdapContextFactory.class);
+        when(contextFactory.createContext()).thenReturn(contextMock);
+
+        final OrgServiceRolesExtractor extractor = spy(new OrgServiceRolesExtractor(preferenceDao,
+                                                                                    null,
+                                                                                    null,
+                                                                                    null,
+                                                                                    "employeeType",
+                                                                                    null,
+                                                                                    contextFactory));
+
+        // when
+        final Set<String> roles = extractor.getRoles(ticket.getPrincipal().getId());
+
+        // then
+        assertTrue(roles.isEmpty());
     }
 }

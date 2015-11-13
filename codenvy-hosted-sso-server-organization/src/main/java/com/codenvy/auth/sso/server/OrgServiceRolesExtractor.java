@@ -33,6 +33,7 @@ import javax.naming.Context;
 import javax.naming.NameNotFoundException;
 import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
+import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 import javax.naming.ldap.InitialLdapContext;
 import java.util.HashSet;
@@ -157,13 +158,14 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                 final String toDnVal = userAttrs.get(userDn).get().toString();
                 context.rename(formatDn(oldUserDn, fromDnVal), formatDn(userDn, toDnVal));
             }
-            rolesEnum = userAttrs.get(roleAttrName).getAll();
-
+            final Attribute rolesAttr = userAttrs.get(roleAttrName);
             final Set<String> roles = new HashSet<>();
-            while (rolesEnum.hasMoreElements()) {
-                roles.add(rolesEnum.next().toString());
+            if (rolesAttr != null) {
+                rolesEnum = rolesAttr.getAll();
+                while (rolesEnum.hasMoreElements()) {
+                    roles.add(rolesEnum.next().toString());
+                }
             }
-
             return roles;
         } catch (NameNotFoundException nfEx) {
             throw new NotFoundException(format("User with id '%s' was not found", id));
