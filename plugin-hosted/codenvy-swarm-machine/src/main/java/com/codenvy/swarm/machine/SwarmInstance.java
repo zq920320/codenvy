@@ -76,7 +76,7 @@ public class SwarmInstance extends DockerInstance {
     public MachineMetadata getMetadata() {
         try {
             if (containerInfo == null) {
-                containerInfo = docker.inspectContainer(container);
+                containerInfo = (SwarmContainerInfo)docker.inspectContainer(container);
             }
 
             return new SwarmInstanceMetadata(containerInfo, dockerNode);
