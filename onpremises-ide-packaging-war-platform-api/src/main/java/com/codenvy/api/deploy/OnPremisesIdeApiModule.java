@@ -266,12 +266,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         //SSO
         Multibinder<com.codenvy.api.dao.authentication.AuthenticationHandler> handlerBinder =
                 Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
-        handlerBinder.addBinding().to(com.codenvy.auth.sso.server.ldap.LdapAuthenticationHandler.class);
         handlerBinder.addBinding().to(com.codenvy.auth.sso.server.OrgServiceAuthenticationHandler.class);
 
 
         Multibinder<RolesExtractor> rolesExtractorBinder = Multibinder.newSetBinder(binder(), RolesExtractor.class);
-        rolesExtractorBinder.addBinding().to(com.codenvy.auth.sso.server.ldap.LdapRolesExtractor.class);
 
         rolesExtractorBinder.addBinding().to(com.codenvy.auth.sso.server.OrgServiceRolesExtractor.class);
 
