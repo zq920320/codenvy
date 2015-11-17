@@ -27,7 +27,6 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.commons.lang.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,6 +43,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
@@ -171,7 +171,7 @@ public class SubscriptionMailSender {
         mailProperties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
 
         mailClient.sendMail("Codenvy <noreply@codenvy.com>",
-                            Strings.join(", ", emails.toArray(new String[emails.size()])),
+                            emails.stream().collect(Collectors.joining(", ")),
                             null,
                             subject,
                             mediaType,
