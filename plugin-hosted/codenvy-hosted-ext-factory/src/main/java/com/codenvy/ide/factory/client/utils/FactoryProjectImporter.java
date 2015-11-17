@@ -151,12 +151,11 @@ public class FactoryProjectImporter {
         attributes.put(Constants.FACTORY_ID_ATTRIBUTE_NAME, Collections.singletonList(factory.getId()));
         ProjectConfigDto update = dtoFactory.createDto(ProjectConfigDto.class)
                                          .withType(projectDescriptor.getType())
-                                         .withMixins(projectDescriptor.getMixins())
+                                         .withMixinTypes(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
                                          .withPath(projectDescriptor.getContentRoot())
                                          .withMixinTypes(projectDescriptor.getMixins())
-                                         .withContentRoot(projectDescriptor.getContentRoot())
-                                         .withMixins(projectDescriptor.getMixins())
+                                         .withPath(projectDescriptor.getContentRoot())
                                          .withDescription(projectDescriptor.getDescription());
         projectServiceClient.updateProject(projectDescriptor.getPath(), update,
                                            new AsyncRequestCallback<ProjectDescriptor>(
