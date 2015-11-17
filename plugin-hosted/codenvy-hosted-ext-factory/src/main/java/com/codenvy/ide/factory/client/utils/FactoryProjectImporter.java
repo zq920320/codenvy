@@ -23,24 +23,20 @@ import com.codenvy.ide.factory.shared.Constants;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 
+import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
-import org.eclipse.che.api.project.shared.dto.ImportProject;
-import org.eclipse.che.api.project.shared.dto.ImportResponse;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.project.shared.dto.ProjectUpdate;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
-import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.ssh.client.SshKeyService;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
-import org.eclipse.che.ide.ui.dialogs.CancelCallback;
-import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
+import org.eclipse.che.ide.websocket.rest.RequestCallback;
 
 import java.util.Collections;
 import java.util.List;
@@ -99,120 +95,66 @@ public class FactoryProjectImporter {
      * Imports source to project
      */
     private void importProjects() {
-//        for (ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
-//            notification.setMessage(localization.cloningSource());
-//            notificationSubscriber.subscribe(projectConfig.getName(), notification);
-//            ImportProject importProject = dtoFactory.createDto(ImportProject.class)
-//                                                    .withSource(factory.getSource())
-//                                                    .withProject(factory.getProject());
-//
-//            projectServiceClient.importProject(factory.getProject().getName(), true, importProject,
-//                                               new AsyncRequestCallback<ImportResponse>(
-//                                                       dtoUnmarshallerFactory.newUnmarshaller(ImportResponse.class)) {
-//                                                   @Override
-//                                                   protected void onSuccess(ImportResponse importedProject) {
+        for (ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
+            notification.setMessage(localization.cloningSource());
+            notificationSubscriber.subscribe(projectConfig.getName(), notification);
+
+            projectServiceClient.importProject(projectConfig.getName(), true, projectConfig.getSource(),
+                                               new RequestCallback<Void>() {
+                                                   @Override
+                                                   protected void onSuccess(Void result) {
 //                                                       if (importedProject.getProjectDescriptor().getMixins()
 //                                                                          .contains(Constants.FACTORY_PROJECT_TYPE_ID)) {
 //                                                           updateProjectAttributes(importedProject.getProjectDescriptor());
 //                                                       } else {
 //                                                           callback.onSuccess(importedProject.getProjectDescriptor());
 //                                                       }
-//                                                   }
-//
-//                                                   @Override
-//                                                   protected void onFailure(Throwable exception) {
-//                                                       if (exception instanceof UnauthorizedException) {
-//                                                           authenticate(new AuthCallback() {
-//                                                               @Override
-//                                                               public void onAuthenticated() {
-//                                                                   notification.setMessage(localization.oauthSuccess());
-//                                                                   importProjects();
-//                                                               }
-//
-//                                                               @Override
-//                                                               public void onError(String message) {
-//                                                                   handleError(message);
-//                                                               }
-//                                                           });
-//                                                       } else if (exception.getMessage().contains("Unable get private ssh key")) {
-//                                                           askGenerateSSH();
-//                                                       } else {
-//                                                           callback.onFailure(
-//                                                                   new Exception("Unable to import source of project. " + dtoFactory
-//                                                                           .createDtoFromJson(exception.getMessage(), ServiceError.class)
-//                                                                           .getMessage()));
-//                                                       }
-//                                                   }
-//                                               });
-//        }
+                                                       //update poject
+                                                   }
+
+                                                   @Override
+                                                   protected void onFailure(Throwable exception) {
+                                                       if (exception instanceof UnauthorizedException) {
+                                                           rerunWithAuthImport(projectConfig.getSource().getLocation());
+                                                       } else {
+                                                           callback.onFailure(
+                                                                   new Exception("Unable to import source of project. " + dtoFactory
+                                                                           .createDtoFromJson(exception.getMessage(), ServiceError.class)
+                                                                           .getMessage()));
+                                                       }
+                                                   }
+                                               });
+        }
     }
 
-//    private void handleError(String message) {
-//        notification.setMessage(localization.oauthFailed() + " " + message);
-//        notification.setType(Notification.Type.ERROR);
-//        notification.setStatus(Notification.Status.FINISHED);
-//    }
-//
-//    private void askGenerateSSH() {
-//        dialogFactory.createConfirmDialog(localization.dialogSshNotFoundTitle(),
-//                                          localization.dialogSshNotFoundText(),
-//                                          new ConfirmCallback() {
-//                                              @Override
-//                                              public void accepted() {
-//                                                  generateSSHAndImportProject();
-//                                              }
-//                                          },
-//                                          new CancelCallback() {
-//                                              @Override
-//                                              public void cancelled() {
-//                                                  callback.onFailure(new Exception("Unable to import source of project. "));
-//                                              }
-//                                          }).show();
-//    }
-//
-//    private void generateSSHAndImportProject() {
-//        String location = factory.getSource().getProject().getLocation();
-//        String host = location.substring(location.indexOf("@") + 1, location.lastIndexOf(":"));
-//        sshKeyService.generateKey(host, new AsyncRequestCallback<Void>() {
-//            @Override
-//            protected void onSuccess(Void result) {
-//                notification.setMessage(localization.notificationSshGeneratedSuccessfully());
-//                importProjects();
-//            }
-//
-//            @Override
-//            protected void onFailure(Throwable exception) {
-//                if (exception instanceof UnauthorizedException) {
-//                    authenticate(new AuthCallback() {
-//                        @Override
-//                        public void onAuthenticated() {
-//                            generateSSHAndImportProject();
-//                        }
-//
-//                        @Override
-//                        public void onError(String message) {
-//                            handleError(message);
-//                        }
-//                    });
-//                } else {
-//                    callback.onFailure(new Exception("Unable to import source of project. "));
-//                }
-//            }
-//        });
-//    }
-//
-//    private void authenticate(final AuthCallback callback) {
-//        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
-//        authenticator.showOAuthWindow(factory.getSource().getProject().getLocation(), callback);
-//    }
+    private void rerunWithAuthImport(String location) {
+        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
+        authenticator.showOAuthWindow(location,
+                                      new Authenticator.AuthCallback() {
+                                          @Override
+                                          public void onAuthenticated() {
+                                              notification.setMessage(localization.oauthSuccess());
+                                              importProjects();
+                                          }
+
+                                          @Override
+                                          public void onError(String message) {
+                                              notification.setMessage(localization.oauthFailed() + " " + message);
+                                              notification.setType(Notification.Type.ERROR);
+                                              notification.setStatus(Notification.Status.FINISHED);
+                                          }
+                                      });
+    }
 
     private void updateProjectAttributes(ProjectDescriptor projectDescriptor) {
         Map<String, List<String>> attributes = projectDescriptor.getAttributes();
         attributes.put(Constants.FACTORY_ID_ATTRIBUTE_NAME, Collections.singletonList(factory.getId()));
-        ProjectUpdate update = dtoFactory.createDto(ProjectUpdate.class)
+        ProjectConfigDto update = dtoFactory.createDto(ProjectConfigDto.class)
                                          .withType(projectDescriptor.getType())
                                          .withMixins(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
+                                         .withPath(projectDescriptor.getContentRoot())
+                                         .withMixinTypes(projectDescriptor.getMixins())
                                          .withContentRoot(projectDescriptor.getContentRoot())
                                          .withMixins(projectDescriptor.getMixins())
                                          .withDescription(projectDescriptor.getDescription());
