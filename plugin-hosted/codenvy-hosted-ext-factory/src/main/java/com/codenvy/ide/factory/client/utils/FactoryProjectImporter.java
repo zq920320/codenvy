@@ -42,8 +42,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.ide.factory.client.accept.Authenticator.AuthCallback;
-
 /**
  * @author Sergii Leschenko
  * @author Valeriy Svydenko
@@ -151,10 +149,10 @@ public class FactoryProjectImporter {
         attributes.put(Constants.FACTORY_ID_ATTRIBUTE_NAME, Collections.singletonList(factory.getId()));
         ProjectConfigDto update = dtoFactory.createDto(ProjectConfigDto.class)
                                          .withType(projectDescriptor.getType())
-                                         .withMixinTypes(projectDescriptor.getMixins())
+                                         .withMixins(projectDescriptor.getMixins())
                                          .withAttributes(attributes)
                                          .withPath(projectDescriptor.getContentRoot())
-                                         .withMixinTypes(projectDescriptor.getMixins())
+                                         .withMixins(projectDescriptor.getMixins())
                                          .withPath(projectDescriptor.getContentRoot())
                                          .withDescription(projectDescriptor.getDescription());
         projectServiceClient.updateProject(projectDescriptor.getPath(), update,
