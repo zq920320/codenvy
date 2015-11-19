@@ -39,6 +39,7 @@ import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ModuleConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -327,6 +328,15 @@ public class WorkspaceDaoImplTest {
                 assertEquals(project.getAttributes().get(attrName), attrValue, "Attribute values");
             }
 
+            final List<Document> modulesList = (List<Document>)projDoc.get("modules");
+            assertEquals(modulesList.size(), project.getModules().size());
+            for (Document module : modulesList) {
+                final String moduleName = module.getString("name");
+                assertEquals(moduleName, project.getModules().get(0).getName(), "Module name");
+                final List<Document> submodules = (List<Document>)module.get("modules");
+                assertEquals(submodules.size(), project.getModules().get(0).getModules().size(), "Modules size");
+            }
+
             if (project.getSource() != null) {
                 final Document source = (Document)projDoc.get("source");
 
@@ -468,6 +478,23 @@ public class WorkspaceDaoImplTest {
         sourceParameters.put("source-parameter-1", "value1");
         sourceParameters.put("source-parameter-2", "value2");
         project1.setStorage(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
+
+        final ModuleConfigImpl module = new ModuleConfigImpl();
+        module.setName("module");
+        module.setPath("/module");
+        module.setType("sometype");
+        module.setDescription("description");
+        module.setMixins(singletonList("git"));
+
+        final ModuleConfigImpl module_top = new ModuleConfigImpl();
+        module_top.setName("module2");
+        module_top.setPath("/module2");
+        module_top.setType("sometype2");
+        module_top.setDescription("description2");
+        module_top.setMixins(singletonList("git"));
+        module_top.setModules(singletonList(module));
+
+        project1.setModules(singletonList(module_top));
 
         final List<ProjectConfigImpl> projects = singletonList(project1);
 
