@@ -142,8 +142,8 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         projectConfig.setType(document.getString("type"));
         projectConfig.setDescription(document.getString("description"));
 
-        final List<String> mixinTypes = (List<String>)document.get("mixinTypes");
-        projectConfig.setMixinTypes(mixinTypes);
+        final List<String> mixins = (List<String>)document.get("mixins");
+        projectConfig.setMixins(mixins);
 
         final List<Document> attributes = (List<Document>)document.get("attributes");
         projectConfig.setAttributes(attributes.stream()
@@ -164,7 +164,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                 .append("path", project.getPath())
                                                 .append("type", project.getType())
                                                 .append("description", project.getDescription())
-                                                .append("mixinTypes", project.getMixinTypes())
+                                                .append("mixins", project.getMixins())
                                                 .append("attributes", mapAsDocumentsList(project.getAttributes()));
         final SourceStorage sourceStorage = project.getSource();
         if (sourceStorage != null) {

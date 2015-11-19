@@ -315,8 +315,8 @@ public class WorkspaceDaoImplTest {
             assertEquals(project.getDescription(), projDoc.getString("description"));
             assertEquals(project.getPath(), projDoc.getString("path"));
 
-            final List<Document> mixinTypes = (List<Document>)projDoc.get("mixinTypes");
-            assertEquals(project.getMixinTypes(), mixinTypes, "Mixin types");
+            final List<Document> mixins = (List<Document>)projDoc.get("mixins");
+            assertEquals(project.getMixins(), mixins, "Mixin types");
 
             final List<Document> attrsList = (List<Document>)projDoc.get("attributes");
             assertEquals(attrsList.size(), project.getAttributes().size());
@@ -457,7 +457,7 @@ public class WorkspaceDaoImplTest {
         project1.setDescription("This is test project");
         project1.setPath("/path/to/project");
         project1.setType("maven");
-        project1.setMixinTypes(singletonList("git"));
+        project1.setMixins(singletonList("git"));
 
         final Map<String, List<String>> projectAttrs = new HashMap<>(4);
         projectAttrs.put("project.attribute1", singletonList("value1"));

@@ -78,7 +78,7 @@ import static java.util.Objects.requireNonNull;
  *                      }
  *                  ]
  *              },
- *              "mixinTypes" : [ "mixinType1", "mixinType2" ],
+ *              "mixins" : [ "mixinType1", "mixinType2" ],
  *              "attributes" : [
  *                  {
  *                      "name" : "project-attribute-1",
