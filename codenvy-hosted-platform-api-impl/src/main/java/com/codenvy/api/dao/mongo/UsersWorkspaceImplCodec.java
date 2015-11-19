@@ -199,8 +199,8 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         moduleConfig.setType(document.getString("type"));
         moduleConfig.setDescription(document.getString("description"));
 
-        final List<String> mixinTypes = (List<String>)document.get("mixinTypes");
-        moduleConfig.setMixins(mixinTypes);
+        final List<String> mixins = (List<String>)document.get("mixins");
+        moduleConfig.setMixins(mixins);
 
         final List<Document> attributes = (List<Document>)document.get("attributes");
         moduleConfig.setAttributes(attributes.stream()
@@ -208,7 +208,9 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
 
         final List<Document> modules = (List<Document>)document.get("modules");
         if (modules != null) {
-            moduleConfig.setModules(modules.stream().map(UsersWorkspaceImplCodec::asModuleConfig).collect(toList()));
+            moduleConfig.setModules(modules.stream()
+                                           .map(UsersWorkspaceImplCodec::asModuleConfig)
+                                           .collect(toList()));
         }
 
         return moduleConfig;
