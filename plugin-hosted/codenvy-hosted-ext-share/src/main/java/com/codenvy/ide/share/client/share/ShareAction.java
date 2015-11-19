@@ -245,7 +245,7 @@ public class ShareAction extends Action implements CustomComponentAction, Action
         factoryProject.setRunners(currentProject.getRootProject().getRunners());
         factoryProject.setBuilders(currentProject.getRootProject().getBuilders());
         factoryProject.setVisibility(currentProject.getRootProject().getVisibility());
-        factoryProject.setMixinTypes(currentProject.getRootProject().getMixins());
+        factoryProject.setMixins(currentProject.getRootProject().getMixins());
 
         final Factory factory = dtoFactory.createDto(Factory.class);
         factory.setV("2.0");
