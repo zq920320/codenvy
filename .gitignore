@@ -24,6 +24,10 @@ target/
 bin/
 test-output/
 
+# Che  #
+###################
+.vfs
+.codenvy
 
 # OS generated files #
 ######################

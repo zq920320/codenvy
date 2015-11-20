@@ -199,9 +199,9 @@ gulp.task('copy_src', ['duplicate_html','duplicate_error_html'], function(){
   .pipe(gulp.dest(paths.temp))
 })
 
-// Duplicate create-account as index.html to temp folder
+// Duplicate login as index.html to temp folder
 gulp.task('duplicate_html', function(){
-  return gulp.src(paths.src + '/site/create-account.html')
+  return gulp.src(paths.src + '/site/login.html')
   .pipe(rename('index.html'))
   .pipe(gulp.dest(paths.temp))
 })
@@ -304,7 +304,6 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
     '!'+paths.enterprise+'site/email-templates_onpremises/*.html',
     '!'+paths.enterprise+'site/email-templates/*.html',
     '!'+paths.enterprise+'site/login.html',
-    '!'+paths.enterprise+'site/create-account.html',
     '!'+paths.enterprise+'site/recover-password.html',
     '!'+paths.enterprise+'site/setup-password.html',
     '!'+paths.enterprise+'index.html',
