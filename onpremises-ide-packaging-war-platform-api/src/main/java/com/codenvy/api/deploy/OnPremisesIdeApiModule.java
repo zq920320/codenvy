@@ -162,6 +162,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserProfileService.class);
         bind(AccountService.class);
 
+        bind(org.eclipse.che.ide.ext.ssh.server.KeyService.class);
+        bind(org.eclipse.che.ide.ext.ssh.server.SshKeyStore.class).to(org.eclipse.che.ide.ext.ssh.server.UserProfileSshKeyStore.class);
         //recipe service
         bind(RecipeService.class);
         bind(PermissionsChecker.class).to(PermissionsCheckerImpl.class);

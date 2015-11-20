@@ -32,9 +32,6 @@
                 <include>com.codenvy.onpremises:onpremises-ide-packaging-tomcat-site</include>
             </includes>
         </dependencySet>
-        <!--
-
-
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
@@ -44,8 +41,6 @@
                 <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-factory</include>
             </includes>
         </dependencySet>
-
-        -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>

@@ -419,6 +419,11 @@
         </dependency>
         -->
         <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>che-plugin-ssh-ext-sshkey</artifactId>
+            <version>${che.plugins.version}</version>
+        </dependency>
+        <dependency>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>
         </dependency>

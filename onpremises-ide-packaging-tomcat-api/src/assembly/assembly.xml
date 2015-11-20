@@ -50,7 +50,6 @@
                 <include>com.codenvy.hosted-infrastructure:codenvy-hosted-mail-server</include>
             </includes>
         </dependencySet>
-        <!--
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
@@ -60,7 +59,6 @@
                 <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-factory</include>
             </includes>
         </dependencySet>
-        -->
         <dependencySet>
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
