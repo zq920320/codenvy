@@ -36,6 +36,8 @@ import javax.inject.Inject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static org.slf4j.LoggerFactory.getLogger;
 
@@ -47,13 +49,18 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class RemoteDockerNode implements DockerNode {
     private static final Logger LOG = getLogger(RemoteDockerNode.class);
 
+    private static final Pattern NODE_ADRESS = Pattern.compile(
+            "((?<protocol>[a-zA-Z])://)?" +
+            // http://stackoverflow.com/questions/106179/regular-expression-to-match-dns-hostname-or-ip-address
+            "(?<host>(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9]))" +
+            ":(?<port>\\d+)");
+
     private final String               workspaceId;
     private final MachineBackupManager backupManager;
     private final DockerConnector      dockerConnector;
     private final String               containerId;
-
-    private final String hostProjectsFolder;
-    private final String nodeLocation;
+    private final String               hostProjectsFolder;
+    private final String               nodeHost;
 
     @Inject
     public RemoteDockerNode(DockerConnector dockerConnector,
@@ -68,26 +75,31 @@ public class RemoteDockerNode implements DockerNode {
 
         this.hostProjectsFolder = workspaceFolderPathProvider.getPath(workspaceId);
 
-        String nodeLocation = "127.0.0.1";
+        String nodeHost = "127.0.0.1";
         if (dockerConnector instanceof SwarmDockerConnector) {
             try {
-                final SwarmContainerInfo info = ((SwarmDockerConnector)dockerConnector).inspectContainerDirectly(containerId);
+                final SwarmContainerInfo info = (SwarmContainerInfo)dockerConnector.inspectContainer(containerId);
                 if (info != null) {
-                    nodeLocation = info.getNode().getIp();
+                    final Matcher matcher = NODE_ADRESS.matcher(info.getNode().getAddr());
+                    if (matcher.matches()) {
+                        nodeHost = matcher.group("host");
+                    } else {
+                        throw new MachineException("Can't extract docker node address from: " + info.getNode().getAddr());
+                    }
                 }
             } catch (IOException e) {
                 LOG.error(e.getLocalizedMessage(), e);
                 throw new MachineException("Internal server error occurs. Please contact support");
             }
         }
-        this.nodeLocation = nodeLocation;
+        this.nodeHost = nodeHost;
     }
 
     @Override
     public void bindWorkspace() throws MachineException {
         try {
             final Exec exec = dockerConnector.createExec(containerId, false, "/bin/sh", "-c", "id -u && id -g");
-            final List<String> ownerIds = new ArrayList<>(2);
+            final List<String> ownerIds = new ArrayList<>(4);
             final ValueHolder<String> error = new ValueHolder<>();
             dockerConnector.startExec(exec.getId(), message -> {
                 if (message.getType() == LogMessage.Type.STDOUT) {
@@ -106,7 +118,7 @@ public class RemoteDockerNode implements DockerNode {
                                                  hostProjectsFolder,
                                                  ownerIds.get(0),
                                                  ownerIds.get(1),
-                                                 nodeLocation);
+                                                 nodeHost);
         } catch (IOException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new MachineException("Can't restore workspace file system");
@@ -118,7 +130,7 @@ public class RemoteDockerNode implements DockerNode {
     @Override
     public void unbindWorkspace() throws MachineException {
         try {
-            backupManager.backupWorkspaceAndCleanup(workspaceId, hostProjectsFolder, nodeLocation);
+            backupManager.backupWorkspaceAndCleanup(workspaceId, hostProjectsFolder, nodeHost);
         } catch (ServerException e) {
             LOG.error(e.getLocalizedMessage(), e);
         }
@@ -131,6 +143,6 @@ public class RemoteDockerNode implements DockerNode {
 
     @Override
     public String getHost() {
-        return nodeLocation;
+        return nodeHost;
     }
 }

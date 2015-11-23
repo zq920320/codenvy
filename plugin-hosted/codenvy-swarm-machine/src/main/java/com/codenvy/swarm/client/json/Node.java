@@ -17,12 +17,15 @@
  */
 package com.codenvy.swarm.client.json;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
  * Describe docker node in swarm model
  *
  * @author Eugene Voevodin
+ * @author Alexander Garagatyi
  */
 public class Node {
 
@@ -30,12 +33,16 @@ public class Node {
     private String name;
     private String addr;
     private String ip;
+    private int    cpus;
+    private long   memory;
 
-    public String getId() {
+    private Map<String, String> labels = new HashMap<>();
+
+    public String getID() {
         return id;
     }
 
-    public void setId(String id) {
+    public void setID(String id) {
         this.id = id;
     }
 
@@ -55,46 +62,67 @@ public class Node {
         this.addr = addr;
     }
 
-    public String getIp() {
+    public String getIP() {
         return ip;
     }
 
-    public void setIp(String ip) {
+    public void setIP(String ip) {
         this.ip = ip;
+    }
+
+    public int getCpus() {
+        return cpus;
+    }
+
+    public void setCpus(int cpus) {
+        this.cpus = cpus;
+    }
+
+    public long getMemory() {
+        return memory;
+    }
+
+    public void setMemory(long memory) {
+        this.memory = memory;
+    }
+
+    public Map<String, String> getLabels() {
+        return labels;
+    }
+
+    public void setLabels(Map<String, String> labels) {
+        this.labels = labels;
     }
 
     @Override
     public String toString() {
         return "Node{" +
-               "id='" + id + '\'' +
+               "ID='" + id + '\'' +
                ", name='" + name + '\'' +
                ", addr='" + addr + '\'' +
-               ", ip='" + ip + '\'' +
+               ", IP='" + ip + '\'' +
+               ", cpus=" + cpus +
+               ", memory=" + memory +
+               ", labels=" + labels +
                '}';
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (!(obj instanceof Node)) {
-            return false;
-        }
-        final Node other = (Node)obj;
-        return Objects.equals(other.id, id) &&
-               Objects.equals(other.name, name) &&
-               Objects.equals(other.ip, ip) &&
-               Objects.equals(other.addr, addr);
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Node)) return false;
+        Node node = (Node)o;
+        return Objects.equals(getCpus(), node.getCpus()) &&
+               Objects.equals(getMemory(), node.getMemory()) &&
+               Objects.equals(getID(), node.getID()) &&
+               Objects.equals(getName(), node.getName()) &&
+               Objects.equals(getAddr(), node.getAddr()) &&
+               Objects.equals(getIP(), node.getIP()) &&
+               Objects.equals(getLabels(), node.getLabels());
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = hash * 31 + Objects.hashCode(id);
-        hash = hash * 31 + Objects.hashCode(name);
-        hash = hash * 31 + Objects.hashCode(ip);
-        hash = hash * 31 + Objects.hashCode(addr);
-        return hash;
+        return Objects.hash(getID(), getName(), getAddr(), getIP(), getCpus(), getMemory(), getLabels());
     }
 }

@@ -42,9 +42,9 @@ public class SwarmInstanceMetadata extends DockerInstanceMetadata {
     public Map<String, String> getProperties() {
         final Map<String, String> dockerProperties = super.getProperties();
 
-        dockerProperties.put("node.ip", info.getNode().getIp());
+        dockerProperties.put("node.ip", info.getNode().getIP());
         dockerProperties.put("node.addr", info.getNode().getAddr());
-        dockerProperties.put("node.id", info.getNode().getId());
+        dockerProperties.put("node.id", info.getNode().getID());
         dockerProperties.put("node.name", info.getNode().getName());
 
         return dockerProperties;

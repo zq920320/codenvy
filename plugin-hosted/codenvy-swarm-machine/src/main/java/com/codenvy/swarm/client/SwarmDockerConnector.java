@@ -18,7 +18,6 @@
 package com.codenvy.swarm.client;
 
 import com.codenvy.swarm.client.json.DockerNode;
-import com.codenvy.swarm.client.json.Node;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.common.base.Strings;
 import com.google.common.io.CharStreams;
@@ -32,21 +31,15 @@ import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnectionFactory;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
-import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
-import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
-import org.eclipse.che.plugin.docker.client.json.ContainerCreated;
-import org.eclipse.che.plugin.docker.client.json.HostConfig;
 import org.eclipse.che.plugin.docker.client.json.SystemInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.primitives.Ints.tryParse;
@@ -59,15 +52,7 @@ import static com.google.common.primitives.Ints.tryParse;
  */
 @Singleton
 public class SwarmDockerConnector extends DockerConnector {
-    /**
-     * We perform some operations manually on the docker node instead of swarm because of not implemented methods.
-     * That's why swarm doesn't see container immediately after its start and can't make inspect or run exec.
-     * So we inspect container with swarm to find when it is reachable by swarm.
-     * This variable limits time to wait until container is reachable by swarm.
-     */
-    private static final long WAIT_CONTAINER_AVAILABILITY_TIMEOUT_MILLISECONDS = 40000;
 
-    private final URI                     swarmManagerUri;
     private final NodeSelectionStrategy   strategy;
     //TODO should it be done in other way?
     private final String                  nodeDaemonScheme;
@@ -78,58 +63,8 @@ public class SwarmDockerConnector extends DockerConnector {
                                 DockerConnectionFactory connectionFactory) {
         super(connectorConfiguration, connectionFactory);
         this.connectionFactory = connectionFactory;
-        this.swarmManagerUri = connectorConfiguration.getDockerDaemonUri();
         this.strategy = new RandomNodeSelectionStrategy();
         this.nodeDaemonScheme = "http";
-    }
-
-    @Override
-    public void removeImage(String image, boolean force) throws IOException {
-        final URI nodeUri = getNodeUriByImage(image);
-        doRemoveImage(image, force, nodeUri);
-    }
-
-    @Override
-    public void tag(String image, String repository, String tag) throws IOException {
-        final URI nodeUri = getNodeUriByImage(image);
-        doTag(image, repository, tag, nodeUri);
-    }
-
-    @Override
-    public void push(String repository,
-                     String tag,
-                     String registry,
-                     ProgressMonitor progressMonitor) throws IOException, InterruptedException {
-        String target = repository;
-        if (tag != null) {
-            target += ':' + tag;
-        }
-        final URI nodeUri = getNodeUriByImage(target);
-        doPush(repository, tag, registry, progressMonitor, nodeUri);
-    }
-
-    @Override
-    protected String buildImage(String repository,
-                                File tar,
-                                ProgressMonitor progressMonitor,
-                                AuthConfigs authConfigs) throws IOException, InterruptedException {
-        final DockerNode node = strategy.select(getAvailableNodes());
-        return doBuildImage(repository, tar, progressMonitor, addrToUri(node.getAddr()), authConfigs);
-    }
-
-    @Override
-    public String commit(String container, String repository, String tag, String comment, String author) throws IOException {
-        final String addr = inspectContainer(container).getNode().getAddr();
-        return doCommit(container, repository, tag, comment, author, addrToUri(addr));
-    }
-
-    @Override
-    public ContainerCreated createContainer(ContainerConfig containerConfig, String containerName) throws IOException {
-        final URI nodeUri = getNodeUriByImage(containerConfig.getImage());
-        if (nodeUri == null) {
-            return super.createContainer(containerConfig, containerName);
-        }
-        return doCreateContainer(containerConfig, containerName, nodeUri);
     }
 
     @Override
@@ -141,35 +76,9 @@ public class SwarmDockerConnector extends DockerConnector {
         doPull(image, tag, registry, progressMonitor, addrToUri(node.getAddr()));
     }
 
-    @Override
-    public void startContainer(final String container, HostConfig hostConfig)
-            throws IOException {
-        final Node node = inspectContainerDirectly(container).getNode();
-        doStartContainer(container, hostConfig, addrToUri(node.getAddr()));
-
-        final long containerStartTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - containerStartTime < WAIT_CONTAINER_AVAILABILITY_TIMEOUT_MILLISECONDS) {
-            try {
-                // try to inspect container with swarm, if not it will throw an exception
-                inspectContainer(container);
-
-                // container is reachable for swarm, return
-                return;
-            } catch (IOException e) {
-                // container is not reachable yet
-                try {
-                    TimeUnit.MILLISECONDS.sleep(2000);
-                } catch (InterruptedException ignore) {
-                }
-            }
-        }
-    }
-
-    @Override
-    public SwarmContainerInfo inspectContainer(String container) throws IOException {
-        return doInspectContainer(container, swarmManagerUri);
-    }
-
+    /**
+     * Overrides method to return container info extended with swarm information about docker node.
+     */
     @Override
     protected SwarmContainerInfo doInspectContainer(String container, URI dockerDaemonUri) throws IOException {
         try (final DockerConnection connection = connectionFactory.openConnection(dockerDaemonUri)
@@ -185,28 +94,6 @@ public class SwarmDockerConnector extends DockerConnector {
         } catch (JsonParseException e) {
             throw new IOException(e.getMessage(), e);
         }
-    }
-
-    public SwarmContainerInfo inspectContainerDirectly(String container) throws IOException {
-        for (DockerNode node : getAvailableNodes()) {
-            final URI uri = addrToUri(node.getAddr());
-            try {
-                final SwarmContainerInfo info = doInspectContainer(container, uri);
-                //direct inspection does not provide any information about container node
-                final Node newNode = new Node();
-                newNode.setAddr(node.getAddr());
-                newNode.setName(node.getHostname());
-                newNode.setIp(node.getAddr().substring(0, node.getAddr().indexOf(':')));
-                info.setNode(newNode);
-                return info;
-            } catch (DockerException ex) {
-                //ignore exception when image was not found
-                if (ex.getStatus() != 404) {
-                    throw ex;
-                }
-            }
-        }
-        return null;
     }
 
     /**
