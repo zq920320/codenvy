@@ -303,6 +303,7 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
     '!'+paths.enterprise+'site/custom_pages/*.html',
     '!'+paths.enterprise+'site/email-templates_onpremises/*.html',
     '!'+paths.enterprise+'site/email-templates/*.html',
+    '!'+paths.enterprise+'site/login.html',
     '!'+paths.enterprise+'site/recover-password.html',
     '!'+paths.enterprise+'site/setup-password.html',
     '!'+paths.enterprise+'index.html',
@@ -317,9 +318,12 @@ gulp.task('copy_enterprise',['copy_src','enterprise_cfg','css_enterprise','jekyl
   .pipe(gulp.dest(paths.dist+'enterprise'));
 });
 
-// Copy omprem login page templates
+// Copy omprem login page to as index.html and /site/login.html
 gulp.task('onprem_login_page', ['copy_src','enterprise_cfg','css_enterprise','jekyll_enterprise','copy_enterprise'], function(){
-  return   gulp.src(paths.enterprise + 'site/custom_pages/cccis/**.html')
+  return   gulp.src(paths.enterprise + 'site/custom_pages/cccis/onpremises-login.html')
+    .pipe(rename('index.html'))
+    .pipe(gulp.dest(paths.dist+'enterprise'))
+    .pipe(rename('login.html'))
     .pipe(gulp.dest(paths.dist+'enterprise/site'));
 });
 
@@ -340,7 +344,7 @@ gulp.task('onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem
 
 // Copy onprem create-account page TODO
 gulp.task('onprem_create_account_page', ['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se', 'rjs_se', 'rev-se','replace-se','rmbuild-se'], function(){
-  return   gulp.src(paths.onpremSE + 'site/custom_pages/onprem-se/**.html')
+  return   gulp.src(paths.onpremSE + 'site/custom_pages/onprem-se/create-account.html')
   .pipe(gulp.dest(paths.dist+'onprem-se/site'))
   .pipe(print(function(filepath) {
     return "Copy onprem-se custom pages to ->" + filepath;
@@ -448,6 +452,7 @@ gulp.task('copy_onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_o
     '!'+paths.onpremSE+'site/custom_pages/**/*.html',
     '!'+paths.onpremSE+'site/email-templates_onpremises/*.html',
     '!'+paths.onpremSE+'site/email-templates/*.html',
+    '!'+paths.onpremSE+'site/create-account.html', // onprem-se build has custom create-account page (gulp task onprem_create_account_page)
     paths.onpremSE+'**/amd-app-*.js', // minified JS
     paths.onpremSE+'**/*-*.css', // minified CSS
     paths.onpremSE+'**/*.jpg',
