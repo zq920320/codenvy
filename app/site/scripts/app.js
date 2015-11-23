@@ -17,27 +17,25 @@
  */
  
 define(["jquery","config",
-        "views/signinform",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
-        "views/ws_createform",
         "views/adminform",
         "views/create_ws_add_member",
         "views/onpremises-login",
-        "views/factory-usage-notification"
+        "views/factory-usage-notification",
+        "views/login"
         ],
 
     function($,Config,
-        SigninForm,
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
-        WSCreateForm,
         AdminForm,
         CreateWsAdd_Member,
         OnPremisesLogin,
-        FactoryUsageNotification){
+        FactoryUsageNotification,
+        MainPage){
 
         function modernize(){
             Modernizr.load({
@@ -60,15 +58,14 @@ define(["jquery","config",
                     var uvOptions = {}; //UserVoice object
                     
                     if (uvOptions){}
-                    var signinForm = $(".login-form"),
-                        forgotPasswordForm = $(".forgotpassword-form"),
+                    var forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
-                        wsCreateForm = $(".create-form"),
                         adminForm = $(".admin-form"),
                         creatWsAddMember = $(".create-ws-add-memeber"),
                         onpremloginForm = $(".onpremloginForm"),
-                        factoryUsageNotification =  $(".factory-notification");
+                        factoryUsageNotification =  $(".factory-notification"),
+                        mainpage = $(".main-page");
 
                     if(factoryUsageNotification.length !== 0){
                         (function(){
@@ -92,7 +89,7 @@ define(["jquery","config",
                             
                         }());
                     }
-                    
+
                     if(creatWsAddMember.length !== 0){
                         (function(){
                             var form = CreateWsAdd_Member.get(creatWsAddMember),
@@ -102,36 +99,6 @@ define(["jquery","config",
                                 errorReport.show(message);
                             });
                             
-                        }());
-                    }
-
-                    if(wsCreateForm.length !== 0){
-                        (function(){
-                            var form = WSCreateForm.get(wsCreateForm),
-                            errorReport = ErrorReport.get(errorContainer);
-
-                            form.on("submitting", function(){
-                                errorReport.hide();
-                            });
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-                            
-                        }());
-                    }
-
-                    if(signinForm.length !== 0){
-                        (function(){
-                            var form = SigninForm.get(signinForm),
-                            errorReport = ErrorReport.get(errorContainer);
-                            if ($(".error-container").html()){
-                                $(".error-container").addClass("expanded");
-                            }
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
                         }());
                     }
 
@@ -187,6 +154,18 @@ define(["jquery","config",
                             form.resolveUserEmail();
 
                         }());
+                    }
+
+
+                    if(mainpage.length !== 0){
+                        (function(){
+                            var form = MainPage.get(mainpage);
+                            form.on("invalid", function(field,message,errorContainer){
+                                var errorReport = ErrorReport.get(errorContainer);
+                                errorReport.show(message);
+                            });
+                        }());
+                        
                     }
                     
                 });
