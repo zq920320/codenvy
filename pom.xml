@@ -32,8 +32,9 @@
     <name>Onpremises IDE :: Parent</name>
     <modules>
         <!--<module>onpremises-ide-plugin-onpremises</module>-->
+        <module>onpremises-ide-packaging-war-website-codenvy</module>
+        <module>onpremises-ide-packaging-war-webroot-codenvy</module>
         <module>onpremises-ide-packaging-war-platform-api</module>
-        <!--<module>cloud-ide-packaging-war-user-dashboard</module>-->
         <module>onpremises-ide-packaging-war-admin-dashboard</module>
         <module>onpremises-ide-compiling-war-ide-codenvy</module>
         <module>onpremises-ide-packaging-tomcat-site</module>
