@@ -1,18 +1,11 @@
----
-    layout : new-simple
-    title: Codenvy - Login
----	
-<div class="vmiddle">
-	<div class="container">
-		<div class="row text-center">
-			<div class="col-md-12">
+				<!-- onprem-se-->
 				<a href="/"><img src="/site/images/logo@3x.png" alt="logo" class="logo" /></a>
 				<div class="error-container"></div>
-				<form action="" id="onpremloginForm" class="onpremloginForm" >
+				<form action="javascript:void(0);" id="loginForm" class="login-form">
 					<ul>
 						<li class="oauth-list">
 							<span class="input-con">
-								<input class="required" id="usernameid" name="username" type="text" placeholder="Username" />
+								<input class="required username" id="username" name="username" type="text" placeholder="User Name" />
 							</span>
 							<span class="input-con">
 								<input name="password" type="password" placeholder="Your Password">
@@ -21,7 +14,11 @@
 						</li>
 					</ul>
 				</form>
-			</div>
-		</div>
-	</div>
-</div>
+				<ul>
+					<li>
+						<a href="/site/recover-password">Reset Your Password</a>
+					</li>
+					<li>
+						<a id='signUp' href="#">Create a New Account</a>
+					</li>
+				</ul>
