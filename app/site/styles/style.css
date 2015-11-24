@@ -65,7 +65,7 @@ a {
 }
 a:hover {
 	text-decoration:none;
-	color: #F37943;
+	color: #4EABFF;
 }
 ::selection{
 	background:#282828;
@@ -101,10 +101,8 @@ body,h1,h2,h3,h4,h5,h6,a{
 /*SignUp Page*/
 .signup-page, .error-page{
 	height:100vh;
-	background:url(../images/bg-signup-top@1x.png) repeat-x,url(../images/bg-signup-bottom@1x.png) repeat-x;
-	background-position:top center,bottom center;
-	background-color:#01496E;
-	color:#fff;
+	background-color:#21252B;
+	color:#3E4856;
 }
 .signup-page, .error-page{
 	display:table;
@@ -172,8 +170,8 @@ body,h1,h2,h3,h4,h5,h6,a{
 	font-size:14px;
 	border-radius:5px;
 	background:#FFFFFF;
-	border: 1px solid #F37943;
-	color: #F37943;
+	border: 1px solid #4EABFF;
+	color: #4EABFF;
 	font-weight:400;
 	display:inline-block;
 	z-index:999;
@@ -212,7 +210,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	width:150px;
 	border-radius:5px;
 	border:none;
-	background:#F37943;
+	background:#4BAEFF;
 	font-size:16px;
 	font-weight:400;
 	color:#fff;
@@ -239,7 +237,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 
 .signup-page ul li a:hover{
-	color: #F37943;
+	color: #4EABFF;
 }
 
 .signup-page ul li a img{
@@ -261,7 +259,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 
 .error-page-btn{
   	font-size: 16px;
-	background: #F37943;
+	background: #4EABFF;
 	padding: 12px 10px;
 	border-radius: 5px;
 	color: #fff;
@@ -400,7 +398,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	font-size:14px;
 	border-radius:5px;
 	background:#FFFFFF;
-	color: #F37943;
+	color: #4EABFF;
 	font-weight:400;
 }
 .light {
@@ -436,7 +434,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 .expanded {
 	padding: 10px;
-	border: 1px solid #F37943;	
+	border: 1px solid #4EABFF;	
 }
 .short-line {
 	width: 55px;
@@ -451,7 +449,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	margin: 5px 5px;
 	border-radius:5px;
 	border:none;
-	background:#F37943;
+	background:#4EABFF;
 	font-size:16px;
 	font-weight:400;
 	color:#fff;
