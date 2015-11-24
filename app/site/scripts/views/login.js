@@ -43,7 +43,7 @@
                 $(this.el).on('submit', function(e){
                     e.preventDefault();
                 });
-	            if (!Account.isLoginCookiePresent() || window.location.hash.substring(1) === 'create'){
+	            if (!Account.isLoginCookiePresent()){
 	                this.proceedCreate();
 	            }else{
 	                this.proceedLogin();
@@ -52,7 +52,6 @@
 	        
 	        proceedLogin : function(){
 	        	action = 'login';
-	        	window.location.hash = action;
 				var self = this;
 				Account.isUserAuthenticated()
 				.then(function(athenticated){
@@ -78,7 +77,6 @@
 
 	        proceedCreate : function(){
 	        	action = 'create';
-	        	window.location.hash = action;
 	        	var self = this;
 	        	$(".col-md-12").append(this.createTemplate());//TODO show Create form
                 //bind onclick to Google and GitHub buttons
@@ -127,7 +125,9 @@
             __validationRules : function(){
                     return {
                         username: {
-                        required : true
+                            required : true,
+                            email: true,
+                            checkEmail : true
                         },
                         email: {
                             required: true,
