@@ -208,7 +208,7 @@
             
             settings : {
                 noDomainErrorMessage : "Please specify a workspace name",
-                noUsernameErrorMessage : "Please specify a username",
+                noUsernameErrorMessage : "We have not detected a valid user name",
                 noEmailErrorMessage : "Please provide an email address",
                 noPasswordErrorMessage : "Please provide your password",
                 noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
