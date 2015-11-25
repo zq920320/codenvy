@@ -124,6 +124,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 	line-height:30px;
 	font-weight:400;
 	margin-bottom:19px;
+	color: #cccccc;
 }
 .signup-page ul{
 	margin-bottom:13px;
@@ -221,7 +222,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 
 .signup-page input[type="submit"]:hover{
-	background:#ED592B;
+	background:#4A90E2;
 }
 
 .signup-page li p a{
@@ -269,7 +270,7 @@ body,h1,h2,h3,h4,h5,h6,a{
 }
 
 .error-page-btn:hover{
-	background: #ED592B;
+	background: #4A90E2;
 	color: #fff;
 }
 
