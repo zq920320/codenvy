@@ -85,10 +85,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-hosted-ext-support-help</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
         </dependency>
         <dependency>
