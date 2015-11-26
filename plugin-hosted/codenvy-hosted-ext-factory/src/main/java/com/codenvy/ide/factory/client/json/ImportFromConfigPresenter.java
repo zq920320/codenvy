@@ -104,7 +104,7 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
 
         importNotification = new Notification(factoryLocalization.cloningSource(), Notification.Type.INFO, Notification.Status.PROGRESS);
         notificationManager.showNotification(importNotification);
-        projectImporter.startImporting(importNotification, factoryJson, importerCallback);
+        //projectImporter.startImporting(importNotification, factoryJson, importerCallback);
     }
 
 

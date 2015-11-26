@@ -18,13 +18,16 @@
 package com.codenvy.ide.factory.client.accept;
 
 import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
 import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.workspace.gwt.client.WorkspaceServiceClient;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.event.ConfigureProjectEvent;
-import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
+import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
 import org.eclipse.che.ide.api.notification.Notification;
-import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.part.explorer.project.ProjectExplorerPresenter;
+
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.utils.FactoryProjectImporter;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
@@ -41,30 +44,30 @@ import javax.inject.Inject;
 @Singleton
 public class AcceptFactoryHandler {
     private final FactoryLocalizationConstant factoryLocalization;
-    private final NotificationManager         notificationManager;
-    private final FactoryProjectImporter      factoryProjectImporter;
-    private final WorkspaceServiceClient      workspaceServiceClient;
-    private final EventBus                    eventBus;
-    private final AppContext                  appContext;
-    private final GreetingPartPresenter       greetingPartPresenter;
 
-    private Notification notification;
+    private final FactoryProjectImporter   factoryProjectImporter;
+    private final EventBus                 eventBus;
+    private final AppContext               appContext;
+    private final GreetingPartPresenter    greetingPartPresenter;
+    private final ProjectExplorerPresenter projectExplorerPresenter;
+    private final DtoFactory               dtoFactory;
+    private       Notification             notification;
 
     @Inject
     public AcceptFactoryHandler(FactoryLocalizationConstant factoryLocalization,
                                 FactoryProjectImporter factoryProjectImporter,
-                                NotificationManager notificationManager,
-                                WorkspaceServiceClient workspaceServiceClient,
                                 EventBus eventBus,
                                 AppContext appContext,
-                                GreetingPartPresenter greetingPartPresenter) {
+                                DtoFactory dtoFactory,
+                                GreetingPartPresenter greetingPartPresenter,
+                                ProjectExplorerPresenter projectExplorerPresenter) {
         this.factoryProjectImporter = factoryProjectImporter;
-        this.notificationManager = notificationManager;
         this.factoryLocalization = factoryLocalization;
-        this.workspaceServiceClient = workspaceServiceClient;
         this.eventBus = eventBus;
         this.appContext = appContext;
+        this.dtoFactory = dtoFactory;
         this.greetingPartPresenter = greetingPartPresenter;
+        this.projectExplorerPresenter = projectExplorerPresenter;
     }
 
     /**
@@ -72,18 +75,25 @@ public class AcceptFactoryHandler {
      */
     public void process() {
         final Factory factory;
-
         if ((factory = appContext.getFactory()) == null) {
             return;
         }
 
-        notification = new Notification(factoryLocalization.cloningSource(), Notification.Status.PROGRESS);
-        notificationManager.showNotification(notification);
-
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+        eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
-            public void execute() {
-                startImporting(factory);
+            public void onExtServerStarted(final ExtServerStateEvent event) {
+                notification = new Notification(factoryLocalization.cloningSource(), Notification.Status.PROGRESS);
+                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+                    @Override
+                    public void execute() {
+                        startImporting(factory);
+                    }
+                });
+            }
+
+            @Override
+            public void onExtServerStopped(ExtServerStateEvent event) {
+
             }
         });
     }
@@ -95,19 +105,22 @@ public class AcceptFactoryHandler {
                 greetingPartPresenter.showGreeting();
             }
         });
-
         factoryProjectImporter.startImporting(notification, factory,
-                                              new AsyncCallback<ProjectDescriptor>() {
+                                              new AsyncCallback<ProjectConfigDto>() {
                                                   @Override
-                                                  public void onSuccess(final ProjectDescriptor projectDescriptor) {
+                                                  public void onSuccess(final ProjectConfigDto result) {
                                                       notification.setStatus(Notification.Status.FINISHED);
                                                       notification.setMessage(factoryLocalization.clonedSource());
-
-                                                      eventBus.fireEvent(new OpenProjectEvent(projectDescriptor));
-
-                                                      if (!projectDescriptor.getProblems().isEmpty()) {
-                                                          eventBus.fireEvent(new ConfigureProjectEvent(projectDescriptor));
-                                                      }
+                                                      ProjectDescriptor descriptor = dtoFactory.createDto(ProjectDescriptor.class);
+                                                      descriptor.withName(result.getName())
+                                                                .withAttributes(result.getAttributes())
+                                                                .withType(result.getType())
+                                                                .withDescription(result.getDescription())
+                                                                .withContentRoot(result.getPath())
+                                                                .withMixins(result.getMixins())
+                                                                .withModules(result.getModules());
+                                                      eventBus.fireEvent(new CreateProjectEvent(descriptor));
+                                                      projectExplorerPresenter.reloadProjectTree();// TODO: tmp fix
                                                   }
 
                                                   @Override
