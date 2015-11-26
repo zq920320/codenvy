@@ -49,10 +49,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-hosted-client-gwt-subscription</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-hosted-ext-clone</artifactId>
         </dependency>
         <dependency>
