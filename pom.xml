@@ -27,7 +27,7 @@
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
-    <version>3.14.4.1-SNAPSHOT</version>
+    <version>3.13.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
     <scm>
