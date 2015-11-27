@@ -23,11 +23,11 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy.che.depmgt</groupId>
-        <version>3.13.4</version>
+        <version>3.13.4.1</version>
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
-    <version>3.13.4</version>
+    <version>3.14.4.1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
     <scm>
