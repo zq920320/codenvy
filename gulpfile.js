@@ -161,6 +161,7 @@ gulp.task('rmbuild', ['copy_src','prod_cfg','css','rjs','jekyll','myrev','replac
 gulp.task('copy_prod',['copy_src','duplicate_html','prod_cfg','css','rjs','jekyll','myrev','replace','rmbuild'], function(){
   gulp.src([paths.prod+'/**/*.html', // all HTML
     '!'+paths.prod+'site/custom_pages/*.html',
+    '!'+paths.prod+'site/admin.html',
     '!'+paths.prod+'site/email-templates_onpremises/*.html',
     paths.prod+'**/amd-app-*.js', // minified JS
     paths.prod+'**/*-*.css', // minified CSS
@@ -248,6 +249,7 @@ gulp.task('jekyll_stage',['copy_src','stage_cfg'], function () {
 gulp.task('copy_stage',['copy_src','stage_cfg','css_stage','jekyll_stage'], function(){
   gulp.src([paths.stage+'/**/*.html', // all HTML
     '!'+paths.stage+'site/custom_pages/*.html',
+    '!'+paths.stage+'site/admin.html',
     '!'+paths.stage+'site/email-templates_onpremises/*.html',
     paths.stage+'**/*.js',
     paths.stage+'**/*.css',
@@ -461,6 +463,7 @@ gulp.task('rmbuild-se', ['copy_src','css_onprem_se','rjs_se','jekyll_onprem_se',
 gulp.task('copy_onprem_se',['copy_src','onprem_se_cfg','css_onprem_se','jekyll_onprem_se','onprem_create_account_page','rjs_se', 'rev-se', 'replace-se', 'rmbuild-se'], function(){
   gulp.src([paths.onpremSE+'**/*.html', // all HTML
     '!'+paths.onpremSE+'site/custom_pages/**/*.html',
+    '!'+paths.onpremSE+'site/admin.html',
     '!'+paths.onpremSE+'site/email-templates_onpremises/*.html',
     '!'+paths.onpremSE+'site/email-templates/*.html',
     paths.onpremSE+'**/amd-app-*.js', // minified JS
