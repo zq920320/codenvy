@@ -87,6 +87,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel1", "statuschannel1"),
                                      "workspaceId1",
                                      "owner1",
+                                     "envName",
                                      MachineStatus.RUNNING));
 
         when(machineManager.getMachine("id1")).thenReturn(machineInstance);
@@ -122,6 +123,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel2", "statuschannel2"),
                                      "workspaceId2",
                                      "owner2",
+                                     "envName",
                                      MachineStatus.RUNNING));
         when(machineManager.getMachine("id2")).thenReturn(machineInstance);
         when(node.getHost()).thenReturn("192.168.0.1").thenReturn("192.168.0.2");
@@ -152,6 +154,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel2", "statuschannel2"),
                                      "workspaceId2",
                                      "owner2",
+                                     "envName",
                                      MachineStatus.RUNNING));
 
         scheduler.scheduleBackup();
@@ -177,6 +180,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel2", "statuschannel2"),
                                      "workspaceId2",
                                      "owner2",
+                                     "envName",
                                      MachineStatus.CREATING));
         machines.add(new MachineImpl(true,
                                      "displayName3",
@@ -190,6 +194,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel3", "statuschannel3"),
                                      "workspaceId3",
                                      "owner3",
+                                     "envName",
                                      MachineStatus.DESTROYING));
 
         scheduler.scheduleBackup();
@@ -214,6 +219,7 @@ public class WorkspaceFsBackupSchedulerTest {
                                      new ChannelsImpl("outputchannel12", "statuschannel2"),
                                      "workspaceId2",
                                      "owner2",
+                                     "envName",
                                      MachineStatus.RUNNING));
         when(machineManager.getMachine("id2")).thenThrow(new MachineException(""));
 
