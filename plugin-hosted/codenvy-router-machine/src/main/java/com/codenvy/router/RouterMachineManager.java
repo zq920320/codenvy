@@ -244,6 +244,11 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
+            public String getEnvName() {
+                return machine.getEnvName();
+            }
+
+            @Override
             public boolean isDev() {
                 return machine.isDev();
             }
