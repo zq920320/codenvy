@@ -80,6 +80,7 @@ import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.vfs.server.VirtualFileFilter;
 import org.eclipse.che.api.vfs.server.search.SearcherProvider;
+import org.eclipse.che.api.workspace.server.WorkspaceConfigValidator;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 import org.eclipse.che.api.workspace.server.event.WorkspaceMessenger;
@@ -247,6 +248,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         recipeBinder.addBinding().toProvider(RecipeProvider.class);
         recipeBinder.addBinding().toInstance("predefined-recipes.json");
 
+        bind(WorkspaceConfigValidator.class).to(org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigValidatorImpl.class);
         bind(WorkspaceManager.class);
         bind(WorkspaceMessenger.class).asEagerSingleton();
         /*

@@ -24,9 +24,13 @@
     <inherits name="com.google.gwt.inject.Inject"/>
     <inherits name="com.google.gwt.json.JSON"/>
 
-    <!-- We need the JUnit module in the main module,               -->
-    <!-- otherwise eclipse complains (Google plugin bug?)           -->
-    <inherits name='com.google.gwt.junit.JUnit'/>
+    <!-- Configure GWT logging                                      -->
+    <inherits name="com.google.gwt.logging.Logging"/>
+    <!-- Disable logging to the server                              -->
+    <set-property name="gwt.logging.simpleRemoteHandler" value="DISABLED" />
+    <!-- Enable logging to the browser's console in SuperDev mode   -->
+    <set-property name="gwt.logging.developmentModeHandler" value="ENABLED" />
+    <set-property name="gwt.logging.consoleHandler" value="ENABLED"/>
 
     <!-- Inherit the default GWT style sheet.  You can change       -->
     <!-- the theme of your GWT application by uncommenting          -->
@@ -71,6 +75,7 @@
     <!--Hosted specific -->
     <inherits name='com.codenvy.ide.profile.Profile'/>
     <inherits name='com.codenvy.ide.hosted.Hosted'/>
+    <inherits name='com.codenvy.ide.factory.Factory'/>
     <!--
     <inherits name='com.codenvy.api.subscription.Subscription'/>
     -->

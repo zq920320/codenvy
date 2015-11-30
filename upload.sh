@@ -18,7 +18,7 @@
 #
 detect_user_for_upload() {
     case "${SERVER}" in
-      "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "dev" | "stg" | "t1" | "t2" | "t3" | "cf" | "demo" | "nightly" | "machine" )
+      "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "dev" | "stg" | "t1" | "t2" | "t3" | "cf" | "demo" | "nightly" | "machines" )
           SSH_KEY_NAME=upl-dev
           SSH_USER_NAME=upl-dev
       ;;
@@ -102,10 +102,10 @@ PUPPET_DNS=puppet-master.codenvycorp.com
 DATE=`date '+%y%m%d-%H%M%S'`
 CLOUD_IDE_HOME=`pwd`
 SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, site, all\e[0m"
-SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod, machine\e[0m"
+SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod, machines\e[0m"
 #checking possible scope values
 case "$1" in
-   "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "demo" | "nightly" | "dev" | "machine" )
+   "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "demo" | "nightly" | "dev" | "machines" )
       echo "Selected '$1' as cloud for update"
       SERVER=$1
    ;;
