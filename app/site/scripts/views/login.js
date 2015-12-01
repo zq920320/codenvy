@@ -125,9 +125,7 @@
             __validationRules : function(){
                     return {
                         username: {
-                            required : true,
-                            email: true,
-                            checkEmail : true
+                            required : true
                         },
                         email: {
                             required: true,
