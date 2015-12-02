@@ -19,91 +19,120 @@ package com.codenvy.ide.factory.client.utils;
 
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.accept.Authenticator;
+import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
-import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.websocket.rest.RequestCallback;
+import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author Sergii Leschenko
  * @author Valeriy Svydenko
+ * @author Anton Korneta
  */
 public class FactoryProjectImporter {
+    private final ProjectServiceClient                       projectServiceClient;
+    private final NotificationManager                        notificationManager;
+    private final FactoryLocalizationConstant                localization;
+    private final Authenticator                              authenticator;
+    private final ImportProjectNotificationSubscriberFactory subscriberFactory;
+    private final EventBus                                   eventBus;
 
-    private final ProjectServiceClient                projectServiceClient;
-    private final NotificationManager                 notificationManager;
-    private final FactoryLocalizationConstant         localization;
-    private final DtoFactory                          dtoFactory;
-    private final Authenticator                       authenticator;
-    private final ImportProjectNotificationSubscriber notificationSubscriber;
-
-    private Factory                         factory;
-    private Notification                    notification;
-    private AsyncCallback<ProjectConfigDto> callback;
+    private Factory             factory;
+    private AsyncCallback<Void> callback;
 
     @Inject
     public FactoryProjectImporter(ProjectServiceClient projectServiceClient,
                                   NotificationManager notificationManager,
                                   FactoryLocalizationConstant localization,
                                   Authenticator authenticator,
-                                  DtoFactory dtoFactory,
-                                  ImportProjectNotificationSubscriber notificationSubscriber) {
+                                  ImportProjectNotificationSubscriberFactory subscriberFactory,
+                                  EventBus eventBus) {
         this.projectServiceClient = projectServiceClient;
         this.notificationManager = notificationManager;
         this.localization = localization;
-        this.dtoFactory = dtoFactory;
         this.authenticator = authenticator;
-        this.notificationSubscriber = notificationSubscriber;
+        this.subscriberFactory = subscriberFactory;
+        this.eventBus = eventBus;
     }
 
-    public void startImporting(Notification notification, Factory factory, AsyncCallback<ProjectConfigDto> callback) {
+    public void startImporting(Factory factory, AsyncCallback<Void> callback) {
         this.callback = callback;
-        this.notification = notification;
         this.factory = factory;
         importProjects();
     }
 
-
     /**
-     * Imports source to project
+     * Import source projects
      */
     private void importProjects() {
-        for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
-            notificationManager.showNotification(notification);
-            notification.setMessage(localization.cloningSource());
-            notificationSubscriber.subscribe(projectConfig.getName(), notification);
-            projectServiceClient.importProject(projectConfig.getName(), true, projectConfig.getSource(),
-                                               new RequestCallback<Void>() {
-                                                   @Override
-                                                   protected void onSuccess(Void result) {
-                                                       callback.onSuccess(projectConfig);
-                                                   }
+        final List<Promise<Void>> promises = new ArrayList<>();
 
-                                                   @Override
-                                                   protected void onFailure(Throwable exception) {
-//                                                       if (exception instanceof UnauthorizedException) {
-//                                                           rerunWithAuthImport(projectConfig.getSource().getLocation());
-//                                                       } else {
-                                                           callback.onFailure(
-                                                                   new Exception("Unable to import source of project. " + dtoFactory
-                                                                           .createDtoFromJson(exception.getMessage(), ServiceError.class)
-                                                                           .getMessage()));
-//                                                       }
-                                                   }
-                                               });
+        for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
+            final String projectName = projectConfig.getName();
+            final Notification notification = new Notification(localization.cloningSource(projectName), Notification.Status.PROGRESS);
+            notificationManager.showNotification(notification);
+            final ImportProjectNotificationSubscriber notificationSubscriber = subscriberFactory.createSubscriber();
+            notificationSubscriber.subscribe(projectName, notification);
+
+            Promise<Void> promise = projectServiceClient.importProject(projectName, true, projectConfig.getSource())
+                                                        .then(new Operation<Void>() {
+                                                            @Override
+                                                            public void apply(Void arg) throws OperationException {
+                                                                notificationSubscriber.onSuccess();
+                                                                notification.setMessage(localization.clonedSource(projectName));
+                                                                notification.setType(Notification.Type.INFO);
+                                                                notification.setStatus(Notification.Status.FINISHED);
+                                                                eventBus.fireEvent(new CreateProjectEvent(projectConfig));
+                                                            }
+                                                        })
+                                                        .catchError(new Operation<PromiseError>() {
+                                                            @Override
+                                                            public void apply(PromiseError arg) throws OperationException {
+                                                                notificationSubscriber.onFailure(arg.getMessage());
+                                                                notification.setMessage(localization.cloningSourceFailed(projectName));
+                                                                notification.setType(Notification.Type.ERROR);
+                                                                notification.setStatus(Notification.Status.FINISHED);
+                                                                Promises.reject(arg);
+                                                            }
+                                                        });
+            promises.add(promise);
         }
+
+        Promises.all(promises.toArray(new Promise[promises.size()]))
+                .then(new Operation<JsArrayMixed>() {
+                    @Override
+                    public void apply(JsArrayMixed arg) throws OperationException {
+                        callback.onSuccess(null);
+                    }
+                })
+                .catchError(new Operation<PromiseError>() {
+                    @Override
+                    public void apply(PromiseError promiseError) throws OperationException {
+                        /** If it is unable to import any number of projects then factory  import status will be success anyway*/
+                        callback.onSuccess(null);
+                    }
+                });
     }
 
     private void rerunWithAuthImport(String location) {
+        final Notification notification = new Notification(localization.cloningSource(), Notification.Status.PROGRESS);
         notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
         authenticator.showOAuthWindow(location,
                                       new Authenticator.AuthCallback() {
