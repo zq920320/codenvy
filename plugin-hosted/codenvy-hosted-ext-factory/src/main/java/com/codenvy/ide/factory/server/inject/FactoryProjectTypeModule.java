@@ -21,7 +21,7 @@ import com.codenvy.ide.factory.server.FactoryProjectType;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
 
-import org.eclipse.che.api.project.server.type.ProjectType;
+import org.eclipse.che.api.core.model.project.type.ProjectType;
 import org.eclipse.che.inject.DynaModule;
 
 /**

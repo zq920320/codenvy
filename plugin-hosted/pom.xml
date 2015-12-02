@@ -38,7 +38,6 @@
         <module>codenvy-hosted-ext-docker</module>
         -->
         <module>codenvy-swarm-machine</module>
-        <module>codenvy-hosted-ext-permissions</module>
 
         <module>codenvy-hosted-ext-factory</module>
         <!--

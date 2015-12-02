@@ -17,7 +17,7 @@
  */
 package com.codenvy.ide.factory.server;
 
-import org.eclipse.che.api.project.server.type.ProjectType;
+import org.eclipse.che.api.project.server.type.AbstractProjectType;
 
 import javax.inject.Singleton;
 
@@ -31,7 +31,7 @@ import static com.codenvy.ide.factory.shared.Constants.FACTORY_PROJECT_TYPE_ID;
  * @author Max Shaposhnik (mshaposhnik@codenvy.com)
  */
 @Singleton
-public class FactoryProjectType extends ProjectType {
+public class FactoryProjectType extends AbstractProjectType {
     public FactoryProjectType() {
         super(FACTORY_PROJECT_TYPE_ID, FACTORY_PROJECT_TYPE_DISPLAY_NAME, false, true);
         addVariableDefinition(FACTORY_ID_ATTRIBUTE_NAME, "Factory flag", false);
