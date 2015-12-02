@@ -30,11 +30,17 @@ public interface FactoryLocalizationConstant extends Messages {
      *
      * ************************************************************************************************************/
 
-    @Key("project.import.configuring.cloning")
+    @Key("projects.import.configuring.cloning")
     String cloningSource();
 
+    @Key("project.import.configuring.cloning")
+    String cloningSource(String projectName);
+
     @Key("project.import.configured.cloned")
-    String clonedSource();
+    String clonedSource(String projectName);
+
+    @Key("project.import.configuring.cloning.failed")
+    String cloningSourceFailed(String projectName);
 
     @Key("accept.oauth.login.prompt")
     String oAuthLoginPrompt(String host);
