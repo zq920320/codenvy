@@ -224,7 +224,7 @@ public class SyncGitServiceClient {
         if (currentProject != null) {
             ProjectConfigDto rootProjectConfig = currentProject.getRootProject();
             if (rootProjectConfig.getAttributes() == null) {
-                rootProjectConfig.setAttributes(new HashMap<>());
+                rootProjectConfig.setAttributes(new HashMap<String, List<String>>());
 
                 rootProjectConfig.getAttributes().put("vcs.provider.name", new ArrayList<>(Collections.singletonList("git")));
             } else if (rootProjectConfig.getAttributes().get("vcs.provider.name") == null
