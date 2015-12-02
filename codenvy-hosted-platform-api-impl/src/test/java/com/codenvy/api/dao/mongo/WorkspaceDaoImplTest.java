@@ -39,7 +39,6 @@ import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
-import org.eclipse.che.api.workspace.server.model.impl.ModuleConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -392,7 +391,7 @@ public class WorkspaceDaoImplTest {
      * As workspace encoding was tested with assertion on each encoded document field
      * there is no reason to do the same with decoding. To check if document is decoded - it is
      * enough to check that decoding of encoded document produces exactly equal workspace to encoded one.
-     *
+     * <p/>
      * <p>Simplified test case:
      * <pre>
      *     UsersWorkspaceImpl ws = ...
@@ -477,16 +476,16 @@ public class WorkspaceDaoImplTest {
         final Map<String, String> sourceParameters = new HashMap<>(4);
         sourceParameters.put("source-parameter-1", "value1");
         sourceParameters.put("source-parameter-2", "value2");
-        project1.setStorage(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
+        project1.setSource(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
 
-        final ModuleConfigImpl module = new ModuleConfigImpl();
+        final ProjectConfigImpl module = new ProjectConfigImpl();
         module.setName("module");
         module.setPath("/module");
         module.setType("sometype");
         module.setDescription("description");
         module.setMixins(singletonList("git"));
 
-        final ModuleConfigImpl module_top = new ModuleConfigImpl();
+        final ProjectConfigImpl module_top = new ProjectConfigImpl();
         module_top.setName("module2");
         module_top.setPath("/module2");
         module_top.setType("sometype2");
