@@ -17,25 +17,24 @@
  */
 package com.codenvy.ide.factory.client.json;
 
+import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
+import com.codenvy.ide.factory.client.FactoryResources;
+import com.codenvy.ide.factory.client.utils.SyncGitServiceClient;
+import com.google.gwt.user.client.Window;
+import com.google.inject.Inject;
+
 import org.eclipse.che.api.analytics.client.logger.AnalyticsEventLogger;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.ext.git.client.GitRepositoryInitializer;
-import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
-import com.codenvy.ide.factory.client.FactoryResources;
-import com.codenvy.ide.factory.client.utils.SyncGitServiceClient;
-
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
-
-import com.google.gwt.user.client.Window;
-import com.google.inject.Inject;
 
 import javax.inject.Singleton;
 
@@ -76,7 +75,7 @@ public class ExportConfigAction extends Action {
             return;
         }
 
-        final ProjectDescriptor currentProject = appContext.getCurrentProject().getRootProject();
+        final ProjectConfigDto currentProject = appContext.getCurrentProject().getRootProject();
 
         if (!GitRepositoryInitializer.isGitRepository(currentProject) &&
             !currentProject.getAttributes().containsKey("svn.repository.url")) {
@@ -111,6 +110,6 @@ public class ExportConfigAction extends Action {
     @Override
     public void update(ActionEvent event) {
         CurrentProject activeProject = appContext.getCurrentProject();
-        event.getPresentation().setEnabled(activeProject != null && !activeProject.isReadOnly());
+        event.getPresentation().setEnabled(activeProject != null);
     }
 }

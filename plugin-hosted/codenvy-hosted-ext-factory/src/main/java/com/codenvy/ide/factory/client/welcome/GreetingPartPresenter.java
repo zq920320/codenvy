@@ -33,6 +33,7 @@ import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.event.project.CloseCurrentProjectEvent;
@@ -51,8 +52,6 @@ import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
-import org.eclipse.che.commons.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -202,23 +201,6 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
         String key = appContext.getCurrentUser().isUserPermanent() ? "authenticated" : "anonymous";
 
         key += Config.getCurrentWorkspace().isTemporary() ? "-workspace-temporary" : "";
-
-        String projectVisibility = null;
-        //Fetch visibility of project from context
-        if (appContext.getCurrentProject() != null && appContext.getCurrentProject().getRootProject() != null) {
-            projectVisibility = appContext.getCurrentProject().getRootProject().getVisibility();
-        }
-        if (projectVisibility == null) {
-            projectVisibility = "private";
-        }
-
-        if ("private".equals(projectVisibility)) {
-            String url = findGreetingByKey(key + "-private");
-            if (!isNullOrEmpty(url)) {
-                createGreetingFrame(url);
-                return;
-            }
-        }
 
         String url = findGreetingByKey(key);
         if (!isNullOrEmpty(url)) {

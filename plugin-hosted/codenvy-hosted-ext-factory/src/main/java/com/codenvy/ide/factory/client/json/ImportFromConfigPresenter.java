@@ -17,19 +17,20 @@
  */
 package com.codenvy.ide.factory.client.json;
 
-import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
-import org.eclipse.che.ide.api.notification.Notification;
-import org.eclipse.che.ide.api.notification.NotificationManager;
-import org.eclipse.che.ide.dto.DtoFactory;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.utils.FactoryProjectImporter;
-import org.eclipse.che.ide.util.loging.Log;
 import com.google.gwt.json.client.JSONException;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
+
+import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
+import org.eclipse.che.ide.api.notification.Notification;
+import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.util.loging.Log;
 
 /**
  * Imports project from factory.json file
@@ -37,13 +38,14 @@ import com.google.web.bindery.event.shared.EventBus;
  * @author Sergii Leschenko
  */
 public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDelegate {
-    private final FactoryLocalizationConstant      factoryLocalization;
-    private final ImportFromConfigView             view;
-    private final NotificationManager              notificationManager;
-    private final DtoFactory                       dtoFactory;
-    private final FactoryProjectImporter           projectImporter;
-    private final AsyncCallback<ProjectDescriptor>    importerCallback;
-    private       Notification                     importNotification;
+    private final FactoryLocalizationConstant     factoryLocalization;
+    private final ImportFromConfigView            view;
+    private final NotificationManager             notificationManager;
+    private final DtoFactory                      dtoFactory;
+    private final FactoryProjectImporter          projectImporter;
+    private final AsyncCallback<ProjectConfigDto> importerCallback;
+
+    private Notification importNotification;
 
     @Inject
     public ImportFromConfigPresenter(final FactoryLocalizationConstant factoryLocalization,
@@ -59,9 +61,9 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
         this.view.setDelegate(this);
         this.projectImporter = projectImporter;
 
-        importerCallback = new AsyncCallback<ProjectDescriptor>() {
+        importerCallback = new AsyncCallback<ProjectConfigDto>() {
             @Override
-            public void onSuccess(ProjectDescriptor result) {
+            public void onSuccess(ProjectConfigDto result) {
                 importNotification.setMessage(factoryLocalization.clonedSource());
                 importNotification.setType(Notification.Type.INFO);
                 importNotification.setStatus(Notification.Status.FINISHED);

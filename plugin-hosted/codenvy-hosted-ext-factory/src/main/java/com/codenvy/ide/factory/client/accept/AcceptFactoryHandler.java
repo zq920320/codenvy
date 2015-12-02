@@ -17,17 +17,6 @@
  */
 package com.codenvy.ide.factory.client.accept;
 
-import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
-import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
-import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
-import org.eclipse.che.ide.api.notification.Notification;
-import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.part.explorer.project.ProjectExplorerPresenter;
-
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.utils.FactoryProjectImporter;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
@@ -35,6 +24,15 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
+
+import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
+import org.eclipse.che.ide.api.notification.Notification;
+import org.eclipse.che.ide.part.explorer.project.ProjectExplorerPresenter;
 
 import javax.inject.Inject;
 
@@ -50,22 +48,20 @@ public class AcceptFactoryHandler {
     private final AppContext               appContext;
     private final GreetingPartPresenter    greetingPartPresenter;
     private final ProjectExplorerPresenter projectExplorerPresenter;
-    private final DtoFactory               dtoFactory;
-    private       Notification             notification;
+
+    private Notification notification;
 
     @Inject
     public AcceptFactoryHandler(FactoryLocalizationConstant factoryLocalization,
                                 FactoryProjectImporter factoryProjectImporter,
                                 EventBus eventBus,
                                 AppContext appContext,
-                                DtoFactory dtoFactory,
                                 GreetingPartPresenter greetingPartPresenter,
                                 ProjectExplorerPresenter projectExplorerPresenter) {
         this.factoryProjectImporter = factoryProjectImporter;
         this.factoryLocalization = factoryLocalization;
         this.eventBus = eventBus;
         this.appContext = appContext;
-        this.dtoFactory = dtoFactory;
         this.greetingPartPresenter = greetingPartPresenter;
         this.projectExplorerPresenter = projectExplorerPresenter;
     }
@@ -111,15 +107,7 @@ public class AcceptFactoryHandler {
                                                   public void onSuccess(final ProjectConfigDto result) {
                                                       notification.setStatus(Notification.Status.FINISHED);
                                                       notification.setMessage(factoryLocalization.clonedSource());
-                                                      ProjectDescriptor descriptor = dtoFactory.createDto(ProjectDescriptor.class);
-                                                      descriptor.withName(result.getName())
-                                                                .withAttributes(result.getAttributes())
-                                                                .withType(result.getType())
-                                                                .withDescription(result.getDescription())
-                                                                .withContentRoot(result.getPath())
-                                                                .withMixins(result.getMixins())
-                                                                .withModules(result.getModules());
-                                                      eventBus.fireEvent(new CreateProjectEvent(descriptor));
+                                                      eventBus.fireEvent(new CreateProjectEvent(result));
                                                       projectExplorerPresenter.reloadProjectTree();// TODO: tmp fix
                                                   }
 

@@ -22,7 +22,8 @@ import org.eclipse.che.api.git.shared.CommitRequest;
 import org.eclipse.che.api.git.shared.InitRequest;
 import org.eclipse.che.api.git.shared.Revision;
 import org.eclipse.che.api.git.shared.Status;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.api.notification.Notification;
@@ -31,10 +32,9 @@ import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.git.client.GitLocalizationConstant;
 import org.eclipse.che.ide.rest.RestContext;
 
-import javax.validation.constraints.NotNull;
-import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -85,23 +85,23 @@ public class SyncGitServiceClient {
      * @param project
      *         project (root of GIT repository)
      */
-    public native void init(@NotNull ProjectDescriptor project) /*-{
+    public native void init(@NotNull ProjectConfigDto project) /*-{
         var instance = this;
         try {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
                 + "/git/"
                 + instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::workspaceId
-                + "/init?projectPath=" + project.@org.eclipse.che.api.project.shared.dto.ProjectDescriptor::getPath()();
+                + "/init?projectPath=" + project.@org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto::getPath()();
 
             var request = new XMLHttpRequest();
             request.open("POST", url, false);
             request.setRequestHeader("Content-type", "application/json");
-            var data = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::createInitRequest(Lorg/eclipse/che/api/project/shared/dto/ProjectDescriptor;)(project);
+            var data = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::createInitRequest(Lorg/eclipse/che/api/workspace/shared/dto/ProjectConfigDto;)(project);
             request.send(data);
 
             if (request.status != 204) {
                 instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)("Can't init repository. "
-                    + request.responseText);
+                + request.responseText);
             }
 
             instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::updateGitProvider()();
@@ -118,7 +118,7 @@ public class SyncGitServiceClient {
      * @param project
      *         project (root of GIT repository)
      */
-    public native Status status(@NotNull ProjectDescriptor project) /*-{
+    public native Status status(@NotNull ProjectConfigDto project) /*-{
         var instance = this;
         try {
             var statusClass = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::statusClass;
@@ -126,7 +126,7 @@ public class SyncGitServiceClient {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
                 + "/git/"
                 + instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::workspaceId
-                + "/status?projectPath=" + project.@org.eclipse.che.api.project.shared.dto.ProjectDescriptor::getPath()() + "&short=false";
+                + "/status?projectPath=" + project.@org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto::getPath()() + "&short=false";
 
             var request = new XMLHttpRequest();
             request.open("POST", url, false);
@@ -138,7 +138,7 @@ public class SyncGitServiceClient {
             }
 
             instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)("Can't get git status. " +
-                request.responseText);
+            request.responseText);
         } catch (exc) {
             console.log(exc.message);
             instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)(exc.message);
@@ -156,13 +156,13 @@ public class SyncGitServiceClient {
      * @param filePattern
      *         pattern of the files to be added, default is "." (all files are added)
      */
-    public native void add(@NotNull ProjectDescriptor project, boolean update, @Nullable List<String> filePattern) /*-{
+    public native void add(@NotNull ProjectConfigDto project, boolean update, @Nullable List<String> filePattern) /*-{
         var instance = this;
         try {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
                 + "/git/"
                 + instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::workspaceId
-                + "/add?projectPath=" + project.@org.eclipse.che.api.project.shared.dto.ProjectDescriptor::getPath()();
+                + "/add?projectPath=" + project.@org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto::getPath()();
 
             var request = new XMLHttpRequest();
             request.open("POST", url, false);
@@ -171,7 +171,7 @@ public class SyncGitServiceClient {
 
             if (request.status != 204) {
                 instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)("Can't add changes to git. " +
-                    request.responseText);
+                request.responseText);
             }
         } catch (exc) {
             console.log(exc.message);
@@ -192,7 +192,7 @@ public class SyncGitServiceClient {
      * @param amend
      *         indicates that previous commit must be overwritten
      */
-    public native Revision commit(@NotNull ProjectDescriptor project, @NotNull String message, boolean all, boolean amend) /*-{
+    public native Revision commit(@NotNull ProjectConfigDto project, @NotNull String message, boolean all, boolean amend) /*-{
         var instance = this;
         try {
             var dtoFactory = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::dtoFactory;
@@ -200,7 +200,7 @@ public class SyncGitServiceClient {
             var url = instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::restContext
                 + "/git/"
                 + instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::workspaceId
-                + "/commit?projectPath=" + project.@org.eclipse.che.api.project.shared.dto.ProjectDescriptor::getPath()();
+                + "/commit?projectPath=" + project.@org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto::getPath()();
 
             var request = new XMLHttpRequest();
             request.open("POST", url, false);
@@ -212,7 +212,7 @@ public class SyncGitServiceClient {
             }
 
             instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)("Can't commit changes. " +
-                request.responseText);
+            request.responseText);
         } catch (exc) {
             console.log(exc.message);
             instance.@com.codenvy.ide.factory.client.utils.SyncGitServiceClient::processError(Ljava/lang/String;)(exc.message);
@@ -222,16 +222,16 @@ public class SyncGitServiceClient {
     private void updateGitProvider() {
         CurrentProject currentProject = appContext.getCurrentProject();
         if (currentProject != null) {
-            ProjectDescriptor rootProjectDescriptor = currentProject.getRootProject();
-            if (rootProjectDescriptor.getAttributes() == null) {
-                rootProjectDescriptor.setAttributes(new HashMap<String, List<String>>());
+            ProjectConfigDto rootProjectConfig = currentProject.getRootProject();
+            if (rootProjectConfig.getAttributes() == null) {
+                rootProjectConfig.setAttributes(new HashMap<>());
 
-                rootProjectDescriptor.getAttributes().put("vcs.provider.name", new ArrayList<>(Collections.singletonList("git")));
-            } else if (rootProjectDescriptor.getAttributes().get("vcs.provider.name") == null
-                       || rootProjectDescriptor.getAttributes().get("vcs.provider.name").isEmpty()) {
-                rootProjectDescriptor.getAttributes().put("vcs.provider.name", new ArrayList<>(Collections.singletonList("git")));
+                rootProjectConfig.getAttributes().put("vcs.provider.name", new ArrayList<>(Collections.singletonList("git")));
+            } else if (rootProjectConfig.getAttributes().get("vcs.provider.name") == null
+                       || rootProjectConfig.getAttributes().get("vcs.provider.name").isEmpty()) {
+                rootProjectConfig.getAttributes().put("vcs.provider.name", new ArrayList<>(Collections.singletonList("git")));
             } else {
-                rootProjectDescriptor.getAttributes().get("vcs.provider.name").add("git");
+                rootProjectConfig.getAttributes().get("vcs.provider.name").add("git");
             }
         }
     }
@@ -247,7 +247,7 @@ public class SyncGitServiceClient {
         return dtoFactory.toJson(addRequest);
     }
 
-    private String createInitRequest(ProjectDescriptor project) {
+    private String createInitRequest(ProjectConfigDto project) {
         InitRequest initRequest = dtoFactory.createDto(InitRequest.class);
         initRequest.setWorkingDir(project.getName());
         initRequest.setInitCommit(true);
