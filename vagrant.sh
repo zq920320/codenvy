@@ -18,7 +18,7 @@
 #
 
 # To use vagrant you should have next lines in /etc/hosts file:
-# 192.168.56.99 dev.box.com
+# 192.168.56.99 onprem.box.com
 
 
 getUserHelp() {
