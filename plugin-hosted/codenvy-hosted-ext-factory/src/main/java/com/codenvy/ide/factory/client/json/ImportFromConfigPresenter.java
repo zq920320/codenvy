@@ -64,7 +64,7 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
         importerCallback = new AsyncCallback<ProjectConfigDto>() {
             @Override
             public void onSuccess(ProjectConfigDto result) {
-                importNotification.setMessage(factoryLocalization.clonedSource());
+                importNotification.setMessage(factoryLocalization.clonedSource(result.getName()));
                 importNotification.setType(Notification.Type.INFO);
                 importNotification.setStatus(Notification.Status.FINISHED);
                 eventBus.fireEvent(new OpenProjectEvent(result));
