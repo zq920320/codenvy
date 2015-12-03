@@ -238,32 +238,32 @@ fi
 
 if [ ${MULTI_SERVER} == true ]; then
   # Copy tomcats for multi-server environment
-  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-tomcat-api.zip
-  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-tomcat-site.zip
-  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/analytics-tomcat.zip
-  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-tomcat-ext-server.zip
-  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-api/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-api.zip
+  cp -f onpremises-ide-packaging-tomcat-site/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-site.zip
+  cp -f ../analytics/analytics-tomcat-pkg/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/analytics-tomcat.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
 
   # Open folder for multi server env
   cd ../deployment/puppet/vagrant-multi-vm-env
 
 elif [ ${SCALABLE_AIO} == true ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
-  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
-  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-tomcat-ext-server.zip
-  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-zip-terminal.zip
   cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
-  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-tomcat-ext-server.zip
-  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/codenvy_multi/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
 
   # Open folder for AIO env
   cd ../deployment/puppet/vagrant-scalable-aio
 
 else
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
-  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
-  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-tomcat-ext-server.zip
-  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/codenvy/files/onpremises-ide-packaging-zip-terminal.zip
+  cp -f onpremises-ide-packaging-tomcat-codenvy-allinone/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-codenvy-allinone.zip
+  cp -f onpremises-ide-packaging-tomcat-ext-server/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-tomcat-ext-server.zip
+  cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/all_in_one/files/onpremises-ide-packaging-zip-terminal.zip
   cp -f onpremises-ide-packaging-tomcat-im/target/*.zip ../deployment-onprem/puppet/modules/codenvy_im/files/onpremises-ide-packaging-tomcat-im.zip
 
   # Open folder for AIO env
