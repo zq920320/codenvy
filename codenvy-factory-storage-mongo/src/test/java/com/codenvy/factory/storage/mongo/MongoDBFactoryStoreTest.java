@@ -37,7 +37,7 @@ import org.eclipse.che.api.factory.shared.dto.Author;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.factory.shared.dto.Ide;
 import org.eclipse.che.api.factory.shared.dto.OnAppLoaded;
-import org.eclipse.che.api.factory.shared.dto.OnProjectOpened;
+import org.eclipse.che.api.factory.shared.dto.OnProjectsLoaded;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
 import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
@@ -149,7 +149,7 @@ public class MongoDBFactoryStoreTest {
 
         Ide ide = DtoFactory.getInstance().createDto(Ide.class)
                             .withOnAppLoaded(DtoFactory.getInstance().createDto(OnAppLoaded.class))
-                            .withOnProjectOpened(DtoFactory.getInstance().createDto(OnProjectOpened.class));
+                            .withOnProjectsLoaded(DtoFactory.getInstance().createDto(OnProjectsLoaded.class));
 
         Action welcomePage = DtoFactory.getInstance().createDto(Action.class).withId("openWelcomePage");
         Map<String, String> welcomePageProperties = new HashMap<>();
@@ -171,7 +171,7 @@ public class MongoDBFactoryStoreTest {
         findReplaceProperties.put("replaceMode", "content");
         findReplace.setProperties(findReplaceProperties);
 
-        ide.getOnProjectOpened().getActions().add(findReplace);
+        ide.getOnProjectsLoaded().getActions().add(findReplace);
 
         Set<FactoryImage> images = new HashSet<>();
         String id = store.saveFactory(factory, images);
