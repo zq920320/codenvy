@@ -25,13 +25,16 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
+import org.eclipse.che.api.factory.shared.dto.Action;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
 import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
+import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.Notification;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * @author Sergii Leschenko
@@ -39,11 +42,12 @@ import javax.inject.Inject;
  */
 @Singleton
 public class AcceptFactoryHandler {
-    private final FactoryLocalizationConstant factoryLocalization;
-    private final FactoryProjectImporter      factoryProjectImporter;
-    private final EventBus                    eventBus;
-    private final AppContext                  appContext;
-    private final GreetingPartPresenter       greetingPartPresenter;
+    private final FactoryLocalizationConstant  factoryLocalization;
+    private final FactoryProjectImporter       factoryProjectImporter;
+    private final EventBus                     eventBus;
+    private final AppContext                   appContext;
+    private final GreetingPartPresenter        greetingPartPresenter;
+    private final ActionManager                actionManager;
 
     private Notification notification;
 
@@ -52,12 +56,14 @@ public class AcceptFactoryHandler {
                                 FactoryProjectImporter factoryProjectImporter,
                                 EventBus eventBus,
                                 AppContext appContext,
-                                GreetingPartPresenter greetingPartPresenter) {
+                                GreetingPartPresenter greetingPartPresenter,
+                                ActionManager actionManager) {
         this.factoryProjectImporter = factoryProjectImporter;
         this.factoryLocalization = factoryLocalization;
         this.eventBus = eventBus;
         this.appContext = appContext;
         this.greetingPartPresenter = greetingPartPresenter;
+        this.actionManager = actionManager;
     }
 
     /**
@@ -101,6 +107,7 @@ public class AcceptFactoryHandler {
                                                   public void onSuccess(Void result) {
                                                       notification.setStatus(Notification.Status.FINISHED);
                                                       notification.setMessage(factoryLocalization.cloningSource());
+                                                      performActions(factory);
                                                   }
 
                                                   @Override
@@ -110,5 +117,12 @@ public class AcceptFactoryHandler {
                                                       notification.setMessage(throwable.getMessage());
                                                   }
                                               });
+    }
+
+    private void performActions(final Factory factory) {
+        final List<Action> actions = factory.getIde().getOnProjectsLoaded().getActions();
+        for (Action action : actions) {
+            actionManager.performAction(action.getId(), action.getProperties());
+        }
     }
 }
