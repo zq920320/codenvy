@@ -125,7 +125,7 @@ public class FactoryProjectImporter {
                 .catchError(new Operation<PromiseError>() {
                     @Override
                     public void apply(PromiseError promiseError) throws OperationException {
-                        /** If it is unable to import any number of projects then factory  import status will be success anyway*/
+                        // If it is unable to import any number of projects then factory import status will be success anyway
                         callback.onSuccess(null);
                     }
                 });
