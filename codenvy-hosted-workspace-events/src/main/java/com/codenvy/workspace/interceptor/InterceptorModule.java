@@ -17,46 +17,54 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import com.codenvy.api.account.AddDefaultAccountIdInterceptor;
 import com.google.inject.AbstractModule;
-import com.google.inject.matcher.Matchers;
 
-import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
 
+import static com.google.inject.matcher.Matchers.subclassesOf;
 import static org.eclipse.che.inject.Matchers.names;
+
+// TODO bind commented interceptors after memberships refactoring
 
 /**
  * Package api interceptors in guice container.
  *
  * @author Sergii Kabashniuk
+ * @author Yevhenii Voevodin
  */
 public class InterceptorModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        AddWorkspaceMemberInterceptor addWorkspaceMemberInterceptor = new AddWorkspaceMemberInterceptor();
-        RemoveWorkspaceMemberInterceptor removeWorkspaceMemberInterceptor = new RemoveWorkspaceMemberInterceptor();
-        CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
-        FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
-        FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
-        requestInjection(addWorkspaceMemberInterceptor);
-        requestInjection(factoryWorkspaceInterceptor);
-        requestInjection(createWorkspaceInterceptor);
-        requestInjection(factoryResourcesInterceptor);
-        requestInjection(removeWorkspaceMemberInterceptor);
+//        final FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
+//        requestInjection(factoryWorkspaceInterceptor);
+//
+//        final CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
+//        requestInjection(createWorkspaceInterceptor);
+//        bindInterceptor(subclassesOf(WorkspaceService.class),
+//                        names("create"),
+//                        factoryWorkspaceInterceptor,
+//                        createWorkspaceInterceptor);
+//
+//        final FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
+//        requestInjection(factoryResourcesInterceptor);
+//        bindInterceptor(subclassesOf(WorkspaceManager.class), names("createWorkspace"), factoryResourcesInterceptor);
+//
+//        final AddWorkspaceMemberInterceptor addWorkspaceMemberInterceptor = new AddWorkspaceMemberInterceptor();
+//        requestInjection(addWorkspaceMemberInterceptor);
+//        bindInterceptor(subclassesOf(WorkspaceService.class), names("addMember"), addWorkspaceMemberInterceptor);
+//
+//        final RemoveWorkspaceMemberInterceptor removeWorkspaceMemberInterceptor = new RemoveWorkspaceMemberInterceptor();
+//        requestInjection(removeWorkspaceMemberInterceptor);
+//        bindInterceptor(subclassesOf(WorkspaceService.class), names("removeMember"), removeWorkspaceMemberInterceptor);
 
-        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        names("addMember"),
-                        addWorkspaceMemberInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        names("create"),
-                        factoryWorkspaceInterceptor, createWorkspaceInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceManager.class),
-                        names("createWorkspace"),
-                        factoryResourcesInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceService.class),
-                        names("removeMember"),
-                        removeWorkspaceMemberInterceptor);
+        final AddDefaultAccountIdInterceptor addDefaultAccountIdInterceptor = new AddDefaultAccountIdInterceptor();
+        requestInjection(addDefaultAccountIdInterceptor);
+        bindInterceptor(subclassesOf(WorkspaceService.class), names("create"), addDefaultAccountIdInterceptor);
+        bindInterceptor(subclassesOf(WorkspaceService.class), names("startById"), addDefaultAccountIdInterceptor);
+        bindInterceptor(subclassesOf(WorkspaceService.class), names("startByName"), addDefaultAccountIdInterceptor);
+        bindInterceptor(subclassesOf(WorkspaceService.class), names("startTemporary"), addDefaultAccountIdInterceptor);
 
         bind(com.codenvy.workspace.listener.StopAppOnRemoveWsListener.class).asEagerSingleton();
     }

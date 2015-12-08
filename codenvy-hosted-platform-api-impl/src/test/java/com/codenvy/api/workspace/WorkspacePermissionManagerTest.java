@@ -50,7 +50,7 @@ public class WorkspacePermissionManagerTest {
     @Test(expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "Workspace start rejected. User '.+' doesn't own account '.+'")
     public void rejectWorkspaceStartWithIdOfAccountWhichIsNotOwnedByCurrentUser() throws Exception {
-        Account account = new Account().withId("account123");
+        Account account = new Account("account123");
         when(accountDao.getById(account.getId())).thenReturn(account);
         Member member = new Member().withUserId("user123").withRoles(singletonList("account/member"));
         when(accountDao.getMembers(anyString())).thenReturn(singletonList(member));
@@ -60,7 +60,7 @@ public class WorkspacePermissionManagerTest {
 
     @Test
     public void allowWorkspaceStartWithIdOfAccountWhichIsOwnedByCurrentUser() throws Exception {
-        Account account = new Account().withId("account123");
+        Account account = new Account("account123");
         when(accountDao.getById(account.getId())).thenReturn(account);
         Member member = new Member().withUserId("user123").withRoles(singletonList("account/owner"));
         when(accountDao.getMembers(anyString())).thenReturn(singletonList(member));

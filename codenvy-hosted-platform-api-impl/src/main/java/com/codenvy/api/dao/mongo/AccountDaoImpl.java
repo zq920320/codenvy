@@ -375,10 +375,10 @@ public class AccountDaoImpl implements AccountDao {
         for (String workspaceId : workspaceIds) {
             workspaces.add(workspaceDao.get(workspaceId));
         }
-        return new Account().withId(accountObject.getString("id"))
-                            .withName(accountObject.getString("name"))
-                            .withAttributes(asMap(accountObject.get("attributes")))
-                            .withWorkspaces(workspaces);
+        return new Account(accountObject.getString("id"),
+                           accountObject.getString("name"),
+                           workspaces,
+                           asMap(accountObject.get("attributes")));
     }
 
     /**

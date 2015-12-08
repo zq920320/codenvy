@@ -317,9 +317,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
         UsersWorkspaceImpl workspace = mock(UsersWorkspaceImpl.class);
         when(workspace.getId()).thenReturn("workspace123");
         when(workspaceDao.get("workspace123")).thenReturn(workspace);
-        return new Account().withId("test_account_id")
-                            .withName("test_account_name")
-                            .withAttributes(attributes)
-                            .withWorkspaces(new ArrayList<>(singletonList(workspace)));
+        return new Account("test_account_id", "test_account_name", new ArrayList<>(singletonList(workspace)), attributes);
     }
 }

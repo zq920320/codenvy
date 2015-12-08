@@ -101,7 +101,7 @@ public class AccountWorkspaceHooksTest {
     @Test
     public void allowWorkspaceStartWithAccountIdWhichIsEqualToWorkspacesAccount() throws Exception {
         UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
-        Account account = new Account().withId("account123");
+        Account account = new Account("account123");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
         workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), "account123");
@@ -115,7 +115,7 @@ public class AccountWorkspaceHooksTest {
                                             "which is different from specified one '.+'")
     public void rejectWorkspaceStartWithAccountIdWhichIsNotEqualToWorkspacesAccount() throws Exception {
         UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
-        Account account = new Account().withId("321account");
+        Account account = new Account("321account");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
         workspaceHooks.beforeStart(workspace, workspace.getDefaultEnvName(), "account123");
@@ -133,7 +133,7 @@ public class AccountWorkspaceHooksTest {
     public void workspaceShouldBeRemovedFromAccountWhenWorkspaceIsRemoved() throws Exception {
         UsersWorkspace workspace = mock(UsersWorkspace.class);
         when(workspace.getId()).thenReturn("workspace123");
-        Account account = new Account();
+        Account account = new Account("test_id");
         account.setWorkspaces(new ArrayList<>(singletonList(workspace)));
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 

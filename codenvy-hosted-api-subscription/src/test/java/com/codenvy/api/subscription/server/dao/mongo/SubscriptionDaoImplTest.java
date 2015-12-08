@@ -431,8 +431,6 @@ public class SubscriptionDaoImplTest extends BaseDaoTest {
         attributes.put("attr1", "value1");
         attributes.put("attr2", "value2");
         attributes.put("attr3", "value3");
-        return new Account().withId("test_account_id")
-                            .withName("test_account_name")
-                            .withAttributes(attributes);
+        return new Account("test_account_id", "test_account_name", null, attributes);
     }
 }

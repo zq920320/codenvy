@@ -52,26 +52,26 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(AddWorkspaceMemberInterceptor.class);
 
     private static final String MAIL_TEMPLATE = "email-templates/user_added_into_workspace.html";
-
-    @Inject
-    private MailSenderClient mailSenderClient;
-
-    @Inject
-    private UserDao userDao;
-
-    @Inject
-    private AccountDao accountDao;
-
-    @Inject
-    private MembershipDao membershipDao;
-
-    @Inject
-    @Named("api.endpoint")
-    private String apiEndpoint;
-
-    @Inject
-    @Named("workspace.email.added.member.enabled")
-    private boolean sendEmailOnMemberAdded;
+//
+//    @Inject
+//    private MailSenderClient mailSenderClient;
+//
+//    @Inject
+//    private UserDao userDao;
+//
+//    @Inject
+//    private AccountDao accountDao;
+//
+//    @Inject
+//    private MembershipDao membershipDao;
+//
+//    @Inject
+//    @Named("api.endpoint")
+//    private String apiEndpoint;
+//
+//    @Inject
+//    @Named("workspace.email.added.member.enabled")
+//    private boolean sendEmailOnMemberAdded;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

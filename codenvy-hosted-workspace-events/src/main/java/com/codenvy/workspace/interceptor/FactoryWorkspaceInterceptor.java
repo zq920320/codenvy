@@ -49,19 +49,19 @@ import static javax.ws.rs.core.UriBuilder.fromUri;
  * @author Max Shaposhnik (mshaposhnik@codenvy.com)
  */
 public class FactoryWorkspaceInterceptor implements MethodInterceptor {
-
-    @Inject
-    @Named("api.endpoint")
-    private String apiEndPoint;
-
-    @Inject
-    WorkspaceManager workspaceManager;
-
-    @Inject
-    AccountDao accountDao;
-
-    @Inject
-    MembershipDao membershipDao;
+//
+//    @Inject
+//    @Named("api.endpoint")
+//    private String apiEndPoint;
+//
+//    @Inject
+//    WorkspaceManager workspaceManager;
+//
+//    @Inject
+//    AccountDao accountDao;
+//
+//    @Inject
+//    MembershipDao membershipDao;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {

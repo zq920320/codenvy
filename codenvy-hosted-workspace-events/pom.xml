@@ -42,6 +42,10 @@
             <artifactId>codenvy-hosted-mail-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-platform-api-impl</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
