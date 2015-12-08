@@ -478,22 +478,22 @@ public class WorkspaceDaoImplTest {
         sourceParameters.put("source-parameter-2", "value2");
         project1.setSource(new SourceStorageImpl("sources-type", "sources-location", sourceParameters));
 
-        final ProjectConfigImpl module = new ProjectConfigImpl();
-        module.setName("module");
-        module.setPath("/module");
-        module.setType("sometype");
-        module.setDescription("description");
-        module.setMixins(singletonList("git"));
+        final ProjectConfigImpl innerModule = new ProjectConfigImpl();
+        innerModule.setName("module");
+        innerModule.setPath("/module");
+        innerModule.setType("sometype");
+        innerModule.setDescription("description");
+        innerModule.setMixins(singletonList("git"));
 
-        final ProjectConfigImpl module_top = new ProjectConfigImpl();
-        module_top.setName("module2");
-        module_top.setPath("/module2");
-        module_top.setType("sometype2");
-        module_top.setDescription("description2");
-        module_top.setMixins(singletonList("git"));
-        module_top.setModules(singletonList(module));
+        final ProjectConfigImpl topModule = new ProjectConfigImpl();
+        topModule.setName("module2");
+        topModule.setPath("/module2");
+        topModule.setType("sometype2");
+        topModule.setDescription("description2");
+        topModule.setMixins(singletonList("git"));
+        topModule.setModules(singletonList(innerModule));
 
-        project1.setModules(singletonList(module_top));
+        project1.setModules(singletonList(topModule));
 
         final List<ProjectConfigImpl> projects = singletonList(project1);
 
