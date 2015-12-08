@@ -78,6 +78,21 @@ import static java.util.Objects.requireNonNull;
  *                      }
  *                  ]
  *              },
+ *              "modules": [
+ *                  {
+ *                      "name":"my-module",
+ *                      "path":"/path/to/project/my-module",
+ *                      "type":"maven",
+ *                      "mixins" : [ "mixinType1", "mixinType2" ],
+ *                      "description" : "This is module description",
+ *                      "attributes" : [
+ *                          {
+ *                              "name" : "module-attribute-1",
+ *                              "value" : [ "value1", "value2" ]
+ *                          }
+ *                      ]
+ *                  }
+ *              ],
  *              "mixins" : [ "mixinType1", "mixinType2" ],
  *              "attributes" : [
  *                  {

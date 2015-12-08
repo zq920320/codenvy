@@ -153,7 +153,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         final List<Document> modules = (List<Document>)document.get("modules");
         if (modules != null) {
             projectConfig.setModules(modules.stream()
-                                            .map(UsersWorkspaceImplCodec::asModuleConfig)
+                                            .map(UsersWorkspaceImplCodec::asProjectConfig)
                                             .collect(toList()));
         }
 
@@ -167,7 +167,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         return projectConfig;
     }
 
-    private static Document asDocument(ProjectConfigImpl project) {
+    private static Document asDocument(ProjectConfig project) {
         final Document document = new Document().append("name", project.getName())
                                                 .append("path", project.getPath())
                                                 .append("type", project.getType())
@@ -188,44 +188,6 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
 
 
         return document;
-    }
-
-    @SuppressWarnings("unchecked") // contains safe casts - see #decode
-    private static ProjectConfigImpl asModuleConfig(Document document) {
-        final ProjectConfigImpl moduleConfig = new ProjectConfigImpl();
-        moduleConfig.setName(document.getString("name"));
-        moduleConfig.setPath(document.getString("path"));
-        moduleConfig.setType(document.getString("type"));
-        moduleConfig.setDescription(document.getString("description"));
-
-        final List<String> mixins = (List<String>)document.get("mixins");
-        moduleConfig.setMixins(mixins);
-
-        final List<Document> attributes = (List<Document>)document.get("attributes");
-        moduleConfig.setAttributes(attributes.stream()
-                                             .collect(toMap(d -> d.getString("name"), d -> (List<String>)d.get("value"))));
-
-        final List<Document> modules = (List<Document>)document.get("modules");
-        if (modules != null) {
-            moduleConfig.setModules(modules.stream()
-                                           .map(UsersWorkspaceImplCodec::asModuleConfig)
-                                           .collect(toList()));
-        }
-
-        return moduleConfig;
-    }
-
-    private static Document asDocument(ProjectConfig module) {
-        return new Document().append("name", module.getName())
-                             .append("path", module.getPath())
-                             .append("type", module.getType())
-                             .append("description", module.getDescription())
-                             .append("mixins", module.getMixins())
-                             .append("attributes", mapAsDocumentsList(module.getAttributes()))
-                             .append("modules", module.getModules()
-                                                      .stream()
-                                                      .map(UsersWorkspaceImplCodec::asDocument)
-                                                      .collect(toList()));
     }
 
     private static EnvironmentImpl asEnvironment(Document document) {
