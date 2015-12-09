@@ -21,7 +21,6 @@ import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.core.ApiException;
 import com.codenvy.api.dao.authentication.AuthenticationHandler;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.commons.user.UserImpl;
 
 import org.slf4j.Logger;
@@ -52,13 +51,8 @@ public class OrgServiceAuthenticationHandler implements AuthenticationHandler {
         }
 
         try {
-            if (userDao.authenticate(userName, password)) {
-                User user = userDao.getByAlias(userName);
-                return new UserImpl(userName, user.getId(), null, Collections.<String>emptyList(), false);
-            } else {
-                LOG.debug("UserDao fail to authenticate");
-                throw new AuthenticationException(401, "Authentication failed. Please check username and password.");
-            }
+            String userId = userDao.authenticate(userName, password);
+            return new UserImpl(userName, userId, null, Collections.<String>emptyList(), false);
         } catch (ApiException e) {
             LOG.debug(e.getLocalizedMessage(), e);
             throw new AuthenticationException(401, "Authentication failed. Please check username and password.");

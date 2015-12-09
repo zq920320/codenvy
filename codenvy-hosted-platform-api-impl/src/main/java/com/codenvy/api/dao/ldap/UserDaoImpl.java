@@ -22,6 +22,7 @@ import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.notification.EventService;
 
 import com.codenvy.api.event.user.RemoveUserEvent;
@@ -31,7 +32,6 @@ import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
 
-import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,18 +122,19 @@ public class UserDaoImpl implements UserDao {
     }
 
     @Override
-    public boolean authenticate(String alias, String password) throws NotFoundException, ServerException {
+    public String authenticate(String alias, String password) throws UnauthorizedException, ServerException {
         if (isNullOrEmpty(alias) || isNullOrEmpty(password)) {
-            LOG.warn("Can't perform authentication for user '{}'. Username or password is empty", alias);
-            return false;
+            throw new UnauthorizedException(
+                    String.format("Can't perform authentication for user '%s'. Username or password is empty", alias));
         }
+        User user;
         try {
-            User user = doGetByAlias(alias);
+            user = doGetByAlias(alias);
             if (user == null) {
                 user = doGetByName(alias);
             }
             if (user == null) {
-                throw new NotFoundException("User '" + alias + "' was not found");
+                throw new UnauthorizedException(format("Authentication failed for user '%s'", alias));
             }
             InitialLdapContext authContext = null;
             final String principal = formatDn(userDn, user.getId());
@@ -146,16 +147,15 @@ public class UserDaoImpl implements UserDao {
                 try {
                     authContext = contextFactory.createContext(principal, password);
                 } catch (AuthenticationException e2) {
-                    LOG.warn(format("Invalid password for user %s", principal));
-                    return false;
+                    throw new UnauthorizedException(format("Authentication failed for user '%s'", principal));
                 }
             } finally {
                 close(authContext);
             }
         } catch (NamingException e) {
-            throw new ServerException(format("Authentication failed for user '%s'", alias), e);
+            throw new ServerException(format("Error during authentication of user '%s'", alias), e);
         }
-        return true;
+        return user.getId();
     }
 
     @Override
@@ -300,6 +300,19 @@ public class UserDaoImpl implements UserDao {
             return doClone(user);
         } catch (NamingException e) {
             throw new ServerException(format("Unable get user '%s'", id), e);
+        }
+    }
+
+    @Override
+    public User getByName(String name) throws NotFoundException, ServerException {
+        try {
+            final User user = doGetByName(name);
+            if (user == null) {
+                throw new NotFoundException("User " + name + " was not found ");
+            }
+            return doClone(user);
+        } catch (NamingException e) {
+            throw new ServerException(format("Unable get user '%s'", name), e);
         }
     }
 
