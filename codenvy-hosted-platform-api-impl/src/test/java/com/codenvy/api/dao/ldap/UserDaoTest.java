@@ -22,12 +22,12 @@ import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.user.server.dao.User;
 
-import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -46,10 +46,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
 
 @Listeners(value = {MockitoTestNGListener.class})
@@ -113,40 +111,40 @@ public class UserDaoTest extends BaseTest {
 
     @Test
     public void shouldAuthenticateUserUsingAliases() throws Exception {
-        assertTrue(userDao.authenticate(users[0].getAliases().get(0), users[0].getPassword()));
+        assertEquals(userDao.authenticate(users[0].getAliases().get(0), users[0].getPassword()), users[0].getId());
     }
 
     @Test
     public void shouldAuthenticateUserUsingName() throws Exception {
-        assertTrue(userDao.authenticate(users[0].getName(), users[0].getPassword()));
+        assertEquals(userDao.authenticate(users[0].getName(), users[0].getPassword()), users[0].getId());
     }
 
-    @Test
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldNotAuthenticateUserWithWrongPassword() throws Exception {
-        assertFalse(userDao.authenticate(users[0].getName(), "invalid"));
+        userDao.authenticate(users[0].getName(), "invalid");
     }
 
-    @Test
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldNotAuthenticateUserWithEmptyAlias() throws Exception {
-        assertFalse(userDao.authenticate("", "valid"));
+        userDao.authenticate("", "valid");
     }
 
-    @Test
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldNotAuthenticateUserWithEmptyPassword() throws Exception {
-        assertFalse(userDao.authenticate(users[0].getName(), ""));
+        userDao.authenticate(users[0].getName(), "");
     }
 
-    @Test
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldNotAuthenticateUserWithNullAlias() throws Exception {
-        assertFalse(userDao.authenticate(null, "valid"));
+        userDao.authenticate(null, "valid");
     }
 
-    @Test
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldNotAuthenticateUserWithNullPassword() throws Exception {
-        assertFalse(userDao.authenticate(users[0].getName(), null));
+        userDao.authenticate(users[0].getName(), null);
     }
 
-    @Test(expectedExceptions = NotFoundException.class)
+    @Test(expectedExceptions = UnauthorizedException.class)
     public void shouldThrowNotFoundExceptionWhenAuthenticatingNotExistingUser() throws Exception {
         userDao.authenticate("not_found", "secret");
     }
@@ -309,6 +307,17 @@ public class UserDaoTest extends BaseTest {
     @Test
     public void shouldBeAbleToGetUserByAlias() throws Exception {
         final User user = userDao.getByAlias(users[2].getAliases().get(0));
+
+        assertEquals(user.getId(), users[2].getId());
+        assertEquals(user.getEmail(), users[2].getEmail());
+        assertEquals(user.getName(), users[2].getName());
+        assertEquals(user.getPassword(), null);
+        assertEquals(user.getAliases(), users[2].getAliases());
+    }
+
+    @Test
+    public void shouldBeAbleToGetUserByName() throws Exception {
+        final User user = userDao.getByName(users[2].getName());
 
         assertEquals(user.getId(), users[2].getId());
         assertEquals(user.getEmail(), users[2].getEmail());
