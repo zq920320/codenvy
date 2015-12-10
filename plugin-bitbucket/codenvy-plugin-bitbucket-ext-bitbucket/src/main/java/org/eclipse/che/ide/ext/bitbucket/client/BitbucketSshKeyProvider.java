@@ -18,17 +18,17 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.ext.ssh.client.SshKeyProvider;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
+import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
+import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
-import org.eclipse.che.ide.util.Config;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.validation.constraints.NotNull;
 
 import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
 import static org.eclipse.che.security.oauth.OAuthStatus.LOGGED_IN;
@@ -50,7 +50,7 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
 
     @Inject
     public BitbucketSshKeyProvider(@NotNull final BitbucketClientService bitbucketService,
-                                   @NotNull @Named("restContext") final String baseUrl,
+                                   @NotNull @RestContext final String baseUrl,
                                    @NotNull final BitbucketLocalizationConstant constant,
                                    @NotNull final NotificationManager notificationManager,
                                    @NotNull final DialogFactory dialogFactory) {

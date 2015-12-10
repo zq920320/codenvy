@@ -12,7 +12,6 @@ package org.eclipse.che.ide.ext.bitbucket.client;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
@@ -23,6 +22,7 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.AsyncRequestLoader;
+import org.eclipse.che.ide.rest.RestContext;
 
 import javax.validation.constraints.NotNull;
 
@@ -46,7 +46,7 @@ public class BitbucketClientService {
     private final AsyncRequestFactory asyncRequestFactory;
 
     @Inject
-    protected BitbucketClientService(@NotNull @Named("restContext") final String baseUrl,
+    protected BitbucketClientService(@NotNull @RestContext final String baseUrl,
                                      @NotNull final AsyncRequestLoader loader,
                                      @NotNull final AsyncRequestFactory asyncRequestFactory) {
         this.baseUrl = baseUrl + BITBUCKET;
