@@ -39,7 +39,9 @@ import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscribe
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * @author Sergii Leschenko
@@ -82,10 +84,33 @@ public class FactoryProjectImporter {
      * Import source projects
      */
     private void importProjects() {
-        final List<Promise<Void>> promises = new ArrayList<>();
+        projectServiceClient.getProjects(false).then(new Operation<List<ProjectConfigDto>>() {
+            @Override
+            public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
+                Set<String> projectNames = new HashSet<>();
+                for (ProjectConfigDto projectConfigDto : projectConfigs) {
+                    projectNames.add(projectConfigDto.getName());
+                }
+                importProjects(projectNames);
+            }
+        });
+    }
 
+    /**
+     * Import source projects and if it's already exist in workspace
+     * then show warning notification
+     *
+     * @param existedProjects
+     *         set of project names that already exist in workspace
+     */
+    private void importProjects(Set<String> existedProjects) {
+        final List<Promise<Void>> promises = new ArrayList<>();
         for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
             final String projectName = projectConfig.getName();
+            if (existedProjects.contains(projectName)) {
+                notificationManager.showWarning(localization.projectAlreadyImported(projectName));
+                continue;
+            }
             final Notification notification = new Notification(localization.cloningSource(projectName), Notification.Status.PROGRESS);
             notificationManager.showNotification(notification);
             final ImportProjectNotificationSubscriber notificationSubscriber = subscriberFactory.createSubscriber();

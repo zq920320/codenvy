@@ -42,12 +42,12 @@ import java.util.List;
  */
 @Singleton
 public class AcceptFactoryHandler {
-    private final FactoryLocalizationConstant  factoryLocalization;
-    private final FactoryProjectImporter       factoryProjectImporter;
-    private final EventBus                     eventBus;
-    private final AppContext                   appContext;
-    private final GreetingPartPresenter        greetingPartPresenter;
-    private final ActionManager                actionManager;
+    private final FactoryLocalizationConstant factoryLocalization;
+    private final FactoryProjectImporter      factoryProjectImporter;
+    private final EventBus                    eventBus;
+    private final AppContext                  appContext;
+    private final GreetingPartPresenter       greetingPartPresenter;
+    private final ActionManager               actionManager;
 
     private Notification notification;
 
@@ -74,7 +74,6 @@ public class AcceptFactoryHandler {
         if ((factory = appContext.getFactory()) == null) {
             return;
         }
-
         eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
             public void onExtServerStarted(final ExtServerStateEvent event) {

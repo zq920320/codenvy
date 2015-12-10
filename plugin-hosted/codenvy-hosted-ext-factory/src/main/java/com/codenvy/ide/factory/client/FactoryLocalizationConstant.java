@@ -42,6 +42,9 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("project.import.configuring.cloning.failed")
     String cloningSourceFailed(String projectName);
 
+    @Key("project.already.imported")
+    String projectAlreadyImported(String projectName);
+
     @Key("accept.oauth.login.prompt")
     String oAuthLoginPrompt(String host);
 
