@@ -17,7 +17,6 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.filter.FactoryWorkspaceIdEnvironmentInitializationFilter;
 import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
 import com.codenvy.service.http.ContinuousWorkspaceIdEnvInitFilter;
 import com.google.common.collect.ImmutableMap;
@@ -60,8 +59,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
         filter("/workspace", "/workspace/")
                 .through(com.codenvy.service.http.WorkspaceNameRequestParamInitializationFilter.class);
-        filter("/factory/*")
-                .through(FactoryWorkspaceIdEnvironmentInitializationFilter.class);
 
         filterRegex("^/(account|creditcard)/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                                       ImmutableMap.of("accountIdPosition", "3"));
