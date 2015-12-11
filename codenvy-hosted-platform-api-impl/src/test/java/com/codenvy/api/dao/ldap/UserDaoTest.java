@@ -387,7 +387,7 @@ public class UserDaoTest extends BaseTest {
         final User testUser = users[0];
 
         //prepare account
-        final Account testAccount = new Account().withId("account_id");
+        final Account testAccount = new Account("account_id");
         when(accountDao.getByOwner(testUser.getId())).thenReturn(singletonList(testAccount));
 
         //prepare account members

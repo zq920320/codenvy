@@ -150,9 +150,7 @@ public class SubscriptionServiceTest {
         ApplicationContextImpl.setCurrent(contextImpl);
         Map<String, String> attributes = new HashMap<>();
         attributes.put("secret", "bit secret");
-        account = new Account().withId(ACCOUNT_ID)
-                               .withName(ACCOUNT_NAME)
-                               .withAttributes(attributes);
+        account = new Account(ACCOUNT_ID, ACCOUNT_NAME, null, attributes);
 
         plan = DtoFactory.getInstance().createDto(Plan.class)
                          .withId(PLAN_ID)

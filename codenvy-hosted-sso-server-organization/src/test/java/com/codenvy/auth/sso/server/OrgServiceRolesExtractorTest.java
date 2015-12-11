@@ -155,7 +155,7 @@ public class OrgServiceRolesExtractorTest {
         member.withUserId(ticket.getPrincipal().getId()).withRoles(asList("account/owner", "account/member"));
         when(accountDao.getMembers("accId")).thenReturn(asList(member));
 
-        when(accountDao.getById("accId")).thenReturn(new Account());
+        when(accountDao.getById("accId")).thenReturn(new Account("accId"));
 
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), new HashSet<>(asList("user", "account/owner", "account/member")));
     }
