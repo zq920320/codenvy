@@ -28,7 +28,7 @@ import static org.eclipse.che.ide.ext.python.shared.ProjectAttributes.PYTHON_CAT
 /**
  * Provides information for registering GAE Python project type in project wizard.
  *
- * @author Artem Zatsarynnyy
+ * @author Artem Zatsarynnyi
  */
 public class GAEPythonProjectWizardRegistrar implements ProjectWizardRegistrar {
     private final List<Provider<? extends WizardPage<ImportProject>>> wizardPages;
