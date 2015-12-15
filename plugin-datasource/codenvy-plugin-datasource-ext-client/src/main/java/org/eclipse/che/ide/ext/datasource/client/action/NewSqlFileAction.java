@@ -18,7 +18,7 @@ import com.google.inject.Inject;
 /**
  * IDE action to create a new SQL file.
  *
- * @author Artem Zatsarynnyy
+ * @author Artem Zatsarynnyi
  */
 public class NewSqlFileAction extends AbstractNewResourceAction {
 

@@ -28,7 +28,7 @@ import static org.eclipse.che.ide.ext.php.shared.ProjectAttributes.PHP_CATEGORY;
 /**
  * Provides information for registering GAE PHP project type in project wizard.
  *
- * @author Artem Zatsarynnyy
+ * @author Artem Zatsarynnyi
  */
 public class GAEPhpProjectWizardRegistrar implements ProjectWizardRegistrar {
     private final List<Provider<? extends WizardPage<ImportProject>>> wizardPages;

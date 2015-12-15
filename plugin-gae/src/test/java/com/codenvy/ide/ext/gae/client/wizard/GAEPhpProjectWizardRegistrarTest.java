@@ -25,7 +25,7 @@ import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
 
-/** @author Artem Zatsarynnyy */
+/** @author Artem Zatsarynnyi */
 @RunWith(MockitoJUnitRunner.class)
 public class GAEPhpProjectWizardRegistrarTest {
     @Mock
