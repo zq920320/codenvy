@@ -343,9 +343,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         */
         bind(ProfileMigrator.class).asEagerSingleton();
 
-        /*
-        install(new com.codenvy.workspace.interceptor.InterceptorModule()); // temporarrily disabled, needs MemberhsipDao
-        */
+        install(new com.codenvy.workspace.interceptor.InterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerInterceptorModule());
         install(new com.codenvy.auth.sso.server.deploy.SsoServerModule());
 
@@ -425,5 +423,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                      .to(DummyPermissionManager.class);
 
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
+
+        bind(com.codenvy.api.account.DefaultAccountCreator.class);
     }
 }

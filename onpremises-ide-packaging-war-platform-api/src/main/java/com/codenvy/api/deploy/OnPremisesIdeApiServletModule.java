@@ -59,7 +59,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
         filter("/workspace", "/workspace/")
                 .through(com.codenvy.service.http.WorkspaceNameRequestParamInitializationFilter.class);
-
         filterRegex("^/(account|creditcard)/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                                       ImmutableMap.of("accountIdPosition", "3"));
         filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
