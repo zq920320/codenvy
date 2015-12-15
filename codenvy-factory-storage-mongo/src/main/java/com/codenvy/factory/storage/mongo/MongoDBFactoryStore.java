@@ -18,6 +18,9 @@
 package com.codenvy.factory.storage.mongo;
 
 
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoException;
+import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -26,7 +29,7 @@ import com.mongodb.util.JSON;
 
 import org.bson.Document;
 import org.bson.types.Binary;
-import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.server.FactoryImage;
@@ -41,6 +44,7 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,6 +57,40 @@ import static java.lang.String.format;
 
 /**
  * MongoDB implementation of {@link FactoryStore}
+ * 
+ * Storage schema:
+ * <pre>
+ * {
+ *  "_id" : "ihb2r9ys1uk4lqxk", 
+ *  "factory" : {
+ *                "v" : "4.0", 
+ *                "workspace" : {
+ *                    ...
+ *                }, 
+ *                "ide" : {
+ *                    "onProjectOpened" : {
+ *                        "actions" : [ 
+ *                        ...
+ *                        ]
+ *                     }
+ *                }, 
+ *                "creator" : {
+ *                    "created" : 1448271625116, 
+ *                    "userId" : "user9s7lxyvk6eqzgb7t" 
+ *                } 
+ * }, 
+ * "images" : [   
+ *              {
+ *                "name" : "o9urwt58gnfjs11j",
+ *                "type" : "image/jpeg",
+ *                "data" : "<binary_data>"
+ *               }
+ *  ] 
+ * }
+ *
+ * </pre>
+ * 
+ * @author Max Shaposhnik
  */
 
 @Singleton
@@ -76,14 +114,14 @@ public class MongoDBFactoryStore implements FactoryStore {
                                @Named("factory.storage.db.collection") String collectionName) {
         factories = db.getCollection(collectionName, Document.class);
         factories.createIndex(new Document("_id", 1), new IndexOptions().unique(true));
+        factories.createIndex(new Document("factory.name", 1).append("factory.creator.userId", 1), new IndexOptions().unique(true));
     }
 
 
     @Override
-    public String saveFactory(Factory factory, Set<FactoryImage> images) throws ApiException {
-
+    public String saveFactory(Factory factory, Set<FactoryImage> images) throws ConflictException, ServerException {
         if (factory == null) {
-            throw new ServerException("The factory shouldn't be null");
+            throw new NullPointerException("The factory shouldn't be null");
         }
         factory.setId(NameGenerator.generate("", 16));
         final List<Document> imageList = images.stream().map(one -> new Document().append("name", one.getName())
@@ -93,19 +131,40 @@ public class MongoDBFactoryStore implements FactoryStore {
         Document factoryDocument = new Document("_id", factory.getId()).append("factory",
                                                                                Document.parse(encode(DtoFactory.getInstance().toJson(factory))))
                                                                        .append("images", imageList);
-        factories.insertOne(factoryDocument);
+        try {                                                                       
+            factories.insertOne(factoryDocument);
+        } catch (MongoWriteException ex) {
+             if (ex.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
+                 throw new ConflictException("You already have factory with given name. Please, choose another one.");
+             } else {
+                 throw new ServerException("Unable to store factory: " + ex.getMessage(), ex);
+             }
+        } catch (MongoException e) {
+            throw new ServerException("Unable to store factory: " + e.getMessage(), e);
+        }
         return factory.getId();
     }
 
     @Override
-    public void removeFactory(String factoryId) throws ApiException {
-        if (factories.deleteOne(new Document("_id", factoryId)).getDeletedCount() == 0) {
-            throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
+    public void removeFactory(String factoryId) throws NotFoundException, ServerException {
+        if (factoryId == null) {
+            throw new NullPointerException("The factory Id shouldn't be null");
+        }
+        
+        try { 
+            if (factories.deleteOne(new Document("_id", factoryId)).getDeletedCount() == 0) {
+                throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
+            }
+        } catch (MongoException e) {
+            throw new ServerException("Unable to remove factory " + factoryId, e);
         }
     }
 
     @Override
-    public Factory getFactory(String factoryId) throws ApiException {
+    public Factory getFactory(String factoryId) throws NotFoundException, ServerException {
+        if (factoryId == null) {
+            throw new NullPointerException("The factory Id shouldn't be null");
+        }
         final FindIterable<Document> findIt = factories.find(new Document("_id", factoryId));
         if (findIt.first() == null) {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
@@ -122,13 +181,17 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public List<Factory> findByAttribute(Pair<String, String>... attributes) throws ApiException {
-        List<Factory> result = new ArrayList<>();
+    public List<Factory> findByAttribute(int maxItems, int skipCount, List<Pair<String, String>> attributes) throws IllegalArgumentException  {
+        if (skipCount < 0) {
+            throw new IllegalArgumentException("'skipCount' parameter is negative.");
+        }
+        
+        final List<Factory> result = new ArrayList<>();
         Document query = new Document();
         for (Pair<String, String> one : attributes) {
             query.append(format("factory.%s", one.first), one.second);
         }
-        final FindIterable<Document> findIt = factories.find(query);
+        final FindIterable<Document> findIt = factories.find(query).skip(skipCount).limit(maxItems);
         for (Document one : findIt) {
             String decoded = decode(JSON.serialize(one.get("factory", Document.class)));
             Factory factory =
@@ -139,14 +202,19 @@ public class MongoDBFactoryStore implements FactoryStore {
         return result;
     }
 
+    @SuppressWarnings("unchecked") //"images" is always list of documents
     @Override
-    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws ApiException {
+    public Set<FactoryImage> getFactoryImages(String factoryId, String imageId) throws NotFoundException {
+        if (factoryId == null) {
+            throw new NullPointerException("The images factory Id shouldn't be null");
+        }
+        
         final FindIterable<Document> findIt = factories.find(new Document("_id", factoryId));
         Document res =  findIt.first();
         if (res == null) {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
-        Set<FactoryImage> images = new HashSet<>();
+        final Set<FactoryImage> images = new HashSet<>();
 
         for (Document obj : (List<Document>)res.get("images")) {
             try {
@@ -175,13 +243,17 @@ public class MongoDBFactoryStore implements FactoryStore {
      * @return - if of stored factory
      * @throws org.eclipse.che.api.core.NotFoundException
      *         if the given factory ID is not found
-     * @throws org.eclipse.che.api.core.ServerException
-     *         if factory is null
+     * @throws java.lang.IllegalArgumentException
+     *         if {@code factoryId} or {@code factory} is null
      */
     @Override
-    public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ServerException {
+    public String updateFactory(String factoryId, Factory factory) throws NotFoundException {
+        if (factoryId == null) {
+            throw new NullPointerException("The update factory Id shouldn't be null");
+        }
+        
         if (factory == null) {
-            throw new ServerException("The factory replacement shouldn't be null");
+            throw new NullPointerException("The factory replacement shouldn't be null");
         }
 
         final Factory clonedFactory = DtoFactory.getInstance().clone(factory);
