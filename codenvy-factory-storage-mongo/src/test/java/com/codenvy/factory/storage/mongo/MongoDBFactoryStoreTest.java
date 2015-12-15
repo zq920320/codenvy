@@ -29,6 +29,7 @@ import com.mongodb.util.JSON;
 import org.bson.Document;
 import org.bson.codecs.BinaryCodec;
 import org.bson.codecs.configuration.CodecRegistries;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.server.FactoryImage;
@@ -53,6 +54,7 @@ import org.testng.Assert;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -94,7 +96,7 @@ public class MongoDBFactoryStoreTest {
 
 
     @Test
-    public void testSaveFactory() throws Exception {
+    public void shouldSaveFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
         factory.setV("4.0");
 
@@ -186,17 +188,16 @@ public class MongoDBFactoryStoreTest {
 
     /**
      * Checks we can't save a null factory
-     * Expects a server exception
+     * Expects a shouldNotSaveNullFactory exception
      * @throws Exception
      */
-    @Test(expectedExceptions = ServerException.class)
-    public void testSaveNulFactory() throws Exception {
+    @Test(expectedExceptions = NullPointerException.class)
+    public void shouldNotSaveNullFactory() throws Exception {
         store.saveFactory(null, null);
-
     }
 
     @Test
-    public void testRemoveFactory() throws Exception {
+    public void shouldRemoveFactory() throws Exception {
         String id = "123412341";
         Document obj = new Document("_id", id).append("key", "value");
         collection.insertOne(obj);
@@ -205,10 +206,32 @@ public class MongoDBFactoryStoreTest {
 
         assertNull(collection.find(new Document("_id", id)).first());
     }
+    
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldNotSaveFactoryWithSameNameAndUser() throws Exception {
+
+        Set<FactoryImage> images = new HashSet<>();
+
+        Factory factory1 = DtoFactory.getInstance().createDto(Factory.class)
+                                        .withName("testName")
+                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
+                                                               .withUserId("userOK"));
+
+        Factory factory2 = DtoFactory.getInstance().createDto(Factory.class)
+                                        .withName("testName")
+                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
+                                                               .withUserId("userOK"))
+                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
+                                                                 .withName("wsName"));
+
+        store.saveFactory(factory1, images);
+        store.saveFactory(factory2, images);
+    }
+
 
 
     @Test
-    public void testGetFactoryImages() throws Exception {
+    public void shouldGetFactoryImages() throws Exception {
         String id = "testid1234314";
 
         Set<FactoryImage> images = new HashSet<>();
@@ -245,7 +268,7 @@ public class MongoDBFactoryStoreTest {
 
     @SuppressWarnings("unchecked")
     @Test
-    public void testGetFactoryByAttributes() throws Exception {
+    public void shouldGetFactoryByAttributes() throws Exception {
 
         Set<FactoryImage> images = new HashSet<>();
 
@@ -273,18 +296,20 @@ public class MongoDBFactoryStoreTest {
         store.saveFactory(factory2, images);
         store.saveFactory(factory3, images);
 
-        assertEquals(store.findByAttribute(Pair.of("creator.userId", "userOK")).size(), 3);
-        assertEquals(store.findByAttribute(Pair.of("workspace.name", "wsName")).size(), 2);
-        assertEquals(store.findByAttribute(Pair.of("workspace.name", "wsName"), Pair.of("workspace.projects.type", "projectType")).size(), 1);
-        assertEquals(store.findByAttribute(Pair.of("creator.userId", "userOK"), Pair.of("workspace.projects.type", "projectType")).size(), 1);
+        assertEquals(store.findByAttribute(0, 0, Collections.singletonList(Pair.of("creator.userId", "userOK"))).size(), 3);
+        assertEquals(store.findByAttribute(0, 0, Collections.singletonList(Pair.of("workspace.name", "wsName"))).size(), 2);
+        assertEquals(store.findByAttribute(0, 0, Arrays.asList(Pair.of("workspace.name", "wsName"),
+                                                               Pair.of("workspace.projects.type", "projectType"))).size(), 1);
+        assertEquals(store.findByAttribute(0, 0, Arrays.asList(Pair.of("creator.userId", "userOK"),
+                                                               Pair.of("workspace.projects.type", "projectType"))).size(), 1);
     }
-
+    
     /**
      * Checks that we can update a factory that has images and images are unchanged after the update
      * @throws Exception if there is failure
      */
     @Test
-    public void testUpdateFactory() throws Exception {
+    public void shouldUpdateFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
         factory.setV("4.0");
 
@@ -346,7 +371,7 @@ public class MongoDBFactoryStoreTest {
      * @throws Exception the NotFoundException expected one
      */
     @Test(expectedExceptions = NotFoundException.class)
-    public void testUpdateUnknownFactory() throws Exception {
+    public void shouldNotUpdateUnexistingFactory() throws Exception {
         Factory factory = DtoFactory.getInstance().createDto(Factory.class);
         factory.setV("2.1");
 
@@ -362,7 +387,7 @@ public class MongoDBFactoryStoreTest {
      * Check encoding with dot
      */
     @Test
-    public void testEncodedDot() {
+    public void shouldEncodedDot() {
         String original = "hello.my.string";
         String encoded = store.encode(original);
         Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOT + "string", encoded);
@@ -374,7 +399,7 @@ public class MongoDBFactoryStoreTest {
      * Check encoding with dollar
      */
     @Test
-    public void testEncodedDollar() {
+    public void shouldEncodedDollar() {
         String original = "hello$my$string";
         String encoded = store.encode(original);
         Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOLLAR + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
@@ -386,7 +411,7 @@ public class MongoDBFactoryStoreTest {
      * Check encoding with dot and dollar
      */
     @Test
-    public void testEncodedDotDollar() {
+    public void shouldEncodedDotDollar() {
         String original = "hello.my$string";
         String encoded = store.encode(original);
         Assert.assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
