@@ -404,11 +404,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider.class)
                 .to(com.codenvy.machine.RemoteWorkspaceFolderPathProvider.class);
 
-        Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
-                Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
-        machineImageProviderMultibinder.addBinding()
-                                       .to(org.eclipse.che.plugin.docker.machine.DockerInstanceProvider.class);
-
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerExtServerModule());
 
         bind(com.codenvy.machine.backup.WorkspaceFsBackupScheduler.class).asEagerSingleton();
@@ -425,5 +420,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
         bind(com.codenvy.api.account.DefaultAccountCreator.class);
+
+        install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
     }
 }
