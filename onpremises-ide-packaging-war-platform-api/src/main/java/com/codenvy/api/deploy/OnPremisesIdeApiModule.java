@@ -16,9 +16,6 @@
  * from Codenvy S.A..
  */
 package com.codenvy.api.deploy;
-/*
-import com.codenvy.api.analytics.AnalyticsModule;
-*/
 
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
@@ -103,43 +100,6 @@ import org.everrest.guice.ServiceBindingHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.eclipse.che.inject.Matchers.names;
-
-/*
-import com.codenvy.api.metrics.server.MetricModule;
-import com.codenvy.api.resources.server.ResourcesManager;
-import com.codenvy.api.resources.server.ResourcesService;
-*/
-/*
-import com.codenvy.api.subscription.saas.server.ResourcesManagerImpl;
-import com.codenvy.api.subscription.saas.server.SaasSubscriptionModule;
-import com.codenvy.api.subscription.saas.server.billing.BillingModule;
-*/
-/*
-import com.codenvy.sql.SQLModule;
-<<<<<<< HEAD
-*/
-/*
-import org.eclipse.che.api.builder.BuilderAdminService;
-import org.eclipse.che.api.builder.BuilderSelectionStrategy;
-import org.eclipse.che.api.builder.BuilderService;
-import org.eclipse.che.api.builder.LastInUseBuilderSelectionStrategy;
-*/
-/*
-import org.eclipse.che.api.factory.FactoryAcceptValidator;
-import org.eclipse.che.api.factory.FactoryAcceptValidatorImpl;
-import org.eclipse.che.api.factory.FactoryCreateValidator;
-import org.eclipse.che.api.factory.FactoryCreateValidatorImpl;
-import org.eclipse.che.api.factory.FactoryService;
-import org.eclipse.che.api.git.GitConnectionFactory;
-import org.eclipse.che.api.runner.RandomRunnerSelectionStrategy;
-import org.eclipse.che.api.runner.RunnerAdminService;
-import org.eclipse.che.api.runner.RunnerSelectionStrategy;
-import org.eclipse.che.api.runner.RunnerService;
-*/
-/*
-import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
-import org.eclipse.che.ide.ext.java.server.format.FormatService;
-*/
 
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
@@ -393,12 +353,13 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         install(new FactoryModuleBuilder()
                         .implement(org.eclipse.che.api.machine.server.spi.Instance.class,
-//                                   com.codenvy.router.PredictableMachineServerUrlInstance.class)
-                                   com.codenvy.swarm.machine.SwarmInstance.class)
+                                   org.eclipse.che.plugin.docker.machine.DockerInstance.class)
                         .implement(org.eclipse.che.api.machine.server.spi.InstanceProcess.class,
                                    org.eclipse.che.plugin.docker.machine.DockerProcess.class)
                         .implement(org.eclipse.che.plugin.docker.machine.node.DockerNode.class,
                                    com.codenvy.machine.RemoteDockerNode.class)
+                        .implement(org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata.class,
+                                   com.codenvy.swarm.machine.SwarmInstanceMetadata.class)
                         .build(org.eclipse.che.plugin.docker.machine.DockerMachineFactory.class));
 
         bind(org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider.class)
