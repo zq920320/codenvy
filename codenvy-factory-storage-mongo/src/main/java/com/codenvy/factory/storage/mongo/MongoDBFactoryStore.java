@@ -18,9 +18,8 @@
 package com.codenvy.factory.storage.mongo;
 
 
-import com.mongodb.ErrorCategory;
+import com.google.common.base.Strings;
 import com.mongodb.MongoException;
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -114,7 +113,8 @@ public class MongoDBFactoryStore implements FactoryStore {
                                @Named("factory.storage.db.collection") String collectionName) {
         factories = db.getCollection(collectionName, Document.class);
         factories.createIndex(new Document("_id", 1), new IndexOptions().unique(true));
-        factories.createIndex(new Document("factory.name", 1).append("factory.creator.userId", 1), new IndexOptions().unique(true));
+        factories.createIndex(new Document("factory.name", 1).append("factory.creator.userId", 1), new IndexOptions().sparse(true));
+
     }
 
 
@@ -123,6 +123,23 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (factory == null) {
             throw new NullPointerException("The factory shouldn't be null");
         }
+        if (!Strings.isNullOrEmpty(factory.getName())) {
+            /* Check that we don't have the factory with same name and creator.
+             * This cannot be done using composite key and sparse + unique index
+             * because it will check constraint even on single field, e.g. when name is null
+             * see https://docs.mongodb.org/manual/core/index-sparse/#sparse-compound-indexes
+             * This possible can be resolved after upgrade to Mongo 3.2 using partial indexes
+             * see https://docs.mongodb.org/manual/core/index-partial/#index-type-partial
+             * Sparse index is created to speed up this kind of search.
+             */
+            final FindIterable<Document> findIt = factories.find(new Document("factory.name", factory.getName())
+                                                                         .append("factory.creator.userId",
+                                                                                 factory.getCreator().getUserId()));
+            if (findIt.first() != null) {
+                throw new ConflictException("You already have factory with given name. Please, choose another one.");
+            }
+        }
+
         factory.setId(NameGenerator.generate("", 16));
         final List<Document> imageList = images.stream().map(one -> new Document().append("name", one.getName())
                                                                                   .append("type", one.getMediaType())
@@ -133,12 +150,6 @@ public class MongoDBFactoryStore implements FactoryStore {
                                                                        .append("images", imageList);
         try {                                                                       
             factories.insertOne(factoryDocument);
-        } catch (MongoWriteException ex) {
-             if (ex.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
-                 throw new ConflictException("You already have factory with given name. Please, choose another one.");
-             } else {
-                 throw new ServerException("Unable to store factory: " + ex.getMessage(), ex);
-             }
         } catch (MongoException e) {
             throw new ServerException("Unable to store factory: " + e.getMessage(), e);
         }

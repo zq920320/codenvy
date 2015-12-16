@@ -31,7 +31,6 @@ import org.bson.codecs.BinaryCodec;
 import org.bson.codecs.configuration.CodecRegistries;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.server.FactoryImage;
 import org.eclipse.che.api.factory.shared.dto.Action;
 import org.eclipse.che.api.factory.shared.dto.Author;
@@ -207,7 +206,7 @@ public class MongoDBFactoryStoreTest {
         assertNull(collection.find(new Document("_id", id)).first());
     }
     
-    @Test(expectedExceptions = ServerException.class)
+    @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSaveFactoryWithSameNameAndUser() throws Exception {
 
         Set<FactoryImage> images = new HashSet<>();
