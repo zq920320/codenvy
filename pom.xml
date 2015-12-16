@@ -23,7 +23,7 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy.che.depmgt</groupId>
-        <version>4.0.0-M5</version>
+        <version>4.0.0-M6-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy.factory</groupId>
     <artifactId>codenvy-factory-parent</artifactId>
