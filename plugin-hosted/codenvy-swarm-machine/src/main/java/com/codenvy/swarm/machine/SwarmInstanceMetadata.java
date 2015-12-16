@@ -18,10 +18,12 @@
 package com.codenvy.swarm.machine;
 
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
+import com.google.inject.assistedinject.Assisted;
 
+import org.eclipse.che.plugin.docker.client.json.ContainerInfo;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
-import org.eclipse.che.plugin.docker.machine.node.DockerNode;
 
+import javax.inject.Inject;
 import java.util.Map;
 
 /**
@@ -33,9 +35,10 @@ public class SwarmInstanceMetadata extends DockerInstanceMetadata {
 
     private final SwarmContainerInfo info;
 
-    public SwarmInstanceMetadata(SwarmContainerInfo containerInfo, DockerNode dockerNode) {
-        super(containerInfo, dockerNode);
-        info = containerInfo;
+    @Inject
+    public SwarmInstanceMetadata(@Assisted ContainerInfo containerInfo, @Assisted String dockerNodeHost) {
+        super(containerInfo, dockerNodeHost);
+        info = (SwarmContainerInfo)containerInfo;
     }
 
     @Override
