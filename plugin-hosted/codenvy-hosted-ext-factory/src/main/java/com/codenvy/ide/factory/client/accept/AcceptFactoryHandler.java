@@ -31,7 +31,8 @@ import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
 import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.notification.Notification;
+import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.api.notification.StatusNotification;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -48,8 +49,9 @@ public class AcceptFactoryHandler {
     private final AppContext                  appContext;
     private final GreetingPartPresenter       greetingPartPresenter;
     private final ActionManager               actionManager;
+    private final NotificationManager         notificationManager;
 
-    private Notification notification;
+    private StatusNotification notification;
 
     @Inject
     public AcceptFactoryHandler(FactoryLocalizationConstant factoryLocalization,
@@ -57,13 +59,15 @@ public class AcceptFactoryHandler {
                                 EventBus eventBus,
                                 AppContext appContext,
                                 GreetingPartPresenter greetingPartPresenter,
-                                ActionManager actionManager) {
+                                ActionManager actionManager,
+                                NotificationManager notificationManager) {
         this.factoryProjectImporter = factoryProjectImporter;
         this.factoryLocalization = factoryLocalization;
         this.eventBus = eventBus;
         this.appContext = appContext;
         this.greetingPartPresenter = greetingPartPresenter;
         this.actionManager = actionManager;
+        this.notificationManager = notificationManager;
     }
 
     /**
@@ -77,13 +81,10 @@ public class AcceptFactoryHandler {
         eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
             public void onExtServerStarted(final ExtServerStateEvent event) {
-                notification = new Notification(factoryLocalization.cloningSource(), Notification.Status.PROGRESS);
-                Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        startImporting(factory);
-                    }
-                });
+                notification = notificationManager.notify(factoryLocalization.cloningSource(), null, StatusNotification.Status.PROGRESS,
+                                                          false
+                                                         );
+                startImporting(factory);
             }
 
             @Override
@@ -104,16 +105,15 @@ public class AcceptFactoryHandler {
                                               new AsyncCallback<Void>() {
                                                   @Override
                                                   public void onSuccess(Void result) {
-                                                      notification.setStatus(Notification.Status.FINISHED);
-                                                      notification.setMessage(factoryLocalization.cloningSource());
+                                                      notification.setStatus(StatusNotification.Status.SUCCESS);
+                                                      notification.setContent(factoryLocalization.cloningSource());
                                                       performActions(factory);
                                                   }
 
                                                   @Override
                                                   public void onFailure(Throwable throwable) {
-                                                      notification.setType(Notification.Type.ERROR);
-                                                      notification.setImportant(true);
-                                                      notification.setMessage(throwable.getMessage());
+                                                      notification.setStatus(StatusNotification.Status.FAIL);
+                                                      notification.setContent(throwable.getMessage());
                                                   }
                                               });
     }

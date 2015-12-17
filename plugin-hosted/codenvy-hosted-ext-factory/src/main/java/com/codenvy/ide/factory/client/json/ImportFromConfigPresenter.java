@@ -25,12 +25,9 @@ import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
-import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
-import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.dto.DtoFactory;
-import org.eclipse.che.ide.util.loging.Log;
 
 /**
  * Imports project from factory.json file
@@ -38,14 +35,14 @@ import org.eclipse.che.ide.util.loging.Log;
  * @author Sergii Leschenko
  */
 public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDelegate {
-    private final FactoryLocalizationConstant     factoryLocalization;
-    private final ImportFromConfigView            view;
-    private final NotificationManager             notificationManager;
-    private final DtoFactory                      dtoFactory;
-    private final FactoryProjectImporter          projectImporter;
-    private final AsyncCallback<ProjectConfigDto> importerCallback;
+    private final FactoryLocalizationConstant factoryLocalization;
+    private final ImportFromConfigView        view;
+    private final NotificationManager         notificationManager;
+    private final DtoFactory                  dtoFactory;
+    private final FactoryProjectImporter      projectImporter;
+    private final AsyncCallback<Void>         importerCallback;
 
-    private Notification importNotification;
+    private StatusNotification notification;
 
     @Inject
     public ImportFromConfigPresenter(final FactoryLocalizationConstant factoryLocalization,
@@ -61,21 +58,17 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
         this.view.setDelegate(this);
         this.projectImporter = projectImporter;
 
-        importerCallback = new AsyncCallback<ProjectConfigDto>() {
+        importerCallback = new AsyncCallback<Void>() {
             @Override
-            public void onSuccess(ProjectConfigDto result) {
-                importNotification.setMessage(factoryLocalization.clonedSource(result.getName()));
-                importNotification.setType(Notification.Type.INFO);
-                importNotification.setStatus(Notification.Status.FINISHED);
-                eventBus.fireEvent(new OpenProjectEvent(result));
+            public void onSuccess(Void result) {
+                notification.setContent(factoryLocalization.clonedSource(null));
+                notification.setStatus(StatusNotification.Status.SUCCESS);
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                importNotification.setMessage(throwable.getMessage());
-                importNotification.setType(Notification.Type.ERROR);
-                importNotification.setStatus(Notification.Status.FINISHED);
-                Log.error(getClass(), throwable.getMessage());
+                notification.setContent(throwable.getMessage());
+                notification.setStatus(StatusNotification.Status.FAIL);
             }
         };
     }
@@ -100,28 +93,21 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
         try {
             factoryJson = dtoFactory.createDtoFromJson(view.getFileContent(), Factory.class);
         } catch (JSONException jsonException) {
-            showErrorMessage("Error parsing factory object.", jsonException);
+            notification.setStatus(StatusNotification.Status.FAIL);
+            notification.setContent("Error parsing factory object.");
             return;
         }
 
-        importNotification = new Notification(factoryLocalization.cloningSource(), Notification.Type.INFO, Notification.Status.PROGRESS);
-        notificationManager.showNotification(importNotification);
-        //projectImporter.startImporting(importNotification, factoryJson, importerCallback);
+        notification = notificationManager.notify(factoryLocalization.cloningSource(), null, StatusNotification.Status.PROGRESS, false
+                                                 );
+        projectImporter.startImporting(factoryJson, importerCallback);
     }
 
 
     @Override
     public void onErrorReadingFile(String errorMessage) {
         view.setEnabledImportButton(false);
-        showErrorMessage(errorMessage);
-    }
-
-    private void showErrorMessage(String messagePrefix, Throwable error) {
-        showErrorMessage(messagePrefix + error.getMessage());
-    }
-
-    private void showErrorMessage(String message) {
-        notificationManager.showNotification(new Notification(message, Notification.Type.ERROR));
-        Log.error(getClass(), message);
+        notification.setStatus(StatusNotification.Status.FAIL);
+        notification.setContent(errorMessage);
     }
 }

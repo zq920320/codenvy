@@ -26,8 +26,6 @@ import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
-import org.eclipse.che.ide.api.notification.Notification;
-import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.ext.git.client.GitLocalizationConstant;
 import org.eclipse.che.ide.rest.RestContext;
@@ -40,8 +38,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
-
 /**
  * Service contains methods for working with Git repository from client side in a synchronous way.
  *
@@ -51,7 +47,6 @@ import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
 public class SyncGitServiceClient {
     private final DtoFactory              dtoFactory;
     private final GitLocalizationConstant gitLocale;
-    private final NotificationManager     notificationManager;
     private final AppContext              appContext;
     @SuppressWarnings({"unused", "FieldCanBeLocal"})//used in native method
     private final Class<Status>           statusClass;
@@ -67,13 +62,11 @@ public class SyncGitServiceClient {
                                 @Named("workspaceId") String workspaceId,
                                 DtoFactory dtoFactory,
                                 GitLocalizationConstant gitLocale,
-                                NotificationManager notificationManager,
                                 AppContext appContext) {
         this.dtoFactory = dtoFactory;
         this.workspaceId = workspaceId;
         this.restContext = restContext;
         this.gitLocale = gitLocale;
-        this.notificationManager = notificationManager;
         this.appContext = appContext;
         this.statusClass = Status.class;
         this.revisionClass = Revision.class;
@@ -256,8 +249,7 @@ public class SyncGitServiceClient {
     }
 
     private void showNotificationInitRepository() {
-        Notification notification = new Notification(gitLocale.initSuccess(), Notification.Type.INFO);
-        notificationManager.showNotification(notification);
+        //stub
     }
 
     /**
@@ -267,7 +259,6 @@ public class SyncGitServiceClient {
      *         error message
      */
     private void processError(String message) {
-        final Notification notification = new Notification(message, ERROR);
-        notificationManager.showNotification(notification);
+        //stub
     }
 }
