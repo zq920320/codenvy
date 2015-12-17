@@ -13,7 +13,6 @@ package org.eclipse.che.ide.ext.bitbucket.client;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.ext.ssh.client.SshKeyProvider;
@@ -30,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
-import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
 import static org.eclipse.che.security.oauth.OAuthStatus.LOGGED_IN;
 
 /**
@@ -105,9 +103,8 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
     public void onAuthenticated(final OAuthStatus authStatus) {
         if (LOGGED_IN.equals(authStatus)) {
             generateKey(userId, callback);
-
         } else {
-            notificationManager.showNotification(new Notification(constant.bitbucketSshKeyUpdateFailed(), ERROR));
+            notificationManager.notify(constant.bitbucketSshKeyUpdateFailed());
         }
     }
 }

@@ -33,8 +33,8 @@ import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
-import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 
@@ -42,6 +42,10 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.PROGRESS;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
 
 /**
  * @author Sergii Leschenko
@@ -108,11 +112,11 @@ public class FactoryProjectImporter {
         for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
             final String projectName = projectConfig.getName();
             if (existedProjects.contains(projectName)) {
-                notificationManager.showWarning(localization.projectAlreadyImported(projectName));
+                notificationManager.notify("Import", localization.projectAlreadyImported(projectName), FAIL, true);
                 continue;
             }
-            final Notification notification = new Notification(localization.cloningSource(projectName), Notification.Status.PROGRESS);
-            notificationManager.showNotification(notification);
+            final StatusNotification notification =
+                    notificationManager.notify(localization.cloningSource(projectName), null, PROGRESS, true);
             final ImportProjectNotificationSubscriber notificationSubscriber = subscriberFactory.createSubscriber();
             notificationSubscriber.subscribe(projectName, notification);
 
@@ -121,9 +125,8 @@ public class FactoryProjectImporter {
                                                             @Override
                                                             public void apply(Void arg) throws OperationException {
                                                                 notificationSubscriber.onSuccess();
-                                                                notification.setMessage(localization.clonedSource(projectName));
-                                                                notification.setType(Notification.Type.INFO);
-                                                                notification.setStatus(Notification.Status.FINISHED);
+                                                                notification.setContent(localization.clonedSource(projectName));
+                                                                notification.setStatus(SUCCESS);
                                                                 eventBus.fireEvent(new CreateProjectEvent(projectConfig));
                                                             }
                                                         })
@@ -131,9 +134,8 @@ public class FactoryProjectImporter {
                                                             @Override
                                                             public void apply(PromiseError arg) throws OperationException {
                                                                 notificationSubscriber.onFailure(arg.getMessage());
-                                                                notification.setMessage(localization.cloningSourceFailed(projectName));
-                                                                notification.setType(Notification.Type.ERROR);
-                                                                notification.setStatus(Notification.Status.FINISHED);
+                                                                notification.setContent(localization.cloningSourceFailed(projectName));
+                                                                notification.setStatus(FAIL);
                                                                 Promises.reject(arg);
                                                             }
                                                         });
@@ -154,26 +156,6 @@ public class FactoryProjectImporter {
                         callback.onSuccess(null);
                     }
                 });
-    }
-
-    private void rerunWithAuthImport(String location) {
-        final Notification notification = new Notification(localization.cloningSource(), Notification.Status.PROGRESS);
-        notification.setMessage(localization.needToAuthorizeBeforeAcceptMessage());
-        authenticator.showOAuthWindow(location,
-                                      new Authenticator.AuthCallback() {
-                                          @Override
-                                          public void onAuthenticated() {
-                                              notification.setMessage(localization.oauthSuccess());
-                                              importProjects();
-                                          }
-
-                                          @Override
-                                          public void onError(String message) {
-                                              notification.setMessage(localization.oauthFailed() + " " + message);
-                                              notification.setType(Notification.Type.ERROR);
-                                              notification.setStatus(Notification.Status.FINISHED);
-                                          }
-                                      });
     }
 
     public Factory getFactory() {

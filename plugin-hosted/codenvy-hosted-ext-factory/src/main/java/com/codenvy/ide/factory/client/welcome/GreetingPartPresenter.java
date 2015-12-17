@@ -41,7 +41,6 @@ import org.eclipse.che.ide.api.event.project.CloseCurrentProjectHandler;
 import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
 import org.eclipse.che.ide.api.event.project.OpenProjectHandler;
 import org.eclipse.che.ide.api.mvp.View;
-import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.parts.HasView;
 import org.eclipse.che.ide.api.parts.PartStackType;
@@ -313,7 +312,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
      *         message to display
      */
     private void fetchingGreetingParamsFailed(String message) {
-        notificationManager.showNotification(new Notification(message, Notification.Type.ERROR));
+        notificationManager.notify(message);
         Log.error(GreetingPartPresenter.class, message);
     }
 
