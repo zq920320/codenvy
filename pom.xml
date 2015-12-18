@@ -31,7 +31,6 @@
     <packaging>pom</packaging>
     <name>Codenvy Factory :: Parent</name>
     <modules>
-        <module>codenvy-factory-packaging-war</module>
         <module>codenvy-factory-storage-mongo</module>
     </modules>
     <scm>
