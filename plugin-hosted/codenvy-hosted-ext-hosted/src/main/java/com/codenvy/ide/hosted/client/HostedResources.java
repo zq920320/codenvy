@@ -45,4 +45,7 @@ public interface HostedResources extends ClientBundle {
 
     @Source("temporary/temporary.svg")
     SVGResource temporaryButton();
+
+    @Source("logo/codenvy-logo.svg")
+    SVGResource logo();
 }

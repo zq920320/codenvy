@@ -18,14 +18,13 @@
 package com.codenvy.ide.hosted.client.inject;
 
 import com.codenvy.ide.hosted.client.informers.HostedEnvConnectionClosedInformer;
-import com.codenvy.ide.hosted.client.HostedEnvDocumentTitleDecorator;
 import com.codenvy.ide.hosted.client.login.PromptToLoginView;
 import com.codenvy.ide.hosted.client.login.PromptToLoginViewImpl;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.ConnectionClosedInformer;
-import org.eclipse.che.ide.api.DocumentTitleDecorator;
+import org.eclipse.che.ide.api.ProductInfoDataProvider;
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 
 /**
@@ -35,7 +34,7 @@ import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 public class HostedEnvironmentGinModule extends AbstractGinModule {
     @Override
     protected void configure() {
-        bind(DocumentTitleDecorator.class).to(HostedEnvDocumentTitleDecorator.class).in(Singleton.class);
+        bind(ProductInfoDataProvider.class).to(CodenvyProductInfoDataProvider.class).in(Singleton.class);
         bind(ConnectionClosedInformer.class).to(HostedEnvConnectionClosedInformer.class).in(javax.inject.Singleton.class);
         bind(PromptToLoginView.class).to(PromptToLoginViewImpl.class);
     }
