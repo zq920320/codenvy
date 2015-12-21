@@ -35,8 +35,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Scanner;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Validates email and workspace name.
@@ -47,24 +45,12 @@ import java.util.regex.Pattern;
 @Singleton
 public class InputDataValidator {
 
-    public static final  String      WS_BLACKLIST_FILE           = "workspacevalidator.blacklistfile";
     public static final  String      EMAIL_BLACKLIST_FILE        = "emailvalidator.blacklistfile";
-    private static final int         maxTenantNameLength         = 20;
-    private static final Pattern     tenantNameValidationPattern = Pattern.compile("[a-z0-9][a-z0-9_.-]{2,19}");
     private static final Logger      LOG                         = LoggerFactory.getLogger(InputDataValidator.class);
-    private              Set<String> wsBlackList                 = Collections.emptySet();
     private              Set<String> emailBlackList              = Collections.emptySet();
 
     @Inject
-    public InputDataValidator(@Named(WS_BLACKLIST_FILE) String wsBlacklistFile, @Named(EMAIL_BLACKLIST_FILE) String emailBlacklistFile) {
-        try {
-            this.wsBlackList = readBlacklistFile(wsBlacklistFile);
-        } catch (FileNotFoundException e) {
-            LOG.warn("Workspace name blacklist is not found or is a directory", wsBlacklistFile);
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-        }
-
+    public InputDataValidator(@Named(EMAIL_BLACKLIST_FILE) String emailBlacklistFile) {
         try {
             this.emailBlackList = readBlacklistFile(emailBlacklistFile);
         } catch (FileNotFoundException e) {
@@ -79,6 +65,7 @@ public class InputDataValidator {
      * found file reading failed, then throws exception.
      *
      * @param blacklistPath
+     *         path to email black list file
      * @return set with forbidden words
      * @throws java.io.FileNotFoundException
      * @throws java.io.IOException
@@ -124,30 +111,6 @@ public class InputDataValidator {
             if (userMail.endsWith(current)) {
                 throw new InputDataException("User mail " + userMail + " is forbidden.");
             }
-        }
-    }
-
-    public void validateWSName(String wsName) throws InputDataException {
-        if (wsName == null || wsName.isEmpty()) {
-            throw new InputDataException("Workspace name can't be null or empty.");
-        }
-
-        if (maxTenantNameLength < wsName.length()) {
-            throw new InputDataException("Workspace name should contain " + maxTenantNameLength
-                                         + " or less characters");
-        }
-
-        // Check tenant name for invalid characters.
-        Matcher matcher = tenantNameValidationPattern.matcher(wsName);
-        if (!matcher.matches()) {
-            LOG.debug("Invalid workspace name requested: {}", wsName);
-            throw new InputDataException("Your workspace name should start with a Latin letter or a digit, " +
-                                         "and must only containt Latin letters, digits, underscores, dots or dashes. You are allowed to " +
-                                         "use from 3 to " + maxTenantNameLength + " characters in a workspace name.");
-        }
-        // Check blacklist
-        if (wsBlackList.contains(wsName)) {
-            throw new InputDataException("This workspace name is reserved, please choose another name.");
         }
     }
 }

@@ -20,13 +20,10 @@ package com.codenvy.auth.sso.oauth;
 import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import com.codenvy.auth.sso.server.InputDataException;
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
@@ -51,6 +48,7 @@ import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 
 @Singleton
@@ -58,8 +56,6 @@ public class OAuthLoginServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(OAuthLoginServlet.class);
     @Inject
     private UserDao                          userDao;
-    @Inject
-    private WorkspaceManager                 workspaceManager;
     @Inject
     private OAuthAuthenticatorProvider       authenticatorProvider;
     @Inject
@@ -77,26 +73,26 @@ public class OAuthLoginServlet extends HttpServlet {
 
     @Override
     protected void service(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String username = req.getParameter("username");
+        String email = req.getParameter("email");
         String oauthProvider = req.getParameter("oauth_provider");
 
         String bearertoken = req.getParameter("oauthbearertoken");
 
-        if (username == null || oauthProvider == null || bearertoken == null) {
+        if (email == null || oauthProvider == null || bearertoken == null) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
 
 
         try {
-            handler.authenticate(username, bearertoken);
+            handler.authenticate(bearertoken);
         } catch (AuthenticationException e) {
             resp.sendError(e.getResponseStatus(), e.getLocalizedMessage());
             return;
         }
 
-        if (username.contains("+")) {
-            req.setAttribute("errorMessage", "Username with '+' is not allowed for registration");
+        if (email.contains("+")) {
+            req.setAttribute("errorMessage", "Email with '+' is not allowed for registration");
             req.getRequestDispatcher("/login.html")
                .forward(req, resp);
             return;
@@ -110,22 +106,24 @@ public class OAuthLoginServlet extends HttpServlet {
             return;
         }
 
-        final OAuthToken token = authenticator.getToken(username);
+        final OAuthToken token = authenticator.getToken(email);
         if (token == null || token.getToken()
                                   .isEmpty()) {
-            LOG.error("Unable obtain email address for user {} ", username);
-            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable obtain email address for user " + username);
+            LOG.error("Unable obtain email address for user {} ", email);
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable obtain email address for user " + email);
             return;
         }
 
-        if (isUserHasPersistentTenants(username)) {
+        Optional<User> userOptional = getUserByEmail(email);
+        if (userOptional.isPresent()) {
             // send user on login
             URI uri = UriBuilder.fromUri(createWorkspacePage)
                                 .replaceQuery(req.getQueryString())
                                 .replaceQueryParam("signature")
                                 .replaceQueryParam("oauth_provider")
                                 .replaceQueryParam("oauthbearertoken")
-                                .queryParam("bearertoken", handler.generateBearerToken(username,
+                                .queryParam("bearertoken", handler.generateBearerToken(email,
+                                                                                       userOptional.get().getName(),
                                                                                        Collections
                                                                                                .singletonMap(
                                                                                                        "initiator",
@@ -137,17 +135,18 @@ public class OAuthLoginServlet extends HttpServlet {
             resp.sendRedirect(uri.toString());
         } else {
             // fill user profile if user doesn't exists and login in first time.
-            Map profileInfo = createProfileInfo(username, authenticator, token);
+            Map profileInfo = createProfileInfo(email, authenticator, token);
             profileInfo.put("initiator", oauthProvider);
 
             try {
-                inputDataValidator.validateUserMail(username);
+                inputDataValidator.validateUserMail(email);
 
                 URI uri =
                         UriBuilder.fromUri(createWorkspacePage).replaceQuery(req.getQueryString())
                                   .replaceQueryParam("signature")
                                   .replaceQueryParam("oauth_provider")
-                                  .replaceQueryParam("bearertoken", handler.generateBearerToken(username, profileInfo)).build();
+                                  .replaceQueryParam("bearertoken",
+                                                     handler.generateBearerToken(email, findAvailableUsername(email), profileInfo)).build();
 
                 resp.sendRedirect(uri.toString());
             } catch (InputDataException e) {
@@ -156,28 +155,42 @@ public class OAuthLoginServlet extends HttpServlet {
         }
     }
 
-    private boolean isUserHasPersistentTenants(String username) throws IOException {
+    private Optional<User> getUserByEmail(String email) throws IOException {
         try {
-            User user = userDao.getByAlias(username);
-            for (UsersWorkspace ws : workspaceManager.getWorkspaces(user.getId())) {
-                if (!ws.isTemporary()) {
-                    return true;
-                }
-            }
+            User user = userDao.getByAlias(email);
+            return Optional.of(user);
         } catch (NotFoundException e) {
-            //ok
-        } catch (ServerException | BadRequestException e) {
+            return Optional.empty();
+        } catch (ServerException e) {
             throw new IOException(e.getLocalizedMessage(), e);
         }
-        return false;
-
     }
 
-    Map<String, String> createProfileInfo(String username, OAuthAuthenticator authenticator, OAuthToken token) {
+    private String findAvailableUsername(String email) throws IOException {
+        String candidate = email.contains("@") ? email.substring(0, email.indexOf('@')) : email;
+        int count = 1;
+        while (getUserByName(candidate).isPresent()) {
+            candidate =  candidate.concat(String.valueOf(count++));
+        }
+        return candidate;
+    }
+
+    private Optional<User> getUserByName(String name) throws IOException {
+        try {
+            User user = userDao.getByName(name);
+            return Optional.of(user);
+        } catch (NotFoundException e) {
+            return Optional.empty();
+        } catch (ServerException e) {
+            throw new IOException(e.getLocalizedMessage(), e);
+        }
+    }
+
+    Map<String, String> createProfileInfo(String email, OAuthAuthenticator authenticator, OAuthToken token) {
         Map<String, String> profileInfo = new HashMap<>();
         try {
             try {
-                userDao.getByAlias(username);
+                userDao.getByAlias(email);
             } catch (NotFoundException e) {
                 String fullName = authenticator.getUser(token).getName();
                 if (fullName != null && !fullName.isEmpty()) {

@@ -18,24 +18,27 @@
 package com.codenvy.auth.sso.server.organization;
 
 
-import java.io.IOException;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
 
 /**
- * Check if user and workspace name is allowed to validate before workspace creation.
+ * Check if user email and name is allowed to validate before workspace creation.
  *
  * @author Sergii Kabashniuk
  */
-public interface WorkspaceCreationValidator {
+public interface UserCreationValidator {
 
     /**
      * Ensure user and workspace name is eligible to validate email before workspace creation.
      *
      * @param email
-     *         - user name
-     * @param workspaceName
-     *         -desired workspace name
-     * @throws IOException
+     *         - user email. Null or empty value should throw IllegalArgumentException.
+     * @param userName
+     *         -user name. Null or empty value should throw IllegalArgumentException.
+     * @throws ConflictException
+     *         - if user with given email or name cannot be created
+     * @throws ServerException
+     *         - if other error occurs
      */
-    //TODO get better exception
-    void ensureUserCreationAllowed(String email, String workspaceName) throws IOException;
+    void ensureUserCreationAllowed(String email, String userName) throws ConflictException, ServerException;
 }

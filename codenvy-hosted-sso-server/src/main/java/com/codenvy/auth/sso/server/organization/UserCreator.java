@@ -33,12 +33,13 @@ public interface UserCreator {
     /**
      * Create new persistant user.
      *
+     * @param email
      * @param userName
      * @param firstName
      * @param lastName
      * @throws IOException
      */
-    User createUser(String userName, String firstName, String lastName) throws IOException;
+    User createUser(String email, String userName, String firstName, String lastName) throws IOException;
 
     /**
      * Create temporary user.

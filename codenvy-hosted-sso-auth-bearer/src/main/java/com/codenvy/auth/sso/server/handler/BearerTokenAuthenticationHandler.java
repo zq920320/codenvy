@@ -85,20 +85,18 @@ public class BearerTokenAuthenticationHandler {
     }
 
     /**
-     * Authenticate user with username and token.
+     * Authenticate user by token.
      *
-     * @return - user principal of authenticated user
      * @throws AuthenticationException
      */
-    public void authenticate(final String userId, final String userSecret) throws AuthenticationException {
+    public void authenticate(final String userSecret) throws AuthenticationException {
         if (isValid(userSecret)) {
-            Map<String, String> payload = tokenMap.remove(userSecret);
-
-            if (payload.get("userName").equals(userId)) {
-                return;
-            }
+            tokenMap.remove(userSecret);
+        } else {
+            throw new AuthenticationException(403,
+                                              "Authentication of user failed. Token " + userSecret +
+                                              " not found or expired.");
         }
-        throw new AuthenticationException(403, "Authentication of " + userId + " failed. Token " + userSecret + " not found or expired.");
     }
 
     public String getType() {
@@ -108,14 +106,15 @@ public class BearerTokenAuthenticationHandler {
     /**
      * Generate new token for given user.
      *
-     * @param userName
-     *         - name of the user.
+     * @param email
+     *         - email of the user.
      * @return - token for one time authentication.
      */
-    public String generateBearerToken(String userName, Map<String, String> payload) {
+    public String generateBearerToken(String email, String username, Map<String, String> payload) {
         String token = tokenGenerator.generate();
         Map<String, String> payloadCopy = payload == null ? new HashMap() : new HashMap(payload);
-        payloadCopy.put("userName", userName);
+        payloadCopy.put("email", email);
+        payloadCopy.put("username", username);
         payloadCopy.put("creation.time", Long.toString(System.currentTimeMillis()));
         tokenMap.put(token, payloadCopy);
         return token;
