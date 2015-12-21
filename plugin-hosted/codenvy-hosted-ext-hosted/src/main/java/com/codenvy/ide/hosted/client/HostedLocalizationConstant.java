@@ -27,10 +27,10 @@ import com.google.gwt.i18n.client.Messages;
  */
 public interface HostedLocalizationConstant extends Messages {
 
-    @Key("codenvy.projectClosed.title")
+    @Key("codenvy.none.project.selected.title")
     String codenvyTabTitle();
 
-    @Key("codenvy.projectOpened.title")
+    @Key("codenvy.project.selected.title")
     String codenvyTabTitle(String projectName);
 
     /* Connection closed dialog*/
@@ -63,4 +63,9 @@ public interface HostedLocalizationConstant extends Messages {
     @Key("create.account.button")
     String createAccountButtonTitle();
 
+    @Key("get.product.name")
+    String getProductName();
+
+    @Key("get.support.link")
+    String getSupportLink();
 }
