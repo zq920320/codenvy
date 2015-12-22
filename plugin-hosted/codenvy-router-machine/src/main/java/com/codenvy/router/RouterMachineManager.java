@@ -184,8 +184,8 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
-            public InstanceProcess createProcess(String commandLine) throws MachineException {
-                return machine.createProcess(commandLine);
+            public InstanceProcess createProcess(String commandName, String commandLine) throws MachineException {
+                return machine.createProcess(commandName, commandLine);
             }
 
             @Override
