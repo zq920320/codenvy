@@ -18,6 +18,7 @@
 package com.codenvy.ide.factory.client;
 
 import com.codenvy.ide.factory.client.accept.AcceptFactoryHandler;
+import com.codenvy.ide.factory.client.action.CreateFactoryAction;
 import com.codenvy.ide.factory.client.json.ExportConfigAction;
 import com.codenvy.ide.factory.client.json.ImportFromConfigAction;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
@@ -48,6 +49,7 @@ public class FactoryExtension {
     public FactoryExtension(AcceptFactoryHandler acceptFactoryHandler,
                             ActionManager actionManager,
                             FactoryResources resources,
+                            CreateFactoryAction configureFactoryAction,
                             ImportFromConfigAction importFromConfigAction,
                             ExportConfigAction exportConfigAction,
                             GreetingPartPresenter greetingPartPresenter,
@@ -95,5 +97,8 @@ public class FactoryExtension {
         DefaultActionGroup fileGroup = (DefaultActionGroup)actionManager.getAction(GROUP_FILE);
         Constraints afterFile = new Constraints(AFTER, "closeProject");
         fileGroup.add(exportConfigAction, afterFile);
+
+        actionManager.registerAction("configureFactoryAction", configureFactoryAction);
+        fileGroup.add(configureFactoryAction);
     }
 }
