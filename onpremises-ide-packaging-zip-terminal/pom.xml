@@ -32,7 +32,7 @@
         <dependency>
             <groupId>org.eclipse.che.terminal</groupId>
             <artifactId>che-websocket-terminal</artifactId>
-            <version>${websocket.terminal.version}</version>
+            <version>${che.websocket.terminal.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
