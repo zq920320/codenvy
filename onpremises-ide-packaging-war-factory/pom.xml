@@ -18,61 +18,65 @@
     from Codenvy S.A..
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
         <version>4.0.0-M6-SNAPSHOT</version>
     </parent>
-    <artifactId>onpremises-ide-packaging-tomcat-api</artifactId>
+    <artifactId>onpremises-ide-packaging-war-factory</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: IDE :: API</name>
+    <name>Onpremises IDE :: WAR :: IDE :: Factory</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-mail-server</artifactId>
+            <groupId>com.codenvy.cloud-ide</groupId>
+            <artifactId>cloud-ide-packaging-war-factory</artifactId>
             <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-war-factory</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.resources</groupId>
-            <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>org.postgresql</groupId>
-            <artifactId>postgresql</artifactId>
         </dependency>
     </dependencies>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-odyssey</id>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>copy</goal>
+                        </goals>
+                        <configuration>
+                            <stripVersion>true</stripVersion>
+                            <artifactItems>
+                                <artifactItem>
+                                    <groupId>com.codenvy</groupId>
+                                    <artifactId>odyssey</artifactId>
+                                    <version>${codenvy.odyssey.version}</version>
+                                    <classifier>${odyssey.classifier}</classifier>
+                                    <type>zip</type>
+                                </artifactItem>
+                            </artifactItems>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>assembly-number</id>
-                        <phase>process-resources</phase>
+                        <id>unzip-odyssey</id>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <tasks>
-                                <?SORTPOM IGNORE?>
-                                <echo append="false" file="${project.build.directory}/assembly.properties">
-                                    assembly.version=${project.version}
-                                </echo>
-                                <?SORTPOM RESUME?>
+                                <unzip dest="${project.build.directory}/odyssey"
+                                       src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip"/>
                             </tasks>
                         </configuration>
                     </execution>
@@ -84,7 +88,7 @@
                 <executions>
                     <execution>
                         <id>make-assembly</id>
-                        <phase>package</phase>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>single</goal>
                         </goals>

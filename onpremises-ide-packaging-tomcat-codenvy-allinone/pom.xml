@@ -30,11 +30,6 @@
     <name>Onpremises IDE :: Tomcat :: IDE :: All-in-One</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-mail-server</artifactId>
             <type>war</type>
@@ -43,6 +38,11 @@
             <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-tomcat-site</artifactId>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-factory</artifactId>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
