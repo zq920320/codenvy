@@ -46,6 +46,7 @@ import javax.inject.Singleton;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -141,15 +142,22 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
 
         factory.setId(NameGenerator.generate("", 16));
-        final List<Document> imageList = images.stream().map(one -> new Document().append("name", one.getName())
-                                                                                  .append("type", one.getMediaType())
-                                                                                  .append("data", new Binary(one.getImageData())))
-                                         .collect(Collectors.toList());
-        Document factoryDocument = new Document("_id", factory.getId()).append("factory",
-                                                                               Document.parse(encode(DtoFactory.getInstance().toJson(factory))))
-                                                                       .append("images", imageList);
-        try {                                                                       
-            factories.insertOne(factoryDocument);
+        final List<Document> imageList;
+        if (images == null) {
+            imageList = Collections.emptyList();
+        } else {
+            imageList = images.stream()
+                              .map(one -> new Document().append("name", one.getName())
+                                                        .append("type", one.getMediaType())
+                                                        .append("data", new Binary(one.getImageData())))
+                              .collect(Collectors.toList());
+        }
+
+        final Document factoryDocument = Document.parse(encode(DtoFactory.getInstance().toJson(factory)));
+        final Document storedData = new Document("_id", factory.getId()).append("factory", factoryDocument)
+                                                                        .append("images", imageList);
+        try {
+            factories.insertOne(storedData);
         } catch (MongoException e) {
             throw new ServerException("Unable to store factory: " + e.getMessage(), e);
         }
