@@ -56,7 +56,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>factory.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-factory</include>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-factory</include>
             </includes>
         </dependencySet>
         <dependencySet>
