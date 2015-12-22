@@ -34,8 +34,8 @@ import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.extension.Extension;
 
 import static com.google.gwt.core.client.ScriptInjector.TOP_WINDOW;
-import static org.eclipse.che.ide.api.action.IdeActions.GROUP_FILE;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_IMPORT_PROJECT;
+import static org.eclipse.che.ide.api.action.IdeActions.GROUP_WORKSPACE;
 import static org.eclipse.che.ide.api.constraints.Anchor.AFTER;
 
 /**
@@ -87,18 +87,16 @@ public class FactoryExtension {
 
         resources.factoryCSS().ensureInjected();
 
+        DefaultActionGroup projectGroup = (DefaultActionGroup)actionManager.getAction(GROUP_IMPORT_PROJECT);
+        DefaultActionGroup workspaceGroup = (DefaultActionGroup)actionManager.getAction(GROUP_WORKSPACE);
+
         actionManager.registerAction("openWelcomePage", openWelcomePageAction);
-
         actionManager.registerAction("importProjectFromCodenvyConfigAction", importFromConfigAction);
-        DefaultActionGroup importProjectGroup = (DefaultActionGroup)actionManager.getAction(GROUP_IMPORT_PROJECT);
-        importProjectGroup.add(importFromConfigAction);
-
         actionManager.registerAction("exportCodenvyConfigAction", exportConfigAction);
-        DefaultActionGroup fileGroup = (DefaultActionGroup)actionManager.getAction(GROUP_FILE);
-        Constraints afterFile = new Constraints(AFTER, "closeProject");
-        fileGroup.add(exportConfigAction, afterFile);
-
         actionManager.registerAction("configureFactoryAction", configureFactoryAction);
-        fileGroup.add(configureFactoryAction);
+
+        projectGroup.add(importFromConfigAction);
+        workspaceGroup.add(exportConfigAction);
+        workspaceGroup.add(configureFactoryAction);
     }
 }
