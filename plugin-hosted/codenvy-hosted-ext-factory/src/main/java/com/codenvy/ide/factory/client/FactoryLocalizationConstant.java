@@ -131,4 +131,40 @@ public interface FactoryLocalizationConstant extends Messages {
 
     @Key("welcome.preferences.title")
     String welcomePreferencesTitle();
+
+    /* ***************************************************************************************************************
+     *
+     * Create factory
+     *
+     * **************************************************************************************************************/
+
+    @Key("create.factory.form.title")
+    String createFactoryTitle();
+
+    @Key("create.factory.action.title")
+    String createFactoryActionTitle();
+
+    @Key("create.factory.label.name")
+    String createFactoryName();
+
+    @Key("create.factory.button.create")
+    String createFactoryButton();
+
+    @Key("create.factory.button.close")
+    String createFactoryButtonClose();
+
+    @Key("create.factory.label.link")
+    String createFactoryLink();
+
+    @Key("create.factory.already.exist")
+    String createFactoryAlreadyExist();
+
+    @Key("create.factory.unable.create.from.current.workspace")
+    String createFactoryFromCurrentWorkspaceFailed();
+
+    @Key("create.factory.configure.button.tooltip")
+    String createFactoryConfigureTooltip();
+
+    @Key("create.factory.launch.button.tooltip")
+    String createFactoryLaunchTooltip();
 }

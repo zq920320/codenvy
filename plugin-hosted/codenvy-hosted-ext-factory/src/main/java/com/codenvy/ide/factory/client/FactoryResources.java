@@ -20,19 +20,31 @@ package com.codenvy.ide.factory.client;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 
+import org.eclipse.che.ide.ui.Styles;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 /**
  * Factory extension resources (css styles, images).
  *
  * @author Ann Shumilova
+ * @author Anton Korneta
  */
 public interface FactoryResources extends ClientBundle {
-    interface FactoryCSS extends CssResource {
+    interface FactoryCSS extends CssResource, Styles {
         String label();
+
+        String createFactoryButton();
+
+        String labelErrorPosition();
     }
 
-    @Source({"Factory.css", "org/eclipse/che/ide/api/ui/style.css"})
+    interface Style extends CssResource {
+        String launchIcon();
+
+        String configureIcon();
+    }
+
+    @Source({"Factory.css", "org/eclipse/che/ide/api/ui/style.css", "org/eclipse/che/ide/ui/Styles.css"})
     FactoryCSS factoryCSS();
 
     @Source("factory/export-config.svg")
@@ -40,4 +52,10 @@ public interface FactoryResources extends ClientBundle {
 
     @Source("factory/import-config.svg")
     SVGResource importConfig();
+
+    @Source("factory/execute.svg")
+    SVGResource execute();
+
+    @Source("factory/cog-icon.svg")
+    SVGResource configure();
 }
