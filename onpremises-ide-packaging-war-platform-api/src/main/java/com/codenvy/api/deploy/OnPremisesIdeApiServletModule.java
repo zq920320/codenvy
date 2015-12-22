@@ -18,7 +18,6 @@
 package com.codenvy.api.deploy;
 
 import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
-import com.codenvy.service.http.ContinuousWorkspaceIdEnvInitFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.servlet.ServletModule;
 
@@ -41,7 +40,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/code-assistant-java/*",
                "/java-name-environment/*",
                "/project-template/*",
-               "/builder/*",
                "/debug-java/*",
                "/async/*",
                "/git/*",
@@ -52,13 +50,8 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/gae-validator/*",
                "/gae-parameters/*")
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
-        filter("/command/*").through(ContinuousWorkspaceIdEnvInitFilter.class);
-        filterRegex("^/runner/(?!processes$).+")
+        filterRegex("^/workspace/(?!config$|runtime$|name/).+")
                 .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
-        filterRegex("^/workspace/(?!find/|find$|all/|all$|temp/|temp$|config/|config$).+")
-                .through(com.codenvy.service.http.WorkspaceIdEnvironmentInitializationFilter.class);
-        filter("/workspace", "/workspace/")
-                .through(com.codenvy.service.http.WorkspaceNameRequestParamInitializationFilter.class);
         filterRegex("^/(account|creditcard)/(?!find|list).+").through(new AccountIdEnvironmentInitializationFilter(),
                                                                       ImmutableMap.of("accountIdPosition", "3"));
         filterRegex("^/subscription/find/account/.*").through(new AccountIdEnvironmentInitializationFilter(),
