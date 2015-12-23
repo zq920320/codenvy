@@ -35,6 +35,7 @@ import org.eclipse.che.ide.api.extension.Extension;
 
 import static com.google.gwt.core.client.ScriptInjector.TOP_WINDOW;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_IMPORT_PROJECT;
+import static org.eclipse.che.ide.api.action.IdeActions.GROUP_PROJECT;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_WORKSPACE;
 import static org.eclipse.che.ide.api.constraints.Anchor.AFTER;
 
@@ -87,7 +88,7 @@ public class FactoryExtension {
 
         resources.factoryCSS().ensureInjected();
 
-        DefaultActionGroup projectGroup = (DefaultActionGroup)actionManager.getAction(GROUP_IMPORT_PROJECT);
+        DefaultActionGroup projectGroup = (DefaultActionGroup)actionManager.getAction(GROUP_PROJECT);
         DefaultActionGroup workspaceGroup = (DefaultActionGroup)actionManager.getAction(GROUP_WORKSPACE);
 
         actionManager.registerAction("openWelcomePage", openWelcomePageAction);
