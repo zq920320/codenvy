@@ -124,22 +124,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (factory == null) {
             throw new NullPointerException("The factory shouldn't be null");
         }
-        if (!Strings.isNullOrEmpty(factory.getName())) {
-            /* Check that we don't have the factory with same name and creator.
-             * This cannot be done using composite key and sparse + unique index
-             * because it will check constraint even on single field, e.g. when name is null
-             * see https://docs.mongodb.org/manual/core/index-sparse/#sparse-compound-indexes
-             * This possible can be resolved after upgrade to Mongo 3.2 using partial indexes
-             * see https://docs.mongodb.org/manual/core/index-partial/#index-type-partial
-             * Sparse index is created to speed up this kind of search.
-             */
-            final FindIterable<Document> findIt = factories.find(new Document("factory.name", factory.getName())
-                                                                         .append("factory.creator.userId",
-                                                                                 factory.getCreator().getUserId()));
-            if (findIt.first() != null) {
-                throw new ConflictException("You already have factory with given name. Please, choose another one.");
-            }
-        }
+        validateFactoryName(factory);
 
         factory.setId(NameGenerator.generate("", 16));
         final List<Document> imageList;
@@ -252,21 +237,8 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
 
-    /**
-     * Update factory at storage.
-     *
-     * @param factoryId
-     *         - factory information
-     * @param factory
-     *         - factory information
-     * @return - if of stored factory
-     * @throws org.eclipse.che.api.core.NotFoundException
-     *         if the given factory ID is not found
-     * @throws java.lang.IllegalArgumentException
-     *         if {@code factoryId} or {@code factory} is null
-     */
     @Override
-    public String updateFactory(String factoryId, Factory factory) throws NotFoundException {
+    public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ConflictException {
         if (factoryId == null) {
             throw new NullPointerException("The update factory Id shouldn't be null");
         }
@@ -274,6 +246,8 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (factory == null) {
             throw new NullPointerException("The factory replacement shouldn't be null");
         }
+        
+        validateFactoryName(factory);
 
         final Factory clonedFactory = DtoFactory.getInstance().clone(factory);
         clonedFactory.setId(factoryId);
@@ -288,6 +262,28 @@ public class MongoDBFactoryStore implements FactoryStore {
         }
         // return the factory ID
         return clonedFactory.getId();
+    }
+    
+    
+    private void validateFactoryName(Factory factory) throws ConflictException {
+        if (Strings.isNullOrEmpty(factory.getName())) {
+            return;
+        }
+        /* Check that we don't have the factory with same name and creator.
+         * This cannot be done using composite key and sparse + unique index
+         * because it will check constraint even on single field, e.g. when name is null
+         * see https://docs.mongodb.org/manual/core/index-sparse/#sparse-compound-indexes
+         * This possible can be resolved after upgrade to Mongo 3.2 using partial indexes
+         * see https://docs.mongodb.org/manual/core/index-partial/#index-type-partial
+         * Sparse index is created to speed up this kind of search.
+         */
+        final FindIterable<Document> findIt =
+                                              factories.find(new Document("factory.name", factory.getName()).append("factory.creator.userId",
+                                                                                                                    factory.getCreator()
+                                                                                                                           .getUserId()));
+        if (findIt.first() != null) {
+            throw new ConflictException("You already have factory with given name. Please, choose another one.");
+        }
     }
 
     /**
