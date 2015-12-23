@@ -116,10 +116,9 @@
                 });
             }
         };
-        var authenticate = function(username, bearertoken) {
+        var authenticate = function(bearertoken) {
             var deferredResult = $.Deferred();
             var data = {
-                username: username.toLowerCase(),
                 token: bearertoken
             };
             var authenticateUrl = "/api/internal/token/authenticate";
@@ -459,8 +458,8 @@
             },
 
             // signup, oAuth login,
-            processCreate: function(username, bearertoken, error) {
-                authenticate(username, bearertoken)
+            processCreate: function(bearertoken, error) {
+                authenticate(bearertoken)
                 .then(function(){
                     redirectToUrl("/ws/");
                 })
@@ -502,10 +501,10 @@
                 }
             },
 
-            createTenant: function(email, domain, error) {
+            createTenant: function(email, username, error) {
                 var data = {
                     email: email.toLowerCase(),
-                    workspacename: domain.toLowerCase()
+                    username: username.toLowerCase()
                 };
                 var emailValidateUrl = "/api/internal/token/validate?" + window.location.search.substring(1);
                 $.ajax({

@@ -47,10 +47,6 @@ define(["jquery","models/account","views/form","validation"],
 
             __validationRules : function(){
                 return {
-                    domain: {
-                        required : true,
-                        validDomain : true
-                    },
                     email: {
                         required : true,
                         checkEmail : true
@@ -60,10 +56,6 @@ define(["jquery","models/account","views/form","validation"],
 
             __validationMessages : function(){
                 return {
-                    domain: {
-                        required : this.settings.noDomainErrorMessage,
-                        validDomain : this.settings.invalidDomainNameErrorMessage
-                    },
                     email: {
                         required : this.settings.noEmailErrorMessage,
                         checkEmail : this.settings.invalidEmailErrorMessage
