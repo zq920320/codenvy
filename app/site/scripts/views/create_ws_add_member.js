@@ -22,11 +22,9 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
         var CreateWsAddMember = Backbone.View.extend({
             
             initialize : function(){
-                var username = Account.getQueryParameterByName("username"),
-                    bearertoken = Account.getQueryParameterByName("bearertoken");
-                if (username && bearertoken) {
+                var bearertoken = Account.getQueryParameterByName("bearertoken");
+                if (bearertoken) {
                     Account.processCreate(
-                        username,
                         bearertoken,
                         _.bind(function(errors){
 

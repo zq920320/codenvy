@@ -132,10 +132,6 @@
                             checkEmail : true,
                             email: true
                         },
-                        domain: {
-                            required : true,
-                            validDomain : true
-                        },
                         password: {
                             required : true
                         }
@@ -239,7 +235,7 @@
 	                }else{
 		                Account.createTenant(
 		                    $(form).find("input[name='email']").val(),
-		                    $(form).find("input[name='domain']").val(),
+		                    $(form).find("input[name='username']").val(),
 		                    _.bind(function(errors){
 
 		                        this.__restoreForm();
