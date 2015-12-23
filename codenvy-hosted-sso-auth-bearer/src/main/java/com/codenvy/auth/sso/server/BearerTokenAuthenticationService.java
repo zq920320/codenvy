@@ -25,7 +25,10 @@ import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.auth.sso.server.organization.UserCreator;
-import com.codenvy.auth.sso.server.organization.WorkspaceCreationValidator;
+import com.codenvy.auth.sso.server.organization.UserCreationValidator;
+
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.lang.IoUtil;
 import org.eclipse.che.commons.user.User;
 
@@ -77,7 +80,7 @@ public class BearerTokenAuthenticationService {
     @Inject
     protected CookieBuilder                    cookieBuilder;
     @Inject
-    protected WorkspaceCreationValidator       creationValidator;
+    protected UserCreationValidator            creationValidator;
     @Inject
     protected UserCreator                      userCreator;
 
@@ -96,9 +99,7 @@ public class BearerTokenAuthenticationService {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     public Response authenticate(@CookieParam("session-access-key") Cookie tokenAccessCookie,
-                                 Credentials credentials, @Context UriInfo uriInfo)
-            throws AuthenticationException {
-
+                                 Credentials credentials, @Context UriInfo uriInfo) throws AuthenticationException {
 
         if (handler == null) {
             LOG.warn("Bearer authenticator is null.");
@@ -106,16 +107,14 @@ public class BearerTokenAuthenticationService {
         }
 
         boolean isSecure = uriInfo.getRequestUri().getScheme().equals("https");
-        String username = credentials.getUsername();
         if (!handler.isValid(credentials.getToken())) {
             throw new AuthenticationException("Provided token is not valid");
         }
         Map<String, String> payload = handler.getPayload(credentials.getToken());
-        handler.authenticate(username, credentials.getToken());
-
+        handler.authenticate(credentials.getToken());
+        final String username =  payload.get("username");
         try {
-            User principal = userCreator.createUser(username, payload.get("firstName"), payload.get("lastName"));
-
+            User principal = userCreator.createUser(payload.get("email"), username, payload.get("firstName"), payload.get("lastName"));
 
             Response.ResponseBuilder builder = Response.ok();
             if (tokenAccessCookie != null) {
@@ -157,10 +156,10 @@ public class BearerTokenAuthenticationService {
     }
 
     /**
-     * Validates user email and workspace name, than sends confirmation mail.
+     * Validates user email and user name, than sends confirmation mail.
      *
      * @param validationData
-     *         - email and workspace name for validation
+     *         - email and user name for validation
      * @param uriInfo
      * @return
      * @throws java.io.IOException
@@ -170,37 +169,19 @@ public class BearerTokenAuthenticationService {
     @Path("validate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response validate(ValidationData validationData, @Context UriInfo uriInfo)
-            throws IOException, MessagingException, AuthenticationException {
-
-        /* Uncomment to block IDE2 registrations
-          if (IdeVersionHolder.get()) {
-              return Response.status(409).entity("Registrations to this Codenvy version are closed. Please use latest Codenvy version.").build();
-          }
-        */
+            throws ConflictException, MessagingException, ServerException, IOException {
 
         try {
-            inputDataValidator.validateWSName(validationData.getWorkspacename());
             inputDataValidator.validateUserMail(validationData.getEmail());
-            creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getWorkspacename());
-        } catch (IOException e) {
-            switch (e.getLocalizedMessage()) {
-                case "You are the owner of another persistent workspace.":
-                    return Response.status(403).entity(e.getMessage()).build();
-                case "This workspace name is reserved, please choose another name.":
-                    return Response.status(409).entity(e.getMessage()).build();
-                default:
-                    throw e;
-            }
+            creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getUsername());
         } catch (InputDataException e) {
             return Response.status(500).entity(e.getMessage()).build();
         }
 
-
         Map<String, String> props = new HashMap<>();
         props.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
-        props.put("workspace", validationData.getWorkspacename());
-        props.put("username", validationData.getEmail());
-        props.put("bearertoken", handler.generateBearerToken(validationData.getEmail(), Collections.singletonMap("initiator", "email")));
+        props.put("bearertoken", handler.generateBearerToken(validationData.getEmail(), validationData.getUsername(),
+                                                             Collections.singletonMap("initiator", "email")));
         props.put("additional.query.params", uriInfo.getRequestUri().getQuery());
 
         mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", validationData.getEmail(), null,
@@ -217,14 +198,14 @@ public class BearerTokenAuthenticationService {
 
     public static class ValidationData {
         private String email;
-        private String workspacename;
+        private String userName;
 
         public ValidationData() {
         }
 
-        public ValidationData(String email, String workspacename) {
+        public ValidationData(String email, String userName) {
             this.email = email;
-            this.workspacename = workspacename;
+            this.userName = userName;
         }
 
         public String getEmail() {
@@ -235,33 +216,23 @@ public class BearerTokenAuthenticationService {
             this.email = email;
         }
 
-        public String getWorkspacename() {
-            return workspacename;
+        public String getUsername() {
+            return userName;
         }
 
-        public void setWorkspacename(String workspacename) {
-            this.workspacename = workspacename;
+        public void setUsername(String userName) {
+            this.userName = userName;
         }
     }
 
     public static class Credentials {
-        private String username;
         private String token;
 
         public Credentials() {
         }
 
         public Credentials(String username, String token) {
-            this.username = username;
             this.token = token;
-        }
-
-        public String getUsername() {
-            return username;
-        }
-
-        public void setUsername(String username) {
-            this.username = username;
         }
 
         public String getToken() {

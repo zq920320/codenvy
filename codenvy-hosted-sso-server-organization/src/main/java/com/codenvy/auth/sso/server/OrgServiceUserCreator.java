@@ -58,11 +58,11 @@ public class OrgServiceUserCreator implements UserCreator {
     private PreferenceDao preferenceDao;
 
     @Override
-    public User createUser(String userName, String firstName, String lastName) throws IOException {
+    public User createUser(String email, String userName, String firstName, String lastName) throws IOException {
         //TODO check this method should only call if user is not exists.
         try {
-            org.eclipse.che.api.user.server.dao.User user = userDao.getByAlias(userName);
-            return new UserImpl(userName, user.getId(), null, Collections.<String>emptyList(), false);
+            org.eclipse.che.api.user.server.dao.User user = userDao.getByAlias(email);
+            return new UserImpl(email, user.getId(), null, Collections.<String>emptyList(), false);
         } catch (NotFoundException e) {
             String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
 
@@ -78,8 +78,9 @@ public class OrgServiceUserCreator implements UserCreator {
 
             try {
                 userDao.create(new org.eclipse.che.api.user.server.dao.User().withId(id)
-                                                                         .withEmail(userName)
-                                                                         .withPassword(password));
+                                                                             .withName(userName)
+                                                                             .withEmail(email)
+                                                                             .withPassword(password));
                 profileDao.create(profile);
 
                 final Map<String, String> preferences = new HashMap<>();
@@ -87,7 +88,7 @@ public class OrgServiceUserCreator implements UserCreator {
                 preferences.put("resetPassword", "true");
                 preferenceDao.setPreferences(id, preferences);
 
-                return new UserImpl(userName, id, null, Collections.<String>emptyList(), false);
+                return new UserImpl(email, id, null, Collections.<String>emptyList(), false);
             } catch (ConflictException | ServerException | NotFoundException e1) {
                 throw new IOException(e1.getLocalizedMessage(), e1);
             }
@@ -106,7 +107,7 @@ public class OrgServiceUserCreator implements UserCreator {
             while (true) {
                 testName = NameGenerator.generate("AnonymousUser_", 6);
                 try {
-                    userDao.getByAlias(testName);
+                    userDao.getByName(testName);
                 } catch (NotFoundException e) {
                     break;
                 } catch (ApiException e) {
@@ -121,7 +122,7 @@ public class OrgServiceUserCreator implements UserCreator {
             String password = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
 
 
-            userDao.create(new org.eclipse.che.api.user.server.dao.User().withId(id).withEmail(anonymousUser)
+            userDao.create(new org.eclipse.che.api.user.server.dao.User().withId(id).withName(anonymousUser)
                                                                      .withPassword(password));
 
             profileDao.create(new Profile()

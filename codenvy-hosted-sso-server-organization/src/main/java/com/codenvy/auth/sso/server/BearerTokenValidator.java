@@ -33,7 +33,7 @@ public class BearerTokenValidator implements TokenValidator {
 
     @Override
     public String validateToken(String token) throws ConflictException {
-        String username =  handler.getPayload(token).get("userName");
+        String username =  handler.getPayload(token).get("username");
         if (username == null || !handler.isValid(token))
             throw new ConflictException("Cannot create user - authentication token is invalid. Request a new one.");
         return username;
