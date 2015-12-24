@@ -458,10 +458,14 @@
             },
 
             // signup, oAuth login,
-            processCreate: function(bearertoken, error) {
+            processCreate: function(bearertoken, redirect_url,  error) {
                 authenticate(bearertoken)
                 .then(function(){
-                    redirectToUrl("/ws/");
+                    if (!redirect_url){
+                        redirectToUrl("/ws/");
+                    } else {
+                        redirectToUrl(redirect_url);
+                    }
                 })
                 .fail(function(response) {
                         if (response){
