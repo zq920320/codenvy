@@ -22,10 +22,12 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
         var CreateWsAddMember = Backbone.View.extend({
             
             initialize : function(){
-                var bearertoken = Account.getQueryParameterByName("bearertoken");
+                var bearertoken = Account.getQueryParameterByName("bearertoken"),
+                 redirect_url = Account.getQueryParameterByName("redirect_url");
                 if (bearertoken) {
                     Account.processCreate(
                         bearertoken,
+                        redirect_url,
                         _.bind(function(errors){
 
                             if(errors.length !== 0){
