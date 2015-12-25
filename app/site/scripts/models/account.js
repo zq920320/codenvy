@@ -519,9 +519,9 @@
                     success: function() {
                         redirectToUrl('../site/thank-you');
                     },
-                    error: function(xhr /*, status , err*/ ) {
+                    error: function(response /*, status , err*/ ) {
                         error([
-                            new AccountError(null, xhr.responseText)
+                            new AccountError(null, getResponseMessage(response))
                         ]);
                     }
                 });
