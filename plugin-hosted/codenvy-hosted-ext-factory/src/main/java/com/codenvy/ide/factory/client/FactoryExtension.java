@@ -30,14 +30,11 @@ import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
-import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.extension.Extension;
 
 import static com.google.gwt.core.client.ScriptInjector.TOP_WINDOW;
-import static org.eclipse.che.ide.api.action.IdeActions.GROUP_IMPORT_PROJECT;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_PROJECT;
 import static org.eclipse.che.ide.api.action.IdeActions.GROUP_WORKSPACE;
-import static org.eclipse.che.ide.api.constraints.Anchor.AFTER;
 
 /**
  * @author Vladyslav Zhukovskii

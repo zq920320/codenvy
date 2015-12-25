@@ -39,8 +39,11 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("project.import.configured.cloned")
     String clonedSource(String projectName);
 
-    @Key("project.import.configuring.cloning.failed")
+    @Key("project.import.cloning.failed")
     String cloningSourceFailed(String projectName);
+
+    @Key("project.import.configuring.failed")
+    String configuringSourceFailed(String projectName);
 
     @Key("project.already.imported")
     String projectAlreadyImported(String projectName);

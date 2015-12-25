@@ -101,10 +101,9 @@ public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate 
                                   .then(new Operation<Factory>() {
                                       @Override
                                       public void apply(Factory factory) throws OperationException {
-                                          for (Link link : factory.getLinks()) {
-                                              if (link.getRel() != null && link.getRel().equals("create-project")) {
-                                                  view.setFactoryLink(link.getHref());
-                                              }
+                                          Link link = factory.getLink("create-workspace");
+                                          if (link!= null ) {
+                                              view.setFactoryLink(link.getHref());
                                           }
                                       }
                                   })

@@ -27,6 +27,7 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.factory.shared.dto.Action;
 import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Ide;
 import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
 import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
 import org.eclipse.che.ide.api.action.ActionManager;
@@ -119,8 +120,11 @@ public class AcceptFactoryHandler {
     }
 
     private void performActions(final Factory factory) {
-        final List<Action> actions = factory.getIde().getOnProjectsLoaded().getActions();
-        for (Action action : actions) {
+        final Ide ide = factory.getIde();
+        if (ide == null || ide.getOnProjectsLoaded() == null) {
+            return;
+        }
+        for (Action action : ide.getOnProjectsLoaded().getActions()) {
             actionManager.performAction(action.getId(), action.getProperties());
         }
     }

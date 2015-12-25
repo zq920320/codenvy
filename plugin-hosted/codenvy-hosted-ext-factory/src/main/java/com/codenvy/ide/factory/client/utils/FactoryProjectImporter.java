@@ -37,6 +37,7 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
+import org.eclipse.che.ide.util.loging.Log;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -53,11 +54,11 @@ import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUC
  * @author Anton Korneta
  */
 public class FactoryProjectImporter {
-    private final ProjectServiceClient                       projectServiceClient;
-    private final NotificationManager                        notificationManager;
-    private final FactoryLocalizationConstant                localization;
-    private final ImportProjectNotificationSubscriberFactory subscriberFactory;
+    private final ProjectServiceClient                       projectService;
     private final EventBus                                   eventBus;
+    private final FactoryLocalizationConstant                locale;
+    private final NotificationManager                        notificationManager;
+    private final ImportProjectNotificationSubscriberFactory subscriberFactory;
     private final String                                     workspaceId;
 
     private Factory             factory;
@@ -67,15 +68,14 @@ public class FactoryProjectImporter {
     public FactoryProjectImporter(ProjectServiceClient projectServiceClient,
                                   AppContext appContext,
                                   NotificationManager notificationManager,
-                                  FactoryLocalizationConstant localization,
+                                  FactoryLocalizationConstant locale,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
                                   EventBus eventBus) {
-        this.projectServiceClient = projectServiceClient;
+        this.projectService = projectServiceClient;
         this.notificationManager = notificationManager;
-        this.localization = localization;
+        this.locale = locale;
         this.subscriberFactory = subscriberFactory;
         this.eventBus = eventBus;
-        
         this.workspaceId = appContext.getWorkspace().getId();
     }
 
@@ -89,7 +89,7 @@ public class FactoryProjectImporter {
      * Import source projects
      */
     private void importProjects() {
-        projectServiceClient.getProjects(workspaceId, false).then(new Operation<List<ProjectConfigDto>>() {
+        projectService.getProjects(workspaceId, false).then(new Operation<List<ProjectConfigDto>>() {
             @Override
             public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
                 Set<String> projectNames = new HashSet<>();
@@ -111,39 +111,14 @@ public class FactoryProjectImporter {
     private void importProjects(Set<String> existedProjects) {
         final List<Promise<Void>> promises = new ArrayList<>();
         for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
-            final String projectName = projectConfig.getName();
-            if (existedProjects.contains(projectName)) {
-                notificationManager.notify("Import", localization.projectAlreadyImported(projectName), FAIL, true);
+            if (existedProjects.contains(projectConfig.getName())) {
+                notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
                 continue;
             }
-            final StatusNotification notification =
-                    notificationManager.notify(localization.cloningSource(projectName), null, PROGRESS, true);
-            final ImportProjectNotificationSubscriber notificationSubscriber = subscriberFactory.createSubscriber();
-            notificationSubscriber.subscribe(projectName, notification);
-
-            Promise<Void> promise = projectServiceClient.importProject(workspaceId, projectName, true, projectConfig.getSource())
-                                                        .then(new Operation<Void>() {
-                                                            @Override
-                                                            public void apply(Void arg) throws OperationException {
-                                                                notificationSubscriber.onSuccess();
-                                                                notification.setContent(localization.clonedSource(projectName));
-                                                                notification.setStatus(SUCCESS);
-                                                                eventBus.fireEvent(new CreateProjectEvent(projectConfig));
-                                                            }
-                                                        })
-                                                        .catchError(new Operation<PromiseError>() {
-                                                            @Override
-                                                            public void apply(PromiseError arg) throws OperationException {
-                                                                notificationSubscriber.onFailure(arg.getMessage());
-                                                                notification.setContent(localization.cloningSourceFailed(projectName));
-                                                                notification.setStatus(FAIL);
-                                                                Promises.reject(arg);
-                                                            }
-                                                        });
-            promises.add(promise);
+            promises.add(importProject(projectConfig));
         }
 
-        Promises.all(promises.toArray(new Promise[promises.size()]))
+        Promises.all(promises.toArray(new Promise<?>[promises.size()]))
                 .then(new Operation<JsArrayMixed>() {
                     @Override
                     public void apply(JsArrayMixed arg) throws OperationException {
@@ -159,7 +134,46 @@ public class FactoryProjectImporter {
                 });
     }
 
-    public Factory getFactory() {
-        return factory;
+    /** Importing a single project in case of failure will display the notification with appropriate status */
+    private Promise<Void> importProject(final ProjectConfigDto projectConfig) {
+        final String projectName = projectConfig.getName();
+        final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
+        final ImportProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
+        subscriber.subscribe(projectName, notification);
+
+        return projectService.importProject(workspaceId, projectName, true, projectConfig.getSource())
+                             .then(new Operation<Void>() {
+                                 @Override
+                                 public void apply(Void arg) throws OperationException {
+                                     projectService.getProject(workspaceId, projectConfig.getPath())
+                                                   .then(new Operation<ProjectConfigDto>() {
+                                                       @Override
+                                                       public void apply(ProjectConfigDto projectConfig) throws OperationException {
+                                                           eventBus.fireEvent(new CreateProjectEvent(projectConfig));
+                                                           subscriber.onSuccess();
+                                                           notification.setContent(locale.clonedSource(projectName));
+                                                           notification.setStatus(SUCCESS);
+                                                       }
+                                                   })
+                                                   .catchError(new Operation<PromiseError>() {
+                                                       @Override
+                                                       public void apply(PromiseError err) throws OperationException {
+                                                           subscriber.onFailure(err.getMessage());
+                                                           notification.setContent(locale.configuringSourceFailed(projectName));
+                                                           notification.setStatus(FAIL);
+                                                           Promises.reject(err);
+                                                       }
+                                                   });
+                                 }
+                             })
+                             .catchError(new Operation<PromiseError>() {
+                                 @Override
+                                 public void apply(PromiseError err) throws OperationException {
+                                     subscriber.onFailure(err.getMessage());
+                                     notification.setContent(locale.cloningSourceFailed(projectName));
+                                     notification.setStatus(FAIL);
+                                     Promises.reject(err);
+                                 }
+                             });
     }
 }
