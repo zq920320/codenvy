@@ -31,7 +31,6 @@ import org.eclipse.che.ide.ext.git.client.GitLocalizationConstant;
 import org.eclipse.che.ide.rest.RestContext;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -59,12 +58,11 @@ public class SyncGitServiceClient {
 
     @Inject
     public SyncGitServiceClient(@RestContext String restContext,
-                                @Named("workspaceId") String workspaceId,
                                 DtoFactory dtoFactory,
                                 GitLocalizationConstant gitLocale,
                                 AppContext appContext) {
         this.dtoFactory = dtoFactory;
-        this.workspaceId = workspaceId;
+        this.workspaceId = appContext.getWorkspace().getId();
         this.restContext = restContext;
         this.gitLocale = gitLocale;
         this.appContext = appContext;

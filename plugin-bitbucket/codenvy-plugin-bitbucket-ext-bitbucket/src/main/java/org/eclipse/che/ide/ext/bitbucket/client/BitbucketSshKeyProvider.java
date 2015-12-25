@@ -13,6 +13,7 @@ package org.eclipse.che.ide.ext.bitbucket.client;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 import org.eclipse.che.ide.ext.ssh.client.SshKeyProvider;
@@ -20,7 +21,6 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
-import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
@@ -43,6 +43,7 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
     private final BitbucketLocalizationConstant constant;
     private final NotificationManager           notificationManager;
     private final DialogFactory                 dialogFactory;
+    private final AppContext                    appContext;
     private       AsyncCallback<Void>           callback;
     private       String                        userId;
 
@@ -51,13 +52,15 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
                                    @NotNull @RestContext final String baseUrl,
                                    @NotNull final BitbucketLocalizationConstant constant,
                                    @NotNull final NotificationManager notificationManager,
-                                   @NotNull final DialogFactory dialogFactory) {
+                                   @NotNull final DialogFactory dialogFactory,
+                                   AppContext appContext) {
 
         this.bitbucketService = bitbucketService;
         this.baseUrl = baseUrl;
         this.constant = constant;
         this.notificationManager = notificationManager;
         this.dialogFactory = dialogFactory;
+        this.appContext = appContext;
     }
 
     @Override
@@ -94,7 +97,8 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
 
     private void showPopUp() {
         final String authUrl = baseUrl + "/oauth/1.0/authenticate?oauth_provider=bitbucket&userId=" + userId + "&redirect_after_login=" +
-                               Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" + Config.getWorkspaceName();
+                               Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" +
+                               appContext.getWorkspace().getName();
 
         new JsOAuthWindow(authUrl, "error.url", 500, 980, this).loginWithOAuth();
     }

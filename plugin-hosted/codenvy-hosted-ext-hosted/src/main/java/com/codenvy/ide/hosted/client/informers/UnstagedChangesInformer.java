@@ -26,8 +26,6 @@ import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.rest.RestContext;
 
-import javax.inject.Named;
-
 /**
  * Checks for unsaved and uncommitted files and inform the user when he tries to leave the page.
  *
@@ -43,11 +41,10 @@ public class UnstagedChangesInformer extends Action {
 
     @Inject
     public UnstagedChangesInformer(AppContext appContext,
-                                   @RestContext String restContext,
-                                   @Named("workspaceId") String workspaceId) {
+                                   @RestContext String restContext) {
         this.appContext = appContext;
         this.restContext = restContext;
-        this.workspaceId = workspaceId;
+        this.workspaceId = appContext.getWorkspace().getId();
     }
 
     @Override
