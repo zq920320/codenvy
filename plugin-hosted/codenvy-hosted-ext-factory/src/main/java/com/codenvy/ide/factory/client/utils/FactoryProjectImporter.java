@@ -18,7 +18,6 @@
 package com.codenvy.ide.factory.client.utils;
 
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
-import com.codenvy.ide.factory.client.accept.Authenticator;
 import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -32,6 +31,7 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
@@ -56,26 +56,27 @@ public class FactoryProjectImporter {
     private final ProjectServiceClient                       projectServiceClient;
     private final NotificationManager                        notificationManager;
     private final FactoryLocalizationConstant                localization;
-    private final Authenticator                              authenticator;
     private final ImportProjectNotificationSubscriberFactory subscriberFactory;
     private final EventBus                                   eventBus;
+    private final String                                     workspaceId;
 
     private Factory             factory;
     private AsyncCallback<Void> callback;
 
     @Inject
     public FactoryProjectImporter(ProjectServiceClient projectServiceClient,
+                                  AppContext appContext,
                                   NotificationManager notificationManager,
                                   FactoryLocalizationConstant localization,
-                                  Authenticator authenticator,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
                                   EventBus eventBus) {
         this.projectServiceClient = projectServiceClient;
         this.notificationManager = notificationManager;
         this.localization = localization;
-        this.authenticator = authenticator;
         this.subscriberFactory = subscriberFactory;
         this.eventBus = eventBus;
+        
+        this.workspaceId = appContext.getWorkspace().getId();
     }
 
     public void startImporting(Factory factory, AsyncCallback<Void> callback) {
@@ -88,7 +89,7 @@ public class FactoryProjectImporter {
      * Import source projects
      */
     private void importProjects() {
-        projectServiceClient.getProjects(false).then(new Operation<List<ProjectConfigDto>>() {
+        projectServiceClient.getProjects(workspaceId, false).then(new Operation<List<ProjectConfigDto>>() {
             @Override
             public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
                 Set<String> projectNames = new HashSet<>();
@@ -120,7 +121,7 @@ public class FactoryProjectImporter {
             final ImportProjectNotificationSubscriber notificationSubscriber = subscriberFactory.createSubscriber();
             notificationSubscriber.subscribe(projectName, notification);
 
-            Promise<Void> promise = projectServiceClient.importProject(projectName, true, projectConfig.getSource())
+            Promise<Void> promise = projectServiceClient.importProject(workspaceId, projectName, true, projectConfig.getSource())
                                                         .then(new Operation<Void>() {
                                                             @Override
                                                             public void apply(Void arg) throws OperationException {

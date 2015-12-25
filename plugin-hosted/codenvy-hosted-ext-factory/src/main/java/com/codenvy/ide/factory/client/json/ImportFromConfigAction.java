@@ -27,8 +27,6 @@ import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.inject.Named;
-
 /**
  * @author Sergii Leschenko
  */
@@ -43,7 +41,6 @@ public class ImportFromConfigAction extends Action {
                                   FactoryLocalizationConstant locale,
                                   WorkspaceServiceClient workspaceServiceClient,
                                   DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                                  @Named("workspaceId") String workspaceId,
                                   AnalyticsEventLogger eventLogger,
                                   FactoryResources resources) {
         super(locale.importFromConfigurationName(), locale.importFromConfigurationDescription(), null, resources.importConfig());

@@ -17,6 +17,21 @@
  */
 package com.codenvy.ide.hosted.client.informers;
 
+import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
+import com.codenvy.ide.hosted.client.HostedResources;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.event.dom.client.MouseOutEvent;
+import com.google.gwt.event.dom.client.MouseOutHandler;
+import com.google.gwt.event.dom.client.MouseOverEvent;
+import com.google.gwt.event.dom.client.MouseOverHandler;
+import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.Widget;
+import com.google.inject.Inject;
+
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.action.Action;
 import org.eclipse.che.ide.api.action.ActionEvent;
 import org.eclipse.che.ide.api.action.ActionManager;
@@ -24,23 +39,8 @@ import org.eclipse.che.ide.api.action.CustomComponentAction;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.action.Presentation;
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.constraints.Constraints;
-import org.eclipse.che.ide.util.Config;
-
-import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
-import com.codenvy.ide.hosted.client.HostedResources;
-import com.google.gwt.dom.client.Document;
-import com.google.gwt.event.dom.client.MouseOutEvent;
-import com.google.gwt.event.dom.client.MouseOutHandler;
-import com.google.gwt.event.dom.client.MouseOverEvent;
-import com.google.gwt.event.dom.client.MouseOverHandler;
-import com.google.gwt.user.client.DOM;
-import com.google.gwt.dom.client.Element;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.Widget;
-import com.google.inject.Inject;
-
 import org.vectomatic.dom.svg.ui.SVGImage;
 
 import static com.google.gwt.dom.client.Style.Display.BLOCK;
@@ -56,19 +56,23 @@ public class TemporaryWorkspaceInformer {
     private final HostedLocalizationConstant  locale;
     private final ActionManager               actionManager;
     private final TemporaryWorkspaceIndicator temporaryWorkspaceIndicator;
+    private final AppContext                  appContext;
 
     @Inject
     public TemporaryWorkspaceInformer(ActionManager actionManager,
                                       HostedResources resources,
-                                      HostedLocalizationConstant locale) {
+                                      HostedLocalizationConstant locale,
+                                      AppContext appContext) {
         this.actionManager = actionManager;
         this.resources = resources;
         this.locale = locale;
         temporaryWorkspaceIndicator = new TemporaryWorkspaceIndicator();
+        this.appContext = appContext;
     }
 
     public void process() {
-        if (Config.getCurrentWorkspace() == null || !Config.getCurrentWorkspace().isTemporary()) {
+        UsersWorkspaceDto workspace = appContext.getWorkspace();
+        if (workspace == null || !workspace.isTemporary()) {
             return;
         }
 

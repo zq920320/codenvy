@@ -17,21 +17,22 @@
  */
 package com.codenvy.ide.factory.client.accept;
 
+import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
+import com.google.gwt.user.client.Window;
+
 import org.eclipse.che.api.user.gwt.client.UserServiceClient;
 import org.eclipse.che.api.user.shared.dto.UserDescriptor;
-import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
-import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
-import com.google.gwt.user.client.Window;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -52,6 +53,7 @@ public class Authenticator implements OAuthCallback {
     private final DtoUnmarshallerFactory      dtoUnmarshallerFactory;
     private final DialogFactory               dialogFactory;
     private final String                      restContext;
+    private final AppContext                  appContext;
 
     private AuthCallback authCallback;
 
@@ -60,11 +62,13 @@ public class Authenticator implements OAuthCallback {
                          UserServiceClient userServiceClient,
                          DtoUnmarshallerFactory dtoUnmarshallerFactory,
                          DialogFactory dialogFactory,
+                         AppContext appContext,
                          @RestContext String restContext) {
         this.localizationConstant = localizationConstant;
         this.userServiceClient = userServiceClient;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.dialogFactory = dialogFactory;
+        this.appContext = appContext;
         this.restContext = restContext;
     }
 
@@ -185,7 +189,7 @@ public class Authenticator implements OAuthCallback {
     private void showPopUp(String userId, String providerId, String scope) {
         String authUrl = restContext + "/oauth/authenticate?oauth_provider=" + providerId + "&scope=" + scope + "&userId=" + userId +
                          "&redirect_after_login=" + Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" +
-                         Config.getWorkspaceName();
+                         appContext.getWorkspace().getName();
         JsOAuthWindow authWindow = new JsOAuthWindow(authUrl, "error.url", 500, 980, this);
         authWindow.loginWithOAuth();
     }

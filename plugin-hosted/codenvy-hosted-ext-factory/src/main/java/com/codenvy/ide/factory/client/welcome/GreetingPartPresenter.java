@@ -33,6 +33,7 @@ import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 import com.google.web.bindery.event.shared.HandlerRegistration;
 
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.constraints.Constraints;
@@ -47,7 +48,6 @@ import org.eclipse.che.ide.api.parts.PartStackType;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.api.preferences.PreferencesManager;
-import org.eclipse.che.ide.util.Config;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
@@ -169,7 +169,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
                          parameters.get("nonAuthenticatedNotification"));
         }
 
-        if (Config.getCurrentWorkspace().isTemporary()) {
+        if (appContext.getWorkspace().isTemporary()) {
             workspaceAgent.setActivePart(this);
         }
     }
@@ -190,8 +190,10 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
             }
         }
 
+        UsersWorkspaceDto workspace = appContext.getWorkspace();
+
         // checking whether welcome is enabled for persistent workspace.
-        if (!Config.getCurrentWorkspace().isTemporary()
+        if (!workspace.isTemporary()
             && preferencesManager.getValue(ShowWelcomePreferencePagePresenter.SHOW_WELCOME_PREFERENCE_KEY) != null
             && !"true".equals(preferencesManager.getValue(ShowWelcomePreferencePagePresenter.SHOW_WELCOME_PREFERENCE_KEY))) {
             return;
@@ -199,7 +201,7 @@ public class GreetingPartPresenter extends BasePresenter implements GreetingPart
 
         String key = appContext.getCurrentUser().isUserPermanent() ? "authenticated" : "anonymous";
 
-        key += Config.getCurrentWorkspace().isTemporary() ? "-workspace-temporary" : "";
+        key += workspace.isTemporary() ? "-workspace-temporary" : "";
 
         String url = findGreetingByKey(key);
         if (!isNullOrEmpty(url)) {
