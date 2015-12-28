@@ -69,7 +69,7 @@ public class AddWorkspaceMemberInterceptor implements MethodInterceptor {
 //            }
 //        }
 //        return result;
-        return null;
+        return invocation.proceed();
     }
 
 }

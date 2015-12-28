@@ -78,8 +78,6 @@ public class WorkspaceRemovalListener implements RemovalListener<String, Boolean
                     try {
                         memberships.addAll(membershipDao.getAllMemberships("workspace", wsId));
                         workspaceManager.removeWorkspace(wsId);
-                    } catch (NotFoundException e) {
-                        return;
                     } catch (BadRequestException e) {
                         LOG.error("Cannot remove workspace {}", wsId);
                     }
