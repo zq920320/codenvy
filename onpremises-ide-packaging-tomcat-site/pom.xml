@@ -31,17 +31,17 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-next-ide-codenvy</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-next-ide-resources-codenvy</artifactId>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.cloud-ide</groupId>
             <artifactId>cloud-ide-packaging-war-user-dashboard</artifactId>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-next-ide-codenvy</artifactId>
             <type>war</type>
         </dependency>
         <dependency>
