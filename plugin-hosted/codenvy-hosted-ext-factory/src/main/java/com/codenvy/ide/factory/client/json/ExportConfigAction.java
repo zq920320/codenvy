@@ -47,6 +47,7 @@ public class ExportConfigAction extends Action {
     private final AnalyticsEventLogger        eventLogger;
     private final SyncGitServiceClient        gitService;
     private final DialogFactory               dialogFactory;
+    private final String                      exportConfigURL;
 
     @Inject
     public ExportConfigAction(FactoryLocalizationConstant locale,
@@ -61,6 +62,7 @@ public class ExportConfigAction extends Action {
         this.eventLogger = eventLogger;
         this.gitService = gitService;
         this.dialogFactory = dialogFactory;
+        this.exportConfigURL = "/api/factory/workspace/" + appContext.getWorkspace().getId();
     }
 
     /** {@inheritDoc} */
@@ -100,8 +102,7 @@ public class ExportConfigAction extends Action {
     }
 
     private void exportConfig(String projectName) {
-        final String currentWorkspaceId = appContext.getWorkspace().getId();
-        String downloadConfigLink = "/api/factory/" + currentWorkspaceId + "/" + projectName;
+        final String downloadConfigLink = exportConfigURL + "?path=/" + projectName;
         Window.open(downloadConfigLink, "Download Config", "");
     }
 
