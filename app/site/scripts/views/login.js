@@ -43,11 +43,7 @@
                 $(this.el).on('submit', function(e){
                     e.preventDefault();
                 });
-	            if (!Account.isLoginCookiePresent() && window.location.pathname.indexOf('site/login')<0){
-	                this.proceedCreate();
-	            }else{
-	                this.proceedLogin();
-	            }
+                this.proceedLogin();
 	        },
 	        
 	        proceedLogin : function(){
