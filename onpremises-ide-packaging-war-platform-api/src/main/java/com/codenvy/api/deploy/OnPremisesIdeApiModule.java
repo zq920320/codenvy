@@ -39,9 +39,8 @@ import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.filter.RequestMethodFilter;
 import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
-import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
-import com.codenvy.auth.sso.server.OrgServiceUserValidator;
+import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.workspace.CreateWsRootDirInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
@@ -326,7 +325,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new ScheduleModule());
         */
         bind(org.eclipse.che.api.machine.server.MachineService.class);
-        bind(org.eclipse.che.api.machine.server.dao.SnapshotDao.class).to(com.codenvy.api.dao.mongo.MongoSnapshotDaoImpl.class);
+        bind(org.eclipse.che.api.machine.server.dao.SnapshotDao.class).to(com.codenvy.api.dao.mongo.SnapshotDaoImpl.class);
         bind(com.mongodb.DB.class).annotatedWith(Names.named("mongo.db.machine"))
                                   .toProvider(com.codenvy.api.dao.mongo.MachineMongoDBProvider.class);
 
