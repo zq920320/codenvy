@@ -23,6 +23,7 @@ import com.google.inject.multibindings.Multibinder;
 import org.bson.codecs.Codec;
 import org.bson.codecs.configuration.CodecProvider;
 import org.bson.codecs.configuration.CodecRegistry;
+import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
 import org.eclipse.che.inject.DynaModule;
 
@@ -34,6 +35,7 @@ import org.eclipse.che.inject.DynaModule;
  * See <a href="http://mongodb.github.io/mongo-java-driver/3.0/bson/codecs/">example</a>
  *
  * @author Eugene Voevodin
+ * @author Sergii Kabashniuk
  * @see MongoDatabaseProvider
  */
 @DynaModule
@@ -48,6 +50,8 @@ public class MongoCodecModule extends AbstractModule {
             public <T> Codec<T> get(Class<T> clazz, CodecRegistry registry) {
                 if (clazz == UsersWorkspaceImpl.class) {
                     return (Codec<T>)new UsersWorkspaceImplCodec(registry);
+                } else if (clazz == SnapshotImpl.class) {
+                    return (Codec<T>)new SnapshotImplCodec(registry);
                 }
                 return null;
             }
