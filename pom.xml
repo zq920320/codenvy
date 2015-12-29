@@ -36,6 +36,7 @@
         <module>onpremises-ide-packaging-war-webroot-codenvy</module>
         <module>onpremises-ide-packaging-war-factory</module>
         <module>onpremises-ide-packaging-war-platform-api</module>
+        <module>onpremises-ide-packaging-war-next-ide-codenvy</module>
         <module>onpremises-ide-packaging-war-admin-dashboard</module>
         <module>onpremises-ide-packaging-tomcat-site</module>
         <module>onpremises-ide-packaging-tomcat-api</module>

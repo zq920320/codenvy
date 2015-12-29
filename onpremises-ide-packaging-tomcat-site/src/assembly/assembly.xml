@@ -65,7 +65,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>ws.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-next-ide-codenvy</include>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-next-ide-codenvy</include>
             </includes>
         </dependencySet>
         <dependencySet>
