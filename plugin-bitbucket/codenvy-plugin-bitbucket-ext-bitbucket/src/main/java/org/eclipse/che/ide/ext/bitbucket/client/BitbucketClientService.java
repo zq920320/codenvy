@@ -21,8 +21,8 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
-import org.eclipse.che.ide.rest.AsyncRequestLoader;
 import org.eclipse.che.ide.rest.RestContext;
+import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 
 import javax.validation.constraints.NotNull;
 
@@ -42,15 +42,15 @@ public class BitbucketClientService {
     private static final String SSH_KEYS     = "/ssh-keys";
 
     private final String              baseUrl;
-    private final AsyncRequestLoader  loader;
+    private final LoaderFactory       loaderFactory;
     private final AsyncRequestFactory asyncRequestFactory;
 
     @Inject
     protected BitbucketClientService(@NotNull @RestContext final String baseUrl,
-                                     @NotNull final AsyncRequestLoader loader,
+                                     @NotNull final LoaderFactory loaderFactory,
                                      @NotNull final AsyncRequestFactory asyncRequestFactory) {
         this.baseUrl = baseUrl + BITBUCKET;
-        this.loader = loader;
+        this.loaderFactory = loaderFactory;
         this.asyncRequestFactory = asyncRequestFactory;
     }
 
@@ -66,7 +66,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + USER;
-        asyncRequestFactory.createGetRequest(requestUrl).loader(loader).send(callback);
+        asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -89,7 +89,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug;
-        asyncRequestFactory.createGetRequest(requestUrl).loader(loader).send(callback);
+        asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -112,7 +112,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/forks";
-        asyncRequestFactory.createGetRequest(requestUrl).loader(loader).send(callback);
+        asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -144,7 +144,7 @@ public class BitbucketClientService {
         final String requestUrl =
                 baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/fork?forkName=" + forkName + "&isForkPrivate=" +
                 isForkPrivate;
-        asyncRequestFactory.createPostRequest(requestUrl, null).loader(loader).send(callback);
+        asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -168,7 +168,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
-        asyncRequestFactory.createGetRequest(requestUrl).loader(loader).send(callback);
+        asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -195,7 +195,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
-        asyncRequestFactory.createPostRequest(requestUrl, pullRequest).loader(loader).send(callback);
+        asyncRequestFactory.createPostRequest(requestUrl, pullRequest).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -214,7 +214,7 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner;
-        asyncRequestFactory.createGetRequest(requestUrl).loader(loader).send(callback);
+        asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
     /**
@@ -229,6 +229,6 @@ public class BitbucketClientService {
         checkArgument(callback != null, "callback");
 
         final String requestUrl = baseUrl + SSH_KEYS;
-        asyncRequestFactory.createPostRequest(requestUrl, null).loader(loader).send(callback);
+        asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
     }
 }
