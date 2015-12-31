@@ -39,7 +39,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/ws/*",
                "/code-assistant-java/*",
                "/java-name-environment/*",
-               "/project-template/*",
                "/debug-java/*",
                "/async/*",
                "/git/*",

@@ -76,5 +76,9 @@
                 <include>assembly.properties</include>
             </includes>
         </fileSet>
+        <fileSet>
+            <directory>${project.basedir}/src/assembly/che-templates</directory>
+            <outputDirectory>che-templates</outputDirectory>
+        </fileSet>
     </fileSets>
 </assembly>
