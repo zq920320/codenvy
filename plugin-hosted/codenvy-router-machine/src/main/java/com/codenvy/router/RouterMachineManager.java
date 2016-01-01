@@ -29,6 +29,7 @@ import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.MachineInstanceProviders;
 import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.api.machine.server.MachineRegistry;
+import org.eclipse.che.api.machine.server.WsAgentLauncher;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
@@ -61,6 +62,7 @@ public class RouterMachineManager extends MachineManager {
     private final int                      defaultMachineMemorySizeMB;
     private final String                   apiEndpoint;
     private final RouterRulesRegistry      routerRulesRegistry;
+    private final WsAgentLauncher          wsAgentLauncher;
 
     @Inject
     public RouterMachineManager(SnapshotDao snapshotDao,
@@ -70,9 +72,16 @@ public class RouterMachineManager extends MachineManager {
                                 EventService eventService,
                                 @Named("machine.default_mem_size_mb") int defaultMachineMemorySizeMB,
                                 @Named("api.endpoint") String apiEndpoint,
-                                RouterRulesRegistry routerRulesRegistry) {
-        super(snapshotDao, machineRegistry, machineInstanceProviders, machineLogsDir, eventService, defaultMachineMemorySizeMB,
-              apiEndpoint);
+                                RouterRulesRegistry routerRulesRegistry,
+                                WsAgentLauncher wsAgentLauncher) {
+        super(snapshotDao,
+              machineRegistry,
+              machineInstanceProviders,
+              machineLogsDir,
+              eventService,
+              defaultMachineMemorySizeMB,
+              apiEndpoint,
+              wsAgentLauncher);
         this.snapshotDao = snapshotDao;
         this.machineRegistry = machineRegistry;
         this.machineInstanceProviders = machineInstanceProviders;
@@ -81,6 +90,7 @@ public class RouterMachineManager extends MachineManager {
         this.defaultMachineMemorySizeMB = defaultMachineMemorySizeMB;
         this.apiEndpoint = apiEndpoint;
         this.routerRulesRegistry = routerRulesRegistry;
+        this.wsAgentLauncher = wsAgentLauncher;
     }
 
     /**
@@ -94,7 +104,8 @@ public class RouterMachineManager extends MachineManager {
              manager.eventService,
              manager.defaultMachineMemorySizeMB,
              manager.apiEndpoint,
-             manager.routerRulesRegistry);
+             manager.routerRulesRegistry,
+             manager.wsAgentLauncher);
     }
 
     private Map<String, ServerImpl> rewriteServersUrls(String machineId, Map<String, ? extends Server> servers) {
