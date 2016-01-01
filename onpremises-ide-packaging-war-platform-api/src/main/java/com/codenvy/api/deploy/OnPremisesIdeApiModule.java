@@ -389,5 +389,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(com.codenvy.api.account.DefaultAccountCreator.class);
 
         install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
+
+        bind(org.eclipse.che.api.machine.server.WsAgentLauncher.class).to(org.eclipse.che.api.machine.server.WsAgentLauncherImpl.class);
     }
 }
