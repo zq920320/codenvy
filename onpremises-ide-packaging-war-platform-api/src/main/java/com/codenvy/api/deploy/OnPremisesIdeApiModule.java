@@ -72,6 +72,7 @@ import org.eclipse.che.api.project.server.ProjectTemplateDescriptionLoader;
 import org.eclipse.che.api.project.server.ProjectTemplateRegistry;
 import org.eclipse.che.api.project.server.ProjectTemplateService;
 import org.eclipse.che.api.project.server.handlers.ProjectHandler;
+import org.eclipse.che.api.ssh.server.spi.SshDao;
 import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.UserProfileService;
 import org.eclipse.che.api.user.server.UserService;
@@ -129,8 +130,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserProfileService.class);
         bind(AccountService.class);
 
-        bind(org.eclipse.che.ide.ext.ssh.server.KeyService.class);
-        bind(org.eclipse.che.ide.ext.ssh.server.SshKeyStore.class).to(org.eclipse.che.ide.ext.ssh.server.UserProfileSshKeyStore.class);
         //recipe service
         bind(RecipeService.class);
         bind(PermissionsChecker.class).to(PermissionsCheckerImpl.class);
@@ -204,6 +203,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserDao.class).to(UserDaoImpl.class);
         bind(UserProfileDao.class).to(com.codenvy.api.dao.ldap.UserProfileDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
+        bind(SshDao.class).to(com.codenvy.api.dao.mongo.ssh.SshDaoImpl.class);
         //bind(MemberDao.class).to(LocalMemberDaoImpl.class);
         bind(AccountDao.class).to(AccountDaoImpl.class);
         bind(org.eclipse.che.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
@@ -330,6 +330,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new AnalyticsModule());
         install(new ScheduleModule());
         */
+        bind(org.eclipse.che.api.ssh.server.SshService.class);
         bind(org.eclipse.che.api.machine.server.MachineService.class);
         bind(org.eclipse.che.api.machine.server.dao.SnapshotDao.class).to(com.codenvy.api.dao.mongo.SnapshotDaoImpl.class);
         bind(com.mongodb.DB.class).annotatedWith(Names.named("mongo.db.machine"))
