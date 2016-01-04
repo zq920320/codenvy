@@ -161,6 +161,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToRemoveAccount() throws Exception {
         final Account account = createAccount();
+        accountDao.create(account);
         when(workspaceDao.getByAccount(account.getId())).thenReturn(Collections.<Workspace>emptyList());
         final Member member1 = new Member().withUserId("test_user_1")
                                            .withAccountId(account.getId())
@@ -169,7 +170,6 @@ public class AccountDaoImplTest extends BaseDaoTest {
                                            .withAccountId(account.getId())
                                            .withRoles(asList("account/member"));
         insertMembers(member1, member2);
-        insertAccounts(account);
 
         accountDao.remove(account.getId());
 
@@ -181,7 +181,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
             }
         }));
         assertNull(collection.findOne(new BasicDBObject("id", account.getId())));
-        assertFalse(membersCollection.find(new BasicDBObject("members.accountId", account.getId())).hasNext());
+        assertEquals(membersCollection.find().count(), 0);
     }
 
     @Test(expectedExceptions = ConflictException.class,
@@ -204,16 +204,15 @@ public class AccountDaoImplTest extends BaseDaoTest {
 
         accountDao.addMember(member);
 
-        final DBObject membersDocument = membersCollection.findOne(new BasicDBObject("_id", member.getUserId()));
-        assertNotNull(membersDocument);
-        final BasicDBList actualMembers = (BasicDBList)membersDocument.get("members");
-        assertEquals(actualMembers.size(), 1);
-        assertEquals(accountDao.toMember(actualMembers.get(0)), member);
+        final DBObject result = membersCollection.findOne(accountDao.query(member.getUserId(), member.getAccountId()));
+        assertNotNull(result);
+        assertEquals(accountDao.toMember(result), member);
     }
 
     @Test
     public void shouldBeAbleToGetMembers() throws Exception {
         final Account account = createAccount();
+        accountDao.create(account);
         final Member member1 = new Member().withUserId("test_user_id1")
                                            .withAccountId(account.getId())
                                            .withRoles(asList("account/owner"));
@@ -230,6 +229,7 @@ public class AccountDaoImplTest extends BaseDaoTest {
     @Test
     public void shouldBeAbleToRemoveMember() throws Exception {
         final Account account = createAccount();
+        accountDao.create(account);
         final Member member1 = new Member().withUserId("test_user_1")
                                            .withAccountId(account.getId())
                                            .withRoles(asList("account/owner"));
@@ -241,12 +241,13 @@ public class AccountDaoImplTest extends BaseDaoTest {
         accountDao.removeMember(member2);
 
         assertNull(membersCollection.findOne(new BasicDBObject("_id", member2.getUserId())));
-        assertNotNull(membersCollection.findOne(new BasicDBObject("_id", member1.getUserId())));
+        assertNull(membersCollection.findOne(accountDao.query(member2.getUserId(), member2.getAccountId())));
     }
 
     @Test
-    public void shouldBeAbleToGetAccountMembershipsByMember() throws NotFoundException, ServerException {
+    public void shouldBeAbleToGetAccountMembershipsByMember() throws Exception {
         final Account account = createAccount();
+        accountDao.create(account);
         final Member member = new Member().withAccountId(account.getId())
                                           .withUserId("test_user_id")
                                           .withRoles(asList("account/owner"));
@@ -264,16 +265,9 @@ public class AccountDaoImplTest extends BaseDaoTest {
         }
     }
 
-    private void insertMembers(Member... members) {
-        final Map<String, BasicDBList> membersMap = new HashMap<>();
+    private void insertMembers(Member... members) throws ConflictException, NotFoundException, ServerException {
         for (Member member : members) {
-            if (!membersMap.containsKey(member.getUserId())) {
-                membersMap.put(member.getUserId(), new BasicDBList());
-            }
-            membersMap.get(member.getUserId()).add(accountDao.toDBObject(member));
-        }
-        for (Map.Entry<String, BasicDBList> entry : membersMap.entrySet()) {
-            membersCollection.insert(new BasicDBObject("_id", entry.getKey()).append("members", entry.getValue()));
+            accountDao.addMember(member);
         }
     }
 
