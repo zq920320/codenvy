@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
-import org.eclipse.che.ide.ext.ssh.client.SshKeyProvider;
+import org.eclipse.che.ide.ext.ssh.client.SshKeyUploader;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
@@ -37,7 +37,7 @@ import static org.eclipse.che.security.oauth.OAuthStatus.LOGGED_IN;
  * @author Kevin Pollet
  */
 @Singleton
-public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
+public class BitbucketSshKeyProvider implements SshKeyUploader, OAuthCallback {
     private final BitbucketClientService        bitbucketService;
     private final String                        baseUrl;
     private final BitbucketLocalizationConstant constant;
@@ -64,7 +64,7 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
     }
 
     @Override
-    public void generateKey(final String userId, final AsyncCallback<Void> callback) {
+    public void uploadKey(String userId, final AsyncCallback<Void> callback) {
         this.callback = callback;
         this.userId = userId;
 
@@ -106,7 +106,7 @@ public class BitbucketSshKeyProvider implements SshKeyProvider, OAuthCallback {
     @Override
     public void onAuthenticated(final OAuthStatus authStatus) {
         if (LOGGED_IN.equals(authStatus)) {
-            generateKey(userId, callback);
+            uploadKey(userId, callback);
         } else {
             notificationManager.notify(constant.bitbucketSshKeyUpdateFailed());
         }

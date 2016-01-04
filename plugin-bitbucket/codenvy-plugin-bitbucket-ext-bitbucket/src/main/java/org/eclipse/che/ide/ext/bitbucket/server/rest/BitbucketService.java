@@ -10,12 +10,13 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.bitbucket.server.rest;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
+import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.git.GitException;
-import org.eclipse.che.ide.commons.ParsingResponseException;
+import org.eclipse.che.api.ssh.server.SshServiceClient;
+import org.eclipse.che.api.ssh.shared.dto.GenerateSshPairRequest;
+import org.eclipse.che.api.ssh.shared.model.SshPair;
 import org.eclipse.che.ide.ext.bitbucket.server.Bitbucket;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketException;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketKeyUploader;
@@ -25,12 +26,9 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
-import org.eclipse.che.ide.ext.ssh.server.SshKey;
-import org.eclipse.che.ide.ext.ssh.server.SshKeyStore;
-import org.eclipse.che.ide.ext.ssh.server.SshKeyStoreException;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
@@ -41,6 +39,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.io.IOException;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
+
 /**
  * REST service for Bitbucket.
  *
@@ -50,15 +51,15 @@ import java.io.IOException;
 public class BitbucketService {
     private final Bitbucket            bitbucket;
     private final BitbucketKeyUploader bitbucketKeyUploader;
-    private final SshKeyStore          sshKeyStore;
+    private final SshServiceClient     sshServiceClient;
 
     @Inject
     public BitbucketService(@NotNull final Bitbucket bitbucket,
                             @NotNull final BitbucketKeyUploader bitbucketKeyUploader,
-                            @NotNull final SshKeyStore sshKeyStore) {
+                            @NotNull final SshServiceClient sshServiceClient) {
         this.bitbucket = bitbucket;
         this.bitbucketKeyUploader = bitbucketKeyUploader;
-        this.sshKeyStore = sshKeyStore;
+        this.sshServiceClient = sshServiceClient;
     }
 
     /**
@@ -142,31 +143,32 @@ public class BitbucketService {
 
     @POST
     @Path("ssh-keys")
-    public void generateAndUploadSSHKey() throws GitException, UnauthorizedException {
+    public void generateAndUploadSSHKey() throws ServerException, UnauthorizedException {
         final String host = "bitbucket.org";
-        SshKey publicKey;
-
+        SshPair sshPair = null;
         try {
+            sshPair = sshServiceClient.getPair("git", host);
+        } catch (NotFoundException ignored) {
+        }
 
-            if (sshKeyStore.getPrivateKey(host) != null) {
-                publicKey = sshKeyStore.getPublicKey(host);
-                if (publicKey == null) {
-                    sshKeyStore.removeKeys(host);
-                    publicKey = sshKeyStore.genKeyPair(host, null, null).getPublicKey();
+        if (sshPair != null) {
+            if (sshPair.getPublicKey() == null) {
+                try {
+                    sshServiceClient.removePair("git", host);
+                } catch (NotFoundException ignored) {
                 }
-            } else {
-                publicKey = sshKeyStore.genKeyPair(host, null, null).getPublicKey();
-            }
 
-        } catch (final SshKeyStoreException e) {
-            throw new GitException(e);
+                sshPair = sshServiceClient.generatePair(newDto(GenerateSshPairRequest.class).withService("git")
+                                                                                            .withName(host));
+            }
+        } else {
+            sshPair = sshServiceClient.generatePair(newDto(GenerateSshPairRequest.class).withService("git")
+                                                                                        .withName(host));
         }
 
         // update public key
         try {
-
-            bitbucketKeyUploader.uploadKey(publicKey);
-
+            bitbucketKeyUploader.uploadKey(sshPair.getPublicKey());
         } catch (final IOException e) {
             throw new GitException(e);
         }
