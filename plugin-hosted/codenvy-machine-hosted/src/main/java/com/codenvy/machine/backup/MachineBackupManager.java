@@ -23,7 +23,7 @@ import org.eclipse.che.api.core.util.ListLineConsumer;
 import org.eclipse.che.api.core.util.ProcessUtil;
 import org.eclipse.che.api.core.util.ValueHolder;
 import org.eclipse.che.api.core.util.Watchdog;
-import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
+import org.eclipse.che.commons.lang.WorkspaceIdHashLocationFinder;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -43,23 +43,23 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class MachineBackupManager {
     private static final Logger LOG = getLogger(MachineBackupManager.class);
 
-    private final String                            backupScript;
-    private final String                            restoreScript;
-    private final int                               maxBackupDuration;
-    private final int                               restoreDuration;
-    private final WorkspaceHashLocalFSMountStrategy mountStrategy;
+    private final String backupScript;
+    private final String restoreScript;
+    private final int    maxBackupDuration;
+    private final int    restoreDuration;
+    private final File   backupsRootDir;
 
     @Inject
     public MachineBackupManager(@Named("machine.backup.backup_script") String backupScript,
                                 @Named("machine.backup.restore_script") String restoreScript,
                                 @Named("machine.backup.backup_duration_second") int maxBackupDurationSec,
                                 @Named("machine.backup.restore_duration_second") int restoreDurationSec,
-                                WorkspaceHashLocalFSMountStrategy mountStrategy) {
+                                @Named("vfs.local.fs_root_dir") File backupsRootDir) {
         this.backupScript = backupScript;
         this.restoreScript = restoreScript;
         this.maxBackupDuration = maxBackupDurationSec;
         this.restoreDuration = restoreDurationSec;
-        this.mountStrategy = mountStrategy;
+        this.backupsRootDir = backupsRootDir;
     }
 
     /**
@@ -96,7 +96,7 @@ public class MachineBackupManager {
 
     private void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress, boolean removeSourceOnSuccess)
             throws ServerException {
-        final File destPath = mountStrategy.getMountPath(workspaceId);
+        final File destPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId);
 
         CommandLine commandLine = new CommandLine(backupScript,
                                                   srcPath,
@@ -127,7 +127,7 @@ public class MachineBackupManager {
                                        final String userId,
                                        final String groupId,
                                        final String destAddress) throws ServerException {
-        final String srcPath = mountStrategy.getMountPath(workspaceId).toString();
+        final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
 
         CommandLine commandLine = new CommandLine(restoreScript,
                                                   srcPath,
