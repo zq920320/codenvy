@@ -36,7 +36,6 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 
 import javax.inject.Inject;
-import java.util.List;
 
 /**
  * @author Sergii Leschenko
@@ -82,9 +81,7 @@ public class AcceptFactoryHandler {
         eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
             public void onExtServerStarted(final ExtServerStateEvent event) {
-                notification = notificationManager.notify(factoryLocalization.cloningSource(), null, StatusNotification.Status.PROGRESS,
-                                                          false
-                                                         );
+                notification = notificationManager.notify(factoryLocalization.cloningSource(), StatusNotification.Status.PROGRESS, false);
                 startImporting(factory);
             }
 
