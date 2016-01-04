@@ -439,10 +439,7 @@
                 login(email, password)
                 .then(function(){
                     if (!redirect_url){
-                        return navigateToLocation()
-                        .fail(function(error){
-                            return $.Deferred().reject(error);
-                        });
+                        redirectToUrl("/dashboard/");
                     } else {
                         redirectToUrl(redirect_url);
                     }
@@ -462,7 +459,7 @@
                 authenticate(bearertoken)
                 .then(function(){
                     if (!redirect_url){
-                        redirectToUrl("/ws/");
+                        redirectToUrl("/dashboard/");
                     } else {
                         redirectToUrl(redirect_url);
                     }
