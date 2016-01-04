@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.projecttype.server;
 
-import org.eclipse.che.api.project.server.type.ProjectType;
+import org.eclipse.che.api.project.server.type.ProjectTypeDef;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,7 +28,7 @@ import static com.codenvy.plugin.contribution.projecttype.shared.ContributionPro
  * @author Kevin Pollet
  */
 @Singleton
-public class ContributionProjectType extends ProjectType {
+public class ContributionProjectType extends ProjectTypeDef {
     @Inject
     public ContributionProjectType() {
         super(CONTRIBUTION_PROJECT_TYPE_ID, CONTRIBUTION_PROJECT_TYPE_DISPLAY_NAME, false, true);

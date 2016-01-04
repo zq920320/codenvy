@@ -28,9 +28,10 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.user.client.ui.AcceptsOneWidget;
+import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.git.shared.Branch;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
@@ -248,6 +249,16 @@ public class ContributePartPresenter extends BasePresenter
     @Override
     public String getTitle() {
         return messages.contributePartTitle();
+    }
+
+    @Override
+    public void setVisible(boolean visible) {
+        
+    }
+
+    @Override
+    public IsWidget getView() {
+        return view;
     }
 
     @Nullable

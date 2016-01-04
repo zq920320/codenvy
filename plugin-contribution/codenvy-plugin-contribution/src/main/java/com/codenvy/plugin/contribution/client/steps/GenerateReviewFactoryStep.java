@@ -25,11 +25,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.gwt.xhr.client.ReadyStateChangeHandler;
 import com.google.gwt.xhr.client.XMLHttpRequest;
 
+import org.eclipse.che.api.core.model.project.SourceStorage;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
-import org.eclipse.che.api.factory.dto.Factory;
-import org.eclipse.che.api.project.shared.dto.ImportSourceDescriptor;
-import org.eclipse.che.api.project.shared.dto.RunnerSource;
-import org.eclipse.che.api.project.shared.dto.Source;
+import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.commons.exception.ServerException;
@@ -45,7 +44,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.GENERATE_REVIEW_FACTORY;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_MODE_VARIABLE_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.PULL_REQUEST_ID_VARIABLE_NAME;
 import static java.util.Arrays.asList;
@@ -151,27 +149,28 @@ public class GenerateReviewFactoryStep implements Step {
         exportProject(new AsyncCallback<Factory>() {
             @Override
             public void onSuccess(final Factory factory) {
-                getSource(context, new AsyncCallback<Source>() {
+                getSource(context, new AsyncCallback<SourceStorage>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         callback.onFailure(exception);
                     }
 
                     @Override
-                    public void onSuccess(final Source source) {
-                        factory.setSource(source);
+                    public void onSuccess(final SourceStorage source) {
+                        // FIXME
+//                        factory.getWorkspace().getProjects()
 
                         // project must be public to be shared
-                        factory.getProject().setVisibility("public");
+//                        factory.getProject().setVisibility("public");
 
                         // new factory is not a 'contribute workflow factory'
-                        factory.getProject().getAttributes().remove(CONTRIBUTE_VARIABLE_NAME);
+//                        factory.getProject().getAttributes().remove(CONTRIBUTE_VARIABLE_NAME);
 
                         // new factory is in a review mode
-                        factory.getProject().getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, asList("review"));
+//                        factory.getProject().getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, asList("review"));
 
                         // remember the related pull request id
-                        factory.getProject().getAttributes().put(PULL_REQUEST_ID_VARIABLE_NAME, asList("notUsed"));
+//                        factory.getProject().getAttributes().put(PULL_REQUEST_ID_VARIABLE_NAME, asList("notUsed"));
 
                         callback.onSuccess(factory);
                     }
@@ -210,7 +209,7 @@ public class GenerateReviewFactoryStep implements Step {
         }
     }
 
-    private void getSource(final Context context, final AsyncCallback<Source> callback) {
+    private void getSource(final Context context, final AsyncCallback<SourceStorage> callback) {
         vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
             @Override
             public void onFailure(final Throwable exception) {
@@ -219,40 +218,41 @@ public class GenerateReviewFactoryStep implements Step {
 
             @Override
             public void onSuccess(final VcsHostingService vcsHostingService) {
-                final Source source = dtoFactory.createDto(Source.class);
-                final ImportSourceDescriptor importSourceDescriptor = dtoFactory.createDto(ImportSourceDescriptor.class);
-
-                final String forkRepoUrl =
-                        vcsHostingService.makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
-                importSourceDescriptor.setLocation(forkRepoUrl);
-
-                final String vcsType = context.getProject().getAttributes().get(VCS_PROVIDER_NAME).get(0);
-                importSourceDescriptor.setType(vcsType);
-
-                importSourceDescriptor.setParameters(new HashMap<String, String>());
-
-                // keep some origin factory settings
-                if (appContext.getFactory() != null) {
-                    final Factory originFactory = appContext.getFactory();
-
-                    final String keepDirectory = originFactory.getSource().getProject().getParameters().get("keepDirectory");
-                    if (keepDirectory != null) {
-                        importSourceDescriptor.getParameters().put("keepDirectory", keepDirectory);
-                    }
-
-                    final Map<String, RunnerSource> runners = originFactory.getSource().getRunners();
-                    if (runners != null && !runners.isEmpty()) {
-                        source.setRunners(runners);
-                    }
-                }
-
-                // keep VCS information
-                importSourceDescriptor.getParameters().put("keepVcs", "true");
-
-                // Use the contribution branch
-                importSourceDescriptor.getParameters().put("branch", context.getWorkBranchName());
-
-                callback.onSuccess(source.withProject(importSourceDescriptor));
+                final SourceStorage source = dtoFactory.createDto(SourceStorageDto.class);
+                // FIXME
+//                final ImportSourceDescriptor importSourceDescriptor = dtoFactory.createDto(ImportSourceDescriptor.class);
+//
+//                final String forkRepoUrl =
+//                        vcsHostingService.makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
+//                importSourceDescriptor.setLocation(forkRepoUrl);
+//
+//                final String vcsType = context.getProject().getAttributes().get(VCS_PROVIDER_NAME).get(0);
+//                importSourceDescriptor.setType(vcsType);
+//
+//                importSourceDescriptor.setParameters(new HashMap<String, String>());
+//
+//                // keep some origin factory settings
+//                if (appContext.getFactory() != null) {
+//                    final Factory originFactory = appContext.getFactory();
+//
+//                    final String keepDirectory = originFactory.getSource().getProject().getParameters().get("keepDirectory");
+//                    if (keepDirectory != null) {
+//                        importSourceDescriptor.getParameters().put("keepDirectory", keepDirectory);
+//                    }
+//
+//                    final Map<String, RunnerSource> runners = originFactory.getSource().getRunners();
+//                    if (runners != null && !runners.isEmpty()) {
+//                        source.setRunners(runners);
+//                    }
+//                }
+//
+//                // keep VCS information
+//                importSourceDescriptor.getParameters().put("keepVcs", "true");
+//
+//                // Use the contribution branch
+//                importSourceDescriptor.getParameters().put("branch", context.getWorkBranchName());
+//
+//                callback.onSuccess(source.withProject(importSourceDescriptor));
             }
         });
     }

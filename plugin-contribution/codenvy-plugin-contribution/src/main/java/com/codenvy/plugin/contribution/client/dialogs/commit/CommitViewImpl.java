@@ -63,7 +63,7 @@ public class CommitViewImpl extends Window implements CommitView {
                 delegate.onOk();
             }
         });
-        ok.addStyleName(resources.centerPanelCss().blueButton());
+        ok.addStyleName(resources.windowCss().button());
 
         final Button continueWithoutCommitting =
                 createButton(messages.commitDialogButtonContinueText(), "commit-dialog-continue-without-committing",

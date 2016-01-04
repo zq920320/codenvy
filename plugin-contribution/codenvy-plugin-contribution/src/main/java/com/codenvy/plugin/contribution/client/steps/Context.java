@@ -13,7 +13,7 @@ package com.codenvy.plugin.contribution.client.steps;
 import com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
@@ -33,7 +33,7 @@ public class Context {
     private final EventBus eventBus;
 
     /** The project. */
-    private ProjectDescriptor project;
+    private ProjectConfigDto project;
 
     /** The name of the cloned branch. */
     private String clonedBranchName;
@@ -76,12 +76,12 @@ public class Context {
         this.eventBus = eventBus;
     }
 
-    public ProjectDescriptor getProject() {
+    public ProjectConfigDto getProject() {
         return project;
     }
 
-    public void setProject(final ProjectDescriptor project) {
-        final ProjectDescriptor oldValue = this.project;
+    public void setProject(final ProjectConfigDto project) {
+        final ProjectConfigDto oldValue = this.project;
         this.project = project;
 
         fireContextPropertyChange(PROJECT, oldValue, project);

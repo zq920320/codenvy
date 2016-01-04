@@ -18,7 +18,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
 import org.eclipse.che.ide.commons.exception.ServerException;
@@ -41,7 +41,6 @@ import org.eclipse.che.security.oauth.OAuthStatus;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
-import javax.inject.Named;
 
 import static com.google.gwt.regexp.shared.RegExp.compile;
 import static org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest.BitbucketPullRequestBranch;
@@ -391,7 +390,7 @@ public class BitbucketHostingService implements VcsHostingService {
 
     @Override
     public void authenticate(@NotNull final CurrentUser user, @NotNull final AsyncCallback<HostUser> callback) {
-        final WorkspaceDescriptor workspace = this.appContext.getWorkspace();
+        final UsersWorkspaceDto workspace = this.appContext.getWorkspace();
         if (workspace == null) {
             callback.onFailure(new Exception("Error accessing current workspace"));
             return;

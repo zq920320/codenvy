@@ -21,8 +21,11 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.git.shared.PushResponse;
-import org.eclipse.che.ide.ext.ssh.client.SshKeyService;
-import org.eclipse.che.ide.rest.AsyncRequestCallback;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.api.ssh.gwt.client.SshServiceClient;
+import org.eclipse.che.api.ssh.shared.dto.SshPairDto;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
@@ -44,7 +47,7 @@ public class PushBranchOnForkStep implements Step {
     private final VcsHostingServiceProvider vcsHostingServiceProvider;
     private final ContributeMessages        messages;
     private final DialogFactory             dialogFactory;
-    private final SshKeyService             sshKeyService;
+    private final SshServiceClient          sshService;
 
     @Inject
     public PushBranchOnForkStep(@NotNull final GenerateReviewFactoryStep generateReviewFactoryStep,
@@ -52,13 +55,13 @@ public class PushBranchOnForkStep implements Step {
                                 @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
                                 @NotNull final ContributeMessages messages,
                                 @NotNull final DialogFactory dialogFactory,
-                                @NotNull final SshKeyService sshKeyService) {
+                                @NotNull final SshServiceClient sshService) {
         this.generateReviewFactoryStep = generateReviewFactoryStep;
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
         this.messages = messages;
         this.dialogFactory = dialogFactory;
-        this.sshKeyService = sshKeyService;
+        this.sshService = sshService;
     }
 
     @Override
@@ -180,16 +183,18 @@ public class PushBranchOnForkStep implements Step {
     }
 
     private void generateSSHAndPushBranch(final ContributorWorkflow workflow, final Context context, String host) {
-        sshKeyService.generateKey(host, new AsyncRequestCallback<Void>() {
-            @Override
-            protected void onSuccess(Void result) {
-                pushBranch(workflow, context);
-            }
-
-            @Override
-            protected void onFailure(Throwable exception) {
-                workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, exception.getMessage());
-            }
-        });
+        sshService.generatePair("git", host)
+                  .then(new Operation<SshPairDto>() {
+                      @Override
+                      public void apply(SshPairDto arg) throws OperationException {
+                          pushBranch(workflow, context);
+                      }
+                  })
+                  .catchError(new Operation<PromiseError>() {
+                      @Override
+                      public void apply(PromiseError err) throws OperationException {
+                          workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, err.getMessage());
+                      }
+                  });
     }
 }

@@ -10,7 +10,7 @@
  *******************************************************************************/
 package com.codenvy.plugin.contribution.projecttype.server;
 
-import org.eclipse.che.api.project.server.type.ProjectType;
+import org.eclipse.che.api.project.server.type.ProjectTypeDef;
 import org.eclipse.che.inject.DynaModule;
 import com.google.inject.AbstractModule;
 import com.google.inject.multibindings.Multibinder;
@@ -24,7 +24,7 @@ import com.google.inject.multibindings.Multibinder;
 public class ContributionProjectTypeModule extends AbstractModule {
     @Override
     protected void configure() {
-        final Multibinder<ProjectType> projectTypeMultibinder = Multibinder.newSetBinder(binder(), ProjectType.class);
+        final Multibinder<ProjectTypeDef> projectTypeMultibinder = Multibinder.newSetBinder(binder(), ProjectTypeDef.class);
         projectTypeMultibinder.addBinding().to(ContributionProjectType.class);
     }
 }

@@ -11,7 +11,7 @@
 package com.codenvy.plugin.contribution.client.utils;
 
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 
 import javax.validation.constraints.NotNull;
 

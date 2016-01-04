@@ -21,19 +21,18 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvi
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.factory.dto.Factory;
+import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
-import org.eclipse.che.api.project.shared.dto.ImportSourceDescriptor;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
-import org.eclipse.che.api.project.shared.dto.ProjectUpdate;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.event.ProjectActionEvent;
-import org.eclipse.che.ide.api.event.ProjectActionHandler;
+import org.eclipse.che.ide.api.event.project.CloseCurrentProjectEvent;
+import org.eclipse.che.ide.api.event.project.CloseCurrentProjectHandler;
+import org.eclipse.che.ide.api.event.project.OpenProjectEvent;
+import org.eclipse.che.ide.api.event.project.OpenProjectHandler;
 import org.eclipse.che.ide.api.extension.Extension;
 import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
-import org.eclipse.che.ide.rest.Unmarshallable;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
@@ -54,7 +53,7 @@ import static java.util.Arrays.asList;
  */
 @Singleton
 @Extension(title = "Contributor", version = "1.0.0")
-public class ContributorExtension implements ProjectActionHandler {
+public class ContributorExtension implements OpenProjectHandler, CloseCurrentProjectHandler {
     private final ContributeMessages        messages;
     private final AppContext                appContext;
     private final NotificationHelper        notificationHelper;
@@ -91,79 +90,74 @@ public class ContributorExtension implements ProjectActionHandler {
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
 
         resources.contributeCss().ensureInjected();
-        eventBus.addHandler(ProjectActionEvent.TYPE, this);
+
+        eventBus.addHandler(OpenProjectEvent.TYPE, this);
+        eventBus.addHandler(CloseCurrentProjectEvent.TYPE, this);
     }
 
     @Override
-    public void onProjectOpened(final ProjectActionEvent event) {
-        initializeContributorExtension(event.getProject());
+    public void onProjectOpened(OpenProjectEvent event) {
+        initializeContributorExtension(event.getProjectConfig());
     }
 
     @Override
-    public void onProjectClosing(ProjectActionEvent event) {
-
-    }
-
-    @Override
-    public void onProjectClosed(final ProjectActionEvent event) {
+    public void onCloseCurrentProject(CloseCurrentProjectEvent event) {
         contributePartPresenter.remove();
     }
 
-    private void initializeContributorExtension(final ProjectDescriptor project) {
+    private void initializeContributorExtension(final ProjectConfigDto project) {
         final VcsService vcsService = vcsServiceProvider.getVcsService();
-        final List<String> projectPermissions = project.getPermissions();
+//        final List<String> projectPermissions = project.getPermissions();
 
-        if (projectPermissions != null && projectPermissions.contains("write")) {
-            if (vcsService != null) {
-                vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-                    @Override
-                    public void onFailure(final Throwable exception) {
-                        if (exception instanceof NoVcsHostingServiceImplementationException) {
-                            Log.info(ContributorExtension.class, "Contribution disabled - remote VCS hosting not supported.");
-                        } else {
-                            notificationHelper.showError(ContributorExtension.class, exception);
+        if (vcsService != null) {
+            vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
+                @Override
+                public void onFailure(final Throwable exception) {
+                    if (exception instanceof NoVcsHostingServiceImplementationException) {
+                        Log.info(ContributorExtension.class, "Contribution disabled - remote VCS hosting not supported.");
+                    } else {
+                        notificationHelper.showError(ContributorExtension.class, exception);
+                    }
+                }
+
+                @Override
+                public void onSuccess(final VcsHostingService vcsHostingService) {
+                    addContributionMixin(project, vcsService, new AsyncCallback<ProjectConfigDto>() {
+
+                        @Override
+                        public void onFailure(Throwable ex) {
+                            String errMessage = messages.contributorExtensionErrorUpdatingContributionAttributes(ex.getMessage());
+                            notificationHelper.showError(ContributorExtension.class, errMessage, ex);
                         }
-                    }
 
-                    @Override
-                    public void onSuccess(final VcsHostingService vcsHostingService) {
-                        addContributionMixin(project, vcsService, new AsyncCallback<ProjectDescriptor>() {
-                            @Override
-                            public void onFailure(final Throwable exception) {
-                                notificationHelper.showError(ContributorExtension.class,
-                                                             messages.contributorExtensionErrorUpdatingContributionAttributes(
-                                                                     exception.getMessage()), exception);
-                            }
+                        @Override
+                        public void onSuccess(ProjectConfigDto config) {
+                            contributePartPresenter.open();
+                            workflow.init();
+                            workflow.executeStep();
+                        }
+                    });
+                }
+            });
+        } else {
+            removeContributionMixin(project, new AsyncCallback<ProjectConfigDto>() {
+                @Override
+                public void onFailure(Throwable exception) {
+                    notificationHelper.showError(ContributorExtension.class,
+                                                 messages.contributorExtensionErrorUpdatingContributionAttributes(
+                                                         exception.getMessage()), exception);
+                }
 
-                            @Override
-                            public void onSuccess(final ProjectDescriptor project) {
-                                contributePartPresenter.open();
-                                workflow.init();
-                                workflow.executeStep();
-                            }
-                        });
-                    }
-                });
-            } else {
-                removeContributionMixin(project, new AsyncCallback<ProjectDescriptor>() {
-                    @Override
-                    public void onFailure(Throwable exception) {
-                        notificationHelper.showError(ContributorExtension.class,
-                                                     messages.contributorExtensionErrorUpdatingContributionAttributes(
-                                                             exception.getMessage()), exception);
-                    }
-
-                    @Override
-                    public void onSuccess(ProjectDescriptor result) {
-                    }
-                });
-            }
+                @Override
+                public void onSuccess(ProjectConfigDto result) {
+                }
+            });
         }
     }
 
-    private void addContributionMixin(final ProjectDescriptor project,
+    private void addContributionMixin(final ProjectConfigDto project,
                                       final VcsService vcsService,
-                                      final AsyncCallback<ProjectDescriptor> callback) {
+                                      final AsyncCallback<ProjectConfigDto> callback) {
 
         final List<String> projectMixins = project.getMixins();
         final Map<String, List<String>> projectAttributes = project.getAttributes();
@@ -174,7 +168,7 @@ public class ContributorExtension implements ProjectActionHandler {
             // set the contribute flag
             final Factory factory = appContext.getFactory();
             if (factory != null) {
-                final List<String> contributeValues = factory.getProject().getAttributes().get(CONTRIBUTE_VARIABLE_NAME);
+                final List<String> contributeValues = project.getAttributes().get(CONTRIBUTE_VARIABLE_NAME);
                 if (contributeValues != null && contributeValues.contains("github")) {
                     projectAttributes.put(CONTRIBUTE_VARIABLE_NAME, contributeValues);
                 }
@@ -184,7 +178,7 @@ public class ContributorExtension implements ProjectActionHandler {
             projectAttributes.put(CONTRIBUTE_MODE_VARIABLE_NAME, asList("contribute"));
 
             // set the contribute_branch
-            setClonedBranch(projectAttributes, factory, vcsService, project, new AsyncCallback<Void>() {
+            setClonedBranch(projectAttributes, vcsService, project, new AsyncCallback<Void>() {
                 @Override
                 public void onFailure(final Throwable exception) {
                     callback.onFailure(exception);
@@ -192,17 +186,20 @@ public class ContributorExtension implements ProjectActionHandler {
 
                 @Override
                 public void onSuccess(final Void notUsed) {
-                    updateProject(project, new AsyncRequestCallback<ProjectDescriptor>(dtoUnmarshallerFactory.newUnmarshaller(ProjectDescriptor.class)) {
-                        @Override
-                        protected void onSuccess(final ProjectDescriptor projectDescriptor) {
-                            callback.onSuccess(projectDescriptor);
-                        }
+                    projectService.updateProject(appContext.getWorkspaceId(),
+                                                 project.getPath(),
+                                                 project,
+                                                 new AsyncRequestCallback<ProjectConfigDto>() {
+                                                     @Override
+                                                     protected void onSuccess(ProjectConfigDto result) {
+                                                         callback.onSuccess(result);
+                                                     }
 
-                        @Override
-                        protected void onFailure(final Throwable exception) {
-                            callback.onFailure(exception);
-                        }
-                    });
+                                                     @Override
+                                                     protected void onFailure(Throwable exception) {
+                                                         callback.onFailure(exception);
+                                                     }
+                                                 });
                 }
             });
 
@@ -211,8 +208,25 @@ public class ContributorExtension implements ProjectActionHandler {
         }
     }
 
-    private void removeContributionMixin(final ProjectDescriptor project,
-                                         final AsyncCallback<ProjectDescriptor> callback) {
+    private void updateProject(final ProjectConfigDto project, final AsyncCallback<ProjectConfigDto> callback) {
+        projectService.updateProject(appContext.getWorkspaceId(),
+                                     project.getPath(),
+                                     project,
+                                     new AsyncRequestCallback<ProjectConfigDto>() {
+                                         @Override
+                                         protected void onSuccess(ProjectConfigDto result) {
+                                             callback.onSuccess(result);
+                                         }
+
+                                         @Override
+                                         protected void onFailure(Throwable exception) {
+                                             callback.onFailure(exception);
+                                         }
+                                     });
+    }
+
+    private void removeContributionMixin(final ProjectConfigDto project,
+                                         final AsyncCallback<ProjectConfigDto> callback) {
         final List<String> projectMixins = project.getMixins();
         final Map<String, List<String>> projectAttributes = project.getAttributes();
 
@@ -222,37 +236,22 @@ public class ContributorExtension implements ProjectActionHandler {
             projectAttributes.remove(CONTRIBUTE_MODE_VARIABLE_NAME);
             projectAttributes.remove(CONTRIBUTE_BRANCH_VARIABLE_NAME);
 
-            updateProject(project, new AsyncRequestCallback<ProjectDescriptor>(dtoUnmarshallerFactory.newUnmarshaller(ProjectDescriptor.class)) {
-                @Override
-                protected void onSuccess(final ProjectDescriptor projectDescriptor) {
-                    callback.onSuccess(projectDescriptor);
-                }
-
-                @Override
-                protected void onFailure(final Throwable exception) {
-                    callback.onFailure(exception);
-                }
-            });
+            updateProject(project, callback);
         } else {
             callback.onSuccess(project);
         }
     }
 
     private void setClonedBranch(final Map<String, List<String>> projectAttributes,
-                                 final Factory factory,
                                  final VcsService vcsService,
-                                 final ProjectDescriptor project,
+                                 final ProjectConfigDto project,
                                  final AsyncCallback<Void> callback) {
 
         if (projectAttributes.containsKey(CONTRIBUTE_BRANCH_VARIABLE_NAME)) {
             callback.onSuccess(null);
-
         } else {
-            if (factory != null && factory.getSource() != null) {
-                final ImportSourceDescriptor factoryProject = factory.getSource().getProject();
-                final Map<String, String> parameters = factoryProject.getParameters();
-
-                final String branchName = parameters.get("branch");
+            if (project != null) {
+                final String branchName = project.getSource().getParameters().get("branch");
                 if (branchName != null) {
                     projectAttributes.put(CONTRIBUTE_BRANCH_VARIABLE_NAME, asList(branchName));
                     callback.onSuccess(null);
@@ -273,22 +272,5 @@ public class ContributorExtension implements ProjectActionHandler {
                 }
             });
         }
-    }
-
-    private void updateProject(final ProjectDescriptor project, final AsyncRequestCallback<ProjectDescriptor> updateCallback) {
-        final ProjectUpdate projectToUpdate = dtoFactory.createDto(ProjectUpdate.class);
-        copyProjectInfo(project, projectToUpdate);
-
-        projectService.updateProject(project.getPath(), projectToUpdate, updateCallback);
-    }
-
-    private void copyProjectInfo(final ProjectDescriptor projectDescriptor, final ProjectUpdate projectUpdate) {
-        projectUpdate.setType(projectDescriptor.getType());
-        projectUpdate.setDescription(projectDescriptor.getDescription());
-        projectUpdate.setAttributes(projectDescriptor.getAttributes());
-        projectUpdate.setRunners(projectDescriptor.getRunners());
-        projectUpdate.setMixins(projectDescriptor.getMixins());
-        projectUpdate.setBuilders(projectDescriptor.getBuilders());
-        projectUpdate.setVisibility(projectDescriptor.getVisibility());
     }
 }
