@@ -20,11 +20,13 @@ package com.codenvy.api.dao.mongo;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+
 import com.codenvy.api.dao.ldap.UserDaoImpl;
+
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.workspace.server.dao.Member;
 import org.eclipse.che.api.workspace.server.dao.Workspace;
-import com.mongodb.BasicDBList;
+
 import com.mongodb.DBObject;
 
 import org.mockito.Mock;
@@ -39,6 +41,7 @@ import java.util.List;
 
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
@@ -75,11 +78,9 @@ public class MemberDaoImplTest extends BaseDaoTest {
 
         memberDao.create(testMember);
 
-        final DBObject membersDocument = collection.findOne(testMember.getUserId());
-        assertNotNull(membersDocument);
-        final BasicDBList members = (BasicDBList)membersDocument.get("members");
-        assertEquals(members.size(), 1);
-        assertEquals(memberDao.fromDBObject((DBObject)members.get(0)), testMember);
+        final DBObject memberObj = collection.findOne(memberDao.query(testMember.getUserId(), testMember.getWorkspaceId()));
+        assertNotNull(memberObj);
+        assertEquals(memberDao.fromDBObject(memberObj), testMember);
     }
 
     @Test
@@ -91,33 +92,32 @@ public class MemberDaoImplTest extends BaseDaoTest {
 
         memberDao.update(testMember);
 
-        final DBObject membersDocument = collection.findOne(testMember.getUserId());
-        assertNotNull(membersDocument);
-        final BasicDBList members = (BasicDBList)membersDocument.get("members");
-        assertEquals(members.size(), 1);
-        assertEquals(memberDao.fromDBObject((DBObject)members.get(0)), testMember);
+        final DBObject memberObj = collection.findOne(memberDao.query(testMember.getUserId(), testMember.getWorkspaceId()));
+        assertNotNull(memberObj);
+        assertEquals(memberDao.fromDBObject(memberObj), testMember);
     }
 
     @Test
     public void shouldBeAbleToGetWorkspaceMembers() throws Exception {
+        when(userDao.getById(anyString())).thenReturn(mock(User.class));
+        when(workspaceDao.getById(anyString())).thenReturn(mock(Workspace.class));
         //create first member
         final Member first = new Member().withUserId("test_user_id")
                                          .withWorkspaceId("test_workspace_id")
                                          .withRoles(singletonList("workspace/admin"));
-        when(userDao.getById(first.getUserId())).thenReturn(mock(User.class));
-        when(workspaceDao.getById(first.getWorkspaceId())).thenReturn(mock(Workspace.class));
-        memberDao.create(first);
-        //create second member
         final Member second = new Member().withUserId("test_user_id2")
                                           .withWorkspaceId(first.getWorkspaceId())
-                                          .withRoles(singletonList("workspace/admin"));
-        when(userDao.getById(second.getUserId())).thenReturn(mock(User.class));
-        when(workspaceDao.getById(second.getWorkspaceId())).thenReturn(mock(Workspace.class));
+                                          .withRoles(singletonList("workspace/developer"));
+        final Member third = new Member().withUserId("test_user_id2")
+                                         .withWorkspaceId("another-workspace-id")
+                                         .withRoles(singletonList("workspace/developer"));
+        memberDao.create(first);
         memberDao.create(second);
+        memberDao.create(third);
 
-        final List<Member> actualMembers = memberDao.getWorkspaceMembers(first.getWorkspaceId());
+        final List<Member> result = memberDao.getWorkspaceMembers(first.getWorkspaceId());
 
-        assertEquals(new HashSet<>(actualMembers), new HashSet<>(asList(first, second)));
+        assertEquals(new HashSet<>(result), new HashSet<>(asList(first, second)));
     }
 
     @Test
@@ -125,9 +125,9 @@ public class MemberDaoImplTest extends BaseDaoTest {
         final Member testMember = createMember();
         memberDao.create(testMember);
 
-        final Member actual = memberDao.getWorkspaceMember(testMember.getWorkspaceId(), testMember.getUserId());
+        final Member result = memberDao.getWorkspaceMember(testMember.getWorkspaceId(), testMember.getUserId());
 
-        assertEquals(actual, testMember);
+        assertEquals(result, testMember);
     }
 
     @Test
@@ -137,29 +137,30 @@ public class MemberDaoImplTest extends BaseDaoTest {
 
         memberDao.remove(testMember);
 
-        assertNull(collection.findOne(testMember.getUserId()));
+        assertNull(collection.findOne(memberDao.query(testMember.getUserId(), testMember.getWorkspaceId())));
     }
 
     @Test
     public void shouldBeAbleToGetUserRelationships() throws Exception {
+        when(userDao.getById(anyString())).thenReturn(mock(User.class));
+        when(workspaceDao.getById(anyString())).thenReturn(mock(Workspace.class));
         //create first member
         final Member first = new Member().withUserId("test_user_id")
                                          .withWorkspaceId("test_workspace_id")
                                          .withRoles(singletonList("workspace/admin"));
-        when(userDao.getById(first.getUserId())).thenReturn(mock(User.class));
-        when(workspaceDao.getById(first.getWorkspaceId())).thenReturn(mock(Workspace.class));
+        final Member second = new Member().withUserId("test_user_id")
+                                          .withWorkspaceId(first.getWorkspaceId() + "2")
+                                          .withRoles(singletonList("workspace/developer"));
+        final Member third = new Member().withUserId("test_user_id")
+                                         .withWorkspaceId(first.getWorkspaceId() + "3")
+                                         .withRoles(singletonList("workspace/developer"));
         memberDao.create(first);
-        //create second member
-        final Member second = new Member().withUserId(first.getUserId())
-                                          .withWorkspaceId("test_workspace_id2")
-                                          .withRoles(singletonList("workspace/admin"));
-        when(userDao.getById(second.getUserId())).thenReturn(mock(User.class));
-        when(workspaceDao.getById(second.getWorkspaceId())).thenReturn(mock(Workspace.class));
         memberDao.create(second);
+        memberDao.create(third);
 
-        final List<Member> actualRelationships = memberDao.getUserRelationships(first.getUserId());
+        final List<Member> result = memberDao.getUserRelationships(first.getUserId());
 
-        assertEquals(new HashSet<>(actualRelationships), new HashSet<>(asList(first, second)));
+        assertEquals(new HashSet<>(result), new HashSet<>(asList(first, second, third)));
     }
 
     private Member createMember() throws NotFoundException, ServerException {

@@ -18,12 +18,14 @@
 package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.event.user.RemoveAccountEvent;
+import com.google.common.annotations.VisibleForTesting;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
+import com.mongodb.DuplicateKeyException;
 import com.mongodb.MongoException;
 
 import org.eclipse.che.api.account.server.dao.Account;
@@ -41,8 +43,6 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
@@ -55,19 +55,10 @@ import static java.lang.String.format;
  *  Account members collection document schema:
  *
  * {
- *     "_id" : "userId...",
- *     "members" : [
- *          ...
- *          {
- *              "userId" : "userId...",
- *              "accountId" : "accountId...",
- *              "roles" : [
- *                  "role1...",
- *                  "role2..."
- *              ]
- *          }
- *          ...
- *     ]
+ *      "_id" : ObjectId("...")
+ *      "userId" : "userId...",
+ *      "accountId" : "accountId...",
+ *      "roles" : [ "account/owner" ]
  * }
  *
  * Account collection document schema:
@@ -116,7 +107,7 @@ public class AccountDaoImpl implements AccountDao {
         accountCollection.createIndex(new BasicDBObject("name", 1));
         accountCollection.createIndex(new BasicDBObject("attributes.name", 1).append("attributes.value", 1));
         memberCollection = db.getCollection(memberCollectionName);
-        memberCollection.createIndex(new BasicDBObject("members.accountId", 1));
+        memberCollection.createIndex(new BasicDBObject("accountId", 1).append("userId", 1), new BasicDBObject("unique", true));
         this.workspaceDao = workspaceDao;
     }
 
@@ -162,21 +153,11 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public List<Account> getByOwner(String owner) throws ServerException, NotFoundException {
-        final List<Account> accounts = new LinkedList<>();
-        try {
-            final DBObject membersDocument = memberCollection.findOne(owner);
-            if (membersDocument != null) {
-                final BasicDBList members = (BasicDBList)membersDocument.get("members");
-                for (Object memberObj : members) {
-                    final Member member = toMember(memberObj);
-                    if (member.getRoles().contains("account/owner")) {
-                        accounts.add(getById(member.getAccountId()));
-                    }
-                }
+        final List<Account> accounts = new ArrayList<>();
+        for (Member member : getByMember(owner)) {
+            if (member.getRoles().contains("account/owner")) {
+                accounts.add(getById(member.getAccountId()));
             }
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve accounts");
         }
         return accounts;
     }
@@ -215,122 +196,60 @@ public class AccountDaoImpl implements AccountDao {
 
     @Override
     public List<Member> getMembers(String accountId) throws ServerException {
-        final List<Member> result = new ArrayList<>();
-        try (DBCursor membersCursor = memberCollection.find(new BasicDBObject("members.accountId", accountId))) {
-            for (DBObject memberDocument : membersCursor) {
-                final BasicDBList members = (BasicDBList)memberDocument.get("members");
-                result.add(retrieveMember(accountId, members));
-            }
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve account members");
-        }
-        return result;
+        return doGetMembers(new BasicDBObject("accountId", accountId));
     }
 
     @Override
     public List<Member> getByMember(String userId) throws NotFoundException, ServerException {
-        final List<Member> result = new ArrayList<>();
-        try {
-            final DBObject membersDocument = memberCollection.findOne(userId);
-            if (membersDocument != null) {
-                final BasicDBList members = (BasicDBList)membersDocument.get("members");
-                for (Object memberObj : members) {
-                    result.add(toMember(memberObj));
-                }
-            }
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to retrieve members");
-        }
-        return result;
+        return doGetMembers(new BasicDBObject("userId", userId));
     }
 
     @Override
     public void addMember(Member member) throws NotFoundException, ConflictException, ServerException {
+        checkAccountExists(member.getAccountId());
         try {
-            checkAccountExists(member.getAccountId());
-            final DBObject membersDocument = documentFor(member);
-            final BasicDBList members = (BasicDBList)membersDocument.get("members");
-            checkMemberIsAbsent(member, members);
-            //member doesn't exist so we can create and save it
-            members.add(toDBObject(member));
-            memberCollection.save(membersDocument);
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to persist member");
+            memberCollection.insert(toDBObject(member));
+        } catch (DuplicateKeyException dkEx) {
+            throw new ConflictException(format("User '%s' is already has membership in account '%s'",
+                                               member.getUserId(),
+                                               member.getAccountId()));
+        } catch (MongoException ex) {
+            throw new ServerException(ex.getLocalizedMessage(), ex);
         }
     }
 
     @Override
     public void removeMember(Member member) throws NotFoundException, ServerException, ConflictException {
-        final DBObject query = new BasicDBObject("_id", member.getUserId());
         try {
-            final DBObject membersDocument = memberCollection.findOne(query);
-            if (membersDocument == null) {
-                throw new NotFoundException(format("User %s doesn't have account memberships", member.getUserId()));
+            if (memberCollection.remove(query(member.getUserId(), member.getAccountId())).getN() == 0) {
+                throw new NotFoundException(
+                        format("Membership between '%s' and '%s' not found", member.getUserId(), member.getAccountId()));
             }
-            final BasicDBList members = (BasicDBList)membersDocument.get("members");
-            //remove member from members list
-            if (!remove(member.getAccountId(), members)) {
-                throw new NotFoundException(format("Membership between %s and %s not found", member.getUserId(), member.getAccountId()));
-            }
-            //if user doesn't have memberships then remove document
-            if (!members.isEmpty()) {
-                memberCollection.update(query, membersDocument);
-            } else {
-                memberCollection.remove(query);
-            }
-        } catch (MongoException me) {
-            LOG.error(me.getMessage(), me);
-            throw new ServerException("It is not possible to remove member");
+        } catch (MongoException ex) {
+            throw new ServerException(ex.getLocalizedMessage(), ex);
         }
     }
 
-    private boolean remove(String accountId, BasicDBList src) {
-        boolean found = false;
-        final Iterator it = src.iterator();
-        while (!found && it.hasNext()) {
-            final Member member = toMember(it.next());
-            if (member.getAccountId().equals(accountId)) {
-                found = true;
-                it.remove();
-            }
-        }
-        return found;
+    @VisibleForTesting
+    BasicDBObject query(String userId, String accountId) {
+        return new BasicDBObject("userId", userId).append("accountId", accountId);
     }
 
-    private Member retrieveMember(String accountId, BasicDBList src) {
-        for (Object dbMember : src) {
-            final Member member = toMember(dbMember);
-            if (accountId.equals(member.getAccountId())) {
-                return member;
+
+    private List<Member> doGetMembers(BasicDBObject query) throws ServerException {
+        final List<Member> members;
+        try (DBCursor cursor = memberCollection.find(query)) {
+            members = new ArrayList<>(cursor.count());
+            for (DBObject memberDoc : cursor) {
+                members.add(toMember(memberDoc));
             }
         }
-        return null;
-    }
-
-    private DBObject documentFor(Member member) {
-        DBObject membersDocument = memberCollection.findOne(new BasicDBObject("_id", member.getUserId()));
-        if (membersDocument == null) {
-            membersDocument = new BasicDBObject("_id", member.getUserId());
-            membersDocument.put("members", new BasicDBList());
-        }
-        return membersDocument;
+        return members;
     }
 
     private void checkAccountExists(String id) throws NotFoundException {
         if (accountCollection.findOne(new BasicDBObject("id", id)) == null) {
             throw new NotFoundException(format("Account with id %s was not found", id));
-        }
-    }
-
-    private void checkMemberIsAbsent(Member target, BasicDBList members) throws ConflictException {
-        for (Object dbMember : members) {
-            final Member member = toMember(dbMember);
-            if (target.getAccountId().equals(member.getAccountId())) {
-                throw new ConflictException(format("Account %s already contains member %s", target.getAccountId(), target.getUserId()));
-            }
         }
     }
 
