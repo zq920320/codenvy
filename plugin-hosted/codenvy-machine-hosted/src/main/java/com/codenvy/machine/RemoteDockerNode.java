@@ -49,7 +49,7 @@ import static org.slf4j.LoggerFactory.getLogger;
 public class RemoteDockerNode implements DockerNode {
     private static final Logger LOG = getLogger(RemoteDockerNode.class);
 
-    private static final Pattern NODE_ADRESS = Pattern.compile(
+    private static final Pattern NODE_ADDRESS = Pattern.compile(
             "((?<protocol>[a-zA-Z])://)?" +
             // http://stackoverflow.com/questions/106179/regular-expression-to-match-dns-hostname-or-ip-address
             "(?<host>(([a-zA-Z0-9]|[a-zA-Z0-9][a-zA-Z0-9\\-]*[a-zA-Z0-9])\\.)*([A-Za-z0-9]|[A-Za-z0-9][A-Za-z0-9\\-]*[A-Za-z0-9]))" +
@@ -80,7 +80,7 @@ public class RemoteDockerNode implements DockerNode {
             try {
                 final SwarmContainerInfo info = (SwarmContainerInfo)dockerConnector.inspectContainer(containerId);
                 if (info != null) {
-                    final Matcher matcher = NODE_ADRESS.matcher(info.getNode().getAddr());
+                    final Matcher matcher = NODE_ADDRESS.matcher(info.getNode().getAddr());
                     if (matcher.matches()) {
                         nodeHost = matcher.group("host");
                     } else {
