@@ -54,7 +54,7 @@ public class RemoteWorkspaceFolderPathProvider implements WorkspaceFolderPathPro
     }
 
     @Override
-    public String getPath(@Assisted("workspace") String workspaceId) {
+    public String getPath(@Assisted("workspace") String workspaceId) throws IOException {
         return projectsFolderPath.resolve(workspaceId).toString();
     }
 }

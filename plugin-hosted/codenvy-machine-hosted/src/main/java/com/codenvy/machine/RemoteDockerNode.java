@@ -67,17 +67,17 @@ public class RemoteDockerNode implements DockerNode {
                             @Assisted("container") String containerId,
                             @Assisted("workspace") String workspaceId,
                             MachineBackupManager backupManager,
-                            WorkspaceFolderPathProvider workspaceFolderPathProvider) throws MachineException {
+                            WorkspaceFolderPathProvider workspaceFolderPathProvider) throws MachineException, IOException {
         this.workspaceId = workspaceId;
         this.backupManager = backupManager;
         this.dockerConnector = dockerConnector;
         this.containerId = containerId;
 
-        this.hostProjectsFolder = workspaceFolderPathProvider.getPath(workspaceId);
+        try {
+            String nodeHost = "127.0.0.1";
+            this.hostProjectsFolder = workspaceFolderPathProvider.getPath(workspaceId);
+            if (dockerConnector instanceof SwarmDockerConnector) {
 
-        String nodeHost = "127.0.0.1";
-        if (dockerConnector instanceof SwarmDockerConnector) {
-            try {
                 final SwarmContainerInfo info = (SwarmContainerInfo)dockerConnector.inspectContainer(containerId);
                 if (info != null) {
                     final Matcher matcher = NODE_ADDRESS.matcher(info.getNode().getAddr());
@@ -87,12 +87,12 @@ public class RemoteDockerNode implements DockerNode {
                         throw new MachineException("Can't extract docker node address from: " + info.getNode().getAddr());
                     }
                 }
-            } catch (IOException e) {
-                LOG.error(e.getLocalizedMessage(), e);
-                throw new MachineException("Internal server error occurs. Please contact support");
             }
+            this.nodeHost = nodeHost;
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new MachineException("Internal server error occurs. Please contact support");
         }
-        this.nodeHost = nodeHost;
     }
 
     @Override
