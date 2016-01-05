@@ -67,7 +67,7 @@ public class RemoteDockerNode implements DockerNode {
                             @Assisted("container") String containerId,
                             @Assisted("workspace") String workspaceId,
                             MachineBackupManager backupManager,
-                            WorkspaceFolderPathProvider workspaceFolderPathProvider) throws MachineException, IOException {
+                            WorkspaceFolderPathProvider workspaceFolderPathProvider) throws MachineException {
         this.workspaceId = workspaceId;
         this.backupManager = backupManager;
         this.dockerConnector = dockerConnector;
