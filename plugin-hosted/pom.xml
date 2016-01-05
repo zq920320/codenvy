@@ -23,11 +23,11 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-beta-5</version>
+        <version>4.0.0-beta-6-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>codenvy-plugin-hosted-parent</artifactId>
-    <version>4.0.0-beta-5</version>
+    <version>4.0.0-beta-6-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy Plugin :: Hosted :: Parent</name>
     <modules>
@@ -55,7 +55,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugin-hosted.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/plugin-hosted.git</developerConnection>
-        <tag>4.0.0-beta-5</tag>
+        <tag>HEAD</tag>
     </scm>
     <properties>
         <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
