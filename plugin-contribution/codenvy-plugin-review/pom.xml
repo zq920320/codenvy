@@ -16,7 +16,7 @@
     <parent>
         <artifactId>contributor-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-beta-6</version>
+        <version>4.0.0-beta-7-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-plugin-review</artifactId>
     <name>Codenvy Plugin :: Contribution :: Review</name>
