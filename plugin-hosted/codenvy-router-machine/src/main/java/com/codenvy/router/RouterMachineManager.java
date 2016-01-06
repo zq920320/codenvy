@@ -19,6 +19,7 @@ package com.codenvy.router;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.model.machine.Channels;
+import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.core.model.machine.Limits;
 import org.eclipse.che.api.core.model.machine.MachineMetadata;
 import org.eclipse.che.api.core.model.machine.MachineSource;
@@ -195,8 +196,8 @@ public class RouterMachineManager extends MachineManager {
             }
 
             @Override
-            public InstanceProcess createProcess(String commandName, String commandLine) throws MachineException {
-                return machine.createProcess(commandName, commandLine);
+            public InstanceProcess createProcess(Command command, String outputChannel) throws MachineException {
+                return machine.createProcess(command, outputChannel);
             }
 
             @Override
