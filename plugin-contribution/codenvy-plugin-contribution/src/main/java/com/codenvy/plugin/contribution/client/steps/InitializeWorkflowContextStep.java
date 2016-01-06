@@ -12,6 +12,7 @@ package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
+import com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
@@ -20,7 +21,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.git.shared.Remote;
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
@@ -28,8 +29,6 @@ import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
-
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
 
 /**
  * This step initialize the contribution workflow context.
@@ -68,7 +67,7 @@ public class InitializeWorkflowContextStep implements Step {
         final VcsService vcsService = vcsServiceProvider.getVcsService();
 
         if (currentProject != null && vcsService != null) {
-            final ProjectDescriptor project = currentProject.getRootProject();
+            final ProjectConfigDto project = currentProject.getRootProject();
             final Map<String, List<String>> attributes = project.getAttributes();
 
             context.setProject(project);
@@ -97,10 +96,10 @@ public class InitializeWorkflowContextStep implements Step {
                                     context.setOriginRepositoryName(originRepositoryName);
 
                                     // set project information
-                                    if (attributes.containsKey(CONTRIBUTE_BRANCH_VARIABLE_NAME) &&
-                                        !attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
+                                    if (attributes.containsKey(ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME) &&
+                                        !attributes.get(ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
 
-                                        final String clonedBranch = attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
+                                        final String clonedBranch = attributes.get(ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
                                         context.setClonedBranchName(clonedBranch);
                                     }
 

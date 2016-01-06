@@ -17,7 +17,7 @@ import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.eclipse.che.api.project.shared.dto.ProjectDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.Notification;
 
@@ -26,8 +26,6 @@ import javax.inject.Inject;
 import java.util.Date;
 
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
-import static org.eclipse.che.ide.api.notification.Notification.Status.PROGRESS;
-import static org.eclipse.che.ide.api.notification.Notification.Type.INFO;
 
 /**
  * This step defines the working branch for the user contribution.
@@ -63,7 +61,7 @@ public class DefineWorkBranchStep implements Step {
     @Override
     public void execute(@NotNull final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
-        final ProjectDescriptor project = appContext.getCurrentProject().getRootProject();
+        final ProjectConfigDto project = appContext.getCurrentProject().getRootProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
 
         // if we come from a contribute factory we have to create the working branch
@@ -71,8 +69,9 @@ public class DefineWorkBranchStep implements Step {
             && project.getAttributes().get(CONTRIBUTE_VARIABLE_NAME).contains("github")) {
 
             final String workingBranchName = generateWorkBranchName();
+            // FIXME
             final Notification createWorkingBranchNotification =
-                    new Notification(messages.stepDefineWorkBranchCreatingWorkBranch(workingBranchName), INFO, PROGRESS);
+                    new Notification(messages.stepDefineWorkBranchCreatingWorkBranch(workingBranchName));
             notificationHelper.showNotification(createWorkingBranchNotification);
 
             // the working branch is only created if it doesn't exist

@@ -19,7 +19,7 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
 import org.eclipse.che.ide.dto.DtoFactory;
@@ -40,7 +40,6 @@ import org.eclipse.che.security.oauth.OAuthStatus;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -468,7 +467,7 @@ public class GitHubHostingService implements VcsHostingService {
 
     @Override
     public void authenticate(@NotNull final CurrentUser currentUser, @NotNull final AsyncCallback<HostUser> callback) {
-        final WorkspaceDescriptor workspace = this.appContext.getWorkspace();
+        final UsersWorkspaceDto workspace = this.appContext.getWorkspace();
         if (workspace == null) {
             callback.onFailure(new Exception("Error accessing current workspace"));
             return;

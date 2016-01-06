@@ -17,20 +17,20 @@ import com.google.inject.Inject;
 
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
+import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
 
-import static org.eclipse.che.ide.api.notification.Notification.Status.FINISHED;
-import static org.eclipse.che.ide.api.notification.Notification.Type.ERROR;
-import static org.eclipse.che.ide.api.notification.Notification.Type.INFO;
-import static org.eclipse.che.ide.api.notification.Notification.Type.WARNING;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
 
 /**
  * Helper class to work with notifications and standardize contribute workflow notifications.
  *
  * @author Kevin Pollet
  */
+// FIXME
 public final class NotificationHelper {
     /** The notification manger used to handle errors. */
     private final NotificationManager notificationManager;
@@ -51,7 +51,7 @@ public final class NotificationHelper {
      *         the info message.
      */
     public void showInfo(@NotNull final String message) {
-        showNotification(new Notification(message, INFO));
+        showNotification(new Notification(message));
     }
 
     /**
@@ -61,7 +61,7 @@ public final class NotificationHelper {
      *         the warning message.
      */
     public void showWarning(@NotNull final String message) {
-        showNotification(new Notification(message, WARNING));
+        showNotification(new Notification(message));
     }
 
     /**
@@ -94,7 +94,7 @@ public final class NotificationHelper {
     public void showError(@NotNull final Class<?> cls, @NotNull final String errorMessage, @NotNull final Throwable exception) {
         // workaround IDEX-2381
         final String jsonMessage = ensureJson(errorMessage);
-        showNotification(new Notification(jsonMessage, ERROR));
+        showNotification(new Notification(jsonMessage));
         Log.error(cls, exception);
     }
 
@@ -117,8 +117,8 @@ public final class NotificationHelper {
      *         notification to display.
      */
     public void showNotification(@NotNull final Notification notification) {
-        notification.setMessage(messages.notificationMessagePrefix(notification.getMessage()));
-        notificationManager.showNotification(notification);
+        notification.setContent(messages.notificationMessagePrefix(notification.getContent()));
+        notificationManager.notify(notification);
     }
 
     /**
@@ -150,7 +150,6 @@ public final class NotificationHelper {
     public void finishNotificationWithError(@NotNull final Class<?> cls,
                                             @NotNull final Throwable exception,
                                             @NotNull final Notification notification) {
-        notification.setType(ERROR);
         finishNotification(exception.getMessage(), notification);
         Log.error(cls, exception);
     }
@@ -164,7 +163,6 @@ public final class NotificationHelper {
      *         the notification to finish.
      */
     public void finishNotificationWithWarning(@NotNull final String message, @NotNull final Notification notification) {
-        notification.setType(WARNING);
         finishNotification(message, notification);
     }
 
@@ -177,7 +175,7 @@ public final class NotificationHelper {
      *         the notification to finish.
      */
     public void finishNotification(@NotNull final String message, @NotNull final Notification notification) {
-        notification.setMessage(messages.notificationMessagePrefix(message));
-        notification.setStatus(FINISHED);
+        notification.setContent(messages.notificationMessagePrefix(message));
+        ((StatusNotification)notification).setStatus(SUCCESS);
     }
 }
