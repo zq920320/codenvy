@@ -19,7 +19,6 @@ package com.codenvy.ide.factory.client;
 
 import com.codenvy.ide.factory.client.accept.AcceptFactoryHandler;
 import com.codenvy.ide.factory.client.action.CreateFactoryAction;
-import com.codenvy.ide.factory.client.json.ExportConfigAction;
 import com.codenvy.ide.factory.client.json.ImportFromConfigAction;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
 import com.codenvy.ide.factory.client.welcome.OpenWelcomePageAction;
@@ -49,7 +48,6 @@ public class FactoryExtension {
                             FactoryResources resources,
                             CreateFactoryAction configureFactoryAction,
                             ImportFromConfigAction importFromConfigAction,
-                            ExportConfigAction exportConfigAction,
                             GreetingPartPresenter greetingPartPresenter,
                             OpenWelcomePageAction openWelcomePageAction) {
         acceptFactoryHandler.process();
@@ -90,11 +88,9 @@ public class FactoryExtension {
 
         actionManager.registerAction("openWelcomePage", openWelcomePageAction);
         actionManager.registerAction("importProjectFromCodenvyConfigAction", importFromConfigAction);
-        actionManager.registerAction("exportCodenvyConfigAction", exportConfigAction);
         actionManager.registerAction("configureFactoryAction", configureFactoryAction);
 
         projectGroup.add(importFromConfigAction);
-        workspaceGroup.add(exportConfigAction);
         workspaceGroup.add(configureFactoryAction);
     }
 }
