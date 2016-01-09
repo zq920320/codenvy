@@ -20,7 +20,7 @@
     </parent>
     <groupId>com.codenvy.plugin</groupId>
     <artifactId>codenvy-plugin-parent</artifactId>
-    <version>4.0.0-beta-7-SNAPSHOT</version>
+    <version>4.0.0-beta-7</version>
     <packaging>pom</packaging>
     <name>Codenvy Plugin Parent</name>
     <modules>
@@ -35,7 +35,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/plugins.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>4.0.0-beta-7</tag>
         <url>https://github.com/codenvy/plugins</url>
     </scm>
     <properties>
