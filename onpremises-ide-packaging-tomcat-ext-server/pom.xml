@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>4.0.0-beta-7-SNAPSHOT</version>
+        <version>4.0.0-beta-7</version>
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-ext-server</artifactId>
     <packaging>pom</packaging>
