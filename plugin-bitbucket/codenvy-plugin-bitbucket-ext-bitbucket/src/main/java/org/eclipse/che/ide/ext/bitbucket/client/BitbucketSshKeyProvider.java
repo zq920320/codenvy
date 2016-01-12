@@ -16,7 +16,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
-import org.eclipse.che.ide.ext.ssh.client.SshKeyUploader;
+import org.eclipse.che.ide.ext.git.ssh.client.SshKeyUploader;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.ConfirmCallback;

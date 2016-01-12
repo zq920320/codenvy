@@ -14,7 +14,7 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.ext.ssh.client.GitSshKeyUploaderRegistry;
+import org.eclipse.che.ide.ext.git.ssh.client.GitSshKeyUploaderRegistry;
 
 import javax.validation.constraints.NotNull;
 
