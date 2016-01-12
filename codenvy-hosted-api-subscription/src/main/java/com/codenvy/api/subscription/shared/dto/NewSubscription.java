@@ -18,7 +18,7 @@
 package com.codenvy.api.subscription.shared.dto;
 
 import com.codenvy.api.subscription.server.AbstractSubscriptionService;
-import com.wordnik.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiModelProperty;
 
 import org.eclipse.che.dto.shared.DTO;
 
