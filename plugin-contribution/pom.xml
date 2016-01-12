@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-beta-8-SNAPSHOT</version>
+        <version>4.0.0-beta-8</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>contributor-parent</artifactId>
@@ -38,7 +38,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugin-contribution.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/plugin-contribution.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>4.0.0-beta-8</tag>
     </scm>
     <properties>
         <license_years>2014-2015</license_years>
