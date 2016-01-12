@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-plugin-hosted-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-beta-8</version>
+        <version>4.0.0-beta-9-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-client-gwt-subscription</artifactId>
     <packaging>jar</packaging>
