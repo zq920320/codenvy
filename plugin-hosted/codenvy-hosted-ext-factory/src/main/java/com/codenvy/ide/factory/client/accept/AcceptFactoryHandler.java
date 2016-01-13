@@ -52,6 +52,7 @@ public class AcceptFactoryHandler {
     private final NotificationManager         notificationManager;
 
     private StatusNotification notification;
+    private boolean            isImportingStarted;
 
     @Inject
     public AcceptFactoryHandler(FactoryLocalizationConstant factoryLocalization,
@@ -81,6 +82,12 @@ public class AcceptFactoryHandler {
         eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
             public void onExtServerStarted(final ExtServerStateEvent event) {
+                if (isImportingStarted) {
+                    return;
+                }
+
+                isImportingStarted = true;
+
                 notification = notificationManager.notify(factoryLocalization.cloningSource(), StatusNotification.Status.PROGRESS, false);
                 startImporting(factory);
             }

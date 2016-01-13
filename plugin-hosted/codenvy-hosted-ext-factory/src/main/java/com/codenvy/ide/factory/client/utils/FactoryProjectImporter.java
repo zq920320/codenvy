@@ -31,14 +31,17 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.api.workspace.shared.dto.ProjectProblemDto;
+import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
+import org.eclipse.che.ide.api.importer.AbstractImporter;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
-import org.eclipse.che.ide.util.loging.Log;
 
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -53,30 +56,27 @@ import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUC
  * @author Valeriy Svydenko
  * @author Anton Korneta
  */
-public class FactoryProjectImporter {
-    private final ProjectServiceClient                       projectService;
-    private final EventBus                                   eventBus;
-    private final FactoryLocalizationConstant                locale;
-    private final NotificationManager                        notificationManager;
-    private final ImportProjectNotificationSubscriberFactory subscriberFactory;
-    private final String                                     workspaceId;
+public class FactoryProjectImporter extends AbstractImporter {
+
+    private final EventBus                    eventBus;
+    private final FactoryLocalizationConstant locale;
+    private final NotificationManager         notificationManager;
 
     private Factory             factory;
     private AsyncCallback<Void> callback;
 
     @Inject
-    public FactoryProjectImporter(ProjectServiceClient projectServiceClient,
+    public FactoryProjectImporter(ProjectServiceClient projectService,
                                   AppContext appContext,
                                   NotificationManager notificationManager,
                                   FactoryLocalizationConstant locale,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
                                   EventBus eventBus) {
-        this.projectService = projectServiceClient;
+        super(appContext, projectService, subscriberFactory);
+
         this.notificationManager = notificationManager;
         this.locale = locale;
-        this.subscriberFactory = subscriberFactory;
         this.eventBus = eventBus;
-        this.workspaceId = appContext.getWorkspace().getId();
     }
 
     public void startImporting(Factory factory, AsyncCallback<Void> callback) {
@@ -93,8 +93,14 @@ public class FactoryProjectImporter {
             @Override
             public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
                 Set<String> projectNames = new HashSet<>();
-                for (ProjectConfigDto projectConfigDto : projectConfigs) {
-                    projectNames.add(projectConfigDto.getName());
+                for (ProjectConfigDto projectConfig : projectConfigs) {
+                    if (isProjectExistOnFileSystem(projectConfig)) {
+                        notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
+
+                        continue;
+                    }
+
+                    projectNames.add(projectConfig.getName());
                 }
                 importProjects(projectNames);
             }
@@ -105,17 +111,15 @@ public class FactoryProjectImporter {
      * Import source projects and if it's already exist in workspace
      * then show warning notification
      *
-     * @param existedProjects
-     *         set of project names that already exist in workspace
+     * @param projectsToImport
+     *         set of project names that already exist in workspace and will be imported on file system
      */
-    private void importProjects(Set<String> existedProjects) {
+    private void importProjects(Set<String> projectsToImport) {
         final List<Promise<Void>> promises = new ArrayList<>();
         for (final ProjectConfigDto projectConfig : factory.getWorkspace().getProjects()) {
-            if (existedProjects.contains(projectConfig.getName())) {
-                notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
-                continue;
+            if (projectsToImport.contains(projectConfig.getName())) {
+                promises.add(startImport(projectConfig.getPath(), projectConfig.getName(), projectConfig.getSource()));
             }
-            promises.add(importProject(projectConfig));
         }
 
         Promises.all(promises.toArray(new Promise<?>[promises.size()]))
@@ -134,18 +138,35 @@ public class FactoryProjectImporter {
                 });
     }
 
-    /** Importing a single project in case of failure will display the notification with appropriate status */
-    private Promise<Void> importProject(final ProjectConfigDto projectConfig) {
-        final String projectName = projectConfig.getName();
+    private boolean isProjectExistOnFileSystem(ProjectConfigDto projectConfigDto) {
+        List<ProjectProblemDto> problems = projectConfigDto.getProblems();
+
+        if (problems == null || problems.isEmpty()) {
+            return true;
+        }
+
+        for (ProjectProblemDto problem : problems) {
+            if (problem.getCode() == 9) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    @Override
+    protected Promise<Void> importProject(@NotNull final String pathToProject,
+                                          @NotNull final String projectName,
+                                          @NotNull final SourceStorageDto sourceStorage) {
         final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
         final ImportProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
         subscriber.subscribe(projectName, notification);
 
-        return projectService.importProject(workspaceId, projectName, true, projectConfig.getSource())
+        return projectService.importProject(workspaceId, projectName, true, sourceStorage)
                              .then(new Operation<Void>() {
                                  @Override
                                  public void apply(Void arg) throws OperationException {
-                                     projectService.getProject(workspaceId, projectConfig.getPath())
+                                     projectService.getProject(workspaceId, pathToProject)
                                                    .then(new Operation<ProjectConfigDto>() {
                                                        @Override
                                                        public void apply(ProjectConfigDto projectConfig) throws OperationException {
