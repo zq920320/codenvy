@@ -25,9 +25,9 @@
         <groupId>com.codenvy.hosted-infrastructure</groupId>
         <version>4.0.0-beta-10-SNAPSHOT</version>
     </parent>
-    <artifactId>codenvy-hosted-workspace-events</artifactId>
+    <artifactId>codenvy-hosted-events</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy :: Hosted :: Workspace events</name>
+    <name>Codenvy :: Hosted :: Events</name>
     <dependencies>
         <dependency>
             <groupId>aopalliance</groupId>

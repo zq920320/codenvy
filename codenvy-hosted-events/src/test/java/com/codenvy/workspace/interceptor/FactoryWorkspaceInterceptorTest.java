@@ -17,43 +17,14 @@
  */
 package com.codenvy.workspace.interceptor;
 
-import org.aopalliance.intercept.MethodInvocation;
-import org.eclipse.che.api.account.server.dao.Account;
-import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.mockito.testng.MockitoTestNGListener;
+import org.testng.annotations.Listeners;
+
 /*
 import org.eclipse.che.api.factory.dto.Author;
 import org.eclipse.che.api.factory.dto.Factory;
 import org.eclipse.che.api.factory.dto.Workspace;
 */
-import org.eclipse.che.api.workspace.server.WorkspaceService;
-import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.commons.lang.Pair;
-import org.eclipse.che.commons.user.UserImpl;
-import org.eclipse.che.dto.server.DtoFactory;
-import org.mockito.ArgumentMatcher;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.testng.MockitoTestNGListener;
-import org.testng.Assert;
-import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.Listeners;
-import org.testng.annotations.Test;
-
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.util.Arrays;
-import java.util.HashMap;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Matchers.argThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
 
 /**
  * @author Max Shaposhnik
