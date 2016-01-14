@@ -265,6 +265,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("error.page.workspace_not_found_redirect_url")).to("/site/error/error-tenant-name");
         bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
                       .to("/site/error/error-cookies-disabled");
+        bindConstant().annotatedWith(Names.named("auth.no.account.found.page")).to("/site/error/no-account-found");
 
         bind(RequestFilter.class).toInstance(
                 new DisjunctionRequestFilter(
