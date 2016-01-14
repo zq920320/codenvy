@@ -17,15 +17,15 @@
  */
 package com.codenvy.auth.sso.server;
 
+import com.codenvy.auth.sso.server.organization.UserCreationValidator;
+
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.UserDao;
 
-import com.codenvy.auth.sso.server.organization.UserCreationValidator;
-
-
 import javax.inject.Inject;
+import javax.inject.Named;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -34,15 +34,21 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  */
 public class OrgServiceUserValidator implements UserCreationValidator {
 
-    private UserDao userDao;
+    private final UserDao userDao;
+    private final boolean userSelfCreationAllowed;
 
     @Inject
-    public OrgServiceUserValidator(UserDao userDao) {
+    public OrgServiceUserValidator(UserDao userDao,
+                                   @Named("user.self.creation.allowed") boolean userSelfCreationAllowed) {
         this.userDao = userDao;
+        this.userSelfCreationAllowed = userSelfCreationAllowed;
     }
 
     @Override
     public void ensureUserCreationAllowed(String email, String userName) throws ConflictException, ServerException {
+        if (!userSelfCreationAllowed) {
+            throw new ConflictException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
+        }
 
         if (isNullOrEmpty(email)) {
             throw new IllegalArgumentException("Email cannot be empty or null");
