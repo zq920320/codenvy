@@ -22,11 +22,11 @@ import com.codenvy.api.creditcard.shared.dto.CreditCard;
 import com.codenvy.api.creditcard.shared.dto.CreditCardDescriptor;
 import com.codenvy.api.creditcard.shared.dto.NewCreditCard;
 import com.google.common.annotations.Beta;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;

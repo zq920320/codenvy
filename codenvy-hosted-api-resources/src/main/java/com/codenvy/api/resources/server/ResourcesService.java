@@ -23,11 +23,11 @@ import com.codenvy.api.resources.shared.dto.UpdateResourcesDescriptor;
 import com.codenvy.api.resources.shared.dto.WorkspaceResources;
 import com.google.common.annotations.Beta;
 import com.google.common.collect.FluentIterable;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
