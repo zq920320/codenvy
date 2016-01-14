@@ -63,6 +63,19 @@
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-docs</artifactId>
         </dependency>
+        <!--dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-subscription-saas</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-events</artifactId>
+        </dependency>
         <!--
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
@@ -102,19 +115,6 @@
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-server-organization</artifactId>
-        </dependency>
-        <!--dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-saas</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-workspace-events</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
