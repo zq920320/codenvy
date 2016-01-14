@@ -35,14 +35,14 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.platform-api</groupId>
-            <artifactId>codenvy-api-docs-ui</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.resources</groupId>
             <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
             <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.swagger</groupId>
+            <artifactId>che-swagger-war</artifactId>
+            <type>war</type>
         </dependency>
     </dependencies>
     <profiles>
@@ -67,9 +67,9 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/war/im-api-docs-ui</outputDirectory>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>com.codenvy.platform-api</groupId>
-                                            <artifactId>codenvy-api-docs-ui</artifactId>
-                                            <version>${codenvy.api-docs-ui.version}</version>
+                                            <groupId>org.eclipse.che.swagger</groupId>
+                                            <artifactId>che-swagger-war</artifactId>
+                                            <version>${che.swagger.ui.version}</version>
                                             <type>war</type>
                                         </artifactItem>
                                     </artifactItems>

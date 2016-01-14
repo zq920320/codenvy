@@ -149,7 +149,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         /*
         install(new org.eclipse.che.api.factory.FactoryModule());
         */
-        install(new com.codenvy.che.docs.DocsModule());
         install(new org.eclipse.che.api.machine.server.MachineModule());
 
         // Copied from IDE3 api war >

@@ -22,6 +22,7 @@ import com.google.common.collect.ImmutableMap;
 import com.google.inject.servlet.ServletModule;
 
 import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.swagger.deploy.BasicSwaggerConfigurationModule;
 import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
@@ -134,5 +135,7 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
 
         getServletContext().addListener(new WSConnectionTracker());
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
+        install(new BasicSwaggerConfigurationModule());
+
     }
 }

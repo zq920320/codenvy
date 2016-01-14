@@ -81,9 +81,9 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>false</unpack>
             <outputDirectory>webapps</outputDirectory>
-            <outputFileNameMapping>api-docs-ui.war</outputFileNameMapping>
+            <outputFileNameMapping>swagger.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.platform-api:codenvy-api-docs-ui</include>
+                <include>org.eclipse.che.swagger:che-swagger-war</include>
             </includes>
         </dependencySet>
     </dependencySets>

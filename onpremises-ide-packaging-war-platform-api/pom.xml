@@ -61,19 +61,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-api-docs</artifactId>
-        </dependency>
-        <!--dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-onpremises</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-subscription-saas</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-events</artifactId>
         </dependency>
         <!--
@@ -356,6 +343,10 @@
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-machine-ext-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.swagger</groupId>
+            <artifactId>che-swagger-module</artifactId>
         </dependency>
         <!--dependency>
             <groupId>org.eclipse.che.plugin</groupId>
