@@ -19,29 +19,11 @@ package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.eclipse.che.api.account.server.dao.AccountDao;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
-import org.eclipse.che.api.core.rest.shared.dto.Link;
+
 /*
 import org.eclipse.che.api.factory.FactoryService;
 import org.eclipse.che.api.factory.dto.Factory;
 */
-import org.eclipse.che.api.user.server.dao.MembershipDao;
-import org.eclipse.che.api.workspace.server.WorkspaceManager;
-import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.commons.lang.Pair;
-import org.eclipse.che.commons.user.User;
-
-import javax.inject.Inject;
-import javax.inject.Named;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.SecurityContext;
-import java.security.Principal;
-import java.util.Arrays;
-import java.util.Map;
-
-import static javax.ws.rs.core.UriBuilder.fromUri;
 
 /**
  * Allows to create one factory workspace into other's account.
