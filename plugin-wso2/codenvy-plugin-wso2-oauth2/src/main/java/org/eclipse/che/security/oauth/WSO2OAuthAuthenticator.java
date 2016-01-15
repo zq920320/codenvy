@@ -11,6 +11,7 @@
 package org.eclipse.che.security.oauth;
 
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.commons.lang.IoUtil;
@@ -35,8 +36,12 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.Collections.singletonList;
 
 /** OAuth authentication for wso2 account. */
 @Singleton
@@ -48,28 +53,22 @@ public class WSO2OAuthAuthenticator extends OAuthAuthenticator {
     final String userUri;
 
     @Inject
-    public WSO2OAuthAuthenticator(@Named("oauth.wso2.clientid") String clientId,
-                                  @Named("oauth.wso2.clientsecret") String clientSecret,
-                                  @Named("oauth.wso2.redirecturis") String[] redirectUris,
-                                  @Named("oauth.wso2.authuri") String authUri,
-                                  @Named("oauth.wso2.tokenuri") String tokenUri,
-                                  @Named("oauth.wso2.useruri") String userUri) throws IOException {
-        super(new AuthorizationCodeFlow.Builder(
-                      BearerToken.authorizationHeaderAccessMethod(),
-                      new NetHttpTransport(),
-                      new JacksonFactory(),
-                      new GenericUrl(tokenUri),
-                      new ClientParametersAuthentication(
-                              clientId,
-                              clientSecret),
-                      clientId,
-                      authUri
-              )
-                      .setScopes(Arrays.asList(SCOPE))
-                      .setDataStoreFactory(new MemoryDataStoreFactory())
-                      .build(),
-              Arrays.asList(redirectUris));
+    public WSO2OAuthAuthenticator(@Nullable @Named("oauth.wso2.clientid") String clientId,
+                                  @Nullable @Named("oauth.wso2.clientsecret") String clientSecret,
+                                  @Nullable @Named("oauth.wso2.redirecturis") String[] redirectUris,
+                                  @Nullable @Named("oauth.wso2.authuri") String authUri,
+                                  @Nullable @Named("oauth.wso2.tokenuri") String tokenUri,
+                                  @Nullable @Named("oauth.wso2.useruri") String userUri) throws IOException {
         this.userUri = userUri;
+
+        if (!isNullOrEmpty(clientId)
+            && !isNullOrEmpty(clientSecret)
+            && !isNullOrEmpty(authUri)
+            && !isNullOrEmpty(tokenUri)
+            && redirectUris != null && redirectUris.length != 0) {
+
+            configure(clientId, clientSecret, redirectUris, authUri, tokenUri, new MemoryDataStoreFactory(), singletonList(SCOPE));
+        }
     }
 
     /** {@inheritDoc} */
