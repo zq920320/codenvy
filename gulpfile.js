@@ -72,10 +72,10 @@ gulp.task('css', ['copy_src','jekyll'], function() {
 });
 
 gulp.task('lint',function(){
-//  gulp.src(['!'+paths.src+'site/scripts/vendor/*.*',paths.src+'site/scripts/**/*.js'])
-//    .pipe(jshint())
-//  .pipe(jshint.reporter('jshint-stylish'))
-//  .pipe(jshint.reporter('fail'))
+  gulp.src(['!'+paths.src+'site/scripts/vendor/*.*',paths.src+'site/scripts/**/*.js'])
+    .pipe(jshint())
+  .pipe(jshint.reporter('jshint-stylish'))
+  .pipe(jshint.reporter('fail'))
 });
 
 // Builds projects using require.js's optimizer + Minify files with UglifyJS

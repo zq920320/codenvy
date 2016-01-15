@@ -25,6 +25,19 @@
             new AccountError("password","Your password is too short")
 
         */
+        var isWebsocketEnabled = function() {
+            var USER_AGENT = navigator.userAgent.toLowerCase();
+            if (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1) {
+                window.location = "/site/error/browser-not-supported#show";
+                return false;
+            }
+            var IS_WS_SUPPORTED = ("WebSocket" in window);
+            if (!IS_WS_SUPPORTED) {
+                window.location = "/site/error/websocket-connection-error";
+                return false;
+            }
+            return true;
+        };
 
         var AccountError = function(fieldName, errorDescription) {
             return {
@@ -96,19 +109,6 @@
                 }
 
         */
-        var isWebsocketEnabled = function() {
-            var USER_AGENT = navigator.userAgent.toLowerCase();
-            if (USER_AGENT.indexOf("chrome") === -1 && USER_AGENT.indexOf("firefox") === -1 && USER_AGENT.indexOf("safari") === -1) {
-                window.location = "/site/error/browser-not-supported#show";
-                return false;
-            }
-            var IS_WS_SUPPORTED = ("WebSocket" in window);
-            if (!IS_WS_SUPPORTED) {
-                window.location = "/site/error/websocket-connection-error";
-                return false;
-            }
-            return true;
-        };
         var removeCookie = function(cookie) {
             if ($.cookie(cookie)) {
                 $.removeCookie("cookie", {
@@ -185,6 +185,25 @@
             return deferredResult;
         };
 
+        var testProjectPath = function(recentProject){
+            var deferredResult = $.Deferred();
+            var projectName = recentProject.path.substr(recentProject.path.indexOf("/",1));
+            var url = "/api/project/" + recentProject.workspaceId + projectName;
+            $.ajax({
+                url: url,
+                type: "GET",
+                success: function(project,a,b) {
+                    console.info('a-> '+ a);
+                    console.info('b-> '+ b);
+                        deferredResult.resolve(project);
+                },
+                error: function() {
+                    deferredResult.reject();
+                }
+            });
+            return deferredResult;
+        };
+
         var getLastProject = function(){
             var deferredResult = $.Deferred();
             getProfilePrefs()
@@ -215,25 +234,6 @@
 
         };
 
-        var testProjectPath = function(recentProject){
-            var deferredResult = $.Deferred();
-            var projectName = recentProject.path.substr(recentProject.path.indexOf("/",1));
-            var url = "/api/project/" + recentProject.workspaceId + projectName;
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(project,a,b) {
-                    console.info('a-> '+ a);
-                    console.info('b-> '+ b);
-                        deferredResult.resolve(project);
-                },
-                error: function() {
-                    deferredResult.reject();
-                }
-            });
-            return deferredResult;
-        };
-
         var getWorkspaces = function() {
             var deferredResult = $.Deferred();
             var url = "/api/workspace";
@@ -249,6 +249,27 @@
             });
             return deferredResult;
 
+        };
+
+        var createAccount = function(accountName) {
+            var deferredResult = $.Deferred();
+            var url = "/api/account";
+            var data = {
+                name: accountName
+            };
+            $.ajax({
+                url: url,
+                type: "POST",
+                data: JSON.stringify(data),
+                contentType: "application/json"
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
+            });
+            return deferredResult;
         };
 
         var ensureExistenceAccount = function(accountName) {
@@ -278,28 +299,6 @@
             });
             return deferredResult;
         };
-
-        var createAccount = function(accountName) {
-            var deferredResult = $.Deferred();
-            var url = "/api/account";
-            var data = {
-                name: accountName
-            };
-            $.ajax({
-                url: url,
-                type: "POST",
-                data: JSON.stringify(data),
-                contentType: "application/json"
-            })
-            .success(function(response){
-                deferredResult.resolve(response);
-            })
-            .error(function(error){
-                deferredResult.reject(error);
-            });
-            return deferredResult;
-        };
-
 
         var login = function(email, password) {
             if (isWebsocketEnabled()) {
