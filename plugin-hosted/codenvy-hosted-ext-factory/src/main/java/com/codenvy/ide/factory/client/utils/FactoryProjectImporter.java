@@ -93,10 +93,13 @@ public class FactoryProjectImporter extends AbstractImporter {
             @Override
             public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
                 Set<String> projectNames = new HashSet<>();
+                String createPolicy = factory.getPolicies() != null ? factory.getPolicies().getCreate() : null;
                 for (ProjectConfigDto projectConfig : projectConfigs) {
                     if (isProjectExistOnFileSystem(projectConfig)) {
-                        notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
-
+                        // to prevent warning when reusing same workspace
+                        if (!("perUser".equals(createPolicy) || "perAccount".equals(createPolicy))) {
+                            notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
+                        }
                         continue;
                     }
 
