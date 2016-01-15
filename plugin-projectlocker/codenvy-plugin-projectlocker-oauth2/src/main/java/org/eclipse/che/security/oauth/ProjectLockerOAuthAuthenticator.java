@@ -10,24 +10,17 @@
  *******************************************************************************/
 package org.eclipse.che.security.oauth;
 
-import org.eclipse.che.api.auth.shared.dto.OAuthToken;
-import org.eclipse.che.security.oauth.shared.User;
-import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
-import com.google.api.client.auth.oauth2.BearerToken;
-import com.google.api.client.auth.oauth2.ClientParametersAuthentication;
-import com.google.api.client.http.GenericUrl;
-import com.google.api.client.http.javanet.NetHttpTransport;
-import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.commons.annotation.Nullable;
+import org.eclipse.che.security.oauth.shared.User;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
-import java.util.Arrays;
-import java.util.Collections;
+
+import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * OAuth authentication for ProjectLocker account.
@@ -35,31 +28,20 @@ import java.util.Collections;
  * @author Max Shaposhnik
  */
 public class ProjectLockerOAuthAuthenticator extends OAuthAuthenticator {
-
-    private static final Logger LOG = LoggerFactory.getLogger(ProjectLockerOAuthAuthenticator.class);
-
     @Inject
-    public ProjectLockerOAuthAuthenticator(@Named("oauth.projectlocker.clientid") String clientId,
-                                           @Named("oauth.projectlocker.clientsecret") String clientSecret,
-                                           @Named("oauth.projectlocker.redirecturis") String[] redirectUris,
-                                           @Named("oauth.projectlocker.authuri") String authUri,
-                                           @Named("oauth.projectlocker.tokenuri") String tokenUri) throws IOException {
-        super(new AuthorizationCodeFlow.Builder(
-                      BearerToken.authorizationHeaderAccessMethod(),
-                      new NetHttpTransport(),
-                      new JacksonFactory(),
-                      new GenericUrl(tokenUri),
-                      new ClientParametersAuthentication(
-                              clientId,
-                              clientSecret),
-                      clientId,
-                      authUri
-              )
-                      .setScopes(Collections.<String>emptyList())
-                      .setDataStoreFactory(new MemoryDataStoreFactory())
-                      .build(),
-              Arrays.asList(redirectUris)
-             );
+    public ProjectLockerOAuthAuthenticator(@Nullable @Named("oauth.projectlocker.clientid") String clientId,
+                                           @Nullable @Named("oauth.projectlocker.clientsecret") String clientSecret,
+                                           @Nullable @Named("oauth.projectlocker.redirecturis") String[] redirectUris,
+                                           @Nullable @Named("oauth.projectlocker.authuri") String authUri,
+                                           @Nullable @Named("oauth.projectlocker.tokenuri") String tokenUri) throws IOException {
+        if (!isNullOrEmpty(clientId)
+            && !isNullOrEmpty(clientSecret)
+            && !isNullOrEmpty(authUri)
+            && !isNullOrEmpty(tokenUri)
+            && redirectUris != null && redirectUris.length != 0) {
+
+            configure(clientId, clientSecret, redirectUris, authUri, tokenUri, new MemoryDataStoreFactory());
+        }
     }
 
     @Override

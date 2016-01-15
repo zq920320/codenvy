@@ -10,22 +10,22 @@
  *******************************************************************************/
 package org.eclipse.che.security.oauth;
 
-import org.eclipse.che.api.auth.shared.dto.OAuthToken;
-import org.eclipse.che.commons.json.JsonHelper;
-import org.eclipse.che.commons.json.JsonParseException;
-import org.eclipse.che.commons.lang.IoUtil;
-import org.eclipse.che.security.oauth.shared.User;
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
 import com.google.api.client.googleapis.auth.oauth2.GoogleClientSecrets;
 import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.store.MemoryDataStoreFactory;
 
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.commons.annotation.Nullable;
+import org.eclipse.che.commons.json.JsonHelper;
+import org.eclipse.che.commons.json.JsonParseException;
+import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.security.oauth.shared.User;
 import org.everrest.core.impl.provider.json.JsonValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -35,6 +35,8 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Arrays;
 
+import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
+
 /** OAuth authentication for google account. */
 @Singleton
 public class GoogleOAuthAuthenticator extends OAuthAuthenticator {
@@ -42,31 +44,33 @@ public class GoogleOAuthAuthenticator extends OAuthAuthenticator {
     private static final Logger LOG = LoggerFactory.getLogger(GoogleOAuthAuthenticator.class);
 
     @Inject
-    public GoogleOAuthAuthenticator(@Named("oauth.google.clientid") String clientId,
-                                    @Named("oauth.google.clientsecret") String clientSecret,
-                                    @Named("oauth.google.redirecturis") String[] redirectUris,
+    public GoogleOAuthAuthenticator(@Nullable @Named("oauth.google.clientid") String clientId,
+                                    @Nullable @Named("oauth.google.clientsecret") String clientSecret,
+                                    @Nullable @Named("oauth.google.redirecturis") String[] redirectUris,
                                     @Nullable @Named("oauth.google.authuri") String authUri,
                                     @Nullable @Named("oauth.google.tokenuri") String tokenUri) throws IOException {
-        super(new GoogleAuthorizationCodeFlow.Builder(
-                      new NetHttpTransport(),
-                      new JacksonFactory(),
-                      new GoogleClientSecrets().setWeb(
-                              new GoogleClientSecrets.Details()
-                                      .setClientId(clientId)
-                                      .setClientSecret(clientSecret)
-                                      .setRedirectUris(Arrays.asList(redirectUris))
-                                      .setAuthUri(authUri)
-                                      .setTokenUri(tokenUri)
-                                                      ),
-                      Arrays.asList(
-                              "https://www.googleapis.com/auth/userinfo.email",
-                              "https://www.googleapis.com/auth/userinfo.profile")
-              )
-                      .setDataStoreFactory(new MemoryDataStoreFactory())
-                      .setApprovalPrompt("auto")
-                      .setAccessType("online").build(),
-              Arrays.asList(redirectUris)
-             );
+        if (!isNullOrEmpty(clientId)
+            && !isNullOrEmpty(clientSecret)
+            && redirectUris != null && redirectUris.length != 0) {
+
+            configure(new GoogleAuthorizationCodeFlow.Builder(new NetHttpTransport(),
+                                                              new JacksonFactory(),
+                                                              new GoogleClientSecrets().setWeb(
+                                                                      new GoogleClientSecrets.Details()
+                                                                              .setClientId(clientId)
+                                                                              .setClientSecret(clientSecret)
+                                                                              .setRedirectUris(Arrays.asList(redirectUris))
+                                                                              .setAuthUri(authUri)
+                                                                              .setTokenUri(tokenUri)
+                                                              ),
+                                                              Arrays.asList("https://www.googleapis.com/auth/userinfo.email",
+                                                                            "https://www.googleapis.com/auth/userinfo.profile"))
+                              .setDataStoreFactory(new MemoryDataStoreFactory())
+                              .setApprovalPrompt("auto")
+                              .setAccessType("online").build(),
+                      Arrays.asList(redirectUris)
+            );
+        }
     }
 
     @Override
