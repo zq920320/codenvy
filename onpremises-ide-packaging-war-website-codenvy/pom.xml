@@ -23,7 +23,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>4.0.0-beta-10</version>
+        <version>4.0.0-beta-11-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-website-codenvy</artifactId>
     <packaging>war</packaging>
