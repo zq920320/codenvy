@@ -17,6 +17,10 @@
  */
 package com.codenvy.auth.sso.oauth;
 
+import com.codenvy.auth.sso.server.InputDataException;
+import com.codenvy.auth.sso.server.InputDataValidator;
+import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
+
 import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
@@ -24,13 +28,9 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import com.codenvy.auth.sso.server.InputDataException;
-import com.codenvy.auth.sso.server.InputDataValidator;
-import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +50,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
+
 
 @Singleton
 public class OAuthLoginServlet extends HttpServlet {
@@ -65,6 +67,12 @@ public class OAuthLoginServlet extends HttpServlet {
     @Named("auth.sso.create_workspace_page_url")
     @Inject
     private String                           createWorkspacePage;
+    @Named("auth.no.account.found.page")
+    @Inject
+    private String                           noAccountFoundErrorPage;
+    @Inject
+    @Named("user.self.creation.allowed")
+    private boolean                          userSelfCreationAllowed;
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -107,8 +115,7 @@ public class OAuthLoginServlet extends HttpServlet {
         }
 
         final OAuthToken token = authenticator.getToken(email);
-        if (token == null || token.getToken()
-                                  .isEmpty()) {
+        if (token == null || isNullOrEmpty(token.getToken())) {
             LOG.error("Unable obtain email address for user {} ", email);
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Unable obtain email address for user " + email);
             return;
@@ -134,8 +141,13 @@ public class OAuthLoginServlet extends HttpServlet {
             LOG.debug("Oauth login. Redirect after: {}", uri.toString());
             resp.sendRedirect(uri.toString());
         } else {
+            if (!userSelfCreationAllowed) {
+                resp.sendRedirect(noAccountFoundErrorPage);
+                return;
+            }
+
             // fill user profile if user doesn't exists and login in first time.
-            Map profileInfo = createProfileInfo(email, authenticator, token);
+            Map<String, String> profileInfo = createProfileInfo(email, authenticator, token);
             profileInfo.put("initiator", oauthProvider);
 
             try {
@@ -170,7 +182,7 @@ public class OAuthLoginServlet extends HttpServlet {
         String candidate = email.contains("@") ? email.substring(0, email.indexOf('@')) : email;
         int count = 1;
         while (getUserByName(candidate).isPresent()) {
-            candidate =  candidate.concat(String.valueOf(count++));
+            candidate = candidate.concat(String.valueOf(count++));
         }
         return candidate;
     }

@@ -36,6 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +58,10 @@ public class OrgServiceUserCreator implements UserCreator {
     @Inject
     private PreferenceDao preferenceDao;
 
+    @Inject
+    @Named("user.self.creation.allowed")
+    private boolean userSelfCreationAllowed;
+
     @Override
     public User createUser(String email, String userName, String firstName, String lastName) throws IOException {
         //TODO check this method should only call if user is not exists.
@@ -64,6 +69,10 @@ public class OrgServiceUserCreator implements UserCreator {
             org.eclipse.che.api.user.server.dao.User user = userDao.getByAlias(email);
             return new UserImpl(email, user.getId(), null, Collections.<String>emptyList(), false);
         } catch (NotFoundException e) {
+            if (!userSelfCreationAllowed) {
+                throw new IOException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
+            }
+
             String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
 
             final Map<String, String> attributes = new HashMap<>();
