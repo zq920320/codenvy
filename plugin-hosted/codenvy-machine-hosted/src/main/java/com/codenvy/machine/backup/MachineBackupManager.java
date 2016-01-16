@@ -54,7 +54,7 @@ public class MachineBackupManager {
                                 @Named("machine.backup.restore_script") String restoreScript,
                                 @Named("machine.backup.backup_duration_second") int maxBackupDurationSec,
                                 @Named("machine.backup.restore_duration_second") int restoreDurationSec,
-                                @Named("vfs.local.fs_root_dir") File backupsRootDir) {
+                                @Named("che.user.workspaces.storage") File backupsRootDir) {
         this.backupScript = backupScript;
         this.restoreScript = restoreScript;
         this.maxBackupDuration = maxBackupDurationSec;
