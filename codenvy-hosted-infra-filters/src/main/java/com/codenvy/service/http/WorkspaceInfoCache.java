@@ -17,25 +17,23 @@
  */
 package com.codenvy.service.http;
 
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
-import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.workspace.server.WorkspaceManager;
-import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
-
 import com.google.common.cache.CacheBuilder;
 import com.google.common.cache.CacheLoader;
 import com.google.common.cache.LoadingCache;
 import com.google.inject.name.Named;
 
-import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
+import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
+import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.net.URI;
 import java.util.Objects;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -51,7 +49,6 @@ public class WorkspaceInfoCache {
 
     private final LoadingCache<Key, UsersWorkspace> workspaceCache;
 
-
     @Inject
     public WorkspaceInfoCache(WorkspaceCacheLoader cacheLoader) {
         this.workspaceCache = CacheBuilder.newBuilder()
@@ -60,7 +57,6 @@ public class WorkspaceInfoCache {
                                           .build(cacheLoader);
 
     }
-
 
     /**
      * @param wsName
@@ -173,28 +169,26 @@ public class WorkspaceInfoCache {
 
         @Inject
         @Named("api.endpoint")
-        String apiEndpoint;
+        URI apiEndpoint;
+
+        @Inject
+        HttpJsonRequestFactory requestFactory;
 
         @Override
         public UsersWorkspace load(Key key) throws Exception {
             LOG.debug("Load {} from manager ", key.key);
             try {
-                Link getWorkspaceLink;
+                String getWorkspaceUrl;
                 if (key.isUuid) {
-                    getWorkspaceLink =
-                            DtoFactory.getInstance()
-                                      .createDto(Link.class)
-                                      .withMethod("GET")
-                                      .withHref(apiEndpoint + "/workspace/" + key.key);
+                    getWorkspaceUrl = "workspace/" + key.key;
                 } else {
-                    getWorkspaceLink =
-                            DtoFactory.getInstance()
-                                      .createDto(Link.class)
-                                      .withMethod("GET")
-                                      .withHref(apiEndpoint + "/workspace?name=" + key.key);
+                    getWorkspaceUrl = "workspace?name=" + key.key;
                 }
 
-                return HttpJsonHelper.request(UsersWorkspaceDto.class, getWorkspaceLink);
+                return requestFactory.fromUrl(apiEndpoint.resolve(getWorkspaceUrl).toString())
+                                     .useGetMethod()
+                                     .request()
+                                     .asDto(UsersWorkspaceDto.class);
             } catch (Exception e) {
                 LOG.warn("Not able to get information for {} - {}", key.key, key.isUuid);
                 LOG.debug(e.getLocalizedMessage(), e);
