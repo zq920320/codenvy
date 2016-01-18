@@ -22,18 +22,18 @@
         var action,
         errorContainer,
 		oauthProviderButtons;
-	    var LoginForm = Backbone.View.extend({
-			loginTemplate : Handlebars.compile(loginTemplate),
-			createTemplate : Handlebars.compile(createTemplate),
-			oauthTemplate : Handlebars.compile(oauthTemplate),
-	        initialize : function(){
+        oauthProviderButtons = ["google", "github"]; // the list of oauth provider buttons
+        var LoginForm = Backbone.View.extend({
+            loginTemplate : Handlebars.compile(loginTemplate),
+            createTemplate : Handlebars.compile(createTemplate),
+            oauthTemplate : Handlebars.compile(oauthTemplate),
+            initialize : function(){
                 $.validator.addMethod("validDomain", function(value) {
                     return Account.isValidDomain(value.toLowerCase());
                 });
                 $.validator.addMethod("checkEmail", function(value) {
                     return Account.isValidEmail(value);
                 });
-		        oauthProviderButtons = ["google", "github"]; // the list of oauth provider buttons
                 Account.isApiAvailable()
                 .then(function(apiAvailable){
                     if (!apiAvailable){
@@ -57,13 +57,21 @@
 				       return $.Deferred().reject();
 				   }
 				   })
-				.fail(function(){
-					$(".col-md-12").append(self.loginTemplate());//TODO show Login form
-				    // remove cookie to be able to sign up
-					$("#signUp").click(function(){
-				       $(".col-md-12").empty();//TODO hide login form
-				       self.proceedCreate();
-				   });
+				.fail(function(){ //user is not aouthenticated
+                    Account.getUserSettings() //get user props
+                    .then(function(settings){ //set parameter to hide/show create account form
+    					$(".col-md-12").append(self.loginTemplate());//show Login form
+    				    // remove cookie to be able to sign up
+                        if (settings["user.self.creation.allowed"] === "true") {
+                                //show create-account link
+                            $("#signUp").html('Create a New Account');
+                            $("#signUp").click(function(){
+                               $(".col-md-12").empty();//hide login form
+                               self.proceedCreate();
+                            });
+                        }
+				   })
+                    .fail();
                     Account.getOAuthproviders(_.bind(self.constructOAuthElements,self));
                     self.el = $(".login-form");
                     errorContainer = $(".error-container");

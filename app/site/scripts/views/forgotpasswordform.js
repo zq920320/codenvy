@@ -21,6 +21,17 @@ define(["jquery","underscore","views/accountformbase","models/account"],
     function($,_,AccountFormBase,Account){
 
         var ForgotPasswordForm = AccountFormBase.extend({
+            initialize : function(){
+                Account.getUserSettings() //get user props
+                .then(function(settings){
+                    if (settings["user.self.creation.allowed"] === "true") {
+                            //show create-account link
+                        $('#bottom-ul').prepend('<li><a href="/">Create a New Account</a></li>');
+                    }
+               })
+                .fail();
+            },
+
             __submit : function(){
                 this.__showProgress();
                 this.trigger("submitting");

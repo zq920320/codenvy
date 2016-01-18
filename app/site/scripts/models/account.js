@@ -375,6 +375,23 @@
         var appendQuery = function(url) {
             return url  +  window.location.search + window.location.hash;
         };
+
+        var getUserSettings = function() {
+            var deferredResult = $.Deferred();
+            var url = "/api/user/settings";
+            $.ajax({
+                url: url,
+                type: "GET"
+            })
+            .success(function(response){
+                deferredResult.resolve(response);
+            })
+            .error(function(error){
+                deferredResult.reject(error);
+            });
+            return deferredResult;
+        };
+
         return {
             removeCookie: removeCookie,
             isWebsocketEnabled: isWebsocketEnabled,
@@ -387,6 +404,7 @@
             isApiAvailable: isApiAvailable,
             getOAuthproviders: getOAuthproviders,
             loginWithOauthProvider: loginWithOauthProvider,
+            getUserSettings: getUserSettings,
             isValidDomain: function(domain) {
                 return (/^[a-z0-9][a-z0-9_.-]{2,19}$/).exec(domain) !== null;
             },
