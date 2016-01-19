@@ -1,3 +1,4 @@
+
 /*
  * CODENVY CONFIDENTIAL
  * __________________
@@ -17,34 +18,30 @@
  */
 package com.codenvy.service.password;
 
+import com.jayway.restassured.response.Response;
+
+import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.user.server.dao.Profile;
-import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-
-import com.jayway.restassured.response.Response;
-
-import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.everrest.assured.EverrestJetty;
-import org.everrest.core.impl.uri.UriBuilderImpl;
 import org.everrest.core.tools.DependencySupplierImpl;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.testng.MockitoTestNGListener;
+import org.testng.ITestContext;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import javax.mail.MessagingException;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ExceptionMapper;
-import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -61,22 +58,18 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /** Test of features from PasswordService */
 @Listeners(value = {EverrestJetty.class, MockitoTestNGListener.class})
 public class PasswordServiceTest {
-    private static final String              SERVICE_PATH           = "/password";
-    private static final String              NEW_PASSWORD           = "new password";
-    private static final String              UUID                   = java.util.UUID.randomUUID().toString();
-    private static final String              USERNAME               = "user@mail.com";
-    private static final String              CODENVY_MASTERHOST_URL = "http://localhost:1111";
-
-    @Mock
-    private UriInfo uriInfo;
+    private static final String SERVICE_PATH = "/password";
+    private static final String NEW_PASSWORD = "new password";
+    private static final String UUID         = java.util.UUID.randomUUID().toString();
+    private static final String USERNAME     = "user@mail.com";
 
     @Mock
     private MailSenderClient mailService;
@@ -99,7 +92,7 @@ public class PasswordServiceTest {
     private PasswordService passService;
 
     @SuppressWarnings("unused")
-    private ExceptionMapper exceptionMapper = new ApiExceptionMapper();
+    ApiExceptionMapper exceptionMapper;
 
     @BeforeMethod
     public void setup() throws Exception {
@@ -116,11 +109,6 @@ public class PasswordServiceTest {
         dependencies.addComponent(UserDao.class, userDao);
         dependencies.addComponent(UserProfileDao.class, userProfileDao);
 
-        when(uriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl().uri("http://localhost:1111"));
-        final Field uriField = passService.getClass()
-                                          .getDeclaredField("uriInfo");
-        uriField.setAccessible(true);
-        uriField.set(passService, uriInfo);
     }
 
     @Test
@@ -232,14 +220,14 @@ public class PasswordServiceTest {
     }
 
     @Test
-    public void shouldBeAbleToRecoverPassword() throws Exception {
+    public void shouldBeAbleToRecoverPassword(ITestContext ctx) throws Exception {
         when(userDao.getByAlias(USERNAME)).thenReturn(user);
         when(recoveryStorage.generateRecoverToken(eq(USERNAME))).thenReturn(UUID);
         Response response = given().pathParam("username", USERNAME).when().post(SERVICE_PATH + "/recover/{username}");
 
         assertEquals(response.statusCode(), 204);
         Map<String, String> templateProperties = new HashMap<>();
-        templateProperties.put("com.codenvy.masterhost.url", CODENVY_MASTERHOST_URL);
+        templateProperties.put("com.codenvy.masterhost.url", "http://localhost:" + ctx.getAttribute(EverrestJetty.JETTY_PORT));
         templateProperties.put("id", UUID);
         templateProperties.put("validation.token.age.message", "1 hour");
         verify(mailService).sendMail(eq("Codenvy <noreply@codenvy.com>"),

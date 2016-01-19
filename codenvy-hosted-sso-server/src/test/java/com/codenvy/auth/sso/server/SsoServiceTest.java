@@ -24,7 +24,6 @@ import com.codenvy.api.dao.authentication.TicketManager;
 import org.eclipse.che.api.auth.AuthenticationExceptionMapper;
 import org.eclipse.che.commons.user.User;
 import org.eclipse.che.commons.user.UserImpl;
-
 import org.everrest.assured.EverrestJetty;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -32,13 +31,14 @@ import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.ws.rs.ext.ExceptionMapper;
 import java.util.Arrays;
 import java.util.HashSet;
 
 import static com.jayway.restassured.RestAssured.given;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertTrue;
 
@@ -47,9 +47,7 @@ import static org.testng.Assert.assertTrue;
  */
 @Listeners(value = {EverrestJetty.class, MockitoTestNGListener.class})
 public class SsoServiceTest {
-    private ExceptionMapper exceptionMapper = new AuthenticationExceptionMapper();
-
-
+    AuthenticationExceptionMapper exceptionMapper;
     @Mock
     TicketManager              ticketManager;
     @Mock

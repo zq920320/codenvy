@@ -158,7 +158,7 @@ public class SaasServiceTest {
     }
 
     @Filter
-    private class EnvironmentFilter implements RequestFilter {
+    public static class EnvironmentFilter implements RequestFilter {
         public void doFilter(GenericContainerRequest request) {
             EnvironmentContext context = EnvironmentContext.getCurrent();
             context.setUser(new UserImpl(ADMIN_USER_NAME, USER_ID, "token-2323", Collections.<String>emptyList(), false));
