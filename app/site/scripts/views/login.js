@@ -61,7 +61,10 @@
                     Account.getUserSettings() //get user props
                     .then(function(settings){ //set parameter to hide/show create account form
     					$(".col-md-12").append(self.loginTemplate());//show Login form
-    				    // remove cookie to be able to sign up
+                        Account.getOAuthproviders(_.bind(self.constructOAuthElements,self));
+                        self.el = $(".login-form");
+                        errorContainer = $(".error-container");
+                        self.addValidator();
                         if (settings["user.self.creation.allowed"] === "true") {
                                 //show create-account link
                             $("#signUp").html('Create a New Account');
@@ -70,12 +73,8 @@
                                self.proceedCreate();
                             });
                         }
-				   })
+                   })
                     .fail();
-                    Account.getOAuthproviders(_.bind(self.constructOAuthElements,self));
-                    self.el = $(".login-form");
-                    errorContainer = $(".error-container");
-                    self.addValidator();
 				});
 	        },
 
