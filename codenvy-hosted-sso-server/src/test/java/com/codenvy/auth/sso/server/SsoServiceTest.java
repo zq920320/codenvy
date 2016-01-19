@@ -47,9 +47,7 @@ import static org.testng.Assert.assertTrue;
  */
 @Listeners(value = {EverrestJetty.class, MockitoTestNGListener.class})
 public class SsoServiceTest {
-    private ExceptionMapper exceptionMapper = new AuthenticationExceptionMapper();
-
-
+     AuthenticationExceptionMapper exceptionMapper;
     @Mock
     TicketManager              ticketManager;
     @Mock

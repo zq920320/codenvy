@@ -1,3 +1,4 @@
+
 /*
  * CODENVY CONFIDENTIAL
  * __________________
@@ -17,19 +18,18 @@
  */
 package com.codenvy.service.password;
 
+import com.jayway.restassured.response.Response;
+
+import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.user.server.dao.Profile;
-import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-
-import com.jayway.restassured.response.Response;
-
-import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.everrest.assured.EverrestJetty;
 import org.everrest.core.impl.uri.UriBuilderImpl;
 import org.everrest.core.tools.DependencySupplierImpl;
@@ -43,7 +43,6 @@ import org.testng.annotations.Test;
 import javax.mail.MessagingException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
-import javax.ws.rs.ext.ExceptionMapper;
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,8 +60,8 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyZeroInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
@@ -99,7 +98,7 @@ public class PasswordServiceTest {
     private PasswordService passService;
 
     @SuppressWarnings("unused")
-    private ExceptionMapper exceptionMapper = new ApiExceptionMapper();
+     ApiExceptionMapper exceptionMapper;
 
     @BeforeMethod
     public void setup() throws Exception {
@@ -248,7 +247,7 @@ public class PasswordServiceTest {
                                      eq("Codenvy Password Recovery"),
                                      eq(MediaType.TEXT_HTML),
                                      eq(readAndCloseQuietly(getResource("/email-templates/password_recovery.html"))),
-                                     eq(templateProperties));
+                                     any(Map.class));
     }
 
     @Test
