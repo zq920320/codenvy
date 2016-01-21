@@ -288,7 +288,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         new ConjunctionRequestFilter(
                                 new UriStartFromRequestFilter("/api/oauth/authenticate"),
                                 r -> isNullOrEmpty(r.getParameter("userId"))
-                        )
+                        ),
+                        new UriStartFromRequestFilter("/api/user/settings")
                 )
                                             );
 
