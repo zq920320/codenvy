@@ -386,8 +386,8 @@
             .success(function(response){
                 deferredResult.resolve(response);
             })
-            .error(function(error){
-                deferredResult.reject(error);
+            .error(function(){
+                deferredResult.resolve({});
             });
             return deferredResult;
         };

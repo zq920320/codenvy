@@ -72,6 +72,8 @@
                                $(".col-md-12").empty();//hide login form
                                self.proceedCreate();
                             });
+                        }else {
+                            $("#signUp").after('To get access please contact your Codenvy administrator').remove();
                         }
                    })
                     .fail();
