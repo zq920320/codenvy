@@ -21,7 +21,8 @@ define(["jquery","underscore","views/accountformbase","models/account"],
     function($,_,AccountFormBase,Account){
 
         var ForgotPasswordForm = AccountFormBase.extend({
-            initialize : function(){
+            initialize : function(attributes){
+                AccountFormBase.prototype.initialize.apply(this,attributes);
                 Account.getUserSettings() //get user props
                 .then(function(settings){
                     if (settings["user.self.creation.allowed"] === "true") {
@@ -54,6 +55,7 @@ define(["jquery","underscore","views/accountformbase","models/account"],
                         }
                     },this)
                 );
+                return false;
             },
 
             __showResultMessage : function(){
