@@ -29,8 +29,24 @@
             <unpack>true</unpack>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-tomcat-ext-server</include>
+                <include>com.codenvy.resources:che-tomcat8-slf4j-logback</include>
+            </includes>
+        </dependencySet>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>false</unpack>
+            <outputDirectory>webapps</outputDirectory>
+            <outputFileNameMapping>api.war</outputFileNameMapping>
+            <includes>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-ext-server</include>
             </includes>
         </dependencySet>
     </dependencySets>
+    <files>
+        <file>
+            <source>${project.basedir}/src/assembly/server.xml</source>
+            <outputDirectory>conf</outputDirectory>
+            <destName>server.xml</destName>
+        </file>
+    </files>
 </assembly>

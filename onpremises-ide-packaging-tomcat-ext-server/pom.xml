@@ -30,8 +30,13 @@
     <name>Onpremises IDE :: Tomcat :: Machine :: Extension server</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-tomcat-ext-server</artifactId>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-tomcat-ext-server</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.resources</groupId>
+            <artifactId>che-tomcat8-slf4j-logback</artifactId>
             <type>zip</type>
         </dependency>
     </dependencies>
