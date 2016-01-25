@@ -31,8 +31,8 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-tomcat-ext-server</artifactId>
-            <type>zip</type>
+            <artifactId>onpremises-ide-packaging-war-ext-server</artifactId>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.resources</groupId>
