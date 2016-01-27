@@ -67,6 +67,19 @@
                 <include>org.postgresql:postgresql</include>
             </includes>
         </dependencySet>
+        <dependencySet>
+            <useProjectArtifact>false</useProjectArtifact>
+            <unpack>true</unpack>
+            <outputDirectory>che-templates</outputDirectory>
+            <includes>
+                <include>org.eclipse.che.core:che-core-ide-templates</include>
+            </includes>
+            <unpackOptions>
+                <excludes>
+                    <exclude>META-INF/**</exclude>
+                </excludes>
+            </unpackOptions>
+        </dependencySet>
     </dependencySets>
     <fileSets>
         <fileSet>
@@ -75,10 +88,6 @@
             <includes>
                 <include>assembly.properties</include>
             </includes>
-        </fileSet>
-        <fileSet>
-            <directory>${project.basedir}/src/assembly/che-templates</directory>
-            <outputDirectory>che-templates</outputDirectory>
         </fileSet>
     </fileSets>
 </assembly>
