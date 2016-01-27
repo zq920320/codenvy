@@ -93,7 +93,7 @@ public class ResourcesServiceTest {
     private ResourcesService resourcesService;
 
     @Filter
-    private class EnvironmentFilter implements RequestFilter {
+    public static class EnvironmentFilter implements RequestFilter {
         public void doFilter(GenericContainerRequest request) {
             EnvironmentContext context = EnvironmentContext.getCurrent();
             context.setUser(new UserImpl(ADMIN_USER_NAME, "id-2314", "token-2323",
