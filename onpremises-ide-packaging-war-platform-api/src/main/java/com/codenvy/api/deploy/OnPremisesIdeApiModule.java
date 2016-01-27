@@ -19,6 +19,7 @@ package com.codenvy.api.deploy;
 
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
+import com.codenvy.api.dao.ldap.AdminUserDaoImpl;
 import com.codenvy.api.dao.ldap.UserDaoImpl;
 import com.codenvy.api.dao.mongo.AccountDaoImpl;
 import com.codenvy.api.dao.mongo.MachineMongoDatabaseProvider;
@@ -27,6 +28,8 @@ import com.codenvy.api.dao.mongo.RecipeDaoImpl;
 import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.api.factory.FactoryMongoDatabaseProvider;
+import com.codenvy.api.user.server.AdminUserService;
+import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
@@ -128,6 +131,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(AuthenticationService.class);
         bind(WorkspaceService.class);
         bind(UserService.class);
+        bind(AdminUserService.class);
         bind(UserProfileService.class);
         bind(AccountService.class);
 
@@ -202,6 +206,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(WorkspaceDao.class).to(WorkspaceDaoImpl.class);
         bind(UserDao.class).to(UserDaoImpl.class);
+        bind(AdminUserDao.class).to(AdminUserDaoImpl.class);
         bind(UserProfileDao.class).to(com.codenvy.api.dao.ldap.UserProfileDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
         bind(SshDao.class).to(com.codenvy.api.dao.mongo.ssh.SshDaoImpl.class);

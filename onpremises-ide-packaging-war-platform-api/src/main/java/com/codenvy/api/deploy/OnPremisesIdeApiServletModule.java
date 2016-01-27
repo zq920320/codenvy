@@ -65,6 +65,8 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/account/*",
                "/java-name-environment/*",
                "/user/*",
+               "/admin/user",
+               "/admin/user/*",
                "/analytics/*",
                "/invite/*",
                "/factory",
