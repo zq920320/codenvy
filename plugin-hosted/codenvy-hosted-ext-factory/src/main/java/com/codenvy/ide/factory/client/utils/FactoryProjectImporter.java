@@ -38,8 +38,8 @@ import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
 import org.eclipse.che.ide.api.importer.AbstractImporter;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
-import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriber;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
+import org.eclipse.che.ide.api.project.wizard.ProjectNotificationSubscriber;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -162,7 +162,7 @@ public class FactoryProjectImporter extends AbstractImporter {
                                           @NotNull final String projectName,
                                           @NotNull final SourceStorageDto sourceStorage) {
         final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
-        final ImportProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
+        final ProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
         subscriber.subscribe(projectName, notification);
 
         return projectService.importProject(workspaceId, projectName, true, sourceStorage)
