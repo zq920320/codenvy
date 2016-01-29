@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.codenvy.api.event.user.RemoveUserEvent;
+
 import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.ConflictException;
@@ -24,14 +26,10 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.notification.EventService;
-
-import com.codenvy.api.event.user.RemoveUserEvent;
-
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
+import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-import org.eclipse.che.api.user.server.dao.User;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,17 +68,17 @@ import static java.lang.String.format;
 public class UserDaoImpl implements UserDao {
     private static final Logger LOG = LoggerFactory.getLogger(UserDaoImpl.class);
 
-    private final String                    userObjectClassFilter;
-    private final String                    containerDn;
-    private final String                    userDn;
-    private final String                    oldUserDn;
-    private final EventService              eventService;
-    private final AccountDao                accountDao;
+    protected final String                    userObjectClassFilter;
+    protected final String                    containerDn;
+    protected final String                    userDn;
+    protected final String                    oldUserDn;
+    protected final EventService              eventService;
+    protected final AccountDao                accountDao;
     //    private final MemberDao                 memberDao;
-    private final UserProfileDao            profileDao;
-    private final PreferenceDao             preferenceDao;
-    private final UserAttributesMapper      mapper;
-    private final InitialLdapContextFactory contextFactory;
+    protected final UserProfileDao            profileDao;
+    protected final PreferenceDao             preferenceDao;
+    protected final UserAttributesMapper      mapper;
+    protected final InitialLdapContextFactory contextFactory;
 
 
     /**
@@ -444,7 +442,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private void close(Context ctx) {
+    protected void close(Context ctx) {
         if (ctx != null) {
             try {
                 ctx.close();
@@ -454,7 +452,7 @@ public class UserDaoImpl implements UserDao {
         }
     }
 
-    private void close(NamingEnumeration<SearchResult> enumeration) {
+    protected void close(NamingEnumeration<SearchResult> enumeration) {
         if (enumeration != null) {
             try {
                 enumeration.close();

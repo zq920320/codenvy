@@ -38,6 +38,7 @@
         -->
         <module>codenvy-hosted-api-subscription</module>
         <module>codenvy-hosted-api-creditcard</module>
+        <module>codenvy-hosted-api-admin</module>
         <module>codenvy-hosted-subscription-onpremises</module>
         <!--
         <module>codenvy-hosted-subscription-saas</module>
