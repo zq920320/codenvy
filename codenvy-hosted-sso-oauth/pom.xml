@@ -23,7 +23,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>3.14.1-SNAPSHOT</version>
+        <version>3.14.1</version>
     </parent>
     <artifactId>codenvy-hosted-sso-oauth</artifactId>
     <packaging>jar</packaging>
