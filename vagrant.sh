@@ -245,7 +245,7 @@ if [ ${MULTI_SERVER} == true ]; then
   cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
 
   # Open folder for multi server env
-  cd ../deployment/puppet/vagrant-multi-vm-env
+  cd ../deployment-onprem/puppet/vagrant-multi-vm-env
 
 elif [ ${SCALABLE_AIO} == true ]; then
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
@@ -257,7 +257,7 @@ elif [ ${SCALABLE_AIO} == true ]; then
   cp -f onpremises-ide-packaging-zip-terminal/target/*.zip ../deployment-onprem/puppet/modules/multi_server/files/onpremises-ide-packaging-zip-terminal.zip
 
   # Open folder for AIO env
-  cd ../deployment/puppet/vagrant-scalable-aio
+  cd ../deployment-onprem/puppet/vagrant-scalable-aio
 
 else
   # Copy all-in-one tomcat zip to puppet folder for subsequent update
@@ -271,7 +271,7 @@ else
 fi
 
 # Destroy existing VM if user set corresponding parameter
-if [[ $DESTROY_VM == true && ${MULTI_SERVER} == false ]]; then
+if [ $DESTROY_VM == true ]; then
   vagrant destroy -f
 fi
 
