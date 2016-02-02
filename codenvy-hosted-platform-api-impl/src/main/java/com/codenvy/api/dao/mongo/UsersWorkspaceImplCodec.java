@@ -72,9 +72,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         @SuppressWarnings("unchecked") // 'commands' field is always list
         final List<Document> commandDocuments = (List<Document>)document.get("commands");
         final List<CommandImpl> commands = commandDocuments.stream()
-                                                           .map(d -> new CommandImpl(d.getString("name"),
-                                                                                     d.getString("commandLine"),
-                                                                                     d.getString("type")))
+                                                           .map(UsersWorkspaceImplCodec::asCommand)
                                                            .collect(toList());
 
         @SuppressWarnings("unchecked") // 'projects' field is always list
@@ -115,7 +113,8 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                              .stream()
                                              .map(command -> new Document().append("name", command.getName())
                                                                            .append("commandLine", command.getCommandLine())
-                                                                           .append("type", command.getType()))
+                                                                           .append("type", command.getType())
+                                                                           .append("attributes", mapAsDocumentsList(command.getAttributes())))
                                              .collect(toList()));
         document.append("projects", workspace.getProjects()
                                              .stream()
@@ -133,6 +132,19 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
     @Override
     public Class<UsersWorkspaceImpl> getEncoderClass() {
         return UsersWorkspaceImpl.class;
+    }
+
+    private static CommandImpl asCommand(Document document) {
+        CommandImpl command = new CommandImpl(document.getString("name"),
+                                              document.getString("commandLine"),
+                                              document.getString("type"));
+
+        @SuppressWarnings("unchecked") // 'attributes' field is always list
+        final List<Document> attributes = (List<Document>)document.get("attributes");
+        if (attributes != null) {
+            command.setAttributes(documentsListAsMap(attributes));
+        }
+        return command;
     }
 
     @SuppressWarnings("unchecked") // contains safe casts - see #decode
