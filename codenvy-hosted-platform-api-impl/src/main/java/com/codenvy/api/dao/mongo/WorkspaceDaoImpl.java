@@ -59,7 +59,13 @@ import static java.util.Objects.requireNonNull;
  *          {
  *              "name" : "mci",
  *              "commandLine" : "maven clean install",
- *              "type" : "maven"
+ *              "type" : "maven",
+ *              "attributes" : [
+ *                  {
+ *                      "name" : "attribute1",
+ *                      "value" : "value1"
+ *                  }
+ *               ]
  *          }
  *      ],
  *      "projects" : [
