@@ -35,6 +35,7 @@ public class MachineServletModule extends ServletModule {
         getServletContext().addListener(new org.everrest.websockets.WSConnectionTracker());
         getServletContext().addListener(new com.codenvy.auth.sso.client.DestroySessionListener());
         //filters
+        filter("/*").through(com.codenvy.auth.sso.client.MachineRequestTokenInjectFilter.class);
         filterRegex("/(?!_sso/).*$").through(com.codenvy.auth.sso.client.LoginFilter.class);
         //servlets
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
