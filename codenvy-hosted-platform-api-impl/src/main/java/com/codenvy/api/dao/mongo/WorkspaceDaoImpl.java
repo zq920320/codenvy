@@ -48,92 +48,94 @@ import static java.util.Objects.requireNonNull;
  *
  * {
  *      "id" : "workspace123",
- *      "name" : "my-workspace",
- *      "description" : "This is workspace description",
- *      "owner" : "user123",
- *      "defaultEnv" : "dev-env",
- *      "commands" : [
- *          {
- *              "name" : "mci",
- *              "commandLine" : "maven clean install",
- *              "type" : "maven",
- *              "attributes" : [
- *                  {
- *                      "name" : "attribute1",
- *                      "value" : "value1"
- *                  }
- *               ]
- *          }
- *      ],
- *      "projects" : [
- *          {
- *              "name" : "my-project",
- *              "path" : "/path/to/project",
- *              "description" : "This is project description",
- *              "type" : "project-type",
- *              "source" : {
- *                  "type" : "storage-type",
- *                  "location" : "storage-location",
- *                  "parameters" : [
+ *      "config" : {
+ *          "name" : "my-workspace",
+ *          "description" : "This is workspace description",
+ *          "defaultEnv" : "dev-env",
+ *          "commands" : [
+ *              {
+ *                  "name" : "mci",
+ *                  "commandLine" : "maven clean install",
+ *                  "type" : "maven",
+ *                  "attributes" : [
  *                      {
- *                          "name" : "parameter1",
- *                          "value" : "parameter-value"
+ *                          "name" : "attribute1",
+ *                          "value" : "value1"
  *                      }
- *                  ]
- *              },
- *              "modules": [
- *                  {
- *                      "name":"my-module",
- *                      "path":"/path/to/project/my-module",
- *                      "type":"maven",
- *                      "mixins" : [ "mixinType1", "mixinType2" ],
- *                      "description" : "This is module description",
- *                      "attributes" : [
+ *                   ]
+ *              }
+ *          ],
+ *          "projects" : [
+ *              {
+ *                  "name" : "my-project",
+ *                  "path" : "/path/to/project",
+ *                  "description" : "This is project description",
+ *                  "type" : "project-type",
+ *                  "source" : {
+ *                      "type" : "storage-type",
+ *                      "location" : "storage-location",
+ *                      "parameters" : [
  *                          {
- *                              "name" : "module-attribute-1",
- *                              "value" : [ "value1", "value2" ]
+ *                              "name" : "parameter1",
+ *                              "value" : "parameter-value"
  *                          }
  *                      ]
- *                  }
- *              ],
- *              "mixins" : [ "mixinType1", "mixinType2" ],
- *              "attributes" : [
- *                  {
- *                      "name" : "project-attribute-1",
- *                      "value" : [ "value1", "value2" ]
- *                  }
- *              ]
- *          }
- *      ],
- *      "environments" : [
- *          {
- *              "name" : "dev-env",
- *              "recipe" : {
- *                  "type" : "dockerfile",
- *                  "script" : "FROM codenvy/jdk7\nCMD tail -f /dev/null"
- *              },
- *              "machineConfigs" : [
- *                  {
- *                      "isDev" : true,
- *                      "name" : "dev",
- *                      "type" : "machine-type",
- *                      "limits" : {
- *                          "ram" : 512
- *                      },
- *                      "source" : {
- *                          "type" : "recipe",
- *                          "location" : "recipe-url"
+ *                  },
+ *                  "modules": [
+ *                      {
+ *                          "name":"my-module",
+ *                          "path":"/path/to/project/my-module",
+ *                          "type":"maven",
+ *                          "mixins" : [ "mixinType1", "mixinType2" ],
+ *                          "description" : "This is module description",
+ *                          "attributes" : [
+ *                              {
+ *                                  "name" : "module-attribute-1",
+ *                                  "value" : [ "value1", "value2" ]
+ *                              }
+ *                          ]
  *                      }
- *                  }
- *              ]
- *          }
- *      ],
- *      "attributes" : [
- *          {
- *              "name" : "attribute1",
- *              "value" : "value1"
- *          }
- *      ]
+ *                  ],
+ *                  "mixins" : [ "mixinType1", "mixinType2" ],
+ *                  "attributes" : [
+ *                      {
+ *                          "name" : "project-attribute-1",
+ *                          "value" : [ "value1", "value2" ]
+ *                      }
+ *                  ]
+ *              }
+ *          ],
+ *          "environments" : [
+ *              {
+ *                  "name" : "dev-env",
+ *                  "recipe" : {
+ *                      "type" : "dockerfile",
+ *                      "script" : "FROM codenvy/jdk7\nCMD tail -f /dev/null"
+ *                  },
+ *                  "machineConfigs" : [
+ *                      {
+ *                          "isDev" : true,
+ *                          "name" : "dev",
+ *                          "type" : "machine-type",
+ *                          "limits" : {
+ *                              "ram" : 512
+ *                          },
+ *                          "source" : {
+ *                              "type" : "recipe",
+ *                              "location" : "recipe-url"
+ *                          }
+ *                      }
+ *                  ]
+ *              }
+ *          ],
+ *          "attributes" : [
+ *              {
+ *                  "name" : "attribute1",
+ *                  "value" : "value1"
+ *              }
+ *          ]
+ *      },
+ *      "owner" : "user123"
  * }
  * </pre>
  *
@@ -170,18 +172,19 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     public WorkspaceDaoImpl(@Named("mongo.db.organization") MongoDatabase database,
                             @Named("organization.storage.db.workspace2.collection") String collectionName) {
         collection = database.getCollection(collectionName, UsersWorkspaceImpl.class);
-        collection.createIndex(new Document("name", 1).append("owner", 1), new IndexOptions().unique(true));
+        collection.createIndex(new Document("config.name", 1).append("owner", 1), new IndexOptions().unique(true));
     }
 
     @Override
     public UsersWorkspaceImpl create(UsersWorkspaceImpl workspace) throws ConflictException, ServerException {
         requireNonNull(workspace, "Workspace must not be null");
+        requireNonNull(workspace.getConfig(), "Workspace config must not be null");
         try {
             collection.insertOne(workspace);
         } catch (MongoWriteException writeEx) {
             handleWriteConflict(writeEx, format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
                                                 workspace.getId(),
-                                                workspace.getName(),
+                                                workspace.getConfig().getName(),
                                                 workspace.getOwner()));
         } catch (MongoException mongoEx) {
             throw new ServerException(mongoEx.getMessage(), mongoEx);
@@ -192,6 +195,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     @Override
     public UsersWorkspaceImpl update(UsersWorkspaceImpl update) throws NotFoundException, ConflictException, ServerException {
         requireNonNull(update, "Workspace update must not be null");
+        requireNonNull(update.getConfig(), "Workspace update config must not be null");
         try {
             if (collection.findOneAndReplace(eq("_id", update.getId()), update) == null) {
                 throw new NotFoundException("Workspace with id '" + update.getId() + "' was not found");
@@ -199,7 +203,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         } catch (MongoWriteException writeEx) {
             handleWriteConflict(writeEx, format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
                                                 update.getId(),
-                                                update.getName(),
+                                                update.getConfig().getName(),
                                                 update.getOwner()));
         } catch (MongoException mongoEx) {
             throw new ServerException(mongoEx.getMessage(), mongoEx);
@@ -230,7 +234,7 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         requireNonNull(name, "Workspace name must not be null");
         requireNonNull(owner, "Workspace owner must not be null");
 
-        final FindIterable<UsersWorkspaceImpl> findIt = collection.find(and(eq("name", name), eq("owner", owner)));
+        final FindIterable<UsersWorkspaceImpl> findIt = collection.find(and(eq("config.name", name), eq("owner", owner)));
         if (findIt.first() == null) {
             throw new NotFoundException(format("Workspace with name '%s' and owner '%s' was not found", name, owner));
         }
