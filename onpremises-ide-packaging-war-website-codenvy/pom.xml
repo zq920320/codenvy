@@ -170,6 +170,7 @@
                             <targetPath>/</targetPath>
                         </resource>
                     </webResources>
+                    <packagingExcludes>WEB-INF/lib/*gwt*.jar,WEB-INF/lib/gin-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>
