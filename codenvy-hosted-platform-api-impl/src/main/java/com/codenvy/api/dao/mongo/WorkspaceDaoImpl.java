@@ -54,7 +54,7 @@ import static java.util.Objects.requireNonNull;
  *      "name" : "my-workspace",
  *      "description" : "This is workspace description",
  *      "owner" : "user123",
- *      "defaultEnvName" : "dev-env",
+ *      "defaultEnv" : "dev-env",
  *      "commands" : [
  *          {
  *              "name" : "mci",
