@@ -108,8 +108,8 @@ import static java.util.Objects.requireNonNull;
  *              ]
  *          }
  *      ],
- *      "environments" : {
- *          "dev-env" : {
+ *      "environments" : [
+ *          {
  *              "name" : "dev-env",
  *              "recipe" : {
  *                  "type" : "dockerfile",
@@ -121,7 +121,7 @@ import static java.util.Objects.requireNonNull;
  *                      "name" : "dev",
  *                      "type" : "machine-type",
  *                      "limits" : {
- *                          memory : 512
+ *                          "ram" : 512
  *                      },
  *                      "source" : {
  *                          "type" : "recipe",
@@ -130,7 +130,7 @@ import static java.util.Objects.requireNonNull;
  *                  }
  *              ]
  *          }
- *      },
+ *      ],
  *      "attributes" : [
  *          {
  *              "name" : "attribute1",
