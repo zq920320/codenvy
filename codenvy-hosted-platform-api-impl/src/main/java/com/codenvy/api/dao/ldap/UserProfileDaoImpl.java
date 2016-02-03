@@ -58,6 +58,11 @@ public class UserProfileDaoImpl implements UserProfileDao {
      */
     @Override
     public void create(Profile profile) throws ServerException {
+        try {
+            update(profile);
+        } catch (NotFoundException e) {
+            throw new ServerException("Unable to create profile for non-existent user");
+        }
     }
 
     /**
