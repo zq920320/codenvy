@@ -20,7 +20,6 @@ package com.codenvy.api.dao.mongo;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
 import com.mongodb.MongoException;
-import com.mongodb.MongoWriteException;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
@@ -56,6 +55,8 @@ import java.util.function.Consumer;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
 import static com.codenvy.api.dao.mongo.MongoUtil.mapAsDocumentsList;
+import static com.codenvy.api.dao.mongo.MongoUtilTest.mockWriteEx;
+import static com.mongodb.ErrorCategory.DUPLICATE_KEY;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
@@ -78,8 +79,8 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class WorkspaceDaoImplTest {
 
-    MongoCollection<UsersWorkspaceImpl> collection;
-    WorkspaceDaoImpl                    workspaceDao;
+    private MongoCollection<UsersWorkspaceImpl> collection;
+    private WorkspaceDaoImpl                    workspaceDao;
 
     @BeforeMethod
     public void setUpDb() {
@@ -108,21 +109,26 @@ public class WorkspaceDaoImplTest {
         workspaceDao.create(null);
     }
 
-    @Test(expectedExceptions = ConflictException.class)
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Workspace with id '.*' or combination of name '.*' & owner '.*' already exists")
     public void testCreateWorkspaceWhenWorkspaceWithSuchIdAlreadyExists() throws Exception {
-        final UsersWorkspaceImpl workspace = createWorkspace();
+        // fongo throws DuplicateKeyException in the case of duplicate key
+        // but mongo 3.x driver throws MongoWriteException in this case
+        // so we need to mock the collection to force fongo behave like mongo driver does
+        final MongoDatabase db = mockDatabase(col -> doThrow(mockWriteEx(DUPLICATE_KEY)).when(col).insertOne(any()));
 
-        workspaceDao.create(workspace);
-        workspace.setName("anotherName");// to prevent same name restriction
-        workspaceDao.create(workspace);
+        new WorkspaceDaoImpl(db, "workspaces").create(createWorkspace());
     }
 
-    @Test(expectedExceptions = ConflictException.class)
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "Workspace with id '.*' or combination of name '.*' & owner '.*' already exists")
     public void testCreateWorkspaceWhenWorkspaceWithSuchNameAndOwnerAlreadyExists() throws Exception {
-        final UsersWorkspaceImpl workspace = createWorkspace();
+        // fongo throws DuplicateKeyException in the case of duplicate key
+        // but mongo 3.x driver throws MongoWriteException in this case
+        // so we need to mock the collection to force fongo behave like mongo driver does
+        final MongoDatabase db = mockDatabase(col -> doThrow(mockWriteEx(DUPLICATE_KEY)).when(col).findOneAndReplace(any(), any()));
 
-        workspaceDao.create(workspace);
-        workspaceDao.create(workspace);
+        new WorkspaceDaoImpl(db, "workspaces").update(createWorkspace());
     }
 
     @Test(expectedExceptions = ServerException.class)
@@ -155,13 +161,6 @@ public class WorkspaceDaoImplTest {
     @Test(expectedExceptions = NullPointerException.class, expectedExceptionsMessageRegExp = "Workspace update must not be null")
     public void testUpdateWorkspaceWhenWorkspaceIsNull() throws Exception {
         workspaceDao.update(null);
-    }
-
-    @Test(expectedExceptions = ConflictException.class)
-    public void testUpdateWorkspaceWhenWorkspaceWithSuchNameAndOwnerAlreadyExists() throws Exception {
-        final MongoDatabase db = mockDatabase(col -> when(col.findOneAndReplace(any(), any())).thenThrow(mock(MongoWriteException.class)));
-
-        new WorkspaceDaoImpl(db, "workspaces").update(createWorkspace());
     }
 
     @Test(expectedExceptions = ServerException.class)

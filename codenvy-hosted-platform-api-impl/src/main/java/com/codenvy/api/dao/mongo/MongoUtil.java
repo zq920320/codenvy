@@ -20,7 +20,12 @@ package com.codenvy.api.dao.mongo;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoWriteException;
+
 import org.bson.Document;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -31,9 +36,65 @@ import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
 /**
- * @author Eugene Voevodin
+ * Utils for Mongo.
+ *
+ * @author Yevhenii Voevodin
  */
 public final class MongoUtil {
+
+    /**
+     * Checks if the {@link MongoWriteException writeEx} category is {@link ErrorCategory#DUPLICATE_KEY}
+     * and if it is - throws {@link ConflictException} with given {@code dkExErrorMessage},
+     * otherwise throws {@link ServerException} with the message based on the {@code writeEx}.
+     *
+     * <p>The most typical usage of this method is <i>update/create</i> dao methods,
+     * which need to throw {@link ConflictException} in the case of duplicate key(e.g. workspace with
+     * such name already exists) but to do this they need to extract actual write exception category
+     * and write the common code.
+     *
+     * <p>Example:
+     * <pre>{@code
+     *  try {
+     *      collection.insertOne(workspace);
+     *  } catch (MongoWriteException writeEx) {
+     *      if (writeEx.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
+     *          throw new ConflictException("Workspace with the name " + name + " already exists");
+     *      }
+     *      throw new ServerException(writeEx.getMessage(), writeEx);
+     *  } catch (MongoException mongoEx) {
+     *      throw new ServerException(mongoEx.getMessage(), mongoEx);
+     *  }
+     * }</pre>
+     *
+     * <p>The goal of this method is to simplify this process by extracting and rethrowing appropriate exceptions.
+     * Example:
+     * <pre>{@code
+     *  try {
+     *      collection.insertOne(workspace);
+     *  } catch (MongoWriteException writeEx) {
+     *      handleWriteConflict(writeEx, "Workspace with the name " + name + " already exists");
+     *  } catch (MongoException mongoEx) {
+     *      throw new ServerException(mongoEx.getMessage(), mongoEx);
+     *  }
+     * }</pre>
+     *
+     * @param writeEx
+     *         write exception which category should be checked
+     * @param dkExErrorMessage
+     *         the message of the conflict exception to throw when {@code writeEx} category is {@link ErrorCategory#DUPLICATE_KEY}
+     * @throws ConflictException
+     *         when {@code writeEx} category is {@link ErrorCategory#DUPLICATE_KEY}.
+     *         Exception message is equal to the {@code dkExErrorMessage}
+     * @throws ServerException
+     *         when {@code writeEx} category is different from the {@link ErrorCategory#DUPLICATE_KEY}.
+     *         Exception message is based on the {@code writeEx} message
+     */
+    public static void handleWriteConflict(MongoWriteException writeEx, String dkExErrorMessage) throws ConflictException, ServerException {
+        if (writeEx.getError().getCategory() == ErrorCategory.DUPLICATE_KEY) {
+            throw new ConflictException(dkExErrorMessage);
+        }
+        throw new ServerException(writeEx.getMessage(), writeEx);
+    }
 
     /**
      * Converts map to database list
@@ -126,5 +187,5 @@ public final class MongoUtil {
         return dbList;
     }
 
-    private MongoUtil() { }
+    private MongoUtil() {}
 }
