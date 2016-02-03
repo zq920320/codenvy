@@ -41,11 +41,9 @@ import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
 
 import java.util.List;
-import java.util.Map;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
 import static com.codenvy.api.dao.mongo.MongoUtil.mapAsDocumentsList;
-import static java.util.function.Function.identity;
 import static java.util.stream.Collectors.toList;
 import static java.util.stream.Collectors.toMap;
 
@@ -82,18 +80,17 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                                  .collect(toList());
 
         @SuppressWarnings("unchecked") // 'environments' fields is aways map
-        final Map<String, Document> envDocuments = (Map<String, Document>)document.get("environments");
-        final Map<String, EnvironmentImpl> environments = envDocuments.values()
-                                                                      .stream()
-                                                                      .map(UsersWorkspaceImplCodec::asEnvironment)
-                                                                      .collect(toMap(EnvironmentImpl::getName, identity()));
+        final List<Document> envDocuments = (List<Document>)document.get("environments");
+        final List<EnvironmentImpl> environments = envDocuments.stream()
+                                                               .map(UsersWorkspaceImplCodec::asEnvironment)
+                                                               .collect(toList());
 
         return UsersWorkspaceImpl.builder()
                                  .setId(document.getString("_id"))
                                  .setName(document.getString("name"))
                                  .setOwner(document.getString("owner"))
                                  .setDescription(document.getString("description"))
-                                 .setDefaultEnvName(document.getString("defaultEnvName"))
+                                 .setDefaultEnv(document.getString("defaultEnv"))
                                  .setCommands(commands)
                                  .setAttributes(documentsListAsMap(attributes))
                                  .setProjects(projects)
@@ -107,7 +104,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                 .append("name", workspace.getName())
                                                 .append("owner", workspace.getOwner())
                                                 .append("description", workspace.getDescription())
-                                                .append("defaultEnvName", workspace.getDefaultEnvName())
+                                                .append("defaultEnv", workspace.getDefaultEnv())
                                                 .append("attributes", mapAsDocumentsList(workspace.getAttributes()));
         document.append("commands", workspace.getCommands()
                                              .stream()
@@ -120,12 +117,11 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                              .stream()
                                              .map(UsersWorkspaceImplCodec::asDocument)
                                              .collect(toList()));
-        final Document envDoc = workspace.getEnvironments()
-                                         .values()
-                                         .stream()
-                                         .map(UsersWorkspaceImplCodec::asDocument)
-                                         .reduce(new Document(), (r, d) -> r.append(d.getString("name"), d));
-        document.append("environments", envDoc);
+
+        document.append("environments", workspace.getEnvironments()
+                                                 .stream()
+                                                 .map(UsersWorkspaceImplCodec::asDocument)
+                                                 .collect(toList()));
         codec.encode(writer, document, encoderContext);
     }
 
@@ -262,7 +258,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         }
         final Limits limits = config.getLimits();
         if (limits != null) {
-            document.append("limits", new Document("memory", limits.getMemory()));
+            document.append("limits", new Document("memory", limits.getRam()));
         }
         return document;
     }

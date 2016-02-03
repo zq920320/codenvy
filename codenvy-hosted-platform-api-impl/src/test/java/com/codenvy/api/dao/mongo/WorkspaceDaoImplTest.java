@@ -285,7 +285,7 @@ public class WorkspaceDaoImplTest {
         assertEquals(result.getString("name"), workspace.getName(), "Workspace name");
         assertEquals(result.getString("owner"), workspace.getOwner(), "Workspace owner");
         assertEquals(result.getString("description"), workspace.getDescription(), "Workspace description");
-        assertEquals(result.getString("defaultEnvName"), workspace.getDefaultEnvName(), "Workspace defaultEnvName");
+        assertEquals(result.getString("defaultEnv"), workspace.getDefaultEnv(), "Workspace defaultEnvName");
 
         // check attributes
         final List<Document> attributes = (List<Document>)result.get("attributes");
@@ -349,11 +349,11 @@ public class WorkspaceDaoImplTest {
         }
 
         // check environments
-        final Map<String, Document> environments = (Map<String, Document>)result.get("environments");
+        final List<Document> environments = (List<Document>)result.get("environments");
         assertEquals(environments.size(), workspace.getEnvironments().size());
-        for (Map.Entry<String, Document> envEntry : environments.entrySet()) {
-            final EnvironmentStateImpl environment = workspace.getEnvironments().get(envEntry.getKey());
-            final Document envDoc = envEntry.getValue();
+        for (final Document envDoc : environments) {
+            final EnvironmentStateImpl environment =
+                    workspace.getEnvironments().stream().filter(env -> env.getName().equals(envDoc.getString("name"))).findFirst().get();
 
             assertEquals(envDoc.getString("name"), environment.getName());
 
@@ -381,7 +381,7 @@ public class WorkspaceDaoImplTest {
                 if (machine.getLimits() != null) {
                     final Document limitsDoc = machineDoc.get("limits", Document.class);
 
-                    assertEquals(limitsDoc.getInteger("memory", 0), machine.getLimits().getMemory(), "Machine RAM limit");
+                    assertEquals(limitsDoc.getInteger("memory", 0), machine.getLimits().getRam(), "Machine RAM limit");
                 }
             }
         }
@@ -456,9 +456,9 @@ public class WorkspaceDaoImplTest {
         final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
         final EnvironmentImpl env2 = new EnvironmentImpl("my-environment-2", recipe, singletonList(machineCfg1));
 
-        final Map<String, EnvironmentImpl> environments = new HashMap<>(4);
-        environments.put(env1.getName(), env1);
-        environments.put(env2.getName(), env2);
+        final List<EnvironmentImpl> environments = new ArrayList<>();
+        environments.add(env1);
+        environments.add(env2);
 
         // projects
         final ProjectConfigImpl project1 = new ProjectConfigImpl();
@@ -518,7 +518,7 @@ public class WorkspaceDaoImplTest {
                                  .setCommands(commands)
                                  .setProjects(projects)
                                  .setEnvironments(environments)
-                                 .setDefaultEnvName(env1.getName())
+                                 .setDefaultEnv(env1.getName())
                                  .build();
     }
 
