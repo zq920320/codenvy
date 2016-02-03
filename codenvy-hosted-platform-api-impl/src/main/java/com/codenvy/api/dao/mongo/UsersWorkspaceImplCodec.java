@@ -239,7 +239,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         LimitsImpl limits = null;
         final Document limitsDocument = document.get("limits", Document.class);
         if (limitsDocument != null) {
-            limits = new LimitsImpl(limitsDocument.getInteger("memory", 0));
+            limits = new LimitsImpl(limitsDocument.getInteger("ram", 0));
         }
         return new MachineConfigImpl(document.getBoolean("isDev"),
                                      document.getString("name"),
@@ -258,7 +258,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         }
         final Limits limits = config.getLimits();
         if (limits != null) {
-            document.append("limits", new Document("memory", limits.getRam()));
+            document.append("limits", new Document("ram", limits.getRam()));
         }
         return document;
     }

@@ -381,7 +381,7 @@ public class WorkspaceDaoImplTest {
                 if (machine.getLimits() != null) {
                     final Document limitsDoc = machineDoc.get("limits", Document.class);
 
-                    assertEquals(limitsDoc.getInteger("memory", 0), machine.getLimits().getRam(), "Machine RAM limit");
+                    assertEquals(limitsDoc.getInteger("ram", 0), machine.getLimits().getRam(), "Machine RAM limit");
                 }
             }
         }
