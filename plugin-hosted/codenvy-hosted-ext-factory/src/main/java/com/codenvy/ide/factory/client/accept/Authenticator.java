@@ -186,7 +186,7 @@ public class Authenticator implements OAuthCallback {
     private void showPopUp(String userId, String providerId, String scope) {
         String authUrl = restContext + "/oauth/authenticate?oauth_provider=" + providerId + "&scope=" + scope + "&userId=" + userId +
                          "&redirect_after_login=" + Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" +
-                         appContext.getWorkspace().getName();
+                         appContext.getWorkspace().getConfig().getName();
         JsOAuthWindow authWindow = new JsOAuthWindow(authUrl, "error.url", 500, 980, this);
         authWindow.loginWithOAuth();
     }
