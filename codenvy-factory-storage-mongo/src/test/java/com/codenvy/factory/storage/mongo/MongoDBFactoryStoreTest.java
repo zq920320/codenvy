@@ -125,28 +125,27 @@ public class MongoDBFactoryStoreTest {
                                                                              .withName("command1")
                                                                              .withType("maven")
                                                                              .withCommandLine("mvn test")))
-                                       .withDefaultEnvName("env1")
-                                       .withEnvironments(singletonMap("test", DtoFactory.getInstance().createDto(EnvironmentDto.class)
-                                                                                        .withName("test")
-                                                                                        .withMachineConfigs(singletonList(
-                                                                                                DtoFactory.getInstance().createDto(
-                                                                                                        MachineConfigDto.class)
-                                                                                                          .withName("name")
-                                                                                                          .withType("docker")
-                                                                                                          .withDev(true)
-                                                                                                          .withSource(
-                                                                                                                  DtoFactory.getInstance()
-                                                                                                                            .createDto(
-                                                                                                                                    MachineSourceDto.class)
-                                                                                                                            .withType(
-                                                                                                                                    "git")
-                                                                                                                            .withLocation(
-                                                                                                                                    "https://github.com/123/test.git"))))
-                                                                                        .withRecipe(DtoFactory.getInstance().createDto(
-                                                                                                RecipeDto.class)
-                                                                                                              .withType("sometype")
-                                                                                                              .withScript(
-                                                                                                                      "some script")))));
+                                       .withDefaultEnv("env1")
+                                       .withEnvironments(singletonList(DtoFactory.getInstance().createDto(EnvironmentDto.class)
+                                                                                 .withName("test")
+                                                                                 .withMachineConfigs(singletonList(
+                                                                                         DtoFactory.getInstance().createDto(
+                                                                                                 MachineConfigDto.class)
+                                                                                                   .withName("name")
+                                                                                                   .withType("docker")
+                                                                                                   .withDev(true)
+                                                                                                   .withSource(
+                                                                                                           DtoFactory.getInstance()
+                                                                                                                     .createDto(
+                                                                                                                             MachineSourceDto.class)
+                                                                                                                     .withType(
+                                                                                                                             "git")
+                                                                                                                     .withLocation(
+                                                                                                                             "https://github.com/123/test.git"))))
+                                                                                 .withRecipe(DtoFactory.getInstance().createDto(
+                                                                                         RecipeDto.class)
+                                                                                                       .withType("sometype")
+                                                                                                       .withScript("some script")))));
 
         Ide ide = DtoFactory.getInstance().createDto(Ide.class)
                             .withOnAppLoaded(DtoFactory.getInstance().createDto(OnAppLoaded.class))
