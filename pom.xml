@@ -28,6 +28,7 @@
         <module>plugin-bitbucket</module>
         <module>plugin-wso2</module>
         <module>plugin-projectlocker</module>
+        <module>plugin-microsoft</module>
         <module>plugin-contribution</module>
         <module>plugin-hosted</module>
     </modules>
