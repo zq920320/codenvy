@@ -23,6 +23,7 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
+import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.promises.client.Operation;
@@ -40,6 +41,7 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 import org.eclipse.che.ide.api.project.wizard.ProjectNotificationSubscriber;
+import org.eclipse.che.ide.dto.DtoFactory;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
@@ -61,6 +63,7 @@ public class FactoryProjectImporter extends AbstractImporter {
     private final EventBus                    eventBus;
     private final FactoryLocalizationConstant locale;
     private final NotificationManager         notificationManager;
+    private final DtoFactory                  dtoFactory;
 
     private Factory             factory;
     private AsyncCallback<Void> callback;
@@ -71,12 +74,14 @@ public class FactoryProjectImporter extends AbstractImporter {
                                   NotificationManager notificationManager,
                                   FactoryLocalizationConstant locale,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
-                                  EventBus eventBus) {
+                                  EventBus eventBus,
+                                  DtoFactory dtoFactory) {
         super(appContext, projectService, subscriberFactory);
 
         this.notificationManager = notificationManager;
         this.locale = locale;
         this.eventBus = eventBus;
+        this.dtoFactory = dtoFactory;
     }
 
     public void startImporting(Factory factory, AsyncCallback<Void> callback) {
@@ -193,8 +198,9 @@ public class FactoryProjectImporter extends AbstractImporter {
                              .catchError(new Operation<PromiseError>() {
                                  @Override
                                  public void apply(PromiseError err) throws OperationException {
-                                     subscriber.onFailure(err.getMessage());
-                                     notification.setContent(locale.cloningSourceFailed(projectName));
+                                     String errMessage = dtoFactory.createDtoFromJson(err.getMessage(), ServiceError.class).getMessage();
+                                     subscriber.onFailure(errMessage);
+                                     notification.setTitle(locale.cloningSourceFailedTitle(projectName));
                                      notification.setStatus(FAIL);
                                      Promises.reject(err);
                                  }
