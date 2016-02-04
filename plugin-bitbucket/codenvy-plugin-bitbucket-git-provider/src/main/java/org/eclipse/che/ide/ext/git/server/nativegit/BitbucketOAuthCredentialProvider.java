@@ -62,28 +62,6 @@ public class BitbucketOAuthCredentialProvider implements CredentialsProvider {
     }
 
     @Override
-    public GitUser getUser() throws GitException {
-        try {
-
-            final OAuthCredentialsResponse credentials = oAuthAuthenticator.getToken(EnvironmentContext.getCurrent().getUser().getId());
-            if (credentials != null) {
-                final User user = oAuthAuthenticator.getUser(credentials.token, credentials.tokenSecret);
-                if (user != null) {
-                    return DtoFactory.getInstance()
-                                     .createDto(GitUser.class)
-                                     .withEmail(user.getEmail())
-                                     .withName(user.getName());
-                }
-
-            }
-
-        } catch (final IOException | OAuthAuthenticationException e) {
-            LOG.warn(e.getLocalizedMessage());
-        }
-        return null;
-    }
-
-    @Override
     public String getId() {
         return OAUTH_PROVIDER_NAME;
     }

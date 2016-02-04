@@ -10,16 +10,12 @@
  *******************************************************************************/
 package org.eclipse.che.ide.ext.git.server.nativegit;
 
+import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.git.GitException;
-import org.eclipse.che.api.git.shared.GitUser;
 import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.api.git.CredentialsProvider;
 import org.eclipse.che.api.git.UserCredential;
-import org.eclipse.che.security.oauth.OAuthAuthenticationException;
-import org.eclipse.che.security.oauth.ProjectLockerOAuthAuthenticator;
-import org.eclipse.che.security.oauth.shared.User;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,19 +39,19 @@ public class ProjectLockerOAuthCredentialProvider implements CredentialsProvider
     private static String OAUTH_PROVIDER_NAME = "projectlocker";
     public final Pattern PROJECTLOCKER_2_URL_PATTERN;
 
-    private final ProjectLockerOAuthAuthenticator authAuthenticator;
+    private final OAuthTokenProvider oAuthTokenProvider;
 
     @Inject
-    public ProjectLockerOAuthCredentialProvider(ProjectLockerOAuthAuthenticator authAuthenticator,
+    public ProjectLockerOAuthCredentialProvider(OAuthTokenProvider oAuthTokenProvider,
                                                 @Named("oauth.projectlocker.git.pattern") String gitPattern) {
-        this.authAuthenticator = authAuthenticator;
+        this.oAuthTokenProvider = oAuthTokenProvider;
         this.PROJECTLOCKER_2_URL_PATTERN = Pattern.compile(gitPattern);
     }
 
     @Override
     public UserCredential getUserCredential() throws GitException {
         try {
-            OAuthToken token = authAuthenticator.getToken(EnvironmentContext.getCurrent().getUser().getId());
+            OAuthToken token = oAuthTokenProvider.getToken(OAUTH_PROVIDER_NAME, EnvironmentContext.getCurrent().getUser().getId());
             if (token != null) {
                 return new UserCredential(token.getToken(), token.getToken(), OAUTH_PROVIDER_NAME);
             }
@@ -65,24 +61,6 @@ public class ProjectLockerOAuthCredentialProvider implements CredentialsProvider
         return null;
     }
 
-    @Override
-    public GitUser getUser() throws GitException {
-        try {
-            OAuthToken token = authAuthenticator.getToken(EnvironmentContext.getCurrent().getUser().getId());
-            if (token != null) {
-                User user = authAuthenticator.getUser(token);
-                if (user != null) {
-                    return DtoFactory.getInstance().createDto(GitUser.class)
-                                     .withEmail(user.getEmail())
-                                     .withName(user.getName());
-                }
-
-            }
-        } catch (IOException | OAuthAuthenticationException e) {
-            LOG.warn(e.getLocalizedMessage());
-        }
-        return null;
-    }
 
     @Override
     public String getId() {

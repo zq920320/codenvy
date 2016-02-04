@@ -13,7 +13,9 @@ package org.eclipse.che.ide.ext.git.server.nativegit;
 import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.git.GitException;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.commons.env.EnvironmentContext;
+
 import org.eclipse.che.api.git.CredentialsProvider;
 import org.eclipse.che.api.git.UserCredential;
 
@@ -27,34 +29,33 @@ import java.io.IOException;
 import java.util.regex.Pattern;
 
 /**
- * Used to store credentials when given url is WSO2.
+ * Credentials provider for Microsoft
  *
- * @author Eugene Voevodin
+ * @author Max Shaposhnik
  */
 @Singleton
-public class WSO2OAuthCredentialsProvider implements CredentialsProvider {
-    private static String OAUTH_PROVIDER_NAME = "wso2";
-    public final Pattern WSO_2_URL_PATTERN;
+public class MicrosoftOAuthCredentialsProvider implements CredentialsProvider {
 
-    private static final Logger LOG = LoggerFactory.getLogger(WSO2OAuthCredentialsProvider.class);
+    private static final Logger LOG                 = LoggerFactory.getLogger(MicrosoftOAuthCredentialsProvider.class);
+    private static final String OAUTH_PROVIDER_NAME = "microsoft";
+
+    private final Pattern            microsoftUrlPattern;
     private final OAuthTokenProvider oAuthTokenProvider;
 
     @Inject
-    public WSO2OAuthCredentialsProvider(OAuthTokenProvider oAuthTokenProvider,
-                                        @Named("oauth.wso2.git.pattern") String gitPattern) {
+    public MicrosoftOAuthCredentialsProvider(OAuthTokenProvider oAuthTokenProvider,
+                                             @Nullable @Named("oauth.microsoft.git.pattern") String gitPattern) {
         this.oAuthTokenProvider = oAuthTokenProvider;
-        this.WSO_2_URL_PATTERN = Pattern.compile(gitPattern);
+        this.microsoftUrlPattern = Pattern.compile(gitPattern);
     }
 
     @Override
     public UserCredential getUserCredential() throws GitException {
         try {
             OAuthToken token = oAuthTokenProvider.getToken(OAUTH_PROVIDER_NAME, EnvironmentContext.getCurrent().getUser().getId());
-            if (token != null) {
-                return new UserCredential(token.getToken(), "x-oauth-basic", OAUTH_PROVIDER_NAME);
-            }
-        } catch (IOException e) {
-            LOG.warn(e.getLocalizedMessage());
+            return new UserCredential(token.getToken(), token.getToken(), OAUTH_PROVIDER_NAME);
+        } catch (IOException ioEx) {
+            LOG.warn(ioEx.getLocalizedMessage());
         }
         return null;
     }
@@ -66,7 +67,6 @@ public class WSO2OAuthCredentialsProvider implements CredentialsProvider {
 
     @Override
     public boolean canProvideCredentials(String url) {
-        return WSO_2_URL_PATTERN.matcher(url).matches();
+        return microsoftUrlPattern.matcher(url).matches();
     }
-
 }
