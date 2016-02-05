@@ -71,6 +71,7 @@ import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.fail;
 
 /**
  * Tests for {@link MongoDBFactoryStore}
@@ -362,6 +363,82 @@ public class MongoDBFactoryStoreTest {
         assertEquals(newImage.getMediaType(), image.getMediaType());
         assertEquals(newImage.getImageData(), image.getImageData());
 
+    }
+
+    @Test
+    public void shouldUpdateUnnamedFactoryWithNewName() throws Exception {
+        // given
+
+        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        factory.setV("4.0");
+
+        factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
+                                     .withName("Florent")
+                                     .withAccountId("acc1")
+                                     .withCreated(System.currentTimeMillis())
+                                     .withEmail("test@codenvy.com")
+                                     .withUserId("1234567890"));
+        String factoryId = null;
+        try {
+            factoryId = store.saveFactory(factory, null);
+        } catch (Exception e) {
+            fail("Unexpected exception occured", e);
+        }
+
+        factory.setName("new-name");
+
+        // when
+        // update factory
+        store.updateFactory(factoryId, factory);
+
+        // then
+        FindIterable<Document> list = collection.find(new Document("_id", factoryId));
+        Document res = list.first().get("factory", Document.class);
+
+        Factory result = DtoFactory.getInstance().createDtoFromJson(JSON.serialize(res), Factory.class);
+        assertEquals(result.getName(), "new-name");
+    }
+
+    /**
+     * Check that exception is thrown when trying to update
+     * a factory with name, which already belongs to another
+     * existing factory
+     * @throws Exception the ConflictException expected one
+     */
+    @Test(expectedExceptions = ConflictException.class)
+    public void shouldNotUpdateFactoryWithConflictingName() throws Exception {
+        // given
+        // prepare original factories and save them
+
+        Factory originalFactory = DtoFactory.getInstance().createDto(Factory.class);
+        originalFactory.setV("4.0");
+        originalFactory.setName("factory-1");
+
+        originalFactory.setCreator(DtoFactory.getInstance().createDto(Author.class)
+                                             .withName("Florent")
+                                             .withAccountId("acc1")
+                                             .withCreated(System.currentTimeMillis())
+                                             .withEmail("test@codenvy.com")
+                                             .withUserId("1234567890"));
+        String originalFactoryId = null;
+        try {
+            originalFactoryId = store.saveFactory(originalFactory, null);
+        } catch (Exception e) {
+            fail("Unexpected exception occured", e);
+        }
+;
+        Factory updatedFactory = DtoFactory.getInstance().clone(originalFactory);
+        updatedFactory.setName("factory-2");
+        String updatedFactoryId;
+        try {
+            updatedFactoryId = store.saveFactory(updatedFactory, null);
+        } catch (Exception e) {
+            fail("Unexpected exception occured", e);
+        }
+
+        // when
+        // update factory
+        store.updateFactory(originalFactoryId, updatedFactory);
     }
 
     /**
