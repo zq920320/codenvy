@@ -22,14 +22,12 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.core.rest.shared.dto.Link;
-import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.factory.gwt.client.FactoryServiceClient;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.util.Pair;
 
 import java.util.Collections;
@@ -44,20 +42,16 @@ public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate 
     private final AppContext                  appContext;
     private final FactoryServiceClient        factoryService;
     private final FactoryLocalizationConstant locale;
-    private final DtoFactory dtoFactory;
-
 
     @Inject
     public CreateFactoryPresenter(CreateFactoryView view,
                                   AppContext appContext,
                                   FactoryServiceClient factoryService,
-                                  FactoryLocalizationConstant locale,
-                                  DtoFactory dtoFactory) {
+                                  FactoryLocalizationConstant locale) {
         this.view = view;
         this.appContext = appContext;
         this.factoryService = factoryService;
         this.locale = locale;
-        this.dtoFactory = dtoFactory;
         view.setDelegate(this);
     }
 
@@ -102,7 +96,7 @@ public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate 
                                       @Override
                                       public void apply(Factory factory) throws OperationException {
                                           final Link link = factory.getLink("accept-named");
-                                          if (link!= null ) {
+                                          if (link != null) {
                                               view.setFactoryLink(link.getHref());
                                           }
                                       }
@@ -117,8 +111,7 @@ public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate 
         return new Operation<PromiseError>() {
             @Override
             public void apply(PromiseError err) throws OperationException {
-                final String errorMessage = dtoFactory.createDtoFromJson(err.getMessage(), ServiceError.class).getMessage();
-                view.showFactoryNameError(locale.createFactoryFromCurrentWorkspaceFailed(), errorMessage);
+                view.showFactoryNameError(locale.createFactoryFromCurrentWorkspaceFailed(), err.getMessage());
             }
         };
     }
