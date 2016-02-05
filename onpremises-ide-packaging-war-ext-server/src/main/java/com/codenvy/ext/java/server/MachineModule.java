@@ -28,6 +28,7 @@ import org.eclipse.che.api.core.notification.WSocketEventBusClient;
 import org.eclipse.che.api.core.rest.ApiInfoService;
 import org.eclipse.che.api.core.rest.CoreRestModule;
 import org.eclipse.che.api.git.GitConnectionFactory;
+import org.eclipse.che.api.git.GitUserResolver;
 import org.eclipse.che.api.project.server.BaseProjectModule;
 import org.eclipse.che.api.ssh.server.HttpSshServiceClient;
 import org.eclipse.che.api.ssh.server.SshServiceClient;
@@ -38,6 +39,7 @@ import org.eclipse.che.api.vfs.server.VirtualFileSystemRegistryPlugin;
 import org.eclipse.che.everrest.CodenvyAsynchronousJobPool;
 import org.eclipse.che.generator.archetype.ArchetypeGenerator;
 import org.eclipse.che.generator.archetype.ArchetypeGeneratorModule;
+import org.eclipse.che.git.impl.nativegit.LocalGitUserResolver;
 import org.eclipse.che.git.impl.nativegit.NativeGitConnectionFactory;
 import org.eclipse.che.ide.ext.github.server.inject.GitHubModule;
 import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
@@ -90,6 +92,7 @@ public class MachineModule extends AbstractModule {
         bind(ArchetypeGenerator.class);
         bind(DebuggerService.class);
 
+        bind(GitUserResolver.class).to(LocalGitUserResolver.class);
         bind(GitConnectionFactory.class).to(NativeGitConnectionFactory.class);
 
         bind(AsynchronousJobPool.class).to(CodenvyAsynchronousJobPool.class);
