@@ -123,6 +123,7 @@
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-microsoft-oauth2</artifactId>
         </dependency>
+        <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
         </dependency>
