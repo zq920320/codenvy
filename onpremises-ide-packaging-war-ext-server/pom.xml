@@ -34,6 +34,10 @@
             <artifactId>codenvy-hosted-sso-client</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-microsoft-git-provider</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>

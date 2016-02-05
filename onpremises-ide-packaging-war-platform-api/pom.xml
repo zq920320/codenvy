@@ -111,11 +111,6 @@
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-machine-hosted</artifactId>
         </dependency>
-        <!-- disabled due to git -->
-        <!--dependency>
-            <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-bitbucket-git-provider</artifactId>
-        </dependency-->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
@@ -124,19 +119,10 @@
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-google-oauth2</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-projectlocker-git-provider</artifactId>
-        </dependency-->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-projectlocker-oauth2</artifactId>
+            <artifactId>codenvy-plugin-microsoft-oauth2</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-wso2-git-provider</artifactId>
-        </dependency-->
-        <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
         </dependency>
