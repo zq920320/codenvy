@@ -17,6 +17,8 @@
  */
 package com.codenvy.api.dao.ldap;
 
+import com.google.common.base.Strings;
+
 import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.commons.lang.Pair;
 
@@ -116,6 +118,11 @@ public class ProfileAttributesMapper {
             }
         }
 
+        // LDAP's inetOrgPerson requires sn attribute to be not null or empty
+        if (Strings.isNullOrEmpty(update.get(allowedAttributes.get("sn")))) {
+            update.put(allowedAttributes.get("sn"), "<none>");
+        }
+
         final List<ModificationItem> mods = new LinkedList<>();
         //preparing 'remove' & 'replace' modifications
         for (Map.Entry<String, String> entry : existing.entrySet()) {
@@ -128,7 +135,7 @@ public class ProfileAttributesMapper {
         }
         //preparing 'add' modifications
         for (Map.Entry<String, String> entry : update.entrySet()) {
-            if (!existing.containsKey(entry.getKey())) {
+            if (!existing.containsKey(entry.getKey()) && entry.getValue() != null) {
                 mods.add(new ModificationItem(ADD_ATTRIBUTE, new BasicAttribute(reversed.get(entry.getKey()), entry.getValue())));
             }
         }
