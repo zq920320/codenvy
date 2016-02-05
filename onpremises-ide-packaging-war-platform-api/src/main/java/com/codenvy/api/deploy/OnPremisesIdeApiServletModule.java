@@ -21,11 +21,14 @@ import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.servlet.ServletModule;
 
+import org.apache.catalina.filters.CorsFilter;
 import org.eclipse.che.inject.DynaModule;
 import org.eclipse.che.swagger.deploy.BasicSwaggerConfigurationModule;
 import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Servlet module composer for api war.
@@ -120,6 +123,26 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
         filter("/*").through(com.codenvy.auth.sso.client.TemporaryTenantSharingFilter.class);
         filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);
+
+        final Map<String, String> corsFilterParams = new HashMap<>();
+        corsFilterParams.put("cors.allowed.origins", "*");
+        corsFilterParams.put("cors.allowed.methods", "GET," +
+                                                     "POST," +
+                                                     "HEAD," +
+                                                     "OPTIONS," +
+                                                     "PUT," +
+                                                     "DELETE");
+        corsFilterParams.put("cors.allowed.headers", "Content-Type," +
+                                                     "X-Requested-With," +
+                                                     "accept," +
+                                                     "Origin," +
+                                                     "Access-Control-Request-Method," +
+                                                     "Access-Control-Request-Headers");
+        corsFilterParams.put("cors.support.credentials", "true");
+        // preflight cache is available for 10 minutes
+        corsFilterParams.put("cors.preflight.maxage", "10");
+        bind(CorsFilter.class).in(Singleton.class);
+        filter("/*").through(CorsFilter.class, corsFilterParams);
 
         bind(com.codahale.metrics.servlets.ThreadDumpServlet.class).in(Singleton.class);
         bind(com.codahale.metrics.servlets.PingServlet.class).in(Singleton.class);
