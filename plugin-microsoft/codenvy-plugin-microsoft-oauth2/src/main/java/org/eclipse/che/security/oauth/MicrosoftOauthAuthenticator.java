@@ -94,8 +94,8 @@ public class MicrosoftOauthAuthenticator extends OAuthAuthenticator {
 
 
     @Override
-    protected String prepareState(URL requestUrl, String userId) {
-        String state = super.prepareState(requestUrl, userId);
+    protected String prepareState(URL requestUrl) {
+        String state = super.prepareState(requestUrl);
         try {
             return URLEncoder.encode(state, "UTF-8");
         } catch (UnsupportedEncodingException e) {
