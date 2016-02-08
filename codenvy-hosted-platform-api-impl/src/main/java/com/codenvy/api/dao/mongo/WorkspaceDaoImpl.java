@@ -19,7 +19,6 @@ package com.codenvy.api.dao.mongo;
 
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
-import com.mongodb.WriteConcernException;
 import com.mongodb.client.FindIterable;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
@@ -38,6 +37,7 @@ import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.codenvy.api.dao.mongo.MongoUtil.handleWriteConflict;
 import static com.mongodb.client.model.Filters.and;
 import static com.mongodb.client.model.Filters.eq;
 import static java.lang.String.format;
@@ -162,7 +162,7 @@ import static java.util.Objects.requireNonNull;
  *     ]
  * </pre>
  *
- * @author Eugene Voevodin
+ * @author Yevhenii Voevodin
  */
 @Singleton
 public class WorkspaceDaoImpl implements WorkspaceDao {
@@ -181,11 +181,11 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
         requireNonNull(workspace, "Workspace must not be null");
         try {
             collection.insertOne(workspace);
-        } catch (MongoWriteException | WriteConcernException wcEx) {
-            throw new ConflictException(format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
-                                               workspace.getId(),
-                                               workspace.getName(),
-                                               workspace.getOwner()));
+        } catch (MongoWriteException writeEx) {
+            handleWriteConflict(writeEx, format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
+                                                workspace.getId(),
+                                                workspace.getName(),
+                                                workspace.getOwner()));
         } catch (MongoException mongoEx) {
             throw new ServerException(mongoEx.getMessage(), mongoEx);
         }
@@ -199,11 +199,11 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
             if (collection.findOneAndReplace(eq("_id", update.getId()), update) == null) {
                 throw new NotFoundException("Workspace with id '" + update.getId() + "' was not found");
             }
-        } catch (MongoWriteException | WriteConcernException wcEx) {
-            throw new ConflictException(format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
-                                               update.getId(),
-                                               update.getName(),
-                                               update.getOwner()));
+        } catch (MongoWriteException writeEx) {
+            handleWriteConflict(writeEx, format("Workspace with id '%s' or combination of name '%s' & owner '%s' already exists",
+                                                update.getId(),
+                                                update.getName(),
+                                                update.getOwner()));
         } catch (MongoException mongoEx) {
             throw new ServerException(mongoEx.getMessage(), mongoEx);
         }

@@ -19,8 +19,13 @@ package com.codenvy.api.dao.mongo;
 
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
+import com.mongodb.ErrorCategory;
+import com.mongodb.MongoWriteException;
+import com.mongodb.WriteError;
 
 import org.bson.Document;
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.ServerException;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
@@ -32,8 +37,11 @@ import java.util.Map;
 import static com.codenvy.api.dao.mongo.MongoUtil.asDBList;
 import static com.codenvy.api.dao.mongo.MongoUtil.asMap;
 import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
+import static com.codenvy.api.dao.mongo.MongoUtil.handleWriteConflict;
 import static com.codenvy.api.dao.mongo.MongoUtil.mapAsDocumentsList;
 import static java.util.Arrays.asList;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
@@ -97,5 +105,23 @@ public class MongoUtilTest {
         assertEquals(result.size(), 2);
         assertEquals(result.get("key1"), "value1");
         assertEquals(result.get("key2"), "value2");
+    }
+
+    @Test(expectedExceptions = ConflictException.class, expectedExceptionsMessageRegExp = "duplicate key")
+    public void shouldThrowConflictExceptionWhenWriteExceptionIsDuplicateKey() throws Exception {
+        handleWriteConflict(mockWriteEx(ErrorCategory.DUPLICATE_KEY), "duplicate key");
+    }
+
+    @Test(expectedExceptions = ServerException.class)
+    public void shouldThrowServerExceptionWhenWriteExceptionIsNotDuplicateKey() throws Exception {
+        handleWriteConflict(mockWriteEx(ErrorCategory.EXECUTION_TIMEOUT), "duplicate key");
+    }
+
+    public static MongoWriteException mockWriteEx(ErrorCategory category) {
+        final WriteError writeErrMock = mock(WriteError.class);
+        when(writeErrMock.getCategory()).thenReturn(category);
+        final MongoWriteException writeExMock = mock(MongoWriteException.class);
+        when(writeExMock.getError()).thenReturn(writeErrMock);
+        return writeExMock;
     }
 }
