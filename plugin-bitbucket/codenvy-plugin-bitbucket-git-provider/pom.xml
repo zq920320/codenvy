@@ -16,7 +16,7 @@
     <parent>
         <artifactId>codenvy-plugin-bitbucket-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-RC3</version>
+        <version>4.0.0-RC4-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-plugin-bitbucket-git-provider</artifactId>
     <name>Codenvy Plugin :: Bitbucket :: Credential provider</name>
