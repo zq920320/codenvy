@@ -107,6 +107,20 @@ public class ProfileAttributesMapper {
         return profileDn + '=' + id + ',' + profileContainerDn;
     }
 
+    /**
+     * Creates an array of the modifications using the strategy described above.
+     *
+     * <ul>The update strategy:
+     * <li>1. Remove not {@link #allowedAttributes allowed} attributes from the {@code update}</li>
+     * <li>2. If update contains required attributes with null values, replace this values with default (e.g. sn -> none)</li>
+     * <li>3. Foreach all {@code existing} attributes and check if update provides new values for it,
+     * if update provides null value for existing attribute - create {@link javax.naming.directory.DirContext#REMOVE_ATTRIBUTE remove}
+     * modification, if update provides non-null value - create {@link javax.naming.directory.DirContext#REPLACE_ATTRIBUTE replace}
+     * modification</li>
+     * <li>4. If {@code update} contains attributes different from the {@code existing} attributes,
+     * and attributes values are different from null - create {@link javax.naming.directory.DirContext#ADD_ATTRIBUTE add} modifications</li>
+     * </ul>
+     */
     public ModificationItem[] createModifications(Map<String, String> existing, Map<String, String> update) {
         //reverse allowed attributes
         final Map<String, String> reversed = reverse(allowedAttributes);
@@ -126,11 +140,13 @@ public class ProfileAttributesMapper {
         final List<ModificationItem> mods = new LinkedList<>();
         //preparing 'remove' & 'replace' modifications
         for (Map.Entry<String, String> entry : existing.entrySet()) {
-            final String updateValue = update.get(entry.getKey());
-            if (updateValue == null) {
-                mods.add(new ModificationItem(REMOVE_ATTRIBUTE, new BasicAttribute(reversed.get(entry.getKey()), entry.getValue())));
-            } else if (!updateValue.equals(entry.getValue())) {
-                mods.add(new ModificationItem(REPLACE_ATTRIBUTE, new BasicAttribute(reversed.get(entry.getKey()), updateValue)));
+            if (update.containsKey(entry.getKey())) {
+                final String updateValue = update.get(entry.getKey());
+                if (updateValue == null) {
+                    mods.add(new ModificationItem(REMOVE_ATTRIBUTE, new BasicAttribute(reversed.get(entry.getKey()), entry.getValue())));
+                } else if (!updateValue.equals(entry.getValue())) {
+                    mods.add(new ModificationItem(REPLACE_ATTRIBUTE, new BasicAttribute(reversed.get(entry.getKey()), updateValue)));
+                }
             }
         }
         //preparing 'add' modifications
