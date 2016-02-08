@@ -43,6 +43,8 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.print.Doc;
+import javax.validation.constraints.NotNull;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -57,39 +59,39 @@ import static java.lang.String.format;
 
 /**
  * MongoDB implementation of {@link FactoryStore}
- * 
+ * <p>
  * Storage schema:
  * <pre>
  * {
- *  "_id" : "ihb2r9ys1uk4lqxk", 
+ *  "_id" : "ihb2r9ys1uk4lqxk",
  *  "factory" : {
- *                "v" : "4.0", 
+ *                "v" : "4.0",
  *                "workspace" : {
  *                    ...
- *                }, 
+ *                },
  *                "ide" : {
  *                    "onProjectOpened" : {
- *                        "actions" : [ 
+ *                        "actions" : [
  *                        ...
  *                        ]
  *                     }
- *                }, 
+ *                },
  *                "creator" : {
- *                    "created" : 1448271625116, 
- *                    "userId" : "user9s7lxyvk6eqzgb7t" 
- *                } 
- * }, 
- * "images" : [   
+ *                    "created" : 1448271625116,
+ *                    "userId" : "user9s7lxyvk6eqzgb7t"
+ *                }
+ * },
+ * "images" : [
  *              {
  *                "name" : "o9urwt58gnfjs11j",
  *                "type" : "image/jpeg",
  *                "data" : "<binary_data>"
  *               }
- *  ] 
+ *  ]
  * }
  *
  * </pre>
- * 
+ *
  * @author Max Shaposhnik
  */
 
@@ -154,8 +156,8 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (factoryId == null) {
             throw new NullPointerException("The factory Id shouldn't be null");
         }
-        
-        try { 
+
+        try {
             if (factories.deleteOne(new Document("_id", factoryId)).getDeletedCount() == 0) {
                 throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
             }
@@ -173,7 +175,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (findIt.first() == null) {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
-        Document res =  findIt.first();
+        Document res = findIt.first();
         String decoded = decode(JSON.serialize(res.get("factory", Document.class)));
 
         // Processing factory
@@ -185,11 +187,12 @@ public class MongoDBFactoryStore implements FactoryStore {
     }
 
     @Override
-    public List<Factory> findByAttribute(int maxItems, int skipCount, List<Pair<String, String>> attributes) throws IllegalArgumentException  {
+    public List<Factory> findByAttribute(int maxItems, int skipCount, List<Pair<String, String>> attributes)
+            throws IllegalArgumentException {
         if (skipCount < 0) {
             throw new IllegalArgumentException("'skipCount' parameter is negative.");
         }
-        
+
         final List<Factory> result = new ArrayList<>();
         Document query = new Document();
         for (Pair<String, String> one : attributes) {
@@ -212,9 +215,9 @@ public class MongoDBFactoryStore implements FactoryStore {
         if (factoryId == null) {
             throw new NullPointerException("The images factory Id shouldn't be null");
         }
-        
+
         final FindIterable<Document> findIt = factories.find(new Document("_id", factoryId));
-        Document res =  findIt.first();
+        Document res = findIt.first();
         if (res == null) {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
@@ -236,51 +239,61 @@ public class MongoDBFactoryStore implements FactoryStore {
         return images;
     }
 
-
     @Override
     public String updateFactory(String factoryId, Factory factory) throws NotFoundException, ConflictException {
         if (factoryId == null) {
             throw new NullPointerException("The update factory Id shouldn't be null");
         }
-        
+
         if (factory == null) {
             throw new NullPointerException("The factory replacement shouldn't be null");
         }
-        
-        validateFactoryName(factory);
 
-        final Factory clonedFactory = DtoFactory.getInstance().clone(factory);
-        clonedFactory.setId(factoryId);
+        // if name is changed, we must validate it
+        if (factory.getName() != null) {
+            FindIterable<Document> existing = factories.find(new Document("_id", factoryId));
+            if (existing.first() != null && !factory.getName().equals(existing.first().get("factory", Document.class).get("name"))) {
+                validateFactoryName(factory);
+            }
+        }
 
+        factory.setId(factoryId);
         Document factoryReplacement = new Document("$set",
                                                    new Document("factory", JSON.parse(
                                                            encode(DtoFactory.getInstance()
-                                                                            .toJson(clonedFactory)))));
+                                                                            .toJson(factory)))));
 
         if (factories.findOneAndUpdate(eq("_id", factoryId), factoryReplacement) == null) {
             throw new NotFoundException("Factory with id '" + factoryId + "' was not found");
         }
         // return the factory ID
-        return clonedFactory.getId();
+        return factory.getId();
     }
-    
-    
+
+    /**
+     * Validate factory name for uniqueness
+     *
+     * <p>Check that we don't have the factory with same name and creator.
+     * This cannot be done using composite key and sparse + unique index
+     * because it will check constraint even on single field, e.g. when name is null
+     * see https://docs.mongodb.org/manual/core/index-sparse/#sparse-compound-indexes
+     * This possible can be resolved after upgrade to Mongo 3.2 using partial indexes
+     * see https://docs.mongodb.org/manual/core/index-partial/#index-type-partial
+     * Sparse index is created to speed up this kind of search.
+     *
+     * @param factory factory to validate
+     *
+     * @throws ConflictException if there is a factory present with this name
+     */
     private void validateFactoryName(Factory factory) throws ConflictException {
         if (Strings.isNullOrEmpty(factory.getName())) {
             return;
         }
-        /* Check that we don't have the factory with same name and creator.
-         * This cannot be done using composite key and sparse + unique index
-         * because it will check constraint even on single field, e.g. when name is null
-         * see https://docs.mongodb.org/manual/core/index-sparse/#sparse-compound-indexes
-         * This possible can be resolved after upgrade to Mongo 3.2 using partial indexes
-         * see https://docs.mongodb.org/manual/core/index-partial/#index-type-partial
-         * Sparse index is created to speed up this kind of search.
-         */
+
         final FindIterable<Document> findIt =
-                                              factories.find(new Document("factory.name", factory.getName()).append("factory.creator.userId",
-                                                                                                                    factory.getCreator()
-                                                                                                                           .getUserId()));
+                factories.find(new Document().append("factory.name", factory.getName())
+                                             .append("factory.creator.userId", factory.getCreator().getUserId()));
+
         if (findIt.first() != null) {
             throw new ConflictException("You already have factory with given name. Please, choose another one.");
         }
