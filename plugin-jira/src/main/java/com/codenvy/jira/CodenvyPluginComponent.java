@@ -10,7 +10,6 @@
  *******************************************************************************/
 package com.codenvy.jira;
 
-public interface CodenvyPluginComponent
-{
+public interface CodenvyPluginComponent {
     String getName();
 }
