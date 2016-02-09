@@ -10,6 +10,16 @@
  *******************************************************************************/
 package com.codenvy.jira;
 
+/**
+ * Plugin component module
+ *
+ * @author Stephane Tournie
+ */
 public interface CodenvyPluginComponent {
+    /**
+     * Get the name of the component
+     *
+     * @return the name of the component
+     */
     String getName();
 }

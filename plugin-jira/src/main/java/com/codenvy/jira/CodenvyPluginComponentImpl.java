@@ -12,6 +12,11 @@ package com.codenvy.jira;
 
 import com.atlassian.sal.api.ApplicationProperties;
 
+/**
+ * Implementation of {@link com.codenvy.jira.CodenvyPluginComponent}
+ *
+ * @author Stephane Tournie
+ */
 public class CodenvyPluginComponentImpl implements CodenvyPluginComponent {
     private final ApplicationProperties applicationProperties;
 
@@ -19,6 +24,11 @@ public class CodenvyPluginComponentImpl implements CodenvyPluginComponent {
         this.applicationProperties = applicationProperties;
     }
 
+    /**
+     * Get the name of the component
+     *
+     * @return the name of the component
+     */
     public String getName() {
         if (null != applicationProperties) {
             return "codenvyPluginComponent:" + applicationProperties.getDisplayName();

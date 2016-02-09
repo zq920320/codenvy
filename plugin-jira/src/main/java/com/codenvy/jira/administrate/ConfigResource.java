@@ -31,6 +31,11 @@ import com.atlassian.sal.api.transaction.TransactionCallback;
 import com.atlassian.sal.api.transaction.TransactionTemplate;
 import com.atlassian.sal.api.user.UserManager;
 
+/**
+ * Service to store and retrieve Codenvy administration data
+ *
+ *  @author Stephane Tournie
+ */
 @Path("/")
 public class ConfigResource {
     private final UserManager           userManager;
@@ -44,6 +49,12 @@ public class ConfigResource {
         this.transactionTemplate = transactionTemplate;
     }
 
+    /**
+     * Get Codenvy admin data
+     *
+     * @param request the HTTP request
+     * @return the Codenvy admin data or 401 if not authorized
+     */
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     public Response get(@Context HttpServletRequest request) {
@@ -64,6 +75,13 @@ public class ConfigResource {
         })).build();
     }
 
+    /**
+     * Update Codenvy admin data
+     *
+     * @param config the admin config to store
+     * @param request the HTTP request
+     * @return HTTP 200 if ok or 401 if not authorized
+     */
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     public Response put(final Config config, @Context HttpServletRequest request) {

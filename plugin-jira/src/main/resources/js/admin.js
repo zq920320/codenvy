@@ -8,6 +8,7 @@
  * Contributors:
  *   Codenvy, S.A. - initial API and implementation
  */
+// Javascript used on the Codenvy admin page
 AJS.toInit(function() {
     var baseUrl = AJS.contextPath();
 
@@ -35,6 +36,7 @@ AJS.toInit(function() {
     }
     populateForm();
 
+    // Submit new Codenvy admin data
     AJS.$("#admin").submit(function(e) {
         e.preventDefault();
         updateConfig();

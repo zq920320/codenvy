@@ -23,6 +23,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+/**
+ * Servlet that render Codenvy Administration page
+ *
+ * @author Stephane Tournie
+ */
 public class AdminServlet extends HttpServlet {
     private final UserManager      userManager;
     private final LoginUriProvider loginUriProvider;
@@ -34,6 +39,14 @@ public class AdminServlet extends HttpServlet {
         this.renderer = renderer;
     }
 
+    /**
+     * Check that user is a JIRA admin and render the admin page
+     *
+     * @param request the HTTP request
+     * @param response the HTTP response
+     * @throws IOException
+     * @throws ServletException
+     */
     @Override
     public void doGet(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
         String username = userManager.getRemoteUsername(request);
