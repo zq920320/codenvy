@@ -92,13 +92,11 @@ public class VersionControlMonitorService extends Service {
 
     @ApiOperation(value = "Handle GitHub webhook events",
                   response = Response.class)
-    @ApiResponses({@ApiResponse(
-            code = 200,
-            message = "OK"
-    ), @ApiResponse(
-            code = 500,
-            message = "Internal Server Error"
-    )})
+    @ApiResponses({
+                          @ApiResponse(code = 200, message = "OK"),
+                          @ApiResponse(code = 202, message = "The request has been accepted for processing, but the processing has not been completed."),
+                          @ApiResponse(code = 500, message = "Internal Server Error")
+                  })
     @POST
     @Path("/github-webhook")
     @Consumes(APPLICATION_JSON)
