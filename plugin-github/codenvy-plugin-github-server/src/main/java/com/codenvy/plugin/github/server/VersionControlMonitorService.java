@@ -150,9 +150,9 @@ public class VersionControlMonitorService extends Service {
      */
     protected Response handlePushEvent(PushEvent contribution) throws ServerException {
         LOG.debug("contribution.ref: " + contribution.getRef());
-        LOG.debug("contribution.repository.full_name: " + contribution.getRepository().getFull_name());
-        LOG.debug("contribution.repository.created_at: " + contribution.getRepository().getCreated_at());
-        LOG.debug("contribution.repository.html_url: " + contribution.getRepository().getHtml_url());
+        LOG.debug("contribution.repository.full_name: " + contribution.getRepository().getFullName());
+        LOG.debug("contribution.repository.created_at: " + contribution.getRepository().getCreatedAt());
+        LOG.debug("contribution.repository.html_url: " + contribution.getRepository().getHtmlUrl());
         LOG.debug("contribution.after: " + contribution.getAfter());
 
         // Authenticate on Codenvy
@@ -160,7 +160,7 @@ public class VersionControlMonitorService extends Service {
         final Token token = authConnection.authenticateUser(credentials.first, credentials.second);
 
         // Get contribution data
-        final String contribRepositoryHtmlUrl = contribution.getRepository().getHtml_url();
+        final String contribRepositoryHtmlUrl = contribution.getRepository().getHtmlUrl();
         final String[] contribRefSplit = contribution.getRef().split("/");
         final String contribBranch = contribRefSplit[contribRefSplit.length - 1];
 
@@ -224,11 +224,11 @@ public class VersionControlMonitorService extends Service {
      * @throws ServerException
      */
     protected Response handlePullRequestEvent(PullRequestEvent prEvent) throws ServerException {
-        LOG.debug("pull_request.head.repository.html_url: " + prEvent.getPull_request().getHead().getRepo().getHtml_url());
-        LOG.debug("pull_request.head.ref: " + prEvent.getPull_request().getHead().getRef());
-        LOG.debug("pull_request.head.sha: " + prEvent.getPull_request().getHead().getSha());
-        LOG.debug("pull_request.base.repository.html_url: " + prEvent.getPull_request().getBase().getRepo().getHtml_url());
-        LOG.debug("pull_request.base.ref: " + prEvent.getPull_request().getBase().getRef());
+        LOG.debug("pull_request.head.repository.html_url: " + prEvent.getPullRequest().getHead().getRepo().getHtmlUrl());
+        LOG.debug("pull_request.head.ref: " + prEvent.getPullRequest().getHead().getRef());
+        LOG.debug("pull_request.head.sha: " + prEvent.getPullRequest().getHead().getSha());
+        LOG.debug("pull_request.base.repository.html_url: " + prEvent.getPullRequest().getBase().getRepo().getHtmlUrl());
+        LOG.debug("pull_request.base.ref: " + prEvent.getPullRequest().getBase().getRef());
 
         // Authenticate on Codenvy
         final Pair<String, String> credentials = getCredentials();
@@ -243,18 +243,18 @@ public class VersionControlMonitorService extends Service {
                             String.class))
                     .build();
         }
-        final boolean isMerged = prEvent.getPull_request().getMerged();
+        final boolean isMerged = prEvent.getPullRequest().getMerged();
         if (!isMerged) {
             return Response.accepted(new GenericEntity<>("Pull Request was closed with unmerged commits !", String.class)).build();
         }
 
         // Get head repository data
-        final String prHeadRepositoryHtmlUrl = prEvent.getPull_request().getHead().getRepo().getHtml_url();
-        final String prHeadBranch = prEvent.getPull_request().getHead().getRef();
-        final String prHeadCommitId = prEvent.getPull_request().getHead().getSha();
+        final String prHeadRepositoryHtmlUrl = prEvent.getPullRequest().getHead().getRepo().getHtmlUrl();
+        final String prHeadBranch = prEvent.getPullRequest().getHead().getRef();
+        final String prHeadCommitId = prEvent.getPullRequest().getHead().getSha();
 
         // Get base repository data
-        final String prBaseRepositoryHtmlUrl = prEvent.getPull_request().getBase().getRepo().getHtml_url();
+        final String prBaseRepositoryHtmlUrl = prEvent.getPullRequest().getBase().getRepo().getHtmlUrl();
 
         // Get webhook configured for given repository
         final Optional<GithubWebhook> webhook = Optional.ofNullable(getWebhook(prBaseRepositoryHtmlUrl));

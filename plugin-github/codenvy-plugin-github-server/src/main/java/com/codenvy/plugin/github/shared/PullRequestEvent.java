@@ -11,9 +11,12 @@
 package com.codenvy.plugin.github.shared;
 
 import org.eclipse.che.dto.shared.DTO;
+import org.eclipse.che.dto.shared.JsonFieldName;
 
 @DTO
 public interface PullRequestEvent {
+
+    public String PULL_REQUEST_FIELD = "pull_request";
 
     String getAction();
 
@@ -29,9 +32,10 @@ public interface PullRequestEvent {
     PullRequestEvent withNumber(int number);
 
 
-    PullRequest getPull_request();
+    @JsonFieldName(PULL_REQUEST_FIELD)
+    PullRequest getPullRequest();
 
-    void setPull_request(PullRequest pull_request);
+    void setPullRequest(PullRequest pullRequest);
 
-    PullRequestEvent withPull_request(PullRequest pull_request);
+    PullRequestEvent withPullRequest(PullRequest pullRequest);
 }

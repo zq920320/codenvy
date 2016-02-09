@@ -11,9 +11,15 @@
 package com.codenvy.plugin.github.shared;
 
 import org.eclipse.che.dto.shared.DTO;
+import org.eclipse.che.dto.shared.JsonFieldName;
 
 @DTO
 public interface Repository {
+
+    public String HTML_URL_FIELD   = "html_url";
+    public String FULL_NAME_FIELD  = "full_name";
+    public String CREATED_AT_FIELD = "created_at";
+
     /**
      * Get repository's name.
      *
@@ -78,15 +84,6 @@ public interface Repository {
     void setWatchers(int watchers);
 
     /**
-     * Get private state of the repository.
-     *
-     * @return {@link Boolean} private state of the repository
-     */
-    boolean isPrivate_repo();
-
-    void setPrivate_repo(boolean isPrivate_repo);
-
-    /**
      * Get repository's size.
      *
      * @return {@link Integer} size
@@ -105,115 +102,32 @@ public interface Repository {
     void setDescription(String description);
 
     /**
-     * Get SSH URL.
-     *
-     * @return {@link String} SSH URL
-     */
-    String getSsh_url();
-
-    void setSsh_url(String ssh_url);
-
-    /**
      * Get HTML URL.
      *
      * @return {@link String} HTML URL
      */
-    String getHtml_url();
+    @JsonFieldName(HTML_URL_FIELD)
+    String getHtmlUrl();
 
-    void setHtml_url(String html_url);
-
-    /**
-     * Get updated date.
-     *
-     * @return {@link String}
-     */
-    String getUpdated_at();
-
-    void setUpdated_at(String updated_at);
+    void setHtmlUrl(String htmlUrl);
 
     /**
-     * Get Git URL.
+     * Get full name.
      *
-     * @return {@link String} Git URL
+     * @return {@link String} fullName
      */
-    String getGit_url();
+    @JsonFieldName(FULL_NAME_FIELD)
+    String getFullName();
 
-    void setGit_url(String git_url);
+    void setFullName(String fullName);
 
     /**
-     * Get whether repository has wiki.
+     * Get created at.
      *
-     * @return {@link Boolean} <code> true</code> - has wiki
+     * @return {@link String} createdAt
      */
-    boolean isHas_wiki();
+    @JsonFieldName(CREATED_AT_FIELD)
+    String getCreatedAt();
 
-    void setHas_wiki(boolean isHas_wiki);
-
-    /**
-     * Get clone URL.
-     *
-     * @return {@link String} clone URL
-     */
-    String getClone_url();
-
-    void setClone_url(String clone_url);
-
-    /**
-     * Get SVN URL.
-     *
-     * @return {@link String} SVN URL
-     */
-    String getSvn_url();
-
-    void setSvn_url(String svn_url);
-
-    /**
-     * Get the number of opened issues.
-     *
-     * @return {@link Integer} number of opened issues
-     */
-    int getOpened_issues();
-
-    void setOpened_issues(int opened_issues);
-
-    /**
-     * Get repository's created date.
-     *
-     * @return {@link String} created date
-     */
-    String getCreated_at();
-
-    void setCreated_at(String created_at);
-
-    /**
-     * Get repository's pushed date.
-     *
-     * @return {@link String} pushed date
-     */
-    String getPushed_at();
-
-    void setPushed_at(String pushed_at);
-
-    /**
-     * Get whether repository has downloads.
-     *
-     * @return {@link Boolean} <code> true</code> - has downloads
-     */
-    boolean isHas_downloads();
-
-    void setHas_downloads(boolean isHas_downloads);
-
-    /**
-     * Get whether repository has issues.
-     *
-     * @return {@link Boolean} <code> true</code> - has issues
-     */
-    boolean isHas_issues();
-
-    void setHas_issues(boolean isHas_issues);
-
-
-    String getFull_name();
-
-    void setFull_name(String full_name);
+    void setCreatedAt(String createdAt);
 }

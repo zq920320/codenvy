@@ -11,9 +11,13 @@
 package com.codenvy.plugin.github.shared;
 
 import org.eclipse.che.dto.shared.DTO;
+import org.eclipse.che.dto.shared.JsonFieldName;
 
 @DTO
 public interface PullRequest {
+
+    public String HTML_URL_FIELD = "html_url";
+
     /**
      * Get pull request id.
      *
@@ -41,11 +45,12 @@ public interface PullRequest {
      *
      * @return {@link String} html_url
      */
-    String getHtml_url();
+    @JsonFieldName(HTML_URL_FIELD)
+    String getHtmlUrl();
 
-    void setHtml_url(String html_url);
+    void setHtmlUrl(String html_url);
 
-    PullRequest withHtml_url(String html_url);
+    PullRequest withHtmlUrl(String html_url);
 
     /**
      * Get pull request number.
