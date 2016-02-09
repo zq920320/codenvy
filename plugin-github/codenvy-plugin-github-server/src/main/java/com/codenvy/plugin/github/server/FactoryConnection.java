@@ -107,22 +107,4 @@ public class FactoryConnection {
         }
         return newFactory;
     }
-
-    /**
-     * Get value of a given factory link
-     *
-     * @param factoryLinks
-     *         the factory links
-     * @param rel
-     *         the name of the link to get
-     * @return the value of given factory link if exist, an empty {@link Optional} otherwise
-     */
-    public static Optional<String> getFactoryUrl(final List<Link> factoryLinks, String rel) {
-        List<Link> createProjectLinks = factoryLinks.stream()
-                                                    .filter(link -> rel.equals(link.getRel())).collect(Collectors.toList());
-        if (!createProjectLinks.isEmpty()) {
-            return Optional.of(createProjectLinks.get(0).getHref());
-        }
-        return Optional.empty();
-    }
 }

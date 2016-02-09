@@ -197,19 +197,18 @@ public class VersionControlMonitorService extends Service {
 
         // Get 'open factory' URL
         final Factory f = factory.get();
-        final List<Link> factoryLinks = f.getLinks();
-        final Optional<String> factoryUrl = FactoryConnection.getFactoryUrl(factoryLinks, FACTORY_URL_REL);
-        if (!factoryUrl.isPresent()) {
+        final Optional<Link> factoryLink = Optional.ofNullable(f.getLink(FACTORY_URL_REL));
+        if (!factoryLink.isPresent()) {
             return Response.accepted(new GenericEntity<>("Factory do not contain mandatory \'" + FACTORY_URL_REL + "\' link", String.class))
                            .build();
         }
-        final String url = factoryUrl.get();
+        final Link link = factoryLink.get();
 
         // Get connectors configured for the factory
         final List<Connector> connectors = getConnectors(f.getId());
 
         // Display factory link within third-party services
-        connectors.forEach(connector -> connector.addFactoryLink(url));
+        connectors.forEach(connector -> connector.addFactoryLink(link.getHref()));
         return Response.ok().build();
 
     }
