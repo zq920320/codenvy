@@ -60,22 +60,7 @@ public class AuthConnection {
         try {
             String myCredentials = "{ \"username\": \"" + username + "\", \"password\": \"" + password + "\" }";
             userToken = HttpJsonHelper.post(Token.class, url, DtoFactory.getInstance().createDtoFromJson(myCredentials, Credentials.class));
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ServerException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (UnauthorizedException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ForbiddenException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (NotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ConflictException e) {
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }

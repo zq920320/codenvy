@@ -94,22 +94,7 @@ public class FactoryConnection {
             } else {
                 factory = HttpJsonHelper.get(Factory.class, url);
             }
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ServerException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (UnauthorizedException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ForbiddenException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (NotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ConflictException e) {
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
@@ -141,22 +126,7 @@ public class FactoryConnection {
             } else {
                 factoryLinks = HttpJsonHelper.requestArray(Link.class, lUrl, factoryNameParam);
             }
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ServerException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (UnauthorizedException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ForbiddenException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (NotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ConflictException e) {
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
@@ -203,22 +173,7 @@ public class FactoryConnection {
             } else {
                 newFactory = HttpJsonHelper.put(Factory.class, url, factory);
             }
-        } catch (IOException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ServerException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (UnauthorizedException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ForbiddenException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (NotFoundException e) {
-            LOG.error(e.getMessage(), e);
-            throw new ServerException(e.getLocalizedMessage());
-        } catch (ConflictException e) {
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }

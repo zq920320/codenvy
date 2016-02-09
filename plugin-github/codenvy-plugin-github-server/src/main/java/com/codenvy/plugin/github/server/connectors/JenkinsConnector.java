@@ -133,8 +133,6 @@ public class JenkinsConnector implements Connector {
         try {
             transformer = tf.newTransformer();
             transformer.transform(domSource, result);
-        } catch (TransformerConfigurationException e) {
-            e.printStackTrace();
         } catch (TransformerException e) {
             e.printStackTrace();
         }
@@ -148,11 +146,7 @@ public class JenkinsConnector implements Connector {
             factory.setNamespaceAware(true);
             DocumentBuilder builder = factory.newDocumentBuilder();
             document = builder.parse(new ByteArrayInputStream(jobConfigXml.getBytes("utf-8")));
-        } catch (ParserConfigurationException e) {
-            e.printStackTrace();
-        } catch (SAXException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
+        } catch (ParserConfigurationException | SAXException | IOException e) {
             e.printStackTrace();
         }
         return document;
