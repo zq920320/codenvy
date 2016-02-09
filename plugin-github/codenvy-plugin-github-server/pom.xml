@@ -50,10 +50,6 @@
             <artifactId>javax.inject</artifactId>
         </dependency>
         <dependency>
-            <groupId>javax.servlet</groupId>
-            <artifactId>javax.servlet-api</artifactId>
-        </dependency>
-        <dependency>
             <groupId>javax.ws.rs</groupId>
             <artifactId>javax.ws.rs-api</artifactId>
         </dependency>
@@ -75,11 +71,7 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-project</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-commons-gwt</artifactId>
+            <artifactId>che-core-api-workspace</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
@@ -88,99 +80,6 @@
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-lang</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-            <version>2.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jersey-common</artifactId>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                    <groupId>javax.ws.rs</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-common</artifactId>
-            <version>2.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.ws.rs-api</artifactId>
-                    <groupId>javax.ws.rs</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javax.annotation-api</artifactId>
-                    <groupId>javax.annotation</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>org.osgi.core</artifactId>
-                    <groupId>org.osgi</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-api</artifactId>
-                    <groupId>javax.xml.bind</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hk2-api</artifactId>
-                    <groupId>org.glassfish.hk2</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>javax.inject</artifactId>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>hk2-locator</artifactId>
-                    <groupId>org.glassfish.hk2</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>osgi-resource-locator</artifactId>
-                    <groupId>org.glassfish.hk2</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-multipart</artifactId>
-            <version>2.6</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>javax.inject</artifactId>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-server</artifactId>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-client</artifactId>
-                    <groupId>org.glassfish.jersey.core</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-container-grizzly2-servlet</artifactId>
-                    <groupId>org.glassfish.jersey.containers</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-apache-connector</artifactId>
-                    <groupId>org.glassfish.jersey.connectors</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-grizzly-connector</artifactId>
-                    <groupId>org.glassfish.jersey.connectors</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jersey-jetty-connector</artifactId>
-                    <groupId>org.glassfish.jersey.connectors</groupId>
-                </exclusion>
-                <exclusion>
-                    <artifactId>jaxb-impl</artifactId>
-                    <groupId>com.sun.xml.bind</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -319,20 +218,6 @@
                         <version>${project.version}</version>
                     </dependency>
                 </dependencies>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-enforcer-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-dependency-plugin</artifactId>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
