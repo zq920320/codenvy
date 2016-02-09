@@ -19,16 +19,14 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import javax.servlet.ReadListener;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import static org.mockito.Mockito.mock;
@@ -55,8 +53,10 @@ public class TestVersionControlMonitorService {
         when(mockAuthConnection.authenticateUser("somebody@somemail.com", "somepwd")).thenReturn(fakeToken);
 
         // Prepare factoryConnection
-        URL factoryResource = getClass().getResource("/factory-MKTG-341.json");
-        Factory fakeFactory = DtoFactory.getInstance().createDtoFromJson(readFile(factoryResource.getFile(), StandardCharsets.UTF_8),
+        final Path factoryResourcePath =
+                Paths.get(Thread.currentThread().getContextClassLoader().getResource("factory-MKTG-341.json").toURI());
+        Factory
+                fakeFactory = DtoFactory.getInstance().createDtoFromJson(new String(Files.readAllBytes(factoryResourcePath)),
                                                                          Factory.class);
         FactoryConnection mockFactoryConnection = mock(FactoryConnection.class);
         when(mockFactoryConnection.getFactory("fakeFactoryId", fakeToken)).thenReturn(fakeFactory);
@@ -87,12 +87,14 @@ public class TestVersionControlMonitorService {
         String githubEventString = null;
         switch (eventType) {
             case "pull_request":
-                URL urlPR = getClass().getResource("/pull_request_event.json");
-                githubEventString = readFile(urlPR.getFile(), StandardCharsets.UTF_8);
+                final Path PRResourcePath =
+                        Paths.get(Thread.currentThread().getContextClassLoader().getResource("pull_request_event.json").toURI());
+                githubEventString = new String(Files.readAllBytes(PRResourcePath));
                 break;
             case "push":
-                URL urlP = getClass().getResource("/push_event.json");
-                githubEventString = readFile(urlP.getFile(), StandardCharsets.UTF_8);
+                final Path PushResourcePath =
+                        Paths.get(Thread.currentThread().getContextClassLoader().getResource("push_event.json").toURI());
+                githubEventString = new String(Files.readAllBytes(PushResourcePath));
                 break;
             default:
                 break;
@@ -110,18 +112,5 @@ public class TestVersionControlMonitorService {
         when(mockRequest.getInputStream()).thenReturn(fakeInputStream);
 
         return mockRequest;
-    }
-
-    /**
-     * Read file as String
-     *
-     * @param path path to the file to read
-     * @param encoding charset used to encode
-     * @return
-     * @throws IOException
-     */
-    protected String readFile(String path, Charset encoding) throws IOException {
-        byte[] encoded = Files.readAllBytes(Paths.get(path));
-        return new String(encoded, encoding);
     }
 }
