@@ -42,6 +42,7 @@ import java.util.Locale;
 import java.util.Set;
 
 import static us.monoid.web.Resty.content;
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * JIRA listener that generates Codenvy factories for factory activated issues.
@@ -118,9 +119,7 @@ public class IssueCreatedListener implements InitializingBean, DisposableBean {
             final String codenvyUsername = (String)settings.get("codenvy.admin.username");
             final String codenvyPassword = (String)settings.get("codenvy.admin.password");
 
-            if (codenvyUrl == null || codenvyUrl.isEmpty()
-                || codenvyUsername == null || codenvyUsername.isEmpty()
-                || codenvyPassword == null || codenvyPassword.isEmpty()) {
+            if (isNullOrEmpty(codenvyUrl) || isNullOrEmpty(codenvyUsername) || isNullOrEmpty(codenvyPassword)) {
                 LOG.warn("At least one of codenvy URL (\'" + codenvyUrl + "\'), username (\'" + codenvyUsername + "\') " +
                          "or password (\'" + codenvyPassword + "\') is not set or empty.");
                 return;
