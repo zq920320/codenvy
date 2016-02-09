@@ -58,8 +58,8 @@ public class AuthConnection {
         String url = fromUri(baseUrl).path(AuthenticationService.class).path(AuthenticationService.class, "authenticate")
                                      .build().toString();
         try {
-            String myCredentials = "{ \"username\": \"" + username + "\", \"password\": \"" + password + "\" }";
-            userToken = HttpJsonHelper.post(Token.class, url, DtoFactory.getInstance().createDtoFromJson(myCredentials, Credentials.class));
+            Credentials credentials = DtoFactory.newDto(Credentials.class).withUsername(username).withPassword(password);
+            userToken = HttpJsonHelper.post(Token.class, url, credentials);
         } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
