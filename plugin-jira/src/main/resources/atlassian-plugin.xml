@@ -22,17 +22,6 @@
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="codenvy-jira-plugin"/>
     
-    <!-- add our web resources -->
-    <web-resource key="codenvy-jira-plugin-resources" name="codenvy-jira-plugin Web Resources">
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        
-        <resource type="download" name="codenvy-jira-plugin.css" location="/css/codenvy-jira-plugin.css"/>
-        <resource type="download" name="codenvy-jira-plugin.js" location="/js/codenvy-jira-plugin.js"/>
-        <resource type="download" name="images/" location="/images"/>
-
-        <context>codenvy-jira-plugin</context>
-    </web-resource>
-    
     <!-- publish our component -->
     <component key="codenvyPluginComponent" class="com.codenvy.jira.CodenvyPluginComponentImpl" public="true">
         <interface>com.codenvy.jira.CodenvyPluginComponent</interface>
