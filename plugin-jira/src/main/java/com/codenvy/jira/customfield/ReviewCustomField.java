@@ -26,4 +26,3 @@ public class ReviewCustomField extends GenericTextCFType {
         super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator, jiraAuthenticationContext);
     }
 }
-
