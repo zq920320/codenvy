@@ -12,25 +12,23 @@ package com.codenvy.plugin.github.server;
 
 import org.eclipse.che.api.auth.shared.dto.Token;
 
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
-import org.eclipse.che.api.core.rest.shared.dto.Link;
+import org.eclipse.che.api.core.rest.HttpJsonRequest;
+import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
+import org.eclipse.che.api.core.rest.HttpJsonResponse;
 import org.eclipse.che.api.factory.server.FactoryService;
 import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.commons.lang.Pair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.IOException;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.UriBuilder.fromUri;
 
@@ -43,10 +41,12 @@ public class FactoryConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(FactoryConnection.class);
 
-    private final String baseUrl;
+    private final HttpJsonRequestFactory httpJsonRequestFactory;
+    private final String                 baseUrl;
 
     @Inject
-    public FactoryConnection(@Named("api.endpoint") String baseUrl) {
+    public FactoryConnection(HttpJsonRequestFactory httpJsonRequestFactory, @Named("api.endpoint") String baseUrl) {
+        this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.baseUrl = baseUrl;
     }
 
@@ -64,14 +64,15 @@ public class FactoryConnection {
         String url = fromUri(baseUrl).path(FactoryService.class).path(FactoryService.class, "getFactory")
                                      .build(factoryId).toString();
         Factory factory;
+        HttpJsonRequest httpJsonRequest = httpJsonRequestFactory.fromUrl(url).useGetMethod();
         try {
             if (userToken != null) {
-                Pair tokenParam = Pair.of("token", userToken.getValue());
-                factory = HttpJsonHelper.get(Factory.class, url, tokenParam);
-            } else {
-                factory = HttpJsonHelper.get(Factory.class, url);
+                httpJsonRequest.addQueryParam("token", userToken.getValue());
             }
-        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
+            HttpJsonResponse response = httpJsonRequest.request();
+            factory = response.asDto(Factory.class);
+
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException | BadRequestException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
@@ -94,14 +95,15 @@ public class FactoryConnection {
                                            .build(factoryId).toString();
 
         Factory newFactory;
+        HttpJsonRequest httpJsonRequest = httpJsonRequestFactory.fromUrl(url).usePutMethod().setBody(factory);
         try {
             if (userToken != null) {
-                final Pair tokenParam = Pair.of("token", userToken.getValue());
-                newFactory = HttpJsonHelper.put(Factory.class, url, factory, tokenParam);
-            } else {
-                newFactory = HttpJsonHelper.put(Factory.class, url, factory);
+                httpJsonRequest.addQueryParam("token", userToken.getValue());
             }
-        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
+            HttpJsonResponse response = httpJsonRequest.request();
+            newFactory = response.asDto(Factory.class);
+
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException | BadRequestException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }

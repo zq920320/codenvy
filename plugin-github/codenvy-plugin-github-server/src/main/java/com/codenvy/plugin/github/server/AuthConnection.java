@@ -13,12 +13,15 @@ package com.codenvy.plugin.github.server;
 import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.auth.shared.dto.Credentials;
 import org.eclipse.che.api.auth.shared.dto.Token;
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
-import org.eclipse.che.api.core.rest.HttpJsonHelper;
+import org.eclipse.che.api.core.rest.HttpJsonRequest;
+import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
+import org.eclipse.che.api.core.rest.HttpJsonResponse;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,18 +41,22 @@ public class AuthConnection {
 
     private static final Logger LOG = LoggerFactory.getLogger(AuthConnection.class);
 
-    private final String baseUrl;
+    private final HttpJsonRequestFactory httpJsonRequestFactory;
+    private final String                 baseUrl;
 
     @Inject
-    public AuthConnection(@Named("api.endpoint") String baseUrl) {
+    public AuthConnection(HttpJsonRequestFactory httpJsonRequestFactory, @Named("api.endpoint") String baseUrl) {
+        this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.baseUrl = baseUrl;
     }
 
     /**
      * Authenticate against Codenvy
      *
-     * @param username the username of the user to authenticate
-     * @param password the password of the user to authenticate
+     * @param username
+     *         the username of the user to authenticate
+     * @param password
+     *         the password of the user to authenticate
      * @return an auth token if authentication is successful, null otherwise
      * @throws ServerException
      */
@@ -57,10 +64,14 @@ public class AuthConnection {
         Token userToken;
         String url = fromUri(baseUrl).path(AuthenticationService.class).path(AuthenticationService.class, "authenticate")
                                      .build().toString();
+
+        Credentials credentials = DtoFactory.newDto(Credentials.class).withUsername(username).withPassword(password);
+        HttpJsonRequest httpJsonRequest = httpJsonRequestFactory.fromUrl(url).usePostMethod().setBody(credentials);
         try {
-            Credentials credentials = DtoFactory.newDto(Credentials.class).withUsername(username).withPassword(password);
-            userToken = HttpJsonHelper.post(Token.class, url, credentials);
-        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
+            HttpJsonResponse response = httpJsonRequest.request();
+            userToken = response.asDto(Token.class);
+
+        } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException | BadRequestException e) {
             LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
