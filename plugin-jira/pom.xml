@@ -30,7 +30,7 @@
         <url>http://www.codenvy.com</url>
     </organization>
     <properties>
-        <amps.version>6.2.1</amps.version>
+        <amps.version>6.1.0</amps.version>
         <jira.version>6.4.6</jira.version>
         <plugin.testrunner.version>1.1.1</plugin.testrunner.version>
         <refapp.version>2.12.0</refapp.version>
@@ -94,16 +94,6 @@
             <artifactId>logback-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Add dependency on jira-core if you want access to JIRA implementation classes as well as the sanctioned API. -->
-        <!-- This is not normally recommended, but may be required eg when migrating a plugin originally developed against JIRA 4.x -->
-        <!--
-        <dependency>
-            <groupId>com.atlassian.jira</groupId>
-            <artifactId>jira-core</artifactId>
-            <version>${jira.version}</version>
-            <scope>provided</scope>
-        </dependency>
-        -->
         <!-- WIRED TEST RUNNER DEPENDENCIES -->
         <dependency>
             <groupId>com.atlassian.plugins</groupId>
@@ -151,8 +141,8 @@
             <plugin>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <configuration>
-                    <source>1.8</source>
-                    <target>1.8</target>
+                    <source>1.7</source>
+                    <target>1.7</target>
                 </configuration>
             </plugin>
             <plugin>
