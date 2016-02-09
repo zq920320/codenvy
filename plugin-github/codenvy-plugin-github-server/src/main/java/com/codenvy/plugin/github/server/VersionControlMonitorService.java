@@ -106,8 +106,6 @@ public class VersionControlMonitorService extends Service {
                                   @Context HttpServletRequest request)
             throws ServerException {
 
-        LOG.info("githubWebhook");
-
         Response response;
         String githubHeader = request.getHeader(GITHUB_REQUEST_HEADER);
         switch (githubHeader) {
@@ -151,12 +149,11 @@ public class VersionControlMonitorService extends Service {
      * @throws ServerException
      */
     protected Response handlePushEvent(PushEvent contribution) throws ServerException {
-        LOG.info("handlePushEvent");
-        LOG.info("contribution.ref: " + contribution.getRef());
-        LOG.info("contribution.repository.full_name: " + contribution.getRepository().getFull_name());
-        LOG.info("contribution.repository.created_at: " + contribution.getRepository().getCreated_at());
-        LOG.info("contribution.repository.html_url: " + contribution.getRepository().getHtml_url());
-        LOG.info("contribution.after: " + contribution.getAfter());
+        LOG.debug("contribution.ref: " + contribution.getRef());
+        LOG.debug("contribution.repository.full_name: " + contribution.getRepository().getFull_name());
+        LOG.debug("contribution.repository.created_at: " + contribution.getRepository().getCreated_at());
+        LOG.debug("contribution.repository.html_url: " + contribution.getRepository().getHtml_url());
+        LOG.debug("contribution.after: " + contribution.getAfter());
 
         // Authenticate on Codenvy
         final Pair<String, String> credentials = getCredentials();
@@ -227,12 +224,11 @@ public class VersionControlMonitorService extends Service {
      * @throws ServerException
      */
     protected Response handlePullRequestEvent(PullRequestEvent prEvent) throws ServerException {
-        LOG.info("handlePullRequestEvent");
-        LOG.info("pull_request.head.repository.html_url: " + prEvent.getPull_request().getHead().getRepo().getHtml_url());
-        LOG.info("pull_request.head.ref: " + prEvent.getPull_request().getHead().getRef());
-        LOG.info("pull_request.head.sha: " + prEvent.getPull_request().getHead().getSha());
-        LOG.info("pull_request.base.repository.html_url: " + prEvent.getPull_request().getBase().getRepo().getHtml_url());
-        LOG.info("pull_request.base.ref: " + prEvent.getPull_request().getBase().getRef());
+        LOG.debug("pull_request.head.repository.html_url: " + prEvent.getPull_request().getHead().getRepo().getHtml_url());
+        LOG.debug("pull_request.head.ref: " + prEvent.getPull_request().getHead().getRef());
+        LOG.debug("pull_request.head.sha: " + prEvent.getPull_request().getHead().getSha());
+        LOG.debug("pull_request.base.repository.html_url: " + prEvent.getPull_request().getBase().getRepo().getHtml_url());
+        LOG.debug("pull_request.base.ref: " + prEvent.getPull_request().getBase().getRef());
 
         // Authenticate on Codenvy
         final Pair<String, String> credentials = getCredentials();
@@ -301,7 +297,7 @@ public class VersionControlMonitorService extends Service {
                             prHeadCommitId,
                             String.class)).build();
         }
-        LOG.info("Factory successfully updated with source location " + prBaseRepositoryHtmlUrl + " & commitId " + prHeadCommitId);
+        LOG.debug("Factory successfully updated with source location " + prBaseRepositoryHtmlUrl + " & commitId " + prHeadCommitId);
 
         // TODO Remove factory id from webhook
 
@@ -534,14 +530,14 @@ public class VersionControlMonitorService extends Service {
                     return properties;
                 }
             } catch (IOException e) {
-                LOG.error(e.getMessage(), e);
+                LOG.error(e.getLocalizedMessage(), e);
             } finally {
                 try {
                     if (is.isPresent()) {
                         is.get().close();
                     }
                 } catch (IOException e) {
-                    LOG.error(e.getMessage(), e);
+                    LOG.error(e.getLocalizedMessage(), e);
                 }
             }
         }

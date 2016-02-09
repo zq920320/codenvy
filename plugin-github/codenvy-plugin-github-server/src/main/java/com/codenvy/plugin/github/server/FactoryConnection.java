@@ -84,8 +84,6 @@ public class FactoryConnection {
     public Factory getFactory(String factoryId, Token userToken) throws ServerException {
         String url = fromUri(baseUrl).path(FactoryService.class).path(FactoryService.class, "getFactory")
                                      .build(factoryId).toString();
-        LOG.debug("getFactory: " + url);
-
         Factory factory;
         try {
             if (userToken != null) {
@@ -95,7 +93,7 @@ public class FactoryConnection {
                 factory = HttpJsonHelper.get(Factory.class, url);
             }
         } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
         return factory;
@@ -127,7 +125,7 @@ public class FactoryConnection {
                 factoryLinks = HttpJsonHelper.requestArray(Link.class, lUrl, factoryNameParam);
             }
         } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
 
@@ -143,7 +141,7 @@ public class FactoryConnection {
                 Optional<Factory> factory = Optional.ofNullable(getFactory(factoryId, userToken));
                 factory.ifPresent(f -> factories.add(f));
             }
-            LOG.debug("findMatchingFactories() returned " + factories.size() + " factories");
+            LOG.debug(factories.size() + " factories found.");
             return factories;
         }
 
@@ -174,7 +172,7 @@ public class FactoryConnection {
                 newFactory = HttpJsonHelper.put(Factory.class, url, factory);
             }
         } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
         return newFactory;

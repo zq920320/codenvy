@@ -61,7 +61,7 @@ public class AuthConnection {
             String myCredentials = "{ \"username\": \"" + username + "\", \"password\": \"" + password + "\" }";
             userToken = HttpJsonHelper.post(Token.class, url, DtoFactory.getInstance().createDtoFromJson(myCredentials, Credentials.class));
         } catch (IOException | ServerException | UnauthorizedException | ForbiddenException | NotFoundException | ConflictException e) {
-            LOG.error(e.getMessage(), e);
+            LOG.error(e.getLocalizedMessage(), e);
             throw new ServerException(e.getLocalizedMessage());
         }
         if (userToken != null) {
