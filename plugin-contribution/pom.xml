@@ -47,9 +47,6 @@
         <developerConnection>scm:git:git@github.com:codenvy/plugin-contribution.git</developerConnection>
         <tag>HEAD</tag>
     </scm>
-    <properties>
-        <license_years>2014-2015</license_years>
-    </properties>
     <repositories>
         <repository>
             <id>codenvy-public-repo</id>

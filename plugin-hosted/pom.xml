@@ -32,31 +32,14 @@
     <name>Codenvy Plugin :: Hosted :: Parent</name>
     <modules>
         <module>codenvy-hosted-client-gwt-subscription</module>
-        <!--
-        <module>codenvy-docker-client</module>
-        <module>codenvy-runner-docker</module>
-        <module>codenvy-hosted-ext-docker</module>
-        -->
         <module>codenvy-swarm-machine</module>
-
         <module>codenvy-hosted-ext-factory</module>
-        <!--
-        <module>codenvy-ext-subscriptions</module>
-        -->
         <module>codenvy-hosted-ext-support-help</module>
         <module>codenvy-hosted-ext-profile</module>
         <module>codenvy-hosted-ext-hosted</module>
         <module>codenvy-machine-hosted</module>
-        <!--
-        <module>codenvy-ext-resources</module>
-        -->
         <module>codenvy-router-machine</module>
     </modules>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/plugin-hosted.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/plugin-hosted.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
     <properties>
         <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
         <gwt.test.skip>true</gwt.test.skip>
