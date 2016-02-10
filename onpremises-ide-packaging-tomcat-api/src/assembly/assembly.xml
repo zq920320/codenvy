@@ -29,7 +29,7 @@
             <unpack>true</unpack>
             <outputDirectory></outputDirectory>
             <includes>
-                <include>com.codenvy.resources:codenvy-tomcat8-slf4j-logback</include>
+                <include>org.eclipse.che.lib:che-tomcat8-slf4j-logback</include>
             </includes>
         </dependencySet>
         <dependencySet>

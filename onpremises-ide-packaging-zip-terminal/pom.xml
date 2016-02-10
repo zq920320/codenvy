@@ -30,9 +30,8 @@
     <name>Hosted IDE :: Terminal</name>
     <dependencies>
         <dependency>
-            <groupId>org.eclipse.che.terminal</groupId>
+            <groupId>org.eclipse.che.lib</groupId>
             <artifactId>che-websocket-terminal</artifactId>
-            <version>${che.websocket.terminal.version}</version>
             <type>zip</type>
         </dependency>
     </dependencies>
