@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.jira;
+package com.codenvy.plugin;
 
 /**
  * Plugin component module

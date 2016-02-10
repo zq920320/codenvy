@@ -15,12 +15,12 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package ut.com.codenvy.jira;
+package ut.com.codenvy.plugin;
 
 import org.junit.Test;
 
-import com.codenvy.jira.CodenvyPluginComponent;
-import com.codenvy.jira.CodenvyPluginComponentImpl;
+import com.codenvy.plugin.CodenvyPluginComponent;
+import com.codenvy.plugin.CodenvyPluginComponentImpl;
 
 import static org.junit.Assert.assertEquals;
 

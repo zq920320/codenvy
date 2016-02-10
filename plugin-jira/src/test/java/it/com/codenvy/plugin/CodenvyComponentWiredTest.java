@@ -15,14 +15,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package it.com.codenvy.jira;
+package it.com.codenvy.plugin;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
 import com.atlassian.plugins.osgi.test.AtlassianPluginsTestRunner;
 import com.atlassian.sal.api.ApplicationProperties;
-import com.codenvy.jira.CodenvyPluginComponent;
+import com.codenvy.plugin.CodenvyPluginComponent;
 
 import static org.junit.Assert.assertEquals;
 

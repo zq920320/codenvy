@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.jira.administrate;
+package com.codenvy.plugin.administrate;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;

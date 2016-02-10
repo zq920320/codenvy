@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.jira.customfield;
+package com.codenvy.plugin.customfield;
 
 import com.atlassian.jira.issue.customfields.impl.GenericTextCFType;
 import com.atlassian.jira.issue.customfields.manager.GenericConfigManager;
@@ -24,11 +24,11 @@ import com.atlassian.jira.issue.fields.TextFieldCharacterLengthValidator;
 import com.atlassian.jira.security.JiraAuthenticationContext;
 
 
-public class ReviewCustomField extends GenericTextCFType {
+public class DevelopCustomField extends GenericTextCFType {
 
-    public ReviewCustomField(CustomFieldValuePersister customFieldValuePersister, GenericConfigManager genericConfigManager,
-                             TextFieldCharacterLengthValidator textFieldCharacterLengthValidator,
-                             JiraAuthenticationContext jiraAuthenticationContext) {
+    public DevelopCustomField(CustomFieldValuePersister customFieldValuePersister, GenericConfigManager genericConfigManager,
+                              TextFieldCharacterLengthValidator textFieldCharacterLengthValidator,
+                              JiraAuthenticationContext jiraAuthenticationContext) {
 
         super(customFieldValuePersister, genericConfigManager, textFieldCharacterLengthValidator, jiraAuthenticationContext);
     }

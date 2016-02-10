@@ -15,12 +15,12 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.jira;
+package com.codenvy.plugin;
 
 import com.atlassian.sal.api.ApplicationProperties;
 
 /**
- * Implementation of {@link com.codenvy.jira.CodenvyPluginComponent}
+ * Implementation of {@link com.codenvy.plugin.CodenvyPluginComponent}
  *
  * @author Stephane Tournie
  */

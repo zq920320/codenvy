@@ -15,7 +15,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package ut.com.codenvy.jira;
+package ut.com.codenvy.plugin;
 
 import ch.qos.logback.classic.spi.LoggingEvent;
 import ch.qos.logback.core.Appender;
@@ -35,7 +35,7 @@ import com.atlassian.jira.user.ApplicationUser;
 import com.atlassian.jira.util.ErrorCollection;
 import com.atlassian.sal.api.pluginsettings.PluginSettings;
 import com.atlassian.sal.api.pluginsettings.PluginSettingsFactory;
-import com.codenvy.jira.IssueCreatedListener;
+import com.codenvy.plugin.IssueCreatedListener;
 
 import org.junit.Before;
 import org.junit.Test;
