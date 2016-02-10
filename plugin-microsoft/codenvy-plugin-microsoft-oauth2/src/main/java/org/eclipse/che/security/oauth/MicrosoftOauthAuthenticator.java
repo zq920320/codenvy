@@ -143,10 +143,4 @@ public class MicrosoftOauthAuthenticator extends OAuthAuthenticator {
             }
         }
     }
-
-
-    @Override
-    protected String findRedirectUrl(URL requestUrl)  {
-        return redirectUrisMap.entrySet().iterator().next().getValue();
-    }
 }

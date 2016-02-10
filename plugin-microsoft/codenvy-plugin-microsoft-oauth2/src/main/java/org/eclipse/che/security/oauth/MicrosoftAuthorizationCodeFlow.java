@@ -18,6 +18,7 @@
 package org.eclipse.che.security.oauth;
 
 import com.google.api.client.auth.oauth2.AuthorizationCodeFlow;
+import com.google.api.client.auth.oauth2.AuthorizationCodeTokenRequest;
 import com.google.api.client.auth.oauth2.Credential;
 import com.google.api.client.http.GenericUrl;
 import com.google.api.client.http.HttpExecuteInterceptor;
@@ -31,15 +32,6 @@ import com.google.api.client.json.JsonFactory;
  */
 public class MicrosoftAuthorizationCodeFlow extends AuthorizationCodeFlow {
 
-    public MicrosoftAuthorizationCodeFlow(Credential.AccessMethod method,
-                                          HttpTransport transport,
-                                          JsonFactory jsonFactory,
-                                          GenericUrl tokenServerUrl,
-                                          HttpExecuteInterceptor clientAuthentication, String clientId,
-                                          String authorizationServerEncodedUrl) {
-        super(method, transport, jsonFactory, tokenServerUrl, clientAuthentication, clientId, authorizationServerEncodedUrl);
-    }
-
     /**
      * @param builder
      *         Microsoft authorization code flow builder
@@ -49,15 +41,7 @@ public class MicrosoftAuthorizationCodeFlow extends AuthorizationCodeFlow {
     }
 
     @Override
-    public MicrosoftAuthorizationCodeRequestUrl newAuthorizationUrl() {
-        // don't need to specify redirectUri to give control of it to user of this class
-        return new MicrosoftAuthorizationCodeRequestUrl(
-                getAuthorizationServerEncodedUrl(), getClientId());
-    }
-
-
-    @Override
-    public MicrosoftAuthorizationCodeTokenRequest newTokenRequest(String authorizationCode) {
+    public AuthorizationCodeTokenRequest newTokenRequest(String authorizationCode) {
         // don't need to specify clientId
         // don't need to specify redirectUri to give control of it to user of this class
         return new MicrosoftAuthorizationCodeTokenRequest(getTransport(),
