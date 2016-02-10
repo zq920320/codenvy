@@ -220,8 +220,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         recipeBinder.addBinding().toProvider(RecipeProvider.class);
         recipeBinder.addBinding().toInstance("predefined-recipes.json");
 
-        bind(WorkspaceConfigValidator.class).to(org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigValidatorImpl.class);
-        bind(WorkspaceManager.class);
+        bind(WorkspaceConfigValidator.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceConfigValidator.class);
+        bind(WorkspaceManager.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceManager.class);
         bind(WorkspaceMessenger.class).asEagerSingleton();
         /*
         bind(ResourcesManager.class).to(ResourcesManagerImpl.class);
