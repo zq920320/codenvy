@@ -169,31 +169,11 @@ public class VersionControlMonitorService extends Service {
         final String[] contribRefSplit = contribution.getRef().split("/");
         final String contribBranch = contribRefSplit[contribRefSplit.length - 1];
 
-        // Get webhook configured for given repository
-        final Optional<GithubWebhook> webhook = Optional.ofNullable(getWebhook(contribRepositoryHtmlUrl));
-        if (!webhook.isPresent()) {
-            return Response.accepted(new GenericEntity<>("No webhook configured for repository " + contribRepositoryHtmlUrl, String.class))
-                           .build();
-        }
-        final GithubWebhook w = webhook.get();
-
-        // Get factory id's listed into the webhook
-        final List<String> factoryIDs = Arrays.asList(w.getFactoryIDs());
-
-        // Get factory that contains a project for given repository and branch
-        final Predicate<ProjectConfigDto> matchingProjectPredicate = (p ->
-                                                                              p.getSource() != null
-                                                                              && !isNullOrEmpty(p.getSource().getType())
-                                                                              && !isNullOrEmpty(p.getSource().getLocation())
-                                                                              &&
-                                                                              contribRepositoryHtmlUrl.equals(p.getSource().getLocation())
-                                                                              || (contribRepositoryHtmlUrl + ".git")
-                                                                                         .equals(p.getSource().getLocation())
-                                                                                 && "master".equals(contribBranch)
-                                                                              || !isNullOrEmpty(p.getSource().getParameters().get("branch"))
-                                                                                 && contribBranch.equals(
-                                                                                      p.getSource().getParameters().get("branch")));
-        final Optional<Factory> factory = Optional.ofNullable(getFactoryThatContainsProject(factoryIDs, matchingProjectPredicate, token));
+        // Get factory that:
+        // 1) Is configured in a webhook
+        // 2) Contains a project for given repository and branch
+        final Optional<Factory> factory = Optional.ofNullable(
+                getWebhookConfiguredFactory(contribRepositoryHtmlUrl, contribRepositoryHtmlUrl, contribBranch, token));
         if (!factory.isPresent()) {
             return Response.accepted(
                     new GenericEntity<>("No factory found for repository " + contribRepositoryHtmlUrl + " and branch " + contribBranch,
@@ -260,37 +240,20 @@ public class VersionControlMonitorService extends Service {
         // Get base repository data
         final String prBaseRepositoryHtmlUrl = prEvent.getPullRequest().getBase().getRepo().getHtmlUrl();
 
-        // Get webhook configured for given repository
-        final Optional<GithubWebhook> webhook = Optional.ofNullable(getWebhook(prBaseRepositoryHtmlUrl));
-        if (!webhook.isPresent()) {
-            return Response.accepted(new GenericEntity<>("No webhook configured for repository " + prBaseRepositoryHtmlUrl, String.class))
-                           .build();
-        }
-        final GithubWebhook w = webhook.get();
-
-        // Get factory id's listed into the webhook
-        final List<String> factoryIDs = Arrays.asList(w.getFactoryIDs());
-
-        // Get factory that contains a project for given repository and branch
-        final Predicate<ProjectConfigDto> matchingProjectPredicate = (p ->
-                                                                              p.getSource() != null
-                                                                              && !isNullOrEmpty(p.getSource().getType())
-                                                                              && !isNullOrEmpty(p.getSource().getLocation())
-                                                                              && prHeadRepositoryHtmlUrl.equals(p.getSource().getLocation())
-                                                                              || (prHeadRepositoryHtmlUrl + ".git")
-                                                                                         .equals(p.getSource().getLocation())
-                                                                                 && "master".equals(prHeadBranch)
-                                                                              || !isNullOrEmpty(p.getSource().getParameters().get("branch"))
-                                                                                 && prHeadBranch.equals(
-                                                                                      p.getSource().getParameters().get("branch")));
-        final Optional<Factory> factory = Optional.ofNullable(getFactoryThatContainsProject(factoryIDs, matchingProjectPredicate, token));
+        // Get factory that:
+        // 1) Is configured in a webhook
+        // 2) Contains a project for given repository and branch
+        final Optional<Factory> factory =
+                Optional.ofNullable(getWebhookConfiguredFactory(prBaseRepositoryHtmlUrl, prHeadRepositoryHtmlUrl, prHeadBranch, token));
         if (!factory.isPresent()) {
             return Response.accepted(new GenericEntity<>("No factory found for branch " + prHeadBranch, String.class)).build();
         }
         final Factory f = factory.get();
 
         // Update project into the factory with given repository and branch
-        final Factory updatedfactory = updateProjectInFactory(f, matchingProjectPredicate, prBaseRepositoryHtmlUrl, prHeadCommitId);
+        final Factory updatedfactory =
+                updateProjectInFactory(f, matchingProjectPredicate(prHeadRepositoryHtmlUrl, prHeadBranch), prBaseRepositoryHtmlUrl,
+                                       prHeadCommitId);
 
         // Update factory with new project data
         final Optional<Factory> persistedFactory = Optional.ofNullable(factoryConnection.updateFactory(updatedfactory, token));
@@ -309,19 +272,34 @@ public class VersionControlMonitorService extends Service {
     }
 
     /**
-     * Get the factory that contains a project matching a predicate
+     * Get factory that is configured in a webhook for given base repository
+     * and contains a project for given head repository and head branch
      *
-     * @param factoryIDs
-     *         Id's of factories to search into
-     * @param matchingPredicate
-     *         the matching predicate projects must fulfill
+     * @param baseRepositoryHtmlUrl
+     *         the URL of the repository for which a webhook is configured
+     * @param headRepositoryHtmlUrl
+     *         the URL of the repository that a project into the factory is configured with
+     * @param headBranch
+     *         the name of the branch that a project into the factory is configured with
      * @param token
-     *         the authentication token to use against Codenvy API
-     * @return the first factory that contains a project that matches the predicate
+     *         the authentication token to use against the Codenvy API
+     * @return the factory that is configured in a webhook and contains a project that matches given repo and branch
      * @throws ServerException
      */
-    protected Factory getFactoryThatContainsProject(List<String> factoryIDs, Predicate<ProjectConfigDto> matchingPredicate, Token token)
-            throws ServerException {
+    protected Factory getWebhookConfiguredFactory(String baseRepositoryHtmlUrl, String headRepositoryHtmlUrl, String headBranch,
+                                                  Token token) throws ServerException {
+
+        // Get webhook configured for given repository
+        final Optional<GithubWebhook> webhook = Optional.ofNullable(getWebhook(baseRepositoryHtmlUrl));
+        if (!webhook.isPresent()) {
+            throw new ServerException("No webhook configured for repository " + baseRepositoryHtmlUrl);
+        }
+        final GithubWebhook w = webhook.get();
+
+        // Get factory id's listed into the webhook
+        final List<String> factoryIDs = Arrays.asList(w.getFactoryIDs());
+
+        // Get factory that contains a project for given repository and branch
         Factory factory = null;
         for (String factoryId : factoryIDs) {
             Optional<Factory> obtainedFactory = Optional.ofNullable(factoryConnection.getFactory(factoryId, token));
@@ -329,7 +307,7 @@ public class VersionControlMonitorService extends Service {
                 final Factory f = obtainedFactory.get();
                 final List<ProjectConfigDto> projects = f.getWorkspace().getProjects()
                                                          .stream()
-                                                         .filter(matchingPredicate)
+                                                         .filter(matchingProjectPredicate(headRepositoryHtmlUrl, headBranch))
                                                          .collect(toList());
                 if (!projects.isEmpty()) {
                     factory = f;
@@ -338,6 +316,26 @@ public class VersionControlMonitorService extends Service {
             }
         }
         return factory;
+    }
+
+    /**
+     * Get a {@link Predicate} that matches project configured with given repository and branch
+     *
+     * @param repositoryHtmlUrl
+     *         the repo that the project has to match
+     * @param branch
+     *         the branch that the project has to match
+     * @return the {@link Predicate} that matches relevant project(s)
+     */
+    protected Predicate<ProjectConfigDto> matchingProjectPredicate(String repositoryHtmlUrl, String branch) {
+        return (p -> p.getSource() != null
+                     && !isNullOrEmpty(p.getSource().getType())
+                     && !isNullOrEmpty(p.getSource().getLocation())
+                     && repositoryHtmlUrl.equals(p.getSource().getLocation())
+                     || (repositoryHtmlUrl + ".git").equals(p.getSource().getLocation())
+                        && "master".equals(branch)
+                     || !isNullOrEmpty(p.getSource().getParameters().get("branch"))
+                        && branch.equals(p.getSource().getParameters().get("branch")));
     }
 
     /**
