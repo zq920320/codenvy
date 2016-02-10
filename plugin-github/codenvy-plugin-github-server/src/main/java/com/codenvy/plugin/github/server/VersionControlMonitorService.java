@@ -515,7 +515,7 @@ public class VersionControlMonitorService extends Service {
     protected static Properties getProperties(String fileName) throws ServerException {
         java.nio.file.Path currentRelativePath = Paths.get("", fileName);
         String currentRelativePathString = currentRelativePath.toAbsolutePath().toString();
-        Optional<URL> configPath = Optional.empty();
+        Optional<URL> configPath;
         try {
             configPath = Optional.ofNullable(new File(currentRelativePathString).toURI().toURL());
         } catch (MalformedURLException e) {
