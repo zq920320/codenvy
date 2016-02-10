@@ -16,7 +16,8 @@ import org.eclipse.che.dto.shared.JsonFieldName;
 @DTO
 public interface PullRequest {
 
-    public String HTML_URL_FIELD = "html_url";
+    public String HTML_URL_FIELD  = "html_url";
+    public String MERGED_BY_FIELD = "merged_by";
 
     /**
      * Get pull request id.
@@ -112,9 +113,10 @@ public interface PullRequest {
      *
      * @return the user
      */
-    User getMerged_by();
+    @JsonFieldName(MERGED_BY_FIELD)
+    User getMergedBy();
 
-    void setMerged_by(User user);
+    void setMergedBy(User user);
 
-    PullRequest withMerged_by(User user);
+    PullRequest withMergedBy(User user);
 }
