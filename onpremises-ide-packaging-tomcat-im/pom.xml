@@ -35,8 +35,8 @@
             <type>war</type>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.resources</groupId>
-            <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
+            <groupId>org.eclipse.che.lib</groupId>
+            <artifactId>che-tomcat8-slf4j-logback</artifactId>
             <type>zip</type>
         </dependency>
         <dependency>
@@ -85,9 +85,8 @@
                                     <outputDirectory>${project.build.directory}/tomcat</outputDirectory>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>com.codenvy.resources</groupId>
-                                            <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
-                                            <version>${version.resource-bundle}</version>
+                                            <groupId>org.eclipse.che.lib</groupId>
+                                            <artifactId>che-tomcat8-slf4j-logback</artifactId>
                                             <type>zip</type>
                                         </artifactItem>
                                     </artifactItems>

@@ -29,7 +29,7 @@
             <useProjectArtifact>false</useProjectArtifact>
             <unpack>true</unpack>
             <includes>
-                <include>org.eclipse.che.terminal:che-websocket-terminal</include>
+                <include>org.eclipse.che.lib:che-websocket-terminal</include>
             </includes>
         </dependencySet>
     </dependencySets>
