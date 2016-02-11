@@ -53,12 +53,6 @@
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-admin</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-analytics</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-creditcard</artifactId>
@@ -67,22 +61,10 @@
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-events</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-api-resources</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-infra-filters</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-metrics</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-platform-api-impl</artifactId>
@@ -127,20 +109,6 @@
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>com.codenvy.plugin-gae</groupId>
-            <artifactId>codenvy-plugin-gae</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-ext-factory</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.plugin-hosted</groupId>
-            <artifactId>codenvy-hosted-runner-docker</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-router-machine</artifactId>
@@ -193,23 +161,10 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-auth</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-builder</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-core</artifactId>
         </dependency>
-        <!-- tmp DAO impls -->
-        <!--dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-infrastructure-local</artifactId>
-        </dependency-->
-        <!--
-        -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-factory</artifactId>
@@ -226,12 +181,6 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-ssh</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-runner</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-user</artifactId>
@@ -260,10 +209,6 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-schedule</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-git-impl-native</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-vfs-impl</artifactId>
@@ -276,57 +221,10 @@
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-docker-machine</artifactId>
         </dependency>
-        <!-- AngularJS Server Side Dependency -->
-        <!--
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>angularjs-api-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>angularjs-core-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>angularjs-template-angular-seed</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>angularjs-template-gulp-angularjs-starter</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>angularjs-template-yeoman</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-cpp-ext-cpp</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-datasource-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-docker-runner</artifactId>
-        </dependency>
-        -->
-        <!--dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-git-provider-che</artifactId>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-github-ext-github</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-github-oauth2</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-github-provider-github</artifactId>
-        </dependency-->
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
             <artifactId>che-plugin-java-ext-lang-server</artifactId>
@@ -336,78 +234,9 @@
             <artifactId>che-plugin-machine-ext-server</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che.swagger</groupId>
+            <groupId>org.eclipse.che.lib</groupId>
             <artifactId>che-swagger-module</artifactId>
         </dependency>
-        <!--dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-maven</artifactId>
-        </dependency-->
-        <!--dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-ssh-git-native</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-go-ext-go</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-ant</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-debugger-java</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>tools</artifactId>
-                    <groupId>sun.jdt</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-java</artifactId>
-            <exclusions>
-                <exclusion>
-                    <artifactId>org.eclipse.jdt.core</artifactId>
-                    <groupId>org.eclipse.tycho</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-java-ext-maven</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-php-ext-php</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-python-ext-python</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-ruby-ext-ruby</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-ssh-git-native</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-svn-ext-subversion</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-tour-server</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.eclipse.tycho</groupId>
             <artifactId>org.eclipse.jdt.core</artifactId>

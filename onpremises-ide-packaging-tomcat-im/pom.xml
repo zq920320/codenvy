@@ -40,7 +40,7 @@
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che.swagger</groupId>
+            <groupId>org.eclipse.che.lib</groupId>
             <artifactId>che-swagger-war</artifactId>
             <type>war</type>
         </dependency>
@@ -69,7 +69,6 @@
                                         <artifactItem>
                                             <groupId>org.eclipse.che.swagger</groupId>
                                             <artifactId>che-swagger-war</artifactId>
-                                            <version>${che.swagger.ui.version}</version>
                                             <type>war</type>
                                         </artifactItem>
                                     </artifactItems>

@@ -60,7 +60,7 @@
             <type>zip</type>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che.swagger</groupId>
+            <groupId>org.eclipse.che.lib</groupId>
             <artifactId>che-swagger-war</artifactId>
             <type>war</type>
         </dependency>
