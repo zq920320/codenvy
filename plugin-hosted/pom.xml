@@ -53,7 +53,7 @@
                 <plugin>
                     <groupId>org.eclipse.che.core</groupId>
                     <artifactId>che-core-api-dto-maven-plugin</artifactId>
-                    <version>${che.core.version}</version>
+                    <version>${che.version}</version>
                 </plugin>
             </plugins>
         </pluginManagement>
