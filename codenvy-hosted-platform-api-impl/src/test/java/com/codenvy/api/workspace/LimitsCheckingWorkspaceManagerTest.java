@@ -42,7 +42,8 @@ import static org.mockito.Mockito.verify;
 public class LimitsCheckingWorkspaceManagerTest {
 
     @Test(expectedExceptions = BadRequestException.class,
-          expectedExceptionsMessageRegExp = "The limit of the user's workspaces which is '2' is exceeded")
+          expectedExceptionsMessageRegExp = "The maximum workspaces allowed per user is set to '2' and you are currently at that limit. " +
+                                            "This value is set by your admin with the 'limits.user.workspaces.count' property")
     public void shouldNotBeAbleToCreateNewWorkspaceIfLimitIsExceeded() throws Exception {
         final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2, // <- workspaces max count
                                                                                               "2gb",
@@ -76,9 +77,9 @@ public class LimitsCheckingWorkspaceManagerTest {
     }
 
     @Test(expectedExceptions = BadRequestException.class,
-          expectedExceptionsMessageRegExp = "Could not start the workspace '.*', " +
-                                            "the maximum available RAM '2048mb' was exceeded, " +
-                                            "currently used RAM is '2048mb', wanted to allocated additional '1024mb'")
+          expectedExceptionsMessageRegExp = "This workspace cannot be started as it would exceed the maximum available RAM allocated to you." +
+                                            " Users are each currently allocated '2048mb' RAM across their active workspaces. " +
+                                            "This value is set by your admin with the 'limits.user.workspaces.ram' property")
     public void shouldNotBeAbleToStartNewWorkspaceIfRamLimitIsExceeded() throws Exception {
         final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
                                                                                               "2gb", // <- workspaces ram limit

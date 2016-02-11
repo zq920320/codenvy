@@ -172,12 +172,11 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                                                       .sum();
             final long allocating = sumRam(envOptional.get().getMachineConfigs());
             if (currentlyUsedRamMB + allocating > ramPerUser) {
-                throw new BadRequestException(format("Could not start the workspace '%s', the maximum available RAM '%dmb' was exceeded, "
-                                                     + "currently used RAM is '%dmb', wanted to allocated additional '%dmb'",
-                                                     config.getName(),
-                                                     ramPerUser,
-                                                     currentlyUsedRamMB,
-                                                     allocating));
+                throw new BadRequestException(format("This workspace cannot be started as it would exceed the maximum available RAM " +
+                                                     "allocated to you. Users are each currently allocated '%dmb' RAM across their " +
+                                                     "active workspaces. This value is set by your admin with the " +
+                                                     "'limits.user.workspaces.ram' property",
+                                                     ramPerUser));
             }
             return callback.call();
         } finally {
@@ -205,7 +204,10 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
         try {
             final List<UsersWorkspaceImpl> workspaces = getWorkspaces(user);
             if (workspaces.size() >= workspacesPerUser) {
-                throw new BadRequestException(format("The limit of the user's workspaces which is '%d' is exceeded", workspacesPerUser));
+                throw new BadRequestException(format("The maximum workspaces allowed per user is set to '%d' and " +
+                                                     "you are currently at that limit. This value is set by your admin with the " +
+                                                     "'limits.user.workspaces.count' property",
+                                                     workspacesPerUser));
             }
             return callback.call();
         } finally {
