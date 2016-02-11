@@ -37,27 +37,27 @@
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-account</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-builder</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-core</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-runner</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-schedule</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>

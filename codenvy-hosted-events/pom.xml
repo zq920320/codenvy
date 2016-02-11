@@ -73,16 +73,6 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-model</artifactId>
         </dependency>
-        <!--
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-factory</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-api-runner</artifactId>
-        </dependency>
-        -->
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-user</artifactId>
@@ -136,7 +126,6 @@
             <artifactId>hamcrest-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Mock testing -->
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-core</artifactId>
@@ -147,7 +136,6 @@
             <artifactId>mockitong</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>

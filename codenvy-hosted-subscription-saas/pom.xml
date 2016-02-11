@@ -70,32 +70,32 @@
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-account</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-core</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-dto</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-workspace</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-inject</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-schedule</artifactId>
-            <version>${che.core.version}</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mongodb</groupId>
@@ -205,7 +205,7 @@
             <plugin>
                 <groupId>org.eclipse.che.core</groupId>
                 <artifactId>che-core-api-dto-maven-plugin</artifactId>
-                <version>${che.core.version}</version>
+                <version>${che.version}</version>
                 <executions>
                     <execution>
                         <phase>process-sources</phase>
