@@ -51,6 +51,7 @@ public class LimitsCheckingWorkspaceConfigValidator extends DefaultWorkspaceConf
         for (Environment environment : config.getEnvironments()) {
             final long workspaceRam = environment.getMachineConfigs()
                                                  .stream()
+                                                 .filter(machineCfg -> machineCfg.getLimits() != null)
                                                  .mapToInt(machineCfg -> machineCfg.getLimits().getRam())
                                                  .sum();
             if (workspaceRam > maxRamPerWorkspaceEnv) {
