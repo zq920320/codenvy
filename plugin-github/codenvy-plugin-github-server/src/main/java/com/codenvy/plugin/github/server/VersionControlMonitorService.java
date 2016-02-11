@@ -361,7 +361,7 @@ public class VersionControlMonitorService extends Service {
                                                                  .filter(matchingProjectPredicate)
                                                                  .collect(toList());
 
-        if (matchingProjects.size() == 0) {
+        if (matchingProjects.isEmpty()) {
             throw new ServerException(
                     "Factory " + factory.getId() + " contains no project for given repository and branch.");
         } else if (matchingProjects.size() > 1) {
