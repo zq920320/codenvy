@@ -60,7 +60,6 @@
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-env</artifactId>
         </dependency>
-        <!-- Logger -->
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
@@ -85,7 +84,6 @@
             <artifactId>everrest-core</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Mock testing -->
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-test</artifactId>
@@ -101,7 +99,6 @@
             <artifactId>mockitong</artifactId>
             <scope>test</scope>
         </dependency>
-        <!-- Test dependencies -->
         <dependency>
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
