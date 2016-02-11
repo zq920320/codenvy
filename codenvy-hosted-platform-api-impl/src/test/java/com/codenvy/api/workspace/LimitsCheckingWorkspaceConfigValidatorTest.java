@@ -31,9 +31,8 @@ import static com.codenvy.api.workspace.TestObjects.createConfig;
 public class LimitsCheckingWorkspaceConfigValidatorTest {
 
     @Test(expectedExceptions = BadRequestException.class,
-          expectedExceptionsMessageRegExp = "The environment '.*' of the workspace configuration " +
-                                            "'.*' exceeds maximum available RAM per workspace. " +
-                                            "The maximum available value is '2048mb' but the received value is '3072mb'.")
+          expectedExceptionsMessageRegExp = "The maximum RAM per workspace is set to '2048mb' and you requested '3072mb'. " +
+                                            "This value is set by your admin with the 'limits.workspace.env.ram' property")
     public void shouldNotBeAbleToCreateWorkspaceWhichExceedsRamLimit() throws BadRequestException {
         final WorkspaceConfig config = createConfig("3gb");
 
@@ -41,9 +40,8 @@ public class LimitsCheckingWorkspaceConfigValidatorTest {
     }
 
     @Test(expectedExceptions = BadRequestException.class,
-          expectedExceptionsMessageRegExp = "The environment '.*' of the workspace configuration '.*' " +
-                                            "exceeds maximum available RAM per workspace. " +
-                                            "The maximum available value is '2048mb' but the received value is '2304mb'.")
+          expectedExceptionsMessageRegExp = "The maximum RAM per workspace is set to '2048mb' and you requested '2304mb'. " +
+                                            "This value is set by your admin with the 'limits.workspace.env.ram' property")
     public void shouldNotBeAbleToCreateWorkspaceWithMultipleMachinesWhichExceedsRamLimit() throws BadRequestException {
         final WorkspaceConfig config = createConfig("1gb", "1gb", "256mb");
 

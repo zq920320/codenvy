@@ -55,11 +55,8 @@ public class LimitsCheckingWorkspaceConfigValidator extends DefaultWorkspaceConf
                                                  .mapToInt(machineCfg -> machineCfg.getLimits().getRam())
                                                  .sum();
             if (workspaceRam > maxRamPerWorkspaceEnv) {
-                throw new BadRequestException(format("The environment '%s' of the workspace configuration '%s' "
-                                                     + "exceeds maximum available RAM per workspace. The maximum available value is '%dmb' "
-                                                     + "but the received value is '%dmb'.",
-                                                     environment.getName(),
-                                                     config.getName(),
+                throw new BadRequestException(format("The maximum RAM per workspace is set to '%dmb' and you requested '%dmb'. " +
+                                                     "This value is set by your admin with the 'limits.workspace.env.ram' property",
                                                      maxRamPerWorkspaceEnv,
                                                      workspaceRam));
             }
