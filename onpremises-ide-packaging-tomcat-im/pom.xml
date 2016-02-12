@@ -36,13 +36,13 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.lib</groupId>
-            <artifactId>che-tomcat8-slf4j-logback</artifactId>
-            <type>zip</type>
+            <artifactId>che-swagger-war</artifactId>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.lib</groupId>
-            <artifactId>che-swagger-war</artifactId>
-            <type>war</type>
+            <artifactId>che-tomcat8-slf4j-logback</artifactId>
+            <type>zip</type>
         </dependency>
     </dependencies>
     <profiles>
@@ -67,7 +67,7 @@
                                     <outputDirectory>${project.build.directory}/packager-conf/war/im-api-docs-ui</outputDirectory>
                                     <artifactItems>
                                         <artifactItem>
-                                            <groupId>org.eclipse.che.swagger</groupId>
+                                            <groupId>org.eclipse.che.lib</groupId>
                                             <artifactId>che-swagger-war</artifactId>
                                             <type>war</type>
                                         </artifactItem>

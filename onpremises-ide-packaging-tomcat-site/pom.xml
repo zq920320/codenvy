@@ -56,13 +56,13 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.lib</groupId>
-            <artifactId>che-tomcat8-slf4j-logback</artifactId>
-            <type>zip</type>
+            <artifactId>che-swagger-war</artifactId>
+            <type>war</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.lib</groupId>
-            <artifactId>che-swagger-war</artifactId>
-            <type>war</type>
+            <artifactId>che-tomcat8-slf4j-logback</artifactId>
+            <type>zip</type>
         </dependency>
     </dependencies>
     <build>
