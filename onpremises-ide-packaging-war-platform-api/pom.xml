@@ -52,10 +52,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
-            <artifactId>codenvy-hosted-api-creditcard</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-events</artifactId>
         </dependency>
         <dependency>
