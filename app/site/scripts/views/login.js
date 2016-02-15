@@ -22,7 +22,7 @@
         var action,
         errorContainer,
 		oauthProviderButtons;
-        oauthProviderButtons = ["google", "github"]; // the list of oauth provider buttons
+        oauthProviderButtons = ["google", "github","microsoft"]; // the list of oauth provider buttons
         var LoginForm = Backbone.View.extend({
             loginTemplate : Handlebars.compile(loginTemplate),
             createTemplate : Handlebars.compile(createTemplate),

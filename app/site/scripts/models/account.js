@@ -85,6 +85,9 @@
                         _gaq.push(['_trackEvent', 'Regisration', 'GitHub registration', page]);
                         scope = "scope=user,repo,write:public_key";
                         break;
+                    case "microsoft":
+                        scope = "scope=vso.code_manage vso.code_status";
+                        break;
                 }
                 oauthUrl = oauthUrl + scope + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
