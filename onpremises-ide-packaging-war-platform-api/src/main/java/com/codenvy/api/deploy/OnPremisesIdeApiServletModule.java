@@ -107,6 +107,8 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/machine",
                "/recipe",
                "/recipe/*",
+               "/stack",
+               "/stack/*",
                "/command",
                "/command/*",
                "/subscription/*",
