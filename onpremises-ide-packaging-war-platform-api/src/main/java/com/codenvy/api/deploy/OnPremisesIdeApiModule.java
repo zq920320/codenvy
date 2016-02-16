@@ -152,6 +152,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         */
         install(new org.eclipse.che.api.machine.server.MachineModule());
 
+        install(new org.eclipse.che.swagger.deploy.DocsModule());
+
         // Copied from IDE3 api war >
 
         //Temporary FS change
