@@ -27,10 +27,6 @@
     <name>Codenvy Plugin :: Hosted :: Help</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-hosted-client-gwt-subscription</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>

@@ -14,8 +14,6 @@
  */
 package com.codenvy.ide.support.help.client;
 
-import com.codenvy.api.subscription.gwt.client.SubscriptionServiceClient;
-import com.codenvy.api.subscription.shared.dto.SubscriptionDescriptor;
 import com.codenvy.ide.support.help.client.action.CreateSupportTicketAction;
 import com.codenvy.ide.support.help.client.action.RedirectToEngineerChatChannelAction;
 import com.google.gwt.core.client.Callback;
@@ -27,11 +25,8 @@ import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.loging.Log;
-
-import java.util.List;
 
 
 /**
@@ -42,7 +37,6 @@ import java.util.List;
 @Singleton
 @Extension(title = "SupportHelp", version = "1.0.0")
 public class HelpExtension {
-    private final SubscriptionServiceClient           subscriptionServiceClient;
     private final DtoUnmarshallerFactory              dtoUnmarshallerFactory;
     private final HelpResources                       resources;
     private final ActionManager                       actionManager;
@@ -53,15 +47,12 @@ public class HelpExtension {
 
     /** Create extension. */
     @Inject
-    public HelpExtension(SubscriptionServiceClient subscriptionServiceClient,
-                         ActionManager actionManager,
+    public HelpExtension(ActionManager actionManager,
                          RedirectToEngineerChatChannelAction redirectToEngineerChatChannelAction,
                          CreateSupportTicketAction createSupportTicketAction,
                          HelpLocalizationConstant localizationConstant,
                          DtoUnmarshallerFactory dtoUnmarshallerFactory,
                          HelpResources resources) {
-        this.subscriptionServiceClient = subscriptionServiceClient;
-
         this.resources = resources;
         this.actionManager = actionManager;
         this.createSupportTicketAction = createSupportTicketAction;
