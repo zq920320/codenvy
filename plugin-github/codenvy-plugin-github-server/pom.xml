@@ -1,9 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
 
-    CODENVY CONFIDENTIAL
-    __________________
-
      [2012] - [2016] Codenvy, S.A.
      All Rights Reserved.
 
@@ -23,7 +20,7 @@
     <parent>
         <artifactId>codenvy-plugin-github-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-RC4-SNAPSHOT</version>
+        <version>4.0.0-RC5-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>codenvy-plugin-github-server</artifactId>
@@ -185,7 +182,7 @@
             <plugin>
                 <groupId>org.eclipse.che.core</groupId>
                 <artifactId>che-core-api-dto-maven-plugin</artifactId>
-                <version>${che.core.version}</version>
+                <version>${project.version}</version>
                 <executions>
                     <execution>
                         <id>generate-server-dto</id>
