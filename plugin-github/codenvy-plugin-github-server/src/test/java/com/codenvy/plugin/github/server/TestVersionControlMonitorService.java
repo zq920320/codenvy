@@ -63,8 +63,8 @@ public class TestVersionControlMonitorService {
                 fakeFactory = DtoFactory.getInstance().createDtoFromJson(new String(Files.readAllBytes(factoryResourcePath)),
                                                                          Factory.class);
         FactoryConnection mockFactoryConnection = mock(FactoryConnection.class);
-        when(mockFactoryConnection.getFactory("fakeFactoryId", fakeToken)).thenReturn(fakeFactory);
-        when(mockFactoryConnection.updateFactory(fakeFactory, fakeToken)).thenReturn(fakeFactory);
+        when(mockFactoryConnection.getFactory("fakeFactoryId")).thenReturn(fakeFactory);
+        when(mockFactoryConnection.updateFactory(fakeFactory)).thenReturn(fakeFactory);
 
         // Prepare VersionControlMonitorService
         fakeVersionControlMonitorService =

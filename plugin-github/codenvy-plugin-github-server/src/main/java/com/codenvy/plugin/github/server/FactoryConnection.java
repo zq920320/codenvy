@@ -59,20 +59,15 @@ public class FactoryConnection {
      *
      * @param factoryId
      *         the id of the factory
-     * @param userToken
-     *         the authentication token to use against the Codenvy API
      * @return the expected factory or null if an error occurred during the call to 'getFactory'
      * @throws ServerException
      */
-    public Factory getFactory(String factoryId, Token userToken) throws ServerException {
+    public Factory getFactory(String factoryId) throws ServerException {
         String url = fromUri(baseUrl).path(FactoryService.class).path(FactoryService.class, "getFactory")
                                      .build(factoryId).toString();
         Factory factory;
         HttpJsonRequest httpJsonRequest = httpJsonRequestFactory.fromUrl(url).useGetMethod();
         try {
-            if (userToken != null) {
-                httpJsonRequest.addQueryParam("token", userToken.getValue());
-            }
             HttpJsonResponse response = httpJsonRequest.request();
             factory = response.asDto(Factory.class);
 
@@ -88,12 +83,10 @@ public class FactoryConnection {
      *
      * @param factory
      *         the factory to update
-     * @param userToken
-     *         the authentication token to use against the Codenvy API
      * @return the updated factory or null if an error occurred during the call to 'updateFactory'
      * @throws ServerException
      */
-    public Factory updateFactory(Factory factory, Token userToken) throws ServerException {
+    public Factory updateFactory(Factory factory) throws ServerException {
         final String factoryId = factory.getId();
         final String url = fromUri(baseUrl).path(FactoryService.class).path(FactoryService.class, "updateFactory")
                                            .build(factoryId).toString();
@@ -101,9 +94,6 @@ public class FactoryConnection {
         Factory newFactory;
         HttpJsonRequest httpJsonRequest = httpJsonRequestFactory.fromUrl(url).usePutMethod().setBody(factory);
         try {
-            if (userToken != null) {
-                httpJsonRequest.addQueryParam("token", userToken.getValue());
-            }
             HttpJsonResponse response = httpJsonRequest.request();
             newFactory = response.asDto(Factory.class);
 

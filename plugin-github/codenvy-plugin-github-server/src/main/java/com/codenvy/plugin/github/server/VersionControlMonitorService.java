@@ -34,7 +34,9 @@ import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
+import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.Pair;
+import org.eclipse.che.commons.user.User;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -157,9 +159,8 @@ public class VersionControlMonitorService extends Service {
         LOG.debug("contribution.repository.html_url: " + contribution.getRepository().getHtmlUrl());
         LOG.debug("contribution.after: " + contribution.getAfter());
 
-        // Authenticate on Codenvy
-        final Pair<String, String> credentials = getCredentials();
-        final Token token = authConnection.authenticateUser(credentials.first, credentials.second);
+        // Set current Codenvy user
+        EnvironmentContext.getCurrent().setUser(new TokenUser());
 
         // Get contribution data
         final String contribRepositoryHtmlUrl = contribution.getRepository().getHtmlUrl();
@@ -170,7 +171,7 @@ public class VersionControlMonitorService extends Service {
         // 1) Is configured in a webhook
         // 2) Contains a project for given repository and branch
         final Optional<Factory> factory = Optional.ofNullable(
-                getWebhookConfiguredFactory(contribRepositoryHtmlUrl, contribRepositoryHtmlUrl, contribBranch, token));
+                getWebhookConfiguredFactory(contribRepositoryHtmlUrl, contribRepositoryHtmlUrl, contribBranch));
         if (!factory.isPresent()) {
             return Response.accepted(
                     new GenericEntity<>("No factory found for repository " + contribRepositoryHtmlUrl + " and branch " + contribBranch,
@@ -211,9 +212,8 @@ public class VersionControlMonitorService extends Service {
         LOG.debug("pull_request.base.repository.html_url: " + prEvent.getPullRequest().getBase().getRepo().getHtmlUrl());
         LOG.debug("pull_request.base.ref: " + prEvent.getPullRequest().getBase().getRef());
 
-        // Authenticate on Codenvy
-        final Pair<String, String> credentials = getCredentials();
-        final Token token = authConnection.authenticateUser(credentials.first, credentials.second);
+        // Set current Codenvy user
+        EnvironmentContext.getCurrent().setUser(new TokenUser());
 
         // Check that event indicates a successful merging
         final String action = prEvent.getAction();
@@ -241,7 +241,7 @@ public class VersionControlMonitorService extends Service {
         // 1) Is configured in a webhook
         // 2) Contains a project for given repository and branch
         final Optional<Factory> factory =
-                Optional.ofNullable(getWebhookConfiguredFactory(prBaseRepositoryHtmlUrl, prHeadRepositoryHtmlUrl, prHeadBranch, token));
+                Optional.ofNullable(getWebhookConfiguredFactory(prBaseRepositoryHtmlUrl, prHeadRepositoryHtmlUrl, prHeadBranch));
         if (!factory.isPresent()) {
             return Response.accepted(new GenericEntity<>("No factory found for branch " + prHeadBranch, String.class)).build();
         }
@@ -253,7 +253,7 @@ public class VersionControlMonitorService extends Service {
                                        prHeadCommitId);
 
         // Update factory with new project data
-        final Optional<Factory> persistedFactory = Optional.ofNullable(factoryConnection.updateFactory(updatedfactory, token));
+        final Optional<Factory> persistedFactory = Optional.ofNullable(factoryConnection.updateFactory(updatedfactory));
         if (!persistedFactory.isPresent()) {
             return Response.accepted(
                     new GenericEntity<>(
@@ -278,13 +278,11 @@ public class VersionControlMonitorService extends Service {
      *         the URL of the repository that a project into the factory is configured with
      * @param headBranch
      *         the name of the branch that a project into the factory is configured with
-     * @param token
-     *         the authentication token to use against the Codenvy API
      * @return the factory that is configured in a webhook and contains a project that matches given repo and branch
      * @throws ServerException
      */
-    protected Factory getWebhookConfiguredFactory(String baseRepositoryHtmlUrl, String headRepositoryHtmlUrl, String headBranch,
-                                                  Token token) throws ServerException {
+    protected Factory getWebhookConfiguredFactory(String baseRepositoryHtmlUrl, String headRepositoryHtmlUrl, String headBranch)
+            throws ServerException {
 
         // Get webhook configured for given repository
         final Optional<GithubWebhook> webhook = Optional.ofNullable(getWebhook(baseRepositoryHtmlUrl));
@@ -299,7 +297,7 @@ public class VersionControlMonitorService extends Service {
         // Get factory that contains a project for given repository and branch
         Factory factory = null;
         for (String factoryId : factoryIDs) {
-            Optional<Factory> obtainedFactory = Optional.ofNullable(factoryConnection.getFactory(factoryId, token));
+            Optional<Factory> obtainedFactory = Optional.ofNullable(factoryConnection.getFactory(factoryId));
             if (obtainedFactory.isPresent()) {
                 final Factory f = obtainedFactory.get();
                 final List<ProjectConfigDto> projects = f.getWorkspace().getProjects()
@@ -541,5 +539,40 @@ public class VersionControlMonitorService extends Service {
             }
         }
         return null;
+    }
+
+    private class TokenUser implements User {
+
+        private final Token token;
+
+        TokenUser() throws ServerException {
+            final Pair<String, String> credentials = getCredentials();
+            token = authConnection.authenticateUser(credentials.first, credentials.second);
+        }
+
+        @Override
+        public String getName() {
+            return "token-user";
+        }
+
+        @Override
+        public boolean isMemberOf(String role) {
+            return false;
+        }
+
+        @Override
+        public String getToken() {
+            return token.getValue();
+        }
+
+        @Override
+        public String getId() {
+            return "0000-00-0000";
+        }
+
+        @Override
+        public boolean isTemporary() {
+            return false;
+        }
     }
 }
