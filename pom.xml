@@ -36,7 +36,6 @@
         <module>plugin-contribution</module>
         <module>plugin-hosted</module>
         <module>plugin-github</module>
-        <module>plugin-jira</module>
     </modules>
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
