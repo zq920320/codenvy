@@ -330,6 +330,8 @@
                                 <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates">
                                     <fileset dir="${project.build.directory}/unzip/odyssey/site/email-templates" />
                                 </copy>
+                                <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates"
+                                      file="${project.build.directory}/unzip/odyssey/site/images/mail/header.png"/>
                             </tasks>
                         </configuration>
                     </execution>
