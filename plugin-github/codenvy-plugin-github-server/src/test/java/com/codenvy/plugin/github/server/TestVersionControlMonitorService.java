@@ -74,14 +74,14 @@ public class TestVersionControlMonitorService {
     @Test
     public void testGithubWebhookPushEventNoConnector() throws Exception {
         HttpServletRequest mockRequest = prepareRequest("push");
-        Response response = fakeVersionControlMonitorService.githubWebhook(mockRequest);
+        Response response = fakeVersionControlMonitorService.handleGithubWebhookEvent(mockRequest);
         Assert.assertTrue(response.getStatus() == OK.getStatusCode());
     }
 
     @Test
     public void testGithubWebhookPullRequestEventNoConnector() throws Exception {
         HttpServletRequest mockRequest = prepareRequest("pull_request");
-        Response response = fakeVersionControlMonitorService.githubWebhook(mockRequest);
+        Response response = fakeVersionControlMonitorService.handleGithubWebhookEvent(mockRequest);
         Assert.assertTrue(response.getStatus() == OK.getStatusCode());
     }
 

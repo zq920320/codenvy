@@ -104,7 +104,7 @@ public class VersionControlMonitorService extends Service {
     @POST
     @Path("/github-webhook")
     @Consumes(APPLICATION_JSON)
-    public Response githubWebhook(@ApiParam(value = "New contribution", required = true)
+    public Response handleGithubWebhookEvent(@ApiParam(value = "New contribution", required = true)
                                   @Context HttpServletRequest request)
             throws ServerException {
 
