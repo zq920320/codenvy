@@ -111,16 +111,4 @@ public interface PullRequest {
     void setMerged(boolean merged);
 
     PullRequest withMerged(boolean merged);
-
-    /**
-     * Tells which user merged the pull request (if it was).
-     *
-     * @return the user
-     */
-    @JsonFieldName(MERGED_BY_FIELD)
-    User getMergedBy();
-
-    void setMergedBy(User user);
-
-    PullRequest withMergedBy(User user);
 }

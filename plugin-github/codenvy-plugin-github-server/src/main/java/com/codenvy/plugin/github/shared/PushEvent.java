@@ -98,9 +98,9 @@ public interface PushEvent {
     PushEvent withRepository(final Repository repository);
 
 
-    User getPusher();
+    Pusher getPusher();
 
-    void setPusher(final User pusher);
+    void setPusher(final Pusher pusher);
 
-    PushEvent withPusher(final User pusher);
+    PushEvent withPusher(final Pusher pusher);
 }

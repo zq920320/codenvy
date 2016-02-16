@@ -53,16 +53,16 @@ public interface Commit {
     Commit withUrl(final String url);
 
 
-    User getAuthor();
+    Author getAuthor();
 
-    void setAuthor(final User author);
+    void setAuthor(final Author author);
 
-    Commit withAuthor(final User author);
+    Commit withAuthor(final Author author);
 
 
-    User getCommitter();
+    Committer getCommitter();
 
-    void setCommitter(final User committer);
+    void setCommitter(final Committer committer);
 
-    Commit withCommitter(final User committer);
+    Commit withCommitter(final Committer committer);
 }

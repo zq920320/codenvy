@@ -17,24 +17,27 @@ package com.codenvy.plugin.github.shared;
 import org.eclipse.che.dto.shared.DTO;
 
 @DTO
-public interface User {
+public interface Pusher {
+
+    /**
+     * Get pusher's name.
+     *
+     * @return {@link String} name
+     */
     String getName();
 
     void setName(final String name);
 
-    User withName(final String name);
+    Pusher withName(final String name);
 
-
+    /**
+     * Get pusher's email.
+     *
+     * @return {@link String} email
+     */
     String getEmail();
 
     void setEmail(final String email);
 
-    User withEmail(final String email);
-
-
-    String getUsername();
-
-    void setUsername(final String username);
-
-    User withUsername(final String username);
+    Pusher withEmail(final String email);
 }
