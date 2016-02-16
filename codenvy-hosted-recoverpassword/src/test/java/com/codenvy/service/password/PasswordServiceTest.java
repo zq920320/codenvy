@@ -32,9 +32,11 @@
  */
 package com.codenvy.service.password;
 
+import com.codenvy.mail.MailSenderClient;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
 import com.jayway.restassured.response.Response;
 
-import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
@@ -54,20 +56,12 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.mail.MessagingException;
-import javax.ws.rs.core.MediaType;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
-import static org.eclipse.che.commons.lang.IoUtil.getResource;
-import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyObject;
-import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Matchers.isNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
@@ -240,17 +234,8 @@ public class PasswordServiceTest {
         Response response = given().pathParam("username", USERNAME).when().post(SERVICE_PATH + "/recover/{username}");
 
         assertEquals(response.statusCode(), 204);
-        Map<String, String> templateProperties = new HashMap<>();
-        templateProperties.put("com.codenvy.masterhost.url", "http://localhost:" + ctx.getAttribute(EverrestJetty.JETTY_PORT));
-        templateProperties.put("id", UUID);
-        templateProperties.put("validation.token.age.message", "1 hour");
-        verify(mailService).sendMail(eq("Codenvy <noreply@codenvy.com>"),
-                                     eq(USERNAME),
-                                     (String)isNull(),
-                                     eq("Codenvy Password Recovery"),
-                                     eq(MediaType.TEXT_HTML),
-                                     eq(readAndCloseQuietly(getResource("/email-templates/password_recovery.html"))),
-                                     eq(templateProperties));
+
+        verify(mailService).sendMail(any(EmailBeanDto.class));
     }
 
     @Test
@@ -267,13 +252,7 @@ public class PasswordServiceTest {
 
     @Test
     public void shouldRespond500IfProblemOnEmailSendingOccurs() throws Exception {
-        doThrow(new MessagingException()).when(mailService).sendMail(anyString(),
-                                                                     anyString(),
-                                                                     anyString(),
-                                                                     anyString(),
-                                                                     anyString(),
-                                                                     anyString(),
-                                                                     (Map)anyObject());
+        doThrow(new ApiException("error")).when(mailService).sendMail(any(EmailBeanDto.class));
 
         Response response = given().pathParam("username", USERNAME).when().post(SERVICE_PATH + "/recover/{username}");
 

@@ -23,13 +23,15 @@ import com.codenvy.api.dao.authentication.TokenGenerator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
+import com.codenvy.mail.MailSenderClient;
+import com.codenvy.mail.shared.dto.AttachmentDto;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
+import com.google.common.io.Files;
 
-import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.commons.lang.Deserializer;
 import org.eclipse.che.commons.user.User;
 
-import org.codenvy.mail.MailSenderClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,10 +47,17 @@ import javax.ws.rs.core.Cookie;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
+import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
+import static org.eclipse.che.commons.lang.IoUtil.getResource;
+import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 
 /**
@@ -64,6 +73,8 @@ public class BearerTokenAuthenticationService {
     private static final Logger LOG           = LoggerFactory.getLogger(BearerTokenAuthenticationService.class);
     // TODO made this configurable
     private static final String MAIL_TEMPLATE = "email-templates/verify_email_address.html";
+    private static final String LOGO          = "/email-templates/header.png";
+    private static final String LOGO_CID      = "codenvyLogo";
     @Inject
     protected TicketManager                    ticketManager;
     @Inject
@@ -166,7 +177,7 @@ public class BearerTokenAuthenticationService {
     @Path("validate")
     @Consumes(MediaType.APPLICATION_JSON)
     public Response validate(ValidationData validationData, @Context UriInfo uriInfo)
-            throws ConflictException, MessagingException, ServerException, IOException {
+            throws ApiException, MessagingException, IOException {
 
         try {
             inputDataValidator.validateUserMail(validationData.getEmail());
@@ -176,15 +187,27 @@ public class BearerTokenAuthenticationService {
         }
 
         Map<String, String> props = new HashMap<>();
-        props.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
+        props.put("logo.cid", "codenvyLogo");
         props.put("bearertoken", handler.generateBearerToken(validationData.getEmail(), validationData.getUsername(),
                                                              Collections.singletonMap("initiator", "email")));
         props.put("additional.query.params", uriInfo.getRequestUri().getQuery());
 
-        mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", validationData.getEmail(), null,
-                                  "Verify Your Codenvy Account",
-                                  MediaType.TEXT_HTML,
-                                  IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), props);
+        File logo = new File(this.getClass().getResource(LOGO).getPath());
+        AttachmentDto attachmentDto = newDto(AttachmentDto.class)
+                .withContent(Base64.getEncoder().encodeToString(Files.toByteArray(logo)))
+                .withContentId(LOGO_CID)
+                .withFileName("logo.png");
+
+        EmailBeanDto emailBeanDto = newDto(EmailBeanDto.class)
+                .withBody(Deserializer.resolveVariables(readAndCloseQuietly(getResource("/" + MAIL_TEMPLATE)), props))
+                .withFrom("Codenvy <noreply@codenvy.com>")
+                .withTo(validationData.getEmail())
+                .withReplyTo(null)
+                .withSubject("Verify Your Codenvy Account")
+                .withMimeType(TEXT_HTML)
+                .withAttachments(Collections.singletonList(attachmentDto));
+
+        mailSenderClient.sendMail(emailBeanDto);
 
         LOG.info("EVENT#signup-validation-email-send# EMAIL#{}#", validationData.getEmail());
         LOG.info("Email validation message send to {}", validationData.getEmail());

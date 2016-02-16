@@ -12,8 +12,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package org.codenvy.mail;
+package com.codenvy.mail;
 
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.commons.lang.IoUtil;
 
 import org.slf4j.Logger;
@@ -66,7 +67,7 @@ public class MailSenderConsoleClient {
 
             sendMails(server, from, recipientsFileName, replyTo, subject, mimeType, template);
 
-        } catch (IOException | MessagingException | InterruptedException e) {
+        } catch (ApiException | IOException | MessagingException | InterruptedException e) {
             LOG.error("Mails sending failed - {}", e.getLocalizedMessage(), e);
             throw new RuntimeException(e.getLocalizedMessage(), e);
         } finally {
@@ -83,7 +84,7 @@ public class MailSenderConsoleClient {
 
     private static void sendMails(String server, String from, String recipientsFileName, String replyTo, String subject,
                                   String mimeType,
-                                  String template) throws MessagingException, IOException, InterruptedException {
+                                  String template) throws MessagingException, IOException, InterruptedException, ApiException {
         MailSenderClient mailService = new MailSenderClient(server);
 
         Map<String, String> templateVariables = new HashMap<String, String>();

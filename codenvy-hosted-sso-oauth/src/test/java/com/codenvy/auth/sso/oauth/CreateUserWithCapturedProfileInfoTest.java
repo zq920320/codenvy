@@ -15,19 +15,20 @@
 package com.codenvy.auth.sso.oauth;
 
 
+import com.codenvy.auth.sso.server.InputDataValidator;
+import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
+import com.codenvy.mail.MailSenderClient;
+
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import com.codenvy.auth.sso.server.InputDataValidator;
-import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 
-import org.codenvy.mail.MailSenderClient;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -50,25 +51,25 @@ public class CreateUserWithCapturedProfileInfoTest {
     private static final OAuthToken TOKEN    =
             DtoFactory.getInstance().createDto(OAuthToken.class).withToken("1231243");
     @Mock
-    private ServletContext                         servletContext;
+    private ServletContext                             servletContext;
     @Mock
-    private OAuthAuthenticator                     authenticator;
+    private OAuthAuthenticator                         authenticator;
     @Mock
-    private UserDao                                userDao;
+    private UserDao                                    userDao;
     @Mock
-    private ServletConfig                          servletConfig;
+    private ServletConfig                              servletConfig;
     @Mock
-    private AccountDao                             accountDao;
+    private AccountDao                                 accountDao;
     @Mock
-    private MailSenderClient                       mailSenderClient;
+    private MailSenderClient                           mailSenderClient;
     @Mock
-    private OAuthAuthenticatorProvider             authenticatorProvider;
+    private OAuthAuthenticatorProvider                 authenticatorProvider;
     @Mock
-    private BearerTokenAuthenticationHandler       handler;
+    private BearerTokenAuthenticationHandler           handler;
     @Mock
     private org.eclipse.che.security.oauth.shared.User googleUser;
     @Mock
-    private InputDataValidator                     inputDataValidator;
+    private InputDataValidator                         inputDataValidator;
 
     @InjectMocks
     private OAuthLoginServlet oAuthLoginServlet;

@@ -14,25 +14,32 @@
  */
 package com.codenvy.user.interceptor;
 
+import com.codenvy.mail.MailSenderClient;
+import com.codenvy.mail.shared.dto.AttachmentDto;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
+import com.google.common.io.Files;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.user.server.UserService;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.commons.env.EnvironmentContext;
+import org.eclipse.che.commons.lang.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.ws.rs.core.MediaType;
-import java.net.URL;
+import java.io.File;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Intercepts {@link UserService} methods.
@@ -48,13 +55,11 @@ public class CreateUserInterceptor implements MethodInterceptor {
 
     private static final String EMAIL_TEMPLATE_USER_CREATED_WITH_PASSWORD    = "email-templates/user_created_with_password.html";
     private static final String EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD = "email-templates/user_created_without_password.html";
+    private static final String LOGO                                         = "/email-templates/header.png";
+    private static final String LOGO_CID                                     = "codenvyLogo";
 
     @Inject
     private MailSenderClient mailSenderClient;
-
-    @Inject
-    @Named("api.endpoint")
-    private String apiEndpoint;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
@@ -64,22 +69,31 @@ public class CreateUserInterceptor implements MethodInterceptor {
             User user = (User)invocation.getArguments()[0];
 
             String userEmail = user.getEmail();
-            URL urlEndpoint = new URL(apiEndpoint);
             String template = isUserCreatedByAdmin() ? EMAIL_TEMPLATE_USER_CREATED_WITH_PASSWORD
                                                      : EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD;
 
             Map<String, String> properties = new HashMap<>();
-            properties.put("com.codenvy.masterhost.url", urlEndpoint.getProtocol() + "://" + urlEndpoint.getHost());
+            properties.put("logo.cid", "codenvyLogo");
             properties.put("username", user.getName());
             properties.put("password", user.getPassword());
 
-            mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>",
-                                      userEmail,
-                                      null,
-                                      "Welcome To Codenvy",
-                                      MediaType.TEXT_HTML,
-                                      readAndCloseQuietly(getResource("/" + template)),
-                                      properties);
+            File logo = new File(this.getClass().getResource(LOGO).getPath());
+
+            AttachmentDto attachmentDto = newDto(AttachmentDto.class)
+                    .withContent(Base64.getEncoder().encodeToString(Files.toByteArray(logo)))
+                    .withContentId(LOGO_CID)
+                    .withFileName("logo.png");
+
+            EmailBeanDto emailBeanDto = newDto(EmailBeanDto.class)
+                    .withBody(Deserializer.resolveVariables(readAndCloseQuietly(getResource("/" + template)), properties))
+                    .withFrom("Codenvy <noreply@codenvy.com>")
+                    .withTo(userEmail)
+                    .withReplyTo(null)
+                    .withSubject("Welcome To Codenvy")
+                    .withMimeType(TEXT_HTML)
+                    .withAttachments(Collections.singletonList(attachmentDto));
+
+            mailSenderClient.sendMail(emailBeanDto);
 
             LOG.info("User created message send to {}", userEmail);
         } catch (Exception e) {

@@ -16,7 +16,9 @@ package com.codenvy.workspace.interceptor;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
+
+import com.codenvy.mail.MailSenderClient;
+
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.shared.dto.MemberDescriptor;
 import org.eclipse.che.api.user.server.dao.MembershipDao;
