@@ -25,8 +25,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.eclipse.che.api.factory.shared.dto.Action;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.factory.shared.dto.Ide;
-import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateEvent;
-import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateHandler;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateEvent;
+import org.eclipse.che.api.machine.gwt.client.events.ExtServerStateHandler;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
@@ -76,9 +76,9 @@ public class AcceptFactoryHandler {
         if ((factory = appContext.getFactory()) == null) {
             return;
         }
-        eventBus.addHandler(WsAgentStateEvent.TYPE, new WsAgentStateHandler() {
+        eventBus.addHandler(ExtServerStateEvent.TYPE, new ExtServerStateHandler() {
             @Override
-            public void onWsAgentStarted(final WsAgentStateEvent event) {
+            public void onExtServerStarted(final ExtServerStateEvent event) {
                 if (isImportingStarted) {
                     return;
                 }
@@ -90,7 +90,7 @@ public class AcceptFactoryHandler {
             }
 
             @Override
-            public void onWsAgentStopped(WsAgentStateEvent event) {
+            public void onExtServerStopped(ExtServerStateEvent event) {
 
             }
         });
