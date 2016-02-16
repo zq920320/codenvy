@@ -14,6 +14,12 @@
  */
 package com.codenvy.service.password;
 
+import com.codenvy.mail.MailSenderClient;
+import com.codenvy.mail.shared.dto.AttachmentDto;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
+import com.google.common.io.Files;
+
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -23,13 +29,12 @@ import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 
-import org.codenvy.mail.MailSenderClient;
+import org.eclipse.che.commons.lang.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
-import javax.mail.MessagingException;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.FormParam;
 import javax.ws.rs.GET;
@@ -39,13 +44,17 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.UriInfo;
+import java.io.File;
 import java.io.IOException;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Services for password features
@@ -57,6 +66,8 @@ public class PasswordService {
 
     private static final Logger LOG           = LoggerFactory.getLogger(PasswordService.class);
     private static final String MAIL_TEMPLATE = "/email-templates/password_recovery.html";
+    private static final String LOGO          = "/email-templates/header.png";
+    private static final String LOGO_CID      =  "codenvyLogo";
 
     private final MailSenderClient mailService;
     private final UserDao          userDao;
@@ -122,20 +133,30 @@ public class PasswordService {
             String uuid = recoveryStorage.generateRecoverToken(mail);
 
             Map<String, String> props = new HashMap<>();
-            props.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
+            props.put("logo.cid", LOGO_CID);
             props.put("id", uuid);
             props.put("validation.token.age.message", String.valueOf(validationMaxAge) + " hour");
 
-            mailService.sendMail(mailSender,
-                                 mail,
-                                 null,
-                                 recoverMailSubject,
-                                 TEXT_HTML,
-                                 readAndCloseQuietly(getResource(MAIL_TEMPLATE)),
-                                 props);
+            File logo = new File(this.getClass().getResource(LOGO).getPath());
+            AttachmentDto attachmentDto = newDto(AttachmentDto.class)
+                    .withContent(Base64.getEncoder().encodeToString(Files.toByteArray(logo)))
+                    .withContentId(LOGO_CID)
+                    .withFileName("logo.png");
+
+            EmailBeanDto emailBeanDto = newDto(EmailBeanDto.class)
+                    .withBody(Deserializer.resolveVariables(readAndCloseQuietly(getResource(MAIL_TEMPLATE)), props))
+                    .withFrom(mailSender)
+                    .withTo(mail)
+                    .withReplyTo(null)
+                    .withSubject(recoverMailSubject)
+                    .withMimeType(TEXT_HTML)
+                    .withAttachments(Collections.singletonList(attachmentDto));
+
+            mailService.sendMail(emailBeanDto);
+
         } catch (NotFoundException e) {
             throw new NotFoundException("User " + mail + " is not registered in the system.");
-        } catch (IOException | MessagingException e) {
+        } catch (ApiException | IOException e) {
             LOG.error("Error during setting user's password", e);
             throw new ServerException("Unable to recover password. Please contact support or try later.");
         }

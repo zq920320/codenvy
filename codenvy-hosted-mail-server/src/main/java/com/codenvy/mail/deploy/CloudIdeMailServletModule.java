@@ -12,26 +12,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package org.codenvy.mail.deploy;
+package com.codenvy.mail.deploy;
 
-import com.google.inject.AbstractModule;
-
-import org.codenvy.mail.MailSender;
 import org.eclipse.che.inject.DynaModule;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import com.google.inject.servlet.ServletModule;
 
+import org.everrest.guice.servlet.GuiceEverrestServlet;
 
 /**
- * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
+ * Servlet module composer for api war.
  */
 @DynaModule
-public class CloudIdeMailModule extends AbstractModule {
-
-    private static final Logger LOG = LoggerFactory.getLogger(CloudIdeMailModule.class);
-
+public class CloudIdeMailServletModule extends ServletModule {
     @Override
-    protected void configure() {
-        bind(MailSender.class);
+    protected void configureServlets() {
+        serve("/*").with(GuiceEverrestServlet.class);
     }
 }

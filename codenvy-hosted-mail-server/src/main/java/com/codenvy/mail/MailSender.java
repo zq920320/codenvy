@@ -12,7 +12,11 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package org.codenvy.mail;
+package com.codenvy.mail;
+
+import com.codenvy.mail.shared.dto.AttachmentDto;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
+import com.google.common.io.Files;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,15 +24,23 @@ import org.slf4j.LoggerFactory;
 import javax.inject.Inject;
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.Multipart;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.List;
 
 /** Provide service of email sending. */
 @Path("/mail")
@@ -54,10 +66,34 @@ public class MailSender {
     @POST
     @Path("send")
     @Consumes(MediaType.APPLICATION_JSON)
-    public Response sendMail(EmailBean emailBean) {
+    public Response sendMail(EmailBeanDto emailBean) {
+        List<File> tempFiles = new ArrayList<>();
         try {
             MimeMessage message = new MimeMessage(sessionHolder.getMailSession());
-            message.setContent(emailBean.getBody(), emailBean.getMimeType());
+            Multipart contentPart = new MimeMultipart();
+
+            MimeBodyPart bodyPart = new MimeBodyPart();
+            bodyPart.setText(emailBean.getBody(), "UTF-8", getSubType(emailBean.getMimeType()));
+            contentPart.addBodyPart(bodyPart);
+
+            if (emailBean.getAttachments() != null) {
+                for (AttachmentDto attachment : emailBean.getAttachments()) {
+                    MimeBodyPart attachmentPart = new MimeBodyPart();
+
+                    byte[] content = Base64.getDecoder().decode(attachment.getContent());
+
+                    String tempDir = System.getProperty("java.io.tmpdir");
+                    File tempFile = new File(tempDir, attachment.getFileName());
+                    tempFiles.add(tempFile);
+                    Files.write(content, tempFile);
+
+                    attachmentPart.attachFile(tempFile);
+                    attachmentPart.setContentID("<" + attachment.getContentId() + ">");
+                    contentPart.addBodyPart(attachmentPart);
+                }
+            }
+
+            message.setContent(contentPart);
             message.setSubject(emailBean.getSubject(), "UTF-8");
             message.setFrom(new InternetAddress(emailBean.getFrom(), true));
             message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(emailBean.getTo()));
@@ -69,11 +105,27 @@ public class MailSender {
 
             Transport.send(message);
             LOG.debug("Mail send");
-        } catch (MessagingException e) {
+        } catch (MessagingException | IOException e) {
             LOG.error(e.getLocalizedMessage());
             throw new WebApplicationException(e);
+        } finally {
+            tempFiles.forEach(File::delete);
         }
 
         return Response.ok().build();
+    }
+
+    /**
+     * Get the specified MIME subtype from given primary MIME type.
+     * <p/>
+     * It is needed for setText method in MimeBodyPar because it works only with text MimeTypes.
+     * setText method in MimeBodyPar already adds predefined "text/" to given subtype.
+     *
+     * @param mimeType
+     *         primary MIME type
+     * @return MIME subtype
+     */
+    private String getSubType(String mimeType) {
+        return mimeType.substring(mimeType.lastIndexOf("/") + 1);
     }
 }

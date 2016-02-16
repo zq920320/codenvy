@@ -15,10 +15,10 @@
 package com.codenvy.workspace.interceptor;
 
 import com.codenvy.workspace.activity.WsActivityEventSender;
+import com.codenvy.mail.MailSenderClient;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.slf4j.Logger;
@@ -91,7 +91,7 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
 //                                                        .findFirst();
 //                    String creatorEmail = userDao.getById(EnvironmentContext.getCurrent().getUser().getId()).getEmail();
 //                    Map<String, String> properties = new HashMap<>();
-//                    properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+//                    properties.put("logo.cid", "codenvyLogo");
 //                    properties.put("workspace", descriptor.getName());
 //                    properties.put("free.gbh", freeGbh);
 //                    if (accountOwner.isPresent()) {

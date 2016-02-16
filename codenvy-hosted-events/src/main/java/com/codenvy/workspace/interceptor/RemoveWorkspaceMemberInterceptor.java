@@ -14,24 +14,36 @@
  */
 package com.codenvy.workspace.interceptor;
 
+import com.codenvy.mail.MailSenderClient;
+import com.codenvy.mail.shared.dto.AttachmentDto;
+import com.codenvy.mail.shared.dto.EmailBeanDto;
+import com.google.common.io.Files;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.codenvy.mail.MailSenderClient;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.account.server.dao.Member;
 import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.commons.lang.IoUtil;
+import org.eclipse.che.commons.lang.Deserializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.File;
+import java.util.Base64;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+
+import static javax.ws.rs.core.MediaType.TEXT_HTML;
+import static org.eclipse.che.commons.lang.IoUtil.getResource;
+import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Intercepts calls to workspace/removeMember() service and do some post actions
@@ -46,6 +58,10 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
 
     private static final String MAIL_TEMPLATE = "email-templates/user_removed_from_workspace.html";
 
+    private static final String LOGO = "/email-templates/header.png";
+
+    private static final String LOGO_CID = "codenvyLogo";
+
     @Inject
     private MailSenderClient mailSenderClient;
 
@@ -57,10 +73,6 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
 
     @Inject
     private WorkspaceManager workspaceManager;
-
-    @Inject
-    @Named("api.endpoint")
-    private String apiEndpoint;
 
     @Inject
     @Named("workspace.email.removed.member.enabled")
@@ -90,18 +102,29 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
                                                                           .contains("account/owner"))
                                                   .findFirst();
         Map<String, String> properties = new HashMap<>();
-        properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
+        properties.put("logo.cid", "codenvyLogo");
         properties.put("workspace", ws.getName());
         properties.put("admin.email", senderEmail);
         if (accountOwner.isPresent()) {
-            properties.put("accountOwner.email", userDao.getById(accountOwner.get()
-                                                                             .getUserId())
-                                                        .getEmail());
+            properties.put("accountOwner.email", userDao.getById(accountOwner.get().getUserId()).getEmail());
         }
-        mailSenderClient.sendMail("Codenvy <noreply@codenvy.com>", recipientEmail, null,
-                                  "Codenvy Workspace Access Removed",
-                                  "text/html; charset=utf-8",
-                                  IoUtil.readAndCloseQuietly(IoUtil.getResource("/" + MAIL_TEMPLATE)), properties);
+
+        File logo = new File(this.getClass().getResource(LOGO).getPath());
+        AttachmentDto attachmentDto = newDto(AttachmentDto.class)
+                .withContent(Base64.getEncoder().encodeToString(Files.toByteArray(logo)))
+                .withContentId(LOGO_CID)
+                .withFileName("logo.png");
+
+        EmailBeanDto emailBeanDto = newDto(EmailBeanDto.class)
+                .withBody(Deserializer.resolveVariables(readAndCloseQuietly(getResource("/" + MAIL_TEMPLATE)), properties))
+                .withFrom("Codenvy <noreply@codenvy.com>")
+                .withTo(recipientEmail)
+                .withReplyTo(null)
+                .withSubject("Codenvy Workspace Access Removed")
+                .withMimeType(TEXT_HTML)
+                .withAttachments(Collections.singletonList(attachmentDto));
+
+        mailSenderClient.sendMail(emailBeanDto);
 
         LOG.info("User added into ws message send to {}", recipientEmail);
         return result;
