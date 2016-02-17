@@ -18,6 +18,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.FluentIterable;
 import com.google.common.collect.Maps;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
@@ -80,6 +81,7 @@ import static java.util.Objects.requireNonNull;
  *
  * @author Eugene Voevodin
  */
+@Singleton
 public class RecipeDaoImpl implements RecipeDao {
 
     private static final FromDBObjectToRecipeFunction FROM_OBJECT_TO_RECIPE_FUNCTION = new FromDBObjectToRecipeFunction();

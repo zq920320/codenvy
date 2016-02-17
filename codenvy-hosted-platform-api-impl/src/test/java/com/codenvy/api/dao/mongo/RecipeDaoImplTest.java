@@ -53,7 +53,7 @@ import static org.testng.Assert.assertNull;
  *
  * @author Eugene Voevodin
  */
-public class RecipeDaoTest extends BaseDaoTest {
+public class RecipeDaoImplTest extends BaseDaoTest {
 
     private static final FromDBObjectToRecipeFunction FROM_OBJECT_TO_RECIPE_FUNCTION = new FromDBObjectToRecipeFunction();
 
