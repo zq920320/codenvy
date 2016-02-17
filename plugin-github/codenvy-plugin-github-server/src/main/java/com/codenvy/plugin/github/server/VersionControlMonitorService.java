@@ -326,11 +326,11 @@ public class VersionControlMonitorService extends Service {
         return (p -> p.getSource() != null
                      && !isNullOrEmpty(p.getSource().getType())
                      && !isNullOrEmpty(p.getSource().getLocation())
-                     && repositoryHtmlUrl.equals(p.getSource().getLocation())
-                     || (repositoryHtmlUrl + ".git").equals(p.getSource().getLocation())
-                        && "master".equals(branch)
-                     || !isNullOrEmpty(p.getSource().getParameters().get("branch"))
-                        && branch.equals(p.getSource().getParameters().get("branch")));
+                     && (repositoryHtmlUrl.equals(p.getSource().getLocation())
+                        || (repositoryHtmlUrl + ".git").equals(p.getSource().getLocation()))
+                     && ("master".equals(branch)
+                        || (!isNullOrEmpty(p.getSource().getParameters().get("branch"))
+                            && branch.equals(p.getSource().getParameters().get("branch")))));
     }
 
     /**
