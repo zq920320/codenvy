@@ -88,7 +88,7 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
-            <artifactId>codenvy-plugin-bitbucket-oauth1</artifactId>
+            <artifactId>codenvy-plugin-bitbucket-oauth2</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
