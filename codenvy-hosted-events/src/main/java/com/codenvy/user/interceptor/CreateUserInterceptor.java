@@ -29,8 +29,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.File;
+import java.net.URL;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,6 +63,10 @@ public class CreateUserInterceptor implements MethodInterceptor {
     @Inject
     private MailSenderClient mailSenderClient;
 
+    @Inject
+    @Named("api.endpoint")
+    private String apiEndpoint;
+
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         invocation.proceed();
@@ -69,6 +75,7 @@ public class CreateUserInterceptor implements MethodInterceptor {
             User user = (User)invocation.getArguments()[0];
 
             String userEmail = user.getEmail();
+            URL urlEndpoint = new URL(apiEndpoint);
             String template = isUserCreatedByAdmin() ? EMAIL_TEMPLATE_USER_CREATED_WITH_PASSWORD
                                                      : EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD;
 
@@ -76,6 +83,7 @@ public class CreateUserInterceptor implements MethodInterceptor {
             properties.put("logo.cid", "codenvyLogo");
             properties.put("username", user.getName());
             properties.put("password", user.getPassword());
+            properties.put("com.codenvy.masterhost.url", urlEndpoint.getProtocol() + "://" + urlEndpoint.getHost());
 
             File logo = new File(this.getClass().getResource(LOGO).getPath());
 

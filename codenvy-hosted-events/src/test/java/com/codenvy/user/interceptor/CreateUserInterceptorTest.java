@@ -26,6 +26,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -46,6 +47,11 @@ public class CreateUserInterceptorTest extends BaseInterceptorTest {
     private CreateUserInterceptor interceptor;
 
     private String recipient = "test@user.com";
+
+    @BeforeMethod
+    public void setup() throws Exception {
+        setInterceptorPrivateFieldValue(interceptor, "apiEndpoint", "http://localhost/api");
+    }
 
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSendEmailIfInvocationThrowsException() throws Throwable {

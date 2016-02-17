@@ -136,6 +136,7 @@ public class PasswordService {
             props.put("logo.cid", LOGO_CID);
             props.put("id", uuid);
             props.put("validation.token.age.message", String.valueOf(validationMaxAge) + " hour");
+            props.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
 
             File logo = new File(this.getClass().getResource(LOGO).getPath());
             AttachmentDto attachmentDto = newDto(AttachmentDto.class)

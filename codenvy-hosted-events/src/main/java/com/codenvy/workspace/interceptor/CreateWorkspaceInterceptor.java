@@ -94,6 +94,7 @@ public class CreateWorkspaceInterceptor implements MethodInterceptor {
 //                    properties.put("logo.cid", "codenvyLogo");
 //                    properties.put("workspace", descriptor.getName());
 //                    properties.put("free.gbh", freeGbh);
+//                    properties.put("com.codenvy.masterhost.url", apiEndpoint.substring(0, apiEndpoint.lastIndexOf("/")));
 //                    if (accountOwner.isPresent()) {
 //                        properties.put("email", userDao.getById(accountOwner.get().getUserId()).getEmail());
 //                    }
