@@ -191,6 +191,7 @@ public class BearerTokenAuthenticationService {
         props.put("bearertoken", handler.generateBearerToken(validationData.getEmail(), validationData.getUsername(),
                                                              Collections.singletonMap("initiator", "email")));
         props.put("additional.query.params", uriInfo.getRequestUri().getQuery());
+        props.put("com.codenvy.masterhost.url", uriInfo.getBaseUriBuilder().replacePath(null).build().toString());
 
         File logo = new File(this.getClass().getResource(LOGO).getPath());
         AttachmentDto attachmentDto = newDto(AttachmentDto.class)
