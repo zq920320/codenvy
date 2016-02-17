@@ -12,19 +12,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package org.eclipse.che.security.oauth1;
+package org.eclipse.che.security.oauth;
 
 
-import org.eclipse.che.security.oauth1.shared.User;
+import org.eclipse.che.security.oauth.shared.User;
 
 /**
- * Represents Bitbucket user.
+ * Represents github user
  *
- * @author Kevin Pollet
+ * @author Michail Kuznyetsov
  */
 public class BitbucketUser implements User {
-    private String username;
+
     private String email;
+    private String name;
 
     @Override
     public final String getId() {
@@ -33,25 +34,8 @@ public class BitbucketUser implements User {
 
     @Override
     public final void setId(String id) {
-        //nothing to do there is no id field in Bitbucket response
-    }
-
-    @Override
-    public String getName() {
-        return username;
-    }
-
-    @Override
-    public void setName(String name) {
-        //nothing to do there is no name field in Bitbucket response
-    }
-
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
+        // JSON response from API contains key 'id' but it has different purpose.
+        // Ignore calls of this method. Email address is used as user identifier.
     }
 
     @Override
@@ -61,15 +45,17 @@ public class BitbucketUser implements User {
 
     @Override
     public void setEmail(String email) {
+        setId(email);
         this.email = email;
     }
 
     @Override
-    public String toString() {
-        return "BitbucketUser{" +
-               "id='" + getId() + '\'' +
-               ", name='" + username + '\'' +
-               ", email='" + email + '\'' +
-               '}';
+    public String getName() {
+        return name;
+    }
+
+    @Override
+    public void setName(String name) {
+        this.name = name;
     }
 }

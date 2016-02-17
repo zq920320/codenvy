@@ -14,7 +14,7 @@
  */
 package org.eclipse.che.ide.ext.bitbucket.server;
 
-import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
+import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.json.JsonHelper;
@@ -62,11 +62,11 @@ public class BitbucketKeyUploader implements SshKeyUploader {
     private static final Pattern BITBUCKET_URL_PATTERN = Pattern.compile(".*bitbucket\\.org.*");
     private static final String  OAUTH_PROVIDER_NAME   = "bitbucket";
 
-    private final OAuthAuthorizationHeaderProvider authorizationHeaderProvider;
+    private final OAuthTokenProvider tokenProvider;
 
     @Inject
-    public BitbucketKeyUploader(@NotNull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
-        this.authorizationHeaderProvider = authorizationHeaderProvider;
+    public BitbucketKeyUploader(@NotNull final OAuthTokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
     }
 
     @Override
@@ -103,8 +103,7 @@ public class BitbucketKeyUploader implements SshKeyUploader {
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod(POST);
             conn.setRequestProperty(ACCEPT, APPLICATION_JSON);
-            conn.setRequestProperty(AUTHORIZATION, authorizationHeaderProvider
-                    .getAuthorizationHeader(OAUTH_PROVIDER_NAME, getUserId(), POST, sshKeysUrl, Collections.<String, String>emptyMap()));
+            conn.setRequestProperty(AUTHORIZATION, "Bearer " + tokenProvider.getToken(OAUTH_PROVIDER_NAME, getUserId()).getToken());
 
             conn.setRequestProperty(CONTENT_TYPE, APPLICATION_JSON);
             conn.setRequestProperty(CONTENT_LENGTH, String.valueOf(postBody.length()));
@@ -142,9 +141,7 @@ public class BitbucketKeyUploader implements SshKeyUploader {
             conn.setInstanceFollowRedirects(false);
             conn.setRequestMethod(GET);
             conn.setRequestProperty(ACCEPT, APPLICATION_JSON);
-            conn.setRequestProperty(AUTHORIZATION, authorizationHeaderProvider
-                    .getAuthorizationHeader(OAUTH_PROVIDER_NAME, getUserId(), GET, requestUrl, Collections.<String, String>emptyMap()));
-
+            conn.setRequestProperty(AUTHORIZATION, "Bearer " + tokenProvider.getToken(OAUTH_PROVIDER_NAME, getUserId()).getToken());
             if (conn.getResponseCode() == OK) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                     String line;
