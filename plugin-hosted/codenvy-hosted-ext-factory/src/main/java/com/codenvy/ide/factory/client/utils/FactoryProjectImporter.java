@@ -15,12 +15,14 @@
 package com.codenvy.ide.factory.client.utils;
 
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
+import com.google.common.base.MoreObjects;
 import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.factory.shared.dto.Factory;
+import org.eclipse.che.api.git.shared.GitCheckoutEvent;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
@@ -40,27 +42,37 @@ import org.eclipse.che.ide.api.oauth.OAuth2AuthenticatorRegistry;
 import org.eclipse.che.ide.api.oauth.OAuth2AuthenticatorUrlProvider;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 import org.eclipse.che.ide.api.project.wizard.ProjectNotificationSubscriber;
-import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.util.ExceptionUtils;
 import org.eclipse.che.ide.util.StringUtils;
+import org.eclipse.che.ide.util.loging.Log;
+import org.eclipse.che.ide.websocket.MessageBus;
+import org.eclipse.che.ide.websocket.MessageBusProvider;
+import org.eclipse.che.ide.websocket.WebSocketException;
+import org.eclipse.che.ide.websocket.rest.SubscriptionHandler;
 import org.eclipse.che.security.oauth.OAuthStatus;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
+import static com.google.common.base.MoreObjects.*;
 import static org.eclipse.che.api.core.ErrorCodes.UNABLE_GET_PRIVATE_SSH_KEY;
+import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
+import static org.eclipse.che.api.core.ErrorCodes.FAILED_CHECKOUT;
+import static org.eclipse.che.api.core.ErrorCodes.FAILED_CHECKOUT_WITH_START_POINT;
+import static org.eclipse.che.api.git.shared.ProviderInfo.AUTHENTICATE_URL;
+import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.PROGRESS;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
-import static org.eclipse.che.api.git.shared.ProviderInfo.AUTHENTICATE_URL;
-import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
 
 /**
  * @author Sergii Leschenko
@@ -68,14 +80,16 @@ import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
  * @author Anton Korneta
  */
 public class FactoryProjectImporter extends AbstractImporter {
+    private static final String CHANNEL = "git:checkout:";
 
     private final EventBus                    eventBus;
+    private final MessageBusProvider          messageBusProvider;
     private final FactoryLocalizationConstant locale;
     private final NotificationManager         notificationManager;
-    private final DtoFactory                  dtoFactory;
     private final String                      restContext;
     private final DialogFactory               dialogFactory;
     private final OAuth2AuthenticatorRegistry oAuth2AuthenticatorRegistry;
+    private final DtoUnmarshallerFactory      dtoUnmarshallerFactory;
 
     private Factory             factory;
     private AsyncCallback<Void> callback;
@@ -89,17 +103,18 @@ public class FactoryProjectImporter extends AbstractImporter {
                                   @RestContext String restContext,
                                   DialogFactory dialogFactory,
                                   EventBus eventBus,
-                                  DtoFactory dtoFactory,
-                                  OAuth2AuthenticatorRegistry oAuth2AuthenticatorRegistry) {
+                                  OAuth2AuthenticatorRegistry oAuth2AuthenticatorRegistry,
+                                  MessageBusProvider messageBusProvider,
+                                  DtoUnmarshallerFactory dtoUnmarshallerFactory) {
         super(appContext, projectService, subscriberFactory);
-
         this.notificationManager = notificationManager;
         this.locale = locale;
         this.restContext = restContext;
         this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
-        this.dtoFactory = dtoFactory;
         this.oAuth2AuthenticatorRegistry = oAuth2AuthenticatorRegistry;
+        this.messageBusProvider = messageBusProvider;
+        this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
     }
 
     public void startImporting(Factory factory, AsyncCallback<Void> callback) {
@@ -184,7 +199,7 @@ public class FactoryProjectImporter extends AbstractImporter {
     protected Promise<Void> importProject(@NotNull final String pathToProject,
                                           @NotNull final String projectName,
                                           @NotNull final SourceStorageDto sourceStorage) {
-        return  doImport(pathToProject, projectName, sourceStorage);
+        return doImport(pathToProject, projectName, sourceStorage);
     }
 
 
@@ -194,7 +209,45 @@ public class FactoryProjectImporter extends AbstractImporter {
         final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
         final ProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
         subscriber.subscribe(projectName, notification);
+        String location = sourceStorage.getLocation();
+        // it's needed for extract repository name from repository url e.g https://github.com/codenvy/che-core.git
+        // lastIndexOf('/') + 1 for not to capture slash and length - 4 for trim .git
+        final String repository = location.substring(location.lastIndexOf('/') + 1).replace(".git", "");
+        final Map<String, String> parameters = firstNonNull(sourceStorage.getParameters(), Collections.<String, String>emptyMap());
+        final String branch = parameters.get("branch");
+        final String startPoint = parameters.get("startPoint");
+        final MessageBus messageBus = messageBusProvider.getMachineMessageBus();
+        try {
+            final String channel = CHANNEL + appContext.getWorkspaceId() + ':' + projectName;
+            messageBus.subscribe(channel, new SubscriptionHandler<GitCheckoutEvent>(
+                    dtoUnmarshallerFactory.newWSUnmarshaller(GitCheckoutEvent.class)) {
+                @Override
+                protected void onMessageReceived(GitCheckoutEvent result) {
+                    if (result.isCheckoutOnly()) {
+                        notificationManager.notify(locale.clonedSource(projectName),
+                                                   locale.clonedSourceWithCheckout(projectName, repository, result.getBranchRef(), branch),
+                                                   SUCCESS,
+                                                   true);
+                    } else {
+                        notificationManager.notify(locale.clonedSource(projectName),
+                                                   locale.clonedWithCheckoutOnStartPoint(projectName, repository, startPoint, branch),
+                                                   SUCCESS,
+                                                   true);
+                    }
+                }
 
+                @Override
+                protected void onErrorReceived(Throwable e) {
+                    try {
+                        messageBus.unsubscribe(channel, this);
+                    } catch (WebSocketException wEx) {
+                        Log.error(FactoryProjectImporter.class, wEx);
+                    }
+                }
+            });
+        } catch (WebSocketException e) {
+            Log.error(FactoryProjectImporter.class, e.getMessage());
+        }
         return projectService.importProject(workspaceId, projectName, true, sourceStorage)
                              .then(new Operation<Void>() {
                                  @Override
@@ -223,33 +276,43 @@ public class FactoryProjectImporter extends AbstractImporter {
                                  @Override
                                  public void apply(PromiseError err) throws OperationException {
                                      int errorCode = ExceptionUtils.getErrorCode(err.getCause());
-                                     if (errorCode == UNAUTHORIZED_GIT_OPERATION) {
-                                         subscriber.onFailure(err.getCause().getMessage());
-                                         final Map<String, String> attributes = ExceptionUtils.getAttributes(err.getCause());
-                                         final String providerName = attributes.get(PROVIDER_NAME);
-                                         final String authenticateUrl = attributes.get(AUTHENTICATE_URL);
-                                         if (!StringUtils.isNullOrEmpty(providerName) && !StringUtils.isNullOrEmpty(authenticateUrl)) {
-                                             tryAuthenticateAndRepeatImport(providerName,
-                                                                            authenticateUrl,
-                                                                            pathToProject,
-                                                                            projectName,
-                                                                            sourceStorage,
-                                                                            subscriber);
-                                         } else {
-                                             dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
-                                                                               locale.oauthFailedToGetAuthenticatorText(), null).show();
-                                         }
-                                     } else if (errorCode == UNABLE_GET_PRIVATE_SSH_KEY) {
-                                         subscriber.onFailure(locale.acceptSshNotFoundText());
-                                     } else {
-                                         subscriber.onFailure(err.getMessage());
-                                         notification.setTitle(locale.cloningSourceFailedTitle(projectName));
-                                         notification.setStatus(FAIL);
+                                     switch (errorCode) {
+                                         case UNAUTHORIZED_GIT_OPERATION:
+                                             subscriber.onFailure(err.getCause().getMessage());
+                                             final Map<String, String> attributes = ExceptionUtils.getAttributes(err.getCause());
+                                             final String providerName = attributes.get(PROVIDER_NAME);
+                                             final String authenticateUrl = attributes.get(AUTHENTICATE_URL);
+                                             if (!StringUtils.isNullOrEmpty(providerName) && !StringUtils.isNullOrEmpty(authenticateUrl)) {
+                                                 tryAuthenticateAndRepeatImport(providerName,
+                                                                                authenticateUrl,
+                                                                                pathToProject,
+                                                                                projectName,
+                                                                                sourceStorage,
+                                                                                subscriber);
+                                             } else {
+                                                 dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
+                                                                                   locale.oauthFailedToGetAuthenticatorText(), null).show();
+                                             }
+                                             break;
+                                         case UNABLE_GET_PRIVATE_SSH_KEY:
+                                             subscriber.onFailure(locale.acceptSshNotFoundText());
+                                             break;
+                                         case FAILED_CHECKOUT:
+                                             subscriber.onFailure(locale.cloningSourceWithCheckoutFailed(branch, repository));
+                                             notification.setTitle(locale.cloningSourceFailedTitle(projectName));
+                                             break;
+                                         case FAILED_CHECKOUT_WITH_START_POINT:
+                                             subscriber.onFailure(locale.cloningSourceWithCheckoutFailed(branch, startPoint, repository));
+                                             notification.setTitle(locale.cloningSourceFailedTitle(projectName));
+                                             break;
+                                         default:
+                                             subscriber.onFailure(err.getMessage());
+                                             notification.setTitle(locale.cloningSourceFailedTitle(projectName));
+                                             notification.setStatus(FAIL);
                                      }
                                  }
                              });
     }
-
 
     private void tryAuthenticateAndRepeatImport(@NotNull final String providerName,
                                                 @NotNull final String authenticateUrl,
@@ -272,7 +335,7 @@ public class FactoryProjectImporter extends AbstractImporter {
                                     public void onSuccess(OAuthStatus result) {
                                         if (!result.equals(OAuthStatus.NOT_PERFORMED)) {
                                             doImport(pathToProject, projectName, sourceStorage);
-                                        } else  {
+                                        } else {
                                             subscriber.onFailure("Authentication cancelled");
                                             callback.onSuccess(null);
                                         }
