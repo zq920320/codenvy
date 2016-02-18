@@ -54,7 +54,6 @@ import com.palominolabs.metrics.guice.InstrumentationModule;
 import org.eclipse.che.api.account.server.AccountService;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.AuthenticationService;
-import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
 import org.eclipse.che.api.core.rest.permission.PermissionManager;
@@ -94,7 +93,6 @@ import org.eclipse.che.inject.DynaModule;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
-import org.eclipse.che.security.oauth1.OAuthAuthenticatorAuthorizationHeaderProvider;
 import org.eclipse.che.vfs.impl.fs.CleanableSearcherProvider;
 import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
 import org.eclipse.che.vfs.impl.fs.MountPointCacheCleaner;
@@ -166,10 +164,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(LocalFSMountStrategy.class).to(WorkspaceHashLocalFSMountStrategy.class); // (RemoteDockerNode class want it)
 
-        //oauth 1
-        bind(org.eclipse.che.security.oauth1.OAuthAuthenticatorProvider.class);
-        bind(OAuthAuthorizationHeaderProvider.class).to(OAuthAuthenticatorAuthorizationHeaderProvider.class);
-
         //oauth 2
         bind(OAuthAuthenticatorProvider.class).to(OAuthAuthenticatorProviderImpl.class);
         bind(org.eclipse.che.api.auth.oauth.OAuthTokenProvider.class).to(OAuthAuthenticatorTokenProvider.class);
@@ -239,8 +233,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(TokenValidator.class).to(com.codenvy.auth.sso.server.BearerTokenValidator.class);
         bind(com.codenvy.auth.sso.oauth.SsoOAuthAuthenticationService.class);
-        bind(org.eclipse.che.security.oauth1.OAuthAuthenticationService.class);
-
 
         //SSO
         Multibinder<com.codenvy.api.dao.authentication.AuthenticationHandler> handlerBinder =
