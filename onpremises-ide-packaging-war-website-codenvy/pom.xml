@@ -31,12 +31,8 @@
             <artifactId>metrics-servlets</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-filters</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-listeners</artifactId>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-commons-j2ee</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
