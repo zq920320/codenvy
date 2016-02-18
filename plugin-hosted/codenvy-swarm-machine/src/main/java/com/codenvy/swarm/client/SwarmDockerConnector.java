@@ -17,7 +17,6 @@ package com.codenvy.swarm.client;
 import com.codenvy.swarm.client.json.DockerNode;
 import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.common.base.Strings;
-import com.google.common.io.CharStreams;
 
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
@@ -28,18 +27,21 @@ import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnectionFactory;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
+import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
+import org.eclipse.che.plugin.docker.client.json.ContainerCreated;
 import org.eclipse.che.plugin.docker.client.json.SystemInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
 import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.primitives.Ints.tryParse;
+import static javax.ws.rs.core.Response.Status.OK;
 
 /**
  * Swarm implementation of {@link DockerConnector} that can be used on distributed system
@@ -83,13 +85,29 @@ public class SwarmDockerConnector extends DockerConnector {
                                                                   .path("/containers/" + container + "/json")) {
             final DockerResponse response = connection.request();
             final int status = response.getStatus();
-            if (200 != status) {
-                final String msg = CharStreams.toString(new InputStreamReader(response.getInputStream()));
-                throw new DockerException(String.format("Error response from docker API, status: %d, message: %s", status, msg), status);
+            if (HttpURLConnection.HTTP_OK != status) {
+                throw getDockerException(response);
             }
             return JsonHelper.fromJson(response.getInputStream(), SwarmContainerInfo.class, null, FIRST_LETTER_LOWERCASE);
         } catch (JsonParseException e) {
             throw new IOException(e.getMessage(), e);
+        }
+    }
+
+    /**
+     * Overrides method to return user-friendly error if no resource left to schedule container
+     */
+    @Override
+    public ContainerCreated createContainer(ContainerConfig containerConfig, String containerName) throws IOException {
+        try {
+            return super.createContainer(containerConfig, containerName);
+        } catch (DockerException e) {
+            if (e.getOriginError().contains("no resources available to schedule container")) {
+                e = new DockerException("The system is out of resources. Please contact your system admin.",
+                                        e.getOriginError(),
+                                        e.getStatus());
+            }
+            throw e;
         }
     }
 
