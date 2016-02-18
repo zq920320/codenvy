@@ -15,7 +15,6 @@
 package com.codenvy.cloudide;
 
 
-import com.codenvy.auth.sso.client.CacheDisablingFilter;
 import com.codenvy.auth.sso.client.EmptyContextResolver;
 import com.codenvy.auth.sso.client.LoginFilter;
 import com.codenvy.auth.sso.client.WebAppClientUrlExtractor;
@@ -48,7 +47,7 @@ public class OnPremisesIdeWebsiteServletModule extends ServletModule {
         bind(com.codahale.metrics.servlets.ThreadDumpServlet.class).in(Singleton.class);
         bind(com.codahale.metrics.servlets.PingServlet.class).in(Singleton.class);
 
-        filter("/*").through(CacheDisablingFilter.class);
+        filter("/*").through(com.codenvy.servlet.CacheDisablingFilter.class);
         filter("/private/*", "/zendesk").through(LoginFilter.class);
         filter("/*").through(PagesExtensionHider.class);
         serve("/metrics/ping").with(com.codahale.metrics.servlets.PingServlet.class);
