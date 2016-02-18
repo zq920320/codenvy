@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-factory-parent</artifactId>
         <groupId>com.codenvy.factory</groupId>
-        <version>4.0.0-RC5</version>
+        <version>4.0.0-RC6-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-factory-storage-mongo</artifactId>
     <packaging>jar</packaging>
