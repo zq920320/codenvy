@@ -41,14 +41,15 @@ public class OrgServiceAuthenticationHandler implements AuthenticationHandler {
     @Inject
     UserDao userDao;
 
-    public org.eclipse.che.commons.user.User authenticate(final String userName, final String password)
+    public org.eclipse.che.commons.user.User authenticate(final String login, final String password)
             throws AuthenticationException {
-        if (userName == null || userName.isEmpty() || password == null || password.isEmpty()) {
+        if (login == null || login.isEmpty() || password == null || password.isEmpty()) {
             throw new AuthenticationException(401, "Authentication failed. Please check username and password.");
         }
 
         try {
-            String userId = userDao.authenticate(userName, password);
+            String userId = userDao.authenticate(login, password);
+            String userName = userDao.getById(userId).getName();
             return new UserImpl(userName, userId, null, Collections.<String>emptyList(), false);
         } catch (ApiException e) {
             LOG.debug(e.getLocalizedMessage(), e);
