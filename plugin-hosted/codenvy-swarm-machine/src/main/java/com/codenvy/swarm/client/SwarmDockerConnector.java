@@ -122,19 +122,22 @@ public class SwarmDockerConnector extends DockerConnector {
      * </pre>
      */
     private List<DockerNode> getAvailableNodes() throws IOException {
-        final String[][] driverStatus = getSystemInfo().getDriverStatus();
+        final String[][] systemStatus = getSystemInfo().getSystemStatus();
+        if (systemStatus == null) {
+            throw new DockerException("Can't find available docker nodes. DriverStatus, SystemStatus fields missing.", 500);
+        }
         int count = 0;
         int startsFrom = 0;
-        for (int i = 0; i < driverStatus.length; ++i) {
-            if ("Nodes".equals(Strings.nullToEmpty(driverStatus[i][0]).trim())) {
-                count = firstNonNull(tryParse(driverStatus[i][1]), 0);
+        for (int i = 0; i < systemStatus.length; ++i) {
+            if ("Nodes".equals(Strings.nullToEmpty(systemStatus[i][0]).trim())) {
+                count = firstNonNull(tryParse(systemStatus[i][1]), 0);
                 startsFrom = i + 1;
                 break;
             }
         }
         final ArrayList<DockerNode> nodes = new ArrayList<>(count);
         for (int i = 0; i < count; ++i) {
-            final String[] node = driverStatus[i * 5 + startsFrom];
+            final String[] node = systemStatus[i * 8 + startsFrom];
             nodes.add(new DockerNode(node[0], node[1]));
         }
         return nodes;
