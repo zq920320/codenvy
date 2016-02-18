@@ -14,17 +14,12 @@
  */
 package org.eclipse.che.ide.ext.git.server.nativegit;
 
-import com.google.api.client.auth.oauth.OAuthCredentialsResponse;
-
+import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.git.GitException;
-import org.eclipse.che.api.git.shared.GitUser;
 import org.eclipse.che.commons.env.EnvironmentContext;
-import org.eclipse.che.dto.server.DtoFactory;
 import org.eclipse.che.api.git.CredentialsProvider;
 import org.eclipse.che.api.git.UserCredential;
-import org.eclipse.che.security.oauth1.BitbucketOAuthAuthenticator;
-import org.eclipse.che.security.oauth1.OAuthAuthenticationException;
-import org.eclipse.che.security.oauth1.shared.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,20 +38,19 @@ public class BitbucketOAuthCredentialProvider implements CredentialsProvider {
     private static final Logger LOG                 = LoggerFactory.getLogger(BitbucketOAuthCredentialProvider.class);
     private static final String OAUTH_PROVIDER_NAME = "bitbucket";
 
-    private final BitbucketOAuthAuthenticator oAuthAuthenticator;
+    private final OAuthTokenProvider oAuthTokenProvider;
 
     @Inject
-    public BitbucketOAuthCredentialProvider(@NotNull final BitbucketOAuthAuthenticator oAuthAuthenticator) {
-        this.oAuthAuthenticator = oAuthAuthenticator;
+    public BitbucketOAuthCredentialProvider(@NotNull final OAuthTokenProvider oAuthTokenProvider) {
+        this.oAuthTokenProvider = oAuthTokenProvider;
     }
 
     @Override
     public UserCredential getUserCredential() throws GitException {
         try {
-
-            final OAuthCredentialsResponse credentials = oAuthAuthenticator.getToken(EnvironmentContext.getCurrent().getUser().getId());
-            if (credentials != null) {
-                return new UserCredential(credentials.token, credentials.tokenSecret, OAUTH_PROVIDER_NAME);
+            final OAuthToken token = oAuthTokenProvider.getToken(OAUTH_PROVIDER_NAME, EnvironmentContext.getCurrent().getUser().getId());
+            if (token != null) {
+                return new UserCredential("x-token-auth", token.getToken(), OAUTH_PROVIDER_NAME);
             }
 
         } catch (IOException e) {

@@ -30,7 +30,7 @@ import static org.eclipse.che.ide.rest.HTTPMethod.POST;
 import static org.eclipse.che.ide.rest.HTTPStatus.CREATED;
 import static org.eclipse.che.ide.rest.HTTPStatus.OK;
 
-import org.eclipse.che.api.auth.oauth.OAuthAuthorizationHeaderProvider;
+import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.json.JsonHelper;
@@ -69,11 +69,11 @@ public class Bitbucket {
     private static final String BITBUCKET_2_0_API_URL = BITBUCKET_API_URL + "/2.0";
     private static final String BITBUCKET_1_0_API_URL = BITBUCKET_API_URL + "/1.0";
 
-    private final OAuthAuthorizationHeaderProvider authorizationHeaderProvider;
+    private final OAuthTokenProvider tokenProvider;
 
     @Inject
-    public Bitbucket(@NotNull final OAuthAuthorizationHeaderProvider authorizationHeaderProvider) {
-        this.authorizationHeaderProvider = authorizationHeaderProvider;
+    public Bitbucket(@NotNull final OAuthTokenProvider tokenProvider) {
+        this.tokenProvider = tokenProvider;
     }
 
     /**
@@ -296,9 +296,7 @@ public class Bitbucket {
                 }
             }
 
-            final String authorizationHeaderValue = authorizationHeaderProvider.getAuthorizationHeader("bitbucket", getUserId(),
-                                                                                                       requestMethod, requestUrl,
-                                                                                                       requestParameters);
+            final String authorizationHeaderValue = "Bearer " + tokenProvider.getToken("bitbucket", getUserId()).getToken();
             http.setRequestProperty(AUTHORIZATION, authorizationHeaderValue);
             http.setRequestProperty(ACCEPT, APPLICATION_JSON);
 
