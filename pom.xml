@@ -35,6 +35,7 @@
         <module>codenvy-hosted-infra-filters</module>
         <module>codenvy-hosted-recoverpassword</module>
         <module>codenvy-hosted-events</module>
+        <module>codenvy-hosted-commons-j2ee</module>
         <module>codenvy-hosted-sso-server</module>
         <module>codenvy-hosted-sso-auth-bearer</module>
         <module>codenvy-hosted-sso-client</module>
