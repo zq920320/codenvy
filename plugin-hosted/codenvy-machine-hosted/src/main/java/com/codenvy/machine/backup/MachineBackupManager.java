@@ -104,7 +104,13 @@ public class MachineBackupManager {
         try {
             execute(commandLine.asArray(), maxBackupDuration);
         } catch (TimeoutException e) {
-            throw new ServerException("Workspace FS backup terminated due to timeout. Please, contact support.");
+            throw new ServerException("Backup of workspace " + workspaceId + " filesystem terminated due to timeout.");
+        } catch (InterruptedException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException("Backup of workspace " + workspaceId + " filesystem interrupted.");
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException("Backup of workspace " + workspaceId + " filesystem terminated. " + e.getLocalizedMessage());
         }
     }
 
@@ -136,11 +142,17 @@ public class MachineBackupManager {
         try {
             execute(commandLine.asArray(), restoreDuration);
         } catch (TimeoutException e) {
-            throw new ServerException("Workspace FS restore terminated due to timeout. Please, contact support.");
+            throw new ServerException("Restoring of workspace " + workspaceId + " filesystem terminated due to timeout.");
+        } catch (InterruptedException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException("Restoring of workspace " + workspaceId + " filesystem interrupted.");
+        } catch (IOException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+            throw new ServerException("Restoring of workspace " + workspaceId + " filesystem terminated. " + e.getLocalizedMessage());
         }
     }
 
-    private void execute(String[] commandLine, int timeout) throws ServerException, TimeoutException {
+    private void execute(String[] commandLine, int timeout) throws TimeoutException, IOException, InterruptedException {
         ProcessBuilder pb = new ProcessBuilder(commandLine).redirectErrorStream(true);
         final ListLineConsumer outputConsumer = new ListLineConsumer();
 
@@ -165,12 +177,8 @@ public class MachineBackupManager {
                 throw new TimeoutException();
             } else if (process.exitValue() != 0) {
                 LOG.error(outputConsumer.getText());
-                throw new ServerException("Process failed. Exit code " + process.exitValue());
+                throw new IOException("Process failed. Exit code " + process.exitValue());
             }
-        } catch (InterruptedException e) {
-            throw new ServerException("Process terminated. " + e.getLocalizedMessage());
-        } catch (IOException e) {
-            throw new ServerException("Process failed.");
         } finally {
             watcher.stop();
         }
