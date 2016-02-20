@@ -94,8 +94,8 @@ public class RouterListener implements EventSubscriber<MachineStatusEvent> {
     private void addRouting(String machineId) {
         try {
             // this class require appropriate implementation of Instance
-            final Instance machine = registry.getInstance(machineId);
-            machine.getRuntime()
+            final Instance machine = registry.get(machineId);
+            machine.getMetadata()
                    .getServers()
                    .entrySet()
                    .stream()
