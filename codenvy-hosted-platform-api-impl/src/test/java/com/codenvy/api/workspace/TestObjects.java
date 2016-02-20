@@ -22,7 +22,6 @@ import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.RuntimeWorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
-import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Size;
 
@@ -49,22 +48,18 @@ public final class TestObjects {
         }
         return UsersWorkspaceImpl.builder()
                                  .generateId()
-                                 .setConfig(WorkspaceConfigImpl.builder()
-                                                               .setName(NameGenerator.generate("workspace", 2))
-                                                               .setEnvironments(singletonList(new EnvironmentImpl("dev-env",
-                                                                                                                  null,
-                                                                                                                  machineConfigs)))
-                                                               .setDefaultEnv("dev-env")
-                                                               .build())
+                                 .setName(NameGenerator.generate("workspace", 2))
                                  .setOwner(owner)
                                  .setTemporary(false)
                                  .setStatus(WorkspaceStatus.STOPPED)
+                                 .setEnvironments(singletonList(new EnvironmentImpl("dev-env", null, machineConfigs)))
+                                 .setDefaultEnv("dev-env")
                                  .build();
     }
 
     /** Creates workspace config object based on the machines RAM. */
     public static WorkspaceConfig createConfig(String devMachineRam, String... machineRams) {
-        return createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams).getConfig();
+        return createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams);
     }
 
     /** Creates runtime workspace object based on the machines RAM. */
@@ -72,7 +67,7 @@ public final class TestObjects {
         final UsersWorkspaceImpl workspace = createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams);
         return RuntimeWorkspaceImpl.builder()
                                    .fromWorkspace(workspace)
-                                   .setActiveEnv(workspace.getConfig().getDefaultEnv())
+                                   .setActiveEnvName(workspace.getDefaultEnv())
                                    .build();
     }
 

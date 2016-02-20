@@ -103,7 +103,7 @@ public class RemoveWorkspaceMemberInterceptor implements MethodInterceptor {
                                                   .findFirst();
         Map<String, String> properties = new HashMap<>();
         properties.put("logo.cid", "codenvyLogo");
-        properties.put("workspace", ws.getConfig().getName());
+        properties.put("workspace", ws.getName());
         properties.put("admin.email", senderEmail);
         if (accountOwner.isPresent()) {
             properties.put("accountOwner.email", userDao.getById(accountOwner.get().getUserId()).getEmail());

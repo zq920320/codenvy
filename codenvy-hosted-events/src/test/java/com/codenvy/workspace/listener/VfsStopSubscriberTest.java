@@ -14,12 +14,14 @@
  */
 package com.codenvy.workspace.listener;
 
+import org.eclipse.che.api.core.notification.EventService;
+
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 import com.codenvy.workspace.event.StopWsEvent;
 
-import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
+import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -28,7 +30,6 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
 
@@ -66,10 +67,10 @@ public class VfsStopSubscriberTest {
         subscriber.subscribe();
 
         // when
-        eventService.publish(new DeleteWorkspaceEvent(newDto(UsersWorkspaceDto.class)
-                                                              .withId("id")
-                                                              .withTemporary(true)
-                                                              .withConfig(newDto(WorkspaceConfigDto.class).withName("name"))));
+        eventService.publish(new DeleteWorkspaceEvent(DtoFactory.newDto(UsersWorkspaceDto.class)
+                                                                .withId("id")
+                                                                .withTemporary(true)
+                                                                .withName("name")));
 
         // then
         verify(vfsCleanupPerformer, timeout(500)).unregisterProvider("id");

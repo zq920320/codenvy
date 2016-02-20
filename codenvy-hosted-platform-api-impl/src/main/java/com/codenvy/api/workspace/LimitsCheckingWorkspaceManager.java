@@ -94,7 +94,7 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                                                                     ForbiddenException,
                                                                                     ConflictException {
         final UsersWorkspaceImpl workspace = getWorkspace(workspaceId);
-        return checkRamAndPropagateStart(workspace.getConfig(),
+        return checkRamAndPropagateStart(workspace,
                                          envName,
                                          workspace.getOwner(),
                                          () -> super.startWorkspaceById(workspaceId, envName, accountId));
@@ -110,7 +110,7 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                                                                       ForbiddenException,
                                                                                       ConflictException {
         final UsersWorkspaceImpl workspace = getWorkspace(workspaceName, owner);
-        return checkRamAndPropagateStart(workspace.getConfig(),
+        return checkRamAndPropagateStart(workspace,
                                          envName,
                                          owner,
                                          () -> super.startWorkspaceByName(workspaceName, owner, envName, accountId));

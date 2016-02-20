@@ -28,7 +28,7 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.model.machine.Command;
-import org.eclipse.che.api.core.model.project.ProjectConfig;
+import org.eclipse.che.api.core.model.workspace.ProjectConfig;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
@@ -39,13 +39,14 @@ import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.machine.shared.Group;
 import org.eclipse.che.api.machine.shared.Permissions;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
-import org.eclipse.che.api.workspace.server.model.impl.stack.StackComponentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.stack.StackImpl;
-import org.eclipse.che.api.workspace.server.model.impl.stack.StackSourceImpl;
 import org.eclipse.che.api.workspace.server.model.stack.StackComponent;
+import org.eclipse.che.api.workspace.server.model.impl.stack.StackComponentImpl;
+import org.eclipse.che.api.workspace.server.model.impl.stack.StackSourceImpl;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.testng.MockitoTestNGListener;
@@ -395,10 +396,10 @@ public class StackDaoImplTest extends BaseDaoTest {
         assertEquals(environments.size(), workspace.getEnvironments().size());
         for (Document envDoc : environments) {
             String envName = envDoc.getString("name");
-            final EnvironmentImpl environment = workspace.getEnvironments()
-                                                         .stream()
-                                                         .filter(environmentState -> envName.equals(environmentState.getName()))
-                                                         .collect(toList()).get(0);
+            final EnvironmentStateImpl environment = workspace.getEnvironments()
+                                                              .stream()
+                                                              .filter(environmentState -> envName.equals(environmentState.getName()))
+                                                              .collect(toList()).get(0);
 
             assertEquals(envDoc.getString("name"), environment.getName());
 

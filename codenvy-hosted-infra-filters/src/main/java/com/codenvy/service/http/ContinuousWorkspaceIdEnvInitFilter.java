@@ -14,6 +14,7 @@
  */
 package com.codenvy.service.http;
 
+
 import javax.inject.Singleton;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -22,7 +23,7 @@ import javax.servlet.ServletResponse;
 import java.io.IOException;
 
 /**
- * Retrieves workspace from request and returns its Workspace
+ * Retrieves workspace from request and returns its {@link org.eclipse.che.api.workspace.shared.dto.WorkspaceDescriptor}
  * when possible, otherwise returns {@code null}. Unlike {@link WorkspaceIdEnvironmentInitializationFilter} this filter
  * continues request processing instead of responding to client.
  *

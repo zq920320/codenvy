@@ -81,7 +81,7 @@ public class AccountWorkspaceHooksTest {
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
         when(accountDao.getByOwner(currentUser.getId())).thenReturn(asList(mock(Account.class), mock(Account.class)));
 
-        workspaceHooks.beforeStart(workspace, workspace.getConfig().getDefaultEnv(), null);
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnv(), null);
     }
 
     @Test
@@ -90,7 +90,7 @@ public class AccountWorkspaceHooksTest {
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
         when(accountDao.getByOwner(currentUser.getId())).thenReturn(singletonList(mock(Account.class)));
 
-        workspaceHooks.beforeStart(workspace, workspace.getConfig().getDefaultEnv(), null);
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnv(), null);
 
         verify(accountDao).update(any());
     }
@@ -101,7 +101,7 @@ public class AccountWorkspaceHooksTest {
         Account account = new Account("account123");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
-        workspaceHooks.beforeStart(workspace, workspace.getConfig().getDefaultEnv(), "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnv(), "account123");
 
         verify(accountDao, never()).update(any());
     }
@@ -115,7 +115,7 @@ public class AccountWorkspaceHooksTest {
         Account account = new Account("321account");
         when(accountDao.getByWorkspace(workspace.getId())).thenReturn(account);
 
-        workspaceHooks.beforeStart(workspace, workspace.getConfig().getDefaultEnv(), "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnv(), "account123");
     }
 
     @Test
@@ -123,7 +123,7 @@ public class AccountWorkspaceHooksTest {
         UsersWorkspace workspace = mock(UsersWorkspace.class, RETURNS_MOCKS);
         when(accountDao.getByWorkspace(workspace.getId())).thenThrow(new NotFoundException(""));
 
-        workspaceHooks.beforeStart(workspace, workspace.getConfig().getDefaultEnv(), "account123");
+        workspaceHooks.beforeStart(workspace, workspace.getDefaultEnv(), "account123");
     }
 
     @Test
