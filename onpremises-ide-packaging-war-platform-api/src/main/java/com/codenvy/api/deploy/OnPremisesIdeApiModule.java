@@ -368,8 +368,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                    org.eclipse.che.plugin.docker.machine.DockerProcess.class)
                         .implement(org.eclipse.che.plugin.docker.machine.node.DockerNode.class,
                                    com.codenvy.machine.RemoteDockerNode.class)
-                        .implement(org.eclipse.che.plugin.docker.machine.DockerInstanceRuntimeInfo.class,
-                                   com.codenvy.machine.HttpsSupportInstanceRuntimeInfo.class)
+                        .implement(org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata.class,
+                                   com.codenvy.machine.HttpsSupportInstanceMetadata.class)
                         .build(org.eclipse.che.plugin.docker.machine.DockerMachineFactory.class));
 
         bind(org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider.class)
