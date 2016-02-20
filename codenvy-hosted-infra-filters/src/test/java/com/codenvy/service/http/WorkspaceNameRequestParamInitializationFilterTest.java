@@ -24,6 +24,7 @@ import static org.testng.Assert.assertEquals;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.model.workspace.UsersWorkspace;
+import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.commons.env.EnvironmentContext;
 
 import org.everrest.test.mock.MockHttpServletRequest;
@@ -52,6 +53,8 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
     WorkspaceInfoCache cache;
     @Mock
     UsersWorkspace     workspace;
+    @Mock
+    WorkspaceConfig    workspaceConfig;
 
     @Mock
     FilterChain         chain;
@@ -96,7 +99,8 @@ public class WorkspaceNameRequestParamInitializationFilterTest {
 
         //given
         when(cache.getByName("myWorkspace", null)).thenReturn(workspace);
-        when(workspace.getName()).thenReturn("myWorkspace");
+        when(workspace.getConfig()).thenReturn(workspaceConfig);
+        when(workspaceConfig.getName()).thenReturn("myWorkspace");
         when(workspace.getId()).thenReturn("wsId");
 
 

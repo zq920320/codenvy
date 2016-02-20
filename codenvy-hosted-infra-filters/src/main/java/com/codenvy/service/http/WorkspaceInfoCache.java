@@ -119,12 +119,12 @@ public class WorkspaceInfoCache {
     private UsersWorkspace doGet(Key key) throws ServerException, NotFoundException, ExecutionException {
         UsersWorkspace workspace = workspaceCache.get(key);
         if (workspace.isTemporary()) {
-            if (workspace.getAttributes().containsKey("allowAnyoneAddMember")) {
+            if (workspace.getConfig().getAttributes().containsKey("allowAnyoneAddMember")) {
                 return workspace;
             }
             workspaceCache.invalidate(key);
             workspaceCache.invalidate(key.isUuid ?
-                                      new Key(workspace.getName(), null, false) :
+                                      new Key(workspace.getConfig().getName(), null, false) :
                                       new Key(workspace.getId(), workspace.getOwner(), true));
             workspace = workspaceCache.get(key);
         }
