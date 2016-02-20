@@ -34,10 +34,10 @@ import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
-import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
+import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -139,8 +139,8 @@ public class WorkspaceDaoImplTest {
     public void testUpdateWorkspace() throws Exception {
         final UsersWorkspaceImpl workspace = createWorkspace();
         collection.insertOne(workspace);
-        workspace.setName("new-workspace-name");
-        workspace.setDescription("new-workspace-description");
+        workspace.getConfig().setName("new-workspace-name");
+        workspace.getConfig().setDescription("new-workspace-description");
 
         workspaceDao.update(workspace);
 
@@ -208,7 +208,7 @@ public class WorkspaceDaoImplTest {
         final UsersWorkspaceImpl workspace = createWorkspace();
         collection.insertOne(workspace);
 
-        final UsersWorkspaceImpl result = workspaceDao.get(workspace.getName(), workspace.getOwner());
+        final UsersWorkspaceImpl result = workspaceDao.get(workspace.getConfig().getName(), workspace.getOwner());
 
         assertEquals(result, workspace);
     }
@@ -232,9 +232,11 @@ public class WorkspaceDaoImplTest {
     public void testGetWorkspacesByOwner() throws Exception {
         final UsersWorkspaceImpl workspace = createWorkspace();
         final UsersWorkspaceImpl workspace2 = createWorkspace();
-        workspace2.setName(workspace.getName() + '2');
-        final UsersWorkspaceImpl workspace3 = new UsersWorkspaceImpl(workspace, generate("ws", 16), workspace.getOwner() + '2');
-        workspace3.setName(workspace.getName() + '3');
+        workspace2.getConfig().setName(workspace.getConfig().getName() + '2');
+        final UsersWorkspaceImpl workspace3 = new UsersWorkspaceImpl(workspace.getConfig(),
+                                                                     generate("ws", 16),
+                                                                     workspace.getOwner() + '2');
+        workspace3.getConfig().setName(workspace.getConfig().getName() + '3');
         collection.insertMany(asList(workspace, workspace2, workspace3));
 
         final List<UsersWorkspaceImpl> result = workspaceDao.getByOwner(workspace.getOwner());
@@ -278,20 +280,21 @@ public class WorkspaceDaoImplTest {
         // check encoding result
         final Document result = documentHolder[0];
         assertEquals(result.getString("_id"), workspace.getId(), "Workspace id");
-        assertEquals(result.getString("name"), workspace.getName(), "Workspace name");
         assertEquals(result.getString("owner"), workspace.getOwner(), "Workspace owner");
-        assertEquals(result.getString("description"), workspace.getDescription(), "Workspace description");
-        assertEquals(result.getString("defaultEnv"), workspace.getDefaultEnv(), "Workspace defaultEnvName");
+        final Document wsConfig = (Document)result.get("config");
+        assertEquals(wsConfig.getString("name"), workspace.getConfig().getName(), "Workspace name");
+        assertEquals(wsConfig.getString("description"), workspace.getConfig().getDescription(), "Workspace description");
+        assertEquals(wsConfig.getString("defaultEnv"), workspace.getConfig().getDefaultEnv(), "Workspace defaultEnv");
 
         // check attributes
-        final List<Document> attributes = (List<Document>)result.get("attributes");
-        assertEquals(attributes, mapAsDocumentsList(workspace.getAttributes()), "Workspace attributes");
+        final List<Document> attributes = (List<Document>)wsConfig.get("attributes");
+        assertEquals(attributes, mapAsDocumentsList(workspace.getConfig().getAttributes()), "Workspace attributes");
 
         // check commands
-        final List<Document> commands = (List<Document>)result.get("commands");
-        assertEquals(commands.size(), workspace.getCommands().size(), "Workspace commands size");
+        final List<Document> commands = (List<Document>)wsConfig.get("commands");
+        assertEquals(commands.size(), workspace.getConfig().getCommands().size(), "Workspace commands size");
         for (int i = 0; i < commands.size(); i++) {
-            final CommandImpl command = workspace.getCommands().get(i);
+            final CommandImpl command = workspace.getConfig().getCommands().get(i);
             final Document document = commands.get(i);
 
             assertEquals(document.getString("name"), command.getName(), "Command name");
@@ -300,10 +303,10 @@ public class WorkspaceDaoImplTest {
         }
 
         // check projects
-        final List<Document> projects = (List<Document>)result.get("projects");
-        assertEquals(projects.size(), workspace.getProjects().size());
+        final List<Document> projects = (List<Document>)wsConfig.get("projects");
+        assertEquals(projects.size(), workspace.getConfig().getProjects().size());
         for (int i = 0; i < projects.size(); i++) {
-            final ProjectConfigImpl project = workspace.getProjects().get(i);
+            final ProjectConfigImpl project = workspace.getConfig().getProjects().get(i);
             final Document projDoc = projects.get(0);
 
             assertEquals(project.getName(), projDoc.getString("name"), "Project nam");
@@ -345,11 +348,15 @@ public class WorkspaceDaoImplTest {
         }
 
         // check environments
-        final List<Document> environments = (List<Document>)result.get("environments");
-        assertEquals(environments.size(), workspace.getEnvironments().size());
+        final List<Document> environments = (List<Document>)wsConfig.get("environments");
+        assertEquals(environments.size(), workspace.getConfig().getEnvironments().size());
         for (final Document envDoc : environments) {
-            final EnvironmentStateImpl environment =
-                    workspace.getEnvironments().stream().filter(env -> env.getName().equals(envDoc.getString("name"))).findFirst().get();
+            final EnvironmentImpl environment = workspace.getConfig()
+                                                         .getEnvironments()
+                                                         .stream()
+                                                         .filter(env -> env.getName().equals(envDoc.getString("name")))
+                                                         .findFirst()
+                                                         .get();
 
             assertEquals(envDoc.getString("name"), environment.getName());
 
@@ -507,14 +514,16 @@ public class WorkspaceDaoImplTest {
 
         return UsersWorkspaceImpl.builder()
                                  .setId(generate("workspace", 16))
-                                 .setName("workspace-name")
-                                 .setDescription("This is test workspace")
+                                 .setConfig(WorkspaceConfigImpl.builder()
+                                                               .setName("workspace-name")
+                                                               .setDescription("This is test workspace")
+                                                               .setAttributes(attributes)
+                                                               .setCommands(commands)
+                                                               .setProjects(projects)
+                                                               .setEnvironments(environments)
+                                                               .setDefaultEnv(env1.getName())
+                                                               .build())
                                  .setOwner("user123")
-                                 .setAttributes(attributes)
-                                 .setCommands(commands)
-                                 .setProjects(projects)
-                                 .setEnvironments(environments)
-                                 .setDefaultEnv(env1.getName())
                                  .build();
     }
 
