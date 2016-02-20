@@ -24,15 +24,14 @@ import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.che.api.core.model.machine.Limits;
 import org.eclipse.che.api.core.model.machine.MachineSource;
 import org.eclipse.che.api.core.model.machine.Recipe;
+import org.eclipse.che.api.core.model.project.ProjectConfig;
 import org.eclipse.che.api.core.model.project.SourceStorage;
-import org.eclipse.che.api.core.model.workspace.ProjectConfig;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
-import org.eclipse.che.api.workspace.server.model.impl.EnvironmentStateImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -61,65 +60,71 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
     @Override
     public UsersWorkspaceImpl decode(BsonReader reader, DecoderContext decoderContext) {
         final Document document = codec.decode(reader, decoderContext);
+        @SuppressWarnings("unchecked") // 'config' field is always document
+        final Document configDocument = (Document)document.get("config");
 
         @SuppressWarnings("unchecked") // 'attributes' field is always list
-        final List<Document> attributes = (List<Document>)document.get("attributes");
+        final List<Document> attributes = (List<Document>)configDocument.get("attributes");
 
         @SuppressWarnings("unchecked") // 'commands' field is always list
-        final List<Document> commandDocuments = (List<Document>)document.get("commands");
+        final List<Document> commandDocuments = (List<Document>)configDocument.get("commands");
         final List<CommandImpl> commands = commandDocuments.stream()
                                                            .map(UsersWorkspaceImplCodec::asCommand)
                                                            .collect(toList());
 
         @SuppressWarnings("unchecked") // 'projects' field is always list
-        final List<Document> projectDocuments = (List<Document>)document.get("projects");
+        final List<Document> projectDocuments = (List<Document>)configDocument.get("projects");
         final List<ProjectConfigImpl> projects = projectDocuments.stream()
                                                                  .map(UsersWorkspaceImplCodec::asProjectConfig)
                                                                  .collect(toList());
 
         @SuppressWarnings("unchecked") // 'environments' fields is aways map
-        final List<Document> envDocuments = (List<Document>)document.get("environments");
+        final List<Document> envDocuments = (List<Document>)configDocument.get("environments");
         final List<EnvironmentImpl> environments = envDocuments.stream()
                                                                .map(UsersWorkspaceImplCodec::asEnvironment)
                                                                .collect(toList());
 
         return UsersWorkspaceImpl.builder()
                                  .setId(document.getString("_id"))
-                                 .setName(document.getString("name"))
+                                 .setConfig(WorkspaceConfigImpl.builder()
+                                                               .setName(configDocument.getString("name"))
+                                                               .setDescription(configDocument.getString("description"))
+                                                               .setDefaultEnv(configDocument.getString("defaultEnv"))
+                                                               .setCommands(commands)
+                                                               .setAttributes(documentsListAsMap(attributes))
+                                                               .setProjects(projects)
+                                                               .setEnvironments(environments)
+                                                               .build())
                                  .setOwner(document.getString("owner"))
-                                 .setDescription(document.getString("description"))
-                                 .setDefaultEnv(document.getString("defaultEnv"))
-                                 .setCommands(commands)
-                                 .setAttributes(documentsListAsMap(attributes))
-                                 .setProjects(projects)
-                                 .setEnvironments(environments)
                                  .build();
     }
 
     @Override
     public void encode(BsonWriter writer, UsersWorkspaceImpl workspace, EncoderContext encoderContext) {
         final Document document = new Document().append("_id", workspace.getId())
-                                                .append("name", workspace.getName())
-                                                .append("owner", workspace.getOwner())
-                                                .append("description", workspace.getDescription())
-                                                .append("defaultEnv", workspace.getDefaultEnv())
-                                                .append("attributes", mapAsDocumentsList(workspace.getAttributes()));
-        document.append("commands", workspace.getCommands()
+                                                .append("owner", workspace.getOwner());
+        final WorkspaceConfigImpl config = workspace.getConfig();
+        final Document configDocument = new Document().append("name", config.getName())
+                                                      .append("description", config.getDescription())
+                                                      .append("defaultEnv", config.getDefaultEnv())
+                                                      .append("attributes", mapAsDocumentsList(config.getAttributes()));
+        configDocument.append("commands", config.getCommands()
                                              .stream()
                                              .map(command -> new Document().append("name", command.getName())
                                                                            .append("commandLine", command.getCommandLine())
                                                                            .append("type", command.getType())
                                                                            .append("attributes", mapAsDocumentsList(command.getAttributes())))
                                              .collect(toList()));
-        document.append("projects", workspace.getProjects()
+        configDocument.append("projects", config.getProjects()
                                              .stream()
                                              .map(UsersWorkspaceImplCodec::asDocument)
                                              .collect(toList()));
 
-        document.append("environments", workspace.getEnvironments()
+        configDocument.append("environments", config.getEnvironments()
                                                  .stream()
                                                  .map(UsersWorkspaceImplCodec::asDocument)
                                                  .collect(toList()));
+        document.append("config", configDocument);
         codec.encode(writer, document, encoderContext);
     }
 
@@ -212,7 +217,7 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         return new EnvironmentImpl(document.getString("name"), recipe, machineConfigs);
     }
 
-    private static Document asDocument(EnvironmentStateImpl environment) {
+    private static Document asDocument(EnvironmentImpl environment) {
         final Document document = new Document();
 
         final Recipe recipe = environment.getRecipe();

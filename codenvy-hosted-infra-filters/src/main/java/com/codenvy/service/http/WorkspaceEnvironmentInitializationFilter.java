@@ -55,7 +55,7 @@ public abstract class WorkspaceEnvironmentInitializationFilter implements Filter
             final UsersWorkspace workspace = getWorkspaceFromRequest(request);
             if (workspace != null) {
                 final EnvironmentContext env = EnvironmentContext.getCurrent();
-                env.setWorkspaceName(workspace.getName());
+                env.setWorkspaceName(workspace.getConfig().getName());
                 env.setWorkspaceId(workspace.getId());
 //                env.setAccountId(workspace.getAccountId());
                 env.setWorkspaceTemporary(workspace.isTemporary());
