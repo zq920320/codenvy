@@ -404,7 +404,7 @@ public class BitbucketHostingService implements VcsHostingService {
                                + "&redirect_after_login="
                                + Window.Location.getProtocol() + "//"
                                + Window.Location.getHost() + "/ws/"
-                               + workspace.getName();
+                               + workspace.getConfig().getName();
 
         new JsOAuthWindow(authUrl, "error.url", 500, 980, new OAuthCallback() {
             @Override

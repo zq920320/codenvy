@@ -102,7 +102,7 @@ public class BitbucketSshKeyProvider implements SshKeyUploader, OAuthCallback {
     private void showPopUp() {
         final String authUrl = baseUrl + "/oauth/1.0/authenticate?oauth_provider=bitbucket&userId=" + userId + "&redirect_after_login=" +
                                Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" +
-                               appContext.getWorkspace().getName();
+                               appContext.getWorkspace().getConfig().getName();
 
         new JsOAuthWindow(authUrl, "error.url", 500, 980, this).loginWithOAuth();
     }

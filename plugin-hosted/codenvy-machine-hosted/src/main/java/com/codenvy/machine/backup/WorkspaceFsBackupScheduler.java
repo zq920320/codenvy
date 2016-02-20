@@ -20,7 +20,7 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.model.machine.MachineStatus;
 import org.eclipse.che.api.machine.server.MachineManager;
-import org.eclipse.che.api.machine.server.model.impl.MachineStateImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.spi.InstanceNode;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
@@ -67,18 +67,18 @@ public class WorkspaceFsBackupScheduler {
     @ScheduleRate(initialDelay = 1, period = 1, unit = TimeUnit.MINUTES)
     public void scheduleBackup() {
         try {
-            for (final MachineStateImpl state : machineManager.getMachinesStates()) {
-                final String machineId = state.getId();
+            for (final MachineImpl machine : machineManager.getMachines()) {
+                final String machineId = machine.getId();
 
-                if (state.isDev() &&
-                    state.getStatus() == MachineStatus.RUNNING &&
+                if (machine.getConfig().isDev() &&
+                    machine.getStatus() == MachineStatus.RUNNING &&
                     isTimeToBackup(machineId)) {
 
                     executor.execute(() -> {
                         try {
-                            final InstanceNode node = machineManager.getMachine(machineId).getNode();
+                            final InstanceNode node = machineManager.getInstance(machineId).getNode();
 
-                            backupManager.backupWorkspace(state.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
+                            backupManager.backupWorkspace(machine.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
 
                             lastMachineSynchronizationTime.put(machineId, System.currentTimeMillis());
                         } catch (ServerException | NotFoundException e) {

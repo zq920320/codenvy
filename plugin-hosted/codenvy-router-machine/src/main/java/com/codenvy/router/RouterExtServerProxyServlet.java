@@ -17,8 +17,8 @@ package com.codenvy.router;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.api.machine.server.exception.MachineException;
+import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.proxy.MachineExtensionProxyServlet;
-import org.eclipse.che.api.machine.server.spi.Instance;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -35,9 +35,10 @@ public class RouterExtServerProxyServlet extends MachineExtensionProxyServlet {
     public RouterExtServerProxyServlet(@Named("machine.extension.api_port") int extServicesPort,
                                        MachineManager machineManager) {
         super(extServicesPort, new RouterMachineManager((RouterMachineManager)machineManager) {
+
             @Override
-            public Instance getMachine(String machineId) throws NotFoundException, MachineException {
-                return getMachineWithDirectServersUrls(machineId);
+            public MachineImpl getDevMachine(String workspaceId) throws NotFoundException, MachineException {
+                return getDevMachineWithDirectServersUrls(workspaceId);
             }
         });
     }
