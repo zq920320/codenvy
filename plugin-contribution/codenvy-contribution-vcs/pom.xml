@@ -20,7 +20,7 @@
     <parent>
         <artifactId>contributor-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-RC6-SNAPSHOT</version>
+        <version>4.0.0-RC6</version>
     </parent>
     <artifactId>codenvy-contribution-vcs</artifactId>
     <name>Codenvy Plugin :: Contribution :: VCS</name>
