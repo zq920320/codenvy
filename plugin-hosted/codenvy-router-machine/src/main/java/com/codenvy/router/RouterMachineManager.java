@@ -15,33 +15,24 @@
 package com.codenvy.router;
 
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.model.machine.Channels;
-import org.eclipse.che.api.core.model.machine.Command;
-import org.eclipse.che.api.core.model.machine.Limits;
-import org.eclipse.che.api.core.model.machine.MachineMetadata;
-import org.eclipse.che.api.core.model.machine.MachineSource;
-import org.eclipse.che.api.core.model.machine.MachineStatus;
+import org.eclipse.che.api.core.model.machine.MachineRuntimeInfo;
 import org.eclipse.che.api.core.model.machine.Server;
 import org.eclipse.che.api.core.notification.EventService;
-import org.eclipse.che.api.core.util.LineConsumer;
 import org.eclipse.che.api.machine.server.MachineInstanceProviders;
 import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.api.machine.server.MachineRegistry;
 import org.eclipse.che.api.machine.server.WsAgentLauncher;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.machine.server.exception.MachineException;
+import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
-import org.eclipse.che.api.machine.server.spi.Instance;
-import org.eclipse.che.api.machine.server.spi.InstanceKey;
-import org.eclipse.che.api.machine.server.spi.InstanceNode;
-import org.eclipse.che.api.machine.server.spi.InstanceProcess;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.ws.rs.core.UriBuilder;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -139,142 +130,18 @@ public class RouterMachineManager extends MachineManager {
         return serversWithRewrittenUrls;
     }
 
-    Instance getMachineWithDirectServersUrls(String machineId) throws NotFoundException, MachineException {
-        final Instance machine = super.getMachine(machineId);
-        return new Instance() {
+    MachineImpl getDevMachineWithDirectServersUrls(String workspaceId) throws NotFoundException, MachineException {
+        final MachineImpl devMachine = super.getDevMachine(workspaceId);
+        return new MachineImpl(devMachine) {
             @Override
-            public MachineMetadata getMetadata() {
-                final MachineMetadata metadata = machine.getMetadata();
-                return new MachineMetadata() {
-                    @Override
-                    public Map<String, ServerImpl> getServers() {
-                        return rewriteServersUrls(machineId, metadata.getServers());
-                    }
-
-                    /************* Proxy methods ***********/
-
-                    @Override
-                    public Map<String, String> getEnvVariables() {
-                        return metadata.getEnvVariables();
-                    }
-
-                    @Override
-                    public Map<String, String> getProperties() {
-                        return metadata.getProperties();
-                    }
-
-                    @Override
-                    public String projectsRoot() {
-                        return metadata.projectsRoot();
-                    }
-                };
-            }
-
-            /************* Proxy methods ***********/
-
-            @Override
-            public void setStatus(MachineStatus status) {
-                machine.setStatus(status);
-            }
-
-            @Override
-            public LineConsumer getLogger() {
-                return machine.getLogger();
-            }
-
-            @Override
-            public InstanceProcess getProcess(int pid) throws NotFoundException, MachineException {
-                return machine.getProcess(pid);
-            }
-
-            @Override
-            public List<InstanceProcess> getProcesses() throws MachineException {
-                return machine.getProcesses();
-            }
-
-            @Override
-            public InstanceProcess createProcess(Command command, String outputChannel) throws MachineException {
-                return machine.createProcess(command, outputChannel);
-            }
-
-            @Override
-            public InstanceKey saveToSnapshot(String owner) throws MachineException {
-                return machine.saveToSnapshot(owner);
-            }
-
-            @Override
-            public void destroy() throws MachineException {
-                machine.destroy();
-            }
-
-            @Override
-            public InstanceNode getNode() {
-                return machine.getNode();
-            }
-
-            @Override
-            public String readFileContent(String filePath, int startFrom, int limit) throws MachineException {
-                return machine.readFileContent(filePath, startFrom, limit);
-            }
-
-            @Override
-            public void copy(Instance instance, String sourcePath, String targetPath, boolean overwrite) throws MachineException {
-                machine.copy(instance, sourcePath, targetPath, overwrite);
-            }
-
-            @Override
-            public String getId() {
-                return machine.getId();
-            }
-
-            @Override
-            public String getType() {
-                return machine.getType();
-            }
-
-            @Override
-            public String getOwner() {
-                return machine.getOwner();
-            }
-
-            @Override
-            public MachineStatus getStatus() {
-                return machine.getStatus();
-            }
-
-            @Override
-            public String getName() {
-                return machine.getName();
-            }
-
-            @Override
-            public String getWorkspaceId() {
-                return machine.getWorkspaceId();
-            }
-
-            @Override
-            public String getEnvName() {
-                return machine.getEnvName();
-            }
-
-            @Override
-            public boolean isDev() {
-                return machine.isDev();
-            }
-
-            @Override
-            public Channels getChannels() {
-                return machine.getChannels();
-            }
-
-            @Override
-            public MachineSource getSource() {
-                return machine.getSource();
-            }
-
-            @Override
-            public Limits getLimits() {
-                return machine.getLimits();
+            public MachineRuntimeInfoImpl getRuntime() {
+                final MachineRuntimeInfo machineRuntime = devMachine.getRuntime();
+                return new MachineRuntimeInfoImpl(MachineRuntimeInfoImpl.builder()
+                                                                        .setEnvVariables(machineRuntime.getEnvVariables())
+                                                                        .setProperties(machineRuntime.getProperties())
+                                                                        .setServers(rewriteServersUrls(devMachine.getId(),
+                                                                                                       machineRuntime.getServers()))
+                                                                        .build());
             }
         };
     }
