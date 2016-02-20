@@ -22,7 +22,6 @@ import com.codenvy.service.http.WorkspaceInfoCache;
 import com.codenvy.workspace.event.DeleteWorkspaceEvent;
 
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
-import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -30,7 +29,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.timeout;
 import static org.mockito.Mockito.verify;
@@ -65,7 +63,7 @@ public class WsCacheCleanupSubscriberTest {
         // when
         eventService.publish(new DeleteWorkspaceEvent(DtoFactory.newDto(UsersWorkspaceDto.class)
                                                                 .withId(ID)
-                                                                .withConfig(newDto(WorkspaceConfigDto.class).withName(NAME))
+                                                                .withName(NAME)
                                                                 .withOwner("owner")));
 
         //then
