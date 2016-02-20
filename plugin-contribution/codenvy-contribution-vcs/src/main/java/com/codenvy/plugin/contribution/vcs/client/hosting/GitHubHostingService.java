@@ -481,7 +481,7 @@ public class GitHubHostingService implements VcsHostingService {
                                + "&scope=user,repo,write:public_key&redirect_after_login="
                                + Window.Location.getProtocol() + "//"
                                + Window.Location.getHost() + "/ws/"
-                               + workspace.getConfig().getName();
+                               + workspace.getName();
 
         new JsOAuthWindow(authUrl, "error.url", 500, 980, new OAuthCallback() {
             @Override

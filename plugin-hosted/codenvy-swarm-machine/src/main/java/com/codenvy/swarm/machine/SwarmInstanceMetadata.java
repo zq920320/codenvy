@@ -18,22 +18,22 @@ import com.codenvy.swarm.client.json.SwarmContainerInfo;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.plugin.docker.client.json.ContainerInfo;
-import org.eclipse.che.plugin.docker.machine.DockerInstanceRuntimeInfo;
+import org.eclipse.che.plugin.docker.machine.DockerInstanceMetadata;
 
 import javax.inject.Inject;
 import java.util.Map;
 
 /**
- * Swarm implementation of {@link org.eclipse.che.api.core.model.machine.MachineRuntimeInfo}
+ * Swarm implementation of {@link org.eclipse.che.api.core.model.machine.MachineMetadata}
  *
  * @author Alexander Garagatyi
  */
-public class SwarmInstanceRuntimeInfo extends DockerInstanceRuntimeInfo {
+public class SwarmInstanceMetadata extends DockerInstanceMetadata {
 
     private final SwarmContainerInfo info;
 
     @Inject
-    public SwarmInstanceRuntimeInfo(@Assisted ContainerInfo containerInfo, @Assisted String dockerNodeHost) {
+    public SwarmInstanceMetadata(@Assisted ContainerInfo containerInfo, @Assisted String dockerNodeHost) {
         super(containerInfo, dockerNodeHost);
         info = (SwarmContainerInfo)containerInfo;
     }

@@ -14,7 +14,7 @@
  */
 package com.codenvy.machine;
 
-import com.codenvy.swarm.machine.SwarmInstanceRuntimeInfo;
+import com.codenvy.swarm.machine.SwarmInstanceMetadata;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.core.model.machine.Server;
@@ -35,17 +35,17 @@ import java.util.Map;
  *
  * @author Alexander Garagatyi
  */
-public class HttpsSupportInstanceRuntimeInfo extends SwarmInstanceRuntimeInfo {
-    private static final Logger LOG = LoggerFactory.getLogger(HttpsSupportInstanceRuntimeInfo.class);
+public class HttpsSupportInstanceMetadata extends SwarmInstanceMetadata {
+    private static final Logger LOG = LoggerFactory.getLogger(HttpsSupportInstanceMetadata.class);
 
     private final boolean                        isHttpsEnabled;
     private final MachineServerHostPortGenerator serverHostPortGenerator;
 
     @Inject
-    public HttpsSupportInstanceRuntimeInfo(@Assisted ContainerInfo containerInfo,
-                                           @Assisted String dockerNodeHost,
-                                           @Named("api.endpoint") URI apiEndpoint,
-                                           MachineServerHostPortGenerator serverHostPortGenerator) {
+    public HttpsSupportInstanceMetadata(@Assisted ContainerInfo containerInfo,
+                                        @Assisted String dockerNodeHost,
+                                        @Named("api.endpoint") URI apiEndpoint,
+                                        MachineServerHostPortGenerator serverHostPortGenerator) {
         super(containerInfo, dockerNodeHost);
         this.serverHostPortGenerator = serverHostPortGenerator;
 
