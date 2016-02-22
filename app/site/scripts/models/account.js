@@ -333,10 +333,6 @@
                 return (/^(?=.*[0-9]+.*)(?=.*[a-zA-Z]+.*).{8,100}$/).test(value);
             },
 
-            isLoginCookiePresent: function() {
-                return $.cookie('logged_in')?true:false;
-            },
-
             isUserAuthenticated: function() {
                 return getProfilePrefs()
                     .then(function(prefs){
@@ -362,12 +358,6 @@
 
             navigateToLocation: navigateToLocation,
 
-            // redirect to login page if user has 'logged_in' cookie
-            redirectIfUserHasLoginCookie: function() {
-                if ($.cookie('logged_in') && (getQueryParameterByName('account') !== "new")) {
-                    window.location = '/site/login' + window.location.search;
-                }
-            },
             // Login with email and password
             processLogin: function(email, password, redirect_url, error){
                 login(email, password)
@@ -406,34 +396,6 @@
                         }
                     }
                 );
-            },
-
-            adminLogin: function(email, password, redirect_url, error) {
-                if (isWebsocketEnabled()) {
-                    var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
-                    var data = {
-                        username: email,
-                        password: password,
-                        realm: "sysldap"
-                    };
-                    if (!redirect_url){
-                        redirect_url = "/dashboard?" + window.location.search.substring(1);
-                    }
-                    $.ajax({
-                        url: loginUrl,
-                        type: "POST",
-                        contentType: "application/json",
-                        data: JSON.stringify(data),
-                        success: function() {
-                            redirectToUrl(redirect_url);
-                        },
-                        error: function(response /*, status , err*/ ) {
-                            error([
-                                new AccountError(null, getResponseMessage(response))
-                            ]);
-                        }
-                    });
-                }
             },
 
             createTenant: function(email, username, error) {
@@ -561,12 +523,6 @@
                     string = string.replace(/\"/g, "\\\"");
                 }
                 return string;
-            },
-
-            // Changing login page behavior if authtype=ldap
-            isAuthtypeLdap: function() {
-                var type = getQueryParameterByName("authtype");
-                return type;
             }
         };
     });
