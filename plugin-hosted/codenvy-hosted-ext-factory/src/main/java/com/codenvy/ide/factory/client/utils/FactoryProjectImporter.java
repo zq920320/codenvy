@@ -20,7 +20,6 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.core.rest.shared.dto.ServiceError;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
 import org.eclipse.che.api.promises.client.Operation;
@@ -36,19 +35,32 @@ import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
 import org.eclipse.che.ide.api.importer.AbstractImporter;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
+import org.eclipse.che.ide.api.oauth.OAuth2Authenticator;
+import org.eclipse.che.ide.api.oauth.OAuth2AuthenticatorRegistry;
+import org.eclipse.che.ide.api.oauth.OAuth2AuthenticatorUrlProvider;
 import org.eclipse.che.ide.api.project.wizard.ImportProjectNotificationSubscriberFactory;
 import org.eclipse.che.ide.api.project.wizard.ProjectNotificationSubscriber;
 import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.rest.RestContext;
+import org.eclipse.che.ide.ui.dialogs.DialogFactory;
+import org.eclipse.che.ide.util.ExceptionUtils;
+import org.eclipse.che.ide.util.StringUtils;
+import org.eclipse.che.security.oauth.OAuthStatus;
 
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
+import static org.eclipse.che.api.core.ErrorCodes.UNABLE_GET_PRIVATE_SSH_KEY;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.PROGRESS;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
+import static org.eclipse.che.api.git.shared.ProviderInfo.AUTHENTICATE_URL;
+import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
 
 /**
  * @author Sergii Leschenko
@@ -61,6 +73,9 @@ public class FactoryProjectImporter extends AbstractImporter {
     private final FactoryLocalizationConstant locale;
     private final NotificationManager         notificationManager;
     private final DtoFactory                  dtoFactory;
+    private final String                      restContext;
+    private final DialogFactory               dialogFactory;
+    private final OAuth2AuthenticatorRegistry oAuth2AuthenticatorRegistry;
 
     private Factory             factory;
     private AsyncCallback<Void> callback;
@@ -71,14 +86,20 @@ public class FactoryProjectImporter extends AbstractImporter {
                                   NotificationManager notificationManager,
                                   FactoryLocalizationConstant locale,
                                   ImportProjectNotificationSubscriberFactory subscriberFactory,
+                                  @RestContext String restContext,
+                                  DialogFactory dialogFactory,
                                   EventBus eventBus,
-                                  DtoFactory dtoFactory) {
+                                  DtoFactory dtoFactory,
+                                  OAuth2AuthenticatorRegistry oAuth2AuthenticatorRegistry) {
         super(appContext, projectService, subscriberFactory);
 
         this.notificationManager = notificationManager;
         this.locale = locale;
+        this.restContext = restContext;
+        this.dialogFactory = dialogFactory;
         this.eventBus = eventBus;
         this.dtoFactory = dtoFactory;
+        this.oAuth2AuthenticatorRegistry = oAuth2AuthenticatorRegistry;
     }
 
     public void startImporting(Factory factory, AsyncCallback<Void> callback) {
@@ -163,6 +184,13 @@ public class FactoryProjectImporter extends AbstractImporter {
     protected Promise<Void> importProject(@NotNull final String pathToProject,
                                           @NotNull final String projectName,
                                           @NotNull final SourceStorageDto sourceStorage) {
+        return  doImport(pathToProject, projectName, sourceStorage);
+    }
+
+
+    protected Promise<Void> doImport(@NotNull final String pathToProject,
+                                     @NotNull final String projectName,
+                                     @NotNull final SourceStorageDto sourceStorage) {
         final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
         final ProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
         subscriber.subscribe(projectName, notification);
@@ -187,7 +215,6 @@ public class FactoryProjectImporter extends AbstractImporter {
                                                            subscriber.onFailure(err.getMessage());
                                                            notification.setContent(locale.configuringSourceFailed(projectName));
                                                            notification.setStatus(FAIL);
-                                                           Promises.reject(err);
                                                        }
                                                    });
                                  }
@@ -195,12 +222,62 @@ public class FactoryProjectImporter extends AbstractImporter {
                              .catchError(new Operation<PromiseError>() {
                                  @Override
                                  public void apply(PromiseError err) throws OperationException {
-                                     String errMessage = dtoFactory.createDtoFromJson(err.getMessage(), ServiceError.class).getMessage();
-                                     subscriber.onFailure(errMessage);
-                                     notification.setTitle(locale.cloningSourceFailedTitle(projectName));
-                                     notification.setStatus(FAIL);
-                                     Promises.reject(err);
+                                     int errorCode = ExceptionUtils.getErrorCode(err.getCause());
+                                     if (errorCode == UNAUTHORIZED_GIT_OPERATION) {
+                                         subscriber.onFailure(err.getCause().getMessage());
+                                         final Map<String, String> attributes = ExceptionUtils.getAttributes(err.getCause());
+                                         final String providerName = attributes.get(PROVIDER_NAME);
+                                         final String authenticateUrl = attributes.get(AUTHENTICATE_URL);
+                                         if (!StringUtils.isNullOrEmpty(providerName) && !StringUtils.isNullOrEmpty(authenticateUrl)) {
+                                             tryAuthenticateAndRepeatImport(providerName,
+                                                                            authenticateUrl,
+                                                                            pathToProject,
+                                                                            projectName,
+                                                                            sourceStorage,
+                                                                            subscriber);
+                                         } else {
+                                             dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
+                                                                               locale.oauthFailedToGetAuthenticatorText(), null).show();
+                                         }
+                                     } else if (errorCode == UNABLE_GET_PRIVATE_SSH_KEY) {
+                                         subscriber.onFailure(locale.acceptSshNotFoundText());
+                                     } else {
+                                         subscriber.onFailure(err.getMessage());
+                                         notification.setTitle(locale.cloningSourceFailedTitle(projectName));
+                                         notification.setStatus(FAIL);
+                                     }
                                  }
                              });
+    }
+
+
+    private void tryAuthenticateAndRepeatImport(@NotNull final String providerName,
+                                                @NotNull final String authenticateUrl,
+                                                @NotNull final String pathToProject,
+                                                @NotNull final String projectName,
+                                                @NotNull final SourceStorageDto sourceStorage,
+                                                @NotNull final ProjectNotificationSubscriber subscriber) {
+        OAuth2Authenticator authenticator = oAuth2AuthenticatorRegistry.getAuthenticator(providerName);
+        if (authenticator == null) {
+            authenticator = oAuth2AuthenticatorRegistry.getAuthenticator("default");
+        }
+        authenticator.authorize(OAuth2AuthenticatorUrlProvider.get(restContext, authenticateUrl),
+                                new AsyncCallback<OAuthStatus>() {
+                                    @Override
+                                    public void onFailure(Throwable caught) {
+                                        callback.onFailure(new Exception(caught.getMessage()));
+                                    }
+
+                                    @Override
+                                    public void onSuccess(OAuthStatus result) {
+                                        if (!result.equals(OAuthStatus.NOT_PERFORMED)) {
+                                            doImport(pathToProject, projectName, sourceStorage);
+                                        } else  {
+                                            subscriber.onFailure("Authentication cancelled");
+                                            callback.onSuccess(null);
+                                        }
+                                    }
+                                });
+
     }
 }

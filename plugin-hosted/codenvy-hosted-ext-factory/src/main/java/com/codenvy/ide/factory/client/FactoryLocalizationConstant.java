@@ -45,38 +45,15 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("project.already.imported")
     String projectAlreadyImported(String projectName);
 
-    @Key("accept.oauth.login.prompt")
-    String oAuthLoginPrompt(String host);
 
-    @Key("accept.oauth.login.title")
-    String oAuthLoginTitle();
+    @Key("oauth.failed.to.get.authenticator.title")
+    String oauthFailedToGetAuthenticatorTitle();
 
-    @Key("accept.oauth.failed.to.get.current.loggedin.user")
-    String oauthFailedToGetCurrentLoggedInUser();
+    @Key("oauth.failed.to.get.authenticator.text")
+    String oauthFailedToGetAuthenticatorText();
 
-    @Key("accept.oauth.failed")
-    String oauthFailed();
-
-    @Key("accept.oauth.success")
-    String oauthSuccess();
-
-    @Key("accept.before.need.to.authorize")
-    String needToAuthorizeBeforeAcceptMessage();
-
-    @Key("accept.not.supported.authorize")
-    String notSupportedAuthorize();
-
-    @Key("accept.canceled.required.authorize")
-    String canceledRequiredAuthorize();
-
-    @Key("accept.dialog.ssh.not.found.title")
-    String dialogSshNotFoundTitle();
-
-    @Key("accept.dialog.ssh.not.found.text")
-    String dialogSshNotFoundText();
-
-    @Key("accept.notification.ssh.generated.successfully")
-    String notificationSshGeneratedSuccessfully();
+    @Key("message.ssh.not.found.text")
+    String acceptSshNotFoundText();
 
     /* ***************************************************************************************************************
      *
