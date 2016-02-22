@@ -20,7 +20,6 @@ define(["jquery","config",
         "views/forgotpasswordform",
         "views/resetpasswordform",
         "views/errorreport",
-        "views/adminform",
         "views/create_ws_add_member",
         "views/onpremises-login",
         "views/factory-usage-notification",
@@ -31,7 +30,6 @@ define(["jquery","config",
         ForgotPasswordForm,
         ResetPasswordForm,
         ErrorReport,
-        AdminForm,
         CreateWsAdd_Member,
         OnPremisesLogin,
         FactoryUsageNotification,
@@ -61,7 +59,6 @@ define(["jquery","config",
                     var forgotPasswordForm = $(".forgotpassword-form"),
                         resetPasswordForm = $(".resetpassword-form"),
                         errorContainer = $(".error-container"),
-                        adminForm = $(".admin-form"),
                         creatWsAddMember = $(".create-ws-add-memeber"),
                         onpremloginForm = $(".onpremloginForm"),
                         factoryUsageNotification =  $(".factory-notification"),
@@ -101,20 +98,6 @@ define(["jquery","config",
                             
                         }());
                     }
-
-                    if(adminForm.length !== 0){
-                        (function(){
-                            var form = AdminForm.get(adminForm),
-                            errorReport = ErrorReport.get(errorContainer);
-                            if ($(".error-container").html()){
-                                $(".error-container").addClass("expanded");
-                            }
-
-                            form.on("invalid", function(field,message){
-                                errorReport.show(message);
-                            });
-                        }());
-                    }                    
 
                     if(forgotPasswordForm.length !== 0){
                         (function(){
