@@ -17,6 +17,7 @@ package org.eclipse.che.ide.ext.git.server.nativegit;
 import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.git.GitException;
+import org.eclipse.che.api.git.shared.ProviderInfo;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.api.git.CredentialsProvider;
 import org.eclipse.che.api.git.UserCredential;
@@ -72,5 +73,11 @@ public class WSO2OAuthCredentialsProvider implements CredentialsProvider {
     public boolean canProvideCredentials(String url) {
         return WSO_2_URL_PATTERN.matcher(url).matches();
     }
+
+    @Override
+    public ProviderInfo getProviderInfo() {
+        return null;
+    }
+
 
 }
