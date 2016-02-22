@@ -188,72 +188,6 @@
             return deferredResult;
         };
 
-        var testProjectPath = function(recentProject){
-            var deferredResult = $.Deferred();
-            var projectName = recentProject.path.substr(recentProject.path.indexOf("/",1));
-            var url = "/api/project/" + recentProject.workspaceId + projectName;
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(project,a,b) {
-                    console.info('a-> '+ a);
-                    console.info('b-> '+ b);
-                        deferredResult.resolve(project);
-                },
-                error: function() {
-                    deferredResult.reject();
-                }
-            });
-            return deferredResult;
-        };
-
-        var getLastProject = function(){
-            var deferredResult = $.Deferred();
-            getProfilePrefs()
-            .then(function(prefs){
-                var recentProject;
-                try{
-                    recentProject = JSON.parse(prefs.CodenvyAppState).recentProject;
-                    if ((/^\/[^\/]+\/[^\/]+$/).test(recentProject.path)){ //if project path is valid
-                        testProjectPath(recentProject)
-                        .then(function(){
-                            return deferredResult.resolve("/ws" + recentProject.path);
-                        })
-                        .fail(function(){
-                            return deferredResult.resolve("");
-                        });
-                    }else{
-                        deferredResult.resolve("");
-                    }
-                }catch(err){
-                    //if response does not contain JSON object
-                    deferredResult.resolve("");
-                }
-            })
-            .fail(function(){
-                deferredResult.resolve("");
-            });
-            return deferredResult;
-
-        };
-
-        var getWorkspaces = function() {
-            var deferredResult = $.Deferred();
-            var url = "/api/workspace";
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(workspace) {
-                        deferredResult.resolve(workspace); //returns first available workspace
-                },
-                error: function(error) {
-                    deferredResult.reject(error);
-                }
-            });
-            return deferredResult;
-
-        };
-
         var createAccount = function(accountName) {
             var deferredResult = $.Deferred();
             var url = "/api/account";
@@ -325,27 +259,7 @@
 
         var navigateToLocation = function(){
             var redirect_url = "/dashboard/";
-            return getWorkspaces()
-            .fail(function(error){
-                return $.Deferred().reject(error);
-            })
-            .then(function(workspace){
-                if (!workspace){
-                    redirectToUrl("/site/auth/no-workspaces-found");
-                    return $.Deferred().reject();
-                } else {
-                    return $.Deferred().resolve(workspace.id);
-                }
-            })
-            .then(function(){
-                return getLastProject();
-            })
-            .then(function(lastProject) {
-                if (lastProject) {
-                    redirect_url = lastProject;
-                }
-                redirectToUrl(redirect_url);
-            });
+            redirectToUrl(redirect_url);
         };
         //TODO api returns list of oAuth providers
         var getOAuthproviders = function(success) {
