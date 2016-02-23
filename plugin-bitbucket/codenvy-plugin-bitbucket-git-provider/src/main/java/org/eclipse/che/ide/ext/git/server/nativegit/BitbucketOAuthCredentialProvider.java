@@ -27,6 +27,7 @@ import org.slf4j.LoggerFactory;
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 
 /**
@@ -72,6 +73,10 @@ public class BitbucketOAuthCredentialProvider implements CredentialsProvider {
 
     @Override
     public ProviderInfo getProviderInfo() {
-        return null;
+        return new ProviderInfo(OAUTH_PROVIDER_NAME, UriBuilder.fromUri("/oauth/authenticate")
+                                                               .queryParam("oauth_provider", OAUTH_PROVIDER_NAME)
+                                                               .queryParam("userId", EnvironmentContext.getCurrent().getUser().getId())
+                                                               .build()
+                                                               .toString());
     }
 }
