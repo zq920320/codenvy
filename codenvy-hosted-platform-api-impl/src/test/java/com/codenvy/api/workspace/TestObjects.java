@@ -19,6 +19,7 @@ import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.RuntimeWorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
@@ -27,6 +28,8 @@ import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Size;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonList;
@@ -83,7 +86,10 @@ public final class TestObjects {
                                      "docker",
                                      new MachineSourceImpl("recipe",
                                                            "recipe-location"),
-                                     new LimitsImpl(ramLimit));
+                                     new LimitsImpl(ramLimit),
+                                     Arrays.asList(new ServerConfImpl("ref1", "8080/tcp", "https"),
+                                                   new ServerConfImpl("ref2", "9090/udp", "protocol")),
+                                     Collections.singletonMap("key1", "value1"));
     }
 
     private TestObjects() {}

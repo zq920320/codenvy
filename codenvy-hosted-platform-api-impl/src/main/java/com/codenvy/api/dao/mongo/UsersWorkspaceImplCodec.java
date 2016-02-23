@@ -29,7 +29,9 @@ import org.eclipse.che.api.core.model.project.SourceStorage;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl.MachineConfigImplBuilder;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
@@ -109,21 +111,22 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                                       .append("defaultEnv", config.getDefaultEnv())
                                                       .append("attributes", mapAsDocumentsList(config.getAttributes()));
         configDocument.append("commands", config.getCommands()
-                                             .stream()
-                                             .map(command -> new Document().append("name", command.getName())
-                                                                           .append("commandLine", command.getCommandLine())
-                                                                           .append("type", command.getType())
-                                                                           .append("attributes", mapAsDocumentsList(command.getAttributes())))
-                                             .collect(toList()));
+                                                .stream()
+                                                .map(command -> new Document().append("name", command.getName())
+                                                                              .append("commandLine", command.getCommandLine())
+                                                                              .append("type", command.getType())
+                                                                              .append("attributes",
+                                                                                      mapAsDocumentsList(command.getAttributes())))
+                                                .collect(toList()));
         configDocument.append("projects", config.getProjects()
-                                             .stream()
-                                             .map(UsersWorkspaceImplCodec::asDocument)
-                                             .collect(toList()));
+                                                .stream()
+                                                .map(UsersWorkspaceImplCodec::asDocument)
+                                                .collect(toList()));
 
         configDocument.append("environments", config.getEnvironments()
-                                                 .stream()
-                                                 .map(UsersWorkspaceImplCodec::asDocument)
-                                                 .collect(toList()));
+                                                    .stream()
+                                                    .map(UsersWorkspaceImplCodec::asDocument)
+                                                    .collect(toList()));
         document.append("config", configDocument);
         codec.encode(writer, document, encoderContext);
     }
@@ -233,28 +236,47 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         return document;
     }
 
+    private static ServerConfImpl asServerConf(Document document) {
+        return new ServerConfImpl(document.getString("ref"),
+                                  document.getString("port"),
+                                  document.getString("protocol"));
+    }
+
     private static MachineConfigImpl asMachineConfig(Document document) {
-        MachineSourceImpl source = null;
+        final MachineConfigImplBuilder builder = MachineConfigImpl.builder()
+                                                                  .setDev(document.getBoolean("isDev"))
+                                                                  .setName(document.getString("name"))
+                                                                  .setType(document.getString("type"));
         final Document sourceDocument = document.get("source", Document.class);
         if (sourceDocument != null) {
-            source = new MachineSourceImpl(sourceDocument.getString("type"), sourceDocument.getString("location"));
+            builder.setSource(new MachineSourceImpl(sourceDocument.getString("type"), sourceDocument.getString("location")));
         }
-        LimitsImpl limits = null;
         final Document limitsDocument = document.get("limits", Document.class);
         if (limitsDocument != null) {
-            limits = new LimitsImpl(limitsDocument.getInteger("ram", 0));
+            builder.setLimits(new LimitsImpl(limitsDocument.getInteger("ram", 0)));
         }
-        return new MachineConfigImpl(document.getBoolean("isDev"),
-                                     document.getString("name"),
-                                     document.getString("type"),
-                                     source,
-                                     limits);
+
+        @SuppressWarnings("unchecked") // 'servers' field is always list
+        final List<Document> serversDocuments = (List<Document>)document.get("servers");
+        if (serversDocuments != null) {
+            builder.setServers(serversDocuments.stream()
+                                               .map(UsersWorkspaceImplCodec::asServerConf)
+                                               .collect(toList()));
+        }
+
+        @SuppressWarnings("unchecked") // 'envVariables' field is always list
+        final List<Document> envVariables = (List<Document>)document.get("envVariables");
+        if (envVariables != null) {
+            builder.setEnvVariables(documentsListAsMap(envVariables));
+        }
+        return builder.build();
     }
 
     private static Document asDocument(MachineConfigImpl config) {
         final Document document = new Document().append("isDev", config.isDev())
                                                 .append("name", config.getName())
-                                                .append("type", config.getType());
+                                                .append("type", config.getType())
+                                                .append("envVariables", mapAsDocumentsList(config.getEnvVariables()));
         final MachineSource source = config.getSource();
         if (source != null) {
             document.append("source", new Document("type", source.getType()).append("location", source.getLocation()));
@@ -263,6 +285,14 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
         if (limits != null) {
             document.append("limits", new Document("ram", limits.getRam()));
         }
+
+        document.append("servers", config.getServers()
+                                         .stream()
+                                         .map(server -> new Document().append("ref", server.getRef())
+                                                                      .append("port", server.getPort())
+                                                                      .append("protocol", server.getProtocol()))
+                                         .collect(toList()));
+
         return document;
     }
 

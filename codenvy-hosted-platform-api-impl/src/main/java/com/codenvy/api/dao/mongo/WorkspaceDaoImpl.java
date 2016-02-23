@@ -135,7 +135,20 @@ import static java.util.Objects.requireNonNull;
  *              }
  *          ]
  *      },
- *      "owner" : "user123"
+ *      "owner" : "user123",
+ *      "servers" : [
+ *          {
+ *              "ref" : "some_reference",
+ *              "port" : "9090/udp",
+ *              "protocol" : "some_protocol"
+ *          }
+ *      ],
+ *      envVariables : [
+ *          {
+ *              "name" : "var_name1",
+ *              "value" : "var_value1"
+ *          }
+ *      ]
  * }
  * </pre>
  *
