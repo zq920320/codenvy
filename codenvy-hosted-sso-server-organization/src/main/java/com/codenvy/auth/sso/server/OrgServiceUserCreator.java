@@ -15,6 +15,8 @@
 package com.codenvy.auth.sso.server;
 
 
+import com.codenvy.auth.sso.server.organization.UserCreator;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -24,11 +26,9 @@ import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.Profile;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-import com.codenvy.auth.sso.server.organization.UserCreator;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.user.User;
 import org.eclipse.che.commons.user.UserImpl;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,7 +64,7 @@ public class OrgServiceUserCreator implements UserCreator {
         //TODO check this method should only call if user is not exists.
         try {
             org.eclipse.che.api.user.server.dao.User user = userDao.getByAlias(email);
-            return new UserImpl(email, user.getId(), null, Collections.<String>emptyList(), false);
+            return new UserImpl(user.getName(), user.getId(), null, Collections.<String>emptyList(), false);
         } catch (NotFoundException e) {
             if (!userSelfCreationAllowed) {
                 throw new IOException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
@@ -95,7 +95,7 @@ public class OrgServiceUserCreator implements UserCreator {
                 preferences.put("resetPassword", "true");
                 preferenceDao.setPreferences(id, preferences);
 
-                return new UserImpl(email, id, null, Collections.<String>emptyList(), false);
+                return new UserImpl(userName, id, null, Collections.<String>emptyList(), false);
             } catch (ConflictException | ServerException | NotFoundException e1) {
                 throw new IOException(e1.getLocalizedMessage(), e1);
             }
