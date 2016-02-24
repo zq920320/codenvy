@@ -36,6 +36,18 @@ public interface FactoryLocalizationConstant extends Messages {
     @Key("project.import.configured.cloned")
     String clonedSource(String projectName);
 
+    @Key("project.import.cloned.with.checkout")
+    String clonedSourceWithCheckout(String projectName, String repoName, String ref, String branch);
+
+    @Key("project.import.cloned.with.checkout.start.point")
+    String clonedWithCheckoutOnStartPoint(String projectName, String repoName, String startPoint, String branch);
+
+    @Key("project.import.cloning.failed.without.start.point")
+    String cloningSourceWithCheckoutFailed(String branch, String repoName);
+
+    @Key("project.import.cloning.failed.with.start.point")
+    String cloningSourceWithCheckoutFailed(String branch, String startPoint, String repoName);
+
     @Key("project.import.cloning.failed.title")
     String cloningSourceFailedTitle(String projectName);
 
