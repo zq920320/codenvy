@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * OAuth authentication for Microsoft account.
@@ -62,22 +63,30 @@ public class MicrosoftOauthAuthenticator extends OAuthAuthenticator {
                                        @Nullable @Named("oauth.microsoft.authuri") String authUri,
                                        @Nullable @Named("oauth.microsoft.tokenuri") String tokenUri,
                                        @Nullable @Named("oauth.microsoft.useruri") String userUri) throws IOException {
-        super();
-        configure(new MicrosoftAuthorizationCodeFlow.Builder(
-                      BearerToken.authorizationHeaderAccessMethod(),
-                      new NetHttpTransport(),
-                      new JacksonFactory(),
-                      new GenericUrl(tokenUri),
-                      new MicrosoftParametersAuthentication(
+        if (!isNullOrEmpty(clientId)
+            && !isNullOrEmpty(clientSecret)
+            && !isNullOrEmpty(authUri)
+            && !isNullOrEmpty(tokenUri)
+            && !isNullOrEmpty(userUri)
+            && redirectUris != null && redirectUris.length != 0) {
+
+            configure(new MicrosoftAuthorizationCodeFlow.Builder(
+                          BearerToken.authorizationHeaderAccessMethod(),
+                          new NetHttpTransport(),
+                          new JacksonFactory(),
+                          new GenericUrl(tokenUri),
+                          new MicrosoftParametersAuthentication(
                               clientSecret),
-                      clientId,
-                      authUri
-              )
-                      .setScopes(Arrays.asList("vso.code_manage", "vso.code_status"))
-                      .setDataStoreFactory(new MemoryDataStoreFactory())
-                      .build(),
-              Arrays.asList(redirectUris)
-             );
+                          clientId,
+                          authUri
+                      )
+                          .setScopes(Arrays.asList("vso.code_manage", "vso.code_status"))
+                          .setDataStoreFactory(new MemoryDataStoreFactory())
+                          .build(),
+                      Arrays.asList(redirectUris)
+            );
+        }
+
         this.userUri = userUri;
     }
 
