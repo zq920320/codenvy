@@ -65,4 +65,7 @@ public interface HostedLocalizationConstant extends Messages {
 
     @Key("get.support.link")
     String getSupportLink();
+
+    @Key("support.title")
+    String supportTitle();
 }
