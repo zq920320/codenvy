@@ -17,20 +17,17 @@ package com.codenvy.ide.factory.client.accept;
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
 import com.codenvy.ide.factory.client.utils.FactoryProjectImporter;
 import com.codenvy.ide.factory.client.welcome.GreetingPartPresenter;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Singleton;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.factory.shared.dto.Action;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.factory.shared.dto.Ide;
-import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateEvent;
-import org.eclipse.che.api.machine.gwt.client.events.WsAgentStateHandler;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
+import org.eclipse.che.ide.project.event.ProjectExplorerLoadedEvent;
 
 import javax.inject.Inject;
 
@@ -76,48 +73,14 @@ public class AcceptFactoryHandler {
         if ((factory = appContext.getFactory()) == null) {
             return;
         }
-        eventBus.addHandler(WsAgentStateEvent.TYPE, new WsAgentStateHandler() {
-            @Override
-            public void onWsAgentStarted(final WsAgentStateEvent event) {
-                if (isImportingStarted) {
-                    return;
-                }
-
-                isImportingStarted = true;
-
-                notification = notificationManager.notify(factoryLocalization.cloningSource(), StatusNotification.Status.PROGRESS, false);
-                startImporting(factory);
-            }
+        eventBus.addHandler(ProjectExplorerLoadedEvent.getType(), new ProjectExplorerLoadedEvent.ProjectExplorerLoadedHandler() {
 
             @Override
-            public void onWsAgentStopped(WsAgentStateEvent event) {
-
-            }
-        });
-    }
-
-    private void startImporting(final Factory factory) {
-        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-            @Override
-            public void execute() {
+            public void onProjectsLoaded(ProjectExplorerLoadedEvent event) {
+                performActions(factory);
                 greetingPartPresenter.showGreeting();
             }
         });
-        factoryProjectImporter.startImporting(factory,
-                                              new AsyncCallback<Void>() {
-                                                  @Override
-                                                  public void onSuccess(Void result) {
-                                                      notification.setStatus(StatusNotification.Status.SUCCESS);
-                                                      notification.setContent(factoryLocalization.cloningSource());
-                                                      performActions(factory);
-                                                  }
-
-                                                  @Override
-                                                  public void onFailure(Throwable throwable) {
-                                                      notification.setStatus(StatusNotification.Status.FAIL);
-                                                      notification.setContent(throwable.getMessage());
-                                                  }
-                                              });
     }
 
     private void performActions(final Factory factory) {
