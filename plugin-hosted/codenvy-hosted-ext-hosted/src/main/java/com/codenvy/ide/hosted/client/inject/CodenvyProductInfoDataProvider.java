@@ -61,4 +61,9 @@ public class CodenvyProductInfoDataProvider implements ProductInfoDataProvider {
     public SVGResource getLogo() {
         return resources.logo();
     }
+
+    @Override
+    public String getSupportTitle() {
+        return hostedLocalizationConstant.supportTitle();
+    }
 }
