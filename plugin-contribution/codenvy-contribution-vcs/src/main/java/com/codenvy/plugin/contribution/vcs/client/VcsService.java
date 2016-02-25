@@ -17,6 +17,7 @@ package com.codenvy.plugin.contribution.vcs.client;
 import org.eclipse.che.api.git.shared.Branch;
 import org.eclipse.che.api.git.shared.PushResponse;
 import org.eclipse.che.api.git.shared.Remote;
+import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -28,6 +29,7 @@ import java.util.List;
  * Service for VCS operations.
  */
 public interface VcsService {
+
     /**
      * Add a remote to the project VCS metadata.
      *
@@ -96,6 +98,15 @@ public interface VcsService {
     void getBranchName(@NotNull ProjectConfigDto project, @NotNull AsyncCallback<String> callback);
 
     /**
+     * Returns the name of the current branch for the given {@code project}.
+     *
+     * @param project
+     *         the project.
+     * @return the promise that resolves branch name or rejects with an error
+     */
+    Promise<String> getBranchName(ProjectConfigDto project);
+
+    /**
      * Returns if the given project has uncommitted changes.
      *
      * @param project
@@ -134,8 +145,18 @@ public interface VcsService {
      *         the project descriptor.
      * @param callback
      *         what to do with the remotes list
+     * @deprecated use {@link #listRemotes(ProjectConfigDto)}
      */
     void listRemotes(@NotNull ProjectConfigDto project, @NotNull AsyncCallback<List<Remote>> callback);
+
+    /**
+     * Returns the list of the remotes for given {@code project}.
+     *
+     * @param project
+     *         the project
+     * @return the promise which resolves {@literal List<Remote>} or rejects with an error
+     */
+    Promise<List<Remote>> listRemotes(ProjectConfigDto project);
 
     /**
      * Push a local branch to the given remote.

@@ -23,6 +23,17 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.api.promises.client.Function;
+import org.eclipse.che.api.promises.client.FunctionException;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.api.promises.client.js.Executor;
+import org.eclipse.che.api.promises.client.js.JsPromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
+import org.eclipse.che.api.promises.client.js.RejectFunction;
+import org.eclipse.che.api.promises.client.js.ResolveFunction;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
@@ -59,11 +70,11 @@ public class GitHubHostingService implements VcsHostingService {
     private static final String HTTPS_URL_PREFIX                          = "https://github.com/";
     private static final String API_URL_PREFIX                            = "https://api.github.com/repos/";
     private static final RegExp REPOSITORY_NAME_OWNER_PATTERN             = RegExp.compile("([^\\/]+)\\/([^\\/]+)(?:\\.git)?");
-    private static final String REPOSITORY_GIT_EXTENSION = ".git";
+    private static final String REPOSITORY_GIT_EXTENSION                  = ".git";
     private static final String NO_COMMITS_IN_PULL_REQUEST_ERROR_MESSAGE  = "No commits between";
     private static final String PULL_REQUEST_ALREADY_EXISTS_ERROR_MESSAGE = "A pull request already exists for ";
 
-    private final AppContext appContext;
+    private final AppContext              appContext;
     private final DtoUnmarshallerFactory  dtoUnmarshallerFactory;
     private final DtoFactory              dtoFactory;
     private final GitHubClientService     gitHubClientService;
@@ -108,6 +119,21 @@ public class GitHubHostingService implements VcsHostingService {
                 callback.onFailure(exception);
             }
         });
+    }
+
+    @Override
+    public Promise<HostUser> getUserInfo() {
+        return gitHubClientService.getUserInfo()
+                                  .then(new Function<GitHubUser, HostUser>() {
+                                      @Override
+                                      public HostUser apply(GitHubUser gitHubUser) throws FunctionException {
+                                          return dtoFactory.createDto(HostUser.class)
+                                                           .withId(gitHubUser.getId())
+                                                           .withLogin(gitHubUser.getLogin())
+                                                           .withName(gitHubUser.getName())
+                                                           .withUrl(gitHubUser.getUrl());
+                                      }
+                                  });
     }
 
     @Override
@@ -490,6 +516,21 @@ public class GitHubHostingService implements VcsHostingService {
                 getUserInfo(callback);
             }
         }).loginWithOAuth();
+    }
+
+    @Override
+    public Promise<HostUser> authenticate(final CurrentUser user) {
+        final UsersWorkspaceDto workspace = this.appContext.getWorkspace();
+        if (workspace == null) {
+            return Promises.reject(JsPromiseError.create("Error accessing current workspace"));
+        }
+        final String authUrl = baseUrl
+                               + "/oauth/authenticate?oauth_provider=github&userId=" + user.getProfile().getId()
+                               + "&scope=user,repo,write:public_key&redirect_after_login="
+                               + Window.Location.getProtocol() + "//"
+                               + Window.Location.getHost() + "/ws/"
+                               + workspace.getConfig().getName();
+        return ServiceUtil.performWindowAuth(this, authUrl);
     }
 
     @Override

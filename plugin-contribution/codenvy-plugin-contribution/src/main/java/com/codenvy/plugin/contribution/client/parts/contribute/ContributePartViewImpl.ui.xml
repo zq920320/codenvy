@@ -136,6 +136,11 @@
                              text="{messages.contributePartRepositorySectionBranchClonedLabel}"/>
                     <g:Label ui:field="clonedBranch" addStyleNames="{style.field}"/>
                 </div>
+                <div class="{style.fieldItem} {style.horizontal}">
+                    <g:Label addStyleNames="{style.label} {style.left}"
+                             text="{messages.contributePartRepositorySectionCurrentProjectName}"/>
+                    <g:Label ui:field="projectName" addStyleNames="{style.field}"/>
+                </div>
             </div>
             <div class="{style.section} {style.border}">
                 <g:Label addStyleNames="{style.title}" text="{messages.contributePartConfigureContributionSectionTitle}"/>

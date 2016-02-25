@@ -73,6 +73,10 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     @UiField
     Label clonedBranch;
 
+    /** The component for the name of the project */
+    @UiField
+    Label projectName;
+
     /** The input component for the contribution branch name. */
     @UiField
     ListBox contributionBranchName;
@@ -159,6 +163,11 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     @Override
     public void setClonedBranch(final String branch) {
         clonedBranch.setText(branch);
+    }
+
+    @Override
+    public void setProjectName(String projectName) {
+        this.projectName.setText(projectName);
     }
 
     @Override

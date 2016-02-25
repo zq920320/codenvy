@@ -47,7 +47,9 @@ import org.eclipse.che.ide.ui.dialogs.input.InputValidator;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
+
 import org.eclipse.che.commons.annotation.Nullable;
+
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -61,8 +63,7 @@ import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
  *
  * @author Kevin Pollet
  */
-public class ContributePartPresenter extends BasePresenter
-        implements ContributePartView.ActionDelegate, StepHandler, ContextPropertyChangeHandler {
+public class ContributePartPresenter extends BasePresenter implements ContributePartView.ActionDelegate, StepHandler, ContextPropertyChangeHandler {
     private final ContributePartView        view;
     private final WorkspaceAgent            workspaceAgent;
     private final ContributeMessages        messages;
@@ -73,7 +74,6 @@ public class ContributePartPresenter extends BasePresenter
     private final VcsServiceProvider        vcsServiceProvider;
     private final NotificationHelper        notificationHelper;
     private final DialogFactory             dialogFactory;
-    private       boolean                   updateMode;
 
     @Inject
     public ContributePartPresenter(@NotNull final ContributePartView view,
@@ -97,7 +97,6 @@ public class ContributePartPresenter extends BasePresenter
         this.vcsServiceProvider = vcsServiceProvider;
         this.notificationHelper = notificationHelper;
         this.dialogFactory = dialogFactory;
-        this.updateMode = false;
 
         this.view.setDelegate(this);
         eventBus.addHandler(StepEvent.TYPE, this);
@@ -111,6 +110,7 @@ public class ContributePartPresenter extends BasePresenter
         view.setContributionBranchNameEnabled(true);
         view.setContributionBranchNameList(Collections.<String>emptyList());
         view.setContributionTitle("");
+        view.setProjectName("");
         view.setContributionTitleEnabled(true);
         view.setContributionComment("");
         view.setContributionCommentEnabled(true);
@@ -118,7 +118,6 @@ public class ContributePartPresenter extends BasePresenter
         view.hideStatusSection();
         view.hideNewContributionSection();
 
-        updateMode = false;
         updateControls();
 
         workspaceAgent.openPart(ContributePartPresenter.this, TOOLING, LAST);
@@ -130,7 +129,7 @@ public class ContributePartPresenter extends BasePresenter
 
     @Override
     public void onContribute() {
-        if (updateMode) {
+        if (workflow.getContext().isUpdateMode()) {
             view.showStatusSection(messages.contributePartStatusSectionNewCommitsPushedStepLabel(),
                                    messages.contributePartStatusSectionPullRequestUpdatedStepLabel());
 
@@ -204,7 +203,7 @@ public class ContributePartPresenter extends BasePresenter
                             view.hideStatusSectionMessage();
                             view.hideNewContributionSection();
 
-                            updateMode = false;
+                            workflow.getContext().setUpdateMode(false);
                             updateControls();
 
                             notificationHelper
@@ -286,7 +285,7 @@ public class ContributePartPresenter extends BasePresenter
     public void onStepDone(@NotNull final StepEvent event) {
         switch (event.getStep()) {
             case CREATE_FORK: {
-                if (!updateMode) {
+                if (!workflow.getContext().isUpdateMode()) {
                     view.setCurrentStatusStepStatus(true);
                 }
             }
@@ -301,13 +300,14 @@ public class ContributePartPresenter extends BasePresenter
                 view.setCurrentStatusStepStatus(true);
                 view.setContributeButtonEnabled(true);
                 view.setContributionProgressState(false);
-                view.showStatusSectionMessage(updateMode ? messages.contributePartStatusSectionContributionUpdatedMessage()
-                                                         : messages.contributePartStatusSectionContributionCreatedMessage(), false);
+                view.showStatusSectionMessage(
+                        workflow.getContext().isUpdateMode() ? messages.contributePartStatusSectionContributionUpdatedMessage()
+                                                             : messages.contributePartStatusSectionContributionCreatedMessage(), false);
                 view.setContributionBranchNameEnabled(false);
                 view.setContributionTitleEnabled(false);
                 view.setContributionCommentEnabled(false);
                 view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeUpdateText());
-                updateMode = true;
+                workflow.getContext().setUpdateMode(true);
 
                 vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
                     @Override
@@ -337,7 +337,7 @@ public class ContributePartPresenter extends BasePresenter
             break;
 
             case CREATE_FORK: {
-                if (!updateMode) {
+                if (!workflow.getContext().isUpdateMode()) {
                     view.setCurrentStatusStepStatus(false);
                     view.showStatusSectionMessage(event.getMessage(), true);
                 }
@@ -407,6 +407,7 @@ public class ContributePartPresenter extends BasePresenter
             break;
 
             case PROJECT: {
+                view.setProjectName(event.getContext().getProject().getName());
                 refreshContributionBranchNameList();
             }
             break;

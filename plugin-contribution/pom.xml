@@ -35,7 +35,6 @@
     </licenses>
     <modules>
         <module>codenvy-plugin-contribution</module>
-        <module>codenvy-plugin-review</module>
         <module>codenvy-contribution-vcs</module>
         <module>codenvy-contribution-projecttype</module>
     </modules>

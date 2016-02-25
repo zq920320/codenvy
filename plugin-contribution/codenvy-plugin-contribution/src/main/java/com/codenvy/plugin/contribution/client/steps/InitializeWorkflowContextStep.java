@@ -104,6 +104,7 @@ public class InitializeWorkflowContextStep implements Step {
                                         !attributes.get(ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
 
                                         final String clonedBranch = attributes.get(ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
+
                                         context.setClonedBranchName(clonedBranch);
                                     }
 

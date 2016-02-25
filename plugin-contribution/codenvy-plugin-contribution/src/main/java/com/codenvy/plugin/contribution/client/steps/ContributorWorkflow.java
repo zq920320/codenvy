@@ -18,6 +18,7 @@ import com.codenvy.plugin.contribution.client.steps.events.StepEvent;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.ide.dto.DtoFactory;
+import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
@@ -61,6 +62,8 @@ public class ContributorWorkflow {
      * Executes the current step.
      */
     public void executeStep() {
+        // FIXME: remove after plugin is fully back ported
+        Log.info(getClass(), "Executing step  =>  " + step.getClass());
         step.execute(this);
     }
 

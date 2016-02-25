@@ -19,12 +19,13 @@ import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.HostUser;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.AUTHORIZE_CODENVY_ON_VCS_HOST;
@@ -37,78 +38,83 @@ import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step
 public class AuthorizeCodenvyOnVCSHostStep implements Step {
     private final Step                      initializeWorkflowContextStep;
     private final NotificationHelper        notificationHelper;
-    private final VcsHostingServiceProvider vcsHostingServiceProvider;
+    private final VcsHostingServiceProvider hostingServiceProvider;
     private final AppContext                appContext;
     private final ContributeMessages        messages;
 
     @Inject
-    public AuthorizeCodenvyOnVCSHostStep(@NotNull final InitializeWorkflowContextStep initializeWorkflowContextStep,
-                                         @NotNull final NotificationHelper notificationHelper,
-                                         @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                         @NotNull final AppContext appContext,
-                                         @NotNull final ContributeMessages messages) {
+    public AuthorizeCodenvyOnVCSHostStep(final InitializeWorkflowContextStep initializeWorkflowContextStep,
+                                         final NotificationHelper notificationHelper,
+                                         final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                         final AppContext appContext,
+                                         final ContributeMessages messages) {
         this.initializeWorkflowContextStep = initializeWorkflowContextStep;
         this.notificationHelper = notificationHelper;
-        this.vcsHostingServiceProvider = vcsHostingServiceProvider;
+        this.hostingServiceProvider = vcsHostingServiceProvider;
         this.appContext = appContext;
         this.messages = messages;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
-        vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-            @Override
-            public void onFailure(final Throwable exception) {
-                workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST, exception.getMessage());
-            }
-
-            @Override
-            public void onSuccess(final VcsHostingService vcsHostingService) {
-                vcsHostingService.getUserInfo(new AsyncCallback<HostUser>() {
-                    @Override
-                    public void onFailure(final Throwable exception) {
-                        if (exception instanceof UnauthorizedException) {
-
-                            vcsHostingService.authenticate(appContext.getCurrentUser(), new AsyncCallback<HostUser>() {
-                                @Override
-                                public void onFailure(final Throwable exception) {
-                                    workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-
-                                    if (exception instanceof UnauthorizedException) {
-                                        notificationHelper
-                                                .showError(AuthorizeCodenvyOnVCSHostStep.class,
-                                                           messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHost());
-
-                                    } else {
-                                        notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, exception);
-                                    }
-                                }
-
-                                @Override
-                                public void onSuccess(final HostUser user) {
-                                    onVCSHostUserAuthenticated(workflow, user);
-                                }
-                            });
-
-                        } else {
-                            workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-                            notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, exception);
-                        }
-                    }
-
-                    @Override
-                    public void onSuccess(final HostUser user) {
-                        onVCSHostUserAuthenticated(workflow, user);
-                    }
-                });
-            }
-        });
+    public void execute(final ContributorWorkflow workflow) {
+        hostingServiceProvider.getVcsHostingService()
+                              .then(new Operation<VcsHostingService>() {
+                                  @Override
+                                  public void apply(VcsHostingService service) throws OperationException {
+                                      service.getUserInfo()
+                                             .then(authSuccessOp(workflow))
+                                             .catchError(authErrorOp(workflow, service));
+                                  }
+                              })
+                              .catchError(new Operation<PromiseError>() {
+                                  @Override
+                                  public void apply(PromiseError error) throws OperationException {
+                                      workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST, error.getMessage());
+                                  }
+                              });
     }
 
-    private void onVCSHostUserAuthenticated(final ContributorWorkflow workflow, final HostUser user) {
-        workflow.getContext().setHostUserLogin(user.getLogin());
-        workflow.fireStepDoneEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-        workflow.setStep(initializeWorkflowContextStep);
-        workflow.executeStep();
+    private Operation<HostUser> authSuccessOp(final ContributorWorkflow workflow) {
+        return new Operation<HostUser>() {
+            @Override
+            public void apply(HostUser user) throws OperationException {
+                workflow.getContext().setHostUserLogin(user.getLogin());
+                workflow.fireStepDoneEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
+                workflow.setStep(initializeWorkflowContextStep);
+                workflow.executeStep();
+            }
+        };
+    }
+
+    private Operation<PromiseError> authErrorOp(final ContributorWorkflow workflow, final VcsHostingService service) {
+        return new Operation<PromiseError>() {
+            @Override
+            public void apply(PromiseError error) throws OperationException {
+                if (isUnauthorized(error.getCause())) {
+                    service.authenticate(appContext.getCurrentUser())
+                           .then(authSuccessOp(workflow))
+                           .catchError(new Operation<PromiseError>() {
+                               @Override
+                               public void apply(PromiseError error) throws OperationException {
+                                   workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
+                                   if (isUnauthorized(error.getCause())) {
+                                       notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class,
+                                                                    messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHost());
+
+                                   } else {
+                                       notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, error.getCause());
+                                   }
+                               }
+                           });
+                } else {
+                    workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
+                    notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, error.getCause());
+                }
+            }
+        };
+    }
+
+    private boolean isUnauthorized(Throwable cause) {
+        return cause instanceof UnauthorizedException;
     }
 }

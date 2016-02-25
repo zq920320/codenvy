@@ -16,6 +16,7 @@ package com.codenvy.plugin.contribution.vcs.client;
 
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import org.eclipse.che.api.git.gwt.client.GitServiceClient;
 import org.eclipse.che.api.git.shared.Branch;
@@ -24,6 +25,9 @@ import org.eclipse.che.api.git.shared.PushResponse;
 import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.git.shared.Revision;
 import org.eclipse.che.api.git.shared.Status;
+import org.eclipse.che.api.promises.client.Function;
+import org.eclipse.che.api.promises.client.FunctionException;
+import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.dto.DtoFactory;
@@ -41,6 +45,7 @@ import java.util.List;
 /**
  * Git backed implementation for {@link VcsService}.
  */
+@Singleton
 public class GitVcsService implements VcsService {
     private static final String BRANCH_UP_TO_DATE_ERROR_MESSAGE = "Everything up-to-date";
 
@@ -50,10 +55,10 @@ public class GitVcsService implements VcsService {
     private final AppContext             appContext;
 
     @Inject
-    public GitVcsService(@NotNull final DtoFactory dtoFactory,
-                         @NotNull final DtoUnmarshallerFactory dtoUnmarshallerFactory,
-                         @NotNull final GitServiceClient service,
-                         AppContext appContext) {
+    public GitVcsService(final DtoFactory dtoFactory,
+                         final DtoUnmarshallerFactory dtoUnmarshallerFactory,
+                         final GitServiceClient service,
+                         final AppContext appContext) {
         this.dtoFactory = dtoFactory;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.service = service;
@@ -150,32 +155,45 @@ public class GitVcsService implements VcsService {
 
     @Override
     public void getBranchName(@NotNull final ProjectConfigDto project, @NotNull final AsyncCallback<String> callback) {
-        service.status(appContext.getWorkspaceId(), project, new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
-            @Override
-            protected void onSuccess(final Status status) {
-                callback.onSuccess(status.getBranchName());
-            }
+        service.status(appContext.getWorkspaceId(), project,
+                       new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
+                           @Override
+                           protected void onSuccess(final Status status) {
+                               callback.onSuccess(status.getBranchName());
+                           }
 
-            @Override
-            protected void onFailure(final Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
+                           @Override
+                           protected void onFailure(final Throwable exception) {
+                               callback.onFailure(exception);
+                           }
+                       });
+    }
+
+    @Override
+    public Promise<String> getBranchName(ProjectConfigDto project) {
+        return service.status(appContext.getWorkspaceId(), project)
+                      .then(new Function<Status, String>() {
+                          @Override
+                          public String apply(Status status) throws FunctionException {
+                              return status.getBranchName();
+                          }
+                      });
     }
 
     @Override
     public void hasUncommittedChanges(@NotNull final ProjectConfigDto project, @NotNull final AsyncCallback<Boolean> callback) {
-        service.status(appContext.getWorkspaceId(), project, new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
-            @Override
-            protected void onSuccess(final Status status) {
-                callback.onSuccess(!status.isClean());
-            }
+        service.status(appContext.getWorkspaceId(), project,
+                       new AsyncRequestCallback<Status>(dtoUnmarshallerFactory.newUnmarshaller(Status.class)) {
+                           @Override
+                           protected void onSuccess(final Status status) {
+                               callback.onSuccess(!status.isClean());
+                           }
 
-            @Override
-            protected void onFailure(final Throwable exception) {
-                callback.onFailure(exception);
-            }
-        });
+                           @Override
+                           protected void onFailure(final Throwable exception) {
+                               callback.onFailure(exception);
+                           }
+                       });
     }
 
     @Override
@@ -229,24 +247,30 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
+    public Promise<List<Remote>> listRemotes(ProjectConfigDto project) {
+        return service.remoteList(appContext.getWorkspaceId(), project, null, false);
+    }
+
+    @Override
     public void pushBranch(@NotNull final ProjectConfigDto project, @NotNull final String remote,
                            @NotNull final String localBranchName, @NotNull final AsyncCallback<PushResponse> callback) {
-        service.push(appContext.getWorkspaceId(), project, Arrays.asList(localBranchName), remote, true, new AsyncRequestCallback<PushResponse>() {
-            @Override
-            protected void onSuccess(final PushResponse result) {
-                callback.onSuccess(result);
-            }
+        service.push(appContext.getWorkspaceId(), project, Arrays.asList(localBranchName), remote, true,
+                     new AsyncRequestCallback<PushResponse>() {
+                         @Override
+                         protected void onSuccess(final PushResponse result) {
+                             callback.onSuccess(result);
+                         }
 
-            @Override
-            protected void onFailure(final Throwable exception) {
-                if (BRANCH_UP_TO_DATE_ERROR_MESSAGE.equalsIgnoreCase(exception.getMessage())) {
-                    callback.onFailure(new BranchUpToDateException(localBranchName));
+                         @Override
+                         protected void onFailure(final Throwable exception) {
+                             if (BRANCH_UP_TO_DATE_ERROR_MESSAGE.equalsIgnoreCase(exception.getMessage())) {
+                                 callback.onFailure(new BranchUpToDateException(localBranchName));
 
-                } else {
-                    callback.onFailure(exception);
-                }
-            }
-        });
+                             } else {
+                                 callback.onFailure(exception);
+                             }
+                         }
+                     });
     }
 
     /**
