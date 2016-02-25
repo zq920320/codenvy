@@ -75,6 +75,11 @@ public class IssuePullRequestStep implements Step {
                                                         @Override
                                                         public void onFailure(final Throwable exception) {
                                                             if (exception instanceof PullRequestAlreadyExistsException) {
+                                                                // TODO: consider creating separate UpdatePullRequest step
+                                                                if (!context.isUpdateMode()) {
+                                                                    workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, exception.getMessage());
+                                                                    return;
+                                                                }
                                                                 vcsHostingService
                                                                         .getPullRequest(upstreamRepositoryOwner, upstreamRepositoryName,
                                                                                         context.getHostUserLogin(),

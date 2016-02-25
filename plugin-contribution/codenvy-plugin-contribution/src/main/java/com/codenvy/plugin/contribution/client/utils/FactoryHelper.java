@@ -25,7 +25,7 @@ import javax.validation.constraints.NotNull;
  * @author Kevin Pollet
  */
 public final class FactoryHelper {
-    private static final String CREATE_PROJECT_LINK_RELATION_NAME = "create-project";
+    private static final String ACCEPT_FACTORY_LINK_REF = "accept";
 
     /**
      * Disable instantiation.
@@ -42,7 +42,7 @@ public final class FactoryHelper {
      */
     public static String getCreateProjectRelUrl(@NotNull Factory factory) {
         for (final Link oneLink : factory.getLinks()) {
-            if (CREATE_PROJECT_LINK_RELATION_NAME.equals(oneLink.getRel())) {
+            if (ACCEPT_FACTORY_LINK_REF.equals(oneLink.getRel())) {
                 return oneLink.getHref();
             }
         }

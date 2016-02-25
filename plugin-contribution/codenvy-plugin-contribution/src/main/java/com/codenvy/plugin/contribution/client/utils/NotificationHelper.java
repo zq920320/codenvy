@@ -99,7 +99,6 @@ public final class NotificationHelper {
         // workaround IDEX-2381
         final String jsonMessage = ensureJson(errorMessage);
         showNotification(new Notification(jsonMessage));
-        Log.error(cls, exception);
     }
 
     private String ensureJson(final String input) {

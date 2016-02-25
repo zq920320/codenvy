@@ -34,6 +34,11 @@ public interface ContributePartView extends View<ContributePartView.ActionDelega
     void setClonedBranch(String branch);
 
     /**
+     * Set project name.
+     */
+    void setProjectName(String projectName);
+
+    /**
      * Returns the contribution branch name.
      *
      * @return the contribution branch name

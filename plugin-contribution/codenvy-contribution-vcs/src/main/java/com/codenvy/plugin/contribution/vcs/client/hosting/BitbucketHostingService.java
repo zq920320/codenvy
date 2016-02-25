@@ -22,6 +22,17 @@ import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.api.promises.client.Function;
+import org.eclipse.che.api.promises.client.FunctionException;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.api.promises.client.js.Executor;
+import org.eclipse.che.api.promises.client.js.JsPromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
+import org.eclipse.che.api.promises.client.js.RejectFunction;
+import org.eclipse.che.api.promises.client.js.ResolveFunction;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
@@ -35,6 +46,7 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
+import org.eclipse.che.ide.ext.github.shared.GitHubUser;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
@@ -74,7 +86,7 @@ public class BitbucketHostingService implements VcsHostingService {
     private static final RegExp SSH_URL_REGEXP   = compile(SSH_URL_PREFIX + OWNER_REPO_REGEX);
     private static final RegExp HTTPS_URL_REGEXP = compile(HTTPS_URL_PREFIX + OWNER_REPO_REGEX);
 
-    private final AppContext appContext;
+    private final AppContext              appContext;
     private final DtoUnmarshallerFactory  dtoUnmarshallerFactory;
     private final DtoFactory              dtoFactory;
     private final BitbucketClientService  bitbucketClientService;
@@ -363,6 +375,21 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
+    @Override
+    public Promise<HostUser> getUserInfo() {
+        return bitbucketClientService.getUser()
+                                     .then(new Function<BitbucketUser, HostUser>() {
+                                         @Override
+                                         public HostUser apply(BitbucketUser user) throws FunctionException {
+                                             return dtoFactory.createDto(HostUser.class)
+                                                              .withId(user.getUuid())
+                                                              .withName(user.getDisplayName())
+                                                              .withLogin(user.getUsername())
+                                                              .withUrl(user.getLinks().getSelf().getHref());
+                                         }
+                                     });
+    }
+
     @NotNull
     @Override
     public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
@@ -415,6 +442,20 @@ public class BitbucketHostingService implements VcsHostingService {
         }).loginWithOAuth();
     }
 
+    @Override
+    public Promise<HostUser> authenticate(final CurrentUser user) {
+        final UsersWorkspaceDto workspace = this.appContext.getWorkspace();
+        if (workspace == null) {
+            return Promises.reject(JsPromiseError.create("Error accessing current workspace"));
+        }
+        final String authUrl = baseUrl
+                               + "/oauth/1.0/authenticate?oauth_provider=bitbucket&userId=" + user.getProfile().getId()
+                               + "&redirect_after_login="
+                               + Window.Location.getProtocol() + "//"
+                               + Window.Location.getHost() + "/ws/"
+                               + workspace.getConfig().getName();
+        return ServiceUtil.performWindowAuth(this, authUrl);
+    }
 
     /**
      * Converts an instance of {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository} into a {@link

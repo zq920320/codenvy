@@ -73,7 +73,9 @@ public class Context {
     private String forkedRemoteName;
 
     /** The name of the forked repository. */
-    private String forkedRepositoryName;
+    private String  forkedRepositoryName;
+
+    private boolean isUpdateMode;
 
     @Inject
     public Context(@NotNull final EventBus eventBus) {
@@ -237,5 +239,14 @@ public class Context {
         if (!Objects.equals(oldValue, newValue)) {
             eventBus.fireEvent(new ContextPropertyChangeEvent(this, contextProperty));
         }
+    }
+
+    public boolean isUpdateMode() {
+        return isUpdateMode;
+    }
+
+    /** If {@code updateMode} is true then update mode goes */
+    public void setUpdateMode(boolean isUpdateMode) {
+        this.isUpdateMode = isUpdateMode;
     }
 }

@@ -24,7 +24,7 @@ import javax.validation.constraints.NotNull;
  * @author Kevin Pollet
  */
 public class StepEvent extends GwtEvent<StepHandler> {
-    public static Type<StepHandler> TYPE = new Type<>();
+    public static final Type<StepHandler> TYPE = new Type<>();
 
     private final Step    step;
     private final boolean success;

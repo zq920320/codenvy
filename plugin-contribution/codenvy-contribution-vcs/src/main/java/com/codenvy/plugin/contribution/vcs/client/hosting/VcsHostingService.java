@@ -19,6 +19,7 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.ide.api.app.CurrentUser;
 
 import javax.validation.constraints.NotNull;
@@ -167,8 +168,15 @@ public interface VcsHostingService {
      *
      * @param callback
      *         callback called when operation is done.
+     * @deprecated use {@link #getUserInfo()}
      */
+    @Deprecated
     void getUserInfo(@NotNull AsyncCallback<HostUser> callback);
+
+    /**
+     * Returns the user information on the repository host.
+     */
+    Promise<HostUser> getUserInfo();
 
     /**
      * Makes the remote SSH url for the given username and repository.
@@ -225,6 +233,17 @@ public interface VcsHostingService {
      *         the user to authenticate
      * @param callback
      *         what to do once authentication is done
+     * @deprecated use {@link #authenticate(CurrentUser)}
      */
+    @Deprecated
     void authenticate(@NotNull CurrentUser user, @NotNull AsyncCallback<HostUser> callback);
+
+    /**
+     * Authenticates the current user on the hosting service.
+     *
+     * @param user
+     *         the user to authenticate
+     * @return the promise which resolves host user or rejects with an error
+     */
+    Promise<HostUser> authenticate(CurrentUser user);
 }

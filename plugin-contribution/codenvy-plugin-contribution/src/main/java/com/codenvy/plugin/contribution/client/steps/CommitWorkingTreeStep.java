@@ -19,6 +19,8 @@ import com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter;
 import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
+import org.eclipse.che.ide.util.loging.Log;
+
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 

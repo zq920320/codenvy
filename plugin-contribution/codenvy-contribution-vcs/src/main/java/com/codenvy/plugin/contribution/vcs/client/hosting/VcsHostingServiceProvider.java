@@ -17,12 +17,17 @@ package com.codenvy.plugin.contribution.vcs.client.hosting;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Singleton;
 
 import org.eclipse.che.api.git.shared.Remote;
+import org.eclipse.che.api.promises.client.Function;
+import org.eclipse.che.api.promises.client.FunctionException;
+import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.js.JsPromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Set;
@@ -31,7 +36,9 @@ import java.util.Set;
  * Provider for the {@link com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService}.
  *
  * @author Kevin Pollet
+ * @author Yevhenii Voevodin
  */
+@Singleton
 public class VcsHostingServiceProvider {
     private static final String ORIGIN_REMOTE_NAME = "origin";
 
@@ -39,14 +46,40 @@ public class VcsHostingServiceProvider {
     private final VcsServiceProvider     vcsServiceProvider;
     private final Set<VcsHostingService> vcsHostingServices;
 
-
     @Inject
-    public VcsHostingServiceProvider(@NotNull final AppContext appContext,
-                                     @NotNull final VcsServiceProvider vcsServiceProvider,
-                                     @NotNull final Set<VcsHostingService> vcsHostingServices) {
+    public VcsHostingServiceProvider(final AppContext appContext,
+                                     final VcsServiceProvider vcsServiceProvider,
+                                     final Set<VcsHostingService> vcsHostingServices) {
         this.appContext = appContext;
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServices = vcsHostingServices;
+    }
+
+    /**
+     * Returns the dedicated {@link VcsHostingService} implementation for the {@link #ORIGIN_REMOTE_NAME origin} remote.
+     */
+    public Promise<VcsHostingService> getVcsHostingService() {
+        final CurrentProject currentProject = appContext.getCurrentProject();
+        final VcsService vcsService = vcsServiceProvider.getVcsService();
+        if (currentProject == null || vcsService == null) {
+            return Promises.reject(JsPromiseError.create(new NoVcsHostingServiceImplementationException()));
+        }
+        return vcsService.listRemotes(currentProject.getRootProject())
+                         .then(new Function<List<Remote>, VcsHostingService>() {
+                             @Override
+                             public VcsHostingService apply(List<Remote> remotes) throws FunctionException {
+                                 for (Remote remote : remotes) {
+                                     if (ORIGIN_REMOTE_NAME.equals(remote.getName())) {
+                                         for (final VcsHostingService hostingService : vcsHostingServices) {
+                                             if (hostingService.isHostRemoteUrl(remote.getUrl())) {
+                                                 return hostingService;
+                                             }
+                                         }
+                                     }
+                                 }
+                                 throw new FunctionException(new NoVcsHostingServiceImplementationException());
+                             }
+                         });
     }
 
     /**
@@ -56,8 +89,10 @@ public class VcsHostingServiceProvider {
      * @param callback
      *         the callback called when the {@link com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService} implementation is
      *         retrieved.
+     * @deprecated use {@link #getVcsHostingService()} instead
      */
-    public void getVcsHostingService(@NotNull final AsyncCallback<VcsHostingService> callback) {
+    @Deprecated
+    public void getVcsHostingService(final AsyncCallback<VcsHostingService> callback) {
         final CurrentProject currentProject = appContext.getCurrentProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
 
