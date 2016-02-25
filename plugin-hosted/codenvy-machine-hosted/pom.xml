@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-plugin-hosted-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-RC7-SNAPSHOT</version>
+        <version>4.0.0-RC7</version>
     </parent>
     <artifactId>codenvy-machine-hosted</artifactId>
     <name>Codenvy Plugin :: Hosted :: Machine</name>
