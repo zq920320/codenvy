@@ -14,16 +14,15 @@
  */
 package org.eclipse.che.security.oauth;
 
+import com.google.api.client.util.store.MemoryDataStoreFactory;
+import com.google.inject.Singleton;
+
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.commons.json.JsonHelper;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.commons.lang.IoUtil;
 import org.eclipse.che.security.oauth.shared.User;
-
-import com.google.api.client.util.store.MemoryDataStoreFactory;
-import com.google.inject.Singleton;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,8 +35,7 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
-
+import static com.google.common.base.Strings.isNullOrEmpty;
 
 /**
  * OAuth authentication for Bitbucket account.
@@ -46,7 +44,7 @@ import static com.google.api.client.repackaged.com.google.common.base.Strings.is
  */
 @Singleton
 public class BitbucketOAuthAuthenticator extends OAuthAuthenticator {
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(BitbucketOAuthAuthenticator.class);
 
     final String userUri;
