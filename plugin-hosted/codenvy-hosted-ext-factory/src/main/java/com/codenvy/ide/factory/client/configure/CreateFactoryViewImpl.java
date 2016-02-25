@@ -150,12 +150,16 @@ public class CreateFactoryViewImpl extends Window implements CreateFactoryView {
     }
 
     @Override
-    public void setFactoryLink(String link) {
-        factoryLink.setText(link);
+    public void setAcceptFactoryLink(String acceptLink) {
+        factoryLink.setText(acceptLink);
         launch.getElement().setAttribute("target", "_blank");
+        launch.setHref(acceptLink);
+    }
+
+    @Override
+    public void setConfigureFactoryLink(String configureLink) {
         configure.getElement().setAttribute("target", "_blank");
-        launch.setHref(link);
-        configure.setHref("/dashboard");
+        configure.setHref(configureLink);
     }
 
     @Override

@@ -51,7 +51,10 @@ public interface CreateFactoryView extends View<CreateFactoryView.ActionDelegate
     String getFactoryName();
 
     /** Set accept factory link */
-    void setFactoryLink(@NotNull String link);
+    void setAcceptFactoryLink(@NotNull String acceptLink);
+
+    /** Set accept factory link */
+    void setConfigureFactoryLink(@NotNull String configureLink);
 
     /** Set enable create factory button */
     void enableCreateFactoryButton(boolean enabled);
