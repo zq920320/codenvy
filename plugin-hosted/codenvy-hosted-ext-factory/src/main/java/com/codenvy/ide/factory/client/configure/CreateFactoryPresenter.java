@@ -35,6 +35,8 @@ import java.util.List;
  */
 @Singleton
 public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate {
+    public static final String CONFIGURE_LINK = "/dashboard/#/factory/";
+
     private final CreateFactoryView           view;
     private final AppContext                  appContext;
     private final FactoryServiceClient        factoryService;
@@ -94,8 +96,9 @@ public class CreateFactoryPresenter implements CreateFactoryView.ActionDelegate 
                                       public void apply(Factory factory) throws OperationException {
                                           final Link link = factory.getLink("accept-named");
                                           if (link != null) {
-                                              view.setFactoryLink(link.getHref());
+                                              view.setAcceptFactoryLink(link.getHref());
                                           }
+                                          view.setConfigureFactoryLink(CONFIGURE_LINK + factory.getId() + "/configure");
                                       }
                                   })
                                   .catchError(logError());
