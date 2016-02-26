@@ -14,6 +14,7 @@
  */
 package com.codenvy.machine.backup;
 
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 
 import org.eclipse.che.api.core.NotFoundException;
@@ -76,11 +77,9 @@ public class WorkspaceFsBackupScheduler {
 
                     executor.execute(() -> {
                         try {
-                            final InstanceNode node = machineManager.getInstance(machineId).getNode();
+                            backupWorkspaceInMachine(machine);
 
-                            backupManager.backupWorkspace(machine.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
-
-                            lastMachineSynchronizationTime.put(machineId, System.currentTimeMillis());
+                            lastMachineSynchronizationTime.put(machine.getId(), System.currentTimeMillis());
                         } catch (ServerException | NotFoundException e) {
                             LOG.error(e.getLocalizedMessage(), e);
                         }
@@ -92,7 +91,15 @@ public class WorkspaceFsBackupScheduler {
         }
     }
 
-    private boolean isTimeToBackup(String machineId) {
+    @VisibleForTesting
+    void backupWorkspaceInMachine(MachineImpl machine) throws NotFoundException, ServerException {
+        final InstanceNode node = machineManager.getInstance(machine.getId()).getNode();
+
+        backupManager.backupWorkspace(machine.getWorkspaceId(), node.getProjectsFolder(), node.getHost());
+    }
+
+    @VisibleForTesting
+    boolean isTimeToBackup(String machineId) {
         final Long lastMachineSyncTime = lastMachineSynchronizationTime.get(machineId);
 
         return lastMachineSyncTime == null || System.currentTimeMillis() - lastMachineSyncTime > syncTimeoutMillisecond;
