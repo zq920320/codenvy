@@ -99,7 +99,9 @@ public class BitbucketClientService {
      *         callback called when operation is done, cannot be {@code null}.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
+     * @deprecated use {@link #getRepository(String, String)}
      */
+    @Deprecated
     public void getRepository(@NotNull final String owner,
                               @NotNull final String repositorySlug,
                               @NotNull final AsyncRequestCallback<BitbucketRepository> callback) throws IllegalArgumentException {
@@ -110,6 +112,29 @@ public class BitbucketClientService {
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug;
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
+
+
+    /**
+     * Get Bitbucket repository information.
+     *
+     * @param owner
+     *         the repository owner, cannot be {@code null}.
+     * @param repositorySlug
+     *         the repository name, cannot be {@code null}.
+     * @throws java.lang.IllegalArgumentException
+     *         if one parameter is not valid.
+     */
+    public Promise<BitbucketRepository> getRepository(@NotNull final String owner,
+                                                      @NotNull final String repositorySlug) throws IllegalArgumentException {
+        checkArgument(owner != null, "owner");
+        checkArgument(repositorySlug != null, "repositorySlug");
+
+        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug;
+        return asyncRequestFactory.createGetRequest(requestUrl)
+                                  .loader(loaderFactory.newLoader())
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepository.class));
+    }
+
 
     /**
      * Get Bitbucket repository forks.

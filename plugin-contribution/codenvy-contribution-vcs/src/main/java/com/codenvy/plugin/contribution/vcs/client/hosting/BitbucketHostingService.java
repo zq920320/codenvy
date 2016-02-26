@@ -304,6 +304,17 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
+    @Override
+    public Promise<Repository> getRepository(String owner, String repositoryName) {
+        return bitbucketClientService.getRepository(owner, repositoryName)
+                                     .then(new Function<BitbucketRepository, Repository>() {
+                                         @Override
+                                         public Repository apply(BitbucketRepository bbRepo) throws FunctionException {
+                                             return valueOf(bbRepo);
+                                         }
+                                     });
+    }
+
     @NotNull
     @Override
     public String getRepositoryNameFromUrl(@NotNull final String url) {

@@ -39,14 +39,14 @@ public class ContributorWorkflow {
     private       Step              step;
 
     @Inject
-    public ContributorWorkflow(@NotNull final Provider<Context> contextProvider,
-                               @NotNull final EventBus eventBus,
-                               @NotNull final AuthorizeCodenvyOnVCSHostStep authorizeCodenvyOnVCSHostStep,
-                               @NotNull final DtoFactory dtoFactory) {
+    public ContributorWorkflow(final Provider<Context> contextProvider,
+                               final EventBus eventBus,
+                               final InitializeWorkflowContextStep initWorkflowContextStep,
+                               final DtoFactory dtoFactory) {
         this.contextProvider = contextProvider;
         this.eventBus = eventBus;
         this.dtoFactory = dtoFactory;
-        this.initialStep = authorizeCodenvyOnVCSHostStep;
+        this.initialStep = initWorkflowContextStep;
     }
 
     /**
@@ -67,6 +67,11 @@ public class ContributorWorkflow {
         step.execute(this);
     }
 
+    /** Sets and executes the {@code step} */
+    public void executeStep(Step step) {
+        setStep(step);
+        executeStep();
+    }
     /**
      * Sets the new current step.
      *
