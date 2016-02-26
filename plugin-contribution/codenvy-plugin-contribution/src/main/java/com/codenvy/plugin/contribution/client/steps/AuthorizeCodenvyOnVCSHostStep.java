@@ -36,19 +36,19 @@ import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step
  * @author Kevin Pollet
  */
 public class AuthorizeCodenvyOnVCSHostStep implements Step {
-    private final Step                      initializeWorkflowContextStep;
-    private final NotificationHelper        notificationHelper;
-    private final VcsHostingServiceProvider hostingServiceProvider;
-    private final AppContext                appContext;
-    private final ContributeMessages        messages;
+    private final NotificationHelper              notificationHelper;
+    private final VcsHostingServiceProvider       hostingServiceProvider;
+    private final AppContext                      appContext;
+    private final ContributeMessages              messages;
+    private final DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep;
 
     @Inject
-    public AuthorizeCodenvyOnVCSHostStep(final InitializeWorkflowContextStep initializeWorkflowContextStep,
+    public AuthorizeCodenvyOnVCSHostStep(final DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep,
                                          final NotificationHelper notificationHelper,
                                          final VcsHostingServiceProvider vcsHostingServiceProvider,
                                          final AppContext appContext,
                                          final ContributeMessages messages) {
-        this.initializeWorkflowContextStep = initializeWorkflowContextStep;
+        this.determineUpstreamRepositoryStep = determineUpstreamRepositoryStep;
         this.notificationHelper = notificationHelper;
         this.hostingServiceProvider = vcsHostingServiceProvider;
         this.appContext = appContext;
@@ -80,7 +80,7 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
             public void apply(HostUser user) throws OperationException {
                 workflow.getContext().setHostUserLogin(user.getLogin());
                 workflow.fireStepDoneEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-                workflow.setStep(initializeWorkflowContextStep);
+                workflow.setStep(determineUpstreamRepositoryStep);
                 workflow.executeStep();
             }
         };

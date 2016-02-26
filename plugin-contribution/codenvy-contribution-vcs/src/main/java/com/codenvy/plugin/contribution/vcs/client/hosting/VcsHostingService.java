@@ -126,8 +126,20 @@ public interface VcsHostingService {
      *         the repository owner.
      * @param repository
      *         the repository name.
+     * @deprecated use {@link #getRepository(String, String)}
      */
+    @Deprecated
     void getRepository(@NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
+
+    /**
+     * Returns the promise which either resolves repository or rejects with an error.
+     *
+     * @param owner
+     *         the owner of the repositoryName
+     * @param repositoryName
+     *         the name of the repository
+     */
+    Promise<Repository> getRepository(String owner, String repositoryName);
 
     /**
      * Returns the repository name from the given url.

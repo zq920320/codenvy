@@ -15,6 +15,7 @@
 package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent;
+import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
@@ -73,9 +74,10 @@ public class Context {
     private String forkedRemoteName;
 
     /** The name of the forked repository. */
-    private String  forkedRepositoryName;
+    private String forkedRepositoryName;
 
-    private boolean isUpdateMode;
+    private boolean           isUpdateMode;
+    private VcsHostingService vcsVostingService;
 
     @Inject
     public Context(@NotNull final EventBus eventBus) {
@@ -248,5 +250,13 @@ public class Context {
     /** If {@code updateMode} is true then update mode goes */
     public void setUpdateMode(boolean isUpdateMode) {
         this.isUpdateMode = isUpdateMode;
+    }
+
+    public VcsHostingService getVcsHostingService() {
+        return vcsVostingService;
+    }
+
+    public void setVcsHostingService(VcsHostingService service) {
+        this.vcsVostingService = service;
     }
 }

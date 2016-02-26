@@ -152,6 +152,17 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
+    @Override
+    public Promise<Repository> getRepository(String owner, String repositoryName) {
+        return gitHubClientService.getRepository(owner, repositoryName)
+                                  .then(new Function<GitHubRepository, Repository>() {
+                                      @Override
+                                      public Repository apply(GitHubRepository ghRepo) throws FunctionException {
+                                          return valueOf(ghRepo);
+                                      }
+                                  });
+    }
+
     @NotNull
     @Override
     public String getRepositoryNameFromUrl(@NotNull final String url) {

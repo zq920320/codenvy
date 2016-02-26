@@ -18,7 +18,11 @@ import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.google.gwt.json.client.JSONException;
 import com.google.gwt.json.client.JSONParser;
 import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.notification.Notification;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
@@ -34,8 +38,9 @@ import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUC
  *
  * @author Kevin Pollet
  */
-// FIXME
+@Singleton
 public final class NotificationHelper {
+
     /** The notification manger used to handle errors. */
     private final NotificationManager notificationManager;
 
@@ -180,5 +185,22 @@ public final class NotificationHelper {
     public void finishNotification(@NotNull final String message, @NotNull final Notification notification) {
         notification.setContent(messages.notificationMessagePrefix(message));
         ((StatusNotification)notification).setStatus(SUCCESS);
+    }
+
+    /**
+     * Returns the operation which proceeds a {@link PromiseError} instance and
+     * shows the error notification {@link #showError(Class, Throwable)}.
+     *
+     * @param clazz
+     *         class which is the source of the error
+     * @return the operation instance
+     */
+    public Operation<PromiseError> showErrorOp(final Class<?> clazz) {
+        return new Operation<PromiseError>() {
+            @Override
+            public void apply(PromiseError error) throws OperationException {
+                showError(clazz, error.getCause());
+            }
+        };
     }
 }
