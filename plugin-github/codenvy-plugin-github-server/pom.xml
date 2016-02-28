@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-plugin-github-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.0.0-RC8</version>
+        <version>4.0.0-RC9-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-plugin-github-server</artifactId>
     <name>Codenvy Plugin :: GitHub :: Server</name>
