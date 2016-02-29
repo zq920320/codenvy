@@ -15,29 +15,41 @@
 package com.codenvy.plugin.contribution.client;
 
 import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 
-import org.eclipse.che.ide.ui.Styles;
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 /**
  * Contributor plugin resources.
  */
 public interface ContributeResources extends ClientBundle {
-    @Source({"Contribute.css", "org/eclipse/che/ide/api/ui/style.css", "org/eclipse/che/ide/ui/Styles.css"})
+    @Source({"Contribute.css", "org/eclipse/che/ide/api/ui/style.css"})
     ContributeCss contributeCss();
-
-    @Source("images/ok.svg")
-    SVGResource statusOkIcon();
-
-    @Source("images/error.svg")
-    SVGResource statusErrorIcon();
 
     @Source("images/refresh.svg")
     SVGResource refreshIcon();
 
-    interface ContributeCss extends Styles {
+    interface ContributeCss extends CssResource {
         String blueButton();
 
         String errorMessage();
+
+        String inputError();
+
+        String inputField();
+
+        String statusSteps();
+
+        String stepLabel();
+
+        String checkIcon();
+
+        String errorIcon();
+
+        String stepLabelRow();
+
+        String statusTitleStepLabel();
+
+        String statusIndexStepLabel();
     }
 }

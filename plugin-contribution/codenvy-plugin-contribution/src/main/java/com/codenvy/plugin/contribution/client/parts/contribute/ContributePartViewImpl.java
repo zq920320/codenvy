@@ -26,27 +26,27 @@ import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Button;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.ListBox;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.Widget;
 
 import org.eclipse.che.ide.api.parts.PartStackUIResources;
 import org.eclipse.che.ide.api.parts.base.BaseView;
+import org.eclipse.che.ide.ui.FontAwesome;
 import org.eclipse.che.ide.ui.buttonLoader.ButtonLoaderResources;
-import org.vectomatic.dom.svg.ui.SVGImage;
+import org.eclipse.che.ide.ui.listbox.CustomListBox;
 import org.vectomatic.dom.svg.ui.SVGPushButton;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
 import static com.google.gwt.dom.client.Style.Cursor.POINTER;
-import static com.google.gwt.dom.client.Style.TextAlign.CENTER;
-import static com.google.gwt.dom.client.Style.Unit.EM;
 import static com.google.gwt.dom.client.Style.Unit.PX;
 
 /**
@@ -79,7 +79,7 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
 
     /** The input component for the contribution branch name. */
     @UiField
-    ListBox contributionBranchName;
+    CustomListBox contributionBranchName;
 
     /** Button used to refresh the contribution branch name list. */
     @UiField
@@ -385,8 +385,7 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
             this.currentStep = 0;
             this.steps = new ArrayList<>();
 
-            getElement().getStyle().setProperty("display", "flex");
-            getElement().getStyle().setProperty("flexDirection", "column");
+            addStyleName(resources.contributeCss().statusSteps());
         }
 
         public void addStep(final String label) {
@@ -421,47 +420,29 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
             add(this.status);
 
             // initialize panel style
-            this.getElement().getStyle().setProperty("display", "flex");
-            this.getElement().getStyle().setProperty("flexDirection", "row");
-            this.getElement().getStyle().setMarginBottom(1, EM);
-            this.getElement().getStyle().setHeight(24, PX);
+            addStyleName(resources.contributeCss().stepLabelRow());
 
             // initialize index style
-            indexLabel.getElement().getStyle().setColor("#47AFDD");
-            indexLabel.getElement().getStyle().setProperty("border", "1px solid #a1a1a1");
-            indexLabel.getElement().getStyle().setProperty("borderRadius", 14, PX);
-            indexLabel.getElement().getStyle().setTextAlign(CENTER);
-            indexLabel.getElement().getStyle().setWidth(22, PX);
-            indexLabel.getElement().getStyle().setHeight(22, PX);
-            indexLabel.getElement().getStyle().setBackgroundColor("#353535");
-            indexLabel.getElement().getStyle().setProperty("alignSelf", "center");
-            indexLabel.getElement().getStyle().setMarginRight(15, PX);
-            indexLabel.getElement().getStyle().setLineHeight(22, PX);
-            indexLabel.getElement().getStyle().setProperty("flexShrink", "0");
+            indexLabel.addStyleName(resources.contributeCss().statusIndexStepLabel());
 
             // initialize label style
-            titleLabel.getElement().getStyle().setProperty("alignSelf", "center");
-            titleLabel.getElement().getStyle().setProperty("flexShrink", "0");
+            titleLabel.addStyleName(resources.contributeCss().statusTitleStepLabel());
 
             // initialize status style
-            this.status.getElement().getStyle().setProperty("display", "flex");
-            this.status.getElement().getStyle().setProperty("justifyContent", "flex-end");
-            this.status.getElement().getStyle().setProperty("alignSelf", "center");
-            this.status.getElement().getStyle().setProperty("flexGrow", "2");
-            this.status.getElement().getStyle().setProperty("flexShrink", "0");
+            this.status.addStyleName(resources.contributeCss().stepLabel());
         }
 
         public void setStatus(final boolean success) {
             status.clear();
-            status.add(getStatusImage(success));
+            status.add(getStatusIcon(success));
         }
 
-        private SVGImage getStatusImage(final boolean success) {
-            final SVGImage image = new SVGImage(success ? resources.statusOkIcon() : resources.statusErrorIcon());
-            image.getElement().getStyle().setWidth(15, PX);
-            image.getElement().getStyle().setProperty("fill", success ? "#FFFFFF" : "#CF3C3E");
+        private Widget getStatusIcon(final boolean success) {
+            final Widget icon = new HTML(success ? FontAwesome.CHECK : FontAwesome.EXCLAMATION_TRIANGLE);
 
-            return image;
+            icon.addStyleName(success ? resources.contributeCss().checkIcon() : resources.contributeCss().errorIcon());
+
+            return icon;
         }
     }
 }
