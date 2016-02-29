@@ -238,7 +238,6 @@ public class SyncGitServiceClient {
     private String createInitRequest(ProjectConfigDto project) {
         InitRequest initRequest = dtoFactory.createDto(InitRequest.class);
         initRequest.setWorkingDir(project.getName());
-        initRequest.setInitCommit(true);
         initRequest.setBare(false);
         return dtoFactory.toJson(initRequest);
     }
