@@ -29,15 +29,6 @@ public interface ContributeMessages extends Messages {
     @Key("contribute.part.repository.section.title")
     String contributePartRepositorySectionTitle();
 
-    @Key("contribute.part.repository.section.url.label")
-    String contributePartRepositorySectionUrlLabel();
-
-    @Key("contribute.part.repository.section.branch.cloned.label")
-    String contributePartRepositorySectionBranchClonedLabel();
-
-    @Key("contribute.part.repository.section.project.name")
-    String contributePartRepositorySectionCurrentProjectName();
-
     @Key("contribute.part.configure.contribution.section.title")
     String contributePartConfigureContributionSectionTitle();
 

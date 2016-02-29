@@ -13,20 +13,84 @@
  * from Codenvy S.A..
  */
 .blueButton {
-    background: #256C9F;
-    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.29), inset 0 1px 0 0 rgba(55, 126, 172, 1);
-    border-color: #2f3237;
+    background: primaryButtonBackground;
+    border: 1px solid primaryButtonBorderColor;
+    color: primaryButtonFontColor;
 }
 
 .blueButton:hover {
-    background: #18537E;
+    background-color: primaryButtonHoverBackground;
+    border: 1px solid primaryButtonHoverBorderColor;
+    color: primaryButtonHoverFontColor;
 }
 
 .blueButton[disabled], .blueButton[disabled]:hover {
-    background: rgba(37, 108, 159, 0.35);
-    color: rgba(255, 255, 255, 0.35);
+    background: primaryButtonDisabledBackground;
+    border: 1px solid primaryButtonDisabledBorderColor;
+    color: primaryButtonDisabledFontColor;
 }
 
 .errorMessage {
-    color: #E25252;
+    color: error;
+}
+
+.checkIcon {
+    color: selectionBackground;
+}
+
+.errorIcon {
+    color: errorColor;
+}
+
+.inputError {
+    border-bottom: 1px solid errorColor;
+}
+
+.inputField {
+    resize: none;
+}
+
+.statusSteps {
+    display: flex;
+    flex-direction: column;
+}
+
+.stepLabel {
+    display: flex;
+    justify-content: flex-end;
+    align-self: center;
+    flex-grow: 2;
+    flex-shrink: 0;
+}
+
+.stepLabel i {
+    width: 20px;
+    font-size: largeFontSize;
+    margin-bottom: 5px;
+}
+
+.stepLabelRow {
+    display: flex;
+    flex-direction: row;
+    margin-bottom: 1em;
+    height: 24px;
+}
+
+.statusIndexStepLabel {
+    color: mainFontColor;
+    border: 1px solid iconColor;
+    border-radius: 14px;
+    text-align: center;
+    width: 22px;
+    height: 22px;
+    align-self: center;
+    margin-right: 10px;
+    line-height: 22px;
+    flex-shrink: 0;
+    background-color: selectionBackground;
+}
+
+.statusTitleStepLabel {
+    align-self: center;
+    flex-shrink: 0;
 }

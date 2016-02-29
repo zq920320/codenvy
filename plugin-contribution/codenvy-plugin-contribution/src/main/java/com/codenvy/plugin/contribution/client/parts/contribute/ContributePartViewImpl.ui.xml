@@ -18,11 +18,11 @@
              xmlns:g='urn:import:com.google.gwt.user.client.ui'
              xmlns:my='urn:import:com.codenvy.plugin.contribution.client.dialogs.paste'
              xmlns:svg='urn:import:org.vectomatic.dom.svg.ui'
-        >
+             xmlns:che='urn:import:org.eclipse.che.ide.ui.listbox'>
 
     <ui:with type="com.codenvy.plugin.contribution.client.ContributeMessages" field="messages"/>
     <ui:with type="com.codenvy.plugin.contribution.client.ContributeResources" field="resources"/>
-    <ui:style>
+    <ui:style src="org/eclipse/che/ide/api/ui/style.css">
         .panel {
             font-size: 11px;
             position: relative;
@@ -31,23 +31,27 @@
         }
 
         .border {
-            border-top: 1px solid #232323;
+            border-top: 1px solid textFieldBorderColor;
         }
 
         .section {
             display: flex;
             flex-direction: column;
-            padding: 0.5em 1em 0.5em 1.5em;
+            padding: 5px 5px 5px 0;
+        }
+
+        .section > * {
+            margin-left: 20px;
         }
 
         .section .title {
-            font-weight: bold;
-            font-size: 12px;
-            margin-bottom: 1em;
-            text-shadow: 0 1px 0 rgba(0, 0, 0, 1);
             position: relative;
-            left: -1em;
             top: 0;
+            font-size: 12px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: mainFontColor;
+            margin-left: 10px;
         }
 
         .section button {
@@ -59,33 +63,54 @@
             display: flex;
             flex-direction: column;
             justify-content: flex-start;
-            margin-bottom: 1em;
-            overflow: hidden;
+            margin-bottom: 5px;
+            overflow: visible;
         }
 
         .fieldItem .field {
             flex-grow: 1;
         }
 
-        .horizontal {
-            display: inline-block;
-            text-align: right;
+        .fieldItem .field span {
+            display: inherit;
         }
 
-        .link, .link:hover, .link:visited {
-            color: #61b7ef;
+        .horizontal {
+            color: mainFontColor;
+            display: inline-block;
+            text-align: left;
+            height: 24px;
+            width: literal("calc(100% - 20px)");
+        }
+
+        .link {
+            color: outputLinkColor !important;
             text-decoration: underline;
         }
 
-        .left {
+        .horizontal .field {
+            color: inherit;
+            width: inherit;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .icon {
+            display: inline-block;
+            text-decoration: none;
+            text-align: center;
+            line-height: 18px;
+            margin-right: 5px;
+            width: 15px;
             float: left;
+            color: inherit;
         }
 
         .fieldItem .label {
-            width: 11em;
-            flex-grow: 0;
+            float: left;
             display: flex;
-            margin-bottom: 0.5em;
+            margin-right: 5px;
+            margin-bottom: 5px;
         }
 
         .fixed-textarea {
@@ -103,18 +128,26 @@
             align-self: center;
             width: auto;
             line-height: 20px;
-
             display: inline-box;
             white-space: pre-wrap;
             word-break: break-all;
         }
 
         .section.repository {
-            background: #343434;
+            background: inherit;
+        }
+
+        .branchField {
+            display: flex;
+        }
+
+        .branchField svg {
+            flex-shrink: 0;
         }
 
         .repository .fieldItem .field {
             font-weight: bold;
+            display: inline-block;
         }
 
         .section.newContribution button {
@@ -127,18 +160,15 @@
             <div class="{style.section} {style.repository}">
                 <g:Label addStyleNames="{style.title}" text="{messages.contributePartRepositorySectionTitle}"/>
                 <div class="{style.fieldItem} {style.horizontal}">
-                    <g:Label addStyleNames="{style.label} {style.left}"
-                             text="{messages.contributePartRepositorySectionUrlLabel}"/>
+                    <i class="fa fa-cogs {style.icon} {style.link}"></i>
                     <g:Anchor ui:field="repositoryUrl" addStyleNames="{style.field} {style.link}" target="_blank"/>
                 </div>
                 <div class="{style.fieldItem} {style.horizontal}">
-                    <g:Label addStyleNames="{style.label} {style.left}"
-                             text="{messages.contributePartRepositorySectionBranchClonedLabel}"/>
+                    <i class="fa fa-code-fork {style.icon}"></i>
                     <g:Label ui:field="clonedBranch" addStyleNames="{style.field}"/>
                 </div>
                 <div class="{style.fieldItem} {style.horizontal}">
-                    <g:Label addStyleNames="{style.label} {style.left}"
-                             text="{messages.contributePartRepositorySectionCurrentProjectName}"/>
+                    <i class="fa fa-bookmark {style.icon}"></i>
                     <g:Label ui:field="projectName" addStyleNames="{style.field}"/>
                 </div>
             </div>
@@ -147,9 +177,9 @@
                 <div class="{style.fieldItem}">
                     <g:Label addStyleNames="{style.label}"
                              text="{messages.contributePartConfigureContributionSectionContributionBranchNameLabel}"/>
-                    <div style="display: flex;">
-                        <g:ListBox ui:field="contributionBranchName" addStyleNames="{style.field} {resources.contributeCss.inputField}"
-                                   multipleSelect="false"/>
+                    <div class="{style.branchField}">
+                        <che:CustomListBox ui:field="contributionBranchName"
+                                           addStyleNames="{style.field} {resources.contributeCss.inputField}"/>
                         <svg:SVGPushButton ui:field="refreshContributionBranchNameListButton" resource="{resources.refreshIcon}"/>
                     </div>
                 </div>
@@ -170,7 +200,7 @@
             </div>
             <g:FlowPanel ui:field="statusSection" addStyleNames="{style.section} {style.border}" debugId="statusSection">
                 <g:Label addStyleNames="{style.title}" text="{messages.contributePartStatusSectionTitle}"/>
-                <g:InlineLabel ui:field="statusSectionMessage" addStyleNames="{style.statusMessage}" debugId="statusSectionMessage" />
+                <g:InlineLabel ui:field="statusSectionMessage" addStyleNames="{style.statusMessage}" debugId="statusSectionMessage"/>
             </g:FlowPanel>
             <g:HTMLPanel ui:field="newContributionSection" addStyleNames="{style.section} {style.newContribution} {style.border}">
                 <g:Button ui:field="openPullRequestOnVcsHostButton"/>
