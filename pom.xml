@@ -24,7 +24,7 @@
     </parent>
     <groupId>com.codenvy.factory</groupId>
     <artifactId>codenvy-factory-parent</artifactId>
-    <version>4.0.0-RC9-SNAPSHOT</version>
+    <version>4.0.0-RC9</version>
     <packaging>pom</packaging>
     <name>Codenvy Factory :: Parent</name>
     <modules>
@@ -33,7 +33,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/factory.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/factory.git</developerConnection>
-        <tag>HEAD</tag>
+        <tag>4.0.0-RC9</tag>
         <url>https://fisheye.codenvycorp.com/browse/factory</url>
     </scm>
     <properties>
