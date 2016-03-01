@@ -217,36 +217,35 @@ public class FactoryProjectImporter extends AbstractImporter {
         final String branch = parameters.get("branch");
         final String startPoint = parameters.get("startPoint");
         final MessageBus messageBus = messageBusProvider.getMachineMessageBus();
-        try {
-            final String channel = CHANNEL + appContext.getWorkspaceId() + ':' + projectName;
-            messageBus.subscribe(channel, new SubscriptionHandler<GitCheckoutEvent>(
-                    dtoUnmarshallerFactory.newWSUnmarshaller(GitCheckoutEvent.class)) {
-                @Override
-                protected void onMessageReceived(GitCheckoutEvent result) {
-                    if (result.isCheckoutOnly()) {
-                        notificationManager.notify(locale.clonedSource(projectName),
-                                                   locale.clonedSourceWithCheckout(projectName, repository, result.getBranchRef(), branch),
-                                                   SUCCESS,
-                                                   true);
-                    } else {
-                        notificationManager.notify(locale.clonedSource(projectName),
-                                                   locale.clonedWithCheckoutOnStartPoint(projectName, repository, startPoint, branch),
-                                                   SUCCESS,
-                                                   true);
-                    }
+        final String channel = CHANNEL + appContext.getWorkspaceId() + ':' + projectName;
+        final SubscriptionHandler<GitCheckoutEvent> successImportHandler = new SubscriptionHandler<GitCheckoutEvent>(
+                dtoUnmarshallerFactory.newWSUnmarshaller(GitCheckoutEvent.class)) {
+            @Override
+            protected void onMessageReceived(GitCheckoutEvent result) {
+                if (result.isCheckoutOnly()) {
+                    notificationManager.notify(locale.clonedSource(projectName),
+                                               locale.clonedSourceWithCheckout(projectName, repository, result.getBranchRef(), branch),
+                                               SUCCESS,
+                                               true);
+                } else {
+                    notificationManager.notify(locale.clonedSource(projectName),
+                                               locale.clonedWithCheckoutOnStartPoint(projectName, repository, startPoint, branch),
+                                               SUCCESS,
+                                               true);
                 }
+            }
 
-                @Override
-                protected void onErrorReceived(Throwable e) {
-                    try {
-                        messageBus.unsubscribe(channel, this);
-                    } catch (WebSocketException wEx) {
-                        Log.error(FactoryProjectImporter.class, wEx);
-                    }
+            @Override
+            protected void onErrorReceived(Throwable e) {
+                try {
+                    messageBus.unsubscribe(channel, this);
+                } catch (WebSocketException ignore) {
                 }
-            });
-        } catch (WebSocketException e) {
-            Log.error(FactoryProjectImporter.class, e.getMessage());
+            }
+        };
+        try {
+            messageBus.subscribe(channel, successImportHandler);
+        } catch (WebSocketException ignore) {
         }
         return projectService.importProject(workspaceId, projectName, true, sourceStorage)
                              .then(new Operation<Void>() {
@@ -275,10 +274,10 @@ public class FactoryProjectImporter extends AbstractImporter {
                              .catchError(new Operation<PromiseError>() {
                                  @Override
                                  public void apply(PromiseError err) throws OperationException {
-                                     int errorCode = ExceptionUtils.getErrorCode(err.getCause());
+                                     final int errorCode = ExceptionUtils.getErrorCode(err.getCause());
                                      switch (errorCode) {
                                          case UNAUTHORIZED_GIT_OPERATION:
-                                             subscriber.onFailure(err.getCause().getMessage());
+                                             subscriber.onFailure(err.getMessage());
                                              final Map<String, String> attributes = ExceptionUtils.getAttributes(err.getCause());
                                              final String providerName = attributes.get(PROVIDER_NAME);
                                              final String authenticateUrl = attributes.get(AUTHENTICATE_URL);
@@ -292,6 +291,10 @@ public class FactoryProjectImporter extends AbstractImporter {
                                              } else {
                                                  dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
                                                                                    locale.oauthFailedToGetAuthenticatorText(), null).show();
+                                             }
+                                             try {
+                                                 messageBus.unsubscribe(channel, successImportHandler);
+                                             } catch (WebSocketException ignore) {
                                              }
                                              break;
                                          case UNABLE_GET_PRIVATE_SSH_KEY:
