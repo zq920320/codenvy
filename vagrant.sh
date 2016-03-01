@@ -150,11 +150,13 @@ checkThatTomcatStartsWithoutErrors() {
 
   SERVER_STATE='Starting'
   COUNTER=0
-  testfile=/tmp/catalin.out
+  local testfile=/tmp/catalin.out
+  local remoteLogsFile=../codenvy/codenvy-tomcat/logs/catalina.out
+  local fromLine=$(vagrant ssh $1 -c "sudo grep -n 'o.a.c.s.VersionLoggerListener .* Server version:        Apache Tomca' ${remoteLogsFile}  | tail -1" | sed 's/:.*//g')
   while [[ ${SERVER_STATE} != "Started" ]]; do
     deleteFileIfExists ${testfile}
 
-    vagrant ssh $1 -c "sudo cat ../codenvy/codenvy-tomcat/logs/catalina.out" > ${testfile}
+    vagrant ssh ${1} -c "sudo tail -n +${fromLine:-1} ${remoteLogsFile}" > ${testfile}
 
     if grep -Fq "[ERROR]" ${testfile}
     then
@@ -167,7 +169,7 @@ checkThatTomcatStartsWithoutErrors() {
     else
       if grep -Fq "Server startup" ${testfile}
       then
-        echo "Tomcat of the server started"
+        echo "Server ${1} started"
         SERVER_STATE=Started
       fi
 
