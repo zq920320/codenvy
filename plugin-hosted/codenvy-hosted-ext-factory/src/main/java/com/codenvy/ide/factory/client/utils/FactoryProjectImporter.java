@@ -15,7 +15,6 @@
 package com.codenvy.ide.factory.client.utils;
 
 import com.codenvy.ide.factory.client.FactoryLocalizationConstant;
-import com.google.common.base.MoreObjects;
 import com.google.gwt.core.client.JsArrayMixed;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Inject;
@@ -24,6 +23,8 @@ import com.google.web.bindery.event.shared.EventBus;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.git.shared.GitCheckoutEvent;
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
+import org.eclipse.che.api.promises.client.Function;
+import org.eclipse.che.api.promises.client.FunctionException;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
@@ -33,7 +34,7 @@ import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectProblemDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.event.project.CreateProjectEvent;
+import org.eclipse.che.ide.api.event.project.ProjectUpdatedEvent;
 import org.eclipse.che.ide.api.importer.AbstractImporter;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
@@ -47,7 +48,6 @@ import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
 import org.eclipse.che.ide.util.ExceptionUtils;
 import org.eclipse.che.ide.util.StringUtils;
-import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.ide.websocket.MessageBus;
 import org.eclipse.che.ide.websocket.MessageBusProvider;
 import org.eclipse.che.ide.websocket.WebSocketException;
@@ -57,7 +57,6 @@ import org.eclipse.che.security.oauth.OAuthStatus;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -248,32 +247,37 @@ public class FactoryProjectImporter extends AbstractImporter {
         } catch (WebSocketException ignore) {
         }
         return projectService.importProject(workspaceId, projectName, true, sourceStorage)
-                             .then(new Operation<Void>() {
+                             .thenPromise(new Function<Void, Promise<Void>>() {
                                  @Override
-                                 public void apply(Void arg) throws OperationException {
-                                     projectService.getProject(workspaceId, pathToProject)
-                                                   .then(new Operation<ProjectConfigDto>() {
-                                                       @Override
-                                                       public void apply(ProjectConfigDto projectConfig) throws OperationException {
-                                                           eventBus.fireEvent(new CreateProjectEvent(projectConfig));
-                                                           subscriber.onSuccess();
-                                                           notification.setContent(locale.clonedSource(projectName));
-                                                           notification.setStatus(SUCCESS);
-                                                       }
-                                                   })
-                                                   .catchError(new Operation<PromiseError>() {
-                                                       @Override
-                                                       public void apply(PromiseError err) throws OperationException {
-                                                           subscriber.onFailure(err.getMessage());
-                                                           notification.setContent(locale.configuringSourceFailed(projectName));
-                                                           notification.setStatus(FAIL);
-                                                       }
-                                                   });
+                                 public Promise<Void> apply(Void aVoid) throws FunctionException {
+                                     return projectService.getProject(workspaceId, pathToProject)
+                                                          .then(new Function<ProjectConfigDto, Void>() {
+                                                              @Override
+                                                              public Void apply(ProjectConfigDto projectConfigDto)
+                                                                      throws FunctionException {
+                                                                  subscriber.onSuccess();
+                                                                  notification.setContent(locale.clonedSource(projectName));
+                                                                  notification.setStatus(SUCCESS);
+
+                                                                  eventBus.fireEvent(
+                                                                          new ProjectUpdatedEvent(pathToProject, projectConfigDto));
+
+                                                                  return null;
+                                                              }
+                                                          })
+                                                          .catchError(new Operation<PromiseError>() {
+                                                              @Override
+                                                              public void apply(PromiseError err) throws OperationException {
+                                                                  subscriber.onFailure(err.getMessage());
+                                                                  notification.setContent(locale.configuringSourceFailed(projectName));
+                                                                  notification.setStatus(FAIL);
+                                                              }
+                                                          });
                                  }
                              })
-                             .catchError(new Operation<PromiseError>() {
+                             .catchErrorPromise(new Function<PromiseError, Promise<Void>>() {
                                  @Override
-                                 public void apply(PromiseError err) throws OperationException {
+                                 public Promise<Void> apply(PromiseError err) throws FunctionException {
                                      final int errorCode = ExceptionUtils.getErrorCode(err.getCause());
                                      switch (errorCode) {
                                          case UNAUTHORIZED_GIT_OPERATION:
@@ -282,12 +286,12 @@ public class FactoryProjectImporter extends AbstractImporter {
                                              final String providerName = attributes.get(PROVIDER_NAME);
                                              final String authenticateUrl = attributes.get(AUTHENTICATE_URL);
                                              if (!StringUtils.isNullOrEmpty(providerName) && !StringUtils.isNullOrEmpty(authenticateUrl)) {
-                                                 tryAuthenticateAndRepeatImport(providerName,
-                                                                                authenticateUrl,
-                                                                                pathToProject,
-                                                                                projectName,
-                                                                                sourceStorage,
-                                                                                subscriber);
+                                                 return tryAuthenticateAndRepeatImport(providerName,
+                                                                                       authenticateUrl,
+                                                                                       pathToProject,
+                                                                                       projectName,
+                                                                                       sourceStorage,
+                                                                                       subscriber);
                                              } else {
                                                  dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
                                                                                    locale.oauthFailedToGetAuthenticatorText(), null).show();
@@ -313,37 +317,40 @@ public class FactoryProjectImporter extends AbstractImporter {
                                              notification.setTitle(locale.cloningSourceFailedTitle(projectName));
                                              notification.setStatus(FAIL);
                                      }
+
+                                     return Promises.resolve(null);
                                  }
                              });
     }
 
-    private void tryAuthenticateAndRepeatImport(@NotNull final String providerName,
-                                                @NotNull final String authenticateUrl,
-                                                @NotNull final String pathToProject,
-                                                @NotNull final String projectName,
-                                                @NotNull final SourceStorageDto sourceStorage,
-                                                @NotNull final ProjectNotificationSubscriber subscriber) {
+    private Promise<Void> tryAuthenticateAndRepeatImport(@NotNull final String providerName,
+                                                         @NotNull final String authenticateUrl,
+                                                         @NotNull final String pathToProject,
+                                                         @NotNull final String projectName,
+                                                         @NotNull final SourceStorageDto sourceStorage,
+                                                         @NotNull final ProjectNotificationSubscriber subscriber) {
         OAuth2Authenticator authenticator = oAuth2AuthenticatorRegistry.getAuthenticator(providerName);
         if (authenticator == null) {
             authenticator = oAuth2AuthenticatorRegistry.getAuthenticator("default");
         }
-        authenticator.authorize(OAuth2AuthenticatorUrlProvider.get(restContext, authenticateUrl),
-                                new AsyncCallback<OAuthStatus>() {
-                                    @Override
-                                    public void onFailure(Throwable caught) {
-                                        callback.onFailure(new Exception(caught.getMessage()));
-                                    }
+        return authenticator.authenticate(OAuth2AuthenticatorUrlProvider.get(restContext, authenticateUrl)).thenPromise(
+                new Function<OAuthStatus, Promise<Void>>() {
+                    @Override
+                    public Promise<Void> apply(OAuthStatus result) throws FunctionException {
+                        if (!result.equals(OAuthStatus.NOT_PERFORMED)) {
+                            return doImport(pathToProject, projectName, sourceStorage);
+                        } else {
+                            subscriber.onFailure("Authentication cancelled");
+                            callback.onSuccess(null);
+                        }
 
-                                    @Override
-                                    public void onSuccess(OAuthStatus result) {
-                                        if (!result.equals(OAuthStatus.NOT_PERFORMED)) {
-                                            doImport(pathToProject, projectName, sourceStorage);
-                                        } else {
-                                            subscriber.onFailure("Authentication cancelled");
-                                            callback.onSuccess(null);
-                                        }
-                                    }
-                                });
-
+                        return Promises.resolve(null);
+                    }
+                }).catchError(new Operation<PromiseError>() {
+            @Override
+            public void apply(PromiseError caught) throws OperationException {
+                callback.onFailure(new Exception(caught.getMessage()));
+            }
+        });
     }
 }
