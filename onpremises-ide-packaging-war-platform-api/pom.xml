@@ -96,6 +96,14 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-webhooks-github</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-webhooks-vsts</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-wso2-oauth2</artifactId>
         </dependency>
         <dependency>
