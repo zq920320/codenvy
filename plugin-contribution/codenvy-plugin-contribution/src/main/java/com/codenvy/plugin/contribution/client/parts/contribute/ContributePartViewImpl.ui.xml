@@ -127,10 +127,10 @@
             margin-bottom: 1em;
             align-self: center;
             width: auto;
-            line-height: 20px;
+            line-height: 15px;
             display: inline-box;
             white-space: pre-wrap;
-            word-break: break-all;
+            word-break:  normal;
         }
 
         .section.repository {
@@ -160,7 +160,7 @@
             <div class="{style.section} {style.repository}">
                 <g:Label addStyleNames="{style.title}" text="{messages.contributePartRepositorySectionTitle}"/>
                 <div class="{style.fieldItem} {style.horizontal}">
-                    <i class="fa fa-cogs {style.icon} {style.link}"></i>
+                    <i class="fa fa-link {style.icon} {style.link}"></i>
                     <g:Anchor ui:field="repositoryUrl" addStyleNames="{style.field} {style.link}" target="_blank"/>
                 </div>
                 <div class="{style.fieldItem} {style.horizontal}">
