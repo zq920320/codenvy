@@ -47,6 +47,14 @@
             <artifactId>codenvy-plugin-microsoft-git-provider</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-microsoft-vsts-ext-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-microsoft-vsts-ext-shared</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.guava</groupId>
             <artifactId>guava</artifactId>
         </dependency>
@@ -184,8 +192,7 @@
                 <configuration>
                     <packagingExcludes>WEB-INF/lib/*gwt*.jar,
                         WEB-INF/lib/gin-*.jar,
-                        WEB-INF/lib/che-core-api-analytics-*.jar
-                    </packagingExcludes>
+                        WEB-INF/lib/che-core-api-analytics-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>
