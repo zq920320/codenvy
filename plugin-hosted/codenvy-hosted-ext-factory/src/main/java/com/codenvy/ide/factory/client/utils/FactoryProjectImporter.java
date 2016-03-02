@@ -296,10 +296,7 @@ public class FactoryProjectImporter extends AbstractImporter {
                                                  dialogFactory.createMessageDialog(locale.oauthFailedToGetAuthenticatorTitle(),
                                                                                    locale.oauthFailedToGetAuthenticatorText(), null).show();
                                              }
-                                             try {
-                                                 messageBus.unsubscribe(channel, successImportHandler);
-                                             } catch (WebSocketException ignore) {
-                                             }
+
                                              break;
                                          case UNABLE_GET_PRIVATE_SSH_KEY:
                                              subscriber.onFailure(locale.acceptSshNotFoundText());
@@ -309,7 +306,7 @@ public class FactoryProjectImporter extends AbstractImporter {
                                              notification.setTitle(locale.cloningSourceFailedTitle(projectName));
                                              break;
                                          case FAILED_CHECKOUT_WITH_START_POINT:
-                                             subscriber.onFailure(locale.cloningSourceWithCheckoutFailed(branch, startPoint, repository));
+                                             subscriber.onFailure(locale.cloningSourceCheckoutFailed(branch, startPoint));
                                              notification.setTitle(locale.cloningSourceFailedTitle(projectName));
                                              break;
                                          default:
