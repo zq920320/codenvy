@@ -18,19 +18,30 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>codenvy-plugin-parent</artifactId>
+        <artifactId>codenvy-plugin-microsoft-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
         <version>4.0.0-RC11-SNAPSHOT</version>
-        <relativePath>../pom.xml</relativePath>
     </parent>
-    <artifactId>codenvy-plugin-microsoft-parent</artifactId>
-    <packaging>pom</packaging>
-    <name>Codenvy Plugin :: Microsoft :: Parent</name>
-    <modules>
-        <module>codenvy-plugin-microsoft-oauth2</module>
-        <module>codenvy-plugin-microsoft-git-provider</module>
-        <module>codenvy-plugin-microsoft-vsts-ext-client</module>
-        <module>codenvy-plugin-microsoft-vsts-ext-server</module>
-        <module>codenvy-plugin-microsoft-vsts-ext-shared</module>
-    </modules>
+    <artifactId>codenvy-plugin-microsoft-vsts-ext-shared</artifactId>
+    <name>Codenvy Plugin :: Microsoft :: Shared</name>
+    <properties>
+        <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-dto</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <resources>
+            <resource>
+                <directory>src/main/java</directory>
+            </resource>
+        </resources>
+    </build>
 </project>
