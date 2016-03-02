@@ -252,8 +252,10 @@ public class GitVcsService implements VcsService {
     }
 
     @Override
-    public void pushBranch(@NotNull final ProjectConfigDto project, @NotNull final String remote,
-                           @NotNull final String localBranchName, @NotNull final AsyncCallback<PushResponse> callback) {
+    public void pushBranch(@NotNull final ProjectConfigDto project,
+                           @NotNull final String remote,
+                           @NotNull final String localBranchName,
+                           @NotNull final AsyncCallback<PushResponse> callback) {
         service.push(appContext.getWorkspaceId(), project, Arrays.asList(localBranchName), remote, true,
                      new AsyncRequestCallback<PushResponse>() {
                          @Override

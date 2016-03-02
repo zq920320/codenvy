@@ -16,7 +16,6 @@ package com.codenvy.plugin.contribution.vcs.client.hosting;
 
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.HostUser;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
-import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequestHead;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
@@ -28,11 +27,8 @@ import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
-import org.eclipse.che.api.promises.client.js.Executor;
 import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.api.promises.client.js.RejectFunction;
-import org.eclipse.che.api.promises.client.js.ResolveFunction;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
@@ -46,7 +42,6 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
-import org.eclipse.che.ide.ext.github.shared.GitHubUser;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
@@ -64,6 +59,7 @@ import static org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest.Bitb
 import static org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest.BitbucketPullRequestLocation;
 import static org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest.BitbucketPullRequestRepository;
 import static org.eclipse.che.ide.rest.HTTPStatus.BAD_REQUEST;
+import static org.eclipse.che.ide.util.ExceptionUtils.getErrorCode;
 import static org.eclipse.che.ide.util.StringUtils.containsIgnoreCase;
 
 /**
@@ -163,6 +159,30 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
+    public Promise<PullRequest> getPullRequest(final String owner,
+                                               final String repository,
+                                               final String username,
+                                               final String branchName) {
+        return bitbucketClientService.getRepositoryPullRequests(owner, repository)
+                                     .thenPromise(new Function<BitbucketPullRequests, Promise<PullRequest>>() {
+                                         @Override
+                                         public Promise<PullRequest> apply(BitbucketPullRequests pullRequests) throws FunctionException {
+                                             for (final BitbucketPullRequest pullRequest : pullRequests.getPullRequests()) {
+                                                 final BitbucketUser author = pullRequest.getAuthor();
+                                                 final BitbucketPullRequestLocation source = pullRequest.getSource();
+                                                 if (author != null && source != null) {
+                                                     final BitbucketPullRequestBranch branch = source.getBranch();
+                                                     if (username.equals(author.getUsername()) && branchName.equals(branch.getName())) {
+                                                         return Promises.resolve(valueOf(pullRequest));
+                                                     }
+                                                 }
+                                             }
+                                             return Promises.reject(JsPromiseError.create(new NoPullRequestException(branchName)));
+                                         }
+                                     });
+    }
+
+    @Override
     public void createPullRequest(@NotNull final String owner,
                                   @NotNull final String repository,
                                   @NotNull final String username,
@@ -219,6 +239,51 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
+    public Promise<PullRequest> createPullRequest(final String owner,
+                                                  final String repository,
+                                                  final String username,
+                                                  final String headRepository,
+                                                  final String headBranchName,
+                                                  final String baseBranchName,
+                                                  final String title,
+                                                  final String body) {
+        final BitbucketPullRequestLocation destination = dtoFactory.createDto(BitbucketPullRequestLocation.class)
+                                                                   .withBranch(dtoFactory.createDto(BitbucketPullRequestBranch.class)
+                                                                                         .withName(baseBranchName));
+
+        final BitbucketPullRequestLocation sources = dtoFactory.createDto(BitbucketPullRequestLocation.class)
+                                                               .withBranch(dtoFactory.createDto(BitbucketPullRequestBranch.class)
+                                                                                     .withName(headBranchName))
+                                                               .withRepository(dtoFactory.createDto(BitbucketPullRequestRepository.class)
+                                                                                         .withFullName(username + '/' + headRepository));
+        final BitbucketPullRequest pullRequest = dtoFactory.createDto(BitbucketPullRequest.class)
+                                                           .withTitle(title)
+                                                           .withDescription(body)
+                                                           .withDestination(destination)
+                                                           .withSource(sources);
+        return bitbucketClientService.openPullRequest(owner, repository, pullRequest)
+                                     .then(new Function<BitbucketPullRequest, PullRequest>() {
+                                         @Override
+                                         public PullRequest apply(BitbucketPullRequest arg) throws FunctionException {
+                                             return valueOf(arg);
+                                         }
+                                     })
+                                     .catchError(new Operation<PromiseError>() {
+                                         @Override
+                                         public void apply(PromiseError e) throws OperationException {
+                                             if (getErrorCode(e.getCause()) == BAD_REQUEST
+                                                 && e.getMessage() != null
+                                                 && containsIgnoreCase(e.getMessage(), NO_CHANGES_TO_BE_PULLED_ERROR_MESSAGE)) {
+                                                 Promises.reject(JsPromiseError.create(new NoCommitsInPullRequestException(headBranchName,
+                                                                                                                           baseBranchName)));
+                                             } else {
+                                                 Promises.reject(e);
+                                             }
+                                         }
+                                     });
+    }
+
+    @Override
     public void fork(@NotNull final String owner, @NotNull final String repository, @NotNull final AsyncCallback<Repository> callback) {
         getRepository(owner, repository, new AsyncCallback<Repository>() {
             @Override
@@ -247,6 +312,30 @@ public class BitbucketHostingService implements VcsHostingService {
         });
     }
 
+    @Override
+    public Promise<Repository> fork(final String owner, final String repository) {
+        return getRepository(owner, repository).thenPromise(new Function<Repository, Promise<Repository>>() {
+            @Override
+            public Promise<Repository> apply(final Repository repository) throws FunctionException {
+                return fork(owner, repository.getName(), 0, repository.isPrivateRepo()).thenPromise(
+                        new Function<BitbucketRepositoryFork, Promise<Repository>>() {
+                            @Override
+                            public Promise<Repository> apply(BitbucketRepositoryFork bitbucketRepositoryFork) throws FunctionException {
+                                return Promises.resolve(dtoFactory.createDto(Repository.class)
+                                                                  .withName(bitbucketRepositoryFork.getName())
+                                                                  .withFork(true)
+                                                                  .withParent(repository)
+                                                                  .withPrivateRepo(bitbucketRepositoryFork.isIsPrivate()));
+                            }
+                        });
+            }
+        });
+    }
+
+    /**
+     * @deprecated use {@link #fork(String, String, int, boolean)}
+     */
+    @Deprecated
     private void fork(@NotNull final String owner,
                       @NotNull final String repository,
                       final int number,
@@ -284,6 +373,36 @@ public class BitbucketHostingService implements VcsHostingService {
                                 });
     }
 
+    private Promise<BitbucketRepositoryFork> fork(final String owner,
+                                                  final String repository,
+                                                  final int number,
+                                                  final boolean isForkPrivate) {
+        final String forkName = number == 0 ? repository : (repository + "-" + number);
+        return bitbucketClientService.forkRepository(owner, repository, forkName, isForkPrivate)
+                                     .catchErrorPromise(new Function<PromiseError, Promise<BitbucketRepositoryFork>>() {
+                                         @Override
+                                         public Promise<BitbucketRepositoryFork> apply(PromiseError exception) throws FunctionException {
+                                             if (number < MAX_FORK_CREATION_ATTEMPT && exception instanceof ServerException) {
+                                                 final ServerException serverException = (ServerException)exception;
+                                                 final String exceptionMessage = serverException.getMessage();
+
+                                                 if (serverException.getHTTPStatus() == BAD_REQUEST
+                                                     && exceptionMessage != null
+                                                     && containsIgnoreCase(exceptionMessage, REPOSITORY_EXISTS_ERROR_MESSAGE)) {
+
+                                                     return fork(owner, repository, number + 1, isForkPrivate);
+                                                 }
+
+                                             }
+                                             return Promises.reject(exception);
+                                         }
+                                     });
+    }
+
+    /**
+     * @deprecated use {@link #getRepository(String, String)}
+     */
+    @Deprecated
     @Override
     public void getRepository(@NotNull final String owner,
                               @NotNull final String repository,
@@ -364,6 +483,26 @@ public class BitbucketHostingService implements VcsHostingService {
     }
 
     @Override
+    public Promise<Repository> getUserFork(final String user,
+                                           final String owner,
+                                           final String repository) {
+        return bitbucketClientService.getRepositoryForks(owner, repository)
+                                     .thenPromise(new Function<BitbucketRepositories, Promise<Repository>>() {
+                                         @Override
+                                         public Promise<Repository> apply(BitbucketRepositories repositories) throws FunctionException {
+                                             for (final BitbucketRepository repository : repositories.getRepositories()) {
+                                                 final BitbucketUser owner = repository.getOwner();
+
+                                                 if (owner != null && user.equals(owner.getUsername())) {
+                                                     return Promises.resolve(valueOf(repository));
+                                                 }
+                                             }
+                                             return Promises.reject(JsPromiseError.create(new NoUserForkException(user)));
+                                         }
+                                     });
+    }
+
+    @Override
     public void getUserInfo(@NotNull final AsyncCallback<HostUser> callback) {
         final Unmarshallable<BitbucketUser> unmarshaller = dtoUnmarshallerFactory.newUnmarshaller(BitbucketUser.class);
 
@@ -403,22 +542,22 @@ public class BitbucketHostingService implements VcsHostingService {
 
     @NotNull
     @Override
-    public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return templates.sshUrlTemplate(username, repository);
+    public Promise<String> makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return Promises.resolve(templates.sshUrlTemplate(username, repository));
     }
 
     @NotNull
     @Override
-    public String makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return templates.httpUrlTemplate(username, repository);
+    public Promise<String> makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return Promises.resolve(templates.httpUrlTemplate(username, repository));
     }
 
     @NotNull
     @Override
-    public String makePullRequestUrl(@NotNull final String username,
+    public Promise<String> makePullRequestUrl(@NotNull final String username,
                                      @NotNull final String repository,
                                      @NotNull final String pullRequestNumber) {
-        return templates.pullRequestUrlTemplate(username, repository, pullRequestNumber);
+        return Promises.resolve(templates.pullRequestUrlTemplate(username, repository, pullRequestNumber));
     }
 
     @NotNull
@@ -520,16 +659,13 @@ public class BitbucketHostingService implements VcsHostingService {
         final BitbucketLink pullRequestHtmlLink = pullRequestLinks != null ? pullRequestLinks.getHtml() : null;
         final BitbucketLink pullRequestSelfLink = pullRequestLinks != null ? pullRequestLinks.getSelf() : null;
 
-        final PullRequestHead pullRequestHead = dtoFactory.createDto(PullRequestHead.class)
-                                                          .withLabel(pullRequestBranch != null ? pullRequestBranch.getName() : null);
-
         return dtoFactory.createDto(PullRequest.class)
                          .withId(pullRequestId)
                          .withUrl(pullRequestSelfLink != null ? pullRequestSelfLink.getHref() : null)
                          .withHtmlUrl(pullRequestHtmlLink != null ? pullRequestHtmlLink.getHref() : null)
                          .withNumber(pullRequestId)
                          .withState(bitbucketPullRequest.getState().name())
-                         .withHead(pullRequestHead);
+                         .withHeadRef(pullRequestBranch.getName());
     }
 
     /**

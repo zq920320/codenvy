@@ -147,7 +147,9 @@ public class BitbucketClientService {
      *         callback called when operation is done, cannot be {@code null}.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
+     * @deprecated use {@link #getRepositoryForks(String, String)}
      */
+    @Deprecated
     public void getRepositoryForks(@NotNull final String owner,
                                    @NotNull final String repositorySlug,
                                    @NotNull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
@@ -157,6 +159,27 @@ public class BitbucketClientService {
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/forks";
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
+    }
+
+    /**
+     * Get Bitbucket repository forks.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repositorySlug
+     *         the repository name.
+     * @throws java.lang.IllegalArgumentException
+     *         if one parameter is not valid.
+     */
+    public Promise<BitbucketRepositories> getRepositoryForks(final String owner,
+                                                             final String repositorySlug) throws IllegalArgumentException {
+        checkArgument(owner != null, "owner");
+        checkArgument(repositorySlug != null, "repositorySlug");
+
+        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/forks";
+        return asyncRequestFactory.createGetRequest(requestUrl)
+                                  .loader(loaderFactory.newLoader())
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepositories.class));
     }
 
     /**
@@ -174,6 +197,7 @@ public class BitbucketClientService {
      *         callback called when operation is done, cannot be {@code null}.
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
+     * @deprecated use {@link #forkRepository(String, String, String, boolean)}
      */
     public void forkRepository(@NotNull final String owner,
                                @NotNull final String repositorySlug,
@@ -189,6 +213,35 @@ public class BitbucketClientService {
                 baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/fork?forkName=" + forkName + "&isForkPrivate=" +
                 isForkPrivate;
         asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
+    }
+
+    /**
+     * Fork a Bitbucket repository.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repositorySlug
+     *         the repository name.
+     * @param forkName
+     *         the fork name, cannot be.
+     * @param isForkPrivate
+     *         if the fork must be private.
+     * @throws java.lang.IllegalArgumentException
+     *         if one parameter is not valid.
+     */
+    public Promise<BitbucketRepositoryFork> forkRepository(final String owner,
+                                                           final String repositorySlug,
+                                                           final String forkName,
+                                                           final boolean isForkPrivate) throws IllegalArgumentException {
+        checkArgument(owner != null, "owner");
+        checkArgument(repositorySlug != null, "repositorySlug");
+        checkArgument(forkName != null && !isNullOrEmpty(forkName), "forkName");
+
+        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/fork?forkName=" + forkName +
+                                  "&isForkPrivate=" + isForkPrivate;
+        return asyncRequestFactory.createPostRequest(requestUrl, null)
+                                  .loader(loaderFactory.newLoader())
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepositoryFork.class));
     }
 
     /**
@@ -216,6 +269,27 @@ public class BitbucketClientService {
     }
 
     /**
+     * Get Bitbucket repository pull requests.
+     *
+     * @param owner
+     *         the repository owner, cannot be {@code null}.
+     * @param repositorySlug
+     *         the repository name, cannot be {@code null}.
+     * @throws java.lang.IllegalArgumentException
+     *         if one parameter is not valid.
+     */
+    public Promise<BitbucketPullRequests> getRepositoryPullRequests(final String owner,
+                                                                    final String repositorySlug) throws IllegalArgumentException {
+        checkArgument(owner != null, "owner");
+        checkArgument(repositorySlug != null, "repositorySlug");
+
+        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/pullrequests";
+        return asyncRequestFactory.createGetRequest(requestUrl)
+                                  .loader(loaderFactory.newLoader())
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequests.class));
+    }
+
+    /**
      * Open the given {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest}.
      *
      * @param owner
@@ -240,6 +314,30 @@ public class BitbucketClientService {
 
         final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
         asyncRequestFactory.createPostRequest(requestUrl, pullRequest).loader(loaderFactory.newLoader()).send(callback);
+    }
+
+    /**
+     * Open the pullRequest on the Bitbucket.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repositorySlug
+     *         the repository name.
+     * @param pullRequest
+     *         the {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest} to open.
+     * @throws java.lang.IllegalArgumentException
+     *         if one parameter is not valid.
+     */
+    public Promise<BitbucketPullRequest> openPullRequest(@NotNull final String owner,
+                                                         @NotNull final String repositorySlug,
+                                                         @NotNull final BitbucketPullRequest pullRequest) throws IllegalArgumentException {
+        checkArgument(!isNullOrEmpty(owner), "owner");
+        checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
+        checkArgument(pullRequest != null, "pullRequest");
+        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
+        return asyncRequestFactory.createPostRequest(requestUrl, pullRequest)
+                                  .loader(loaderFactory.newLoader())
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequest.class));
     }
 
     /**

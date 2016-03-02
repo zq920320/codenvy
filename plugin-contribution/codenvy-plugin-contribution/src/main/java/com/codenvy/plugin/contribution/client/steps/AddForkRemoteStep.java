@@ -22,6 +22,9 @@ import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvi
 import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.git.shared.Remote;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
@@ -64,20 +67,18 @@ public class AddForkRemoteStep implements Step {
         if (originRepositoryOwner.equalsIgnoreCase(upstreamRepositoryOwner) &&
             originRepositoryName.equalsIgnoreCase(upstreamRepositoryName)) {
 
-            vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
+            context.getVcsHostingService().makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName()).then(
+                    new Operation<String>() {
+                        @Override
+                        public void apply(String remoteUrl) throws OperationException {
+                            checkRemotePresent(workflow, remoteUrl);
+                        }
+                    }).catchError(new Operation<PromiseError>() {
                 @Override
-                public void onFailure(final Throwable exception) {
-                    workflow.fireStepErrorEvent(ADD_FORK_REMOTE, exception.getMessage());
-                }
-
-                @Override
-                public void onSuccess(final VcsHostingService vcsHostingService) {
-                    final String remoteUrl =
-                            vcsHostingService.makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
-                    checkRemotePresent(workflow, remoteUrl);
+                public void apply(PromiseError error) throws OperationException {
+                    workflow.fireStepErrorEvent(ADD_FORK_REMOTE, error.getMessage());
                 }
             });
-
         } else {
             context.setForkedRemoteName(ORIGIN_REMOTE_NAME);
             proceed(workflow);

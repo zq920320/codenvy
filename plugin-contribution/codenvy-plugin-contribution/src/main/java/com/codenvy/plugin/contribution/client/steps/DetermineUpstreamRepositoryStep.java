@@ -24,6 +24,8 @@ import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 
+import javax.validation.constraints.NotNull;
+
 /**
  * Determines what is the upstream repository and updates the context with
  * {@link Context#getUpstreamRepositoryOwner()} () repository owner} and
@@ -39,14 +41,17 @@ import org.eclipse.che.api.promises.client.PromiseError;
 @Singleton
 public class DetermineUpstreamRepositoryStep implements Step {
 
-    private final NotificationHelper notificationHelper;
-    private final CreateForkStep     createForkStep;
+    private final NotificationHelper       notificationHelper;
+    private final CreateForkStep           createForkStep;
+    private final CheckoutBranchToPushStep checkoutBranchToPushStep;
 
     @Inject
     public DetermineUpstreamRepositoryStep(NotificationHelper notificationHelper,
-                                           CreateForkStep createForkStep) {
+                                           CreateForkStep createForkStep,
+                                           CheckoutBranchToPushStep checkoutBranchToPushStep) {
         this.notificationHelper = notificationHelper;
         this.createForkStep = createForkStep;
+        this.checkoutBranchToPushStep = checkoutBranchToPushStep;
     }
 
     @Override
@@ -65,7 +70,11 @@ public class DetermineUpstreamRepositoryStep implements Step {
                                   context.setUpstreamRepositoryName(context.getOriginRepositoryName());
                                   context.setUpstreamRepositoryOwner(context.getOriginRepositoryOwner());
                               }
-                              workflow.executeStep(createForkStep);
+                              if (context.hasForkSupport()) {
+                                  workflow.executeStep(createForkStep);
+                              } else {
+                                  workflow.executeStep(checkoutBranchToPushStep);
+                              }
                           }
                       })
                       .catchError(new Operation<PromiseError>() {

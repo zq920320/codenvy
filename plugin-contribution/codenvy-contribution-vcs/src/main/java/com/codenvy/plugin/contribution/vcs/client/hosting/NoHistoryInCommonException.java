@@ -12,21 +12,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.vcs.client.hosting.dto;
+package com.codenvy.plugin.contribution.vcs.client.hosting;
 
-import org.eclipse.che.dto.shared.DTO;
+/**
+ * This exception should be thrown when separate branches have no commits in common.
+ *
+ * @author Anton Korneta
+ */
+public class NoHistoryInCommonException extends Exception {
 
-@DTO
-public interface PullRequestHead {
-    String getLabel();
-
-    PullRequestHead withLabel(String label);
-
-    String getRef();
-
-    PullRequestHead withRef(String ref);
-
-    String getSha();
-
-    PullRequestHead withSha(String sha);
+    public NoHistoryInCommonException(String msg) {
+        super(msg);
+    }
 }

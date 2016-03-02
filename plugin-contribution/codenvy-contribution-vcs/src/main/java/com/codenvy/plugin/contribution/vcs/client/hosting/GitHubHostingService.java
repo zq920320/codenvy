@@ -17,7 +17,6 @@ package com.codenvy.plugin.contribution.vcs.client.hosting;
 
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.HostUser;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
-import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequestHead;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.gwt.regexp.shared.RegExp;
 import com.google.gwt.user.client.Window;
@@ -25,15 +24,10 @@ import com.google.gwt.user.client.rpc.AsyncCallback;
 
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.FunctionException;
-import org.eclipse.che.api.promises.client.Operation;
-import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.PromiseError;
-import org.eclipse.che.api.promises.client.js.Executor;
 import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
-import org.eclipse.che.api.promises.client.js.RejectFunction;
-import org.eclipse.che.api.promises.client.js.ResolveFunction;
 import org.eclipse.che.api.workspace.shared.dto.UsersWorkspaceDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentUser;
@@ -49,12 +43,13 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.rest.Unmarshallable;
+import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -73,6 +68,7 @@ public class GitHubHostingService implements VcsHostingService {
     private static final String REPOSITORY_GIT_EXTENSION                  = ".git";
     private static final String NO_COMMITS_IN_PULL_REQUEST_ERROR_MESSAGE  = "No commits between";
     private static final String PULL_REQUEST_ALREADY_EXISTS_ERROR_MESSAGE = "A pull request already exists for ";
+    private static final String NO_HISTORYIN_COMMON_ERROR_MESSAGE         = "has no history in common with";
 
     private final AppContext              appContext;
     private final DtoUnmarshallerFactory  dtoUnmarshallerFactory;
@@ -219,23 +215,39 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
-    @NotNull
     @Override
-    public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return templates.sshUrlTemplate(username, repository);
+    public Promise<Repository> fork(final String owner, final String repository) {
+        return gitHubClientService.fork(owner, repository)
+                                  .thenPromise(new Function<GitHubRepository, Promise<Repository>>() {
+                                      @Override
+                                      public Promise<Repository> apply(GitHubRepository repository) throws FunctionException {
+                                          if (repository != null) {
+                                              return Promises.resolve(valueOf(repository));
+
+                                          } else {
+                                              return Promises.reject(JsPromiseError.create(new Exception("No repository.")));
+                                          }
+                                      }
+                                  });
     }
 
     @NotNull
     @Override
-    public String makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return templates.httpUrlTemplate(username, repository);
+    public Promise<String> makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return Promises.resolve(templates.sshUrlTemplate(username, repository));
     }
 
     @NotNull
     @Override
-    public String makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
+    public Promise<String> makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return Promises.resolve(templates.httpUrlTemplate(username, repository));
+    }
+
+    @NotNull
+    @Override
+    public Promise<String> makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
                                      @NotNull final String pullRequestNumber) {
-        return templates.pullRequestUrlTemplate(username, repository, pullRequestNumber);
+        return Promises.resolve(templates.pullRequestUrlTemplate(username, repository, pullRequestNumber));
     }
 
     @NotNull
@@ -292,6 +304,23 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
+    @Override
+    public Promise<PullRequest> getPullRequest(String owner, String repository, String username, final String branchName) {
+
+        final String qualifiedBranchName = username + ":" + branchName;
+
+        return getPullRequests(owner, repository).thenPromise(new Function<List<PullRequest>, Promise<PullRequest>>() {
+            @Override
+            public Promise<PullRequest> apply(List<PullRequest> pullRequests) throws FunctionException {
+                final PullRequest pullRequest = getPullRequestByBranch(qualifiedBranchName, pullRequests);
+                if (pullRequest != null) {
+                    return Promises.resolve(pullRequest);
+                }
+                return Promises.reject(JsPromiseError.create(new NoPullRequestException(branchName)));
+            }
+        });
+    }
+
     /**
      * Get all pull requests for given owner:repository
      *
@@ -324,9 +353,32 @@ public class GitHubHostingService implements VcsHostingService {
         });
     }
 
+    /**
+     * Get all pull requests for given owner:repository
+     *
+     * @param owner
+     *         the username of the owner.
+     * @param repository
+     *         the repository name.
+     */
+    private Promise<List<PullRequest>> getPullRequests(String owner, String repository) {
+
+        return gitHubClientService.getPullRequests(owner, repository)
+                                  .then(new Function<GitHubPullRequestList, List<PullRequest>>() {
+                                      @Override
+                                      public List<PullRequest> apply(GitHubPullRequestList result) throws FunctionException {
+                                          final List<PullRequest> pullRequests = new ArrayList<>();
+                                          for (final GitHubPullRequest oneGitHubPullRequest : result.getPullRequests()) {
+                                              pullRequests.add(valueOf(oneGitHubPullRequest));
+                                          }
+                                          return pullRequests;
+                                      }
+                                  });
+    }
+
     protected PullRequest getPullRequestByBranch(final String headBranch, final List<PullRequest> pullRequests) {
         for (final PullRequest onePullRequest : pullRequests) {
-            if (headBranch.equals(onePullRequest.getHead().getLabel())) {
+            if (headBranch.equals(onePullRequest.getHeadRef())) {
                 return onePullRequest;
             }
         }
@@ -334,15 +386,15 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
-    public void createPullRequest(@NotNull final String owner,
-                                  @NotNull final String repository,
-                                  @NotNull final String username,
-                                  @NotNull final String headRepository,
-                                  @NotNull final String headBranchName,
-                                  @NotNull final String baseBranchName,
-                                  @NotNull final String title,
-                                  @NotNull final String body,
-                                  @NotNull final AsyncCallback<PullRequest> callback) {
+    public void createPullRequest(final String owner,
+                                  final String repository,
+                                  final String username,
+                                  final String headRepository,
+                                  final String headBranchName,
+                                  final String baseBranchName,
+                                  final String title,
+                                  final String body,
+                                  final AsyncCallback<PullRequest> callback) {
 
         final String qualifiedHeadBranchName = username + ":" + headBranchName;
         final GitHubPullRequestCreationInput input = dtoFactory.createDto(GitHubPullRequestCreationInput.class)
@@ -379,6 +431,48 @@ public class GitHubHostingService implements VcsHostingService {
     }
 
     @Override
+    public Promise<PullRequest> createPullRequest(final String owner,
+                                                  final String repository,
+                                                  final String username,
+                                                  final String headRepository,
+                                                  final String headBranchName,
+                                                  final String baseBranchName,
+                                                  final String title,
+                                                  final String body) {
+        final String brName = username + ":" + headBranchName;
+        final GitHubPullRequestCreationInput input = dtoFactory.createDto(GitHubPullRequestCreationInput.class)
+                                                               .withTitle(title)
+                                                               .withHead(brName)
+                                                               .withBase(baseBranchName)
+                                                               .withBody(body);
+        return gitHubClientService.createPullRequest(owner, repository, input)
+                                  .then(new Function<GitHubPullRequest, PullRequest>() {
+                                      @Override
+                                      public PullRequest apply(GitHubPullRequest arg) throws FunctionException {
+                                          return valueOf(arg);
+                                      }
+                                  })
+                                  .catchErrorPromise(new Function<PromiseError, Promise<PullRequest>>() {
+                                      @Override
+                                      public Promise<PullRequest> apply(PromiseError err) throws FunctionException {
+                                          final String msg = err.getMessage();
+                                          if (containsIgnoreCase(msg, NO_COMMITS_IN_PULL_REQUEST_ERROR_MESSAGE)) {
+                                              return Promises.reject(JsPromiseError.create(new NoCommitsInPullRequestException(brName,
+                                                                                                                               baseBranchName)));
+                                          } else if (containsIgnoreCase(msg, PULL_REQUEST_ALREADY_EXISTS_ERROR_MESSAGE)) {
+                                              return Promises.reject(JsPromiseError.create(new PullRequestAlreadyExistsException(brName)));
+                                          } else if (containsIgnoreCase(msg, NO_HISTORYIN_COMMON_ERROR_MESSAGE)) {
+                                              return Promises.reject(JsPromiseError.create(new NoHistoryInCommonException(
+                                                      "The " + brName + " branch has no history in common with " + owner + ':' +
+                                                      baseBranchName)));
+                                          }
+
+                                          return Promises.reject(err);
+                                      }
+                                  });
+    }
+
+    @Override
     public void getUserFork(@NotNull final String user,
                             @NotNull final String owner,
                             @NotNull final String repository,
@@ -400,6 +494,21 @@ public class GitHubHostingService implements VcsHostingService {
             @Override
             public void onFailure(final Throwable exception) {
                 callback.onFailure(exception);
+            }
+        });
+    }
+
+    @Override
+    public Promise<Repository> getUserFork(final String user, final String owner, final String repository) {
+        return getForks(owner, repository).thenPromise(new Function<List<Repository>, Promise<Repository>>() {
+            @Override
+            public Promise<Repository> apply(List<Repository> repositories) throws FunctionException {
+                final Repository userFork = getUserFork(user, repositories);
+                if (userFork != null) {
+                    return Promises.resolve(userFork);
+                } else {
+                    return Promises.reject(JsPromiseError.create(new NoUserForkException(user)));
+                }
             }
         });
     }
@@ -434,6 +543,20 @@ public class GitHubHostingService implements VcsHostingService {
                 callback.onFailure(exception);
             }
         });
+    }
+
+    private Promise<List<Repository>> getForks(final String owner, final String repository) {
+        return gitHubClientService.getForks(owner, repository)
+                                  .then(new Function<GitHubRepositoryList, List<Repository>>() {
+                                      @Override
+                                      public List<Repository> apply(GitHubRepositoryList gitHubRepositoryList) throws FunctionException {
+                                          final List<Repository> repositories = new ArrayList<>();
+                                          for (final GitHubRepository oneGitHubRepository : gitHubRepositoryList.getRepositories()) {
+                                              repositories.add(valueOf(oneGitHubRepository));
+                                          }
+                                          return repositories;
+                                      }
+                                  });
     }
 
     private Repository getUserFork(final String login, final List<Repository> forks) {
@@ -492,18 +615,13 @@ public class GitHubHostingService implements VcsHostingService {
             return null;
         }
 
-        final PullRequestHead pullRequestHead = dtoFactory.createDto(PullRequestHead.class)
-                                                          .withLabel(gitHubPullRequest.getHead().getLabel())
-                                                          .withRef(gitHubPullRequest.getHead().getRef())
-                                                          .withSha(gitHubPullRequest.getHead().getSha());
-
         return dtoFactory.createDto(PullRequest.class)
                          .withId(gitHubPullRequest.getId())
                          .withUrl(gitHubPullRequest.getUrl())
                          .withHtmlUrl(gitHubPullRequest.getHtmlUrl())
                          .withNumber(gitHubPullRequest.getNumber())
                          .withState(gitHubPullRequest.getState())
-                         .withHead(pullRequestHead);
+                         .withHeadRef(gitHubPullRequest.getHead().getLabel());
     }
 
     @Override

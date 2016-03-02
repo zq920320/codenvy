@@ -37,6 +37,9 @@ import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
@@ -63,7 +66,8 @@ import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
  *
  * @author Kevin Pollet
  */
-public class ContributePartPresenter extends BasePresenter implements ContributePartView.ActionDelegate, StepHandler, ContextPropertyChangeHandler {
+public class ContributePartPresenter extends BasePresenter
+        implements ContributePartView.ActionDelegate, StepHandler, ContextPropertyChangeHandler {
     private final ContributePartView        view;
     private final WorkspaceAgent            workspaceAgent;
     private final ContributeMessages        messages;
@@ -134,9 +138,14 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
                                    messages.contributePartStatusSectionPullRequestUpdatedStepLabel());
 
         } else {
-            view.showStatusSection(messages.contributePartStatusSectionForkCreatedStepLabel(),
-                                   messages.contributePartStatusSectionBranchPushedStepLabel(),
-                                   messages.contributePartStatusSectionPullRequestIssuedStepLabel());
+            if (workflow.getContext().hasForkSupport()) {
+                view.showStatusSection(messages.contributePartStatusSectionForkCreatedStepLabel(),
+                                       messages.contributePartStatusSectionBranchPushedForkStepLabel(),
+                                       messages.contributePartStatusSectionPullRequestIssuedStepLabel());
+            } else {
+                view.showStatusSection(messages.contributePartStatusSectionBranchPushedOriginStepLabel(),
+                                       messages.contributePartStatusSectionPullRequestIssuedStepLabel());
+            }
         }
 
         view.hideStatusSectionMessage();
@@ -158,59 +167,50 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     public void onOpenPullRequestOnVcsHost() {
         final Context context = workflow.getContext();
 
-        vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
+        context.getVcsHostingService().makePullRequestUrl(context.getUpstreamRepositoryOwner(), context.getUpstreamRepositoryName(),
+                                                          context.getPullRequestIssueNumber()).then(new Operation<String>() {
             @Override
-            public void onFailure(final Throwable exception) {
-                notificationHelper.showError(ContributePartPresenter.class, exception);
+            public void apply(String url) throws OperationException {
+                Window.open(url, "", "");
             }
-
+        }).catchError(new Operation<PromiseError>() {
             @Override
-            public void onSuccess(final VcsHostingService vcsHostingService) {
-                Window.open(vcsHostingService.makePullRequestUrl(context.getUpstreamRepositoryOwner(), context.getUpstreamRepositoryName(),
-                                                                 context.getPullRequestIssueNumber()), "", "");
+            public void apply(PromiseError error) throws OperationException {
+                notificationHelper.showError(ContributePartPresenter.class, error.getCause());
             }
         });
     }
 
     @Override
     public void onNewContribution() {
-        final Factory factory = appContext.getFactory();
-        if (factory != null) {
-            final String createProjectUrl = FactoryHelper.getCreateProjectRelUrl(factory);
-            if (createProjectUrl != null) {
-                Window.open(createProjectUrl, "", "");
-            }
+        final Context context = workflow.getContext();
+        vcsServiceProvider.getVcsService().checkoutBranch(context.getProject(), context.getClonedBranchName(),
+                                                          false, new AsyncCallback<String>() {
+                    @Override
+                    public void onFailure(final Throwable exception) {
+                        notificationHelper.showError(ContributePartPresenter.class, exception);
+                    }
 
-        } else {
-            final Context context = workflow.getContext();
-            vcsServiceProvider.getVcsService().checkoutBranch(context.getProject(), context.getClonedBranchName(),
-                                                              false, new AsyncCallback<String>() {
-                        @Override
-                        public void onFailure(final Throwable exception) {
-                            notificationHelper.showError(ContributePartPresenter.class, exception);
-                        }
+                    @Override
+                    public void onSuccess(final String branchName) {
+                        view.setContributionBranchName(context.getClonedBranchName());
+                        view.setContributionBranchNameEnabled(true);
+                        view.setContributionTitle("");
+                        view.setContributionTitleEnabled(true);
+                        view.setContributionComment("");
+                        view.setContributionCommentEnabled(true);
+                        view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeText());
+                        view.hideStatusSection();
+                        view.hideStatusSectionMessage();
+                        view.hideNewContributionSection();
 
-                        @Override
-                        public void onSuccess(final String branchName) {
-                            view.setContributionBranchName(context.getClonedBranchName());
-                            view.setContributionBranchNameEnabled(true);
-                            view.setContributionTitle("");
-                            view.setContributionTitleEnabled(true);
-                            view.setContributionComment("");
-                            view.setContributionCommentEnabled(true);
-                            view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeText());
-                            view.hideStatusSection();
-                            view.hideStatusSectionMessage();
-                            view.hideNewContributionSection();
+                        workflow.getContext().setUpdateMode(false);
+                        updateControls();
 
-                            workflow.getContext().setUpdateMode(false);
-                            updateControls();
-
-                            notificationHelper
-                                    .showInfo(messages.contributePartNewContributionBranchClonedCheckedOut(context.getClonedBranchName()));
-                        }
-                    });
-        }
+                        notificationHelper
+                                .showInfo(messages.contributePartNewContributionBranchClonedCheckedOut(context.getClonedBranchName()));
+                    }
+                });
     }
 
     @Override
@@ -256,7 +256,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
 
     @Override
     public void setVisible(boolean visible) {
-        
+
     }
 
     @Override
@@ -291,7 +291,8 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
             }
             break;
 
-            case PUSH_BRANCH_ON_FORK: {
+            case PUSH_BRANCH_ON_FORK:
+            case PUSH_BRANCH_ON_ORIGIN: {
                 view.setCurrentStatusStepStatus(true);
             }
             break;
@@ -331,6 +332,11 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     @Override
     public void onStepError(@NotNull final StepEvent event) {
         switch (event.getStep()) {
+            case AUTHORIZE_CODENVY_ON_VCS_HOST:
+                view.hideStatusSection();
+                view.hideStatusSectionMessage();
+                view.hideNewContributionSection();
+                break;
             case COMMIT_WORKING_TREE: {
                 view.hideStatusSection();
             }
@@ -344,7 +350,14 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
             }
             break;
 
+            case CHECKOUT_BRANCH_TO_PUSH: {
+                view.setCurrentStatusStepStatus(false);
+                view.showStatusSectionMessage(event.getMessage(), true);
+            }
+            break;
+
             case PUSH_BRANCH_ON_FORK:
+            case PUSH_BRANCH_ON_ORIGIN:
             case ISSUE_PULL_REQUEST: {
                 view.setCurrentStatusStepStatus(false);
                 view.showStatusSectionMessage(event.getMessage(), true);
@@ -367,6 +380,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
         switch (event.getContextProperty()) {
             case CLONED_BRANCH_NAME: {
                 view.setClonedBranch(context.getClonedBranchName());
+                view.setContributionBranchName(context.getClonedBranchName());
             }
             break;
 
@@ -399,7 +413,13 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
 
                         @Override
                         public void onSuccess(final VcsHostingService vcsHostingService) {
-                            view.setRepositoryUrl(vcsHostingService.makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName));
+                            vcsHostingService.makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName)
+                                             .then(new Operation<String>() {
+                                                 @Override
+                                                 public void apply(String arg) throws OperationException {
+                                                     view.setRepositoryUrl(arg);
+                                                 }
+                                             });
                         }
                     });
                 }

@@ -38,7 +38,7 @@ public interface PullRequest {
 
     PullRequest withState(String state);
 
-    PullRequestHead getHead();
+    String getHeadRef();
 
-    PullRequest withHead(PullRequestHead head);
+    PullRequest withHeadRef(String head);
 }

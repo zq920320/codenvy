@@ -37,8 +37,10 @@ import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUC
  * Helper class to work with notifications and standardize contribute workflow notifications.
  *
  * @author Kevin Pollet
+ * @deprecated Use {@link NotificationManager} directly
  */
 @Singleton
+@Deprecated
 public final class NotificationHelper {
 
     /** The notification manger used to handle errors. */
@@ -60,7 +62,7 @@ public final class NotificationHelper {
      *         the info message.
      */
     public void showInfo(@NotNull final String message) {
-        showNotification(new Notification(message));
+        notificationManager.notify(message, SUCCESS, false);
     }
 
     /**
@@ -102,21 +104,9 @@ public final class NotificationHelper {
      */
     public void showError(@NotNull final Class<?> cls, @NotNull final String errorMessage, @NotNull final Throwable exception) {
         // workaround IDEX-2381
-        final String jsonMessage = ensureJson(errorMessage);
-        showNotification(new Notification(jsonMessage));
+        notificationManager.notify(errorMessage, FAIL, true);
     }
 
-    private String ensureJson(final String input) {
-        if (input == null || input.isEmpty()) {
-            return "\"\"";
-        }
-        try {
-            JSONParser.parseStrict(input);
-            return input;
-        } catch (final JSONException e) {
-            return "{ \"message\": \"" + input + "\"}";
-        }
-    }
 
     /**
      * Shows a notification.
@@ -125,7 +115,6 @@ public final class NotificationHelper {
      *         notification to display.
      */
     public void showNotification(@NotNull final Notification notification) {
-        notification.setContent(messages.notificationMessagePrefix(notification.getContent()));
         notificationManager.notify(notification);
     }
 

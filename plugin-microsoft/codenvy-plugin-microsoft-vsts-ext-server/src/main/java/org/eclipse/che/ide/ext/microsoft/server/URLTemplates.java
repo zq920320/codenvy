@@ -19,8 +19,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.google.inject.name.Named;
 
-import static com.google.api.client.repackaged.com.google.common.base.Preconditions.checkArgument;
-import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
+import java.util.Objects;
+
 import static java.lang.String.format;
 
 /**
@@ -75,8 +75,8 @@ public class URLTemplates {
      *         when either {@code project} or {@code repoName} is null or empty
      */
     public String repositoryUrl(String project, String repoName) {
-        checkArgument(!isNullOrEmpty(project), "Project name required");
-        checkArgument(!isNullOrEmpty(repoName), "Repository name required");
+        Objects.requireNonNull(project, "Project name required");
+        Objects.requireNonNull(repoName, "Repository name required");
         return getTeamBaseUrl() + format(REPOSITORY, project, repoName) + getApiVersion();
     }
 
@@ -89,7 +89,7 @@ public class URLTemplates {
      *         when {@code project} is null or empty
      */
     public String repositoriesUrl(String project) {
-        checkArgument(!isNullOrEmpty(project), "Project required");
+        Objects.requireNonNull(project, "Project required");
         return getTeamBaseUrl() + format(REPOSITORIES, project) + getApiVersion();
     }
 
@@ -102,7 +102,7 @@ public class URLTemplates {
      *         when {@code repository} is null or empty
      */
     public String pullRequestsUrl(String repoId) {
-        checkArgument(!isNullOrEmpty(repoId), "Repository id required");
+        Objects.requireNonNull(repoId, "Repository id required");
         return getTeamBaseUrl() + format(PULL_REQUESTS, repoId) + getApiVersion();
     }
 
@@ -117,8 +117,8 @@ public class URLTemplates {
      *         when either {@code repository} or {@code pullRequest} is null or empty
      */
     public String pullRequestUrl(String repoId, String pullRequest) {
-        checkArgument(!isNullOrEmpty(repoId), "Repository required");
-        checkArgument(!isNullOrEmpty(pullRequest), "Pull request required");
+        Objects.requireNonNull(repoId, "Repository required");
+        Objects.requireNonNull(pullRequest, "Pull request required");
         return getTeamBaseUrl() + format(PULL_REQUEST, repoId, pullRequest) + getApiVersion();
     }
 
@@ -133,9 +133,9 @@ public class URLTemplates {
      *         the id of the pull request
      */
     public String pullRequestUrl(String projectName, String repositoryName, String prId) {
-        checkArgument(!isNullOrEmpty(projectName), "Project name required");
-        checkArgument(!isNullOrEmpty(repositoryName), "Repository name required");
-        checkArgument(!isNullOrEmpty(prId), "Pull request id required");
+        Objects.requireNonNull(projectName, "Project name required");
+        Objects.requireNonNull(repositoryName, "Repository name required");
+        Objects.requireNonNull(prId, "Pull request id required");
         return getTeamBaseUrl() + format(PROJECT_REPO_PULL_REQUEST, projectName, repositoryName, prId) + getApiVersion();
     }
 
@@ -150,9 +150,9 @@ public class URLTemplates {
      *         the id of the pull request
      */
     public String pullRequestHtmlUrl(String projectName, String repositoryName, String prId) {
-        checkArgument(!isNullOrEmpty(projectName), "Project name required");
-        checkArgument(!isNullOrEmpty(repositoryName), "Repository name required");
-        checkArgument(!isNullOrEmpty(prId), "Pull request id required");
+        Objects.requireNonNull(projectName, "Project name required");
+        Objects.requireNonNull(repositoryName, "Repository name required");
+        Objects.requireNonNull(prId, "Pull request id required");
         return getTeamBaseUrl() + format(HTML_PULL_REQUEST, projectName, repositoryName, prId);
     }
 

@@ -36,7 +36,6 @@ import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftUserProfile;
 import org.everrest.core.impl.provider.json.JsonValue;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.BufferedWriter;
 import java.io.IOException;
 import java.io.InputStream;
@@ -44,14 +43,13 @@ import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 import static java.net.HttpURLConnection.HTTP_CREATED;
 import static java.net.HttpURLConnection.HTTP_OK;
 
 /**
- * Lightweight Microsoft VSTS REST client.
+ * Microsoft VSTS REST client.
  *
  * @author Mihail Kuznyetsov
  * @author Yevhenii Voevodin
@@ -67,7 +65,6 @@ public final class MicrosoftVstsRestClient {
     public MicrosoftVstsRestClient(OAuthTokenProvider tokenProvider,
                                    URLTemplates templates) {
         this.tokenProvider = tokenProvider;
-        // TODO inject
         this.templates = templates;
     }
 

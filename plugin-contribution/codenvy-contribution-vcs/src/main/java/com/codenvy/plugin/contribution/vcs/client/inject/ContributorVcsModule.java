@@ -18,6 +18,7 @@ import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.BitbucketHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.GitHubHostingService;
+import com.codenvy.plugin.contribution.vcs.client.hosting.MicrosoftHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -37,5 +38,6 @@ public class ContributorVcsModule extends AbstractGinModule {
         final GinMultibinder<VcsHostingService> vcsHostingServiceBinder = GinMultibinder.newSetBinder(binder(), VcsHostingService.class);
         vcsHostingServiceBinder.addBinding().to(GitHubHostingService.class);
         vcsHostingServiceBinder.addBinding().to(BitbucketHostingService.class);
+        vcsHostingServiceBinder.addBinding().to(MicrosoftHostingService.class);
     }
 }

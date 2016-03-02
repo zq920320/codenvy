@@ -37,7 +37,7 @@ import static com.codenvy.plugin.contribution.projecttype.shared.ContributionPro
  * <li>If the user comes from a contribution factory the contribution branch has to be created automatically.
  * <li>If the project is cloned from GitHub the contribution branch is the current one.
  * </ul>
- * <p/>
+ * <p>
  * The next step is executed when the user click on the contribute/update
  * button. See {@link com.codenvy.plugin.contribution.client.parts.contribute.ContributePartPresenter#onContribute()}
  *
@@ -68,57 +68,17 @@ public class DefineWorkBranchStep implements Step {
         final ProjectConfigDto project = appContext.getCurrentProject().getRootProject();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
 
-        // if we come from a contribute factory we have to create the working branch
-        if (project.getAttributes().containsKey(CONTRIBUTE_VARIABLE_NAME)
-            && project.getAttributes().get(CONTRIBUTE_VARIABLE_NAME).contains("github")) {
+        vcsService.getBranchName(context.getProject(), new AsyncCallback<String>() {
+            @Override
+            public void onFailure(final Throwable exception) {
+                notificationHelper.showError(DefineWorkBranchStep.class, exception);
+            }
 
-            final String workingBranchName = generateWorkBranchName();
-            // FIXME
-            final Notification createWorkingBranchNotification =
-                    new Notification(messages.stepDefineWorkBranchCreatingWorkBranch(workingBranchName));
-            notificationHelper.showNotification(createWorkingBranchNotification);
-
-            // the working branch is only created if it doesn't exist
-            vcsService.isLocalBranchWithName(context.getProject(), workingBranchName, new AsyncCallback<Boolean>() {
-                @Override
-                public void onFailure(final Throwable exception) {
-                    notificationHelper.finishNotificationWithError(DefineWorkBranchStep.class, exception, createWorkingBranchNotification);
-                }
-
-                @Override
-                public void onSuccess(final Boolean branchExists) {
-                    // shorthand for create + checkout new temporary working branch -> checkout -b branchName
-                    vcsService.checkoutBranch(context.getProject(), workingBranchName, !branchExists, new AsyncCallback<String>() {
-                        @Override
-                        public void onSuccess(final String result) {
-                            context.setWorkBranchName(workingBranchName);
-                            notificationHelper.finishNotification(messages.stepDefineWorkBranchWorkBranchCreated(workingBranchName),
-                                                                  createWorkingBranchNotification);
-                        }
-
-                        @Override
-                        public void onFailure(final Throwable exception) {
-                            notificationHelper
-                                    .finishNotificationWithError(DefineWorkBranchStep.class, exception, createWorkingBranchNotification);
-                        }
-                    });
-                }
-            });
-
-            // if it's a github project the working branch is the current one
-        } else {
-            vcsService.getBranchName(context.getProject(), new AsyncCallback<String>() {
-                @Override
-                public void onFailure(final Throwable exception) {
-                    notificationHelper.showError(DefineWorkBranchStep.class, exception);
-                }
-
-                @Override
-                public void onSuccess(final String branchName) {
-                    context.setWorkBranchName(branchName);
-                }
-            });
-        }
+            @Override
+            public void onSuccess(final String branchName) {
+                context.setWorkBranchName(branchName);
+            }
+        });
     }
 
     /**
