@@ -79,6 +79,12 @@ public class Context {
     private boolean           isUpdateMode;
     private VcsHostingService vcsVostingService;
 
+    /** The flag that indicates availability of fork functionality on VCS hosting */
+    private boolean forkSupport;
+
+    /** The name of the origin remote. */
+    private String originRemoteName;
+
     @Inject
     public Context(@NotNull final EventBus eventBus) {
         this.eventBus = eventBus;
@@ -123,6 +129,14 @@ public class Context {
 
     public void setHostUserLogin(final String hostUserLogin) {
         this.hostUserLogin = hostUserLogin;
+    }
+
+    public boolean hasForkSupport() {
+        return forkSupport;
+    }
+
+    public void setForkSupport(boolean hasForkSupport) {
+        this.forkSupport = hasForkSupport;
     }
 
     public String getUpstreamRepositoryOwner() {
@@ -218,6 +232,14 @@ public class Context {
      */
     public void setReviewFactoryUrl(final String reviewFactoryUrl) {
         this.reviewFactoryUrl = reviewFactoryUrl;
+    }
+
+    public String getOriginRemoteName() {
+        return originRemoteName;
+    }
+
+    public void setOriginRemoteName(String originRemoteName) {
+        this.originRemoteName = originRemoteName;
     }
 
     public String getForkedRemoteName() {

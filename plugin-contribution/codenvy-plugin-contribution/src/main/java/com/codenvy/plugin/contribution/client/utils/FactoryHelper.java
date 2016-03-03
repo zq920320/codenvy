@@ -40,7 +40,7 @@ public final class FactoryHelper {
      *         the factory.
      * @return the create project url or {@code null} if none.
      */
-    public static String getCreateProjectRelUrl(@NotNull Factory factory) {
+    public static String getAcceptFactoryUrl(@NotNull Factory factory) {
         for (final Link oneLink : factory.getLinks()) {
             if (ACCEPT_FACTORY_LINK_REF.equals(oneLink.getRel())) {
                 return oneLink.getHref();

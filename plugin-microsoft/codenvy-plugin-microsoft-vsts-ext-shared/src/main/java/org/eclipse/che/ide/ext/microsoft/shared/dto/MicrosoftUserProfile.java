@@ -12,21 +12,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.vcs.client.hosting.dto;
+package org.eclipse.che.ide.ext.microsoft.shared.dto;
 
 import org.eclipse.che.dto.shared.DTO;
 
+/**
+ * @author Mihail Kuznyetsov
+ */
 @DTO
-public interface PullRequestHead {
-    String getLabel();
+public interface MicrosoftUserProfile {
+    String getId();
 
-    PullRequestHead withLabel(String label);
+    void setId(String id);
 
-    String getRef();
+    MicrosoftUserProfile withId(String id);
 
-    PullRequestHead withRef(String ref);
+    String getEmailAddress();
 
-    String getSha();
+    void setEmailAddress(String email);
 
-    PullRequestHead withSha(String sha);
+    MicrosoftUserProfile withEmailAddress(String email);
+
+    String getDisplayName();
+
+    void setDisplayName(String displayName);
+
+    MicrosoftUserProfile withDisplayName(String displayName);
 }

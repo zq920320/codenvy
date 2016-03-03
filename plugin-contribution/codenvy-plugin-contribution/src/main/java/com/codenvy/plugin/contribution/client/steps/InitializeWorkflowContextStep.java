@@ -39,6 +39,7 @@ import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
+import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
 
 /**
  * This step initialize the contribution workflow context.
@@ -122,6 +123,12 @@ public class InitializeWorkflowContextStep implements Step {
                         final String clonedBranch = attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
 
                         context.setClonedBranchName(clonedBranch);
+                    }
+
+                    if (vcsHostingService.getName().equals("VSTS")) {
+                        context.setForkSupport(false);
+                    } else {
+                        context.setForkSupport(true);
                     }
 
                     context.setVcsHostingService(vcsHostingService);

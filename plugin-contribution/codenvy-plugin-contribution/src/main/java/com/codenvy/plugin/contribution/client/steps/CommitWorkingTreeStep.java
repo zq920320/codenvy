@@ -33,9 +33,9 @@ import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step
  * @author Kevin Pollet
  */
 public class CommitWorkingTreeStep implements Step {
-    private final CommitPresenter               commitPresenter;
-    private final ContributeMessages            messages;
-    private final NotificationHelper            notificationHelper;
+    private final CommitPresenter    commitPresenter;
+    private final ContributeMessages messages;
+    private final NotificationHelper notificationHelper;
     private final AuthorizeCodenvyOnVCSHostStep authStep;
 
     @Inject
@@ -85,8 +85,9 @@ public class CommitWorkingTreeStep implements Step {
     }
 
     private void proceed(final ContributorWorkflow workflow) {
-        workflow.fireStepDoneEvent(COMMIT_WORKING_TREE);
         workflow.setStep(authStep);
+
+        workflow.fireStepDoneEvent(COMMIT_WORKING_TREE);
         workflow.executeStep();
     }
 }

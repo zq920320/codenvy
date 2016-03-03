@@ -33,6 +33,14 @@
             <artifactId>codenvy-plugin-bitbucket-ext-bitbucket</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-microsoft-vsts-ext-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-microsoft-vsts-ext-shared</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.gwt</groupId>
             <artifactId>gwt-user</artifactId>
         </dependency>

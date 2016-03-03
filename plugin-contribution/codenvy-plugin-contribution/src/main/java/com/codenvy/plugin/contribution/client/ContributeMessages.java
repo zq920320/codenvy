@@ -62,8 +62,11 @@ public interface ContributeMessages extends Messages {
     @Key("contribute.part.status.section.fork.created.step.label")
     String contributePartStatusSectionForkCreatedStepLabel();
 
-    @Key("contribute.part.status.section.branch.pushed.step.label")
-    String contributePartStatusSectionBranchPushedStepLabel();
+    @Key("contribute.part.status.section.branch.pushed.fork.step.label")
+    String contributePartStatusSectionBranchPushedForkStepLabel();
+
+    @Key("contribute.part.status.section.branch.pushed.origin.step.label")
+    String contributePartStatusSectionBranchPushedOriginStepLabel();
 
     @Key("contribute.part.status.section.new.commits.pushed.step.label")
     String contributePartStatusSectionNewCommitsPushedStepLabel();
@@ -215,8 +218,12 @@ public interface ContributeMessages extends Messages {
     /*
      * Authorize Codenvy on VCS Host step
      */
-    @Key("step.authorize.codenvy.on.vcs.host.error.cannot.access.vcs.host")
-    String stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHost();
+    @Key("step.authorize.codenvy.on.vcs.host.error.cannot.access.vcs.host.title")
+    String stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostTitle();
+
+    @Key("step.authorize.codenvy.on.vcs.host.error.cannot.access.vcs.host.content")
+    String stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostContent();
+
 
     /*
      * Contributor extension

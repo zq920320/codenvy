@@ -44,11 +44,11 @@ import static java.util.Collections.singletonList;
  * Generates a factory for the contribution reviewer.
  */
 public class GenerateReviewFactoryStep implements Step {
-    private final Step                      addReviewFactoryLinkStep;
-    private final ContributeMessages        messages;
-    private final AppContext                appContext;
-    private final NotificationHelper        notificationHelper;
-    private final FactoryServiceClient      factoryService;
+    private final Step                 addReviewFactoryLinkStep;
+    private final ContributeMessages   messages;
+    private final AppContext           appContext;
+    private final NotificationHelper   notificationHelper;
+    private final FactoryServiceClient factoryService;
 
     @Inject
     public GenerateReviewFactoryStep(final AddReviewFactoryLinkStep addReviewFactoryLinkStep,
@@ -66,7 +66,7 @@ public class GenerateReviewFactoryStep implements Step {
     @Override
     public void execute(@NotNull final ContributorWorkflow workflow) {
         factoryService.getFactoryJson(appContext.getWorkspaceId(), null)
-                      .then(updateProjectAttributes())
+                      .then(updateProjectAttributes(workflow))
                       .then(new Operation<Factory>() {
                           @Override
                           public void apply(Factory factory) throws OperationException {
@@ -75,7 +75,7 @@ public class GenerateReviewFactoryStep implements Step {
                                                 @Override
                                                 public void apply(Factory factory) throws OperationException {
                                                     workflow.getContext()
-                                                            .setReviewFactoryUrl(FactoryHelper.getCreateProjectRelUrl(factory));
+                                                            .setReviewFactoryUrl(FactoryHelper.getAcceptFactoryUrl(factory));
                                                     workflow.fireStepDoneEvent(GENERATE_REVIEW_FACTORY);
                                                     workflow.setStep(addReviewFactoryLinkStep);
                                                     workflow.executeStep();
@@ -103,7 +103,7 @@ public class GenerateReviewFactoryStep implements Step {
                       });
     }
 
-    private Function<Factory, Factory> updateProjectAttributes() {
+    private Function<Factory, Factory> updateProjectAttributes(final ContributorWorkflow workflow) {
         return new Function<Factory, Factory>() {
             @Override
             public Factory apply(Factory factory) throws FunctionException {
@@ -126,6 +126,8 @@ public class GenerateReviewFactoryStep implements Step {
                     project.getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, singletonList("review"));
                     // remember the related pull request id
                     project.getAttributes().put(PULL_REQUEST_ID_VARIABLE_NAME, singletonList("notUsed"));
+                    // set factory checkout branch
+                    project.getSource().getParameters().put("branch", workflow.getContext().getWorkBranchName());
                 }
                 return factory;
             }

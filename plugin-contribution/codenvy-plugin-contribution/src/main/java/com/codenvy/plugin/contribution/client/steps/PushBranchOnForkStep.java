@@ -54,12 +54,12 @@ public class PushBranchOnForkStep implements Step {
     private final SshServiceClient          sshService;
 
     @Inject
-    public PushBranchOnForkStep(@NotNull final GenerateReviewFactoryStep generateReviewFactoryStep,
-                                @NotNull final VcsServiceProvider vcsServiceProvider,
-                                @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                @NotNull final ContributeMessages messages,
-                                @NotNull final DialogFactory dialogFactory,
-                                @NotNull final SshServiceClient sshService) {
+    public PushBranchOnForkStep(final GenerateReviewFactoryStep generateReviewFactoryStep,
+                                final VcsServiceProvider vcsServiceProvider,
+                                final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                final ContributeMessages messages,
+                                final DialogFactory dialogFactory,
+                                final SshServiceClient sshService) {
         this.generateReviewFactoryStep = generateReviewFactoryStep;
         this.vcsServiceProvider = vcsServiceProvider;
         this.vcsHostingServiceProvider = vcsHostingServiceProvider;
@@ -69,7 +69,7 @@ public class PushBranchOnForkStep implements Step {
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
+    public void execute(final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final String upstreamRepositoryOwner = context.getUpstreamRepositoryOwner();
         final String upstreamRepositoryName = context.getUpstreamRepositoryName();
@@ -79,60 +79,67 @@ public class PushBranchOnForkStep implements Step {
          * If there is none, push the contribution branch.
          * If there is one, propose to update the pull request.
          */
-        vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-            @Override
-            public void onFailure(final Throwable exception) {
-                workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, exception.getMessage());
-            }
 
-            @Override
-            public void onSuccess(final VcsHostingService vcsHostingService) {
-                vcsHostingService.getPullRequest(upstreamRepositoryOwner,
-                                                 upstreamRepositoryName,
-                                                 context.getHostUserLogin(),
-                                                 context.getWorkBranchName(),
-                                                 new AsyncCallback<PullRequest>() {
-                                                     @Override
-                                                     public void onSuccess(final PullRequest pullRequest) {
-                                                         final ConfirmCallback okCallback = new ConfirmCallback() {
-                                                             @Override
-                                                             public void accepted() {
-                                                                 pushBranch(workflow, context);
-                                                             }
-                                                         };
-                                                         final CancelCallback cancelCallback = new CancelCallback() {
-                                                             @Override
-                                                             public void cancelled() {
-                                                                 workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK,
-                                                                                             messages.stepPushBranchCanceling());
-                                                             }
-                                                         };
+        vcsHostingServiceProvider.getVcsHostingService()
+                                 .then(new Operation<VcsHostingService>() {
+                                     @Override
+                                     public void apply(VcsHostingService vcsHostingService) throws OperationException {
+                                         vcsHostingService.getPullRequest(upstreamRepositoryOwner,
+                                                                          upstreamRepositoryName,
+                                                                          context.getHostUserLogin(),
+                                                                          context.getWorkBranchName())
+                                                          .then(new Operation<PullRequest>() {
+                                                              @Override
+                                                              public void apply(PullRequest pullRequest) throws OperationException {
+                                                                  final ConfirmCallback okCallback = new ConfirmCallback() {
+                                                                      @Override
+                                                                      public void accepted() {
+                                                                          pushBranch(workflow, context);
+                                                                      }
+                                                                  };
+                                                                  final CancelCallback cancelCallback = new CancelCallback() {
+                                                                      @Override
+                                                                      public void cancelled() {
+                                                                          workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK,
+                                                                                                      messages.stepPushBranchCanceling());
+                                                                      }
+                                                                  };
 
-                                                         dialogFactory.createConfirmDialog(
-                                                                 messages.contributePartConfigureContributionDialogUpdateTitle(),
-                                                                 messages.contributePartConfigureContributionDialogUpdateText(
-                                                                         pullRequest.getHead().getLabel()),
-                                                                 okCallback,
-                                                                 cancelCallback).show();
-                                                     }
-
-                                                     @Override
-                                                     public void onFailure(final Throwable exception) {
-                                                         if (exception instanceof NoPullRequestException) {
-                                                             pushBranch(workflow, context);
-                                                             return;
-                                                         }
-
-                                                         workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, exception.getMessage());
-                                                     }
-                                                 });
-            }
-        });
+                                                                  dialogFactory.createConfirmDialog(
+                                                                          messages.contributePartConfigureContributionDialogUpdateTitle(),
+                                                                          messages.contributePartConfigureContributionDialogUpdateText(
+                                                                                  pullRequest.getHeadRef()),
+                                                                          okCallback,
+                                                                          cancelCallback).show();
+                                                              }
+                                                          })
+                                                          .catchError(new Operation<PromiseError>() {
+                                                              @Override
+                                                              public void apply(PromiseError err) throws OperationException {
+                                                                  try {
+                                                                      throw err.getCause();
+                                                                  } catch (NoPullRequestException ex) {
+                                                                      pushBranch(workflow, context);
+                                                                  } catch (Throwable thr) {
+                                                                      workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, err.getMessage());
+                                                                  }
+                                                              }
+                                                          });
+                                     }
+                                 })
+                                 .catchError(new Operation<PromiseError>() {
+                                     @Override
+                                     public void apply(PromiseError exception) throws OperationException {
+                                         workflow.fireStepErrorEvent(PUSH_BRANCH_ON_FORK, exception.getMessage());
+                                     }
+                                 });
     }
 
     protected void pushBranch(final ContributorWorkflow workflow, final Context context) {
         final VcsService vcsService = vcsServiceProvider.getVcsService();
-        vcsService.pushBranch(context.getProject(), context.getForkedRemoteName(), context.getWorkBranchName(),
+        vcsService.pushBranch(context.getProject(),
+                              context.getForkedRemoteName(),
+                              context.getWorkBranchName(),
                               new AsyncCallback<PushResponse>() {
                                   @Override
                                   public void onSuccess(final PushResponse result) {

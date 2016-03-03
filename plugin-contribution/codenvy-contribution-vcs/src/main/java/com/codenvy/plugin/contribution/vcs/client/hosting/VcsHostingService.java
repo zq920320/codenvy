@@ -68,12 +68,31 @@ public interface VcsHostingService {
      *         pull request branch name.
      * @param callback
      *         callback called when operation is done.
+     * @deprecated use {@link #getPullRequest(String, String, String, String)}
      */
+    @Deprecated
     void getPullRequest(@NotNull String owner,
                         @NotNull String repository,
                         @NotNull String username,
                         @NotNull String branchName,
                         @NotNull AsyncCallback<PullRequest> callback);
+
+    /**
+     * Get a pull request by qualified name.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repository
+     *         the repository name.
+     * @param username
+     *         the user name.
+     * @param branchName
+     *         pull request branch name.
+     */
+    Promise<PullRequest> getPullRequest(@NotNull String owner,
+                                        @NotNull String repository,
+                                        @NotNull String username,
+                                        @NotNull String branchName);
 
     /**
      * Creates a pull request.
@@ -96,7 +115,9 @@ public interface VcsHostingService {
      *         the pull request body.
      * @param callback
      *         callback called when operation is done.
+     * @deprecated use {@link #createPullRequest(String, String, String, String, String, String, String, String)}
      */
+    @Deprecated
     void createPullRequest(@NotNull String owner,
                            @NotNull String repository,
                            @NotNull String username,
@@ -108,6 +129,35 @@ public interface VcsHostingService {
                            @NotNull AsyncCallback<PullRequest> callback);
 
     /**
+     * Creates a pull request.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repository
+     *         the repository name.
+     * @param username
+     *         the user name.
+     * @param headRepository
+     *         the repository containing the head branch.
+     * @param headBranchName
+     *         the head branch name.
+     * @param baseBranchName
+     *         the base branch name.
+     * @param title
+     *         the pull request title.
+     * @param body
+     *         the pull request body.
+     */
+    Promise<PullRequest> createPullRequest(String owner,
+                                           String repository,
+                                           String username,
+                                           String headRepository,
+                                           String headBranchName,
+                                           String baseBranchName,
+                                           String title,
+                                           String body);
+
+    /**
      * Forks the given repository for the current user.
      *
      * @param owner
@@ -116,8 +166,20 @@ public interface VcsHostingService {
      *         the repository name.
      * @param callback
      *         callback called when operation is done.
+     * @deprecated use {@link #fork(String, String)}
      */
+    @Deprecated
     void fork(@NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
+
+    /**
+     * Forks the given repository for the current user.
+     *
+     * @param owner
+     *         the repository owner.
+     * @param repository
+     *         the repository name.
+     */
+    Promise<Repository> fork(String owner, String repository);
 
     /**
      * Returns the information of the given repository.
@@ -172,8 +234,22 @@ public interface VcsHostingService {
      *         the repository name.
      * @param callback
      *         callback called when operation is done.
+     * @deprecated use {@link #getUserFork(String, String, String)}
      */
+    @Deprecated
     void getUserFork(@NotNull String user, @NotNull String owner, @NotNull String repository, @NotNull AsyncCallback<Repository> callback);
+
+    /**
+     * Returns the repository fork of the given user.
+     *
+     * @param user
+     *         the  user.
+     * @param owner
+     *         the repository owner.
+     * @param repository
+     *         the repository name.
+     */
+    Promise<Repository> getUserFork(String user, String owner, String repository);
 
     /**
      * Returns the user information on the repository host.
@@ -197,10 +273,9 @@ public interface VcsHostingService {
      *         the user name.
      * @param repository
      *         the repository name.
-     * @return the remote url, never {@code null}.
+     * @return the remote url.
      */
-    @NotNull
-    String makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
+    Promise<String> makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the remote HTTP url for the given username and repository.
@@ -209,10 +284,9 @@ public interface VcsHostingService {
      *         the user name.
      * @param repository
      *         the repository name.
-     * @return the remote url, never {@code null}.
+     * @return the remote url.
      */
-    @NotNull
-    String makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
+    Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the pull request url for the given username, repository and pull request number.
@@ -223,10 +297,9 @@ public interface VcsHostingService {
      *         the repository name.
      * @param pullRequestNumber
      *         the pull request number.
-     * @return the remote url, never {@code null}.
+     * @return the remote url.
      */
-    @NotNull
-    String makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
+    Promise<String> makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
 
     /**
      * Use the VCS hosting comment markup language to format the review factory URL.

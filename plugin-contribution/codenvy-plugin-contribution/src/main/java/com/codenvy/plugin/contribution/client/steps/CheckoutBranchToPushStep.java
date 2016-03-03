@@ -18,12 +18,19 @@ import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
+import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
+import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.CHECKOUT_BRANCH_TO_PUSH;
+import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.COMMIT_WORKING_TREE;
 
 /**
  * This step checkout the branch to push on the user repository for the contribution.
@@ -35,17 +42,23 @@ import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step
  * @author Kevin Pollet
  */
 public class CheckoutBranchToPushStep implements Step {
-    private final Step               addForkRemoteStep;
-    private final VcsServiceProvider vcsServiceProvider;
-    private final ContributeMessages messages;
-    private final NotificationHelper notificationHelper;
+    private final Step                      addForkRemoteStep;
+    private final Step                      pushBranchOnOriginStep;
+    private final VcsServiceProvider        vcsServiceProvider;
+    private final ContributeMessages        messages;
+    private final NotificationHelper        notificationHelper;
+    private final VcsHostingServiceProvider vcsHostingServiceProvider;
 
     @Inject
     public CheckoutBranchToPushStep(@NotNull final AddForkRemoteStep addForkRemoteStep,
+                                    @NotNull final PushBranchOnOriginStep pushBranchOnOriginStep,
                                     @NotNull final VcsServiceProvider vcsServiceProvider,
                                     @NotNull final ContributeMessages messages,
                                     @NotNull final NotificationHelper notificationHelper,
-                                    @NotNull final WaitForkOnRemoteStepFactory waitRemoteStepFactory) {
+                                    @NotNull final WaitForkOnRemoteStepFactory waitRemoteStepFactory,
+                                    @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider) {
+        this.vcsHostingServiceProvider = vcsHostingServiceProvider;
+        this.pushBranchOnOriginStep = pushBranchOnOriginStep;
         this.addForkRemoteStep = waitRemoteStepFactory.create(addForkRemoteStep);
         this.vcsServiceProvider = vcsServiceProvider;
         this.messages = messages;
@@ -57,6 +70,11 @@ public class CheckoutBranchToPushStep implements Step {
         final Context context = workflow.getContext();
         final VcsService vcsService = vcsServiceProvider.getVcsService();
         final String contributionBranchName = workflow.getConfiguration().getContributionBranchName();
+
+        if (!context.hasForkSupport() && contributionBranchName.equals(context.getClonedBranchName())) {
+            workflow.fireStepErrorEvent(CHECKOUT_BRANCH_TO_PUSH, "Unable to create a PR from cloned branch, create another one");
+            return;
+        }
 
         vcsService.isLocalBranchWithName(context.getProject(), contributionBranchName, new AsyncCallback<Boolean>() {
             @Override
@@ -78,11 +96,15 @@ public class CheckoutBranchToPushStep implements Step {
                     @Override
                     public void onSuccess(final String branchName) {
                         context.setWorkBranchName(contributionBranchName);
-
                         workflow.fireStepDoneEvent(CHECKOUT_BRANCH_TO_PUSH);
-                        notificationHelper.showInfo(messages.stepCheckoutBranchToPushLocalBranchCheckedOut(contributionBranchName));
 
-                        workflow.setStep(addForkRemoteStep);
+                        if (workflow.getContext().hasForkSupport()) {
+                            workflow.setStep(addForkRemoteStep);
+                        } else {
+                            workflow.setStep(pushBranchOnOriginStep);
+                        }
+
+                        notificationHelper.showInfo(messages.stepCheckoutBranchToPushLocalBranchCheckedOut(contributionBranchName));
                         workflow.executeStep();
                     }
                 });

@@ -15,63 +15,50 @@
 package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.HostUser;
 
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.AUTHORIZE_CODENVY_ON_VCS_HOST;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * This step authorizes Codenvy on the VCS Host.
  *
  * @author Kevin Pollet
+ * @author Yevhenii Voevodin
  */
 public class AuthorizeCodenvyOnVCSHostStep implements Step {
-    private final NotificationHelper              notificationHelper;
-    private final VcsHostingServiceProvider       hostingServiceProvider;
+    private final NotificationManager             notificationManager;
     private final AppContext                      appContext;
     private final ContributeMessages              messages;
     private final DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep;
 
     @Inject
     public AuthorizeCodenvyOnVCSHostStep(final DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep,
-                                         final NotificationHelper notificationHelper,
-                                         final VcsHostingServiceProvider vcsHostingServiceProvider,
+                                         final NotificationManager notificationManager,
                                          final AppContext appContext,
                                          final ContributeMessages messages) {
         this.determineUpstreamRepositoryStep = determineUpstreamRepositoryStep;
-        this.notificationHelper = notificationHelper;
-        this.hostingServiceProvider = vcsHostingServiceProvider;
+        this.notificationManager = notificationManager;
         this.appContext = appContext;
         this.messages = messages;
     }
 
     @Override
     public void execute(final ContributorWorkflow workflow) {
-        hostingServiceProvider.getVcsHostingService()
-                              .then(new Operation<VcsHostingService>() {
-                                  @Override
-                                  public void apply(VcsHostingService service) throws OperationException {
-                                      service.getUserInfo()
-                                             .then(authSuccessOp(workflow))
-                                             .catchError(authErrorOp(workflow, service));
-                                  }
-                              })
-                              .catchError(new Operation<PromiseError>() {
-                                  @Override
-                                  public void apply(PromiseError error) throws OperationException {
-                                      workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST, error.getMessage());
-                                  }
-                              });
+        workflow.getContext()
+                .getVcsHostingService()
+                .getUserInfo()
+                .then(authSuccessOp(workflow))
+                .catchError(getUserErrorOp(workflow));
     }
 
     private Operation<HostUser> authSuccessOp(final ContributorWorkflow workflow) {
@@ -86,35 +73,46 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
         };
     }
 
-    private Operation<PromiseError> authErrorOp(final ContributorWorkflow workflow, final VcsHostingService service) {
+    private Operation<PromiseError> getUserErrorOp(final ContributorWorkflow workflow) {
         return new Operation<PromiseError>() {
             @Override
             public void apply(PromiseError error) throws OperationException {
-                if (isUnauthorized(error.getCause())) {
-                    service.authenticate(appContext.getCurrentUser())
-                           .then(authSuccessOp(workflow))
-                           .catchError(new Operation<PromiseError>() {
-                               @Override
-                               public void apply(PromiseError error) throws OperationException {
-                                   workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-                                   if (isUnauthorized(error.getCause())) {
-                                       notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class,
-                                                                    messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHost());
-
-                                   } else {
-                                       notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, error.getCause());
-                                   }
-                               }
-                           });
-                } else {
-                    workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
-                    notificationHelper.showError(AuthorizeCodenvyOnVCSHostStep.class, error.getCause());
+                try {
+                    throw error.getCause();
+                } catch (UnauthorizedException unEx) {
+                    authenticate(workflow);
+                } catch (Throwable thr) {
+                    handleThrowable(thr, workflow);
                 }
             }
         };
     }
 
-    private boolean isUnauthorized(Throwable cause) {
-        return cause instanceof UnauthorizedException;
+    private void authenticate(final ContributorWorkflow workflow) {
+        workflow.getContext()
+                .getVcsHostingService()
+                .authenticate(appContext.getCurrentUser())
+                .then(authSuccessOp(workflow))
+                .catchError(new Operation<PromiseError>() {
+                    @Override
+                    public void apply(PromiseError err) throws OperationException {
+                        try {
+                            throw err.getCause();
+                        } catch (UnauthorizedException unEx) {
+                            notificationManager.notify(messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostTitle(),
+                                                       messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostContent(),
+                                                       FAIL,
+                                                       true);
+                            workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
+                        } catch (Throwable thr) {
+                            handleThrowable(thr, workflow);
+                        }
+                    }
+                });
+    }
+
+    private void handleThrowable(final Throwable thr, final ContributorWorkflow workflow) {
+        notificationManager.notify(thr.getLocalizedMessage(), FAIL, true);
+        workflow.fireStepErrorEvent(AUTHORIZE_CODENVY_ON_VCS_HOST);
     }
 }

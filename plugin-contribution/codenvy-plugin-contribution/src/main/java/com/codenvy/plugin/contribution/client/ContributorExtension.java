@@ -35,7 +35,6 @@ import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedEvent;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedHandler;
 import org.eclipse.che.ide.api.extension.Extension;
-import org.eclipse.che.ide.project.event.ProjectExplorerLoadedEvent;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
@@ -70,7 +69,8 @@ public class ContributorExtension {
     private final VcsServiceProvider        vcsServiceProvider;
     private final VcsHostingServiceProvider hostingServiceProvider;
 
-    private String lastSelectedProjectName;
+    private String  lastSelectedProjectName;
+    private boolean partWasOpened;
 
     @Inject
     public ContributorExtension(final EventBus eventBus,
@@ -88,22 +88,14 @@ public class ContributorExtension {
         this.vcsServiceProvider = vcsServiceProvider;
         this.hostingServiceProvider = vcsHostingServiceProvider;
 
-        final CurrentProjectChangedHandler projectChangedHandler = new CurrentProjectChangedHandler() {
+        eventBus.addHandler(CurrentProjectChangedEvent.TYPE, new CurrentProjectChangedHandler() {
             @Override
             public void onCurrentProjectChanged(CurrentProjectChangedEvent event) {
                 final ProjectConfigDto rootProject = appContext.getCurrentProject().getRootProject();
-                if (!rootProject.getName().equals(lastSelectedProjectName)) {
+                if (!rootProject.getName().equals(lastSelectedProjectName) || !partWasOpened) {
                     initializeContributorExtension(rootProject);
                 }
                 lastSelectedProjectName = rootProject.getName();
-            }
-        };
-
-        eventBus.addHandler(ProjectExplorerLoadedEvent.getType(), new ProjectExplorerLoadedEvent.ProjectExplorerLoadedHandler() {
-            @Override
-            public void onProjectsLoaded(ProjectExplorerLoadedEvent event) {
-                eventBus.addHandler(CurrentProjectChangedEvent.TYPE, projectChangedHandler);
-                Log.info(getClass(), "CurrentProjectChanged handler is initialized");
             }
         });
 
@@ -125,7 +117,6 @@ public class ContributorExtension {
                 if (project.getMixins().contains(CONTRIBUTION_PROJECT_TYPE_ID)) {
                     return Promises.resolve(project);
                 }
-                Log.info(getClass(), "Adding the contribution mixin to project: " + project.getName());
                 project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
                 project.getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, singletonList("contribute"));
 
@@ -149,12 +140,11 @@ public class ContributorExtension {
         return new Operation<PromiseError>() {
             @Override
             public void apply(PromiseError error) throws OperationException {
-                Log.info(getClass(), "Cancelling the workflow for the project: " + project.getName());
+                Log.info(getClass(), "Cancelling contribution plugin initialization for project " + project.getName());
                 contributePartPresenter.remove();
                 final List<String> mixins = project.getMixins();
                 final Map<String, List<String>> projectAttributes = project.getAttributes();
                 if (mixins.contains(CONTRIBUTION_PROJECT_TYPE_ID)) {
-                    Log.info(getClass(), "Removing the contribution mixin");
                     mixins.remove(CONTRIBUTION_PROJECT_TYPE_ID);
                     projectAttributes.remove(CONTRIBUTE_VARIABLE_NAME);
                     projectAttributes.remove(CONTRIBUTE_MODE_VARIABLE_NAME);
@@ -166,16 +156,12 @@ public class ContributorExtension {
     }
 
     private Operation<ProjectConfigDto> initWorkflow() {
-        Log.info(getClass(), "Initializing the workflow for the project: " + appContext.getCurrentProject().getRootProject().getName());
+        Log.info(getClass(), "Initializing contribution plugin for project " + appContext.getCurrentProject().getRootProject().getName());
         return new Operation<ProjectConfigDto>() {
             @Override
             public void apply(ProjectConfigDto project) throws OperationException {
                 contributePartPresenter.open();
-                // fixme:
-                // not really sure about workflow execution here, as it will
-                // trigger authentication process, but it is really not nice in
-                // the case of project selection. Authentication step should be triggered
-                // when Pull Request part is clicked
+                partWasOpened = true;
                 workflow.init();
                 workflow.executeStep();
             }
@@ -185,10 +171,8 @@ public class ContributorExtension {
     private Promise<String> getCurrentBranchName(final ProjectConfigDto project) {
         final String branchName = project.getSource().getParameters().get("branch");
         if (branchName != null) {
-            Log.info(getClass(), "Getting branch from the project source");
             return Promises.resolve(branchName);
         }
-        Log.info(getClass(), "Getting branch from the repo status");
         return vcsServiceProvider.getVcsService().getBranchName(project);
     }
 }

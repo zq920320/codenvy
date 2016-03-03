@@ -17,13 +17,14 @@ package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.vcs.client.hosting.NoCommitsInPullRequestException;
+import com.codenvy.plugin.contribution.vcs.client.hosting.NoHistoryInCommonException;
 import com.codenvy.plugin.contribution.vcs.client.hosting.PullRequestAlreadyExistsException;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
-import com.google.gwt.user.client.rpc.AsyncCallback;
 
-import javax.validation.constraints.NotNull;
+import org.eclipse.che.api.promises.client.Operation;
+import org.eclipse.che.api.promises.client.OperationException;
+import org.eclipse.che.api.promises.client.PromiseError;
+
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.ISSUE_PULL_REQUEST;
@@ -34,88 +35,86 @@ import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step
  * @author Kevin Pollet
  */
 public class IssuePullRequestStep implements Step {
-    private final VcsHostingServiceProvider vcsHostingServiceProvider;
-    private final ContributeMessages        messages;
+    private final ContributeMessages messages;
 
     @Inject
-    public IssuePullRequestStep(@NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                @NotNull final ContributeMessages messages) {
-        this.vcsHostingServiceProvider = vcsHostingServiceProvider;
+    public IssuePullRequestStep(final ContributeMessages messages) {
         this.messages = messages;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
+    public void execute(final ContributorWorkflow workflow) {
         final Context context = workflow.getContext();
         final Configuration configuration = workflow.getConfiguration();
-        final String upstreamRepositoryOwner = context.getUpstreamRepositoryOwner();
-        final String upstreamRepositoryName = context.getUpstreamRepositoryName();
-        final String contributionTitle = configuration.getContributionTitle();
-        final String contributionComment = configuration.getContributionComment();
+        workflow.getContext()
+                .getVcsHostingService()
+                .createPullRequest(context.getUpstreamRepositoryOwner(),
+                                   context.getUpstreamRepositoryName(),
+                                   context.getHostUserLogin(),
+                                   context.getForkedRepositoryName(),
+                                   context.getWorkBranchName(),
+                                   context.getClonedBranchName(),
+                                   configuration.getContributionTitle(),
+                                   configuration.getContributionComment())
+                .then(new Operation<PullRequest>() {
+                    @Override
+                    public void apply(PullRequest pullRequest) throws OperationException {
+                        context.setPullRequestIssueNumber(pullRequest.getNumber());
+                        context.setPullRequestId(pullRequest.getId());
+                        workflow.fireStepDoneEvent(ISSUE_PULL_REQUEST);
+                    }
+                })
+                .catchError(new Operation<PromiseError>() {
+                    @Override
+                    public void apply(final PromiseError exception) throws OperationException {
+                        try {
+                            throw exception.getCause();
+                        } catch (PullRequestAlreadyExistsException prEx) {
+                            handlePrExistsEx(prEx, workflow);
+                        } catch (NoCommitsInPullRequestException noCommitsEx) {
+                            handleNoCommitsInPrEx(noCommitsEx, workflow);
+                        } catch (NoHistoryInCommonException noHistory) {
+                            workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, noHistory.getMessage());
+                        } catch (Throwable thr) {
+                            handleThrowable(thr, workflow);
+                        }
+                    }
+                });
+    }
 
-        vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-            @Override
-            public void onFailure(final Throwable exception) {
-                workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, exception.getMessage());
-            }
+    private void handleThrowable(final Throwable thr, final ContributorWorkflow workflow) {
+        workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, messages.stepIssuePullRequestErrorCreatePullRequest());
+    }
 
-            @Override
-            public void onSuccess(final VcsHostingService vcsHostingService) {
-                vcsHostingService.createPullRequest(upstreamRepositoryOwner, upstreamRepositoryName, context.getHostUserLogin(),
-                                                    context.getForkedRepositoryName(), context.getWorkBranchName(),
-                                                    context.getClonedBranchName(), contributionTitle, contributionComment,
-                                                    new AsyncCallback<PullRequest>() {
-                                                        @Override
-                                                        public void onSuccess(final PullRequest pullRequest) {
-                                                            context.setPullRequestIssueNumber(pullRequest.getNumber());
-                                                            context.setPullRequestId(pullRequest.getId());
-                                                            workflow.fireStepDoneEvent(ISSUE_PULL_REQUEST);
-                                                        }
+    private void handleNoCommitsInPrEx(final NoCommitsInPullRequestException ex, final ContributorWorkflow workflow) {
+        workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, messages.stepIssuePullRequestErrorCreatePullRequestWithoutCommits());
+    }
 
-                                                        @Override
-                                                        public void onFailure(final Throwable exception) {
-                                                            if (exception instanceof PullRequestAlreadyExistsException) {
-                                                                // TODO: consider creating separate UpdatePullRequest step
-                                                                if (!context.isUpdateMode()) {
-                                                                    workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, exception.getMessage());
-                                                                    return;
-                                                                }
-                                                                vcsHostingService
-                                                                        .getPullRequest(upstreamRepositoryOwner, upstreamRepositoryName,
-                                                                                        context.getHostUserLogin(),
-                                                                                        context.getWorkBranchName(),
-                                                                                        new AsyncCallback<PullRequest>() {
-                                                                                            @Override
-                                                                                            public void onSuccess(
-                                                                                                    final PullRequest pullRequest) {
-                                                                                                context.setPullRequestIssueNumber(
-                                                                                                        pullRequest.getNumber());
-                                                                                                context.setPullRequestId(
-                                                                                                        pullRequest.getId());
-                                                                                                workflow.fireStepDoneEvent(
-                                                                                                        ISSUE_PULL_REQUEST);
-                                                                                            }
-
-                                                                                            @Override
-                                                                                            public void onFailure(
-                                                                                                    final Throwable exception) {
-                                                                                                workflow.fireStepErrorEvent(
-                                                                                                        ISSUE_PULL_REQUEST,
-                                                                                                        exception.getMessage());
-                                                                                            }
-                                                                                        });
-
-                                                            } else if (exception instanceof NoCommitsInPullRequestException) {
-                                                                workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST,
-                                                                                            messages.stepIssuePullRequestErrorCreatePullRequestWithoutCommits());
-
-                                                            } else {
-                                                                workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST,
-                                                                                            messages.stepIssuePullRequestErrorCreatePullRequest());
-                                                            }
-                                                        }
-                                                    });
-            }
-        });
+    private void handlePrExistsEx(final PullRequestAlreadyExistsException ex, final ContributorWorkflow workflow) {
+        final Context context = workflow.getContext();
+        // TODO: consider creating separate UpdatePullRequest step
+        if (!context.isUpdateMode()) {
+            workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, ex.getMessage());
+            return;
+        }
+        context.getVcsHostingService()
+               .getPullRequest(context.getUpstreamRepositoryOwner(),
+                               context.getUpstreamRepositoryName(),
+                               context.getHostUserLogin(),
+                               context.getWorkBranchName())
+               .then(new Operation<PullRequest>() {
+                   @Override
+                   public void apply(PullRequest pullRequest) throws OperationException {
+                       context.setPullRequestIssueNumber(pullRequest.getNumber());
+                       context.setPullRequestId(pullRequest.getId());
+                       workflow.fireStepDoneEvent(ISSUE_PULL_REQUEST);
+                   }
+               })
+               .catchError(new Operation<PromiseError>() {
+                   @Override
+                   public void apply(PromiseError err) throws OperationException {
+                       workflow.fireStepErrorEvent(ISSUE_PULL_REQUEST, err.getMessage());
+                   }
+               });
     }
 }
