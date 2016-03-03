@@ -14,11 +14,22 @@
  */
 package com.codenvy.plugin.contribution.client.steps;
 
+import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
+import com.google.inject.Singleton;
 
 /**
- * Factory for {@link WaitForkOnRemoteStep}.
+ * Not implemented yet.
+ * Used for toggling last step mark.
+ *
+ * @author Yevhenii Voevodin
  */
-public interface WaitForkOnRemoteStepFactory {
-    WaitForkOnRemoteStep create(Step nextStep);
+@Singleton
+public class UpdatePullRequestStep implements Step {
+
+    @Override
+    public void execute(final WorkflowExecutor executor, final Context context) {
+        executor.done(this, context);
+    }
 }

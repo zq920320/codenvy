@@ -18,13 +18,16 @@ import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.ContributeResources;
 import com.codenvy.plugin.contribution.client.dialogs.paste.PasteEvent;
 import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Text;
 import com.google.gwt.event.dom.client.ChangeEvent;
 import com.google.gwt.event.dom.client.ChangeHandler;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.dom.client.DomEvent;
 import com.google.gwt.event.dom.client.KeyUpEvent;
+import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.client.ui.Anchor;
@@ -36,6 +39,7 @@ import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.TextArea;
 import com.google.gwt.user.client.ui.TextBox;
+import com.google.gwt.user.client.ui.ValueBoxBase;
 import com.google.gwt.user.client.ui.Widget;
 
 import org.eclipse.che.ide.api.parts.PartStackUIResources;
@@ -43,6 +47,7 @@ import org.eclipse.che.ide.api.parts.base.BaseView;
 import org.eclipse.che.ide.ui.FontAwesome;
 import org.eclipse.che.ide.ui.buttonLoader.ButtonLoaderResources;
 import org.eclipse.che.ide.ui.listbox.CustomListBox;
+import org.eclipse.che.ide.util.loging.Log;
 import org.vectomatic.dom.svg.ui.SVGPushButton;
 
 import javax.inject.Inject;
@@ -224,6 +229,11 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     }
 
     @Override
+    public void addContributionCommentChangedHandler(TextChangedHandler handler) {
+        contributionComment.addKeyUpHandler(new TextChangedHandlerAdapter(handler));
+    }
+
+    @Override
     public String getContributionTitle() {
         return contributionTitle.getValue();
     }
@@ -231,6 +241,21 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     @Override
     public void setContributionTitle(final String title) {
         contributionTitle.setText(title);
+    }
+
+    @Override
+    public void addContributionTitleChangedHandler(TextChangedHandler handler) {
+        contributionTitle.addKeyUpHandler(new TextChangedHandlerAdapter(handler));
+    }
+
+    @Override
+    public void addBranchChangedHandler(final TextChangedHandler changeHandler) {
+        contributionBranchName.addChangeHandler(new ChangeHandler() {
+            @Override
+            public void onChange(ChangeEvent event) {
+                changeHandler.onTextChanged(contributionBranchName.getSelectedItemText());
+            }
+        });
     }
 
     @Override
@@ -279,6 +304,11 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     @Override
     public void setCurrentStatusStepStatus(boolean success) {
         statusSteps.setCurrentStepStatus(success);
+    }
+
+    @Override
+    public String getCurrentStatusStepName() {
+        return statusSteps.getCurrentStepName();
     }
 
     @Override
@@ -409,14 +439,19 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
             steps.get(currentStep).setStatus(status);
             currentStep++;
         }
+
+        public String getCurrentStepName() {
+            return steps.get(currentStep).getLabel();
+        }
     }
 
     private class StatusStep extends FlowPanel {
         private final SimplePanel status;
+        private final String      label;
 
         private StatusStep(final int index, final String label) {
             final Label indexLabel = new Label(String.valueOf(index));
-            final Label titleLabel = new Label(label);
+            final Label titleLabel = new Label(this.label = label);
             this.status = new SimplePanel();
 
             add(indexLabel);
@@ -441,6 +476,10 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
             status.add(getStatusIcon(success));
         }
 
+        public String getLabel() {
+            return label;
+        }
+
         private Widget getStatusIcon(final boolean success) {
             final Widget icon = new HTML(success ? FontAwesome.CHECK : FontAwesome.EXCLAMATION_TRIANGLE);
 
@@ -449,4 +488,21 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
             return icon;
         }
     }
+
+    /** Adapts {@link TextChangedHandler} to the {@link KeyUpEvent}. */
+    private static class TextChangedHandlerAdapter implements KeyUpHandler {
+        private final TextChangedHandler handler;
+
+        public TextChangedHandlerAdapter(TextChangedHandler handler) {
+            this.handler = handler;
+        }
+
+        @Override
+        public void onKeyUp(KeyUpEvent event) {
+            if (event.getSource() instanceof ValueBoxBase) {
+                handler.onTextChanged(((ValueBoxBase)event.getSource()).getText());
+            }
+        }
+    }
+
 }

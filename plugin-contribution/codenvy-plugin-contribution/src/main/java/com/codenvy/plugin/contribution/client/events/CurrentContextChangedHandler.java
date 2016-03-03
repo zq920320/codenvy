@@ -12,13 +12,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps;
+package com.codenvy.plugin.contribution.client.events;
 
-import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.google.gwt.event.shared.EventHandler;
 
 /**
- * Factory for {@link WaitForkOnRemoteStep}.
+ * Handler for {@link CurrentContextChangedEvent}.
+ *
+ * @author Yevhenii Voevodin
  */
-public interface WaitForkOnRemoteStepFactory {
-    WaitForkOnRemoteStep create(Step nextStep);
+public interface CurrentContextChangedHandler extends EventHandler {
+
+    /**
+     * Called when the current context changed.
+     *
+     * @param context
+     *         new context
+     */
+    void onContextChanged(final Context context);
 }

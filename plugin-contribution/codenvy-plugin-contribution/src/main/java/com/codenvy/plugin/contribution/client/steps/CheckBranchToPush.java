@@ -14,33 +14,36 @@
  */
 package com.codenvy.plugin.contribution.client.steps;
 
+import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.workflow.Step;
 import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
+import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import javax.inject.Inject;
-
 /**
- * Push the local contribution branch to origin repository
+ * Checks that working branch is different from the cloned branch.
  *
- * @author Mihail Kuznyetsov
+ * @author Yevhenii Voevodin
  */
 @Singleton
-public class PushBranchOnOriginStep implements Step {
+public class CheckBranchToPush implements Step {
 
-    private final PushBranchStepFactory pushBranchStepFactory;
+    private final ContributeMessages messages;
 
     @Inject
-    public PushBranchOnOriginStep(PushBranchStepFactory pushBranchStepFactory) {
-        this.pushBranchStepFactory = pushBranchStepFactory;
+    public CheckBranchToPush(final ContributeMessages messages) {
+        this.messages = messages;
     }
 
     @Override
     public void execute(final WorkflowExecutor executor, final Context context) {
-        pushBranchStepFactory.create(this,
-                                     context.getOriginRepositoryOwner(),
-                                     context.getOriginRepositoryName())
-                             .execute(executor, context);
+        if (context.getWorkBranchName().equals(context.getClonedBranchName())) {
+            executor.fail(this,
+                          context,
+                          messages.stepCheckBranchClonedBranchIsEqualToWorkBranch());
+        } else {
+            executor.done(this, context);
+        }
     }
 }

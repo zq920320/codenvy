@@ -61,6 +61,9 @@ import static org.eclipse.che.ide.util.StringUtils.containsIgnoreCase;
  * @author Kevin Pollet
  */
 public class GitHubHostingService implements VcsHostingService {
+
+    public static final String SERVICE_NAME = "GitHub";
+
     private static final String SSH_URL_PREFIX                            = "git@github.com:";
     private static final String HTTPS_URL_PREFIX                          = "https://github.com/";
     private static final String API_URL_PREFIX                            = "https://api.github.com/repos/";
@@ -246,7 +249,7 @@ public class GitHubHostingService implements VcsHostingService {
     @NotNull
     @Override
     public Promise<String> makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
-                                     @NotNull final String pullRequestNumber) {
+                                              @NotNull final String pullRequestNumber) {
         return Promises.resolve(templates.pullRequestUrlTemplate(username, repository, pullRequestNumber));
     }
 
@@ -267,7 +270,7 @@ public class GitHubHostingService implements VcsHostingService {
     @NotNull
     @Override
     public String getName() {
-        return "GitHub";
+        return SERVICE_NAME;
     }
 
     @NotNull

@@ -12,8 +12,10 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps.events;
+package com.codenvy.plugin.contribution.client.events;
 
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
 import com.google.gwt.event.shared.GwtEvent;
 
 import javax.validation.constraints.NotNull;
@@ -29,15 +31,17 @@ public class StepEvent extends GwtEvent<StepHandler> {
     private final Step    step;
     private final boolean success;
     private final String  message;
+    private final Context context;
 
-    public StepEvent(@NotNull final Step step, final boolean success) {
-        this(step, success, null);
+    public StepEvent(final Context context, final Step step, final boolean success) {
+        this(context, step, success, null);
     }
 
-    public StepEvent(@NotNull final Step step, final boolean success, final String message) {
+    public StepEvent(final Context context, final Step step, final boolean success, final String message) {
         this.step = step;
         this.success = success;
         this.message = message;
+        this.context = context;
     }
 
     @Override
@@ -63,16 +67,7 @@ public class StepEvent extends GwtEvent<StepHandler> {
         return message;
     }
 
-    public enum Step {
-        COMMIT_WORKING_TREE,
-        AUTHORIZE_CODENVY_ON_VCS_HOST,
-        CREATE_FORK,
-        CHECKOUT_BRANCH_TO_PUSH,
-        ADD_FORK_REMOTE,
-        PUSH_BRANCH_ON_FORK,
-        PUSH_BRANCH_ON_ORIGIN,
-        ISSUE_PULL_REQUEST,
-        GENERATE_REVIEW_FACTORY,
-        ADD_REVIEW_FACTORY_LINK
+    public Context getContext() {
+        return context;
     }
 }

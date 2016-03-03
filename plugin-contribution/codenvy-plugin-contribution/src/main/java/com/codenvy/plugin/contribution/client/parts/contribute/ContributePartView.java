@@ -14,6 +14,8 @@
  */
 package com.codenvy.plugin.contribution.client.parts.contribute;
 
+import com.google.gwt.event.dom.client.ChangeHandler;
+
 import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.api.parts.base.BaseActionDelegate;
 
@@ -81,6 +83,8 @@ public interface ContributePartView extends View<ContributePartView.ActionDelega
      */
     void setContributionComment(String comment);
 
+    void addContributionCommentChangedHandler(TextChangedHandler handler);
+
     /**
      * Sets the enabled/disabled state of the contribution comment field.
      */
@@ -100,6 +104,10 @@ public interface ContributePartView extends View<ContributePartView.ActionDelega
      *         the contribution title.
      */
     void setContributionTitle(String title);
+
+    void addContributionTitleChangedHandler(TextChangedHandler handler);
+
+    void addBranchChangedHandler(TextChangedHandler changeHandler);
 
     /**
      * Sets the enabled/disabled state of the contribution title field.
@@ -181,6 +189,8 @@ public interface ContributePartView extends View<ContributePartView.ActionDelega
      *         {@code true} if the contribution is in progress, {@code false} otherwise.
      */
     void setContributionProgressState(boolean progress);
+
+    String getCurrentStatusStepName();
 
     /**
      * Action delegate interface for the contribution configuration dialog.

@@ -14,6 +14,13 @@
  */
 package com.codenvy.plugin.contribution.client.inject;
 
+import com.codenvy.plugin.contribution.client.github.GithubStagesProvider;
+import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
+import com.codenvy.plugin.contribution.client.steps.PushBranchStepFactory;
+import com.codenvy.plugin.contribution.client.vsts.VstsContributionWorkflow;
+import com.codenvy.plugin.contribution.client.vsts.VstsStagesProvider;
+import com.codenvy.plugin.contribution.client.workflow.ContributionWorkflow;
+import com.codenvy.plugin.contribution.client.github.GitHubContributionWorkflow;
 import com.codenvy.plugin.contribution.client.dialogs.commit.CommitView;
 import com.codenvy.plugin.contribution.client.dialogs.commit.CommitViewImpl;
 import com.codenvy.plugin.contribution.client.parts.contribute.ContributePartPresenter;
@@ -22,9 +29,8 @@ import com.codenvy.plugin.contribution.client.parts.contribute.ContributePartVie
 import com.codenvy.plugin.contribution.client.steps.AddForkRemoteStep;
 import com.codenvy.plugin.contribution.client.steps.AddReviewFactoryLinkStep;
 import com.codenvy.plugin.contribution.client.steps.AuthorizeCodenvyOnVCSHostStep;
-import com.codenvy.plugin.contribution.client.steps.CheckoutBranchToPushStep;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
-import com.codenvy.plugin.contribution.client.steps.ContributorWorkflow;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
 import com.codenvy.plugin.contribution.client.steps.DefineWorkBranchStep;
 import com.codenvy.plugin.contribution.client.steps.GenerateReviewFactoryStep;
@@ -32,8 +38,11 @@ import com.codenvy.plugin.contribution.client.steps.InitializeWorkflowContextSte
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.PushBranchOnForkStep;
 import com.codenvy.plugin.contribution.client.steps.WaitForkOnRemoteStepFactory;
+import com.codenvy.plugin.contribution.vcs.client.hosting.GitHubHostingService;
+import com.codenvy.plugin.contribution.vcs.client.hosting.MicrosoftHostingService;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.gwt.inject.client.assistedinject.GinFactoryModuleBuilder;
+import com.google.gwt.inject.client.multibindings.GinMapBinder;
 
 import org.eclipse.che.ide.api.extension.ExtensionGinModule;
 
@@ -56,7 +65,7 @@ public class ContributorGinModule extends AbstractGinModule {
         bind(ContributePartPresenter.class);
 
         // the steps
-        bind(ContributorWorkflow.class).in(Singleton.class);
+        bind(WorkflowExecutor.class).in(Singleton.class);
         bind(InitializeWorkflowContextStep.class);
         bind(DefineWorkBranchStep.class);
         bind(CommitWorkingTreeStep.class);
@@ -65,9 +74,23 @@ public class ContributorGinModule extends AbstractGinModule {
         bind(GenerateReviewFactoryStep.class);
         bind(IssuePullRequestStep.class);
         bind(PushBranchOnForkStep.class);
-        bind(CheckoutBranchToPushStep.class);
         bind(AddForkRemoteStep.class);
         bind(CreateForkStep.class);
         install(new GinFactoryModuleBuilder().build(WaitForkOnRemoteStepFactory.class));
+        install(new GinFactoryModuleBuilder().build(PushBranchStepFactory.class));
+
+        final GinMapBinder<String, ContributionWorkflow> workflowBinder
+                = GinMapBinder.newMapBinder(binder(),
+                                            String.class,
+                                            ContributionWorkflow.class);
+        workflowBinder.addBinding(GitHubHostingService.SERVICE_NAME).to(GitHubContributionWorkflow.class);
+        workflowBinder.addBinding(MicrosoftHostingService.SERVICE_NAME).to(VstsContributionWorkflow.class);
+
+        final GinMapBinder<String, StagesProvider> stagesProvider
+                = GinMapBinder.newMapBinder(binder(),
+                                            String.class,
+                                            StagesProvider.class);
+        stagesProvider.addBinding(GitHubHostingService.SERVICE_NAME).to(GithubStagesProvider.class);
+        stagesProvider.addBinding(MicrosoftHostingService.SERVICE_NAME).to(VstsStagesProvider.class);
     }
 }

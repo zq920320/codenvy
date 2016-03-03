@@ -16,59 +16,60 @@ package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter;
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
+import com.codenvy.plugin.contribution.client.workflow.Configuration;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Singleton;
 
-import org.eclipse.che.ide.util.loging.Log;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.contribution.client.dialogs.commit.CommitPresenter.CommitActionHandler.CommitAction.CANCEL;
-import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.COMMIT_WORKING_TREE;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * This step allow the user to commit the current working tree if the git repository status is not clean.
  *
  * @author Kevin Pollet
+ * @author Yevhenii Voevodin
  */
+@Singleton
 public class CommitWorkingTreeStep implements Step {
-    private final CommitPresenter    commitPresenter;
-    private final ContributeMessages messages;
-    private final NotificationHelper notificationHelper;
-    private final AuthorizeCodenvyOnVCSHostStep authStep;
+    private final CommitPresenter               commitPresenter;
+    private final ContributeMessages            messages;
+    private final NotificationManager           notificationManager;
 
     @Inject
     public CommitWorkingTreeStep(final CommitPresenter commitPresenter,
                                  final ContributeMessages messages,
-                                 final NotificationHelper notificationHelper,
-                                 final AuthorizeCodenvyOnVCSHostStep authStep) {
+                                 final NotificationManager notificationManager) {
         this.commitPresenter = commitPresenter;
         this.messages = messages;
-        this.notificationHelper = notificationHelper;
-        this.authStep = authStep;
+        this.notificationManager = notificationManager;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
-        final Configuration configuration = workflow.getConfiguration();
+    public void execute(final WorkflowExecutor executor, final Context context) {
+        final Configuration configuration = context.getConfiguration();
 
         commitPresenter.setCommitActionHandler(new CommitPresenter.CommitActionHandler() {
             @Override
             public void onCommitAction(final CommitAction action) {
                 if (action == CANCEL) {
-                    workflow.fireStepErrorEvent(COMMIT_WORKING_TREE);
-
+                    executor.fail(CommitWorkingTreeStep.this, context, messages.stepCommitCanceled());
                 } else {
-                    proceed(workflow);
+                    executor.done(CommitWorkingTreeStep.this, context);
                 }
             }
         });
         commitPresenter.hasUncommittedChanges(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(final Throwable exception) {
-                workflow.fireStepErrorEvent(COMMIT_WORKING_TREE);
-                notificationHelper.showError(CommitWorkingTreeStep.class, exception);
+                notificationManager.notify(exception.getLocalizedMessage(), FAIL, true);
+                executor.fail(CommitWorkingTreeStep.this, context, exception.getLocalizedMessage());
             }
 
             @Override
@@ -78,16 +79,9 @@ public class CommitWorkingTreeStep implements Step {
                             .showView(messages.contributorExtensionDefaultCommitDescription(configuration.getContributionBranchName(),
                                                                                             configuration.getContributionTitle()));
                 } else {
-                    proceed(workflow);
+                    executor.done(CommitWorkingTreeStep.this, context);
                 }
             }
         });
-    }
-
-    private void proceed(final ContributorWorkflow workflow) {
-        workflow.setStep(authStep);
-
-        workflow.fireStepDoneEvent(COMMIT_WORKING_TREE);
-        workflow.executeStep();
     }
 }

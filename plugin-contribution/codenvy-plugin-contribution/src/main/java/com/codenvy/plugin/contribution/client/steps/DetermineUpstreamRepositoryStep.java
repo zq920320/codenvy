@@ -14,7 +14,9 @@
  */
 package com.codenvy.plugin.contribution.client.steps;
 
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
 import com.google.inject.Inject;
@@ -23,8 +25,9 @@ import com.google.inject.Singleton;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 
-import javax.validation.constraints.NotNull;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * Determines what is the upstream repository and updates the context with
@@ -41,22 +44,15 @@ import javax.validation.constraints.NotNull;
 @Singleton
 public class DetermineUpstreamRepositoryStep implements Step {
 
-    private final NotificationHelper       notificationHelper;
-    private final CreateForkStep           createForkStep;
-    private final CheckoutBranchToPushStep checkoutBranchToPushStep;
+    private final NotificationManager notificationManager;
 
     @Inject
-    public DetermineUpstreamRepositoryStep(NotificationHelper notificationHelper,
-                                           CreateForkStep createForkStep,
-                                           CheckoutBranchToPushStep checkoutBranchToPushStep) {
-        this.notificationHelper = notificationHelper;
-        this.createForkStep = createForkStep;
-        this.checkoutBranchToPushStep = checkoutBranchToPushStep;
+    public DetermineUpstreamRepositoryStep(NotificationManager notificationManager) {
+        this.notificationManager = notificationManager;
     }
 
     @Override
-    public void execute(final ContributorWorkflow workflow) {
-        final Context context = workflow.getContext();
+    public void execute(final WorkflowExecutor executor, final Context context) {
         final VcsHostingService hostingService = context.getVcsHostingService();
         hostingService.getRepository(context.getOriginRepositoryOwner(), context.getOriginRepositoryName())
                       .then(new Operation<Repository>() {
@@ -70,17 +66,14 @@ public class DetermineUpstreamRepositoryStep implements Step {
                                   context.setUpstreamRepositoryName(context.getOriginRepositoryName());
                                   context.setUpstreamRepositoryOwner(context.getOriginRepositoryOwner());
                               }
-                              if (context.hasForkSupport()) {
-                                  workflow.executeStep(createForkStep);
-                              } else {
-                                  workflow.executeStep(checkoutBranchToPushStep);
-                              }
+                              executor.done(DetermineUpstreamRepositoryStep.this, context);
                           }
                       })
                       .catchError(new Operation<PromiseError>() {
                           @Override
                           public void apply(PromiseError error) throws OperationException {
-                              notificationHelper.showError(InitializeWorkflowContextStep.class, error.getCause());
+                              notificationManager.notify(error.getMessage(), FAIL, true);
+                              executor.fail(DetermineUpstreamRepositoryStep.this, context, error.getMessage());
                           }
                       });
     }

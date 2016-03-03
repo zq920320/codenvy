@@ -25,6 +25,7 @@ import org.eclipse.che.api.promises.client.FunctionException;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
@@ -58,14 +59,19 @@ public class VcsHostingServiceProvider {
 
     /**
      * Returns the dedicated {@link VcsHostingService} implementation for the {@link #ORIGIN_REMOTE_NAME origin} remote.
+     *
+     * @param project
+     *         project used to find origin remote and extract VCS hosting service
      */
-    public Promise<VcsHostingService> getVcsHostingService() {
-        final CurrentProject currentProject = appContext.getCurrentProject();
-        final VcsService vcsService = vcsServiceProvider.getVcsService();
-        if (currentProject == null || vcsService == null) {
+    public Promise<VcsHostingService> getVcsHostingService(final ProjectConfigDto project) {
+        if (project == null) {
             return Promises.reject(JsPromiseError.create(new NoVcsHostingServiceImplementationException()));
         }
-        return vcsService.listRemotes(currentProject.getRootProject())
+        final VcsService vcsService = vcsServiceProvider.getVcsService(project);
+        if (vcsService == null) {
+            return Promises.reject(JsPromiseError.create(new NoVcsHostingServiceImplementationException()));
+        }
+        return vcsService.listRemotes(project)
                          .then(new Function<List<Remote>, VcsHostingService>() {
                              @Override
                              public VcsHostingService apply(List<Remote> remotes) throws FunctionException {
@@ -90,14 +96,14 @@ public class VcsHostingServiceProvider {
      * @param callback
      *         the callback called when the {@link com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService} implementation is
      *         retrieved.
-     * @deprecated use {@link #getVcsHostingService()} instead
+     * @deprecated use {@link #getVcsHostingService(ProjectConfigDto)} instead
      */
     @Deprecated
     public void getVcsHostingService(final AsyncCallback<VcsHostingService> callback) {
         final CurrentProject currentProject = appContext.getCurrentProject();
-        final VcsService vcsService = vcsServiceProvider.getVcsService();
+        final VcsService vcsService = vcsServiceProvider.getVcsService(currentProject.getRootProject());
 
-        if (currentProject != null && vcsService != null) {
+        if (vcsService != null) {
             vcsService.listRemotes(currentProject.getRootProject(), new AsyncCallback<List<Remote>>() {
                 @Override
                 public void onFailure(final Throwable exception) {

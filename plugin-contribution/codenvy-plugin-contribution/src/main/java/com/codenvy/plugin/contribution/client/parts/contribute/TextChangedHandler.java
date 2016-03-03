@@ -12,19 +12,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps;
-
-import javax.validation.constraints.NotNull;
+package com.codenvy.plugin.contribution.client.parts.contribute;
 
 /**
- * Contract for a step in the contribution workflow.
+ * Used to detect if pull request title/comment/branch is changed.
+ *
+ * @author Yevhenii Voevodin
+ * @see ContributePartView#addBranchChangedHandler(TextChangedHandler)
+ * @see ContributePartView#addContributionCommentChangedHandler(TextChangedHandler)
+ * @see ContributePartView#addContributionTitleChangedHandler(TextChangedHandler)
  */
-public interface Step {
+public interface TextChangedHandler {
+
     /**
-     * Execute this step.
+     * Called when title/comment/branch is changed
      *
-     * @param workflow
-     *         the contributors workflow.
+     * @param newText
+     *         new text content
      */
-    void execute(@NotNull final ContributorWorkflow workflow);
+    void onTextChanged(String newText);
 }

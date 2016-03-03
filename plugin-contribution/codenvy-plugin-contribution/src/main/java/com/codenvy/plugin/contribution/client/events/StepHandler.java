@@ -12,7 +12,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps.events;
+package com.codenvy.plugin.contribution.client.events;
 
 import com.google.gwt.event.shared.EventHandler;
 
