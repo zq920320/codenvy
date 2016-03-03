@@ -20,7 +20,7 @@
     <parent>
         <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>4.0.0-RC11</version>
+        <version>4.0.0-RC12-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-factory</artifactId>
     <packaging>pom</packaging>
