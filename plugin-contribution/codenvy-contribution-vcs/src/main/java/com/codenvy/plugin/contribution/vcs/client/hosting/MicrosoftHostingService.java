@@ -217,7 +217,13 @@ public class MicrosoftHostingService implements VcsHostingService {
     public String getRepositoryOwnerFromUrl(@NotNull String url) {
         if (url.contains("/_git/")) {
             String[] splitted = url.split("/_git/");
-            return splitted[0].substring(splitted[0].lastIndexOf('/') + 1);
+            String[] groups = splitted[0].split("/");
+
+            if (groups.length == 5) {
+                return groups[4];
+            } else {
+                return splitted[1];
+            }
         } else {
             throw new IllegalArgumentException("Unknown VSTS repo URL pattern");
         }

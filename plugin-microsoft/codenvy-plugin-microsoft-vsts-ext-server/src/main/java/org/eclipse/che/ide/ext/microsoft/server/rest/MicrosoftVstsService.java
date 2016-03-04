@@ -51,14 +51,14 @@ import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 @Singleton
 public class MicrosoftVstsService {
 
-    final MicrosoftVstsRestClient microsoft;
+    final MicrosoftVstsRestClient microsoftVstsRestClient;
     final URLTemplates            templates;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrosoftVstsService.class);
 
     @Inject
-    public MicrosoftVstsService(MicrosoftVstsRestClient microsoft, URLTemplates templates) {
-        this.microsoft = microsoft;
+    public MicrosoftVstsService(MicrosoftVstsRestClient microsoftVstsRestClient, URLTemplates templates) {
+        this.microsoftVstsRestClient = microsoftVstsRestClient;
         this.templates = templates;
     }
 
@@ -67,7 +67,7 @@ public class MicrosoftVstsService {
     @Produces(APPLICATION_JSON)
     public MicrosoftUserProfile getUserProfile() throws ApiException {
         try {
-            return microsoft.getUserProfile();
+            return microsoftVstsRestClient.getUserProfile();
         } catch (IOException e) {
             LOG.error("Getting user info fail", e);
             throw new ServerException(e.getMessage());
@@ -81,7 +81,7 @@ public class MicrosoftVstsService {
     public MicrosoftRepository getRepository(@PathParam("project") String project,
                                              @PathParam("repository") String repository)
             throws IOException, ServerException, UnauthorizedException {
-        return microsoft.getRepository(project, repository);
+        return microsoftVstsRestClient.getRepository(project, repository);
     }
 
 
@@ -91,8 +91,8 @@ public class MicrosoftVstsService {
     public List<MicrosoftPullRequest> getPullRequests(@PathParam("project") String project,
                                                       @PathParam("repository") String repository)
             throws IOException, ServerException, UnauthorizedException {
-        String repositoryId = microsoft.getRepository(project, repository).getId();
-        return microsoft.getPullRequests(project, repository, repositoryId);
+        String repositoryId = microsoftVstsRestClient.getRepository(project, repository).getId();
+        return microsoftVstsRestClient.getPullRequests(project, repository, repositoryId);
     }
 
     @POST
@@ -101,7 +101,7 @@ public class MicrosoftVstsService {
     public MicrosoftPullRequest createPullRequest(@PathParam("repository") String repository,
                                                   NewMicrosoftPullRequest input)
             throws IOException, ServerException, UnauthorizedException {
-        return microsoft.createPullRequest(repository, input);
+        return microsoftVstsRestClient.createPullRequest(repository, input);
     }
 
     @POST
@@ -111,8 +111,8 @@ public class MicrosoftVstsService {
                                                   @PathParam("repository") String repository,
                                                   NewMicrosoftPullRequest input)
             throws IOException, ServerException, UnauthorizedException {
-        String repositoryId = microsoft.getRepository(project, repository).getId();
-        return microsoft.createPullRequest(repositoryId, input);
+        String repositoryId = microsoftVstsRestClient.getRepository(project, repository).getId();
+        return microsoftVstsRestClient.createPullRequest(repositoryId, input);
     }
 
     @PUT
@@ -122,7 +122,7 @@ public class MicrosoftVstsService {
                                                   @PathParam("pullRequest") String pullRequestId,
                                                   MicrosoftPullRequest pullRequest)
             throws IOException, ServerException, UnauthorizedException {
-        return microsoft.updatePullRequests(repository, pullRequestId, pullRequest);
+        return microsoftVstsRestClient.updatePullRequests(repository, pullRequestId, pullRequest);
     }
 
     @GET
