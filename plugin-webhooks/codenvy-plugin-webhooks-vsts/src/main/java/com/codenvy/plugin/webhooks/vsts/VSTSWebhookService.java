@@ -296,7 +296,7 @@ public class VSTSWebhookService extends BaseWebhookService {
         //https://vsts-test.extmgmt.visualstudio.com/DefaultCollection/_apis
         final String[] s = projectApiUrl.split("visualstudio");
         return s[0] + "extmgmt.visualstudio" + s[1] +
-               "/ExtensionManagement/InstalledExtensions/stournie/codenvy-extension/Data/Scopes/Default/Current/Collections/%24settings/Documents";
+               "/ExtensionManagement/InstalledExtensions/codenvy/codenvy-extension/Data/Scopes/Default/Current/Collections/%24settings/Documents";
     }
 
     /**
