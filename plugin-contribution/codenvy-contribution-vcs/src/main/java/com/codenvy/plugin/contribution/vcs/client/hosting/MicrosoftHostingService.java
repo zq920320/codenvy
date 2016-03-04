@@ -217,7 +217,13 @@ public class MicrosoftHostingService implements VcsHostingService {
     public String getRepositoryOwnerFromUrl(@NotNull String url) {
         if (url.contains("/_git/")) {
             String[] splitted = url.split("/_git/");
-            return splitted[0].substring(splitted[0].lastIndexOf('/') + 1);
+            String[] groups = splitted[0].split("/");
+
+            if (groups.length == 5) {
+                return groups[4];
+            } else {
+                return splitted[1];
+            }
         } else {
             throw new IllegalArgumentException("Unknown VSTS repo URL pattern");
         }
@@ -259,38 +265,17 @@ public class MicrosoftHostingService implements VcsHostingService {
 
     @Override
     public Promise<String> makeSSHRemoteUrl(@NotNull String username, @NotNull String repository) {
-        return microsoftClient.getRepository(username, repository).then(new Function<MicrosoftRepository, String>() {
-            @Override
-            public String apply(MicrosoftRepository result) throws FunctionException {
-                return result.getRemoteUrl();
-            }
-        });
+        return Promises.reject(JsPromiseError.create(new UnsupportedOperationException("This method is not implemented")));
     }
 
     @Override
     public Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository) {
-        return microsoftClient.getRepository(username, repository).then(new Function<MicrosoftRepository, String>() {
-            @Override
-            public String apply(MicrosoftRepository result) throws FunctionException {
-                return result.getRemoteUrl();
-            }
-        });
+        return microsoftClient.makeHttpRemoteUrl(username, repository);
     }
 
     @Override
     public Promise<String> makePullRequestUrl(final String username, final String repository, final String pullRequestNumber) {
-        return microsoftClient.getPullRequests(username, repository)
-                              .then(new Function<List<MicrosoftPullRequest>, String>() {
-                                  @Override
-                                  public String apply(final List<MicrosoftPullRequest> result) throws FunctionException {
-                                      for (MicrosoftPullRequest pullRequest : result)
-                                          if (pullRequest != null &&
-                                              Objects.equals(pullRequest.getPullRequestId(), Integer.valueOf(pullRequestNumber))) {
-                                              return pullRequest.getHtmlUrl();
-                                          }
-                                      throw new FunctionException("Unable to find pull request with specified number");
-                                  }
-                              });
+        return microsoftClient.makePullRequestUrl(username, repository, pullRequestNumber);
     }
 
     @Override

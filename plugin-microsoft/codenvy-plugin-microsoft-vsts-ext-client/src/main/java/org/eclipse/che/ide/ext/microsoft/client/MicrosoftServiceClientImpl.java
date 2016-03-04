@@ -25,6 +25,7 @@ import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftUserProfile;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.NewMicrosoftPullRequest;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+import org.eclipse.che.ide.rest.StringUnmarshaller;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 
 
@@ -102,5 +103,21 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
         return asyncRequestFactory.createGetRequest(url)
                                   .loader(loaderFactory.newLoader("Getting user profile"))
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftUserProfile.class));
+    }
+
+    @Override
+    public Promise<String> makeHttpRemoteUrl(String project, String repository) {
+        String url = baseHttpUrl + "/url/remote/" + project + '/' + repository;
+        return asyncRequestFactory.createGetRequest(url)
+                                  .loader(loaderFactory.newLoader("Getting pull request url"))
+                                  .send(new StringUnmarshaller());
+    }
+
+    @Override
+    public Promise<String> makePullRequestUrl(String project, String repository, String number) {
+        String url = baseHttpUrl + "/url/pullrequest/" + project + '/' + repository + '/' + number;
+        return asyncRequestFactory.createGetRequest(url)
+                                  .loader(loaderFactory.newLoader("Getting user profile"))
+                                  .send(new StringUnmarshaller());
     }
 }

@@ -45,7 +45,10 @@ public class URLTemplates {
     /** Links for {@link #getAppVsspsBaseUrl()} url. */
     public static final String PROFILE = "/_apis/profile/profiles/me";
 
-    private static final String HTML_PULL_REQUEST         = "/%s/_git/%s/pullrequest/%s";
+    private static final String PROJECT_HTTP_REMOTE_URL        = "/_git/%s";
+    private static final String PROJECT_REPO_HTTP_REMOTE_URL   = "/%s/_git/%s";
+    private static final String PROJECT_HTML_PULL_REQUEST      = "/_git/%s/pullrequest/%s";
+    private static final String PROJECT_REPO_HTML_PULL_REQUEST = "/%s/_git/%s/pullrequest/%s";
 
     private final String accountName;
     private final String apiVersion;
@@ -129,14 +132,34 @@ public class URLTemplates {
      *         the name of the project
      * @param repositoryName
      *         the name of the repository
-     * @param prId
+     * @param pullRequestId
      *         the id of the pull request
      */
-    public String pullRequestUrl(String projectName, String repositoryName, String prId) {
+    public String pullRequestUrl(String projectName, String repositoryName, String pullRequestId) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
-        Objects.requireNonNull(prId, "Pull request id required");
-        return getTeamBaseUrl() + format(PROJECT_REPO_PULL_REQUEST, projectName, repositoryName, prId) + getApiVersion();
+        Objects.requireNonNull(pullRequestId, "Pull request id required");
+        return getTeamBaseUrl() + format(PROJECT_REPO_PULL_REQUEST, projectName, repositoryName, pullRequestId) + getApiVersion();
+    }
+
+    /**
+     * Returns remote url for given repository.
+     *
+     * @param projectName
+     *         the name of the project
+     * @param repositoryName
+     *         the name of the repository
+     */
+    public String httpRemoteUrl(String projectName, String repositoryName) {
+        Objects.requireNonNull(projectName, "Project name required");
+        Objects.requireNonNull(repositoryName, "Repository name required");
+        String remoteUrl;
+        if (projectName.equals(repositoryName)) {
+            remoteUrl = getTeamBaseUrl() + format(PROJECT_HTTP_REMOTE_URL, projectName);
+        } else {
+            remoteUrl = getTeamBaseUrl() + format(PROJECT_REPO_HTTP_REMOTE_URL, projectName, repositoryName);
+        }
+        return remoteUrl;
     }
 
     /**
@@ -146,14 +169,20 @@ public class URLTemplates {
      *         the name of the project
      * @param repositoryName
      *         the name of the repository
-     * @param prId
+     * @param pullRequestId
      *         the id of the pull request
      */
-    public String pullRequestHtmlUrl(String projectName, String repositoryName, String prId) {
+    public String pullRequestHtmlUrl(String projectName, String repositoryName, String pullRequestId) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
-        Objects.requireNonNull(prId, "Pull request id required");
-        return getTeamBaseUrl() + format(HTML_PULL_REQUEST, projectName, repositoryName, prId);
+        Objects.requireNonNull(pullRequestId, "Pull request number required");
+        String pullRequestUrl;
+        if (projectName.equals(repositoryName)) {
+            pullRequestUrl = getTeamBaseUrl() + format(PROJECT_HTML_PULL_REQUEST, projectName, pullRequestId);
+        } else {
+            pullRequestUrl = getTeamBaseUrl() + format(PROJECT_REPO_HTML_PULL_REQUEST, projectName, repositoryName, pullRequestId);
+        }
+        return pullRequestUrl;
     }
 
     private String getTeamBaseUrl() {
