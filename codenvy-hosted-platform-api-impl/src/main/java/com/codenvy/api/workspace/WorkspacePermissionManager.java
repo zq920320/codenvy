@@ -26,7 +26,7 @@ import java.util.Map;
 
 import static java.lang.String.format;
 import static java.util.Objects.requireNonNull;
-import static org.eclipse.che.api.workspace.server.Constants.START_WORKSPACE;
+import static org.eclipse.che.api.workspace.shared.Constants.START_WORKSPACE;
 
 /**
  * Rejects/allows workspace service related operations.
