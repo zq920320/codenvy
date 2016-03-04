@@ -45,7 +45,8 @@ public class URLTemplates {
     /** Links for {@link #getAppVsspsBaseUrl()} url. */
     public static final String PROFILE = "/_apis/profile/profiles/me";
 
-    private static final String HTML_PULL_REQUEST         = "/%s/_git/%s/pullrequest/%s";
+    private static final String HTTP_REMOTE_URL   = "/%s/_git/%s";
+    private static final String HTML_PULL_REQUEST = "/%s/_git/%s/pullrequest/%s";
 
     private final String accountName;
     private final String apiVersion;
@@ -140,20 +141,34 @@ public class URLTemplates {
     }
 
     /**
+     * Returns remote url for give repository.
+     *
+     * @param projectName
+     *         the name of the project
+     * @param repositoryName
+     *         the name of the repository
+     */
+    public String httpRemoteUrl(String projectName, String repositoryName) {
+        Objects.requireNonNull(projectName, "Project name required");
+        Objects.requireNonNull(repositoryName, "Repository name required");
+        return getTeamBaseUrl() + format(HTTP_REMOTE_URL, projectName, repositoryName);
+    }
+
+    /**
      * Returns pull request html url.
      *
      * @param projectName
      *         the name of the project
      * @param repositoryName
      *         the name of the repository
-     * @param prId
-     *         the id of the pull request
+     * @param number
+     *         the number of the pull request
      */
-    public String pullRequestHtmlUrl(String projectName, String repositoryName, String prId) {
+    public String pullRequestHtmlUrl(String projectName, String repositoryName, String number) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
-        Objects.requireNonNull(prId, "Pull request id required");
-        return getTeamBaseUrl() + format(HTML_PULL_REQUEST, projectName, repositoryName, prId);
+        Objects.requireNonNull(number, "Pull request number required");
+        return getTeamBaseUrl() + format(HTML_PULL_REQUEST, projectName, repositoryName, number);
     }
 
     private String getTeamBaseUrl() {

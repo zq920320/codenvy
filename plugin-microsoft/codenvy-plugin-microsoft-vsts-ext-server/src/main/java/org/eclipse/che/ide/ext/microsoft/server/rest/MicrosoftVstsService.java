@@ -20,6 +20,7 @@ import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.ide.ext.microsoft.server.MicrosoftVstsRestClient;
+import org.eclipse.che.ide.ext.microsoft.server.URLTemplates;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftPullRequest;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.NewMicrosoftPullRequest;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftRepository;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static javax.ws.rs.core.MediaType.TEXT_PLAIN;
 
 /**
  * REST service for MicrosoftVstsRestClient VSTS.
@@ -50,12 +52,14 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class MicrosoftVstsService {
 
     final MicrosoftVstsRestClient microsoft;
+    final URLTemplates            templates;
 
     private static final Logger LOG = LoggerFactory.getLogger(MicrosoftVstsService.class);
 
     @Inject
-    public MicrosoftVstsService(MicrosoftVstsRestClient microsoft) {
+    public MicrosoftVstsService(MicrosoftVstsRestClient microsoft, URLTemplates templates) {
         this.microsoft = microsoft;
+        this.templates = templates;
     }
 
     @GET
@@ -119,5 +123,24 @@ public class MicrosoftVstsService {
                                                   MicrosoftPullRequest pullRequest)
             throws IOException, ServerException, UnauthorizedException {
         return microsoft.updatePullRequests(repository, pullRequestId, pullRequest);
+    }
+
+    @GET
+    @Path("/url/remote/{project}/{repository}")
+    @Produces(TEXT_PLAIN)
+    public String getHttpRemoteUrl(@PathParam("project") String project,
+                                   @PathParam("repository") String repository)
+            throws IOException, ServerException, UnauthorizedException {
+        return templates.httpRemoteUrl(project, repository);
+    }
+
+    @GET
+    @Path("/url/pullrequest/{project}/{repository}/{number}")
+    @Produces(TEXT_PLAIN)
+    public String getPullRequestRemoteUrl(@PathParam("project") String project,
+                                          @PathParam("repository") String repository,
+                                          @PathParam("number") String number)
+            throws IOException, ServerException, UnauthorizedException {
+        return templates.pullRequestHtmlUrl(project, repository, number);
     }
 }
