@@ -21,6 +21,7 @@ import com.google.common.io.Files;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.user.server.UserService;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.commons.env.EnvironmentContext;
@@ -67,8 +68,9 @@ public class CreateUserInterceptor implements MethodInterceptor {
     @Named("api.endpoint")
     private String apiEndpoint;
 
+    //Do not remove ApiException. It used to tell dependency plugin that api-core is need not only for tests.
     @Override
-    public Object invoke(MethodInvocation invocation) throws Throwable {
+    public Object invoke(MethodInvocation invocation) throws Throwable, ApiException {
         invocation.proceed();
 
         try {
