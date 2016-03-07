@@ -29,7 +29,7 @@ import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.when;
 
-import static org.eclipse.che.api.workspace.server.Constants.START_WORKSPACE;
+import static org.eclipse.che.api.workspace.shared.Constants.START_WORKSPACE;
 
 /**
  * Tests for {@link WorkspacePermissionManager}.
