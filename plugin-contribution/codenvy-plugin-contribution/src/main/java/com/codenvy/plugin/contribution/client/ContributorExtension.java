@@ -19,6 +19,7 @@ import com.codenvy.plugin.contribution.client.steps.ContributorWorkflow;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
+import com.google.gwt.user.client.Timer;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.project.gwt.client.ProjectServiceClient;
@@ -35,6 +36,7 @@ import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedEvent;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedHandler;
 import org.eclipse.che.ide.api.extension.Extension;
+import org.eclipse.che.ide.commons.exception.ServerException;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
@@ -62,6 +64,10 @@ import static java.util.Collections.singletonList;
 @Singleton
 @Extension(title = "Contributor", version = "1.0.0")
 public class ContributorExtension {
+
+    private static final int PERIOD = 1000;
+    private static final int TIMES  = 10;
+
     private final AppContext                appContext;
     private final ContributePartPresenter   contributePartPresenter;
     private final ProjectServiceClient      projectService;
@@ -93,7 +99,7 @@ public class ContributorExtension {
             public void onCurrentProjectChanged(CurrentProjectChangedEvent event) {
                 final ProjectConfigDto rootProject = appContext.getCurrentProject().getRootProject();
                 if (!rootProject.getName().equals(lastSelectedProjectName) || !partWasOpened) {
-                    initializeContributorExtension(rootProject);
+                    initializeContributorExtension(rootProject, 0);
                 }
                 lastSelectedProjectName = rootProject.getName();
             }
@@ -102,11 +108,33 @@ public class ContributorExtension {
         resources.contributeCss().ensureInjected();
     }
 
-    private void initializeContributorExtension(final ProjectConfigDto project) {
-        hostingServiceProvider.getVcsHostingService()
-                              .thenPromise(addMixinIfAbsent(project))
-                              .then(initWorkflow())
-                              .catchError(cancelWorkflow(project));
+    // FIXME THIS is temporary workaround, project sometimes doesn't exist on the filesystem
+    // FIXME so we need to ping it
+    private void initializeContributorExtension(final ProjectConfigDto project, final int currentAttempt) {
+        Log.info(getClass(), "REMOTES :: " + project.getName() + "  ::  attempt   =>  " + currentAttempt);
+        final Timer timer = new Timer() {
+            @Override
+            public void run() {
+                if (currentAttempt < TIMES) {
+                    hostingServiceProvider.getVcsHostingService()
+                                          .thenPromise(addMixinIfAbsent(project))
+                                          .then(initWorkflow())
+                                          .catchError(new Operation<PromiseError>() {
+                                              @Override
+                                              public void apply(PromiseError promiseError) throws OperationException {
+                                                  try {
+                                                      throw promiseError.getCause();
+                                                  } catch (ServerException sEx) {
+                                                      initializeContributorExtension(project, currentAttempt + 1);
+                                                  } catch (Throwable thr) {
+                                                      cancelWorkflow(project);
+                                                  }
+                                              }
+                                          });
+                }
+            }
+        };
+        timer.schedule(PERIOD);
     }
 
     // TODO: find out what is 'contribute' variable name
