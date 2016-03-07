@@ -143,8 +143,10 @@ public class ContributorExtension {
             @Override
             public Promise<ProjectConfigDto> apply(VcsHostingService service) throws FunctionException {
                 if (project.getMixins().contains(CONTRIBUTION_PROJECT_TYPE_ID)) {
+                    Log.info(getClass(), "Has mixin");
                     return Promises.resolve(project);
                 }
+                Log.info(getClass(), "Has no mixin");
                 project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
                 project.getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, singletonList("contribute"));
 

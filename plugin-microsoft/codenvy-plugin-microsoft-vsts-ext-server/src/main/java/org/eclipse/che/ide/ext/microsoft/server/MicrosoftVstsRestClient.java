@@ -96,8 +96,9 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public MicrosoftRepository getRepository(String project, String name) throws IOException, ServerException, UnauthorizedException {
-        return doGet(templates.repositoryUrl(project, name), MicrosoftRepository.class);
+    public MicrosoftRepository getRepository(String account, String collection, String project, String name)
+            throws IOException, ServerException, UnauthorizedException {
+        return doGet(templates.repositoryUrl(account, collection, project, name), MicrosoftRepository.class);
     }
 
     /**
@@ -113,11 +114,14 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public List<MicrosoftPullRequest> getPullRequests(String project, String repository, String repositoryId) throws IOException, ServerException, UnauthorizedException {
-        return doGet(templates.pullRequestsUrl(repositoryId), MicrosoftPullRequestList.class)
+    public List<MicrosoftPullRequest> getPullRequests(String account, String collection, String project, String repository,
+                                                      String repositoryId) throws IOException, ServerException, UnauthorizedException {
+        return doGet(templates.pullRequestsUrl(account, collection, repositoryId), MicrosoftPullRequestList.class)
                 .getValue()
                 .stream()
-                .peek(pr -> pr.setHtmlUrl(templates.pullRequestHtmlUrl(project,
+                .peek(pr -> pr.setHtmlUrl(templates.pullRequestHtmlUrl(account,
+                                                                       collection,
+                                                                       project,
                                                                        repository,
                                                                        String.valueOf(pr.getPullRequestId()))))
                 .collect(Collectors.toList());
@@ -137,10 +141,11 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public MicrosoftPullRequest createPullRequest(String repositoryId, NewMicrosoftPullRequest newPr) throws ServerException,
-                                                                                                             IOException,
-                                                                                                             UnauthorizedException {
-        return doPost(templates.pullRequestsUrl(repositoryId), HTTP_CREATED, newPr, MicrosoftPullRequest.class);
+    public MicrosoftPullRequest createPullRequest(String account, String collection, String repositoryId, NewMicrosoftPullRequest newPr)
+            throws ServerException,
+                   IOException,
+                   UnauthorizedException {
+        return doPost(templates.pullRequestsUrl(account, collection, repositoryId), HTTP_CREATED, newPr, MicrosoftPullRequest.class);
     }
 
     /**
@@ -157,10 +162,10 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public MicrosoftPullRequest getPullRequest(String repositoryId, String prId) throws ServerException,
-                                                                                        IOException,
-                                                                                        UnauthorizedException {
-        return doGet(templates.pullRequestUrl(repositoryId, prId), MicrosoftPullRequest.class);
+    public MicrosoftPullRequest getPullRequest(String account, String collection, String repositoryId, String prId) throws ServerException,
+                                                                                                                           IOException,
+                                                                                                                           UnauthorizedException {
+        return doGet(templates.pullRequestUrl(account, collection, repositoryId, prId), MicrosoftPullRequest.class);
     }
 
     /**
@@ -180,10 +185,14 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public MicrosoftPullRequest getPullRequest(String projectName, String repoName, String prId) throws ServerException,
-                                                                                                        IOException,
-                                                                                                        UnauthorizedException {
-        return doGet(templates.pullRequestUrl(projectName, repoName, prId), MicrosoftPullRequest.class);
+    public MicrosoftPullRequest getPullRequest(String account,
+                                               String collection,
+                                               String projectName,
+                                               String repoName,
+                                               String prId) throws ServerException,
+                                                                   IOException,
+                                                                   UnauthorizedException {
+        return doGet(templates.pullRequestUrl(account, collection, projectName, repoName, prId), MicrosoftPullRequest.class);
     }
 
     /**
@@ -212,13 +221,15 @@ public final class MicrosoftVstsRestClient {
      * @throws UnauthorizedException
      *         when user in not authorized to call this method
      */
-    public MicrosoftPullRequest updatePullRequests(String repository,
+    public MicrosoftPullRequest updatePullRequests(String account,
+                                                   String collection,
+                                                   String repository,
                                                    String prId,
                                                    MicrosoftPullRequest update) throws ServerException,
                                                                                        IOException,
                                                                                        UnauthorizedException {
         final JsonValue response = doRequest("PATCH",
-                                             templates.pullRequestUrl(repository, prId),
+                                             templates.pullRequestUrl(account, collection, repository, prId),
                                              HTTP_OK,
                                              "application/json",
                                              JsonHelper.toJson(update));

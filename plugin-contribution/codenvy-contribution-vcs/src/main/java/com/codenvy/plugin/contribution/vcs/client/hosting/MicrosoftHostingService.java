@@ -43,7 +43,6 @@ import org.eclipse.che.ide.rest.RestContext;
 import javax.inject.Inject;
 import javax.validation.constraints.NotNull;
 import java.util.List;
-import java.util.Objects;
 
 import static org.eclipse.che.ide.ext.microsoft.shared.VstsErrorCodes.PULL_REQUEST_ALREADY_EXISTS;
 import static org.eclipse.che.ide.util.ExceptionUtils.getErrorCode;
@@ -62,6 +61,9 @@ public class MicrosoftHostingService implements VcsHostingService {
     private final MicrosoftServiceClient microsoftClient;
     private final String                 baseUrl;
 
+    private String account;
+    private String collection;
+
     @Inject
     public MicrosoftHostingService(@RestContext final String baseUrl,
                                    AppContext appContext,
@@ -71,6 +73,26 @@ public class MicrosoftHostingService implements VcsHostingService {
         this.appContext = appContext;
         this.dtoFactory = dtoFactory;
         this.microsoftClient = microsoftClient;
+    }
+
+    @Override
+    public VcsHostingService init(String remoteUrl) {
+        MicrosoftHostingService service = new MicrosoftHostingService(baseUrl, appContext, dtoFactory, microsoftClient);
+        service.account = getAccountFromRemoteUrl(remoteUrl);
+        service.collection = getCollectionFromRemoteUrl(remoteUrl);
+        return service;
+    }
+
+    private String getAccountFromRemoteUrl(String remoteUrl) {
+        return remoteUrl.split(".visualstudio.com/")[0].split("//")[1];
+    }
+
+    private String getCollectionFromRemoteUrl(String remoteUrl) {
+        String result =  remoteUrl.split(".visualstudio.com/")[1].split("/_git/")[0];
+        if (result.indexOf('/') != -1) {
+            result = result.substring(0, result.indexOf('/'));
+        }
+        return result;
     }
 
     @Override
@@ -91,13 +113,13 @@ public class MicrosoftHostingService implements VcsHostingService {
     @Override
     public void getPullRequest(@NotNull String owner, @NotNull String repository, @NotNull String username, @NotNull String branchName,
                                @NotNull AsyncCallback<PullRequest> callback) {
-        microsoftClient.getPullRequests(owner, repository);
+        microsoftClient.getPullRequests(account, collection, owner, repository);
 
     }
 
     @Override
     public Promise<PullRequest> getPullRequest(String owner, String repository, String username, final String branchName) {
-        return microsoftClient.getPullRequests(owner, repository)
+        return microsoftClient.getPullRequests(account, collection, owner, repository)
                               .thenPromise(new Function<List<MicrosoftPullRequest>, Promise<PullRequest>>() {
                                   @Override
                                   public Promise<PullRequest> apply(List<MicrosoftPullRequest> result) throws FunctionException {
@@ -120,7 +142,7 @@ public class MicrosoftHostingService implements VcsHostingService {
                                   final String title,
                                   final String body,
                                   final AsyncCallback<PullRequest> callback) {
-        microsoftClient.createPullRequest(owner, repository, dtoFactory.createDto(NewMicrosoftPullRequest.class)
+        microsoftClient.createPullRequest(account, collection, owner, repository, dtoFactory.createDto(NewMicrosoftPullRequest.class)
                                                                        .withTitle(title)
                                                                        .withDescription(body)
                                                                        .withSourceRefName("refs/heads/" + headBranchName)
@@ -151,7 +173,7 @@ public class MicrosoftHostingService implements VcsHostingService {
                                                   final String baseBranchName,
                                                   final String title,
                                                   final String body) {
-        return microsoftClient.createPullRequest(owner, repository, dtoFactory.createDto(NewMicrosoftPullRequest.class)
+        return microsoftClient.createPullRequest(account, collection, owner, repository, dtoFactory.createDto(NewMicrosoftPullRequest.class)
                                                                               .withTitle(title)
                                                                               .withDescription(body)
                                                                               .withSourceRefName("refs/heads/" + headBranchName)
@@ -194,7 +216,7 @@ public class MicrosoftHostingService implements VcsHostingService {
 
     @Override
     public Promise<Repository> getRepository(String owner, String repositoryName) {
-        return microsoftClient.getRepository(owner, repositoryName)
+        return microsoftClient.getRepository(account, collection, owner, repositoryName)
                               .then(new Function<MicrosoftRepository, Repository>() {
                                   @Override
                                   public Repository apply(MicrosoftRepository msRepo) throws FunctionException {
@@ -270,12 +292,12 @@ public class MicrosoftHostingService implements VcsHostingService {
 
     @Override
     public Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository) {
-        return microsoftClient.makeHttpRemoteUrl(username, repository);
+        return microsoftClient.makeHttpRemoteUrl(account, collection, username, repository);
     }
 
     @Override
     public Promise<String> makePullRequestUrl(final String username, final String repository, final String pullRequestNumber) {
-        return microsoftClient.makePullRequestUrl(username, repository, pullRequestNumber);
+        return microsoftClient.makePullRequestUrl(account, collection, username, repository, pullRequestNumber);
     }
 
     @Override
@@ -352,4 +374,5 @@ public class MicrosoftHostingService implements VcsHostingService {
     private String refsHeads(String branchName) {
         return "refs/heads/" + branchName;
     }
+
 }

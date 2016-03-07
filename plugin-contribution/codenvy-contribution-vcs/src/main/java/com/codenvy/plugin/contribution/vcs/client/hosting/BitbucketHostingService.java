@@ -104,6 +104,11 @@ public class BitbucketHostingService implements VcsHostingService {
         this.baseUrl = baseUrl;
     }
 
+    @Override
+    public VcsHostingService init(String remoteUrl) {
+        return this;
+    }
+
     @NotNull
     @Override
     public String getName() {

@@ -32,6 +32,7 @@ import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
+import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
@@ -123,6 +124,8 @@ public class InitializeWorkflowContextStep implements Step {
                         final String clonedBranch = attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
 
                         context.setClonedBranchName(clonedBranch);
+
+                        Log.info(getClass(), "Branch set : " + clonedBranch);
                     }
 
                     if (vcsHostingService.getName().equals("VSTS")) {
