@@ -76,71 +76,85 @@ public class MicrosoftVstsService {
     }
 
     @GET
-    @Path("/repository/{project}/{repository}")
+    @Path("/repository/{account}/{collection}/{project}/{repository}")
     @Produces(APPLICATION_JSON)
-    public MicrosoftRepository getRepository(@PathParam("project") String project,
+    public MicrosoftRepository getRepository(@PathParam("account") String account,
+                                             @PathParam("collection") String collection,
+                                             @PathParam("project") String project,
                                              @PathParam("repository") String repository)
             throws IOException, ServerException, UnauthorizedException {
-        return microsoftVstsRestClient.getRepository(project, repository);
+        return microsoftVstsRestClient.getRepository(account, collection, project, repository);
     }
 
 
     @GET
-    @Path("/pullrequests/{project}/{repository}")
+    @Path("/pullrequests/{account}/{collection}/{project}/{repository}")
     @Produces(APPLICATION_JSON)
-    public List<MicrosoftPullRequest> getPullRequests(@PathParam("project") String project,
+    public List<MicrosoftPullRequest> getPullRequests(@PathParam("account") String account,
+                                                      @PathParam("collection") String collection,
+                                                      @PathParam("project") String project,
                                                       @PathParam("repository") String repository)
             throws IOException, ServerException, UnauthorizedException {
-        String repositoryId = microsoftVstsRestClient.getRepository(project, repository).getId();
-        return microsoftVstsRestClient.getPullRequests(project, repository, repositoryId);
+        String repositoryId = microsoftVstsRestClient.getRepository(account, collection, project, repository).getId();
+        return microsoftVstsRestClient.getPullRequests(account, collection, project, repository, repositoryId);
     }
 
     @POST
-    @Path("/pullrequests/{repository}")
+    @Path("/pullrequests/{account}/{collection}/{repository}")
     @Consumes(APPLICATION_JSON)
-    public MicrosoftPullRequest createPullRequest(@PathParam("repository") String repository,
-                                                  NewMicrosoftPullRequest input)
-            throws IOException, ServerException, UnauthorizedException {
-        return microsoftVstsRestClient.createPullRequest(repository, input);
-    }
-
-    @POST
-    @Path("/pullrequests/{project}/{repository}")
-    @Consumes(APPLICATION_JSON)
-    public MicrosoftPullRequest createPullRequest(@PathParam("project") String project,
+    public MicrosoftPullRequest createPullRequest(@PathParam("account") String account,
+                                                  @PathParam("collection") String collection,
                                                   @PathParam("repository") String repository,
                                                   NewMicrosoftPullRequest input)
             throws IOException, ServerException, UnauthorizedException {
-        String repositoryId = microsoftVstsRestClient.getRepository(project, repository).getId();
-        return microsoftVstsRestClient.createPullRequest(repositoryId, input);
+        return microsoftVstsRestClient.createPullRequest(account, collection, repository, input);
+    }
+
+    @POST
+    @Path("/pullrequests/{account}/{collection}/{project}/{repository}")
+    @Consumes(APPLICATION_JSON)
+    public MicrosoftPullRequest createPullRequest(@PathParam("account") String account,
+                                                  @PathParam("collection") String collection,
+                                                  @PathParam("project") String project,
+                                                  @PathParam("repository") String repository,
+                                                  NewMicrosoftPullRequest input)
+            throws IOException, ServerException, UnauthorizedException {
+        String repositoryId = microsoftVstsRestClient.getRepository(account, collection, project, repository).getId();
+        return microsoftVstsRestClient.createPullRequest(account, collection, repositoryId, input);
     }
 
     @PUT
-    @Path("/pullrequests/{repository}/{pullRequest}")
+    @Path("/pullrequests/{account}/{collection}/{repository}/{pullRequest}")
     @Consumes(APPLICATION_JSON)
-    public MicrosoftPullRequest updatePullRequest(@PathParam("repository") String repository,
+    public MicrosoftPullRequest updatePullRequest(@PathParam("account") String account,
+                                                  @PathParam("collection") String collection,
+                                                  @PathParam("repository") String repository,
                                                   @PathParam("pullRequest") String pullRequestId,
                                                   MicrosoftPullRequest pullRequest)
             throws IOException, ServerException, UnauthorizedException {
-        return microsoftVstsRestClient.updatePullRequests(repository, pullRequestId, pullRequest);
+        return microsoftVstsRestClient.updatePullRequests(account, collection, repository, pullRequestId, pullRequest);
     }
 
     @GET
-    @Path("/url/remote/{project}/{repository}")
+    @Path("/url/remote/{account}/{collection}/{project}/{repository}")
     @Produces(TEXT_PLAIN)
-    public String getHttpRemoteUrl(@PathParam("project") String project,
+    public String getHttpRemoteUrl(@PathParam("account") String account,
+                                   @PathParam("collection") String collection,
+                                   @PathParam("project") String project,
                                    @PathParam("repository") String repository)
             throws IOException, ServerException, UnauthorizedException {
-        return templates.httpRemoteUrl(project, repository);
+        return templates.httpRemoteUrl(account, collection, project, repository);
     }
 
     @GET
-    @Path("/url/pullrequest/{project}/{repository}/{number}")
+    @Path("/url/pullrequest/{account}/{collection}/{project}/{repository}/{number}")
     @Produces(TEXT_PLAIN)
-    public String getPullRequestRemoteUrl(@PathParam("project") String project,
+    public String getPullRequestRemoteUrl(@PathParam("account") String account,
+                                          @PathParam("collection") String collection,
+                                          @PathParam("project") String project,
                                           @PathParam("repository") String repository,
                                           @PathParam("number") String number)
             throws IOException, ServerException, UnauthorizedException {
-        return templates.pullRequestHtmlUrl(project, repository, number);
+        return templates.pullRequestHtmlUrl(account, collection, project, repository, number);
     }
 }

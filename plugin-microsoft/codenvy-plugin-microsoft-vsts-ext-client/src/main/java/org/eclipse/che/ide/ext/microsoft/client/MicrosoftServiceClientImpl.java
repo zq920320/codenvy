@@ -58,8 +58,11 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
     }
 
     @Override
-    public Promise<MicrosoftRepository> getRepository(String project, String repository) {
-        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/repository/" + project + '/' + repository)
+    public Promise<MicrosoftRepository> getRepository(String account,
+                                                      String collection,
+                                                      String project,
+                                                      String repository) {
+        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/repository/" + account + '/' + collection + '/' + project + '/' + repository)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("Getting VSTS repository"))
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftRepository.class));
@@ -67,8 +70,11 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
     }
 
     @Override
-    public Promise<List<MicrosoftPullRequest>> getPullRequests(String project, String repository) {
-        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/pullrequests/" + project + '/' + repository)
+    public Promise<List<MicrosoftPullRequest>> getPullRequests(String account,
+                                                               String collection,
+                                                               String project,
+                                                               String repository) {
+        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("Getting VSTS pull request list"))
                                   .send(dtoUnmarshallerFactory.newListUnmarshaller(MicrosoftPullRequest.class));
@@ -76,21 +82,25 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
     }
 
     @Override
-    public Promise<MicrosoftPullRequest> createPullRequest(String project,
+    public Promise<MicrosoftPullRequest> createPullRequest(String account,
+                                                           String collection,
+                                                           String project,
                                                            String repository,
                                                            NewMicrosoftPullRequest input) {
-        return asyncRequestFactory.createPostRequest(baseHttpUrl + "/pullrequests/" + project + '/' + repository, input)
+        return asyncRequestFactory.createPostRequest(baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository, input)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("Creating new pul request"))
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftPullRequest.class));
     }
 
     @Override
-    public Promise<MicrosoftPullRequest> updatePullRequest(String project,
+    public Promise<MicrosoftPullRequest> updatePullRequest(String account,
+                                                           String collection,
+                                                           String project,
                                                            String repository,
                                                            String pullRequestId,
                                                            MicrosoftPullRequest pullRequest) {
-        final String url = baseHttpUrl + "/pullrequests/" + project + '/' + repository + '/' + pullRequest;
+        final String url = baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository + '/' + pullRequest;
         return asyncRequestFactory.createRequest(PUT, url, pullRequest, false)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("updatePullRequest"))
@@ -106,16 +116,23 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
     }
 
     @Override
-    public Promise<String> makeHttpRemoteUrl(String project, String repository) {
-        String url = baseHttpUrl + "/url/remote/" + project + '/' + repository;
+    public Promise<String> makeHttpRemoteUrl(String account,
+                                             String collection,
+                                             String project,
+                                             String repository) {
+        String url = baseHttpUrl + "/url/remote/" + account + '/' + collection + '/' + project + '/' + repository;
         return asyncRequestFactory.createGetRequest(url)
                                   .loader(loaderFactory.newLoader("Getting pull request url"))
                                   .send(new StringUnmarshaller());
     }
 
     @Override
-    public Promise<String> makePullRequestUrl(String project, String repository, String number) {
-        String url = baseHttpUrl + "/url/pullrequest/" + project + '/' + repository + '/' + number;
+    public Promise<String> makePullRequestUrl(String account,
+                                              String collection,
+                                              String project,
+                                              String repository,
+                                              String number) {
+        String url = baseHttpUrl + "/url/pullrequest/" + account + '/' + collection + '/' +project + '/' + repository + '/' + number;
         return asyncRequestFactory.createGetRequest(url)
                                   .loader(loaderFactory.newLoader("Getting user profile"))
                                   .send(new StringUnmarshaller());

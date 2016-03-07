@@ -29,6 +29,7 @@ import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
 import javax.inject.Inject;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
@@ -72,7 +73,7 @@ public class VcsHostingServiceProvider {
                                      if (ORIGIN_REMOTE_NAME.equals(remote.getName())) {
                                          for (final VcsHostingService hostingService : vcsHostingServices) {
                                              if (hostingService.isHostRemoteUrl(remote.getUrl())) {
-                                                 return hostingService;
+                                                 return hostingService.init(remote.getUrl());
                                              }
                                          }
                                      }
@@ -110,7 +111,7 @@ public class VcsHostingServiceProvider {
 
                             for (final VcsHostingService oneVcsHostingService : vcsHostingServices) {
                                 if (oneVcsHostingService.isHostRemoteUrl(oneRemote.getUrl())) {
-                                    callback.onSuccess(oneVcsHostingService);
+                                    callback.onSuccess(oneVcsHostingService.init(oneRemote.getUrl()));
                                     return;
                                 }
                             }

@@ -35,7 +35,7 @@ public class URLTemplates {
     private static final String SCHEMA = "https";
     private static final String HOST   = "visualstudio.com";
 
-    /** Links for {@link #getTeamBaseUrl()} url. */
+    /** Links for {@link #getTeamBaseUrl(String, String)} url. */
     private static final String REPOSITORY                = "/%s/_apis/git/repositories/%s";
     private static final String REPOSITORIES              = "/%s/_apis/git/repositories";
     private static final String PULL_REQUESTS             = "/_apis/git/repositories/%s/pullrequests";
@@ -50,17 +50,11 @@ public class URLTemplates {
     private static final String PROJECT_HTML_PULL_REQUEST      = "/_git/%s/pullrequest/%s";
     private static final String PROJECT_REPO_HTML_PULL_REQUEST = "/%s/_git/%s/pullrequest/%s";
 
-    private final String accountName;
     private final String apiVersion;
-    private final String collection;
 
     @Inject
-    public URLTemplates(@Named("microsoft.vsts.rest.client.account_name") String accountName,
-                        @Named("microsoft.vsts.rest.client.api_version") String apiVersion,
-                        @Named("microsoft.vsts.rest.client.collection") String collection) {
-        this.accountName = accountName;
+    public URLTemplates(@Named("microsoft.vsts.rest.client.api_version") String apiVersion) {
         this.apiVersion = apiVersion;
-        this.collection = collection;
     }
 
     public String profileUrl() {
@@ -77,10 +71,10 @@ public class URLTemplates {
      * @throws IllegalArgumentException
      *         when either {@code project} or {@code repoName} is null or empty
      */
-    public String repositoryUrl(String project, String repoName) {
+    public String repositoryUrl(String account, String collection, String project, String repoName) {
         Objects.requireNonNull(project, "Project name required");
         Objects.requireNonNull(repoName, "Repository name required");
-        return getTeamBaseUrl() + format(REPOSITORY, project, repoName) + getApiVersion();
+        return getTeamBaseUrl(account, collection) + format(REPOSITORY, project, repoName) + getApiVersion();
     }
 
     /**
@@ -91,9 +85,9 @@ public class URLTemplates {
      * @throws IllegalArgumentException
      *         when {@code project} is null or empty
      */
-    public String repositoriesUrl(String project) {
+    public String repositoriesUrl(String account, String collection, String project) {
         Objects.requireNonNull(project, "Project required");
-        return getTeamBaseUrl() + format(REPOSITORIES, project) + getApiVersion();
+        return getTeamBaseUrl(account, collection) + format(REPOSITORIES, project) + getApiVersion();
     }
 
     /**
@@ -104,9 +98,9 @@ public class URLTemplates {
      * @throws IllegalArgumentException
      *         when {@code repository} is null or empty
      */
-    public String pullRequestsUrl(String repoId) {
+    public String pullRequestsUrl(String account, String collection, String repoId) {
         Objects.requireNonNull(repoId, "Repository id required");
-        return getTeamBaseUrl() + format(PULL_REQUESTS, repoId) + getApiVersion();
+        return getTeamBaseUrl(account, collection) + format(PULL_REQUESTS, repoId) + getApiVersion();
     }
 
     /**
@@ -119,10 +113,10 @@ public class URLTemplates {
      * @throws IllegalArgumentException
      *         when either {@code repository} or {@code pullRequest} is null or empty
      */
-    public String pullRequestUrl(String repoId, String pullRequest) {
+    public String pullRequestUrl(String account, String collection, String repoId, String pullRequest) {
         Objects.requireNonNull(repoId, "Repository required");
         Objects.requireNonNull(pullRequest, "Pull request required");
-        return getTeamBaseUrl() + format(PULL_REQUEST, repoId, pullRequest) + getApiVersion();
+        return getTeamBaseUrl(account, collection) + format(PULL_REQUEST, repoId, pullRequest) + getApiVersion();
     }
 
     /**
@@ -135,11 +129,11 @@ public class URLTemplates {
      * @param pullRequestId
      *         the id of the pull request
      */
-    public String pullRequestUrl(String projectName, String repositoryName, String pullRequestId) {
+    public String pullRequestUrl(String account, String collection, String projectName, String repositoryName, String pullRequestId) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
         Objects.requireNonNull(pullRequestId, "Pull request id required");
-        return getTeamBaseUrl() + format(PROJECT_REPO_PULL_REQUEST, projectName, repositoryName, pullRequestId) + getApiVersion();
+        return getTeamBaseUrl(account, collection) + format(PROJECT_REPO_PULL_REQUEST, projectName, repositoryName, pullRequestId) + getApiVersion();
     }
 
     /**
@@ -150,14 +144,14 @@ public class URLTemplates {
      * @param repositoryName
      *         the name of the repository
      */
-    public String httpRemoteUrl(String projectName, String repositoryName) {
+    public String httpRemoteUrl(String account, String collection, String projectName, String repositoryName) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
         String remoteUrl;
         if (projectName.equals(repositoryName)) {
-            remoteUrl = getTeamBaseUrl() + format(PROJECT_HTTP_REMOTE_URL, projectName);
+            remoteUrl = getTeamBaseUrl(account, collection) + format(PROJECT_HTTP_REMOTE_URL, projectName);
         } else {
-            remoteUrl = getTeamBaseUrl() + format(PROJECT_REPO_HTTP_REMOTE_URL, projectName, repositoryName);
+            remoteUrl = getTeamBaseUrl(account, collection) + format(PROJECT_REPO_HTTP_REMOTE_URL, projectName, repositoryName);
         }
         return remoteUrl;
     }
@@ -172,21 +166,21 @@ public class URLTemplates {
      * @param pullRequestId
      *         the id of the pull request
      */
-    public String pullRequestHtmlUrl(String projectName, String repositoryName, String pullRequestId) {
+    public String pullRequestHtmlUrl(String account, String collection, String projectName, String repositoryName, String pullRequestId) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
         Objects.requireNonNull(pullRequestId, "Pull request number required");
         String pullRequestUrl;
         if (projectName.equals(repositoryName)) {
-            pullRequestUrl = getTeamBaseUrl() + format(PROJECT_HTML_PULL_REQUEST, projectName, pullRequestId);
+            pullRequestUrl = getTeamBaseUrl(account, collection) + format(PROJECT_HTML_PULL_REQUEST, projectName, pullRequestId);
         } else {
-            pullRequestUrl = getTeamBaseUrl() + format(PROJECT_REPO_HTML_PULL_REQUEST, projectName, repositoryName, pullRequestId);
+            pullRequestUrl = getTeamBaseUrl(account, collection) + format(PROJECT_REPO_HTML_PULL_REQUEST, projectName, repositoryName, pullRequestId);
         }
         return pullRequestUrl;
     }
 
-    private String getTeamBaseUrl() {
-        return SCHEMA + "://" + accountName + '.' + HOST + '/' + collection;
+    private String getTeamBaseUrl(String account, String collection) {
+        return SCHEMA + "://" + account + '.' + HOST + '/' + collection;
     }
 
     private String getAppVsspsBaseUrl() {

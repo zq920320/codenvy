@@ -23,6 +23,7 @@ import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.ide.api.app.CurrentUser;
 
 import javax.validation.constraints.NotNull;
+import java.util.Map;
 
 /**
  * Represents a repository host
@@ -30,6 +31,14 @@ import javax.validation.constraints.NotNull;
  * @author Kevin Pollet
  */
 public interface VcsHostingService {
+
+    /**
+     * Initializes new implementation if additional data from remote url is required
+     * @param remoteUrl
+     * @return
+     */
+    public VcsHostingService init(String remoteUrl);
+
     /**
      * Returns the VCS Host name.
      *

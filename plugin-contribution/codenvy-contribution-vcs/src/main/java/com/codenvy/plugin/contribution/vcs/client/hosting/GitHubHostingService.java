@@ -259,6 +259,11 @@ public class GitHubHostingService implements VcsHostingService {
         return templates.formattedReviewFactoryUrlTemplate(protocol, host, reviewFactoryUrl);
     }
 
+    @Override
+    public VcsHostingService init(String remoteUrl) {
+        return this;
+    }
+
     @NotNull
     @Override
     public String getName() {

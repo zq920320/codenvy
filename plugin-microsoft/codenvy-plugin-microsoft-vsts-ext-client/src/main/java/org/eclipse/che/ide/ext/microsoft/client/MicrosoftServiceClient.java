@@ -31,22 +31,39 @@ import java.util.List;
 @Singleton
 public interface MicrosoftServiceClient {
 
-    Promise<MicrosoftRepository> getRepository(String project, String repository);
+    Promise<MicrosoftRepository> getRepository(String account,
+                                               String collection,
+                                               String project,
+                                               String repository);
 
-    Promise<List<MicrosoftPullRequest>> getPullRequests(String project, String repository);
+    Promise<List<MicrosoftPullRequest>> getPullRequests(String account,
+                                                        String collection,
+                                                        String project,
+                                                        String repository);
 
-    Promise<MicrosoftPullRequest> createPullRequest(String project,
+    Promise<MicrosoftPullRequest> createPullRequest(String account,
+                                                    String collection,
+                                                    String project,
                                                     String repository,
                                                     NewMicrosoftPullRequest pullRequest);
 
-    Promise<MicrosoftPullRequest> updatePullRequest(String project,
+    Promise<MicrosoftPullRequest> updatePullRequest(String account,
+                                                    String collection,
+                                                    String project,
                                                     String repository,
                                                     String pullRequestId,
                                                     MicrosoftPullRequest pullRequest);
 
     Promise<MicrosoftUserProfile> getUserProfile();
 
-    Promise<String> makeHttpRemoteUrl(String project, String repository);
+    Promise<String> makeHttpRemoteUrl(String account,
+                                      String collection,
+                                      String project,
+                                      String repository);
 
-    Promise<String> makePullRequestUrl(String project, String repository, String number);
+    Promise<String> makePullRequestUrl(String account,
+                                       String collection,
+                                       String project,
+                                       String repository,
+                                       String number);
 }
