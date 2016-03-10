@@ -27,18 +27,18 @@
     <name>Onpremises IDE :: Tomcat :: IDE :: Site</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-next-ide-resources-codenvy</artifactId>
-            <type>war</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-user-dashboard</artifactId>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-dashboard</artifactId>
             <type>war</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-war-next-ide-codenvy</artifactId>
+            <artifactId>onpremises-ide-packaging-war-ide</artifactId>
+            <type>war</type>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises</groupId>
+            <artifactId>onpremises-ide-packaging-war-ide-resources</artifactId>
             <type>war</type>
         </dependency>
         <dependency>

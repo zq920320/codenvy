@@ -24,10 +24,10 @@
     <display-name>OnPremises-Ide site war</display-name>
 
     <listener>
-        <listener-class>org.eclipse.che.inject.CodenvyBootstrap</listener-class>
+        <listener-class>org.eclipse.che.inject.CheBootstrap</listener-class>
     </listener>
     <listener>
-        <listener-class>com.codenvy.cloudide.OnPremisesIdeServletContextListener</listener-class>
+        <listener-class>com.codenvy.onpremises.OnPremisesIdeServletContextListener</listener-class>
     </listener>
     <filter>
         <filter-name>guiceFilter</filter-name>

@@ -132,7 +132,7 @@ parseParameters() {
         if [[ ${mvn_version} < "3.2.1" ]]; then
           echo "'--nogwt' is supported for maven 3.2.1 or later"
         else
-          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!onpremises-ide-compiling-war-ide-codenvy\""
+          MAVEN_PARAMS=${MAVEN_PARAMS}" -pl \"!onpremises-ide-compiling-war-ide\""
         fi
         ;;
       *)

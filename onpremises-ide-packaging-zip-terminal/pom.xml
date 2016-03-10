@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-zip-terminal</artifactId>
     <packaging>pom</packaging>
-    <name>Hosted IDE :: Terminal</name>
+    <name>Onpremises IDE :: ZIP    :: Terminal</name>
     <dependencies>
         <dependency>
             <groupId>org.eclipse.che.lib</groupId>

@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-tomcat-ext-server</artifactId>
     <packaging>pom</packaging>
-    <name>Onpremises IDE :: Tomcat :: Machine :: Extension server</name>
+    <name>Onpremises IDE :: Tomcat :: WS agent</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>

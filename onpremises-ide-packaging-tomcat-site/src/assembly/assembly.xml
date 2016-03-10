@@ -53,7 +53,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>ide-resources.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-next-ide-resources-codenvy</include>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-ide-resources</include>
             </includes>
         </dependencySet>
         <dependencySet>
@@ -62,7 +62,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>ws.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-next-ide-codenvy</include>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-ide</include>
             </includes>
         </dependencySet>
         <dependencySet>
@@ -71,7 +71,7 @@
             <outputDirectory>webapps</outputDirectory>
             <outputFileNameMapping>dashboard.war</outputFileNameMapping>
             <includes>
-                <include>com.codenvy.cloud-ide:cloud-ide-packaging-war-user-dashboard</include>
+                <include>com.codenvy.onpremises:onpremises-ide-packaging-war-dashboard</include>
             </includes>
         </dependencySet>
         <dependencySet>
