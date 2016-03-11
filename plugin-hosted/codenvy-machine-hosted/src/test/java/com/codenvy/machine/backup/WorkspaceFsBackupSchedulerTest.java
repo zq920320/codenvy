@@ -24,6 +24,7 @@ import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
 import org.eclipse.che.api.machine.server.spi.Instance;
 import org.eclipse.che.api.machine.server.spi.InstanceNode;
@@ -36,6 +37,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static java.util.Collections.singletonMap;
@@ -89,7 +92,10 @@ public class WorkspaceFsBackupSchedulerTest {
                                                          "displayName1",
                                                          "type1",
                                                          new MachineSourceImpl("sourcetype1", "location1"),
-                                                         new LimitsImpl(1024)),
+                                                         new LimitsImpl(1024),
+                                                         Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
+                                                                       new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                         Collections.singletonMap("key1", "value1")),
                                    "id1",
                                    "workspaceId1",
                                    "envName1",
@@ -103,7 +109,10 @@ public class WorkspaceFsBackupSchedulerTest {
                                                          "displayName2",
                                                          "type2",
                                                          new MachineSourceImpl("sourcetype2", "location2"),
-                                                         new LimitsImpl(1024)),
+                                                         new LimitsImpl(1024),
+                                                         Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
+                                                                       new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                         Collections.singletonMap("key1", "value1")),
                                    "id2",
                                    "workspaceId2",
                                    "envName1",
@@ -147,11 +156,8 @@ public class WorkspaceFsBackupSchedulerTest {
         scheduler.scheduleBackup();
 
         // then
-        // add this verification with timeout to ensure that thread executor had enough time before verification of call
         verify(scheduler, timeout(2000)).backupWorkspaceInMachine(eq(machine1));
-        InOrder inOrder = inOrder(scheduler);
-        inOrder.verify(scheduler).backupWorkspaceInMachine(eq(machine1));
-        inOrder.verify(scheduler).backupWorkspaceInMachine(eq(machine2));
+        verify(scheduler, timeout(2000)).backupWorkspaceInMachine(eq(machine2));
     }
 
     @Test
@@ -175,7 +181,15 @@ public class WorkspaceFsBackupSchedulerTest {
     @Test
     public void shouldNotBackupWorkspaceOfNonDevMachines() throws Exception {
         // given
-        machine2.getConfig().setDev(false);
+        machines.clear();
+        machines.add(machine1);
+        machines.add(MachineImpl.builder()
+                                .fromMachine(machine2)
+                                .setConfig(MachineConfigImpl.builder()
+                                                            .fromConfig(machine2.getConfig())
+                                                            .setDev(false)
+                                                            .build())
+                                .build());
 
         // when
         scheduler.scheduleBackup();
@@ -258,3 +272,4 @@ public class WorkspaceFsBackupSchedulerTest {
     }
 
 }
+

@@ -105,7 +105,7 @@ public class RouterMachineManager extends MachineManager {
             String[] routingRuleAddress = routingRule.getUri().split(":", 2);
 
             final String exposedPort = Integer.toString(routingRule.getExposedPort());
-            final Server serverWithRealAddress = servers.get(exposedPort);
+            final Server serverWithRealAddress = servers.get(exposedPort + "/tcp");
 
             String routedUrl = null;
             if (serverWithRealAddress.getUrl() != null) {
@@ -116,9 +116,9 @@ public class RouterMachineManager extends MachineManager {
                                       .toString();
             }
 
-            serversWithRewrittenUrls.put(exposedPort, new ServerImpl(serverWithRealAddress.getRef(),
-                                                                     routingRule.getUri(),
-                                                                     routedUrl));
+            serversWithRewrittenUrls.put(exposedPort + "/tcp", new ServerImpl(serverWithRealAddress.getRef(),
+                                                                              routingRule.getUri(),
+                                                                              routedUrl));
         }
 
         // add those servers that do not have mappings in RouterRulesRegistry

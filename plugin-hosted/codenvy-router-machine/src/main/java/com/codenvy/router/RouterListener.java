@@ -99,14 +99,15 @@ public class RouterListener implements EventSubscriber<MachineStatusEvent> {
                    .getServers()
                    .entrySet()
                    .stream()
-                   .filter(serverInMachine -> !serverInMachine.getKey().contains("/")) // it means tcp, because udp will have /udp in key
+                   .filter(serverInMachine -> serverInMachine.getKey().endsWith("/tcp"))
                    .forEach(serverInMachine -> {
                        final String[] serverHostPort = serverInMachine.getValue().getAddress().split(":", 2);
+                       String exposedPortWithoutProtocol = serverInMachine.getKey().substring(0, serverInMachine.getKey().length() - 4);
                        routerRulesRegistry.addRule(machineId, new RoutingRule(serverHostPort[0],
                                                                               Integer.parseInt(serverHostPort[1]),
-                                                                              Integer.parseInt(serverInMachine.getKey()),
+                                                                              Integer.parseInt(exposedPortWithoutProtocol),
                                                                               String.format(machineServerRoutingPattern,
-                                                                                            serverInMachine.getKey(),
+                                                                                            exposedPortWithoutProtocol,
                                                                                             serverHostPort[0],
                                                                                             serverHostPort[1],
                                                                                             machineId)));

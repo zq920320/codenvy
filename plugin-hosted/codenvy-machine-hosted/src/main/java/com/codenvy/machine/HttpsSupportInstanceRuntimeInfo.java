@@ -17,7 +17,9 @@ package com.codenvy.machine;
 import com.codenvy.swarm.machine.SwarmInstanceRuntimeInfo;
 import com.google.inject.assistedinject.Assisted;
 
+import org.eclipse.che.api.core.model.machine.MachineConfig;
 import org.eclipse.che.api.core.model.machine.Server;
+import org.eclipse.che.api.core.model.machine.ServerConf;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
 import org.eclipse.che.plugin.docker.client.json.ContainerInfo;
 import org.slf4j.Logger;
@@ -29,6 +31,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Rewrites protocol, host and port of machine servers to proxy requests through https decryption proxy
@@ -44,19 +47,22 @@ public class HttpsSupportInstanceRuntimeInfo extends SwarmInstanceRuntimeInfo {
     @Inject
     public HttpsSupportInstanceRuntimeInfo(@Assisted ContainerInfo containerInfo,
                                            @Assisted String dockerNodeHost,
+                                           @Assisted MachineConfig machineConfig,
                                            @Named("api.endpoint") URI apiEndpoint,
-                                           MachineServerHostPortGenerator serverHostPortGenerator) {
-        super(containerInfo, dockerNodeHost);
+                                           MachineServerHostPortGenerator serverHostPortGenerator,
+                                           @Named("machine.docker.dev_machine.machine_servers") Set<ServerConf> devMachineServers,
+                                           @Named("machine.docker.machine_servers") Set<ServerConf> allMachinesServers) {
+        super(containerInfo, dockerNodeHost, machineConfig, devMachineServers, allMachinesServers);
         this.serverHostPortGenerator = serverHostPortGenerator;
 
         isHttpsEnabled = apiEndpoint.getScheme().equals("https");
     }
 
     @Override
-    public Map<String, Server> getServers() {
-        final HashMap<String, Server> servers = new HashMap<>(super.getServers());
+    public Map<String, ServerImpl> getServers() {
+        final HashMap<String, ServerImpl> servers = new HashMap<>(super.getServers());
         if (isHttpsEnabled) {
-            for (Map.Entry<String, Server> serverEntry : servers.entrySet()) {
+            for (Map.Entry<String, ServerImpl> serverEntry : servers.entrySet()) {
                 try {
                     final Server server = serverEntry.getValue();
                     final URI serverUri = server.getUrl() != null ? new URI(server.getUrl()) : new URI("http://" + server.getAddress());

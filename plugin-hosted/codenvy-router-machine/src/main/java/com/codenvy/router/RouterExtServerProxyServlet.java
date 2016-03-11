@@ -32,9 +32,9 @@ import javax.inject.Singleton;
 @Singleton
 public class RouterExtServerProxyServlet extends MachineExtensionProxyServlet {
     @Inject
-    public RouterExtServerProxyServlet(@Named("machine.extension.api_port") int extServicesPort,
+    public RouterExtServerProxyServlet(@Named("machine.extension.api_port") String wsAgentPort,
                                        MachineManager machineManager) {
-        super(extServicesPort, new RouterMachineManager((RouterMachineManager)machineManager) {
+        super(wsAgentPort, new RouterMachineManager((RouterMachineManager)machineManager) {
 
             @Override
             public MachineImpl getDevMachine(String workspaceId) throws NotFoundException, MachineException {
