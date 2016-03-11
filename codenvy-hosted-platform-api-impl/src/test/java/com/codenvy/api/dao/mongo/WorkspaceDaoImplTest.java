@@ -32,6 +32,7 @@ import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
+import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
@@ -44,6 +45,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -386,6 +389,22 @@ public class WorkspaceDaoImplTest {
 
                     assertEquals(limitsDoc.getInteger("ram", 0), machine.getLimits().getRam(), "Machine RAM limit");
                 }
+                if (machine.getServers() != null) {
+                    final List<Document> serversDocuments = (List<Document>)machineDoc.get("servers");
+                    assertEquals(serversDocuments.size(), machine.getServers().size());
+                    for (int j = 0; j < serversDocuments.size(); j++) {
+                        final ServerConfImpl serverConf = machine.getServers().get(j);
+                        final Document serverDocument = serversDocuments.get(j);
+
+                        assertEquals(serverDocument.getString("ref"), serverConf.getRef(), "Server reference");
+                        assertEquals(serverDocument.getString("port"), serverConf.getPort(), "Server port");
+                        assertEquals(serverDocument.getString("protocol"), serverConf.getProtocol(), "Server protocol");
+                    }
+                }
+                if (machine.getEnvVariables() != null) {
+                    final List<Document> envVariablesDocs = (List<Document>)machineDoc.get("envVariables");
+                    assertEquals(envVariablesDocs, mapAsDocumentsList(machine.getEnvVariables()), "Machine env variables");
+                }
             }
         }
     }
@@ -449,12 +468,18 @@ public class WorkspaceDaoImplTest {
                                                                     "dev-machine",
                                                                     "machine-type",
                                                                     machineSource,
-                                                                    new LimitsImpl(512));
+                                                                    new LimitsImpl(512),
+                                                                    Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
+                                                                                  new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                                    Collections.singletonMap("key1", "value1"));
         final MachineConfigImpl machineCfg2 = new MachineConfigImpl(false,
                                                                     "non-dev-machine",
                                                                     "machine-type-2",
                                                                     machineSource,
-                                                                    new LimitsImpl(2048));
+                                                                    new LimitsImpl(2048),
+                                                                    Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
+                                                                                  new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                                    Collections.singletonMap("key1", "value1"));
 
         final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
         final EnvironmentImpl env2 = new EnvironmentImpl("my-environment-2", recipe, singletonList(machineCfg1));
