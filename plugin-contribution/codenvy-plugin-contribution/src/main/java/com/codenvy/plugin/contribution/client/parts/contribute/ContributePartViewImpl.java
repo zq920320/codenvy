@@ -78,9 +78,9 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     @UiField
     Anchor repositoryUrl;
 
-    /** The component for the name of cloned branch. */
+    /** The component for the name of contribute to branch. */
     @UiField
-    Label clonedBranch;
+    Label contributeToBranch;
 
     /** The component for the name of the project */
     @UiField
@@ -170,8 +170,8 @@ public class ContributePartViewImpl extends BaseView<ContributePartView.ActionDe
     }
 
     @Override
-    public void setClonedBranch(final String branch) {
-        clonedBranch.setText(branch);
+    public void setContributeToBranch(final String branch) {
+        contributeToBranch.setText(branch);
     }
 
     @Override

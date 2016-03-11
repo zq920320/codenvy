@@ -55,22 +55,20 @@ public class CreateForkStep implements Step {
                    .getUserFork(context.getHostUserLogin(), upstreamRepositoryOwner, upstreamRepositoryName)
                    .then(new Operation<Repository>() {
                        @Override
-                       public void apply(final Repository fork) throws OperationException {
+                       public void apply(Repository fork) throws OperationException {
                            proceed(fork.getName(), executor, context);
                        }
-                   })
-                   .catchError(new Operation<PromiseError>() {
-                       @Override
-                       public void apply(final PromiseError err) throws OperationException {
-                           try {
-                               throw err.getCause();
-                           } catch (NoUserForkException ex) {
-                               createFork(executor, context, upstreamRepositoryOwner, upstreamRepositoryName);
-                           } catch (Throwable thr) {
-                               executor.fail(CreateForkStep.this, context, thr.getMessage());
-                           }
-                       }
-                   });
+                   }).catchError(new Operation<PromiseError>() {
+                @Override
+                public void apply(PromiseError error) throws OperationException {
+                    if (error.getCause() instanceof NoUserForkException ) {
+                        createFork(executor, context, upstreamRepositoryOwner, upstreamRepositoryName);
+                        return;
+                    }
+
+                    executor.fail(CreateForkStep.this, context, error.getCause().getMessage());
+                }
+            });
         } else {
             // user fork has been cloned
             proceed(originRepositoryName, executor, context);

@@ -105,17 +105,17 @@ public class GenerateReviewFactoryStep implements Step {
                                                                             .filter(new Predicate<ProjectConfigDto>() {
                                                                                 @Override
                                                                                 public boolean apply(ProjectConfigDto project) {
-                                                                                    return project.getPath()
-                                                                                                  .equals(appContext.getCurrentProject()
-                                                                                                                    .getRootProject()
-                                                                                                                    .getPath());
+                                                                                    return project.getName()
+                                                                                                  .equals(context.getProject().getName());
                                                                                 }
-                                                                            })
-                                                                            .first();
+                                                                            }).first();
                 if (projectOpt.isPresent()) {
                     final ProjectConfigDto project = projectOpt.get();
-                    if (project.getSource() != null) {
-                        project.getSource().getParameters().put("branch", context.getWorkBranchName());
+                    project.getSource().getParameters().put("branch", context.getWorkBranchName());
+
+                    if (context.isForkAvailable()) {
+                        project.getSource().setLocation(context.getVcsHostingService()
+                               .makeHttpRemoteUrl(context.getHostUserLogin(), context.getOriginRepositoryName()));
                     }
                 }
                 return factory;

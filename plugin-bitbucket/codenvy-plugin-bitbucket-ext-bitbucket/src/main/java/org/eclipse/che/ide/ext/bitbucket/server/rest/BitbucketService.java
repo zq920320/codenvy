@@ -42,6 +42,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import java.io.IOException;
+import java.util.List;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
@@ -51,7 +52,7 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
  *
  * @author Kevin Pollet
  */
-@Path("bitbucket")
+@Path("/bitbucket/{ws-id}")
 public class BitbucketService {
     private final Bitbucket            bitbucket;
     private final BitbucketKeyUploader bitbucketKeyUploader;
@@ -95,8 +96,8 @@ public class BitbucketService {
     @GET
     @Path("repositories/{owner}/{repositorySlug}/forks")
     @Produces(APPLICATION_JSON)
-    public BitbucketRepositories getRepositoryForks(@PathParam("owner") final String owner,
-                                                    @PathParam("repositorySlug") final String repositorySlug)
+    public List<BitbucketRepository> getRepositoryForks(@PathParam("owner") final String owner,
+                                                        @PathParam("repositorySlug") final String repositorySlug)
             throws IOException, BitbucketException, ServerException {
 
         return bitbucket.getRepositoryForks(owner, repositorySlug);
@@ -123,8 +124,8 @@ public class BitbucketService {
     @GET
     @Path("repositories/{owner}/{repositorySlug}/pullrequests")
     @Produces(APPLICATION_JSON)
-    public BitbucketPullRequests getRepositoryPullRequests(@PathParam("owner") final String owner,
-                                                           @PathParam("repositorySlug") final String repositorySlug)
+    public List<BitbucketPullRequest> getRepositoryPullRequests(@PathParam("owner") final String owner,
+                                                                @PathParam("repositorySlug") final String repositorySlug)
             throws IOException, BitbucketException, ServerException {
 
         return bitbucket.getRepositoryPullRequests(owner, repositorySlug);

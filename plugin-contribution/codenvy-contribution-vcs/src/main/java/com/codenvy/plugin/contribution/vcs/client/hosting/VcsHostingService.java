@@ -284,7 +284,7 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url.
      */
-    Promise<String> makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
+    String makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the remote HTTP url for the given username and repository.
@@ -295,7 +295,7 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url.
      */
-    Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
+    String makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the pull request url for the given username, repository and pull request number.
@@ -308,7 +308,7 @@ public interface VcsHostingService {
      *         the pull request number.
      * @return the remote url.
      */
-    Promise<String> makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
+    String makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
 
     /**
      * Use the VCS hosting comment markup language to format the review factory URL.

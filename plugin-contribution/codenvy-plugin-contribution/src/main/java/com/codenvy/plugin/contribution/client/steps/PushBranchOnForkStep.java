@@ -39,8 +39,8 @@ public class PushBranchOnForkStep implements Step {
     @Override
     public void execute(final WorkflowExecutor executor, final Context context) {
         pushBranchStepFactory.create(this,
-                                     context.getUpstreamRepositoryOwner(),
-                                     context.getUpstreamRepositoryName())
+                                     context.getHostUserLogin(),
+                                     context.getForkedRepositoryName())
                              .execute(executor, context);
     }
 }

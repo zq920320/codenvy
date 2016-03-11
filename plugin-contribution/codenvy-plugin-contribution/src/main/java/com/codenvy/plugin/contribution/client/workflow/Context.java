@@ -29,7 +29,7 @@ import java.util.Objects;
 
 import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.READY_TO_UPDATE_PR;
 import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.UPDATING_PR;
-import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.CLONED_BRANCH_NAME;
+import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.CONTRIBUTE_TO_BRANCH_NAME;
 import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.PROJECT;
 import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.WORK_BRANCH_NAME;
 
@@ -45,8 +45,8 @@ public class Context {
     /** The project. */
     private ProjectConfigDto project;
 
-    /** The name of the cloned branch. */
-    private String clonedBranchName;
+    /** The name of the branch to contribute to. */
+    private String contributeToBranchName;
 
     /** The name of the working branch. */
     private String workBranchName;
@@ -106,15 +106,15 @@ public class Context {
         fireContextPropertyChange(PROJECT, oldValue, project);
     }
 
-    public String getClonedBranchName() {
-        return clonedBranchName;
+    public String getContributeToBranchName() {
+        return contributeToBranchName;
     }
 
-    public void setClonedBranchName(final String clonedBranchName) {
-        final String oldValue = this.clonedBranchName;
-        this.clonedBranchName = clonedBranchName;
+    public void setContributeToBranchName(final String contributeToBranchName) {
+        final String oldValue = this.contributeToBranchName;
+        this.contributeToBranchName = contributeToBranchName;
 
-        fireContextPropertyChange(CLONED_BRANCH_NAME, oldValue, clonedBranchName);
+        fireContextPropertyChange(CONTRIBUTE_TO_BRANCH_NAME, oldValue, contributeToBranchName);
     }
 
     public String getWorkBranchName() {

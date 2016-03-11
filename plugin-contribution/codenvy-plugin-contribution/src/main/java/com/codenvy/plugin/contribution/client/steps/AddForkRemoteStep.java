@@ -39,8 +39,8 @@ public class AddForkRemoteStep implements Step {
     private final static String ORIGIN_REMOTE_NAME = "origin";
     private final static String FORK_REMOTE_NAME   = "fork";
 
-    private final VcsServiceProvider        vcsServiceProvider;
-    private final ContributeMessages        messages;
+    private final VcsServiceProvider vcsServiceProvider;
+    private final ContributeMessages messages;
 
     @Inject
     public AddForkRemoteStep(final VcsServiceProvider vcsServiceProvider,
@@ -60,20 +60,15 @@ public class AddForkRemoteStep implements Step {
         if (originRepositoryOwner.equalsIgnoreCase(upstreamRepositoryOwner) &&
             originRepositoryName.equalsIgnoreCase(upstreamRepositoryName)) {
 
-            context.getVcsHostingService()
-                   .makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName())
-                   .then(new Operation<String>() {
-                       @Override
-                       public void apply(String remoteUrl) throws OperationException {
-                           checkRemotePresent(executor, context, remoteUrl);
-                       }
-                   })
-                   .catchError(new Operation<PromiseError>() {
-                       @Override
-                       public void apply(PromiseError error) throws OperationException {
-                           executor.fail(AddForkRemoteStep.this, context, error.getMessage());
-                       }
-                   });
+            if (context.getVcsHostingService().getName().equals("Bitbucket")) {
+                String remoteUrl =
+                        context.getVcsHostingService().makeHttpRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
+                checkRemotePresent(executor, context, remoteUrl);
+            } else {
+                String remoteUrl =
+                        context.getVcsHostingService().makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
+                checkRemotePresent(executor, context, remoteUrl);
+            }
         } else {
             context.setForkedRemoteName(ORIGIN_REMOTE_NAME);
             proceed(executor, context);

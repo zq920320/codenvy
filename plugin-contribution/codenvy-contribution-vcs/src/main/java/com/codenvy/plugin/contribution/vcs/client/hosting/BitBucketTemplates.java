@@ -23,7 +23,7 @@ public interface BitBucketTemplates extends HostingServiceTemplates {
     @DefaultMessage("git@bitbucket.org:{0}/{1}.git")
     String sshUrlTemplate(String username, String repository);
 
-    @DefaultMessage("https://{0}@bitbucket.org/{0}/{1}.git")
+    @DefaultMessage("https://bitbucket.org/{0}/{1}.git")
     String httpUrlTemplate(String username, String repository);
 
     @DefaultMessage("https://bitbucket.org/{0}/{1}/pull-request/{2}")

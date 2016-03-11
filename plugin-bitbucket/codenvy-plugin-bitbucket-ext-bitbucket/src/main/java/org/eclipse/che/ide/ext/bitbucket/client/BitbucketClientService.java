@@ -20,6 +20,7 @@ import com.google.inject.Singleton;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
+import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
@@ -32,7 +33,10 @@ import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 
+import javax.inject.Named;
 import javax.validation.constraints.NotNull;
+
+import java.util.List;
 
 import static org.eclipse.che.ide.ext.bitbucket.shared.Preconditions.checkArgument;
 import static org.eclipse.che.ide.ext.bitbucket.shared.StringHelper.isNullOrEmpty;
@@ -44,7 +48,6 @@ import static org.eclipse.che.ide.ext.bitbucket.shared.StringHelper.isNullOrEmpt
  */
 @Singleton
 public class BitbucketClientService {
-    private static final String BITBUCKET    = "/bitbucket";
     private static final String USER         = "/user";
     private static final String REPOSITORIES = "/repositories";
     private static final String SSH_KEYS     = "/ssh-keys";
@@ -55,12 +58,13 @@ public class BitbucketClientService {
     private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
 
     @Inject
-    protected BitbucketClientService(@NotNull @RestContext final String baseUrl,
-                                     @NotNull final LoaderFactory loaderFactory,
-                                     @NotNull final AsyncRequestFactory asyncRequestFactory,
-                                     final DtoUnmarshallerFactory dtoUnmarshallerFactory) {
+    protected BitbucketClientService(@Named("cheExtensionPath") String extPath,
+                                     AppContext appContext,
+                                     LoaderFactory loaderFactory,
+                                     AsyncRequestFactory asyncRequestFactory,
+                                     DtoUnmarshallerFactory dtoUnmarshallerFactory) {
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
-        this.baseUrl = baseUrl + BITBUCKET;
+        this.baseUrl = extPath + "/bitbucket/" + appContext.getWorkspace().getId();
         this.loaderFactory = loaderFactory;
         this.asyncRequestFactory = asyncRequestFactory;
     }
@@ -154,7 +158,7 @@ public class BitbucketClientService {
     @Deprecated
     public void getRepositoryForks(@NotNull final String owner,
                                    @NotNull final String repositorySlug,
-                                   @NotNull final AsyncRequestCallback<BitbucketRepositories> callback) throws IllegalArgumentException {
+                                   @NotNull final AsyncRequestCallback<List<BitbucketRepository>> callback) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
@@ -173,15 +177,15 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public Promise<BitbucketRepositories> getRepositoryForks(final String owner,
-                                                             final String repositorySlug) throws IllegalArgumentException {
+    public Promise<List<BitbucketRepository>> getRepositoryForks(final String owner,
+                                                                 final String repositorySlug) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
 
         final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/forks";
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
-                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepositories.class));
+                                  .send(dtoUnmarshallerFactory.newListUnmarshaller(BitbucketRepository.class));
     }
 
     /**
@@ -260,7 +264,7 @@ public class BitbucketClientService {
      */
     public void getRepositoryPullRequests(@NotNull final String owner,
                                           @NotNull final String repositorySlug,
-                                          @NotNull final AsyncRequestCallback<BitbucketPullRequests> callback)
+                                          @NotNull final AsyncRequestCallback<List<BitbucketPullRequest>> callback)
             throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
@@ -280,7 +284,7 @@ public class BitbucketClientService {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public Promise<BitbucketPullRequests> getRepositoryPullRequests(final String owner,
+    public Promise<List<BitbucketPullRequest>> getRepositoryPullRequests(final String owner,
                                                                     final String repositorySlug) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
@@ -288,7 +292,7 @@ public class BitbucketClientService {
         final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/pullrequests";
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
-                                  .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequests.class));
+                                  .send(dtoUnmarshallerFactory.newListUnmarshaller(BitbucketPullRequest.class));
     }
 
     /**

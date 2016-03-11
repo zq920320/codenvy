@@ -33,6 +33,9 @@ import java.util.Set;
 
 import static java.util.Arrays.asList;
 
+/**
+ * @author Yevhenii Voevodin
+ */
 @Singleton
 public class VstsStagesProvider implements StagesProvider {
 

@@ -60,6 +60,9 @@ public class DefineWorkBranchStep implements Step {
 
             @Override
             public void onSuccess(final String branchName) {
+                if (context.getContributeToBranchName() == null) {
+                    context.setContributeToBranchName(branchName);
+                }
                 context.setWorkBranchName(branchName);
                 executor.done(DefineWorkBranchStep.this, context);
             }

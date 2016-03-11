@@ -65,7 +65,7 @@ public class ContextPropertyChangeEvent extends GwtEvent<ContextPropertyChangeHa
         PROJECT,
         ORIGIN_REPOSITORY_OWNER,
         ORIGIN_REPOSITORY_NAME,
-        CLONED_BRANCH_NAME,
+        CONTRIBUTE_TO_BRANCH_NAME,
         WORK_BRANCH_NAME
     }
 }

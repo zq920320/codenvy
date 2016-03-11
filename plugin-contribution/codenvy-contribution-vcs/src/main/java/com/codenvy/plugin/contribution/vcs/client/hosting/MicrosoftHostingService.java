@@ -62,6 +62,7 @@ public class MicrosoftHostingService implements VcsHostingService {
     private final DtoFactory             dtoFactory;
     private final MicrosoftServiceClient microsoftClient;
     private final String                 baseUrl;
+    private final MicrosoftTemplates     microsoftTemplates;
 
     private String account;
     private String collection;
@@ -70,16 +71,17 @@ public class MicrosoftHostingService implements VcsHostingService {
     public MicrosoftHostingService(@RestContext final String baseUrl,
                                    AppContext appContext,
                                    DtoFactory dtoFactory,
-                                   MicrosoftServiceClient microsoftClient) {
+                                   MicrosoftServiceClient microsoftClient, MicrosoftTemplates microsoftTemplates) {
         this.baseUrl = baseUrl;
         this.appContext = appContext;
         this.dtoFactory = dtoFactory;
         this.microsoftClient = microsoftClient;
+        this.microsoftTemplates = microsoftTemplates;
     }
 
     @Override
     public VcsHostingService init(String remoteUrl) {
-        MicrosoftHostingService service = new MicrosoftHostingService(baseUrl, appContext, dtoFactory, microsoftClient);
+        MicrosoftHostingService service = new MicrosoftHostingService(baseUrl, appContext, dtoFactory, microsoftClient, microsoftTemplates);
         service.account = getAccountFromRemoteUrl(remoteUrl);
         service.collection = getCollectionFromRemoteUrl(remoteUrl);
         return service;
@@ -288,18 +290,30 @@ public class MicrosoftHostingService implements VcsHostingService {
     }
 
     @Override
-    public Promise<String> makeSSHRemoteUrl(@NotNull String username, @NotNull String repository) {
-        return Promises.reject(JsPromiseError.create(new UnsupportedOperationException("This method is not implemented")));
+    public String makeSSHRemoteUrl(@NotNull String username, @NotNull String repository) {
+        throw new UnsupportedOperationException("This method is not implemented");
     }
 
     @Override
-    public Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository) {
-        return microsoftClient.makeHttpRemoteUrl(account, collection, username, repository);
+    public String makeHttpRemoteUrl(@NotNull String username, @NotNull String repository) {
+        String remoteUrl;
+        if (username.equals(repository)) {
+            remoteUrl = microsoftTemplates.httpUrlTemplate(account, collection, username, repository);
+        } else {
+            remoteUrl = microsoftTemplates.httpUrlTemplate(account, collection, repository);
+        }
+        return remoteUrl;
     }
 
     @Override
-    public Promise<String> makePullRequestUrl(final String username, final String repository, final String pullRequestNumber) {
-        return microsoftClient.makePullRequestUrl(account, collection, username, repository, pullRequestNumber);
+    public String makePullRequestUrl(final String username, final String repository, final String pullRequestNumber) {
+        String pullRequestUrl;
+        if (username.equals(repository)) {
+            pullRequestUrl = microsoftTemplates.pullRequestUrlTemplate(account, collection, repository, pullRequestNumber);
+        } else {
+            pullRequestUrl = microsoftTemplates.pullRequestUrlTemplate(account, collection, username, repository, pullRequestNumber);
+        }
+        return pullRequestUrl;
     }
 
     @Override

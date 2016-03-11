@@ -55,7 +55,7 @@ public class IssuePullRequestStep implements Step {
                                   context.getHostUserLogin(),
                                   context.getForkedRepositoryName(),
                                   context.getWorkBranchName(),
-                                  context.getClonedBranchName(),
+                                  context.getContributeToBranchName(),
                                   configuration.getContributionTitle(),
                                   configuration.getContributionComment())
                .then(new Operation<PullRequest>() {

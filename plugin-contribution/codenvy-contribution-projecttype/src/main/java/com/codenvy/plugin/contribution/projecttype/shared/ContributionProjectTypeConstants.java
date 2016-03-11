@@ -24,17 +24,11 @@ public final class ContributionProjectTypeConstants {
 
     public static final String CONTRIBUTION_PROJECT_TYPE_DISPLAY_NAME = "contribution";
 
-    /** Flag used to trigger the 'automatic' contribution flow. */
-    public static final String CONTRIBUTE_VARIABLE_NAME = "contribute";
-
-    /** Contribution mode variable used to know if we are in 'contribute' or 'review' mode. */
-    public static final String CONTRIBUTE_MODE_VARIABLE_NAME = "contribute_mode";
+    /** Contribution mode variable used to name the local branch that is initialized. */
+    public static final String CONTRIBUTE_LOCAL_BRANCH_NAME = "local_branch";
 
     /** Contribution mode variable used to know in which branch the contribution has to be pushed. */
-    public static final String CONTRIBUTE_BRANCH_VARIABLE_NAME = "contribute_branch";
-
-    /** Contribution mode variable used to know the pull request id reviewed. */
-    public static final String PULL_REQUEST_ID_VARIABLE_NAME = "pull_request_id";
+    public static final String CONTRIBUTE_TO_BRANCH_VARIABLE_NAME = "contribute_to_branch";
 
     /**
      * Disable instantiation.
