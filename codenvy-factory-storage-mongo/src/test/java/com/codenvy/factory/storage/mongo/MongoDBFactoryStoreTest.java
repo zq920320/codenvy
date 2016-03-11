@@ -38,6 +38,7 @@ import org.eclipse.che.api.factory.shared.dto.OnProjectsLoaded;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
 import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
+import org.eclipse.che.api.machine.shared.dto.ServerConfDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.RecipeDto;
@@ -139,7 +140,15 @@ public class MongoDBFactoryStoreTest {
                                                                                                                      .withType(
                                                                                                                              "git")
                                                                                                                      .withLocation(
-                                                                                                                             "https://github.com/123/test.git"))))
+                                                                                                                             "https://github.com/123/test.git"))
+                                                                                                   .withServers(Arrays.asList(newDto(ServerConfDto.class).withRef("ref1")
+                                                                                                                                                         .withPort("8080")
+                                                                                                                                                         .withProtocol("https"),
+                                                                                                                              newDto(ServerConfDto.class).withRef("ref2")
+                                                                                                                                                         .withPort("9090/udp")
+                                                                                                                                                         .withProtocol("someprotocol")))
+                                                                                                   .withEnvVariables(Collections.singletonMap("key1", "value1"))
+                                                                                 ))
                                                                                  .withRecipe(DtoFactory.getInstance().createDto(
                                                                                          RecipeDto.class)
                                                                                                        .withType("sometype")
