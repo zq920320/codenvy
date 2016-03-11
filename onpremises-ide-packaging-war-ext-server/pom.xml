@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-war-ext-server</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR    :: Machine :: Extension server</name>
+    <name>Onpremises IDE :: WAR    :: Ws agent</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>

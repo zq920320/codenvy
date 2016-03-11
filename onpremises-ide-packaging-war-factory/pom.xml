@@ -23,13 +23,111 @@
         <version>4.0.0-RC14-SNAPSHOT</version>
     </parent>
     <artifactId>onpremises-ide-packaging-war-factory</artifactId>
-    <packaging>pom</packaging>
-    <name>Onpremises IDE :: WAR :: IDE :: Factory</name>
+    <packaging>war</packaging>
+    <name>Onpremises IDE :: WAR    :: Factory</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.cloud-ide</groupId>
-            <artifactId>cloud-ide-packaging-war-factory</artifactId>
-            <type>war</type>
+            <groupId>com.codahale.metrics</groupId>
+            <artifactId>metrics-servlets</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-sso-client</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject</groupId>
+            <artifactId>guice</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.google.inject.extensions</groupId>
+            <artifactId>guice-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-dto</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-factory</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-user</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-workspace</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-env</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-inject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.everrest</groupId>
+            <artifactId>everrest-core</artifactId>
+        </dependency>
+        <!-- Logger -->
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-commons-j2ee</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Test dependencies -->
+        <dependency>
+            <groupId>org.hamcrest</groupId>
+            <artifactId>hamcrest-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mock testing -->
+        <dependency>
+            <groupId>org.mockito</groupId>
+            <artifactId>mockito-core</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <!-- Mock testing of REST services -->
+        <dependency>
+            <groupId>org.mockitong</groupId>
+            <artifactId>mockitong</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.testng</groupId>
+            <artifactId>testng</artifactId>
+            <scope>test</scope>
         </dependency>
     </dependencies>
     <build>
@@ -64,14 +162,17 @@
                 <artifactId>maven-antrun-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>unzip-odyssey</id>
-                        <phase>generate-sources</phase>
+                        <id>unzip-site</id>
+                        <phase>prepare-package</phase>
                         <goals>
                             <goal>run</goal>
                         </goals>
                         <configuration>
                             <tasks>
-                                <unzip dest="${project.build.directory}/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
+                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
+                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-factory-creation.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-factory-creation.html" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -79,20 +180,9 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-assembly-plugin</artifactId>
-                <executions>
-                    <execution>
-                        <id>make-assembly</id>
-                        <phase>prepare-package</phase>
-                        <goals>
-                            <goal>single</goal>
-                        </goals>
-                    </execution>
-                </executions>
+                <artifactId>maven-war-plugin</artifactId>
                 <configuration>
-                    <appendAssemblyId>false</appendAssemblyId>
-                    <updateOnly>false</updateOnly>
-                    <descriptor>${project.basedir}/src/assembly/assembly.xml</descriptor>
+                    <packagingExcludes>WEB-INF/lib/*gwt*.jar,WEB-INF/lib/gin-*.jar</packagingExcludes>
                 </configuration>
             </plugin>
         </plugins>

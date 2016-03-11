@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-war-webroot-codenvy</artifactId>
     <packaging>war</packaging>
-    <name>OnPremises IDE :: WAR    :: IDE     :: Root</name>
+    <name>Onpremises IDE :: WAR    :: Root</name>
     <build>
         <plugins>
             <plugin>

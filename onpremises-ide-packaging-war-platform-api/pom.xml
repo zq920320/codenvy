@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-packaging-war-platform-api</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR    :: IDE :: API</name>
+    <name>Onpremises IDE :: WAR    :: API</name>
     <dependencies>
         <dependency>
             <groupId>aopalliance</groupId>
