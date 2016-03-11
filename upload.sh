@@ -18,7 +18,7 @@
 #
 detect_user_for_upload() {
     case "${SERVER}" in
-      "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "dev" | "stg" | "t1" | "t2" | "t3" | "cf" | "demo" | "nightly" | "machines" )
+      "a9" | "a10" | "a11" | "machines" | "nightly4" )
           SSH_KEY_NAME=upl-dev
           SSH_USER_NAME=upl-dev
       ;;
@@ -48,16 +48,21 @@ selectTomcatToUpload() {
    case "$SCOPE" in
       "aio")
          AIO=`ls onpremises-ide-packaging-tomcat-codenvy-allinone/target/onpremises-ide-packaging-tomcat-codenvy-allinone-*.zip`
+         EXT_SERVER=`ls onpremises-ide-packaging-tomcat-ext-server/target/onpremises-ide-packaging-tomcat-ext-server-*.zip`
+         TERMINAL=`ls onpremises-ide-packaging-zip-terminal/target/onpremises-ide-packaging-zip-terminal-*.zip`
          doUploadTomcat ${AIO} ${SERVER}/${SCOPE}
          doUploadTomcat ${EXT_SERVER} ${SERVER}/${SCOPE}
+         doUploadTomcat ${TERMINAL} ${SERVER}/${SCOPE}
       ;;
      "api")
          API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
          doUploadTomcat ${API} ${SERVER}/${SCOPE}
       ;;
-     "runner")
+     "machine")
          EXT_SERVER=`ls onpremises-ide-packaging-tomcat-ext-server/target/onpremises-ide-packaging-tomcat-ext-server-*.zip`
+         TERMINAL=`ls onpremises-ide-packaging-zip-terminal/target/onpremises-ide-packaging-zip-terminal-*.zip`
          doUploadTomcat ${EXT_SERVER} ${SERVER}/${SCOPE}
+         doUploadTomcat ${TERMINAL} ${SERVER}/${SCOPE}
       ;;
      "site")
          SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
@@ -67,9 +72,11 @@ selectTomcatToUpload() {
          API=`ls onpremises-ide-packaging-tomcat-api/target/onpremises-ide-packaging-tomcat-api-*.zip`
          SITE=`ls onpremises-ide-packaging-tomcat-site/target/onpremises-ide-packaging-tomcat-site-*.zip`
          EXT_SERVER=`ls onpremises-ide-packaging-tomcat-ext-server/target/onpremises-ide-packaging-tomcat-ext-server-*.zip`
+         TERMINAL=`ls onpremises-ide-packaging-zip-terminal/target/onpremises-ide-packaging-zip-terminal-*.zip`
          doUploadTomcat ${API} ${SERVER}/api
          doUploadTomcat ${SITE} ${SERVER}/site
-         doUploadTomcat ${EXT_SERVER} ${SERVER}/runner
+         doUploadTomcat ${EXT_SERVER} ${SERVER}/machine
+         doUploadTomcat ${TERMINAL} ${SERVER}/machine
       ;;
    esac
 }
@@ -101,11 +108,11 @@ doBuild() {
 PUPPET_DNS=puppet-master.codenvycorp.com
 DATE=`date '+%y%m%d-%H%M%S'`
 CLOUD_IDE_HOME=`pwd`
-SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, site, all\e[0m"
-SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a1, a2, a3, a4, a5, demo, cf, t1, t2, t3, nightly, dev, stg, prod, machines\e[0m"
+SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, site, machine, all\e[0m"
+SERVER_HELP="\033[31mNeed to select server where to upload as second argument.\npossible values: a9, a10, a11, nightly4, machines\e[0m"
 #checking possible scope values
 case "$1" in
-   "prod" | "stg" | "t3" |"t2" | "t1" | "cf" | "a1" | "a2" | "a3" | "a4" | "a5" | "a6" | "a7" | "demo" | "nightly" | "dev" | "machines" )
+   "prod" | "a9" | "a10" | "a11" | "nightly4" | "machines" )
       echo "Selected '$1' as cloud for update"
       SERVER=$1
    ;;
@@ -116,14 +123,14 @@ case "$1" in
 esac
 
 case "${SERVER}" in
-    "a1" | "a2" | "a3" | "a4" | "a5" | "a6" |"a7")
+    "a9" | "a10" | "a11" )
       echo "Selected 'aio' as scope for update"
       SCOPE='aio'
       shift
    ;;
    *)
       case "$2" in
-         "site" | "api" | "all" | "aio" | "ext-server")
+         "site" | "api" | "all" | "aio" | "machine")
             if [[ "$2" != "aio" || "$SERVER" == "prod" ]]; then
                 echo "Selected '$2' as scope for update"
                 SCOPE=$2
