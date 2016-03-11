@@ -157,7 +157,7 @@ for i in "$@"
 do
   case "$i" in
     --notests | --t)
-      MAVEN_PARAMS=${MAVEN_PARAMS}"  -Dmaven.test.skip=true"
+      MAVEN_PARAMS=${MAVEN_PARAMS}"  -DskipTests=true"
       ;;
     --nobuild | --b)
       NO_BUILD=true
