@@ -41,4 +41,8 @@ public interface PullRequest {
     String getHeadRef();
 
     PullRequest withHeadRef(String head);
+
+    String getDescription();
+
+    PullRequest withDescription(String description);
 }

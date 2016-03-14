@@ -21,6 +21,7 @@ import com.codenvy.plugin.contribution.client.workflow.Step;
 import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Singleton;
 
 import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.promises.client.Operation;
@@ -33,6 +34,7 @@ import java.util.List;
 /**
  * Adds the forked remote repository to the remotes of the project.
  */
+@Singleton
 public class AddForkRemoteStep implements Step {
     private final static String ORIGIN_REMOTE_NAME = "origin";
     private final static String FORK_REMOTE_NAME   = "fork";

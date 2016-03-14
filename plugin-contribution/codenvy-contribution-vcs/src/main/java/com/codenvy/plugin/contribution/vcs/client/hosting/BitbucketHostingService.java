@@ -612,6 +612,11 @@ public class BitbucketHostingService implements VcsHostingService {
         return ServiceUtil.performWindowAuth(this, authUrl);
     }
 
+    @Override
+    public Promise<PullRequest> updatePullRequest(String owner, String repository, PullRequest pullRequest) {
+        return Promises.reject(JsPromiseError.create("Update pullRequest not implemented for " + getName()));
+    }
+
     /**
      * Converts an instance of {@link org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository} into a {@link
      * com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository}.

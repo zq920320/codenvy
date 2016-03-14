@@ -14,6 +14,7 @@
  */
 package org.eclipse.che.ide.ext.microsoft.server;
 
+import com.google.api.client.http.HttpMethods;
 import com.google.api.client.repackaged.com.google.common.annotations.Beta;
 import com.google.inject.Singleton;
 
@@ -228,7 +229,7 @@ public final class MicrosoftVstsRestClient {
                                                    MicrosoftPullRequest update) throws ServerException,
                                                                                        IOException,
                                                                                        UnauthorizedException {
-        final JsonValue response = doRequest("PATCH",
+        final JsonValue response = doRequest(HttpMethods.PATCH,
                                              templates.pullRequestUrl(account, collection, repository, prId),
                                              HTTP_OK,
                                              "application/json",
@@ -269,6 +270,10 @@ public final class MicrosoftVstsRestClient {
         HttpURLConnection http = null;
         try {
             http = (HttpURLConnection)new URL(url).openConnection();
+            if (HttpMethods.PATCH.equals(requestMethod)) {
+                http.setRequestProperty("X-HTTP-Method-Override", requestMethod);
+                requestMethod = HttpMethods.PUT;
+            }
             http.setRequestMethod(requestMethod);
 
             final OAuthToken token = tokenProvider.getToken("microsoft", getUserId());

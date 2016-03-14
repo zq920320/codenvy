@@ -17,6 +17,7 @@ package com.codenvy.plugin.contribution.client.workflow;
 import com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
+import com.codenvy.plugin.contribution.vcs.client.hosting.dto.PullRequest;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
@@ -66,7 +67,7 @@ public class Context {
     private String originRepositoryName;
 
     /** The identifier of the pull request on the hosting service. */
-    private String pullRequestId;
+    private PullRequest pullRequest;
 
     /** The issue number of the pull request issued for the contribution. */
     private String pullRequestIssueNumber;
@@ -173,23 +174,12 @@ public class Context {
         fireContextPropertyChange(ContextPropertyChangeEvent.ContextProperty.ORIGIN_REPOSITORY_NAME, oldValue, originRepositoryName);
     }
 
-    /**
-     * Return the pull request id for this contribution.
-     *
-     * @return the pull request id
-     */
-    public String getPullRequestId() {
-        return pullRequestId;
+    public PullRequest getPullRequest() {
+        return pullRequest;
     }
 
-    /**
-     * Sets the pull request id for this contribution.
-     *
-     * @param pullRequestId
-     *         the new value
-     */
-    public void setPullRequestId(final String pullRequestId) {
-        this.pullRequestId = pullRequestId;
+    public void setPullRequest(PullRequest pullRequest) {
+        this.pullRequest = pullRequest;
     }
 
     /**

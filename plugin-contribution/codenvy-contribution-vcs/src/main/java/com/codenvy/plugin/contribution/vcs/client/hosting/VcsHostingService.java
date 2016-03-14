@@ -340,4 +340,17 @@ public interface VcsHostingService {
      * @return the promise which resolves host user or rejects with an error
      */
     Promise<HostUser> authenticate(CurrentUser user);
+
+    /**
+     * Update pull request information e.g. title, description
+     *
+     * @param owner
+     *         repository owner
+     * @param repository
+     *         name of repository
+     * @param pullRequest
+     *         pull request for update
+     * @return updated pull request
+     */
+    Promise<PullRequest> updatePullRequest(String owner, String repository, PullRequest pullRequest);
 }

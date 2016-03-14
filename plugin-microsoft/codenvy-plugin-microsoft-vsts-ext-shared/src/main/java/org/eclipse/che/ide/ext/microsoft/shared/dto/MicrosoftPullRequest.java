@@ -63,4 +63,10 @@ public interface MicrosoftPullRequest {
     void setHtmlUrl(String htmlUrl);
 
     MicrosoftPullRequest withHtmlUrl(String htmlUrl);
+
+    String getDescription();
+
+    void setDescription(String description);
+
+    MicrosoftPullRequest withDescription(String description);
 }

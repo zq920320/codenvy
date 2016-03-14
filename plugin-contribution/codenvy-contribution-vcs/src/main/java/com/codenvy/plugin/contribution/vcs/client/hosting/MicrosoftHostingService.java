@@ -327,6 +327,22 @@ public class MicrosoftHostingService implements VcsHostingService {
         return ServiceUtil.performWindowAuth(this, authUrl);
     }
 
+    @Override
+    public Promise<PullRequest> updatePullRequest(String owner, String repository, PullRequest pullRequest) {
+        return microsoftClient.updatePullRequest(account,
+                                                 collection,
+                                                 owner,
+                                                 repository,
+                                                 pullRequest.getId(),
+                                                 valueOf(pullRequest))
+                              .then(new Function<MicrosoftPullRequest, PullRequest>() {
+                                  @Override
+                                  public PullRequest apply(MicrosoftPullRequest microsoftPullRequest) throws FunctionException {
+                                      return valueOf(microsoftPullRequest);
+                                  }
+                              });
+    }
+
     /**
      * Converts an instance of {@link org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftRepository} into a {@link
      * com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository}.
@@ -370,7 +386,18 @@ public class MicrosoftHostingService implements VcsHostingService {
                          .withHtmlUrl("")
                          .withNumber(String.valueOf(microsoftPullRequest.getPullRequestId()))
                          .withState(microsoftPullRequest.getStatus())
-                         .withHeadRef(microsoftPullRequest.getSourceRefName());
+                         .withHeadRef(microsoftPullRequest.getSourceRefName())
+                         .withDescription(microsoftPullRequest.getDescription());
+    }
+
+    private MicrosoftPullRequest valueOf(PullRequest pullRequest) {
+        if (pullRequest == null) {
+            return null;
+        }
+
+        return dtoFactory.createDto(MicrosoftPullRequest.class)
+                         .withDescription(pullRequest.getDescription())
+                         .withStatus(pullRequest.getState());
     }
 
     private String refsHeads(String branchName) {

@@ -629,7 +629,8 @@ public class GitHubHostingService implements VcsHostingService {
                          .withHtmlUrl(gitHubPullRequest.getHtmlUrl())
                          .withNumber(gitHubPullRequest.getNumber())
                          .withState(gitHubPullRequest.getState())
-                         .withHeadRef(gitHubPullRequest.getHead().getLabel());
+                         .withHeadRef(gitHubPullRequest.getHead().getLabel())
+                         .withDescription(gitHubPullRequest.getBody());
     }
 
     @Override
@@ -668,6 +669,31 @@ public class GitHubHostingService implements VcsHostingService {
                                + Window.Location.getHost() + "/ws/"
                                + workspace.getConfig().getName();
         return ServiceUtil.performWindowAuth(this, authUrl);
+    }
+
+    @Override
+    public Promise<PullRequest> updatePullRequest(String owner, String repository, PullRequest pullRequest) {
+        return gitHubClientService.updatePullRequest(owner, repository, pullRequest.getNumber(), valueOf(pullRequest))
+                                  .then(new Function<GitHubPullRequest, PullRequest>() {
+                                      @Override
+                                      public PullRequest apply(GitHubPullRequest arg) throws FunctionException {
+                                          return valueOf(arg);
+                                      }
+                                  });
+    }
+
+    private GitHubPullRequest valueOf(PullRequest pullRequest) {
+        if (pullRequest == null) {
+            return null;
+        }
+
+        return dtoFactory.createDto(GitHubPullRequest.class)
+                         .withId(pullRequest.getId())
+                         .withUrl(pullRequest.getUrl())
+                         .withHtmlUrl(pullRequest.getHtmlUrl())
+                         .withNumber(pullRequest.getNumber())
+                         .withState(pullRequest.getState())
+                         .withBody(pullRequest.getDescription());
     }
 
     @Override

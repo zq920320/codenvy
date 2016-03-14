@@ -62,7 +62,7 @@ public class IssuePullRequestStep implements Step {
                    @Override
                    public void apply(PullRequest pullRequest) throws OperationException {
                        context.setPullRequestIssueNumber(pullRequest.getNumber());
-                       context.setPullRequestId(pullRequest.getId());
+                       context.setPullRequest(pullRequest);
                        executor.done(IssuePullRequestStep.this, context);
                    }
                })

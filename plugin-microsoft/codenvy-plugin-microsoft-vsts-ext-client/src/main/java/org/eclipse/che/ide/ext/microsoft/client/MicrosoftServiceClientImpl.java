@@ -100,7 +100,7 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                                            String repository,
                                                            String pullRequestId,
                                                            MicrosoftPullRequest pullRequest) {
-        final String url = baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository + '/' + pullRequest;
+        final String url = baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository + '/' + pullRequestId;
         return asyncRequestFactory.createRequest(PUT, url, pullRequest, false)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("updatePullRequest"))
