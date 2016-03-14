@@ -158,6 +158,10 @@ public class UserDaoImpl implements UserDao {
         InitialLdapContext context = null;
         DirContext newContext = null;
         try {
+            final String email = user.getEmail();
+            if (email != null && doGetByAlias(email) != null) {
+                throw new ConflictException(format("User with email '%s' already exists", email));
+            }
             for (String alias : user.getAliases()) {
                 if (doGetByAlias(alias) != null) {
                     throw new ConflictException(format("User with alias '%s' already exists", alias));

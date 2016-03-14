@@ -240,6 +240,18 @@ public class UserDaoTest extends BaseTest {
         userDao.create(users[0]);
     }
 
+    @Test(expectedExceptions = ConflictException.class,
+          expectedExceptionsMessageRegExp = "User with email .* already exists")
+    public void shouldThrowConflictExceptionWhenCreatingTwoUsersWithSameEmails() throws Exception {
+        userDao.create(new User().withId("id_1")
+                                 .withEmail("example@mail.com")
+                                 .withPassword("password"));
+        userDao.create(new User().withId("id_2")
+                                 .withEmail("example@mail.com")
+                                 .withPassword("password"));
+
+    }
+
     @Test(expectedExceptions = ServerException.class)
     public void shouldWrapAnyNamingExceptionWithServerExceptionWhenCreatingUser() throws Exception {
         when(factory.createContext()).thenThrow(new NamingException());
