@@ -89,7 +89,7 @@ public class CommitPresenter implements CommitView.ActionDelegate {
             callback.onFailure(new IllegalStateException("Opened project is not has no Git repository"));
 
         } else {
-            vcsServiceProvider.getVcsService().hasUncommittedChanges(project.getRootProject(), callback);
+            vcsServiceProvider.getVcsService(project.getRootProject()).hasUncommittedChanges(project.getRootProject(), callback);
         }
     }
 
@@ -97,7 +97,7 @@ public class CommitPresenter implements CommitView.ActionDelegate {
     public void onOk() {
         final CurrentProject project = appContext.getCurrentProject();
         if (project != null) {
-            vcsServiceProvider.getVcsService().commit(project.getRootProject(), view.isIncludeUntracked(),
+            vcsServiceProvider.getVcsService(project.getRootProject()).commit(project.getRootProject(), view.isIncludeUntracked(),
                                                       view.getCommitDescription(), new AsyncCallback<Void>() {
                         @Override
                         public void onFailure(final Throwable exception) {

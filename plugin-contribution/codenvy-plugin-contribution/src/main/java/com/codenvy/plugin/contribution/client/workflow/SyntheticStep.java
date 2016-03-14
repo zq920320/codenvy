@@ -12,13 +12,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps;
+package com.codenvy.plugin.contribution.client.workflow;
 
+import com.codenvy.plugin.contribution.client.events.StepEvent;
 import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 
 /**
- * Factory for {@link WaitForkOnRemoteStep}.
+ * This is a marker interface.
+ * {@link WorkflowExecutor} won't fire {@link StepEvent} for such kind of steps.
+ *
+ * @author Yevhenii Voevodin
  */
-public interface WaitForkOnRemoteStepFactory {
-    WaitForkOnRemoteStep create(Step nextStep);
-}
+public interface SyntheticStep extends Step {}

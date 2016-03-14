@@ -15,11 +15,11 @@
 package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
-import com.codenvy.plugin.contribution.vcs.client.VcsService;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -30,22 +30,20 @@ import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
-import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.app.CurrentProject;
-import org.eclipse.che.ide.util.loging.Log;
-
-import javax.validation.constraints.NotNull;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * This step initialize the contribution workflow context.
  *
  * @author Kevin Pollet
+ * @author Yevhenii Voevodin
  */
 @Singleton
 public class InitializeWorkflowContextStep implements Step {
@@ -57,51 +55,28 @@ public class InitializeWorkflowContextStep implements Step {
         }
     };
 
-    private final VcsServiceProvider        vcsServiceProvider;
-    private final VcsHostingServiceProvider vcsHostingServiceProvider;
-    private final AppContext                appContext;
-    private final NotificationHelper        notificationHelper;
-    private final ContributeMessages        messages;
-    private final Step                      defineWorkBranchStep;
+    private final VcsServiceProvider vcsServiceProvider;
+    private final NotificationManager notificationManager;
+    private final ContributeMessages messages;
 
     @Inject
     public InitializeWorkflowContextStep(final VcsServiceProvider vcsServiceProvider,
-                                         final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                         final AppContext appContext,
-                                         final NotificationHelper notificationHelper,
-                                         final ContributeMessages messages,
-                                         final DefineWorkBranchStep defineWorkBranchStep) {
+                                         final NotificationManager notificationManager,
+                                         final ContributeMessages messages) {
         this.vcsServiceProvider = vcsServiceProvider;
-        this.vcsHostingServiceProvider = vcsHostingServiceProvider;
-        this.appContext = appContext;
-        this.notificationHelper = notificationHelper;
+        this.notificationManager = notificationManager;
         this.messages = messages;
-        this.defineWorkBranchStep = defineWorkBranchStep;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
-        final CurrentProject currentProject = appContext.getCurrentProject();
-        final VcsService vcsService = vcsServiceProvider.getVcsService();
-
-        if (currentProject != null && vcsService != null) {
-            final ProjectConfigDto project = currentProject.getRootProject();
-            workflow.getContext().setProject(project);
-
-            vcsHostingServiceProvider.getVcsHostingService()
-                                     .then(new Operation<VcsHostingService>() {
-                                         @Override
-                                         public void apply(final VcsHostingService service) throws OperationException {
-                                             vcsService.listRemotes(project)
-                                                       .then(setUpOriginRepoOp(workflow, service))
-                                                       .catchError(errorSettingUpOriginRepoOp());
-                                         }
-                                     })
-                                     .catchError(notificationHelper.showErrorOp(getClass()));
-        }
+    public void execute(final WorkflowExecutor executor, final Context context) {
+        vcsServiceProvider.getVcsService(context.getProject())
+                          .listRemotes(context.getProject())
+                          .then(setUpOriginRepoOp(executor, context))
+                          .catchError(errorSettingUpOriginRepoOp(executor, context));
     }
 
-    private Operation<List<Remote>> setUpOriginRepoOp(final ContributorWorkflow workflow, final VcsHostingService vcsHostingService) {
+    private Operation<List<Remote>> setUpOriginRepoOp(final WorkflowExecutor executor, final Context context) {
         return new Operation<List<Remote>>() {
             @Override
             public void apply(final List<Remote> remotes) throws OperationException {
@@ -109,46 +84,46 @@ public class InitializeWorkflowContextStep implements Step {
                                                                  .filter(ORIGIN_REMOTE_FILTER)
                                                                  .first();
                 if (remoteOpt.isPresent()) {
-                    final Context context = workflow.getContext();
-                    final Map<String, List<String>> attributes = context.getProject().getAttributes();
                     final Remote remote = remoteOpt.get();
                     final String originUrl = remote.getUrl();
+                    final VcsHostingService vcsHostingService = context.getVcsHostingService();
 
                     context.setOriginRepositoryOwner(vcsHostingService.getRepositoryOwnerFromUrl(originUrl));
                     context.setOriginRepositoryName(vcsHostingService.getRepositoryNameFromUrl(originUrl));
 
-                    // set project information
-                    if (attributes.containsKey(CONTRIBUTE_BRANCH_VARIABLE_NAME) &&
-                        !attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
+                    context.setClonedBranchName(getClonedBranch(context.getProject()));
 
-                        final String clonedBranch = attributes.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
-
-                        context.setClonedBranchName(clonedBranch);
-
-                        Log.info(getClass(), "Branch set : " + clonedBranch);
-                    }
-
-                    if (vcsHostingService.getName().equals("VSTS")) {
-                        context.setForkSupport(false);
-                    } else {
-                        context.setForkSupport(true);
-                    }
-
-                    context.setVcsHostingService(vcsHostingService);
-
-                    workflow.executeStep(defineWorkBranchStep);
+                    executor.done(InitializeWorkflowContextStep.this, context);
+                } else {
+                    notificationManager.notify(messages.stepInitWorkflowOriginRemoteNotFound(), FAIL, true);
+                    executor.fail(InitializeWorkflowContextStep.this, context, messages.stepInitWorkflowOriginRemoteNotFound());
                 }
             }
         };
     }
 
-    private Operation<PromiseError> errorSettingUpOriginRepoOp() {
+    private String getClonedBranch(final ProjectConfigDto project) {
+        final Map<String, List<String>> attrs = project.getAttributes();
+        if (attrs.containsKey(CONTRIBUTE_BRANCH_VARIABLE_NAME) && !attrs.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
+            return attrs.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
+        }
+        if (project.getSource() != null) {
+            final String branchName = project.getSource().getParameters().get("branch");
+            if (!isNullOrEmpty(branchName)) {
+                return branchName;
+            }
+        }
+        return null;
+    }
+
+    private Operation<PromiseError> errorSettingUpOriginRepoOp(final WorkflowExecutor executor, final Context context) {
         return new Operation<PromiseError>() {
             @Override
             public void apply(final PromiseError error) throws OperationException {
-                notificationHelper.showError(InitializeWorkflowContextStep.class,
-                                             messages.contributorExtensionErrorSetupOriginRepository(error.getMessage()),
-                                             error.getCause());
+                notificationManager.notify(messages.contributorExtensionErrorSetupOriginRepository(error.getMessage()),
+                                           FAIL,
+                                           true);
+                executor.fail(InitializeWorkflowContextStep.this, context, error.getMessage());
             }
         };
     }

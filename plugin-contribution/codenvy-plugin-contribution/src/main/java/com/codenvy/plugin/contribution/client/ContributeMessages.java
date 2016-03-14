@@ -143,6 +143,21 @@ public interface ContributeMessages extends Messages {
     @Key("notification.message.prefix")
     String notificationMessagePrefix(String notificationMessage);
 
+    @Key("step.check_branch_to_push.cloned_branch_is_equal_to_work_branch")
+    String stepCheckBranchClonedBranchIsEqualToWorkBranch();
+
+    /*
+     * Init workflow step
+     */
+    @Key("step.init_workflow.remote_not_found")
+    String stepInitWorkflowOriginRemoteNotFound();
+
+    /*
+     * Commit working tree step
+     */
+    @Key("step.commit.canceled")
+    String stepCommitCanceled();
+
     /*
      * Define work branch step
      */

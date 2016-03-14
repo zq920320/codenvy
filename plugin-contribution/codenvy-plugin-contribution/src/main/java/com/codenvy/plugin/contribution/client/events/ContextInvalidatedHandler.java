@@ -12,13 +12,23 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps;
+package com.codenvy.plugin.contribution.client.events;
 
-import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.google.gwt.event.shared.EventHandler;
 
 /**
- * Factory for {@link WaitForkOnRemoteStep}.
+ * Handler for the {@link ContextInvalidatedEvent}.
+ *
+ * @author Yevhenii Voevodin
  */
-public interface WaitForkOnRemoteStepFactory {
-    WaitForkOnRemoteStep create(Step nextStep);
+public interface ContextInvalidatedHandler extends EventHandler {
+
+    /**
+     * Called when {@code context} is invalidated.
+     *
+     * @param context
+     *         invalidated context
+     */
+    void onContextInvalidated(final Context context);
 }

@@ -15,10 +15,11 @@
 package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.google.inject.assistedinject.Assisted;
 
-/**
- * Factory for {@link WaitForkOnRemoteStep}.
- */
-public interface WaitForkOnRemoteStepFactory {
-    WaitForkOnRemoteStep create(Step nextStep);
+public interface PushBranchStepFactory {
+
+    PushBranchStep create(@Assisted("delegate") Step delegate,
+                          @Assisted("repositoryOwner") String repositoryOwner,
+                          @Assisted("repositoryName") String repositoryName);
 }

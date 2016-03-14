@@ -15,19 +15,22 @@
 package com.codenvy.plugin.contribution.client.parts.contribute;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
+import com.codenvy.plugin.contribution.client.events.ContextInvalidatedEvent;
+import com.codenvy.plugin.contribution.client.events.ContextInvalidatedHandler;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
-import com.codenvy.plugin.contribution.client.steps.Context;
-import com.codenvy.plugin.contribution.client.steps.ContributorWorkflow;
-import com.codenvy.plugin.contribution.client.steps.Step;
-import com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent;
-import com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeHandler;
-import com.codenvy.plugin.contribution.client.steps.events.StepEvent;
-import com.codenvy.plugin.contribution.client.steps.events.StepHandler;
-import com.codenvy.plugin.contribution.client.utils.FactoryHelper;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Context.ViewState.StatusMessage;
+import com.codenvy.plugin.contribution.client.workflow.Context.ViewState.Stage;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor.ChangeContextStatusStep;
+import com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent;
+import com.codenvy.plugin.contribution.client.events.ContextPropertyChangeHandler;
+import com.codenvy.plugin.contribution.client.events.CurrentContextChangedEvent;
+import com.codenvy.plugin.contribution.client.events.CurrentContextChangedHandler;
+import com.codenvy.plugin.contribution.client.events.StepEvent;
+import com.codenvy.plugin.contribution.client.events.StepHandler;
 import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
-import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
-import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.rpc.AsyncCallback;
@@ -35,30 +38,40 @@ import com.google.gwt.user.client.ui.AcceptsOneWidget;
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
-import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.git.shared.Branch;
 import org.eclipse.che.api.promises.client.Operation;
 import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
-import org.eclipse.che.ide.ui.dialogs.InputCallback;
-import org.eclipse.che.ide.ui.dialogs.input.InputValidator;
-import org.eclipse.che.ide.util.loging.Log;
 
 import javax.validation.constraints.NotNull;
 
 import org.eclipse.che.commons.annotation.Nullable;
+import org.eclipse.che.ide.ui.dialogs.InputCallback;
+import org.eclipse.che.ide.ui.dialogs.input.InputValidator;
+import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
 
+import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.INITIALIZING;
+import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.READY_TO_CREATE_PR;
+import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.READY_TO_UPDATE_PR;
+import static com.google.common.base.Strings.nullToEmpty;
+import static java.util.Arrays.asList;
 import static org.eclipse.che.ide.api.constraints.Constraints.LAST;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
 
 /**
@@ -66,64 +79,79 @@ import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
  *
  * @author Kevin Pollet
  */
-public class ContributePartPresenter extends BasePresenter
-        implements ContributePartView.ActionDelegate, StepHandler, ContextPropertyChangeHandler {
-    private final ContributePartView        view;
-    private final WorkspaceAgent            workspaceAgent;
-    private final ContributeMessages        messages;
-    private final ContributorWorkflow       workflow;
-    private final VcsHostingServiceProvider vcsHostingServiceProvider;
-    private final Step                      commitWorkingTreeStep;
-    private final AppContext                appContext;
-    private final VcsServiceProvider        vcsServiceProvider;
-    private final NotificationHelper        notificationHelper;
-    private final DialogFactory             dialogFactory;
+public class ContributePartPresenter extends BasePresenter implements ContributePartView.ActionDelegate,
+                                                                      StepHandler,
+                                                                      ContextPropertyChangeHandler,
+                                                                      CurrentContextChangedHandler,
+                                                                      ContextInvalidatedHandler {
+    private final ContributePartView          view;
+    private final WorkspaceAgent              workspaceAgent;
+    private final ContributeMessages          messages;
+    private final WorkflowExecutor            workflowExecutor;
+    private final AppContext                  appContext;
+    private final NotificationHelper          notificationHelper;
+    private final NotificationManager         notificationManager;
+    private final DialogFactory               dialogFactory;
+    private final Map<String, StagesProvider> stagesProviders;
 
     @Inject
-    public ContributePartPresenter(@NotNull final ContributePartView view,
-                                   @NotNull final ContributeMessages messages,
-                                   @NotNull final WorkspaceAgent workspaceAgent,
-                                   @NotNull final EventBus eventBus,
-                                   @NotNull final ContributorWorkflow workflow,
-                                   @NotNull final VcsHostingServiceProvider vcsHostingServiceProvider,
-                                   @NotNull final CommitWorkingTreeStep commitWorkingTreeStep,
-                                   @NotNull final AppContext appContext,
-                                   @NotNull final VcsServiceProvider vcsServiceProvider,
-                                   @NotNull final NotificationHelper notificationHelper,
-                                   @NotNull final DialogFactory dialogFactory) {
+    public ContributePartPresenter(final ContributePartView view,
+                                   final ContributeMessages messages,
+                                   final WorkspaceAgent workspaceAgent,
+                                   final EventBus eventBus,
+                                   final WorkflowExecutor workflow,
+                                   final AppContext appContext,
+                                   final NotificationHelper notificationHelper,
+                                   final NotificationManager notificationManager,
+                                   final DialogFactory dialogFactory,
+                                   final Map<String, StagesProvider> stagesProviders) {
         this.view = view;
         this.workspaceAgent = workspaceAgent;
-        this.workflow = workflow;
-        this.vcsHostingServiceProvider = vcsHostingServiceProvider;
+        this.workflowExecutor = workflow;
         this.messages = messages;
-        this.commitWorkingTreeStep = commitWorkingTreeStep;
         this.appContext = appContext;
-        this.vcsServiceProvider = vcsServiceProvider;
         this.notificationHelper = notificationHelper;
+        this.notificationManager = notificationManager;
         this.dialogFactory = dialogFactory;
+        this.stagesProviders = stagesProviders;
 
         this.view.setDelegate(this);
+
+        view.addContributionTitleChangedHandler(new TextChangedHandler() {
+            @Override
+            public void onTextChanged(String newText) {
+                final Context curContext = workflowExecutor.getCurrentContext();
+                curContext.getViewState().setContributionTitle(newText);
+            }
+        });
+
+        view.addContributionCommentChangedHandler(new TextChangedHandler() {
+            @Override
+            public void onTextChanged(String newText) {
+                final Context curContext = workflowExecutor.getCurrentContext();
+                curContext.getViewState().setContributionComment(newText);
+            }
+        });
+
+        view.addBranchChangedHandler(new TextChangedHandler() {
+            @Override
+            public void onTextChanged(String branchName) {
+                final Context curContext = workflowExecutor.getCurrentContext();
+                if (!branchName.equals(messages.contributePartConfigureContributionSectionContributionBranchNameCreateNewItemText()) &&
+                    !branchName.equals(curContext.getWorkBranchName())) {
+                    checkoutBranch(curContext, branchName, false);
+                }
+            }
+        });
+
         eventBus.addHandler(StepEvent.TYPE, this);
         eventBus.addHandler(ContextPropertyChangeEvent.TYPE, this);
+        eventBus.addHandler(CurrentContextChangedEvent.TYPE, this);
+        eventBus.addHandler(ContextInvalidatedEvent.TYPE, this);
     }
 
     public void open() {
-        view.setRepositoryUrl("");
-        view.setClonedBranch("");
-        view.setContributionBranchName("");
-        view.setContributionBranchNameEnabled(true);
-        view.setContributionBranchNameList(Collections.<String>emptyList());
-        view.setContributionTitle("");
-        view.setProjectName("");
-        view.setContributionTitleEnabled(true);
-        view.setContributionComment("");
-        view.setContributionCommentEnabled(true);
-        view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeText());
-        view.hideStatusSection();
-        view.hideNewContributionSection();
-
-        updateControls();
-
+        resetView();
         workspaceAgent.openPart(ContributePartPresenter.this, TOOLING, LAST);
     }
 
@@ -133,59 +161,129 @@ public class ContributePartPresenter extends BasePresenter
 
     @Override
     public void onContribute() {
-        if (workflow.getContext().isUpdateMode()) {
-            view.showStatusSection(messages.contributePartStatusSectionNewCommitsPushedStepLabel(),
-                                   messages.contributePartStatusSectionPullRequestUpdatedStepLabel());
+        final Context context = workflowExecutor.getCurrentContext();
+        context.getViewState().setStatusMessage(null);
+        context.getViewState().setStages(getProvidedStages(context));
 
-        } else {
-            if (workflow.getContext().hasForkSupport()) {
-                view.showStatusSection(messages.contributePartStatusSectionForkCreatedStepLabel(),
-                                       messages.contributePartStatusSectionBranchPushedForkStepLabel(),
-                                       messages.contributePartStatusSectionPullRequestIssuedStepLabel());
-            } else {
-                view.showStatusSection(messages.contributePartStatusSectionBranchPushedOriginStepLabel(),
-                                       messages.contributePartStatusSectionPullRequestIssuedStepLabel());
-            }
+        updateView(context,
+                   new NewContributionPanelUpdate(),
+                   new StatusMessageUpdate(),
+                   new StatusSectionUpdate());
+
+        // Extract configuration values and perform contribution
+        if (isCurrentContext(context)) {
+            context.getConfiguration()
+                   .withContributionBranchName(view.getContributionBranchName())
+                   .withContributionComment(view.getContributionComment())
+                   .withContributionTitle(view.getContributionTitle());
         }
 
-        view.hideStatusSectionMessage();
-        view.setContributeButtonEnabled(false);
-        view.setContributionProgressState(true);
+        if (context.isUpdateMode()) {
+            workflowExecutor.updatePullRequest(context);
+        } else {
+            workflowExecutor.createPullRequest(context);
+        }
 
-        // resume the contribution workflow and execute the commit tree step
-        workflow.getConfiguration()
-                .withContributionBranchName(view.getContributionBranchName())
-                .withContributionComment(view.getContributionComment())
-                .withContributionTitle(view.getContributionTitle());
-
-        workflow.setStep(commitWorkingTreeStep);
-        workflow.executeStep();
+        updateView(context, new ContributionButtonUpdate(messages));
     }
 
+    private void restore(final Context context) {
+        final List<ViewUpdate> updates = new ArrayList<>();
+        // Repository panel updates
+        updates.add(new RepositoryUrlUpdate());
+        updates.add(new ClonedBranchUpdate());
+        updates.add(new ProjectNameUpdate());
+        // All the other panels are available only if the mode is different from INITIALIZING
+        // All the other panels are hidden by the #open method, which is called before initialization
+        if (context.getStatus() != INITIALIZING) {
+            // Configuration panel updates
+            updates.add(new WorkBranchUpdate());
+            updates.add(new ContributionTitleUpdate());
+            updates.add(new ContributionCommentUpdate());
+            // Contribution button update
+            updates.add(new ContributionButtonUpdate(messages));
+            // Status panel updates
+            updates.add(new StatusSectionUpdate());
+            updates.add(new StatusMessageUpdate());
+            // New contribution panel updates
+            updates.add(new NewContributionPanelUpdate());
+        }
+        updateView(context, updates);
+    }
+
+    /** Continuously resets the view state as long as current project is not changed. */
+    private void resetView() {
+        final String projectName = appContext.getCurrentProject().getRootProject().getName();
+        if (!isCurrentProject(projectName)) return;
+        view.setRepositoryUrl("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setClonedBranch("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionBranchName("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionBranchNameEnabled(true);
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionBranchNameList(Collections.<String>emptyList());
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionTitle("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setProjectName("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionTitleEnabled(true);
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionComment("");
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributionCommentEnabled(true);
+
+        if (!isCurrentProject(projectName)) return;
+        view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeText());
+
+        if (!isCurrentProject(projectName)) return;
+        view.hideStatusSection();
+
+        if (!isCurrentProject(projectName)) return;
+        view.hideNewContributionSection();
+
+        if (!isCurrentProject(projectName)) return;
+        updateControls();
+    }
 
     @Override
     public void onOpenPullRequestOnVcsHost() {
-        final Context context = workflow.getContext();
+        final Context context = workflowExecutor.getCurrentContext();
 
-        context.getVcsHostingService().makePullRequestUrl(context.getUpstreamRepositoryOwner(), context.getUpstreamRepositoryName(),
-                                                          context.getPullRequestIssueNumber()).then(new Operation<String>() {
-            @Override
-            public void apply(String url) throws OperationException {
-                Window.open(url, "", "");
-            }
-        }).catchError(new Operation<PromiseError>() {
-            @Override
-            public void apply(PromiseError error) throws OperationException {
-                notificationHelper.showError(ContributePartPresenter.class, error.getCause());
-            }
-        });
+        context.getVcsHostingService()
+               .makePullRequestUrl(context.getUpstreamRepositoryOwner(),
+                                   context.getUpstreamRepositoryName(),
+                                   context.getPullRequestIssueNumber())
+               .then(new Operation<String>() {
+                   @Override
+                   public void apply(String url) throws OperationException {
+                       Window.open(url, "", "");
+                   }
+               })
+               .catchError(new Operation<PromiseError>() {
+                   @Override
+                   public void apply(PromiseError error) throws OperationException {
+                       notificationManager.notify(error.getMessage(), FAIL, true);
+                   }
+               });
     }
 
     @Override
     public void onNewContribution() {
-        final Context context = workflow.getContext();
-        vcsServiceProvider.getVcsService().checkoutBranch(context.getProject(), context.getClonedBranchName(),
-                                                          false, new AsyncCallback<String>() {
+        final Context context = workflowExecutor.getCurrentContext();
+        context.getVcsService().checkoutBranch(context.getProject(), context.getClonedBranchName(),
+                                               false, new AsyncCallback<String>() {
                     @Override
                     public void onFailure(final Throwable exception) {
                         notificationHelper.showError(ContributePartPresenter.class, exception);
@@ -193,37 +291,25 @@ public class ContributePartPresenter extends BasePresenter
 
                     @Override
                     public void onSuccess(final String branchName) {
-                        view.setContributionBranchName(context.getClonedBranchName());
-                        view.setContributionBranchNameEnabled(true);
-                        view.setContributionTitle("");
-                        view.setContributionTitleEnabled(true);
-                        view.setContributionComment("");
-                        view.setContributionCommentEnabled(true);
-                        view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeText());
-                        view.hideStatusSection();
-                        view.hideStatusSectionMessage();
-                        view.hideNewContributionSection();
-
-                        workflow.getContext().setUpdateMode(false);
-                        updateControls();
-
-                        notificationHelper
-                                .showInfo(messages.contributePartNewContributionBranchClonedCheckedOut(context.getClonedBranchName()));
+                        resetView();
+                        workflowExecutor.invalidateContext(context.getProject());
+                        workflowExecutor.init(context.getVcsHostingService(), context.getProject());
                     }
                 });
     }
 
     @Override
     public void onRefreshContributionBranchNameList() {
-        refreshContributionBranchNameList();
+        updateView(workflowExecutor.getCurrentContext(), new WorkBranchUpdate());
     }
 
     @Override
     public void onCreateNewBranch() {
+        final Context context = workflowExecutor.getCurrentContext();
         dialogFactory.createInputDialog(messages.contributePartConfigureContributionDialogNewBranchTitle(),
                                         messages.contributePartConfigureContributionDialogNewBranchLabel(),
-                                        new CreateNewBranchCallback(),
-                                        new CancelNewBranchCallback())
+                                        new CreateNewBranchCallback(context),
+                                        new CancelNewBranchCallback(context))
                      .withValidator(new BranchNameValidator())
                      .show();
     }
@@ -282,95 +368,74 @@ public class ContributePartPresenter extends BasePresenter
     }
 
     @Override
-    public void onStepDone(@NotNull final StepEvent event) {
-        switch (event.getStep()) {
-            case CREATE_FORK: {
-                if (!workflow.getContext().isUpdateMode()) {
-                    view.setCurrentStatusStepStatus(true);
+    public void onStepDone(final StepEvent event) {
+        final Class<? extends Step> stepClass = event.getStep().getClass();
+        final Context context = event.getContext();
+        // if current step is in list of provided stages types
+        // then this step is done and view should be affected
+        if (getProvidedStepDoneTypes(context).contains(stepClass)) {
+            context.getViewState().setStageDone(true);
+            updateView(context, new DisplayCurrentStepResultUpdate(true));
+        } else if (stepClass == ChangeContextStatusStep.class) {
+            if (context.getStatus() == READY_TO_UPDATE_PR) {
+                final List<ViewUpdate> updates = new ArrayList<>();
+                // Display status message
+                final String message;
+                if (context.isUpdateMode()) {
+                    message = messages.contributePartStatusSectionContributionUpdatedMessage();
+                } else {
+                    message = messages.contributePartStatusSectionContributionCreatedMessage();
                 }
+                context.getViewState().setStatusMessage(message, false);
+                updates.add(new StatusMessageUpdate());
+
+                // Contribution button
+                updates.add(new ContributionButtonUpdate(messages));
+
+                // Config panel
+                updates.add(new ContributionTitleUpdate());
+                updates.add(new ContributionCommentUpdate());
+
+                // New contribution panel
+                updates.add(new NewContributionPanelUpdate());
+
+                updateView(context, updates);
             }
-            break;
-
-            case PUSH_BRANCH_ON_FORK:
-            case PUSH_BRANCH_ON_ORIGIN: {
-                view.setCurrentStatusStepStatus(true);
-            }
-            break;
-
-            case ISSUE_PULL_REQUEST: {
-                view.setCurrentStatusStepStatus(true);
-                view.setContributeButtonEnabled(true);
-                view.setContributionProgressState(false);
-                view.showStatusSectionMessage(
-                        workflow.getContext().isUpdateMode() ? messages.contributePartStatusSectionContributionUpdatedMessage()
-                                                             : messages.contributePartStatusSectionContributionCreatedMessage(), false);
-                view.setContributionBranchNameEnabled(false);
-                view.setContributionTitleEnabled(false);
-                view.setContributionCommentEnabled(false);
-                view.setContributeButtonText(messages.contributePartConfigureContributionSectionButtonContributeUpdateText());
-                workflow.getContext().setUpdateMode(true);
-
-                vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-                    @Override
-                    public void onFailure(final Throwable exception) {
-                        notificationHelper.showError(ContributePartPresenter.class, exception);
-                    }
-
-                    @Override
-                    public void onSuccess(final VcsHostingService vcsHostingService) {
-                        view.showNewContributionSection(vcsHostingService.getName());
-                    }
-                });
-            }
-            break;
-
-            default:
-                break;
         }
     }
 
     @Override
-    public void onStepError(@NotNull final StepEvent event) {
-        switch (event.getStep()) {
-            case AUTHORIZE_CODENVY_ON_VCS_HOST:
-                view.hideStatusSection();
-                view.hideStatusSectionMessage();
-                view.hideNewContributionSection();
-                break;
-            case COMMIT_WORKING_TREE: {
-                view.hideStatusSection();
+    public void onStepError(final StepEvent event) {
+        final Step step = event.getStep();
+        final Class<? extends Step> stepClass = step.getClass();
+        final Context context = event.getContext();
+        if (stepClass == CommitWorkingTreeStep.class) {
+            if (!context.isUpdateMode()) {
+                context.getViewState().resetSteps();
+                context.getViewState().setStatusMessage(null);
+                updateView(context,
+                           new StatusSectionUpdate(),
+                           new StatusMessageUpdate(),
+                           new NewContributionPanelUpdate(),
+                           new ContributionButtonUpdate(messages));
+            } else {
+                context.getViewState().resetSteps();
+                context.getViewState().setStatusMessage(event.getMessage(), true);
+                updateView(context,
+                           new StatusSectionUpdate(),
+                           new StatusMessageUpdate(),
+                           new ContributionButtonUpdate(messages));
             }
-            break;
-
-            case CREATE_FORK: {
-                if (!workflow.getContext().isUpdateMode()) {
-                    view.setCurrentStatusStepStatus(false);
-                    view.showStatusSectionMessage(event.getMessage(), true);
-                }
-            }
-            break;
-
-            case CHECKOUT_BRANCH_TO_PUSH: {
-                view.setCurrentStatusStepStatus(false);
-                view.showStatusSectionMessage(event.getMessage(), true);
-            }
-            break;
-
-            case PUSH_BRANCH_ON_FORK:
-            case PUSH_BRANCH_ON_ORIGIN:
-            case ISSUE_PULL_REQUEST: {
-                view.setCurrentStatusStepStatus(false);
-                view.showStatusSectionMessage(event.getMessage(), true);
-            }
-            break;
-
-            default:
-                Log.error(ContributePartPresenter.class, "Step error:", event.getMessage());
-                break;
+        } else if (getProvidedStepErrorTypes(context).contains(stepClass)) {
+            context.getViewState().setStageDone(false);
+            context.getViewState().setStatusMessage(event.getMessage(), true);
+            updateView(context,
+                       new DisplayCurrentStepResultUpdate(false),
+                       new StatusMessageUpdate(),
+                       new ContributionButtonUpdate(messages));
+        } else {
+            Log.error(ContributePartPresenter.class, "Step error: ", event.getMessage());
         }
-
-        view.setContributeButtonEnabled(true);
-        view.setContributionProgressState(false);
     }
 
     @Override
@@ -378,101 +443,256 @@ public class ContributePartPresenter extends BasePresenter
         final Context context = event.getContext();
 
         switch (event.getContextProperty()) {
-            case CLONED_BRANCH_NAME: {
-                view.setClonedBranch(context.getClonedBranchName());
-                view.setContributionBranchName(context.getClonedBranchName());
-            }
-            break;
+            case CLONED_BRANCH_NAME:
+                updateView(context, new ClonedBranchUpdate());
+                break;
 
-            case WORK_BRANCH_NAME: {
-                refreshContributionBranchNameList(new AsyncCallback<Void>() {
-                    @Override
-                    public void onFailure(final Throwable exception) {
-                        notificationHelper.showError(ContributePartPresenter.class, exception);
-                    }
-
-                    @Override
-                    public void onSuccess(final Void notUsed) {
-                        view.setContributionBranchName(context.getWorkBranchName());
-                    }
-                });
-            }
-            break;
+            case WORK_BRANCH_NAME:
+                updateView(context, new WorkBranchUpdate());
+                break;
 
             case ORIGIN_REPOSITORY_NAME:
-            case ORIGIN_REPOSITORY_OWNER: {
-                final String originRepositoryName = context.getOriginRepositoryName();
-                final String originRepositoryOwner = context.getOriginRepositoryOwner();
+            case ORIGIN_REPOSITORY_OWNER:
+                updateView(context, new RepositoryUrlUpdate());
+                break;
 
-                if (originRepositoryName != null && originRepositoryOwner != null) {
-                    vcsHostingServiceProvider.getVcsHostingService(new AsyncCallback<VcsHostingService>() {
-                        @Override
-                        public void onFailure(final Throwable exception) {
-                            notificationHelper.showError(ContributePartPresenter.class, exception);
-                        }
-
-                        @Override
-                        public void onSuccess(final VcsHostingService vcsHostingService) {
-                            vcsHostingService.makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName)
-                                             .then(new Operation<String>() {
-                                                 @Override
-                                                 public void apply(String arg) throws OperationException {
-                                                     view.setRepositoryUrl(arg);
-                                                 }
-                                             });
-                        }
-                    });
-                }
-            }
-            break;
-
-            case PROJECT: {
-                view.setProjectName(event.getContext().getProject().getName());
-                refreshContributionBranchNameList();
-            }
-            break;
+            case PROJECT:
+                updateView(context, new ProjectNameUpdate());
+                break;
 
             default:
+                // nothing to do
                 break;
         }
     }
 
-    private void refreshContributionBranchNameList() {
-        refreshContributionBranchNameList(new AsyncCallback<Void>() {
-            @Override
-            public void onFailure(final Throwable exception) {
-                notificationHelper.showError(ContributePartPresenter.class, exception);
-            }
-
-            @Override
-            public void onSuccess(final Void notUsed) {
-                // nothing to do branch name list is refreshed
-            }
-        });
+    @Override
+    public void onContextChanged(final Context context) {
+        restore(context);
     }
 
-    private void refreshContributionBranchNameList(final AsyncCallback<Void> callback) {
-        vcsServiceProvider.getVcsService().listLocalBranches(workflow.getContext().getProject(), new AsyncCallback<List<Branch>>() {
-            @Override
-            public void onFailure(final Throwable exception) {
-                callback.onFailure(exception);
-            }
+    private void updateView(final Context context, final ViewUpdate... updates) {
+        updateView(context, asList(updates));
+    }
 
-            @Override
-            public void onSuccess(final List<Branch> branches) {
-                final List<String> branchNames = new ArrayList<>();
-                for (final Branch oneBranch : branches) {
-                    branchNames.add(oneBranch.getDisplayName());
+    private void updateView(final Context context, final List<ViewUpdate> updates) {
+        for (Iterator<ViewUpdate> it = updates.iterator(); it.hasNext() && isCurrentContext(context); ) {
+            it.next().update(view, context);
+        }
+    }
+
+    private void updateView(final Context context, final ViewUpdate update) {
+        if (isCurrentContext(context)) {
+            update.update(view, context);
+        }
+    }
+
+    @Override
+    public void onContextInvalidated(Context context) {
+        resetView();
+    }
+
+    /**
+     * Defines a single update operation.
+     * Single update operations are required as view is shared between multiple projects.
+     * If context is switched view should not be updated with the updates related to the previous context.
+     */
+    private interface ViewUpdate {
+        void update(final ContributePartView view, final Context context);
+    }
+
+    private static class DisplayCurrentStepResultUpdate implements ViewUpdate {
+        private final boolean result;
+
+        public DisplayCurrentStepResultUpdate(boolean result) {
+            this.result = result;
+        }
+
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.setCurrentStatusStepStatus(result);
+        }
+    }
+
+    private static class NewContributionPanelUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.hideNewContributionSection();
+            if (context.isUpdateMode()) {
+                view.showNewContributionSection(context.getVcsHostingService().getName());
+            }
+        }
+    }
+
+    private static class StatusMessageUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.hideStatusSectionMessage();
+            final StatusMessage statusMessage = context.getViewState().getStatusMessage();
+            if (statusMessage != null) {
+                view.showStatusSectionMessage(statusMessage.getMessage(), statusMessage.isError());
+            }
+        }
+    }
+
+    private static class StatusSectionUpdate implements ViewUpdate {
+        @Override
+        public void update(ContributePartView view, Context context) {
+            view.hideStatusSection();
+            final List<Stage> stepStatuses = context.getViewState().getStages();
+            if (stepStatuses.size() > 0) {
+                final String[] names = context.getViewState().getStageNames().toArray(new String[stepStatuses.size()]);
+                view.showStatusSection(names);
+                for (Boolean stepStatus : context.getViewState().getStageValues()) {
+                    if (stepStatus == null) {
+                        break;
+                    }
+                    view.setCurrentStatusStepStatus(stepStatus);
                 }
-
-                view.setContributionBranchNameList(branchNames);
-                callback.onSuccess(null);
+            } else if (context.getViewState().getStatusMessage() != null) {
+                view.showStatusSection();
             }
-        });
+        }
+    }
+
+    private static class ClonedBranchUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.setClonedBranch(nullToEmpty(context.getClonedBranchName()));
+        }
+    }
+
+    private static class ContributionButtonUpdate implements ViewUpdate {
+        private final ContributeMessages messages;
+
+        private ContributionButtonUpdate(final ContributeMessages messages) { this.messages = messages; }
+
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            final boolean isEnabled = !nullToEmpty(context.getViewState().getContributionTitle()).isEmpty();
+            final boolean isInProgress;
+            final String buttonText;
+            switch (context.getStatus()) {
+                case UPDATING_PR:
+                    buttonText = messages.contributePartConfigureContributionSectionButtonContributeUpdateText();
+                    isInProgress = true;
+                    break;
+                case READY_TO_UPDATE_PR:
+                    buttonText = messages.contributePartConfigureContributionSectionButtonContributeUpdateText();
+                    isInProgress = false;
+                    break;
+                case CREATING_PR:
+                    buttonText = messages.contributePartConfigureContributionSectionButtonContributeText();
+                    isInProgress = true;
+                    break;
+                case READY_TO_CREATE_PR:
+                    buttonText = messages.contributePartConfigureContributionSectionButtonContributeText();
+                    isInProgress = false;
+                    break;
+                default:
+                    throw new IllegalStateException("Illegal workflow status " + context.getStatus());
+            }
+            view.setContributeButtonText(buttonText);
+            view.setContributionProgressState(isInProgress);
+            view.setContributeButtonEnabled(isEnabled);
+        }
+    }
+
+    private class ContributionCommentUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.setContributionComment(nullToEmpty(context.getViewState().getContributionComment()));
+            view.setContributionCommentEnabled(context.getStatus() == READY_TO_CREATE_PR);
+        }
+    }
+
+    private static class ContributionTitleUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.setContributionTitle(nullToEmpty(context.getViewState().getContributionTitle()));
+            view.setContributionTitleEnabled(context.getStatus() == READY_TO_CREATE_PR);
+        }
+    }
+
+    private static class RepositoryUrlUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            final String originRepositoryName = context.getOriginRepositoryName();
+            final String originRepositoryOwner = context.getOriginRepositoryOwner();
+            if (originRepositoryName != null && originRepositoryOwner != null) {
+                context.getVcsHostingService()
+                       .makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName)
+                       .then(new Operation<String>() {
+                           @Override
+                           public void apply(String url) throws OperationException {
+                               view.setRepositoryUrl(url);
+                           }
+                       });
+            }
+        }
+    }
+
+    private static class WorkBranchUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            context.getVcsService()
+                   .listLocalBranches(context.getProject(), new AsyncCallback<List<Branch>>() {
+                       @Override
+                       public void onFailure(final Throwable notUsed) {}
+
+                       @Override
+                       public void onSuccess(final List<Branch> branches) {
+                           final List<String> branchNames = new ArrayList<>();
+                           for (final Branch oneBranch : branches) {
+                               branchNames.add(oneBranch.getDisplayName());
+                           }
+                           view.setContributionBranchNameList(branchNames);
+                           view.setContributionBranchName(context.getWorkBranchName());
+                       }
+                   });
+        }
+    }
+
+    private static class ProjectNameUpdate implements ViewUpdate {
+        @Override
+        public void update(final ContributePartView view, final Context context) {
+            view.setProjectName(context.getProject().getName());
+        }
+    }
+
+    private boolean isCurrentContext(final Context context) {
+        return Objects.equals(context.getProject().getName(), appContext.getCurrentProject().getRootProject().getName());
+    }
+
+    private boolean isCurrentProject(final String projectName) {
+        return Objects.equals(projectName, appContext.getCurrentProject().getRootProject().getName());
+    }
+
+    private StagesProvider getProvider(final Context context) {
+        for (Map.Entry<String, StagesProvider> entry : stagesProviders.entrySet()) {
+            if (entry.getKey().equals(context.getVcsHostingService().getName())) {
+                return entry.getValue();
+            }
+        }
+        throw new IllegalStateException("StagesProvider for VCS hosting service "
+                                        + context.getVcsHostingService().getName()
+                                        + " isn't registered");
+    }
+
+    private List<String> getProvidedStages(final Context context) {
+        return getProvider(context).getStages(context);
+    }
+
+    private Set<Class<? extends Step>> getProvidedStepDoneTypes(final Context context) {
+        return getProvider(context).getStepDoneTypes(context);
+    }
+
+    private Set<Class<? extends Step>> getProvidedStepErrorTypes(final Context context) {
+        return getProvider(context).getStepErrorTypes(context);
     }
 
     private static class BranchNameValidator implements InputValidator {
-        private static final Violation ERROR_WITH_NO_MESSAGE = new Violation() {
+        private static final Violation ERROR_WITH_NO_MESSAGE = new InputValidator.Violation() {
             @Nullable
             @Override
             public String getMessage() {
@@ -494,62 +714,63 @@ public class ContributePartPresenter extends BasePresenter
     }
 
     private class CreateNewBranchCallback implements InputCallback {
+        private final Context context;
+
+        public CreateNewBranchCallback(final Context context) {
+            this.context = context;
+        }
+
         @Override
         public void accepted(final String branchName) {
-            final Context context = workflow.getContext();
+            context.getVcsService()
+                   .isLocalBranchWithName(context.getProject(), branchName, new AsyncCallback<Boolean>() {
+                       @Override
+                       public void onFailure(final Throwable exception) {
+                           notificationHelper.showError(ContributePartPresenter.class, exception);
+                       }
 
-            vcsServiceProvider.getVcsService().isLocalBranchWithName(context.getProject(), branchName, new AsyncCallback<Boolean>() {
-                @Override
-                public void onFailure(final Throwable exception) {
-                    notificationHelper.showError(ContributePartPresenter.class, exception);
-                }
+                       @Override
+                       public void onSuccess(final Boolean branchExists) {
+                           if (branchExists) {
+                               notificationHelper.showError(ContributePartPresenter.class,
+                                                            messages.contributePartConfigureContributionDialogNewBranchErrorBranchExists(
+                                                                    branchName));
 
-                @Override
-                public void onSuccess(final Boolean branchExists) {
-                    if (branchExists) {
-                        view.setContributionBranchName(branchName);
-                        notificationHelper.showError(ContributePartPresenter.class,
-                                                     messages.contributePartConfigureContributionDialogNewBranchErrorBranchExists(
-                                                             branchName));
-
-                    } else {
-                        vcsServiceProvider.getVcsService().checkoutBranch(context.getProject(), branchName, true,
-                                                                          new AsyncCallback<String>() {
-                                                                              @Override
-                                                                              public void onFailure(final Throwable exception) {
-
-                                                                              }
-
-                                                                              @Override
-                                                                              public void onSuccess(final String notUsed) {
-                                                                                  refreshContributionBranchNameList(
-                                                                                          new AsyncCallback<Void>() {
-                                                                                              @Override
-                                                                                              public void onFailure(
-                                                                                                      final Throwable exception) {
-                                                                                                  notificationHelper.showError(
-                                                                                                          ContributePartPresenter.class,
-                                                                                                          exception);
-                                                                                              }
-
-                                                                                              @Override
-                                                                                              public void onSuccess(final Void notUsed) {
-                                                                                                  view.setContributionBranchName(
-                                                                                                          branchName);
-                                                                                              }
-                                                                                          });
-                                                                              }
-                                                                          });
-                    }
-                }
-            });
+                           } else {
+                               checkoutBranch(context, branchName, true);
+                           }
+                       }
+                   });
         }
     }
 
+    private void checkoutBranch(final Context context, final String branchName, final boolean createNew) {
+        context.getVcsService()
+               .checkoutBranch(context.getProject(),
+                               branchName,
+                               createNew,
+                               new AsyncCallback<String>() {
+                                   @Override
+                                   public void onFailure(final Throwable exception) {
+                                       notificationManager.notify(exception.getLocalizedMessage(), FAIL, true);
+                                   }
+
+                                   @Override
+                                   public void onSuccess(final String notUsed) {
+                                       workflowExecutor.invalidateContext(context.getProject());
+                                       workflowExecutor.init(context.getVcsHostingService(), context.getProject());
+                                   }
+                               });
+    }
+
     private class CancelNewBranchCallback implements CancelCallback {
+        private final Context context;
+
+        private CancelNewBranchCallback(final Context context) { this.context = context; }
+
         @Override
         public void cancelled() {
-            view.setContributionBranchName(workflow.getContext().getWorkBranchName());
+            updateView(context, new WorkBranchUpdate());
         }
     }
 }

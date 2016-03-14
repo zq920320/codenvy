@@ -14,6 +14,7 @@
  */
 package com.codenvy.plugin.contribution.vcs.client;
 
+import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.app.CurrentProject;
 
@@ -28,12 +29,10 @@ import static org.eclipse.che.ide.ext.git.client.GitRepositoryInitializer.isGitR
  * @author Kevin Pollet
  */
 public class VcsServiceProvider {
-    private final AppContext    appContext;
     private final GitVcsService gitVcsService;
 
     @Inject
-    public VcsServiceProvider(@NotNull final AppContext appContext, @NotNull final GitVcsService gitVcsService) {
-        this.appContext = appContext;
+    public VcsServiceProvider(@NotNull final GitVcsService gitVcsService) {
         this.gitVcsService = gitVcsService;
     }
 
@@ -43,10 +42,9 @@ public class VcsServiceProvider {
      * @return the {@link com.codenvy.plugin.contribution.vcs.client.VcsService} implementation or {@code null} if not supported or not
      * initialized.
      */
-    public VcsService getVcsService() {
-        final CurrentProject currentProject = appContext.getCurrentProject();
-        if (currentProject != null) {
-            if (isGitRepository(currentProject.getRootProject())) {
+    public VcsService getVcsService(final ProjectConfigDto project) {
+        if (project != null) {
+            if (isGitRepository(project)) {
                 return gitVcsService;
             }
         }

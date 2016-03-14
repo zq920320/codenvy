@@ -12,21 +12,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.steps;
+package com.codenvy.plugin.contribution.client.workflow;
 
-import com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent;
+import com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent;
+import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.commons.annotation.Nullable;
 
-import javax.validation.constraints.NotNull;
-import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
-import static com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent.ContextProperty.CLONED_BRANCH_NAME;
-import static com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent.ContextProperty.PROJECT;
-import static com.codenvy.plugin.contribution.client.steps.events.ContextPropertyChangeEvent.ContextProperty.WORK_BRANCH_NAME;
+import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.READY_TO_UPDATE_PR;
+import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.UPDATING_PR;
+import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.CLONED_BRANCH_NAME;
+import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.PROJECT;
+import static com.codenvy.plugin.contribution.client.events.ContextPropertyChangeEvent.ContextProperty.WORK_BRANCH_NAME;
 
 /**
  * Context used to share information between the steps in the contribution workflow.
@@ -76,18 +80,18 @@ public class Context {
     /** The name of the forked repository. */
     private String forkedRepositoryName;
 
-    private boolean           isUpdateMode;
-    private VcsHostingService vcsVostingService;
-
-    /** The flag that indicates availability of fork functionality on VCS hosting */
-    private boolean forkSupport;
+    private VcsHostingService vcsHostingService;
 
     /** The name of the origin remote. */
-    private String originRemoteName;
+    private String         originRemoteName;
+    private WorkflowStatus status;
+    private Configuration  configuration;
+    public  ViewState      viewState;
+    private VcsService     vcsService;
 
-    @Inject
-    public Context(@NotNull final EventBus eventBus) {
+    public Context(final EventBus eventBus) {
         this.eventBus = eventBus;
+        viewState = new ViewState();
     }
 
     public ProjectConfigDto getProject() {
@@ -129,14 +133,6 @@ public class Context {
 
     public void setHostUserLogin(final String hostUserLogin) {
         this.hostUserLogin = hostUserLogin;
-    }
-
-    public boolean hasForkSupport() {
-        return forkSupport;
-    }
-
-    public void setForkSupport(boolean hasForkSupport) {
-        this.forkSupport = hasForkSupport;
     }
 
     public String getUpstreamRepositoryOwner() {
@@ -258,7 +254,8 @@ public class Context {
         this.forkedRepositoryName = forkedRepositoryName;
     }
 
-    private void fireContextPropertyChange(final ContextPropertyChangeEvent.ContextProperty contextProperty, final Object oldValue,
+    private void fireContextPropertyChange(final ContextPropertyChangeEvent.ContextProperty contextProperty,
+                                           final Object oldValue,
                                            final Object newValue) {
         if (!Objects.equals(oldValue, newValue)) {
             eventBus.fireEvent(new ContextPropertyChangeEvent(this, contextProperty));
@@ -266,19 +263,168 @@ public class Context {
     }
 
     public boolean isUpdateMode() {
-        return isUpdateMode;
-    }
-
-    /** If {@code updateMode} is true then update mode goes */
-    public void setUpdateMode(boolean isUpdateMode) {
-        this.isUpdateMode = isUpdateMode;
+        return status == UPDATING_PR || status == READY_TO_UPDATE_PR;
     }
 
     public VcsHostingService getVcsHostingService() {
-        return vcsVostingService;
+        return vcsHostingService;
     }
 
     public void setVcsHostingService(VcsHostingService service) {
-        this.vcsVostingService = service;
+        this.vcsHostingService = service;
+    }
+
+    @Nullable
+    public WorkflowStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(@Nullable WorkflowStatus status) {
+        this.status = status;
+    }
+
+    public Configuration getConfiguration() {
+        return configuration;
+    }
+
+    public void setConfiguration(Configuration configuration) {
+        this.configuration = configuration;
+    }
+
+    public ViewState getViewState() {
+        return viewState;
+    }
+
+    public void setVcsService(VcsService vcsService) {
+        this.vcsService = vcsService;
+    }
+
+    public VcsService getVcsService() {
+        return vcsService;
+    }
+
+    public static final class ViewState {
+
+        private String        contributionTitle;
+        private String        contributionComment;
+        private StatusMessage statusMessage;
+        private List<Stage>   stages;
+        private int           currentStage;
+
+        private ViewState() {
+            currentStage = 0;
+        }
+
+        public void setStatusMessage(String message, boolean error) {
+            this.statusMessage = new StatusMessage(message, error);
+        }
+
+        public void setStatusMessage(StatusMessage message) {
+            this.statusMessage = message;
+        }
+
+        public void setContributionTitle(String title) {
+            this.contributionTitle = title;
+        }
+
+        public String getContributionTitle() {
+            return contributionTitle;
+        }
+
+        public void setContributionComment(String contributionComment) {
+            this.contributionComment = contributionComment;
+        }
+
+        public String getContributionComment() {
+            return contributionComment;
+        }
+
+        public List<Stage> getStages() {
+            if (stages == null) {
+                stages = new ArrayList<>(3);
+            }
+            return stages;
+        }
+
+        public List<String> getStageNames() {
+            final List<String> statusNames = new ArrayList<>(getStages().size());
+            for (Stage stepStatus : getStages()) {
+                statusNames.add(stepStatus.getName());
+            }
+            return statusNames;
+        }
+
+        public List<Boolean> getStageValues() {
+            final List<Boolean> statusNames = new ArrayList<>(getStages().size());
+            for (Stage stepStatus : getStages()) {
+                statusNames.add(stepStatus.getStatus());
+            }
+            return statusNames;
+        }
+
+        public void resetSteps() {
+            getStages().clear();
+            currentStage = 0;
+        }
+
+        public void setStep(String name, Boolean value) {
+            getStages().add(new Stage(name, value));
+        }
+
+        public void setStages(List<String> stages) {
+            resetSteps();
+            for (String newStage : stages) {
+                setStep(newStage, null);
+            }
+        }
+
+        public StatusMessage getStatusMessage() {
+            return statusMessage;
+        }
+
+        public void setStageDone(boolean stepDone) {
+            getStages().get(currentStage++).setStatus(stepDone);
+        }
+
+        public static class StatusMessage {
+            private final boolean error;
+            private final String  message;
+
+            private StatusMessage(String message, boolean error) {
+                this.message = message;
+                this.error = error;
+            }
+
+            public boolean isError() {
+                return error;
+            }
+
+            public String getMessage() {
+                return message;
+            }
+        }
+
+        public static class Stage {
+            private final String name;
+
+            private Boolean status;
+
+            public Stage(String name, Boolean status) {
+                this.status = status;
+                this.name = name;
+            }
+
+            public String getName() {
+                return name;
+            }
+
+            public Boolean getStatus() {
+                return status;
+            }
+
+            public void setStatus(Boolean status) {
+                this.status = status;
+            }
+        }
     }
 }

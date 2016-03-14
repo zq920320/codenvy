@@ -14,80 +14,59 @@
  */
 package com.codenvy.plugin.contribution.client.steps;
 
-import com.codenvy.plugin.contribution.client.ContributeMessages;
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.VcsService;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
-import com.google.gwt.i18n.client.DateTimeFormat;
 import com.google.gwt.user.client.rpc.AsyncCallback;
+import com.google.inject.Singleton;
 
-import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
-import org.eclipse.che.ide.api.app.AppContext;
-import org.eclipse.che.ide.api.notification.Notification;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 
 import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
-import java.util.Date;
 
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
- * This step defines the working branch for the user contribution.
- * <ul>
- * <li>If the user comes from a contribution factory the contribution branch has to be created automatically.
- * <li>If the project is cloned from GitHub the contribution branch is the current one.
- * </ul>
- * <p>
- * The next step is executed when the user click on the contribute/update
- * button. See {@link com.codenvy.plugin.contribution.client.parts.contribute.ContributePartPresenter#onContribute()}
+ * This step defines the working branch for the user contribution,
+ * sets cloned branch to working branch if cloned branch is not defined.
  *
  * @author Kevin Pollet
+ * @author Yevhenii Voevodin
  */
+@Singleton
 public class DefineWorkBranchStep implements Step {
-    private static final String GENERATED_WORKING_BRANCH_NAME_PREFIX = "contrib-";
 
-    private final ContributeMessages messages;
-    private final NotificationHelper notificationHelper;
-    private final VcsServiceProvider vcsServiceProvider;
-    private final AppContext         appContext;
+    private final NotificationManager notificationManager;
+    private final VcsServiceProvider  vcsServiceProvider;
 
     @Inject
-    public DefineWorkBranchStep(@NotNull final ContributeMessages messages,
-                                @NotNull final NotificationHelper notificationHelper,
-                                @NotNull final VcsServiceProvider vcsServiceProvider,
-                                @NotNull final AppContext appContext) {
-        this.messages = messages;
-        this.notificationHelper = notificationHelper;
+    public DefineWorkBranchStep(final NotificationManager notificationManager, final VcsServiceProvider vcsServiceProvider) {
+        this.notificationManager = notificationManager;
         this.vcsServiceProvider = vcsServiceProvider;
-        this.appContext = appContext;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
-        final Context context = workflow.getContext();
-        final ProjectConfigDto project = appContext.getCurrentProject().getRootProject();
-        final VcsService vcsService = vcsServiceProvider.getVcsService();
+    public void execute(@NotNull final WorkflowExecutor executor, final Context context) {
+        final VcsService vcsService = vcsServiceProvider.getVcsService(context.getProject());
 
         vcsService.getBranchName(context.getProject(), new AsyncCallback<String>() {
             @Override
             public void onFailure(final Throwable exception) {
-                notificationHelper.showError(DefineWorkBranchStep.class, exception);
+                notificationManager.notify(exception.getLocalizedMessage(), FAIL, true);
+                executor.fail(DefineWorkBranchStep.this, context, exception.getLocalizedMessage());
             }
 
             @Override
             public void onSuccess(final String branchName) {
+                if (context.getClonedBranchName() == null) {
+                    context.setClonedBranchName(branchName);
+                }
                 context.setWorkBranchName(branchName);
+                executor.done(DefineWorkBranchStep.this, context);
             }
         });
-    }
-
-    /**
-     * Generates the work branch name used for the contribution.
-     *
-     * @return the work branch name, never {@code null}.
-     */
-    private String generateWorkBranchName() {
-        final DateTimeFormat dateTimeFormat = DateTimeFormat.getFormat("MMddyyyy");
-        return GENERATED_WORKING_BRANCH_NAME_PREFIX + dateTimeFormat.format(new Date());
     }
 }

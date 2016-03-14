@@ -15,11 +15,13 @@
 package com.codenvy.plugin.contribution.client.steps;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
-import com.codenvy.plugin.contribution.client.utils.FactoryHelper;
-import com.codenvy.plugin.contribution.client.utils.NotificationHelper;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.inject.Singleton;
 
 import org.eclipse.che.api.factory.gwt.client.FactoryServiceClient;
 import org.eclipse.che.api.factory.shared.dto.Factory;
@@ -30,43 +32,38 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
+import org.eclipse.che.ide.api.notification.NotificationManager;
 
-import javax.validation.constraints.NotNull;
 import javax.inject.Inject;
 
-import static com.codenvy.plugin.contribution.client.steps.events.StepEvent.Step.GENERATE_REVIEW_FACTORY;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_MODE_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.PULL_REQUEST_ID_VARIABLE_NAME;
-import static java.util.Collections.singletonList;
+import static com.codenvy.plugin.contribution.client.utils.FactoryHelper.getAcceptFactoryUrl;
+import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
  * Generates a factory for the contribution reviewer.
  */
+@Singleton
 public class GenerateReviewFactoryStep implements Step {
-    private final Step                 addReviewFactoryLinkStep;
     private final ContributeMessages   messages;
     private final AppContext           appContext;
-    private final NotificationHelper   notificationHelper;
+    private final NotificationManager  notificationManager;
     private final FactoryServiceClient factoryService;
 
     @Inject
-    public GenerateReviewFactoryStep(final AddReviewFactoryLinkStep addReviewFactoryLinkStep,
-                                     final ContributeMessages messages,
+    public GenerateReviewFactoryStep(final ContributeMessages messages,
                                      final AppContext appContext,
-                                     final NotificationHelper notificationHelper,
+                                     final NotificationManager notificationManager,
                                      final FactoryServiceClient factoryService) {
-        this.addReviewFactoryLinkStep = addReviewFactoryLinkStep;
         this.messages = messages;
         this.appContext = appContext;
-        this.notificationHelper = notificationHelper;
+        this.notificationManager = notificationManager;
         this.factoryService = factoryService;
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
+    public void execute(final WorkflowExecutor executor, final Context context) {
         factoryService.getFactoryJson(appContext.getWorkspaceId(), null)
-                      .then(updateProjectAttributes(workflow))
+                      .then(updateProjectAttributes(context))
                       .then(new Operation<Factory>() {
                           @Override
                           public void apply(Factory factory) throws OperationException {
@@ -74,20 +71,17 @@ public class GenerateReviewFactoryStep implements Step {
                                             .then(new Operation<Factory>() {
                                                 @Override
                                                 public void apply(Factory factory) throws OperationException {
-                                                    workflow.getContext()
-                                                            .setReviewFactoryUrl(FactoryHelper.getAcceptFactoryUrl(factory));
-                                                    workflow.fireStepDoneEvent(GENERATE_REVIEW_FACTORY);
-                                                    workflow.setStep(addReviewFactoryLinkStep);
-                                                    workflow.executeStep();
+                                                    context.setReviewFactoryUrl(getAcceptFactoryUrl(factory));
+                                                    executor.done(GenerateReviewFactoryStep.this, context);
                                                 }
                                             })
                                             .catchError(new Operation<PromiseError>() {
                                                 @Override
                                                 public void apply(PromiseError arg) throws OperationException {
-                                                    notificationHelper.showWarning(messages.stepGenerateReviewFactoryErrorCreateFactory());
-                                                    workflow.fireStepDoneEvent(GENERATE_REVIEW_FACTORY);
-                                                    workflow.setStep(addReviewFactoryLinkStep);
-                                                    workflow.executeStep();
+                                                    notificationManager.notify(messages.stepGenerateReviewFactoryErrorCreateFactory(),
+                                                                               FAIL,
+                                                                               false);
+                                                    executor.done(GenerateReviewFactoryStep.this, context);
                                                 }
                                             });
                           }
@@ -95,15 +89,15 @@ public class GenerateReviewFactoryStep implements Step {
                       .catchError(new Operation<PromiseError>() {
                           @Override
                           public void apply(PromiseError arg) throws OperationException {
-                              notificationHelper.showWarning(messages.stepGenerateReviewFactoryErrorCreateFactory());
-                              workflow.fireStepDoneEvent(GENERATE_REVIEW_FACTORY);
-                              workflow.setStep(addReviewFactoryLinkStep);
-                              workflow.executeStep();
+                              notificationManager.notify(messages.stepGenerateReviewFactoryErrorCreateFactory(),
+                                                         FAIL,
+                                                         false);
+                              executor.done(GenerateReviewFactoryStep.this, context);
                           }
                       });
     }
 
-    private Function<Factory, Factory> updateProjectAttributes(final ContributorWorkflow workflow) {
+    private Function<Factory, Factory> updateProjectAttributes(final Context context) {
         return new Function<Factory, Factory>() {
             @Override
             public Factory apply(Factory factory) throws FunctionException {
@@ -120,14 +114,9 @@ public class GenerateReviewFactoryStep implements Step {
                                                                             .first();
                 if (projectOpt.isPresent()) {
                     final ProjectConfigDto project = projectOpt.get();
-                    // new factory is not a 'contribute workflow factory'
-                    project.getAttributes().remove(CONTRIBUTE_VARIABLE_NAME);
-                    // new factory is in a review mode
-                    project.getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, singletonList("review"));
-                    // remember the related pull request id
-                    project.getAttributes().put(PULL_REQUEST_ID_VARIABLE_NAME, singletonList("notUsed"));
-                    // set factory checkout branch
-                    project.getSource().getParameters().put("branch", workflow.getContext().getWorkBranchName());
+                    if (project.getSource() != null) {
+                        project.getSource().getParameters().put("branch", context.getWorkBranchName());
+                    }
                 }
                 return factory;
             }

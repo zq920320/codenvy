@@ -14,6 +14,9 @@
  */
 package com.codenvy.plugin.contribution.client.steps;
 
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingService;
 import com.codenvy.plugin.contribution.vcs.client.hosting.VcsHostingServiceProvider;
 import com.codenvy.plugin.contribution.vcs.client.hosting.dto.Repository;
@@ -39,12 +42,12 @@ public class WaitForkOnRemoteStep implements Step {
     }
 
     @Override
-    public void execute(@NotNull final ContributorWorkflow workflow) {
+    public void execute(@NotNull final WorkflowExecutor executor, final Context context) {
         if (timer == null) {
             timer = new Timer() {
                 @Override
                 public void run() {
-                    checkRepository(workflow.getContext(), new AsyncCallback<Void>() {
+                    checkRepository(context, new AsyncCallback<Void>() {
                         @Override
                         public void onFailure(final Throwable caught) {
                             timer.schedule(POLL_FREQUENCY_MS);
@@ -52,8 +55,7 @@ public class WaitForkOnRemoteStep implements Step {
 
                         @Override
                         public void onSuccess(final Void result) {
-                            workflow.setStep(nextStep);
-                            workflow.executeStep();
+                            executor.done(WaitForkOnRemoteStep.this, context);
                         }
                     });
                 }
