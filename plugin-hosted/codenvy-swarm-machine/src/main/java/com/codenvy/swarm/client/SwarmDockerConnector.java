@@ -27,12 +27,14 @@ import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnection;
 import org.eclipse.che.plugin.docker.client.connection.DockerConnectionFactory;
 import org.eclipse.che.plugin.docker.client.connection.DockerResponse;
+import org.eclipse.che.plugin.docker.client.dto.AuthConfigs;
 import org.eclipse.che.plugin.docker.client.json.ContainerConfig;
 import org.eclipse.che.plugin.docker.client.json.ContainerCreated;
 import org.eclipse.che.plugin.docker.client.json.SystemInfo;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URI;
@@ -41,7 +43,6 @@ import java.util.List;
 
 import static com.google.common.base.MoreObjects.firstNonNull;
 import static com.google.common.primitives.Ints.tryParse;
-import static javax.ws.rs.core.Response.Status.OK;
 
 /**
  * Swarm implementation of {@link DockerConnector} that can be used on distributed system
@@ -94,6 +95,21 @@ public class SwarmDockerConnector extends DockerConnector {
         }
     }
 
+    @Override
+    public String buildImage(String repository,
+                             ProgressMonitor progressMonitor,
+                             AuthConfigs authConfigs,
+                             boolean doForcePull,
+                             long memoryLimit,
+                             long memorySwapLimit,
+                             File... files) throws IOException, InterruptedException {
+        try {
+            return super.buildImage(repository, progressMonitor, authConfigs, doForcePull, memoryLimit, memorySwapLimit, files);
+        } catch (DockerException e) {
+            throw decorateMessage(e);
+        }
+    }
+
     /**
      * Overrides method to return user-friendly error if no resource left to schedule container
      */
@@ -102,13 +118,17 @@ public class SwarmDockerConnector extends DockerConnector {
         try {
             return super.createContainer(containerConfig, containerName);
         } catch (DockerException e) {
-            if (e.getOriginError().contains("no resources available to schedule container")) {
-                e = new DockerException("The system is out of resources. Please contact your system admin.",
-                                        e.getOriginError(),
-                                        e.getStatus());
-            }
-            throw e;
+            throw decorateMessage(e);
         }
+    }
+
+    private DockerException decorateMessage(DockerException e) {
+        if (e.getOriginError().contains("no resources available to schedule container")) {
+            e = new DockerException("The system is out of resources. Please contact your system admin.",
+                                    e.getOriginError(),
+                                    e.getStatus());
+        }
+        return e;
     }
 
     /**
