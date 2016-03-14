@@ -30,8 +30,7 @@ import javax.inject.Inject;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
- * This step defines the working branch for the user contribution,
- * sets cloned branch to working branch if cloned branch is not defined.
+ * This step defines the working branch for the user contribution.
  *
  * @author Kevin Pollet
  * @author Yevhenii Voevodin
@@ -61,9 +60,6 @@ public class DefineWorkBranchStep implements Step {
 
             @Override
             public void onSuccess(final String branchName) {
-                if (context.getClonedBranchName() == null) {
-                    context.setClonedBranchName(branchName);
-                }
                 context.setWorkBranchName(branchName);
                 executor.done(DefineWorkBranchStep.this, context);
             }
