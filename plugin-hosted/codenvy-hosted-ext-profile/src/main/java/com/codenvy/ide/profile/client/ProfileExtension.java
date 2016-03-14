@@ -23,8 +23,6 @@ import org.eclipse.che.ide.api.extension.Extension;
 
 import com.codenvy.ide.profile.client.action.RedirectToDashboardAccountAction;
 
-import com.codenvy.ide.profile.client.action.RedirectToDashboardProjectsAction;
-import com.codenvy.ide.profile.client.action.RedirectToDashboardWorkspacesAction;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -42,20 +40,11 @@ public class ProfileExtension {
     @Inject
     public ProfileExtension(ActionManager actionManager,
                             RedirectToDashboardAccountAction redirectToDashboardAccountAction,
-                            RedirectToDashboardProjectsAction redirectToDashboardProjectsAction,
-                            RedirectToDashboardWorkspacesAction redirectToDashboardWorkspacesAction,
                             ProfileLocalizationConstant localizationConstant) {
 
-        DefaultActionGroup mainMenu = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_MAIN_MENU);
-        DefaultActionGroup profileActionGroup = new DefaultActionGroup(localizationConstant.profileActionGroup(), true, actionManager);
         actionManager.registerAction(localizationConstant.redirectToDashboardAccountAction(), redirectToDashboardAccountAction);
-        actionManager.registerAction(localizationConstant.redirectToDashboardProjectsAction(), redirectToDashboardProjectsAction);
-        actionManager.registerAction(localizationConstant.redirectToDashboardWorkspacesAction(), redirectToDashboardWorkspacesAction);
-        Constraints constraint = new Constraints(Anchor.BEFORE, IdeActions.GROUP_HELP);
-        mainMenu.add(profileActionGroup, constraint);
-        profileActionGroup.add(redirectToDashboardAccountAction);
-        profileActionGroup.add(redirectToDashboardProjectsAction);
-        profileActionGroup.add(redirectToDashboardWorkspacesAction);
+        Constraints constraint = new Constraints(Anchor.FIRST, null);
+        DefaultActionGroup profileActionGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_PROFILE);
+        profileActionGroup.add(redirectToDashboardAccountAction, constraint);
     }
-
 }

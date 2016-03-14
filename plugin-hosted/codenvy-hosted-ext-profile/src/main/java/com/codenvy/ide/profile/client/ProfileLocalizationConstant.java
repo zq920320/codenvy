@@ -42,28 +42,4 @@ public interface ProfileLocalizationConstant extends Messages {
     @Key("action.redirectToDashboardAccount.description")
     String redirectToDashboardAccountDescription();
 
-    @Key("action.redirectToDashboardProjects.action")
-    String redirectToDashboardProjectsAction();
-
-    @Key("action.redirectToDashboardProjects.url")
-    String redirectToDashboardProjectsUrl();
-
-    @Key("action.redirectToDashboardProjects.title")
-    String redirectToDashboardProjectsTitle();
-
-    @Key("action.redirectToDashboardProjects.description")
-    String redirectToDashboardProjectsDescription();
-
-    @Key("action.redirectToDashboardWorkspaces.action")
-    String redirectToDashboardWorkspacesAction();
-
-    @Key("action.redirectToDashboardWorkspaces.url")
-    String redirectToDashboardWorkspacesUrl();
-
-    @Key("action.redirectToDashboardWorkspaces.title")
-    String redirectToDashboardWorkspacesTitle();
-
-    @Key("action.redirectToDashboardWorkspaces.description")
-    String redirectToDashboardWorkspacesDescription();
-
 }
