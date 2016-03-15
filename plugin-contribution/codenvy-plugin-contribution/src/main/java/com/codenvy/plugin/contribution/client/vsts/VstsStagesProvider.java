@@ -18,6 +18,7 @@ import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
 import com.codenvy.plugin.contribution.client.steps.CheckBranchToPush;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
+import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.PushBranchOnOriginStep;
 import com.codenvy.plugin.contribution.client.workflow.Step;
@@ -73,6 +74,6 @@ public class VstsStagesProvider implements StagesProvider {
 
     @Override
     public Class<? extends Step> getDisplayStagesType(Context context) {
-        return CommitWorkingTreeStep.class;
+        return context.isUpdateMode() ? CommitWorkingTreeStep.class : DetectPullRequestStep.class;
     }
 }
