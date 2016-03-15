@@ -119,7 +119,6 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/ssh/*",
                "/ssh")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filter("/*").through(com.codenvy.workspace.activity.LastAccessTimeFilter.class);
 
         final Map<String, String> corsFilterParams = new HashMap<>();
         corsFilterParams.put("cors.allowed.origins", "*");
