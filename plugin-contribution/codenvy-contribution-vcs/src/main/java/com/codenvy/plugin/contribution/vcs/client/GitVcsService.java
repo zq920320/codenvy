@@ -28,6 +28,9 @@ import org.eclipse.che.api.git.shared.Status;
 import org.eclipse.che.api.promises.client.Function;
 import org.eclipse.che.api.promises.client.FunctionException;
 import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.PromiseError;
+import org.eclipse.che.api.promises.client.js.JsPromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.dto.DtoFactory;
@@ -40,6 +43,7 @@ import org.eclipse.che.ide.websocket.rest.RequestCallback;
 import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -273,6 +277,21 @@ public class GitVcsService implements VcsService {
                              }
                          }
                      });
+    }
+
+    @Override
+    public Promise<PushResponse> pushBranch(final ProjectConfigDto project, final String remote, final String localBranchName) {
+        return service.push(appContext.getWorkspaceId(), project, Collections.singletonList(localBranchName), remote, true)
+                      .catchErrorPromise(new Function<PromiseError, Promise<PushResponse>>() {
+                          @Override
+                          public Promise<PushResponse> apply(PromiseError error) throws FunctionException {
+                              if (BRANCH_UP_TO_DATE_ERROR_MESSAGE.equalsIgnoreCase(error.getMessage())) {
+                                  return Promises.reject(JsPromiseError.create(new BranchUpToDateException(localBranchName)));
+                              } else {
+                                  return Promises.reject(error);
+                              }
+                          }
+                      });
     }
 
     /**

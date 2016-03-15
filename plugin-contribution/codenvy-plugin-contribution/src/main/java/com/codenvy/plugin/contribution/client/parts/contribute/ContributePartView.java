@@ -14,8 +14,6 @@
  */
 package com.codenvy.plugin.contribution.client.parts.contribute;
 
-import com.google.gwt.event.dom.client.ChangeHandler;
-
 import org.eclipse.che.ide.api.mvp.View;
 import org.eclipse.che.ide.api.parts.base.BaseActionDelegate;
 

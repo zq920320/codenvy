@@ -82,6 +82,8 @@ public class PushBranchStep implements SyntheticStep {
                .then(new Operation<PullRequest>() {
                    @Override
                    public void apply(PullRequest pullRequest) throws OperationException {
+                       context.setPullRequest(pullRequest);
+                       context.getConfiguration().withContributionComment(pullRequest.getDescription());
                        final ConfirmCallback okCallback = new ConfirmCallback() {
                            @Override
                            public void accepted() {

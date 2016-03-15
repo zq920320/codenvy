@@ -18,6 +18,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Promise;
+import org.eclipse.che.api.promises.client.js.JsPromiseError;
+import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
@@ -372,5 +374,25 @@ public class BitbucketClientService {
 
         final String requestUrl = baseUrl + SSH_KEYS;
         asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
+    }
+
+    /**
+     * Updates pull request information e.g. title, description
+     *
+     * @param owner
+     *         name of repository owner
+     * @param repository
+     *         name of repository
+     * @param pullRequestId
+     *         updated pull request id
+     * @param pullRequest
+     *         pull request for update
+     * @return updated pull request
+     */
+    public Promise<BitbucketPullRequest> updatePullRequest(final String owner,
+                                                           final String repository,
+                                                           final String pullRequestId,
+                                                           final BitbucketPullRequest pullRequest) {
+        return Promises.reject(JsPromiseError.create("Not implemented yet"));
     }
 }

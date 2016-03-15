@@ -165,11 +165,27 @@ public interface VcsService {
      *         the project descriptor.
      * @param remote
      *         the remote name
-     * @param localBranchNameToPush
+     * @param localBranchName
      *         the local branch name
      * @param callback
      *         callback when the operation is done.
      */
-    void pushBranch(@NotNull ProjectConfigDto project, @NotNull String remote, @NotNull String localBranchNameToPush,
+    void pushBranch(@NotNull ProjectConfigDto project,
+                    @NotNull String remote,
+                    @NotNull String localBranchName,
                     @NotNull AsyncCallback<PushResponse> callback);
+
+    /**
+     * Push a local branch to remote.
+     *
+     * @param project
+     *         the project descriptor.
+     * @param remote
+     *         the remote name
+     * @param localBranchName
+     *         the local branch name
+     */
+    Promise<PushResponse> pushBranch(ProjectConfigDto project,
+                                     String remote,
+                                     String localBranchName);
 }
