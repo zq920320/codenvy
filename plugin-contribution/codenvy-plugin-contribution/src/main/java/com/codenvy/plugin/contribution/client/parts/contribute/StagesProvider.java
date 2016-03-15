@@ -68,4 +68,17 @@ public interface StagesProvider {
      * @return error react classes
      */
     Set<Class<? extends Step>> getStepErrorTypes(final Context context);
+
+    /**
+     * Stages are shown only once and the time to show stages is defined
+     * by return type of this method. If that step(which type is returned) is
+     * successfully executed then {@link #getStages(Context)} method will be used
+     * to show the stages. It is needed for dynamic stages list detection
+     * (e.g. when workflow configures context in create/update chains).
+     *
+     * @param context
+     *         current execution context
+     * @return returns step class after which successful execution stages should be shown
+     */
+    Class<? extends Step> getDisplayStagesType(final Context context);
 }

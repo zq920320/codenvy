@@ -70,6 +70,8 @@ import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.REA
 import static com.codenvy.plugin.contribution.client.workflow.WorkflowStatus.READY_TO_UPDATE_PR;
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
+import static java.util.Arrays.copyOf;
+import static java.util.Arrays.copyOfRange;
 import static org.eclipse.che.ide.api.constraints.Constraints.LAST;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
@@ -163,7 +165,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     public void onContribute() {
         final Context context = workflowExecutor.getCurrentContext();
         context.getViewState().setStatusMessage(null);
-        context.getViewState().setStages(getProvidedStages(context));
+        context.getViewState().resetStages();
 
         updateView(context,
                    new NewContributionPanelUpdate(),
@@ -371,9 +373,16 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     public void onStepDone(final StepEvent event) {
         final Class<? extends Step> stepClass = event.getStep().getClass();
         final Context context = event.getContext();
+
+        // if it is necessarily to display stages on this step
+        if (getProvider(context).getDisplayStagesType(context) == stepClass) {
+            context.getViewState().setStages(getProvidedStages(context));
+            updateView(context, new StatusSectionUpdate());
+        }
+
         // if current step is in list of provided stages types
         // then this step is done and view should be affected
-        if (getProvidedStepDoneTypes(context).contains(stepClass)) {
+        if (!context.getViewState().getStages().isEmpty() && getProvidedStepDoneTypes(context).contains(stepClass)) {
             context.getViewState().setStageDone(true);
             updateView(context, new DisplayCurrentStepResultUpdate(true));
         } else if (stepClass == ChangeContextStatusStep.class) {
@@ -411,7 +420,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
         final Context context = event.getContext();
         if (stepClass == CommitWorkingTreeStep.class) {
             if (!context.isUpdateMode()) {
-                context.getViewState().resetSteps();
+                context.getViewState().resetStages();
                 context.getViewState().setStatusMessage(null);
                 updateView(context,
                            new StatusSectionUpdate(),
@@ -419,7 +428,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
                            new NewContributionPanelUpdate(),
                            new ContributionButtonUpdate(messages));
             } else {
-                context.getViewState().resetSteps();
+                context.getViewState().resetStages();
                 context.getViewState().setStatusMessage(event.getMessage(), true);
                 updateView(context,
                            new StatusSectionUpdate(),

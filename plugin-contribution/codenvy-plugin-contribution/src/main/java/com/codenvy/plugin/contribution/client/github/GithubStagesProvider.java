@@ -16,6 +16,7 @@ package com.codenvy.plugin.contribution.client.github;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
+import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
@@ -75,5 +76,10 @@ public class GithubStagesProvider implements StagesProvider {
     @Override
     public Set<Class<? extends Step>> getStepErrorTypes(Context context) {
         return getStepDoneTypes(context);
+    }
+
+    @Override
+    public Class<? extends Step> getDisplayStagesType(Context context) {
+        return CommitWorkingTreeStep.class;
     }
 }

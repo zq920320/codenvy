@@ -362,7 +362,7 @@ public class Context {
             return statusNames;
         }
 
-        public void resetSteps() {
+        public void resetStages() {
             getStages().clear();
             currentStage = 0;
         }
@@ -372,7 +372,7 @@ public class Context {
         }
 
         public void setStages(List<String> stages) {
-            resetSteps();
+            resetStages();
             for (String newStage : stages) {
                 setStep(newStage, null);
             }
