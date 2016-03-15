@@ -32,6 +32,8 @@ public interface ContributeResources extends ClientBundle {
     interface ContributeCss extends CssResource {
         String blueButton();
 
+        String openOnVcsButton();
+
         String errorMessage();
 
         String inputError();

@@ -203,7 +203,7 @@
                 <g:InlineLabel ui:field="statusSectionMessage" addStyleNames="{style.statusMessage}" debugId="statusSectionMessage"/>
             </g:FlowPanel>
             <g:HTMLPanel ui:field="newContributionSection" addStyleNames="{style.section} {style.newContribution} {style.border}">
-                <g:Button ui:field="openPullRequestOnVcsHostButton"/>
+                <g:Button ui:field="openPullRequestOnVcsHostButton" addStyleNames="{resources.contributeCss.openOnVcsButton}"/>
                 <g:Button ui:field="newContributionButton" addStyleNames="{resources.contributeCss.blueButton}"
                           text="{messages.contributePartNewContributionSectionButtonNewText}"/>
             </g:HTMLPanel>

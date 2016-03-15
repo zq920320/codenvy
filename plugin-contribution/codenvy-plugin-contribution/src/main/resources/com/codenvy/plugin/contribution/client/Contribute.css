@@ -16,6 +16,11 @@
     background: primaryButtonBackground;
     border: 1px solid primaryButtonBorderColor;
     color: primaryButtonFontColor;
+    width: 166px;
+}
+
+.openOnVcsButton {
+    width: 166px;
 }
 
 .blueButton:hover {

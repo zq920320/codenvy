@@ -54,7 +54,7 @@ import static org.eclipse.che.ide.util.ExceptionUtils.getErrorCode;
  */
 public class MicrosoftHostingService implements VcsHostingService {
 
-    public static final String SERVICE_NAME = "VSTS";
+    public static final String SERVICE_NAME = "visualstudio";
 
     private static final RegExp MICROSOFT_GIT_PATTERN = RegExp.compile("https://([0-9a-zA-Z-_.%]+)\\.visualstudio\\.com/.+/_git/.+");
 
