@@ -443,6 +443,8 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
                        new StatusMessageUpdate(),
                        new ContributionButtonUpdate(messages));
         } else {
+            context.getViewState().resetStages();
+            restore(context);
             Log.error(ContributePartPresenter.class, "Step error: ", event.getMessage());
         }
     }

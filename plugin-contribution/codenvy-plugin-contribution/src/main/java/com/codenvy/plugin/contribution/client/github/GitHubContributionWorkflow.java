@@ -20,6 +20,7 @@ import com.codenvy.plugin.contribution.client.steps.AuthorizeCodenvyOnVCSHostSte
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
 import com.codenvy.plugin.contribution.client.steps.DefineWorkBranchStep;
+import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.DetermineUpstreamRepositoryStep;
 import com.codenvy.plugin.contribution.client.steps.GenerateReviewFactoryStep;
 import com.codenvy.plugin.contribution.client.steps.InitializeWorkflowContextStep;
@@ -51,6 +52,7 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
     private final AddReviewFactoryLinkStep        addReviewFactoryLinkStep;
     private final IssuePullRequestStep            issuePullRequestStep;
     private final UpdatePullRequestStep           updatePullRequestStep;
+    private final DetectPullRequestStep           detectPullRequestStep;
 
     @Inject
     public GitHubContributionWorkflow(InitializeWorkflowContextStep initializeWorkflowContextStep,
@@ -64,7 +66,8 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
                                       GenerateReviewFactoryStep generateReviewFactoryStep,
                                       AddReviewFactoryLinkStep addReviewFactoryLinkStep,
                                       IssuePullRequestStep issuePullRequestStep,
-                                      UpdatePullRequestStep updatePullRequestStep) {
+                                      UpdatePullRequestStep updatePullRequestStep,
+                                      DetectPullRequestStep detectPullRequestStep) {
         this.initializeWorkflowContextStep = initializeWorkflowContextStep;
         this.defineWorkBranchStep = defineWorkBranchStep;
         this.commitWorkingTreeStep = commitWorkingTreeStep;
@@ -77,6 +80,7 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
         this.addReviewFactoryLinkStep = addReviewFactoryLinkStep;
         this.issuePullRequestStep = issuePullRequestStep;
         this.updatePullRequestStep = updatePullRequestStep;
+        this.detectPullRequestStep = detectPullRequestStep;
     }
 
     @Override
@@ -90,6 +94,7 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
         return StepsChain.first(commitWorkingTreeStep)
                          .then(authorizeCodenvyOnVCSHostStep)
                          .then(determineUpstreamRepositoryStep)
+                         .then(detectPullRequestStep)
                          .then(createForkStep)
                          .then(addForkRemoteStep)
                          .then(pushBranchOnForkStep)
@@ -107,6 +112,12 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
     public StepsChain updateChain(final Context context) {
         return StepsChain.first(commitWorkingTreeStep)
                          .then(authorizeCodenvyOnVCSHostStep)
+                         .thenIf(new Supplier<Boolean>() {
+                             @Override
+                             public Boolean get() {
+                                 return context.getForkedRemoteName() == null;
+                             }
+                         }, addForkRemoteStep)
                          .then(pushBranchOnForkStep)
                          .then(updatePullRequestStep);
     }

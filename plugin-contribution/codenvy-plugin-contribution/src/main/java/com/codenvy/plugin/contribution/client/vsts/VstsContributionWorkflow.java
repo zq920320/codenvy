@@ -19,6 +19,7 @@ import com.codenvy.plugin.contribution.client.steps.AuthorizeCodenvyOnVCSHostSte
 import com.codenvy.plugin.contribution.client.steps.CheckBranchToPush;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.contribution.client.steps.DefineWorkBranchStep;
+import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.DetermineUpstreamRepositoryStep;
 import com.codenvy.plugin.contribution.client.steps.GenerateReviewFactoryStep;
 import com.codenvy.plugin.contribution.client.steps.InitializeWorkflowContextStep;
@@ -46,6 +47,7 @@ public class VstsContributionWorkflow implements ContributionWorkflow {
     private final IssuePullRequestStep            issuePullRequestStep;
     private final UpdatePullRequestStep           updatePullRequestStep;
     private final CheckBranchToPush               checkBranchToPushIsDifferentFromClonedBranchStep;
+    private final DetectPullRequestStep           detectPullRequestStep;
 
     @Inject
     public VstsContributionWorkflow(InitializeWorkflowContextStep initializeWorkflowContextStep,
@@ -58,7 +60,8 @@ public class VstsContributionWorkflow implements ContributionWorkflow {
                                     AddReviewFactoryLinkStep addReviewFactoryLinkStep,
                                     IssuePullRequestStep issuePullRequestStep,
                                     UpdatePullRequestStep updatePullRequestStep,
-                                    CheckBranchToPush checkBranchToPushIsDifferentFromClonedBranchStep) {
+                                    CheckBranchToPush checkBranchToPushIsDifferentFromClonedBranchStep,
+                                    DetectPullRequestStep detectPullRequestStep) {
         this.initializeWorkflowContextStep = initializeWorkflowContextStep;
         this.defineWorkBranchStep = defineWorkBranchStep;
         this.commitWorkingTreeStep = commitWorkingTreeStep;
@@ -70,6 +73,7 @@ public class VstsContributionWorkflow implements ContributionWorkflow {
         this.issuePullRequestStep = issuePullRequestStep;
         this.updatePullRequestStep = updatePullRequestStep;
         this.checkBranchToPushIsDifferentFromClonedBranchStep = checkBranchToPushIsDifferentFromClonedBranchStep;
+        this.detectPullRequestStep = detectPullRequestStep;
     }
 
     @Override
@@ -84,6 +88,7 @@ public class VstsContributionWorkflow implements ContributionWorkflow {
                          .then(checkBranchToPushIsDifferentFromClonedBranchStep)
                          .then(authorizeCodenvyOnVCSHostStep)
                          .then(determineUpstreamRepositoryStep)
+                         .then(detectPullRequestStep)
                          .then(pushBranchOnOriginStep)
                          .then(generateReviewFactoryStep)
                          .thenIf(new Supplier<Boolean>() {

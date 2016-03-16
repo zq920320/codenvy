@@ -146,6 +146,11 @@ public interface ContributeMessages extends Messages {
     @Key("step.check_branch_to_push.cloned_branch_is_equal_to_work_branch")
     String stepCheckBranchClonedBranchIsEqualToWorkBranch();
 
+    @Key("step.detect_pr.pr_exists_title")
+    String stepDetectPrExistsTitle();
+
+    @Key("step.detect_pr.pr_exists_body")
+    String stepDetectPrExistsTitle(String branch);
     /*
      * Init workflow step
      */

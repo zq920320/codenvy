@@ -43,7 +43,6 @@ import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.rest.Unmarshallable;
-import org.eclipse.che.ide.util.loging.Log;
 import org.eclipse.che.security.oauth.JsOAuthWindow;
 import org.eclipse.che.security.oauth.OAuthCallback;
 import org.eclipse.che.security.oauth.OAuthStatus;
@@ -314,19 +313,16 @@ public class GitHubHostingService implements VcsHostingService {
 
     @Override
     public Promise<PullRequest> getPullRequest(String owner, String repository, String username, final String branchName) {
-
-        final String qualifiedBranchName = username + ":" + branchName;
-
-        return getPullRequests(owner, repository).thenPromise(new Function<List<PullRequest>, Promise<PullRequest>>() {
-            @Override
-            public Promise<PullRequest> apply(List<PullRequest> pullRequests) throws FunctionException {
-                final PullRequest pullRequest = getPullRequestByBranch(qualifiedBranchName, pullRequests);
-                if (pullRequest != null) {
-                    return Promises.resolve(pullRequest);
-                }
-                return Promises.reject(JsPromiseError.create(new NoPullRequestException(branchName)));
-            }
-        });
+        return gitHubClientService.getPullRequests(owner, repository, username + ':' + branchName)
+                                  .thenPromise(new Function<GitHubPullRequestList, Promise<PullRequest>>() {
+                                      @Override
+                                      public Promise<PullRequest> apply(GitHubPullRequestList prsList) throws FunctionException {
+                                          if (prsList.getPullRequests().isEmpty()) {
+                                              return Promises.reject(JsPromiseError.create(new NoPullRequestException(branchName)));
+                                          }
+                                          return Promises.resolve(valueOf(prsList.getPullRequests().get(0)));
+                                      }
+                                  });
     }
 
     /**
