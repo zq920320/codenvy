@@ -75,8 +75,8 @@ public class PromptToLoginViewImpl extends Window implements PromptToLoginView {
         buttonCreateAccount.getElement().getStyle().setProperty("height", "24px");
         buttonCreateAccount.getElement().getStyle().setProperty("lineHeight", "24px");
 
-        getFooter().add(buttonCreateAccount);
-        getFooter().add(buttonLogin);
+        addButtonToFooter(buttonCreateAccount);
+        addButtonToFooter(buttonLogin);
     }
 
     @Override

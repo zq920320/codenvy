@@ -67,7 +67,7 @@ public class ImportFromConfigViewImpl extends Window implements ImportFromConfig
                 delegate.onCancelClicked();
             }
         });
-        getFooter().add(btnCancel);
+        addButtonToFooter(btnCancel);
 
         buttonImport = createButton(locale.importButton(), "import-from-config-btn-import", new ClickHandler() {
             @Override
@@ -75,7 +75,7 @@ public class ImportFromConfigViewImpl extends Window implements ImportFromConfig
                 delegate.onImportClicked();
             }
         });
-        getFooter().add(buttonImport);
+        addButtonToFooter(buttonImport);
     }
 
     /** {@inheritDoc} */
