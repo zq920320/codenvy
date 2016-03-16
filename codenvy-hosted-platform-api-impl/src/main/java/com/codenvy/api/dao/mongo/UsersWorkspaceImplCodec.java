@@ -239,7 +239,8 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
     private static ServerConfImpl asServerConf(Document document) {
         return new ServerConfImpl(document.getString("ref"),
                                   document.getString("port"),
-                                  document.getString("protocol"));
+                                  document.getString("protocol"),
+                                  document.getString("path"));
     }
 
     private static MachineConfigImpl asMachineConfig(Document document) {
@@ -290,7 +291,8 @@ public class UsersWorkspaceImplCodec implements Codec<UsersWorkspaceImpl> {
                                          .stream()
                                          .map(server -> new Document().append("ref", server.getRef())
                                                                       .append("port", server.getPort())
-                                                                      .append("protocol", server.getProtocol()))
+                                                                      .append("protocol", server.getProtocol())
+                                                                      .append("path", server.getPath()))
                                          .collect(toList()));
 
         return document;

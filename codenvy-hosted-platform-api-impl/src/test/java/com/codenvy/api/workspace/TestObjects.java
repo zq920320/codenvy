@@ -87,8 +87,8 @@ public final class TestObjects {
                                      new MachineSourceImpl("recipe",
                                                            "recipe-location"),
                                      new LimitsImpl(ramLimit),
-                                     Arrays.asList(new ServerConfImpl("ref1", "8080/tcp", "https"),
-                                                   new ServerConfImpl("ref2", "9090/udp", "protocol")),
+                                     Arrays.asList(new ServerConfImpl("ref1", "8080/tcp", "https", "some/path"),
+                                                   new ServerConfImpl("ref2", "9090/udp", "protocol", "/some/path")),
                                      Collections.singletonMap("key1", "value1"));
     }
 

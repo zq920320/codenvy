@@ -289,6 +289,8 @@ public class StackDaoImplTest extends BaseDaoTest {
         assertTrue(StackImpls.get(0).equals(expected));
     }
 
+    // suppress warnings about unchecked cast because we have to cast Mongo documents to lists
+    @SuppressWarnings("unchecked")
     @Test
     public void encodeStackTest() {
         // mocking DocumentCodec
@@ -429,6 +431,26 @@ public class StackDaoImplTest extends BaseDaoTest {
 
                     assertEquals(limitsDoc.getInteger("ram", 0), machine.getLimits().getRam(), "Machine RAM limit");
                 }
+
+                List<Document> serversDocs = (List<Document>)machineDoc.get("servers");
+                assertEquals(serversDocs.size(), machine.getServers().size());
+                for (int j = 0; j < serversDocs.size(); ++j) {
+                    Document serverDoc = serversDocs.get(j);
+                    ServerConfImpl server = machine.getServers().get(j);
+                    assertEquals(serverDoc.getString("ref"), server.getRef());
+                    assertEquals(serverDoc.getString("port"), server.getPort());
+                    assertEquals(serverDoc.getString("protocol"), server.getProtocol());
+                    assertEquals(serverDoc.getString("path"), server.getPath());
+                }
+
+                List<Document> envVariablesDocs = (List<Document>)machineDoc.get("envVariables");
+                assertEquals(envVariablesDocs.size(), machine.getEnvVariables().size());
+                for (Document envVarDoc : envVariablesDocs) {
+                    final String envVarName = envVarDoc.getString("name");
+                    final String envVarValue = envVarDoc.getString("value");
+
+                    assertEquals(machine.getEnvVariables().get(envVarName), envVarValue, "envVariable value");
+                }
             }
         }
     }
@@ -491,16 +513,28 @@ public class StackDaoImplTest extends BaseDaoTest {
                                                                     "machine-type",
                                                                     machineSource,
                                                                     new LimitsImpl(512),
-                                                                    Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
-                                                                                  new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                                    Arrays.asList(new ServerConfImpl("ref1",
+                                                                                                     "8080",
+                                                                                                     "https",
+                                                                                                     "some/path"),
+                                                                                  new ServerConfImpl("ref2",
+                                                                                                     "9090/udp",
+                                                                                                     "someprotocol",
+                                                                                                     "/some/path")),
                                                                     Collections.singletonMap("key1", "value1"));
         final MachineConfigImpl machineCfg2 = new MachineConfigImpl(false,
                                                                     "non-dev-machine",
                                                                     "machine-type-2",
                                                                     machineSource,
                                                                     new LimitsImpl(2048),
-                                                                    Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
-                                                                                  new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                                    Arrays.asList(new ServerConfImpl("ref1",
+                                                                                                     "8080",
+                                                                                                     "https",
+                                                                                                     "some/path"),
+                                                                                  new ServerConfImpl("ref2",
+                                                                                                     "9090/udp",
+                                                                                                     "someprotocol",
+                                                                                                     "/some/path")),
                                                                     Collections.singletonMap("key1", "value1"));
 
         final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
