@@ -64,7 +64,7 @@ public class UpdatePullRequestStep implements Step {
                               if (!Strings.isNullOrEmpty(factoryId)) {
                                   updateFactory(executor, context, factoryId, currentFactory);
                               } else {
-                                  addReviewUrl(executor, currentFactory, pullRequest, context, context.getConfiguration());
+                                  addReviewUrl(executor, context, currentFactory);
                               }
                           }
                       })
@@ -82,36 +82,70 @@ public class UpdatePullRequestStep implements Step {
                                      context.setReviewFactoryUrl(FactoryHelper.getAcceptFactoryUrl(updatedFactory));
                                      executor.done(UpdatePullRequestStep.this, context);
                                  }
+                             })
+                             .catchError(new Operation<PromiseError>() {
+                                 @Override
+                                 public void apply(PromiseError error) throws OperationException {
+                                     createNewFactory(executor,
+                                                      context,
+                                                      currentFactory,
+                                                      new Operation<Factory>() {
+                                                          @Override
+                                                          public void apply(Factory factory) throws OperationException {
+                                                              final PullRequest pull = context.getPullRequest();
+                                                              doUpdate(executor,
+                                                                       context,
+                                                                       pull,
+                                                                       pull.getDescription().replaceAll(factoryId, factory.getId()));
+                                                          }
+                                                      });
+                                 }
                              });
     }
 
     private void addReviewUrl(final WorkflowExecutor executor,
-                              final Factory currentFactory,
-                              final PullRequest pullRequest,
                               final Context context,
-                              final Configuration configuration) {
-        factoryService.saveFactory(currentFactory)
-                      .then(new Operation<Factory>() {
-                          @Override
-                          public void apply(Factory factory) throws OperationException {
-                              final String reviewUrl = context.getVcsHostingService()
-                                                              .formatReviewFactoryUrl(FactoryHelper.getAcceptFactoryUrl(factory));
-                              context.setReviewFactoryUrl(reviewUrl);
-                              final String comment = reviewUrl + "\n" + configuration.getContributionComment();
-                              configuration.withContributionComment(comment);
-                              context.getVcsHostingService()
-                                     .updatePullRequest(context.getOriginRepositoryOwner(),
-                                                        context.getUpstreamRepositoryName(),
-                                                        pullRequest.withDescription(comment))
-                                     .then(new Operation<PullRequest>() {
-                                         @Override
-                                         public void apply(PullRequest pr) throws OperationException {
-                                             executor.done(UpdatePullRequestStep.this, context);
-                                         }
-                                     })
-                                     .catchError(handleError(executor, context));
-                          }
-                      });
+                              final Factory currentFactory) {
+        createNewFactory(executor,
+                         context,
+                         currentFactory,
+                         new Operation<Factory>() {
+                             @Override
+                             public void apply(Factory factory) throws OperationException {
+                                 final Configuration configuration = context.getConfiguration();
+                                 final String reviewUrl = context.getVcsHostingService()
+                                                                 .formatReviewFactoryUrl(FactoryHelper.getAcceptFactoryUrl(factory));
+                                 context.setReviewFactoryUrl(reviewUrl);
+                                 final String comment = reviewUrl + "\n" + configuration.getContributionComment();
+                                 configuration.withContributionComment(comment);
+                                 doUpdate(executor, context, context.getPullRequest(), comment);
+                             }
+                         });
+    }
+
+
+    private void createNewFactory(final WorkflowExecutor executor,
+                                  final Context context,
+                                  final Factory factory,
+                                  Operation<Factory> operation) {
+        factoryService.saveFactory(factory).then(operation).catchError(handleError(executor, context));
+    }
+
+    private void doUpdate(final WorkflowExecutor executor,
+                          final Context context,
+                          final PullRequest pullRequest,
+                          final String comment) {
+        context.getVcsHostingService()
+               .updatePullRequest(context.getOriginRepositoryOwner(),
+                                  context.getUpstreamRepositoryName(),
+                                  pullRequest.withDescription(comment))
+               .then(new Operation<PullRequest>() {
+                   @Override
+                   public void apply(PullRequest pr) throws OperationException {
+                       executor.done(UpdatePullRequestStep.this, context);
+                   }
+               })
+               .catchError(handleError(executor, context));
     }
 
     private String extractFactoryId(String description) {
