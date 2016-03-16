@@ -117,7 +117,9 @@ public class RouterMachineManager extends MachineManager {
             }
 
             serversWithRewrittenUrls.put(exposedPort + "/tcp", new ServerImpl(serverWithRealAddress.getRef(),
+                                                                              serverWithRealAddress.getProtocol(),
                                                                               routingRule.getUri(),
+                                                                              serverWithRealAddress.getPath(),
                                                                               routedUrl));
         }
 

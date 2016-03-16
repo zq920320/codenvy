@@ -93,8 +93,14 @@ public class WorkspaceFsBackupSchedulerTest {
                                                          "type1",
                                                          new MachineSourceImpl("sourcetype1", "location1"),
                                                          new LimitsImpl(1024),
-                                                         Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
-                                                                       new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                         Arrays.asList(new ServerConfImpl("ref1",
+                                                                                          "8080",
+                                                                                          "https",
+                                                                                          "some/path"),
+                                                                       new ServerConfImpl("ref2",
+                                                                                          "9090/udp",
+                                                                                          "someprotocol",
+                                                                                          "/some/path")),
                                                          Collections.singletonMap("key1", "value1")),
                                    "id1",
                                    "workspaceId1",
@@ -103,15 +109,25 @@ public class WorkspaceFsBackupSchedulerTest {
                                    MachineStatus.RUNNING,
                                    new MachineRuntimeInfoImpl(singletonMap("var1", "value1"),
                                                               singletonMap("prop1", "pvalue1"),
-                                                              singletonMap("8080", new ServerImpl("ref1", "address1", "url1"))));
+                                                              singletonMap("8080", new ServerImpl("ref1",
+                                                                                                  "http",
+                                                                                                  "address1",
+                                                                                                  "some/path",
+                                                                                                  "url1"))));
 
         machine2 = new MachineImpl(new MachineConfigImpl(true,
                                                          "displayName2",
                                                          "type2",
                                                          new MachineSourceImpl("sourcetype2", "location2"),
                                                          new LimitsImpl(1024),
-                                                         Arrays.asList(new ServerConfImpl("ref1", "8080", "https"),
-                                                                       new ServerConfImpl("ref2", "9090/udp", "someprotocol")),
+                                                         Arrays.asList(new ServerConfImpl("ref1",
+                                                                                          "8080",
+                                                                                          "https",
+                                                                                          "some/path"),
+                                                                       new ServerConfImpl("ref2",
+                                                                                          "9090/udp",
+                                                                                          "someprotocol",
+                                                                                          "/some/path")),
                                                          Collections.singletonMap("key1", "value1")),
                                    "id2",
                                    "workspaceId2",
@@ -120,7 +136,11 @@ public class WorkspaceFsBackupSchedulerTest {
                                    MachineStatus.RUNNING,
                                    new MachineRuntimeInfoImpl(singletonMap("var2", "value2"),
                                                               singletonMap("prop2", "pvalue2"),
-                                                              singletonMap("8080", new ServerImpl("ref2", "address2", "url2"))));
+                                                              singletonMap("8080", new ServerImpl("ref2",
+                                                                                                  "https",
+                                                                                                  "address2",
+                                                                                                  "/some/path",
+                                                                                                  "url2"))));
 
         machines.add(machine1);
         machines.add(machine2);
