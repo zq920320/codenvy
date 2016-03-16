@@ -81,6 +81,12 @@ public class Context {
     /** The name of the forked repository. */
     private String forkedRepositoryName;
 
+    /** Defines availability of fork creation. */
+    private boolean forkAvailable;
+
+    /** Defines ability to use ssh URLs. */
+    private boolean sshAvailable;
+
     private VcsHostingService vcsHostingService;
 
     /** The name of the origin remote. */
@@ -291,6 +297,21 @@ public class Context {
 
     public VcsService getVcsService() {
         return vcsService;
+    }
+
+    public boolean isForkAvailable() {
+        return forkAvailable;
+    }
+    public void setForkAvailable(boolean forkAvailable) {
+        this.forkAvailable = forkAvailable;
+    }
+
+    public boolean isSshAvailable() {
+        return sshAvailable;
+    }
+
+    public void setSshAvailable(boolean sshAvailable) {
+        this.sshAvailable = sshAvailable;
     }
 
     public static final class ViewState {

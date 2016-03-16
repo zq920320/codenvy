@@ -53,7 +53,6 @@ public class IssuePullRequestStep implements Step {
                .createPullRequest(context.getUpstreamRepositoryOwner(),
                                   context.getUpstreamRepositoryName(),
                                   context.getHostUserLogin(),
-                                  context.getForkedRepositoryName(),
                                   context.getWorkBranchName(),
                                   context.getContributeToBranchName(),
                                   configuration.getContributionTitle(),

@@ -145,6 +145,10 @@ public final class StepsChain {
         return this;
     }
 
+    public static StepsChain firstIf(Supplier<Boolean> condition, Step stepIfTrue) {
+        return new StepsChain().thenIf(condition, stepIfTrue);
+    }
+
     /**
      * Executes given step only if {@code supplier} provides true value,
      * otherwise continues workflow execution with {@link WorkflowExecutor#executeNextStep(Context)} method.

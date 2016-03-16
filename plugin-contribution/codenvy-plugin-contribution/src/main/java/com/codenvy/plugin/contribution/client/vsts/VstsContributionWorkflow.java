@@ -34,6 +34,11 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
 @Singleton
+/**
+ * Declares steps of contribution workflow for Visual Studio Team Services repositories.
+ *
+ * @author Yevhenii Voevodin
+ */
 public class VstsContributionWorkflow implements ContributionWorkflow {
 
     private final InitializeWorkflowContextStep   initializeWorkflowContextStep;

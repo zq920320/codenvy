@@ -18,6 +18,7 @@ import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
+import com.codenvy.plugin.contribution.client.steps.PushBranchOnOriginStep;
 import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
@@ -34,19 +35,24 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 /**
+ * Provides displayed stages for GitHub contribution workflow.
+ *
  * @author Yevhenii Voevodin
  */
 @Singleton
 public class GithubStagesProvider implements StagesProvider {
 
     private static final Set<Class<? extends Step>> UPDATE_STEP_DONE_TYPES;
-    private static final Set<Class<? extends Step>> CREATION_STEP_DONE_TYPES;
+    private static final Set<Class<? extends Step>> CREATION_ORIGIN_STEP_DONE_TYPES;
+    private static final Set<Class<? extends Step>> CREATION_FORK_STEP_DONE_TYPES;
 
     static {
         UPDATE_STEP_DONE_TYPES = ImmutableSet.of(PushBranchOnForkStep.class,
                                                  UpdatePullRequestStep.class);
-        CREATION_STEP_DONE_TYPES = ImmutableSet.of(CreateForkStep.class,
+        CREATION_FORK_STEP_DONE_TYPES = ImmutableSet.of(CreateForkStep.class,
                                                    PushBranchOnForkStep.class,
+                                                   IssuePullRequestStep.class);
+        CREATION_ORIGIN_STEP_DONE_TYPES = ImmutableSet.of(PushBranchOnOriginStep.class,
                                                    IssuePullRequestStep.class);
     }
 
@@ -62,16 +68,23 @@ public class GithubStagesProvider implements StagesProvider {
         if (context.isUpdateMode()) {
             return asList(messages.contributePartStatusSectionNewCommitsPushedStepLabel(),
                           messages.contributePartStatusSectionPullRequestUpdatedStepLabel());
-        } else {
+        }
+        if (context.isForkAvailable()){
             return asList(messages.contributePartStatusSectionForkCreatedStepLabel(),
                           messages.contributePartStatusSectionBranchPushedForkStepLabel(),
+                          messages.contributePartStatusSectionPullRequestIssuedStepLabel());
+        } else {
+            return asList(messages.contributePartStatusSectionBranchPushedOriginStepLabel(),
                           messages.contributePartStatusSectionPullRequestIssuedStepLabel());
         }
     }
 
     @Override
     public Set<Class<? extends Step>> getStepDoneTypes(Context context) {
-        return context.isUpdateMode() ? UPDATE_STEP_DONE_TYPES : CREATION_STEP_DONE_TYPES;
+        if (context.isUpdateMode()) {
+            return UPDATE_STEP_DONE_TYPES;
+        }
+        return context.isForkAvailable() ? CREATION_FORK_STEP_DONE_TYPES : CREATION_ORIGIN_STEP_DONE_TYPES;
     }
 
     @Override

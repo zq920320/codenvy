@@ -34,6 +34,8 @@ import java.util.Set;
 import static java.util.Arrays.asList;
 
 /**
+ * Provides displayed stages for Visual Studio Team Services contribution workflow.
+ *
  * @author Yevhenii Voevodin
  */
 @Singleton

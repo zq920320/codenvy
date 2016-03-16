@@ -201,7 +201,6 @@ public class BitbucketHostingService implements VcsHostingService {
     public void createPullRequest(@NotNull final String owner,
                                   @NotNull final String repository,
                                   @NotNull final String username,
-                                  @NotNull final String headRepository,
                                   @NotNull final String headBranchName,
                                   @NotNull final String baseBranchName,
                                   @NotNull final String title,
@@ -217,7 +216,7 @@ public class BitbucketHostingService implements VcsHostingService {
         final BitbucketPullRequestLocation bitbucketPullRequestSource = dtoFactory
                 .createDto(BitbucketPullRequestLocation.class)
                 .withBranch(dtoFactory.createDto(BitbucketPullRequestBranch.class).withName(headBranchName))
-                .withRepository(dtoFactory.createDto(BitbucketPullRequestRepository.class).withFullName(username + "/" + headRepository));
+                .withRepository(dtoFactory.createDto(BitbucketPullRequestRepository.class).withFullName(username + "/" + repository));
 
         final BitbucketPullRequest bitbucketPullRequest = dtoFactory
                 .createDto(BitbucketPullRequest.class)
@@ -257,7 +256,6 @@ public class BitbucketHostingService implements VcsHostingService {
     public Promise<PullRequest> createPullRequest(final String owner,
                                                   final String repository,
                                                   final String username,
-                                                  final String headRepository,
                                                   final String headBranchName,
                                                   final String baseBranchName,
                                                   final String title,
@@ -272,7 +270,7 @@ public class BitbucketHostingService implements VcsHostingService {
                                                                .withBranch(dtoFactory.createDto(BitbucketPullRequestBranch.class)
                                                                                      .withName(headBranchName))
                                                                .withRepository(dtoFactory.createDto(BitbucketPullRequestRepository.class)
-                                                                                         .withFullName(username + '/' + headRepository));
+                                                                                         .withFullName(username + '/' + repository));
         final BitbucketPullRequest pullRequest = dtoFactory.createDto(BitbucketPullRequest.class)
                                                            .withTitle(title)
                                                            .withDescription(body)

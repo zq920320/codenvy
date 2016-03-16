@@ -19,6 +19,7 @@ import com.codenvy.plugin.contribution.client.bitbucket.BitbucketStagesProvider;
 import com.codenvy.plugin.contribution.client.github.GithubStagesProvider;
 import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
 import com.codenvy.plugin.contribution.client.steps.PushBranchStepFactory;
+import com.codenvy.plugin.contribution.client.steps.AddForkRemoteStepFactory;
 import com.codenvy.plugin.contribution.client.vsts.VstsContributionWorkflow;
 import com.codenvy.plugin.contribution.client.vsts.VstsStagesProvider;
 import com.codenvy.plugin.contribution.client.workflow.ContributionWorkflow;
@@ -63,6 +64,7 @@ public class ContributorGinModule extends AbstractGinModule {
         bind(PushBranchOnForkStep.class);
         install(new GinFactoryModuleBuilder().build(WaitForkOnRemoteStepFactory.class));
         install(new GinFactoryModuleBuilder().build(PushBranchStepFactory.class));
+        install(new GinFactoryModuleBuilder().build(AddForkRemoteStepFactory.class));
 
         final GinMapBinder<String, ContributionWorkflow> workflowBinder
                 = GinMapBinder.newMapBinder(binder(),
