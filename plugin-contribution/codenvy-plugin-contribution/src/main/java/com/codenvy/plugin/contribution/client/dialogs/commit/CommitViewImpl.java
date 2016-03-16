@@ -86,9 +86,9 @@ public class CommitViewImpl extends Window implements CommitView {
                                                }
                                            });
 
-        getFooter().add(ok);
-        getFooter().add(continueWithoutCommitting);
-        getFooter().add(cancel);
+        addButtonToFooter(ok);
+        addButtonToFooter(continueWithoutCommitting);
+        addButtonToFooter(cancel);
     }
 
     @Override
