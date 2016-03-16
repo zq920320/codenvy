@@ -24,8 +24,6 @@ import org.eclipse.che.api.workspace.server.WorkspaceService;
 import static com.google.inject.matcher.Matchers.subclassesOf;
 import static org.eclipse.che.inject.Matchers.names;
 
-// TODO bind commented interceptors after memberships refactoring
-
 /**
  * Package api interceptors in guice container.
  *
@@ -37,27 +35,6 @@ public class InterceptorModule extends AbstractModule {
 
     @Override
     protected void configure() {
-//        final FactoryWorkspaceInterceptor factoryWorkspaceInterceptor = new FactoryWorkspaceInterceptor();
-//        requestInjection(factoryWorkspaceInterceptor);
-//
-//        final CreateWorkspaceInterceptor createWorkspaceInterceptor = new CreateWorkspaceInterceptor();
-//        requestInjection(createWorkspaceInterceptor);
-//        bindInterceptor(subclassesOf(WorkspaceService.class),
-//                        names("create"),
-//                        factoryWorkspaceInterceptor,
-//                        createWorkspaceInterceptor);
-//
-//        final FactoryResourcesInterceptor factoryResourcesInterceptor = new FactoryResourcesInterceptor();
-//        requestInjection(factoryResourcesInterceptor);
-//        bindInterceptor(subclassesOf(WorkspaceManager.class), names("createWorkspace"), factoryResourcesInterceptor);
-//
-//        final AddWorkspaceMemberInterceptor addWorkspaceMemberInterceptor = new AddWorkspaceMemberInterceptor();
-//        requestInjection(addWorkspaceMemberInterceptor);
-//        bindInterceptor(subclassesOf(WorkspaceService.class), names("addMember"), addWorkspaceMemberInterceptor);
-//
-//        final RemoveWorkspaceMemberInterceptor removeWorkspaceMemberInterceptor = new RemoveWorkspaceMemberInterceptor();
-//        requestInjection(removeWorkspaceMemberInterceptor);
-//        bindInterceptor(subclassesOf(WorkspaceService.class), names("removeMember"), removeWorkspaceMemberInterceptor);
         final CreateUserInterceptor createUserInterceptor = new CreateUserInterceptor();
         requestInjection(createUserInterceptor);
         bindInterceptor(subclassesOf(UserDao.class), names("create"), createUserInterceptor);
@@ -69,6 +46,5 @@ public class InterceptorModule extends AbstractModule {
         bindInterceptor(subclassesOf(WorkspaceService.class), names("startByName"), addDefaultAccountIdInterceptor);
         bindInterceptor(subclassesOf(WorkspaceService.class), names("startTemporary"), addDefaultAccountIdInterceptor);
 
-        bind(com.codenvy.workspace.listener.StopAppOnRemoveWsListener.class).asEagerSingleton();
     }
 }
