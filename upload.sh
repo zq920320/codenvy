@@ -105,7 +105,7 @@ doBuild() {
     fi
 }
 
-PUPPET_DNS=puppet-master.codenvycorp.com
+PUPPET_DNS=puppet.codenvycorp.com
 DATE=`date '+%y%m%d-%H%M%S'`
 CLOUD_IDE_HOME=`pwd`
 SCOPE_HELP="\033[31mNeed to select target to upload as first argument.\npossible values: aio, api, site, machine, all\e[0m"
