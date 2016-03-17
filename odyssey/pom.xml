@@ -18,26 +18,16 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <groupId>com.codenvy.che.depmgt</groupId>
+        <artifactId>onpremises-assembly-parent</artifactId>
+        <groupId>com.codenvy.onpremises</groupId>
         <version>4.0.0-RC14-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy</groupId>
     <artifactId>odyssey</artifactId>
     <version>4.0.0-RC14-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/odyssey.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/odyssey.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://fisheye.exoplatform.org/browse/odyssey</url>
-    </scm>
-    <properties>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
-    </properties>
     <build>
         <plugins>
             <plugin>
@@ -73,7 +63,6 @@
             </plugin>
             <plugin>
                 <artifactId>maven-clean-plugin</artifactId>
-                <version>2.5</version>
                 <configuration>
                     <filesets>
                         <fileset>

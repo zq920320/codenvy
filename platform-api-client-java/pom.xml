@@ -14,9 +14,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <groupId>com.codenvy.che.depmgt</groupId>
+        <artifactId>onpremises-assembly-parent</artifactId>
+        <groupId>com.codenvy.onpremises</groupId>
         <version>4.0.0-RC14-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy.platform-api-client-java</groupId>
     <artifactId>codenvy-platform-api-client-java-parent</artifactId>
@@ -53,11 +54,6 @@
         <module>core</module>
         <module>assemblies</module>
     </modules>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/platform-api-client-java.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/platform-api-client-java.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
     <properties>
         <codenvy.ide.path>${project.build.directory}/eclipse-che-${che.version}</codenvy.ide.path>
         <version.hk2>2.2.0</version.hk2>
@@ -342,20 +338,6 @@
             <artifactId>mockito-all</artifactId>
         </dependency>
     </dependencies>
-    <repositories>
-        <repository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
     <build>
         <pluginManagement>
             <plugins>

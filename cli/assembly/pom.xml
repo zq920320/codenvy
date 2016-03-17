@@ -203,7 +203,7 @@ set CLASSPATH=%CLASSPATH%;%KARAF_HOME%\system\jline\jline\2.12\jline-2.12.jar]]>
                         <configuration>
                             <descriptors>
                                 <descriptor>mvn:org.apache.karaf.features/standard/${org.apache.karaf.version}/xml/features</descriptor>
-                                <descriptor>mvn:com.codenvy.platform-api-client-java/assemblies-karaf-uberjar/${com.codenvy.client.version}/xml/features</descriptor>
+                                <descriptor>mvn:com.codenvy.platform-api-client-java/assemblies-karaf-uberjar/${project.version}/xml/features</descriptor>
                                 <descriptor>mvn:com.codenvy.cli/cli-feature/${project.version}/xml/features</descriptor>
                             </descriptors>
                             <features>

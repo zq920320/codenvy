@@ -14,9 +14,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <groupId>com.codenvy.che.depmgt</groupId>
+        <artifactId>onpremises-assembly-parent</artifactId>
+        <groupId>com.codenvy.onpremises</groupId>
         <version>4.0.0-RC14-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy.cli</groupId>
     <artifactId>codenvy-cli</artifactId>
@@ -49,15 +50,8 @@
         <module>shell</module>
         <module>assembly</module>
     </modules>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/cli.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/cli.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/codenvy/cli/tree/v2</url>
-    </scm>
     <properties>
         <bnd-plugin.attributes />
-        <com.codenvy.client.version>${project.version}</com.codenvy.client.version>
         <jline.version>2.12</jline.version>
         <maven.bundle-plugin.version>2.5.0</maven.bundle-plugin.version>
         <org.apache.karaf.feature-plugin.version>2.3.5</org.apache.karaf.feature-plugin.version>
@@ -71,36 +65,7 @@
     </properties>
     <dependencyManagement>
         <dependencies>
-            <dependency>
-                <groupId>com.codenvy.cli</groupId>
-                <artifactId>cli-command</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.cli</groupId>
-                <artifactId>cli-preferences-api</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.cli</groupId>
-                <artifactId>cli-preferences-impl</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.cli</groupId>
-                <artifactId>cli-shell-branding</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.platform-api-client-java</groupId>
-                <artifactId>codenvy-platform-api-client-java-api</artifactId>
-                <version>${codenvy.platform-api-client-java.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.platform-api-client-java</groupId>
-                <artifactId>codenvy-platform-api-client-java-dummy</artifactId>
-                <version>${codenvy.platform-api-client-java.version}</version>
-            </dependency>
+
             <dependency>
                 <groupId>jline</groupId>
                 <artifactId>jline</artifactId>
@@ -148,20 +113,6 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <repositories>
-        <repository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </pluginRepository>
-    </pluginRepositories>
     <build>
         <pluginManagement>
             <plugins>

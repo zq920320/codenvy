@@ -18,9 +18,10 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>maven-depmgt-pom</artifactId>
-        <groupId>com.codenvy.che.depmgt</groupId>
+        <artifactId>onpremises-assembly-parent</artifactId>
+        <groupId>com.codenvy.onpremises</groupId>
         <version>4.0.0-RC14-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy.plugin</groupId>
     <artifactId>codenvy-plugin-parent</artifactId>
@@ -37,40 +38,4 @@
         <module>plugin-hosted</module>
         <module>plugin-webhooks</module>
     </modules>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/plugins.git</developerConnection>
-        <tag>HEAD</tag>
-        <url>https://github.com/codenvy/plugins</url>
-    </scm>
-    <properties>
-        <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
-        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
-        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <specification.version>1.0-beta2</specification.version>
-    </properties>
-    <repositories>
-        <repository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </repository>
-        <repository>
-            <id>codenvy-public-snapshots-repo</id>
-            <name>codenvy public snapshots</name>
-            <url>https://maven.codenvycorp.com/content/repositories/codenvy-public-snapshots/</url>
-        </repository>
-    </repositories>
-    <pluginRepositories>
-        <pluginRepository>
-            <id>codenvy-public-repo</id>
-            <name>codenvy public</name>
-            <url>https://maven.codenvycorp.com/content/groups/public/</url>
-        </pluginRepository>
-        <pluginRepository>
-            <id>codenvy-public-snapshots-repo</id>
-            <name>codenvy public snapshots</name>
-            <url>https://maven.codenvycorp.com/content/repositories/codenvy-public-snapshots/</url>
-        </pluginRepository>
-    </pluginRepositories>
 </project>

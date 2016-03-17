@@ -28,18 +28,15 @@
         <dependency>
             <groupId>com.codenvy.cli</groupId>
             <artifactId>cli-assembly</artifactId>
-            <version>${codenvy.cli.version}</version>
             <type>zip</type>
         </dependency>
         <dependency>
             <groupId>com.codenvy.im</groupId>
             <artifactId>installation-manager-cli-bundle</artifactId>
-            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>com.codenvy.im</groupId>
             <artifactId>installation-manager-cli-features</artifactId>
-            <version>${project.version}</version>
             <type>xml</type>
             <classifier>features</classifier>
         </dependency>
@@ -104,14 +101,14 @@
                         </goals>
                         <configuration>
                             <target>
-                                <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/cli-assembly-${codenvy.cli.version}.zip" />
-                                <replace dir="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/bin">
+                                <unzip dest="${project.build.directory}/" src="${project.build.directory}/packager-conf/zip/cli-assembly-${project.version}.zip" />
+                                <replace dir="${project.build.directory}/codenvy-cli-${project.version}/bin">
                                     <include name="*" />
                                     <exclude name="*.bat" />
                                     <replacetoken>#!/bin/sh</replacetoken>
                                     <replacevalue>#!/bin/bash</replacevalue>
                                 </replace>
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/bin/codenvy">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/bin/codenvy">
                                     <replacetoken>main "$@"</replacetoken>
                                     <replacevalue>CURRENT_DIR=$(pwd)
                                         cd ~/codenvy-im
@@ -130,36 +127,36 @@
                                         main "$@"</replacevalue>
                                 </replace>
                                 <delete>
-                                    <fileset dir="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/bin/" includes="*.bat" />
+                                    <fileset dir="${project.build.directory}/codenvy-cli-${project.version}/bin/" includes="*.bat" />
                                 </delete>
                                 <!-- make it possible to pass empty command-line argument "" or argument with spaces only " " to java -->
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/bin/codenvy">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/bin/codenvy">
                                     <replacetoken>codenvy:$COMMAND "$*"</replacetoken>
                                     <replacevalue>codenvy:$COMMAND $(for arg in "$@"; do echo "\"$arg\""; done)</replacevalue>
                                 </replace>
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/org.apache.karaf.features.cfg">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/etc/org.apache.karaf.features.cfg">
                                     <replacetoken><![CDATA[featuresBoot=]]></replacetoken>
                                     <replacevalue><![CDATA[featuresBoot=installation-manager-cli-features,]]></replacevalue>
                                 </replace>
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/org.apache.karaf.features.cfg">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/etc/org.apache.karaf.features.cfg">
                                     <replacetoken><![CDATA[featuresRepositories=]]></replacetoken>
                                     <replacevalue><![CDATA[featuresRepositories=mvn:com.codenvy.im/installation-manager-cli-features/${project.version}/xml/features,]]></replacevalue>
                                 </replace>
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/org.apache.karaf.features.repos.cfg">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/etc/org.apache.karaf.features.repos.cfg">
                                     <replacetoken><![CDATA[cellar       =]]></replacetoken>
                                     <replacevalue><![CDATA[installation-manager-codenvy-cli  = com.codenvy.im:installation-manager-cli-feature:xml:features(0,]
 cellar       =]]></replacevalue>
                                 </replace>
-                                <replace file="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/config.properties">
+                                <replace file="${project.build.directory}/codenvy-cli-${project.version}/etc/config.properties">
                                     <replacetoken>karaf.delay.console=false</replacetoken>
                                     <replacevalue>karaf.delay.console=true</replacevalue>
                                 </replace>
-                                <copy file="${project.build.directory}/packager-conf/jar/installation-manager-cli-bundle-${project.version}.jar" tofile="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/system/com/codenvy/im/installation-manager-cli-bundle/${project.version}/installation-manager-cli-bundle-${project.version}.jar" />
-                                <copy file="${project.build.directory}/packager-conf/xml/installation-manager-cli-features-${project.version}-features.xml" tofile="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/system/com/codenvy/im/installation-manager-cli-features/${project.version}/installation-manager-cli-features-${project.version}-features.xml" />
-                                <copy file="${project.build.directory}/classes/codenvy-cli/etc/org.ops4j.pax.logging.cfg" tofile="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/org.ops4j.pax.logging.cfg" />
-                                <copy file="${project.build.directory}/classes/codenvy-cli/etc/java.util.logging.properties" tofile="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/etc/java.util.logging.properties" />
+                                <copy file="${project.build.directory}/packager-conf/jar/installation-manager-cli-bundle-${project.version}.jar" tofile="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/im/installation-manager-cli-bundle/${project.version}/installation-manager-cli-bundle-${project.version}.jar" />
+                                <copy file="${project.build.directory}/packager-conf/xml/installation-manager-cli-features-${project.version}-features.xml" tofile="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/im/installation-manager-cli-features/${project.version}/installation-manager-cli-features-${project.version}-features.xml" />
+                                <copy file="${project.build.directory}/classes/codenvy-cli/etc/org.ops4j.pax.logging.cfg" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/org.ops4j.pax.logging.cfg" />
+                                <copy file="${project.build.directory}/classes/codenvy-cli/etc/java.util.logging.properties" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/java.util.logging.properties" />
                                 <!-- turn off login command in the codenvy cli command jar-->
-                                <unzip dest="${project.build.directory}/archive-tmp/jar" src="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/system/com/codenvy/cli/cli-command/${codenvy.cli.version}/cli-command-${codenvy.cli.version}.jar" />
+                                <unzip dest="${project.build.directory}/archive-tmp/jar" src="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/cli/cli-command/${project.version}/cli-command-${project.version}.jar" />
                                 <replace file="${project.build.directory}/archive-tmp/jar/META-INF/services/org/apache/karaf/shell/commands">
                                     <replacetoken>com.codenvy.cli.command.builtin.LoginCommand</replacetoken>
                                     <replacevalue />
@@ -172,7 +169,7 @@ cellar       =]]></replacevalue>
                                     <regexp pattern="&lt;command&gt;[^&lt;]*&lt;action class=&quot;com.codenvy.cli.command.builtin.LoginCommand&quot; /&gt;[^&lt;]*&lt;/command&gt;" />
                                     <substitution expression="" />
                                 </replaceregexp>
-                                <zip basedir="${project.build.directory}/archive-tmp/jar" destfile="${project.build.directory}/codenvy-cli-${codenvy.cli.version}/system/com/codenvy/cli/cli-command/${codenvy.cli.version}/cli-command-${codenvy.cli.version}.jar" />
+                                <zip basedir="${project.build.directory}/archive-tmp/jar" destfile="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/cli/cli-command/${project.version}/cli-command-${project.version}.jar" />
                             </target>
                         </configuration>
                     </execution>
