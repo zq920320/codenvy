@@ -12,38 +12,37 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.github;
+package com.codenvy.plugin.contribution.client.bitbucket;
 
 import com.codenvy.plugin.contribution.client.steps.AddForkRemoteStep;
+import com.codenvy.plugin.contribution.client.steps.AddHttpForkRemoteStep;
 import com.codenvy.plugin.contribution.client.steps.AddReviewFactoryLinkStep;
-import com.codenvy.plugin.contribution.client.steps.AddSshForkRemoteStep;
 import com.codenvy.plugin.contribution.client.steps.AuthorizeCodenvyOnVCSHostStep;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
-import com.codenvy.plugin.contribution.client.steps.DefineExecutionConfiguration;
 import com.codenvy.plugin.contribution.client.steps.DefineWorkBranchStep;
 import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
+import com.codenvy.plugin.contribution.client.steps.DefineExecutionConfiguration;
 import com.codenvy.plugin.contribution.client.steps.DetermineUpstreamRepositoryStep;
 import com.codenvy.plugin.contribution.client.steps.GenerateReviewFactoryStep;
 import com.codenvy.plugin.contribution.client.steps.InitializeWorkflowContextStep;
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.PushBranchOnForkStep;
 import com.codenvy.plugin.contribution.client.steps.PushBranchOnOriginStep;
-import com.codenvy.plugin.contribution.client.workflow.StepsChain;
 import com.codenvy.plugin.contribution.client.steps.UpdatePullRequestStep;
 import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.workflow.ContributionWorkflow;
+import com.codenvy.plugin.contribution.client.workflow.StepsChain;
 import com.google.common.base.Supplier;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+
+import javax.inject.Inject;
 
 /**
- * Declares steps of contribution workflow for GitHub repositories.
+ * Declares steps of contribution workflow for Bitbucket repositories.
  *
- * @author Yevhenii Voevodin
+ * @author Mihail Kuznyetsov
  */
-@Singleton
-public class GitHubContributionWorkflow implements ContributionWorkflow {
+public class BitbucketContributionWorkflow implements ContributionWorkflow {
 
     private final InitializeWorkflowContextStep   initializeWorkflowContextStep;
     private final DefineWorkBranchStep            defineWorkBranchStep;
@@ -52,7 +51,7 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
     private final DefineExecutionConfiguration    defineExecutionConfiguration;
     private final DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep;
     private final CreateForkStep                  createForkStep;
-    private final AddSshForkRemoteStep            addSshForkRemoteStep;
+    private final AddHttpForkRemoteStep           addHttpForkRemoteStep;
     private final PushBranchOnForkStep            pushBranchOnForkStep;
     private final PushBranchOnOriginStep          pushBranchOnOriginStep;
     private final GenerateReviewFactoryStep       generateReviewFactoryStep;
@@ -61,37 +60,39 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
     private final UpdatePullRequestStep           updatePullRequestStep;
     private final DetectPullRequestStep           detectPullRequestStep;
 
+
     @Inject
-    public GitHubContributionWorkflow(InitializeWorkflowContextStep initializeWorkflowContextStep,
-                                      DefineWorkBranchStep defineWorkBranchStep,
-                                      CommitWorkingTreeStep commitWorkingTreeStep,
-                                      AuthorizeCodenvyOnVCSHostStep authorizeCodenvyOnVCSHostStep,
-                                      DefineExecutionConfiguration defineExecutionConfiguration,
-                                      DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep,
-                                      CreateForkStep createForkStep,
-                                      AddSshForkRemoteStep addSshForkRemoteStep,
-                                      PushBranchOnForkStep pushBranchOnForkStep,
-                                      PushBranchOnOriginStep pushBranchOnOriginStep,
-                                      GenerateReviewFactoryStep generateReviewFactoryStep,
-                                      AddReviewFactoryLinkStep addReviewFactoryLinkStep,
-                                      IssuePullRequestStep issuePullRequestStep,
-                                      UpdatePullRequestStep updatePullRequestStep,
-                                      DetectPullRequestStep detectPullRequestStep) {
+    public BitbucketContributionWorkflow(InitializeWorkflowContextStep initializeWorkflowContextStep,
+                                         DefineWorkBranchStep defineWorkBranchStep,
+                                         CommitWorkingTreeStep commitWorkingTreeStep,
+                                         AuthorizeCodenvyOnVCSHostStep authorizeCodenvyOnVCSHostStep,
+                                         DefineExecutionConfiguration defineExecutionConfiguration,
+                                         DetermineUpstreamRepositoryStep determineUpstreamRepositoryStep,
+                                         DetectPullRequestStep detectPullRequestStep,
+                                         CreateForkStep createForkStep,
+                                         AddHttpForkRemoteStep addHttpForkRemoteStep,
+                                         PushBranchOnForkStep pushBranchOnForkStep,
+                                         PushBranchOnOriginStep pushBranchOnOriginStep,
+                                         GenerateReviewFactoryStep generateReviewFactoryStep,
+                                         AddReviewFactoryLinkStep addReviewFactoryLinkStep,
+                                         IssuePullRequestStep issuePullRequestStep,
+                                         UpdatePullRequestStep updatePullRequestStep) {
         this.initializeWorkflowContextStep = initializeWorkflowContextStep;
         this.defineWorkBranchStep = defineWorkBranchStep;
         this.commitWorkingTreeStep = commitWorkingTreeStep;
         this.authorizeCodenvyOnVCSHostStep = authorizeCodenvyOnVCSHostStep;
         this.defineExecutionConfiguration = defineExecutionConfiguration;
         this.determineUpstreamRepositoryStep = determineUpstreamRepositoryStep;
+        this.detectPullRequestStep = detectPullRequestStep;
         this.createForkStep = createForkStep;
-        this.addSshForkRemoteStep = addSshForkRemoteStep;
+        this.addHttpForkRemoteStep = addHttpForkRemoteStep;
         this.pushBranchOnForkStep = pushBranchOnForkStep;
         this.pushBranchOnOriginStep = pushBranchOnOriginStep;
         this.generateReviewFactoryStep = generateReviewFactoryStep;
         this.addReviewFactoryLinkStep = addReviewFactoryLinkStep;
         this.issuePullRequestStep = issuePullRequestStep;
         this.updatePullRequestStep = updatePullRequestStep;
-        this.detectPullRequestStep = detectPullRequestStep;
+
     }
 
     @Override
@@ -114,7 +115,7 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
                                           }
                                       },
                                       StepsChain.first(createForkStep)
-                                                .then(addSshForkRemoteStep)
+                                                .then(addHttpForkRemoteStep)
                                                 .then(pushBranchOnForkStep),
                                       StepsChain.first(pushBranchOnOriginStep))
                          .then(generateReviewFactoryStep)
@@ -129,23 +130,18 @@ public class GitHubContributionWorkflow implements ContributionWorkflow {
 
     @Override
     public StepsChain updateChain(final Context context) {
-        final StepsChain forkChain = StepsChain.firstIf(new Supplier<Boolean>() {
-            @Override
-            public Boolean get() {
-                return context.getForkedRemoteName() == null;
-            }
-        }, addSshForkRemoteStep).then(pushBranchOnForkStep);
-
-        final StepsChain originChain = StepsChain.first(pushBranchOnOriginStep);
-
         return StepsChain.first(commitWorkingTreeStep)
                          .then(authorizeCodenvyOnVCSHostStep)
+                         .then(defineExecutionConfiguration)
                          .thenChainIf(new Supplier<Boolean>() {
-                             @Override
-                             public Boolean get() {
-                                 return context.isForkAvailable();
-                             }
-                         }, forkChain, originChain)
+                                          @Override
+                                          public Boolean get() {
+                                              return context.isForkAvailable();
+                                          }
+                                      },
+                                      StepsChain.first(addHttpForkRemoteStep)
+                                                .then(pushBranchOnForkStep),
+                                      StepsChain.first(pushBranchOnOriginStep))
                          .then(updatePullRequestStep);
     }
 }

@@ -17,30 +17,13 @@ package com.codenvy.plugin.contribution.client.steps;
 import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.workflow.Step;
 import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
-import com.google.inject.Singleton;
-
-import javax.inject.Inject;
 
 /**
- * Push the local contribution branch on the user fork.
- *
- * @author Kevin Pollet
+ * @author Mihail Kuznyetsov
  */
-@Singleton
-public class PushBranchOnForkStep implements Step {
-
-    private final PushBranchStepFactory pushBranchStepFactory;
-
-    @Inject
-    public PushBranchOnForkStep(PushBranchStepFactory pushBranchStepFactory) {
-        this.pushBranchStepFactory = pushBranchStepFactory;
-    }
-
+public class DefineForkRemoteUrlProtocolStep implements Step {
     @Override
-    public void execute(final WorkflowExecutor executor, final Context context) {
-        pushBranchStepFactory.create(this,
-                                     context.getHostUserLogin(),
-                                     context.getForkedRepositoryName())
-                             .execute(executor, context);
+    public void execute(WorkflowExecutor executor, Context context) {
+        context.setSshAvailable(false);
     }
 }

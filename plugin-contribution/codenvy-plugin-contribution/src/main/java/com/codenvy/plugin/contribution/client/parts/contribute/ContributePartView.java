@@ -29,9 +29,9 @@ public interface ContributePartView extends View<ContributePartView.ActionDelega
     void setRepositoryUrl(String url);
 
     /**
-     * Set factory's cloned branch name.
+     * Set factory's contribute to branch name.
      */
-    void setClonedBranch(String branch);
+    void setContributeToBranch(String branch);
 
     /**
      * Set project name.

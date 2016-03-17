@@ -55,15 +55,4 @@ public interface MicrosoftServiceClient {
                                                     MicrosoftPullRequest pullRequest);
 
     Promise<MicrosoftUserProfile> getUserProfile();
-
-    Promise<String> makeHttpRemoteUrl(String account,
-                                      String collection,
-                                      String project,
-                                      String repository);
-
-    Promise<String> makePullRequestUrl(String account,
-                                       String collection,
-                                       String project,
-                                       String repository,
-                                       String number);
 }

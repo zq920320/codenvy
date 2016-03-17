@@ -112,8 +112,6 @@ public interface VcsHostingService {
      *         the repository name.
      * @param username
      *         the user name.
-     * @param headRepository
-     *         the repository containing the head branch.
      * @param headBranchName
      *         the head branch name.
      * @param baseBranchName
@@ -124,13 +122,12 @@ public interface VcsHostingService {
      *         the pull request body.
      * @param callback
      *         callback called when operation is done.
-     * @deprecated use {@link #createPullRequest(String, String, String, String, String, String, String, String)}
+     * @deprecated use {@link #createPullRequest(String, String, String, String, String, String, String)}
      */
     @Deprecated
     void createPullRequest(@NotNull String owner,
                            @NotNull String repository,
                            @NotNull String username,
-                           @NotNull String headRepository,
                            @NotNull String headBranchName,
                            @NotNull String baseBranchName,
                            @NotNull String title,
@@ -146,8 +143,6 @@ public interface VcsHostingService {
      *         the repository name.
      * @param username
      *         the user name.
-     * @param headRepository
-     *         the repository containing the head branch.
      * @param headBranchName
      *         the head branch name.
      * @param baseBranchName
@@ -160,7 +155,6 @@ public interface VcsHostingService {
     Promise<PullRequest> createPullRequest(String owner,
                                            String repository,
                                            String username,
-                                           String headRepository,
                                            String headBranchName,
                                            String baseBranchName,
                                            String title,
@@ -284,7 +278,7 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url.
      */
-    Promise<String> makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
+    String makeSSHRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the remote HTTP url for the given username and repository.
@@ -295,7 +289,7 @@ public interface VcsHostingService {
      *         the repository name.
      * @return the remote url.
      */
-    Promise<String> makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
+    String makeHttpRemoteUrl(@NotNull String username, @NotNull String repository);
 
     /**
      * Makes the pull request url for the given username, repository and pull request number.
@@ -308,7 +302,7 @@ public interface VcsHostingService {
      *         the pull request number.
      * @return the remote url.
      */
-    Promise<String> makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
+    String makePullRequestUrl(@NotNull String username, @NotNull String repository, @NotNull String pullRequestNumber);
 
     /**
      * Use the VCS hosting comment markup language to format the review factory URL.

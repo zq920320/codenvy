@@ -137,26 +137,6 @@ public class URLTemplates {
     }
 
     /**
-     * Returns remote url for given repository.
-     *
-     * @param projectName
-     *         the name of the project
-     * @param repositoryName
-     *         the name of the repository
-     */
-    public String httpRemoteUrl(String account, String collection, String projectName, String repositoryName) {
-        Objects.requireNonNull(projectName, "Project name required");
-        Objects.requireNonNull(repositoryName, "Repository name required");
-        String remoteUrl;
-        if (projectName.equals(repositoryName)) {
-            remoteUrl = getTeamBaseUrl(account, collection) + format(PROJECT_HTTP_REMOTE_URL, projectName);
-        } else {
-            remoteUrl = getTeamBaseUrl(account, collection) + format(PROJECT_REPO_HTTP_REMOTE_URL, projectName, repositoryName);
-        }
-        return remoteUrl;
-    }
-
-    /**
      * Returns pull request html url.
      *
      * @param projectName
@@ -169,7 +149,7 @@ public class URLTemplates {
     public String pullRequestHtmlUrl(String account, String collection, String projectName, String repositoryName, String pullRequestId) {
         Objects.requireNonNull(projectName, "Project name required");
         Objects.requireNonNull(repositoryName, "Repository name required");
-        Objects.requireNonNull(pullRequestId, "Pull request number required");
+        Objects.requireNonNull(pullRequestId, "Pull request id required");
         String pullRequestUrl;
         if (projectName.equals(repositoryName)) {
             pullRequestUrl = getTeamBaseUrl(account, collection) + format(PROJECT_HTML_PULL_REQUEST, projectName, pullRequestId);

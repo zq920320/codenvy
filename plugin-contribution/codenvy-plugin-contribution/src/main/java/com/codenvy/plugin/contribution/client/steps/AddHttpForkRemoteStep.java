@@ -22,25 +22,23 @@ import com.google.inject.Singleton;
 import javax.inject.Inject;
 
 /**
- * Push the local contribution branch on the user fork.
+ * Add HTTP fork remote URL to repository.
  *
- * @author Kevin Pollet
+ * @author Mihail Kuznyetsov
  */
 @Singleton
-public class PushBranchOnForkStep implements Step {
-
-    private final PushBranchStepFactory pushBranchStepFactory;
+public class AddHttpForkRemoteStep implements Step {
+    private final AddForkRemoteStepFactory addForkRemoteStepFactory;
 
     @Inject
-    public PushBranchOnForkStep(PushBranchStepFactory pushBranchStepFactory) {
-        this.pushBranchStepFactory = pushBranchStepFactory;
+    public AddHttpForkRemoteStep(AddForkRemoteStepFactory addForkRemoteStepFactory) {
+        this.addForkRemoteStepFactory = addForkRemoteStepFactory;
     }
 
     @Override
     public void execute(final WorkflowExecutor executor, final Context context) {
-        pushBranchStepFactory.create(this,
-                                     context.getHostUserLogin(),
-                                     context.getForkedRepositoryName())
-                             .execute(executor, context);
+        String remoteUrl = context.getVcsHostingService().makeHttpRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName());
+        addForkRemoteStepFactory.create(this, remoteUrl)
+                                .execute(executor, context);
     }
 }

@@ -89,8 +89,8 @@ public interface ContributeMessages extends Messages {
     @Key("contribute.part.new.contribution.section.button.new.text")
     String contributePartNewContributionSectionButtonNewText();
 
-    @Key("contribute.part.new.contribution.branch.cloned.checked.out")
-    String contributePartNewContributionBranchClonedCheckedOut(String clonedBranchName);
+    @Key("contribute.part.new.contribution.contribute.branch.checked.out")
+    String contributePartNewContributionContributeBranchCheckedOut(String contributeToBranchName);
 
     @Key("contribute.part.configure.contribution.dialog.update.title")
     String contributePartConfigureContributionDialogUpdateTitle();

@@ -22,6 +22,7 @@ import com.codenvy.plugin.contribution.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.contribution.vcs.client.VcsServiceProvider;
 import com.google.gwt.user.client.rpc.AsyncCallback;
 import com.google.inject.Singleton;
+import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.git.shared.Remote;
 import org.eclipse.che.api.promises.client.Operation;
@@ -34,17 +35,22 @@ import java.util.List;
 /**
  * Adds the forked remote repository to the remotes of the project.
  */
-@Singleton
 public class AddForkRemoteStep implements Step {
     private final static String ORIGIN_REMOTE_NAME = "origin";
     private final static String FORK_REMOTE_NAME   = "fork";
 
-    private final VcsServiceProvider        vcsServiceProvider;
-    private final ContributeMessages        messages;
+    private final Step delegate;
+    private final String remoteUrl;
+    private final VcsServiceProvider vcsServiceProvider;
+    private final ContributeMessages messages;
 
     @Inject
-    public AddForkRemoteStep(final VcsServiceProvider vcsServiceProvider,
+    public AddForkRemoteStep(@Assisted("delegate") Step delegate,
+                             @Assisted("remoteUrl") String remoteUrl,
+                             final VcsServiceProvider vcsServiceProvider,
                              final ContributeMessages messages) {
+        this.delegate = delegate;
+        this.remoteUrl = remoteUrl;
         this.vcsServiceProvider = vcsServiceProvider;
         this.messages = messages;
     }
@@ -59,21 +65,7 @@ public class AddForkRemoteStep implements Step {
         // the fork remote has to be added only if we cloned the upstream else it's origin
         if (originRepositoryOwner.equalsIgnoreCase(upstreamRepositoryOwner) &&
             originRepositoryName.equalsIgnoreCase(upstreamRepositoryName)) {
-
-            context.getVcsHostingService()
-                   .makeSSHRemoteUrl(context.getHostUserLogin(), context.getForkedRepositoryName())
-                   .then(new Operation<String>() {
-                       @Override
-                       public void apply(String remoteUrl) throws OperationException {
-                           checkRemotePresent(executor, context, remoteUrl);
-                       }
-                   })
-                   .catchError(new Operation<PromiseError>() {
-                       @Override
-                       public void apply(PromiseError error) throws OperationException {
-                           executor.fail(AddForkRemoteStep.this, context, error.getMessage());
-                       }
-                   });
+                checkRemotePresent(executor, context, remoteUrl);
         } else {
             context.setForkedRemoteName(ORIGIN_REMOTE_NAME);
             proceed(executor, context);
@@ -104,7 +96,7 @@ public class AddForkRemoteStep implements Step {
 
                               @Override
                               public void onFailure(final Throwable exception) {
-                                  executor.fail(AddForkRemoteStep.this, context, messages.stepAddForkRemoteErrorCheckRemote());
+                                  executor.fail(delegate, context, messages.stepAddForkRemoteErrorCheckRemote());
                               }
                           });
     }
@@ -129,7 +121,7 @@ public class AddForkRemoteStep implements Step {
 
                               @Override
                               public void onFailure(final Throwable exception) {
-                                  executor.fail(AddForkRemoteStep.this, context, messages.stepAddForkRemoteErrorAddFork());
+                                  executor.fail(delegate, context, messages.stepAddForkRemoteErrorAddFork());
                               }
                           });
     }
@@ -152,7 +144,7 @@ public class AddForkRemoteStep implements Step {
 
                               @Override
                               public void onFailure(final Throwable caught) {
-                                  executor.fail(AddForkRemoteStep.this,
+                                  executor.fail(delegate,
                                                 context,
                                                 messages.stepAddForkRemoteErrorSetForkedRepositoryRemote());
                               }
@@ -160,6 +152,6 @@ public class AddForkRemoteStep implements Step {
     }
 
     private void proceed(final WorkflowExecutor executor, final Context context) {
-        executor.done(this, context);
+        executor.done(delegate, context);
     }
 }

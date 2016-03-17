@@ -165,7 +165,7 @@
                 </div>
                 <div class="{style.fieldItem} {style.horizontal}">
                     <i class="fa fa-code-fork {style.icon}"></i>
-                    <g:Label ui:field="clonedBranch" addStyleNames="{style.field}"/>
+                    <g:Label ui:field="contributeToBranch" addStyleNames="{style.field}"/>
                 </div>
                 <div class="{style.fieldItem} {style.horizontal}">
                     <i class="fa fa-bookmark {style.icon}"></i>

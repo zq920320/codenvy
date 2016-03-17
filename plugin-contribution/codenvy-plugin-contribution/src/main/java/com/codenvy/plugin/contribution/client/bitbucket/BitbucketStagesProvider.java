@@ -12,35 +12,35 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.plugin.contribution.client.github;
+package com.codenvy.plugin.contribution.client.bitbucket;
 
 import com.codenvy.plugin.contribution.client.ContributeMessages;
 import com.codenvy.plugin.contribution.client.parts.contribute.StagesProvider;
 import com.codenvy.plugin.contribution.client.steps.CommitWorkingTreeStep;
-import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
-import com.codenvy.plugin.contribution.client.steps.PushBranchOnOriginStep;
-import com.codenvy.plugin.contribution.client.workflow.Context;
 import com.codenvy.plugin.contribution.client.steps.CreateForkStep;
+import com.codenvy.plugin.contribution.client.steps.DetectPullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.IssuePullRequestStep;
 import com.codenvy.plugin.contribution.client.steps.PushBranchOnForkStep;
-import com.codenvy.plugin.contribution.client.workflow.Step;
+import com.codenvy.plugin.contribution.client.steps.PushBranchOnOriginStep;
 import com.codenvy.plugin.contribution.client.steps.UpdatePullRequestStep;
+import com.codenvy.plugin.contribution.client.workflow.Context;
+import com.codenvy.plugin.contribution.client.workflow.Step;
 import com.google.common.collect.ImmutableSet;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.util.List;
 import java.util.Set;
 
 import static java.util.Arrays.asList;
 
 /**
- * Provides displayed stages for GitHub contribution workflow.
+ * Provides displayed stages for Bitbucket contribution workflow.
  *
- * @author Yevhenii Voevodin
+ * @author Mihail Kuznyetsov
  */
 @Singleton
-public class GithubStagesProvider implements StagesProvider {
+public class BitbucketStagesProvider implements StagesProvider {
 
     private static final Set<Class<? extends Step>> UPDATE_STEP_DONE_TYPES;
     private static final Set<Class<? extends Step>> CREATION_ORIGIN_STEP_DONE_TYPES;
@@ -50,16 +50,16 @@ public class GithubStagesProvider implements StagesProvider {
         UPDATE_STEP_DONE_TYPES = ImmutableSet.of(PushBranchOnForkStep.class,
                                                  UpdatePullRequestStep.class);
         CREATION_FORK_STEP_DONE_TYPES = ImmutableSet.of(CreateForkStep.class,
-                                                   PushBranchOnForkStep.class,
-                                                   IssuePullRequestStep.class);
+                                                          PushBranchOnForkStep.class,
+                                                          IssuePullRequestStep.class);
         CREATION_ORIGIN_STEP_DONE_TYPES = ImmutableSet.of(PushBranchOnOriginStep.class,
-                                                   IssuePullRequestStep.class);
+                                                        IssuePullRequestStep.class);
     }
 
     private final ContributeMessages messages;
 
     @Inject
-    public GithubStagesProvider(final ContributeMessages messages) {
+    public BitbucketStagesProvider(final ContributeMessages messages) {
         this.messages = messages;
     }
 
@@ -69,7 +69,7 @@ public class GithubStagesProvider implements StagesProvider {
             return asList(messages.contributePartStatusSectionNewCommitsPushedStepLabel(),
                           messages.contributePartStatusSectionPullRequestUpdatedStepLabel());
         }
-        if (context.isForkAvailable()){
+        if (context.isForkAvailable()) {
             return asList(messages.contributePartStatusSectionForkCreatedStepLabel(),
                           messages.contributePartStatusSectionBranchPushedForkStepLabel(),
                           messages.contributePartStatusSectionPullRequestIssuedStepLabel());

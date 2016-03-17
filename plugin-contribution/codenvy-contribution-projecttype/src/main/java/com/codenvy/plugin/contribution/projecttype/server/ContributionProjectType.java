@@ -19,12 +19,10 @@ import org.eclipse.che.api.project.server.type.ProjectTypeDef;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_MODE_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_VARIABLE_NAME;
+import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_TO_BRANCH_VARIABLE_NAME;
+import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_LOCAL_BRANCH_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTION_PROJECT_TYPE_DISPLAY_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTION_PROJECT_TYPE_ID;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.PULL_REQUEST_ID_VARIABLE_NAME;
 
 /**
  * The contribution project type definition.
@@ -37,9 +35,7 @@ public class ContributionProjectType extends ProjectTypeDef {
     public ContributionProjectType() {
         super(CONTRIBUTION_PROJECT_TYPE_ID, CONTRIBUTION_PROJECT_TYPE_DISPLAY_NAME, false, true);
 
-        addVariableDefinition(CONTRIBUTE_VARIABLE_NAME, "Contribution flag", false);
-        addVariableDefinition(CONTRIBUTE_MODE_VARIABLE_NAME, "Contribution mode", true);
-        addVariableDefinition(CONTRIBUTE_BRANCH_VARIABLE_NAME, "Branch where contribution commits has to be pulled", true);
-        addVariableDefinition(PULL_REQUEST_ID_VARIABLE_NAME, "ID of the pull request being reviewed", false);
+        addVariableDefinition(CONTRIBUTE_LOCAL_BRANCH_NAME, "Name of local branch", false);
+        addVariableDefinition(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME, "Branch where the contribution has to be pushed", true);
     }
 }

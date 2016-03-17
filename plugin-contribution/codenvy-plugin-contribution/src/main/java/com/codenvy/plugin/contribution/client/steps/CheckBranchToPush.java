@@ -38,7 +38,7 @@ public class CheckBranchToPush implements Step {
 
     @Override
     public void execute(final WorkflowExecutor executor, final Context context) {
-        if (context.getWorkBranchName().equals(context.getClonedBranchName())) {
+        if (context.getWorkBranchName().equals(context.getContributeToBranchName())) {
             executor.fail(this,
                           context,
                           messages.stepCheckBranchClonedBranchIsEqualToWorkBranch());

@@ -220,7 +220,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
         view.setRepositoryUrl("");
 
         if (!isCurrentProject(projectName)) return;
-        view.setClonedBranch("");
+        view.setContributeToBranch("");
 
         if (!isCurrentProject(projectName)) return;
         view.setContributionBranchName("");
@@ -263,28 +263,15 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     public void onOpenPullRequestOnVcsHost() {
         final Context context = workflowExecutor.getCurrentContext();
 
-        context.getVcsHostingService()
-               .makePullRequestUrl(context.getUpstreamRepositoryOwner(),
-                                   context.getUpstreamRepositoryName(),
-                                   context.getPullRequestIssueNumber())
-               .then(new Operation<String>() {
-                   @Override
-                   public void apply(String url) throws OperationException {
-                       Window.open(url, "", "");
-                   }
-               })
-               .catchError(new Operation<PromiseError>() {
-                   @Override
-                   public void apply(PromiseError error) throws OperationException {
-                       notificationManager.notify(error.getMessage(), FAIL, true);
-                   }
-               });
+        Window.open(context.getVcsHostingService().makePullRequestUrl(context.getUpstreamRepositoryOwner(),
+                                                                      context.getUpstreamRepositoryName(),
+                                                                      context.getPullRequestIssueNumber()), "", "");
     }
 
     @Override
     public void onNewContribution() {
         final Context context = workflowExecutor.getCurrentContext();
-        context.getVcsService().checkoutBranch(context.getProject(), context.getClonedBranchName(),
+        context.getVcsService().checkoutBranch(context.getProject(), context.getContributeToBranchName(),
                                                false, new AsyncCallback<String>() {
                     @Override
                     public void onFailure(final Throwable exception) {
@@ -454,7 +441,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
         final Context context = event.getContext();
 
         switch (event.getContextProperty()) {
-            case CLONED_BRANCH_NAME:
+            case CONTRIBUTE_TO_BRANCH_NAME:
                 updateView(context, new ClonedBranchUpdate());
                 break;
 
@@ -569,14 +556,16 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     private static class ClonedBranchUpdate implements ViewUpdate {
         @Override
         public void update(final ContributePartView view, final Context context) {
-            view.setClonedBranch(nullToEmpty(context.getClonedBranchName()));
+            view.setContributeToBranch(nullToEmpty(context.getContributeToBranchName()));
         }
     }
 
     private static class ContributionButtonUpdate implements ViewUpdate {
         private final ContributeMessages messages;
 
-        private ContributionButtonUpdate(final ContributeMessages messages) { this.messages = messages; }
+        private ContributionButtonUpdate(final ContributeMessages messages) {
+            this.messages = messages;
+        }
 
         @Override
         public void update(final ContributePartView view, final Context context) {
@@ -631,14 +620,8 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
             final String originRepositoryName = context.getOriginRepositoryName();
             final String originRepositoryOwner = context.getOriginRepositoryOwner();
             if (originRepositoryName != null && originRepositoryOwner != null) {
-                context.getVcsHostingService()
-                       .makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName)
-                       .then(new Operation<String>() {
-                           @Override
-                           public void apply(String url) throws OperationException {
-                               view.setRepositoryUrl(url);
-                           }
-                       });
+                view.setRepositoryUrl(context.getVcsHostingService()
+                                             .makeHttpRemoteUrl(originRepositoryOwner, originRepositoryName));
             }
         }
     }
@@ -649,7 +632,8 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
             context.getVcsService()
                    .listLocalBranches(context.getProject(), new AsyncCallback<List<Branch>>() {
                        @Override
-                       public void onFailure(final Throwable notUsed) {}
+                       public void onFailure(final Throwable notUsed) {
+                       }
 
                        @Override
                        public void onSuccess(final List<Branch> branches) {
@@ -777,7 +761,9 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
     private class CancelNewBranchCallback implements CancelCallback {
         private final Context context;
 
-        private CancelNewBranchCallback(final Context context) { this.context = context; }
+        private CancelNewBranchCallback(final Context context) {
+            this.context = context;
+        }
 
         @Override
         public void cancelled() {

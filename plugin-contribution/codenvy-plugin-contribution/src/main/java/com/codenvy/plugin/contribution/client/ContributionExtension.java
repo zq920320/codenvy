@@ -42,8 +42,7 @@ import org.eclipse.che.ide.util.loging.Log;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_MODE_VARIABLE_NAME;
+import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_TO_BRANCH_VARIABLE_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTION_PROJECT_TYPE_ID;
 import static java.util.Collections.singletonList;
 
@@ -63,7 +62,7 @@ import static java.util.Collections.singletonList;
 public class ContributionExtension {
 
     private final ContributePartPresenter   contributionPartPresenter;
-    private final AppContext                appContext;
+    private final AppContext        appContext;
     private final WorkflowExecutor          workflowExecutor;
     private final VcsHostingServiceProvider hostingServiceProvider;
     private final VcsServiceProvider        vcsServiceProvider;
@@ -81,9 +80,9 @@ public class ContributionExtension {
                                  final VcsHostingServiceProvider vcsHostingServiceProvider,
                                  final VcsServiceProvider vcsServiceProvider,
                                  final ProjectServiceClient projectService) {
-        this.appContext = appContext;
         this.workflowExecutor = workflow;
         this.contributionPartPresenter = contributionPartPresenter;
+        this.appContext = appContext;
         this.hostingServiceProvider = vcsHostingServiceProvider;
         this.vcsServiceProvider = vcsServiceProvider;
         this.projectService = projectService;
@@ -131,18 +130,11 @@ public class ContributionExtension {
         if (!project.getMixins().contains(CONTRIBUTION_PROJECT_TYPE_ID)) {
             final VcsService vcsService = vcsServiceProvider.getVcsService(project);
             return vcsService.getBranchName(project)
-                             .then(new Function<String, ProjectConfigDto>() {
+                             .thenPromise(new Function<String, Promise<ProjectConfigDto>>() {
                                  @Override
-                                 public ProjectConfigDto apply(String branchName) throws FunctionException {
-                                     project.getAttributes().put(CONTRIBUTE_BRANCH_VARIABLE_NAME, singletonList(branchName));
-                                     return project;
-                                 }
-                             })
-                             .thenPromise(new Function<ProjectConfigDto, Promise<ProjectConfigDto>>() {
-                                 @Override
-                                 public Promise<ProjectConfigDto> apply(final ProjectConfigDto project) throws FunctionException {
+                                 public Promise<ProjectConfigDto> apply(String branchName) throws FunctionException {
                                      project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
-                                     project.getAttributes().put(CONTRIBUTE_MODE_VARIABLE_NAME, singletonList("contribute"));
+                                     project.getAttributes().put(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME, singletonList(branchName));
                                      return projectService.updateProject(appContext.getWorkspaceId(),
                                                                          project.getPath(),
                                                                          project);

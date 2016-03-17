@@ -235,21 +235,21 @@ public class GitHubHostingService implements VcsHostingService {
 
     @NotNull
     @Override
-    public Promise<String> makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return Promises.resolve(templates.sshUrlTemplate(username, repository));
+    public String makeSSHRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return templates.sshUrlTemplate(username, repository);
     }
 
     @NotNull
     @Override
-    public Promise<String> makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
-        return Promises.resolve(templates.httpUrlTemplate(username, repository));
+    public String makeHttpRemoteUrl(@NotNull final String username, @NotNull final String repository) {
+        return templates.httpUrlTemplate(username, repository);
     }
 
     @NotNull
     @Override
-    public Promise<String> makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
+    public String makePullRequestUrl(@NotNull final String username, @NotNull final String repository,
                                               @NotNull final String pullRequestNumber) {
-        return Promises.resolve(templates.pullRequestUrlTemplate(username, repository, pullRequestNumber));
+        return templates.pullRequestUrlTemplate(username, repository, pullRequestNumber);
     }
 
     @NotNull
@@ -393,7 +393,6 @@ public class GitHubHostingService implements VcsHostingService {
     public void createPullRequest(final String owner,
                                   final String repository,
                                   final String username,
-                                  final String headRepository,
                                   final String headBranchName,
                                   final String baseBranchName,
                                   final String title,
@@ -438,7 +437,6 @@ public class GitHubHostingService implements VcsHostingService {
     public Promise<PullRequest> createPullRequest(final String owner,
                                                   final String repository,
                                                   final String username,
-                                                  final String headRepository,
                                                   final String headBranchName,
                                                   final String baseBranchName,
                                                   final String title,

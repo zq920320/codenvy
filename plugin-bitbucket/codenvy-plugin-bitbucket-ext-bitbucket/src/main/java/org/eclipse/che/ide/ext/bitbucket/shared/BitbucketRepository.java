@@ -45,6 +45,10 @@ public interface BitbucketRepository {
 
     void setOwner(BitbucketUser owner);
 
+    String getFullName();
+
+    void setFullName(String fullName);
+
     @DTO
     interface BitbucketRepositoryLinks {
         List<BitbucketLink> getClone();

@@ -114,27 +114,4 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                   .loader(loaderFactory.newLoader("Getting user profile"))
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftUserProfile.class));
     }
-
-    @Override
-    public Promise<String> makeHttpRemoteUrl(String account,
-                                             String collection,
-                                             String project,
-                                             String repository) {
-        String url = baseHttpUrl + "/url/remote/" + account + '/' + collection + '/' + project + '/' + repository;
-        return asyncRequestFactory.createGetRequest(url)
-                                  .loader(loaderFactory.newLoader("Getting pull request url"))
-                                  .send(new StringUnmarshaller());
-    }
-
-    @Override
-    public Promise<String> makePullRequestUrl(String account,
-                                              String collection,
-                                              String project,
-                                              String repository,
-                                              String number) {
-        String url = baseHttpUrl + "/url/pullrequest/" + account + '/' + collection + '/' +project + '/' + repository + '/' + number;
-        return asyncRequestFactory.createGetRequest(url)
-                                  .loader(loaderFactory.newLoader("Getting user profile"))
-                                  .send(new StringUnmarshaller());
-    }
 }

@@ -31,6 +31,7 @@ import static org.eclipse.che.ide.rest.HTTPStatus.CREATED;
 import static org.eclipse.che.ide.rest.HTTPStatus.OK;
 
 import org.eclipse.che.api.auth.oauth.OAuthTokenProvider;
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.json.JsonHelper;
@@ -135,7 +136,7 @@ public class Bitbucket {
      * @throws java.lang.IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketRepositories getRepositoryForks(@NotNull final String owner, @NotNull final String repositorySlug)
+    public List<BitbucketRepository> getRepositoryForks(@NotNull final String owner, @NotNull final String repositorySlug)
             throws IOException, BitbucketException, ServerException, IllegalArgumentException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -153,7 +154,7 @@ public class Bitbucket {
 
         } while (repositoryPage.getNext() != null);
 
-        return DtoFactory.getInstance().createDto(BitbucketRepositories.class).withRepositories(repositories);
+        return repositories;
     }
 
     /**
@@ -209,7 +210,7 @@ public class Bitbucket {
      * @throws IllegalArgumentException
      *         if one parameter is not valid.
      */
-    public BitbucketPullRequests getRepositoryPullRequests(@NotNull final String owner, @NotNull final String repositorySlug)
+    public List<BitbucketPullRequest> getRepositoryPullRequests(@NotNull final String owner, @NotNull final String repositorySlug)
             throws ServerException, IOException, BitbucketException {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
@@ -229,7 +230,7 @@ public class Bitbucket {
 
         } while (pullRequestsPage.getNext() != null);
 
-        return DtoFactory.getInstance().createDto(BitbucketPullRequests.class).withPullRequests(pullRequests);
+        return pullRequests;
 
     }
 
@@ -296,8 +297,10 @@ public class Bitbucket {
                 }
             }
 
-            final String authorizationHeaderValue = "Bearer " + tokenProvider.getToken("bitbucket", getUserId()).getToken();
-            http.setRequestProperty(AUTHORIZATION, authorizationHeaderValue);
+            final OAuthToken token = tokenProvider.getToken("bitbucket", getUserId());
+            if (token != null) {
+                http.setRequestProperty(AUTHORIZATION, "Bearer " +  token.getToken());
+            }
             http.setRequestProperty(ACCEPT, APPLICATION_JSON);
 
             if (data != null && !data.isEmpty()) {

@@ -141,29 +141,4 @@ public class MicrosoftVstsService {
         final String repositoryId = microsoftVstsRestClient.getRepository(account, collection, project, repository).getId();
         return microsoftVstsRestClient.updatePullRequests(account, collection, repositoryId, pullRequestId, pullRequest);
     }
-
-    @GET
-    @Path("/url/remote/{account}/{collection}/{project}/{repository}")
-    @Produces(TEXT_PLAIN)
-    public String getHttpRemoteUrl(@PathParam("account") String account,
-                                   @PathParam("collection") String collection,
-                                   @PathParam("project") String project,
-                                   @PathParam("repository") String repository) throws IOException,
-                                                                                      ServerException,
-                                                                                      UnauthorizedException {
-        return templates.httpRemoteUrl(account, collection, project, repository);
-    }
-
-    @GET
-    @Path("/url/pullrequest/{account}/{collection}/{project}/{repository}/{number}")
-    @Produces(TEXT_PLAIN)
-    public String getPullRequestRemoteUrl(@PathParam("account") String account,
-                                          @PathParam("collection") String collection,
-                                          @PathParam("project") String project,
-                                          @PathParam("repository") String repository,
-                                          @PathParam("number") String number) throws IOException,
-                                                                                     ServerException,
-                                                                                     UnauthorizedException {
-        return templates.pullRequestHtmlUrl(account, collection, project, repository, number);
-    }
 }

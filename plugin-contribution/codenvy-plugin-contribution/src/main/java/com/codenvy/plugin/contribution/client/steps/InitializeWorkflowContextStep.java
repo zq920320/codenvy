@@ -35,7 +35,7 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_BRANCH_VARIABLE_NAME;
+import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_TO_BRANCH_VARIABLE_NAME;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
@@ -91,7 +91,7 @@ public class InitializeWorkflowContextStep implements Step {
                     context.setOriginRepositoryOwner(vcsHostingService.getRepositoryOwnerFromUrl(originUrl));
                     context.setOriginRepositoryName(vcsHostingService.getRepositoryNameFromUrl(originUrl));
 
-                    context.setClonedBranchName(getClonedBranch(context.getProject()));
+                    context.setContributeToBranchName(getContributeToBranchName(context.getProject()));
 
                     executor.done(InitializeWorkflowContextStep.this, context);
                 } else {
@@ -102,10 +102,10 @@ public class InitializeWorkflowContextStep implements Step {
         };
     }
 
-    private String getClonedBranch(final ProjectConfigDto project) {
+    private String getContributeToBranchName(final ProjectConfigDto project) {
         final Map<String, List<String>> attrs = project.getAttributes();
-        if (attrs.containsKey(CONTRIBUTE_BRANCH_VARIABLE_NAME) && !attrs.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).isEmpty()) {
-            return attrs.get(CONTRIBUTE_BRANCH_VARIABLE_NAME).get(0);
+        if (attrs.containsKey(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME) && !attrs.get(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME).isEmpty()) {
+            return attrs.get(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME).get(0);
         }
         if (project.getSource() != null) {
             final String branchName = project.getSource().getParameters().get("branch");
