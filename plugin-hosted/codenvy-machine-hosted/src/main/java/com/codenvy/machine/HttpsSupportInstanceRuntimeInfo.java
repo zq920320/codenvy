@@ -72,7 +72,9 @@ public class HttpsSupportInstanceRuntimeInfo extends SwarmInstanceRuntimeInfo {
                                                                                     serverUri.getHost(),
                                                                                     serverUri.getPort());
                         serverEntry.setValue(new ServerImpl(server.getRef(),
+                                                            server.getProtocol(),
                                                             newHostPort,
+                                                            server.getPath(),
                                                             serverUri.getScheme() + "://" + newHostPort));
                     }
                 } catch (URISyntaxException e) {
