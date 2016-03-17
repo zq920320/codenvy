@@ -1,0 +1,454 @@
+/*
+ *  [2012] - [2016] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
+package com.codenvy.im.commands;
+
+import com.codenvy.im.agent.AgentException;
+import com.codenvy.im.commands.decorators.PuppetErrorInterrupter;
+import com.codenvy.im.managers.InstallOptions;
+import com.codenvy.im.managers.InstallType;
+import com.codenvy.im.managers.NodeConfig;
+import com.google.common.collect.ImmutableList;
+import org.eclipse.che.commons.annotation.Nullable;
+
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static com.codenvy.im.commands.SimpleCommand.createCommand;
+import static java.lang.String.format;
+import static java.nio.file.Files.exists;
+
+/** @author Dmytro Nochevnov */
+public class CommandLibrary {
+
+    private static final String STOP     = "stop";
+    private static final String START    = "start";
+    private static final String ACTIVE   = "active";
+    private static final String INACTIVE = "inactive";
+
+    /** @return Empty command which returns empty string after execution */
+    public static final Command EMPTY_COMMAND = new EmptyCommand();
+
+    public enum PatchType {
+        BEFORE_UPDATE, AFTER_UPDATE
+    }
+
+    private CommandLibrary() {
+    }
+
+    public static Command createPropertyReplaceCommand(String file, String property, String value) {
+        return createPropertyReplaceCommand(file, property, value, true);
+    }
+
+    public static Command createPropertyReplaceCommand(Path file, String property, String value) {
+        return createPropertyReplaceCommand(file.toString(), property, value, true);
+    }
+
+    public static Command createPropertyReplaceCommand(String file, String property, String value, boolean withSudo) {
+        String replacingToken = format("%s *= *\"[^\"]*\"", property);
+        String replacement = format("%s = \"%s\"", property, value);
+        return createReplaceCommand(file, replacingToken, replacement, withSudo);
+    }
+
+    public static Command createReplaceCommand(Path file, String replacingToken, String replacement) {
+        return createReplaceCommand(file.toString(), replacingToken, replacement, true);
+    }
+
+    public static Command createReplaceCommand(String file, String replacingToken, String replacement) {
+        return createReplaceCommand(file, replacingToken, replacement, true);
+    }
+
+    /**
+     * The idea is to treat file as a single line and replace text respectively.
+     */
+    public static Command createReplaceCommand(String file, String replacingToken, String replacement, boolean withSudo) {
+        String cmd = format("sudo cat %3$s | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|%1$s|%2$2s|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %3$s",
+                            replacingToken,
+                            replacement.replace("\\$", "\\\\$").replace("\n", "\\n"),
+                            file);
+        return createCommand(withSudo ? cmd : cmd.replace("sudo ", ""));
+    }
+
+    public static Command createFileRestoreOrBackupCommand(final String file) {
+        return createCommand(getFileRestoreOrBackupCommand(file));
+    }
+
+    public static Command createFileRestoreOrBackupCommand(final String file, List<NodeConfig> nodes) throws AgentException {
+        return MacroCommand.createCommand(getFileRestoreOrBackupCommand(file), null, nodes);
+    }
+
+    public static Command createFileRestoreOrBackupCommand(final String file, NodeConfig node) throws AgentException {
+        return MacroCommand.createCommand(getFileRestoreOrBackupCommand(file), null, ImmutableList.of(node));
+    }
+
+    protected static String getFileRestoreOrBackupCommand(final String file) {
+        final String backupFile = file + ".back";
+        return format("if sudo test -f %2$s; then " +
+                      "    if ! sudo test -f %1$s; then " +
+                      "        sudo cp %2$s %1$s; " +
+                      "    else " +
+                      "        sudo cp %1$s %2$s; " +
+                      "    fi " +
+                      "fi",
+                      backupFile,
+                      file);
+    }
+
+    public static Command createFileBackupCommand(String file, NodeConfig node) throws AgentException {
+        return createCommand(getFileBackupCommand(file), node);
+    }
+
+    public static Command createFileBackupCommand(final String file) {
+        return createCommand(getFileBackupCommand(file));
+    }
+
+    public static Command createFileBackupCommand(final Path file) {
+        return createCommand(getFileBackupCommand(file.toString()));
+    }
+
+    protected static String getFileBackupCommand(final String file) {
+        return format("sudo cp %1$s %1$s.back ; " +
+                      "sudo cp %1$s %1$s.back.%2$s ; ",
+                      file,
+                      new Date().getTime());
+    }
+
+    public static Command createPatchCommand(Path patchDir, PatchType patchType, InstallOptions installOptions) throws IOException {
+        List<Command> commands = new ArrayList<>();
+
+        Path relativePatchFilePath = getRelativePatchFilePath(patchType, installOptions.getInstallType());
+        Path patchFile = patchDir.resolve(relativePatchFilePath);
+        if (exists(patchFile)) {
+            for (Map.Entry<String, String> e : installOptions.getConfigProperties().entrySet()) {
+                String property = e.getKey();
+                String value = e.getValue();
+
+                commands.add(createReplaceCommand(patchFile.toString(), "$" + property, value));
+            }
+            commands.add(createCommand(format("bash %s", patchFile)));
+        }
+
+        return new MacroCommand(commands, "Patch resources");
+    }
+
+    /**
+     * Return relative path to patch file, for example:  "single_server/patch_before_update.sh"
+     */
+    private static Path getRelativePatchFilePath(PatchType patchType, InstallType installType) {
+        String pathFilename = format("patch_%s.sh", patchType.toString().toLowerCase());
+        return Paths.get(installType.toString().toLowerCase())
+                    .resolve(pathFilename);
+    }
+
+    public static Command createRepeatCommand(Command command) {
+        return new RepeatCommand(command);
+    }
+
+    public static Command createStopServiceCommand(String serviceName) {
+        return createCommand(getServiceManagementCommand(serviceName, STOP));
+    }
+
+    public static Command createStopServiceCommand(String serviceName, NodeConfig node) throws AgentException {
+        return createCommand(getServiceManagementCommand(serviceName, STOP), node);
+    }
+
+    public static Command createStartServiceCommand(String serviceName) {
+        return createCommand(getServiceManagementCommand(serviceName, START));
+    }
+
+    public static Command createStartServiceCommand(String serviceName, NodeConfig node) throws AgentException {
+        return createCommand(getServiceManagementCommand(serviceName, START), node);
+    }
+
+    protected static String getServiceManagementCommand(String serviceName, String action) {
+        switch (action) {
+            case STOP:
+                return format("/bin/systemctl status %1$s.service; "
+                              + "if [ $? -eq 0 ]; then "
+                              + "  sudo /bin/systemctl stop %1$s.service; "
+                              + "fi; ",
+                              serviceName);
+
+            case START:
+                return format("/bin/systemctl status %1$s.service; "
+                              + "if [ $? -ne 0 ]; then "
+                              + "  sudo /bin/systemctl start %1$s.service; "
+                              + "fi; ",
+                              serviceName);
+            default:
+                throw new IllegalArgumentException(format("Service action '%s' isn't supported", action));
+        }
+    }
+
+    /**
+     * @return command "sudo tar -C {fromDir} -rf {packFile} {pathWithinThePack}", if packFile exists, or
+     * command "sudo tar -C {fromDir} -cf {packFile} {pathWithinThePack}", if packFile doesn't exists.
+     *
+     * Don't gzip to be able to update pack in future.
+     */
+    public static Command createPackCommand(Path fromDir, Path packFile, String pathWithinThePack, boolean needSudo) {
+        return createCommand(getPackCommand(fromDir, packFile, pathWithinThePack, needSudo, false));
+    }
+
+    /**
+     * @return for certain node, the command "sudo tar -C {fromDir} -rf {packFile} {pathWithinThePack}", if packFile exists, or
+     * command "sudo tar -C {fromDir} -cf {packFile} {pathWithinThePack}", if packFile doesn't exists.
+     *
+     * Don't gzip to be able to update pack in future.
+     */
+    public static Command createPackCommand(Path fromDir, Path packFile, String pathWithinThePack, NodeConfig node) throws AgentException {
+        return createCommand(getPackCommand(fromDir, packFile, pathWithinThePack, true, false), node);
+    }
+
+    /**
+     * @return for certain node, the command "sudo tar -C {fromDir} -z -rf {packFile} {pathWithinThePack}", if packFile exists, or
+     * command "sudo tar -C {fromDir} -z -cf {packFile} {pathWithinThePack}", if packFile doesn't exists.
+     */
+    public static Command createCompressCommand(Path fromDir, Path packFile, String pathWithinThePack, NodeConfig node) throws AgentException {
+        return createCommand(getPackCommand(fromDir, packFile, pathWithinThePack, true, true), node);
+    }
+
+    private static String getPackCommand(Path fromDir, Path packFile, String pathWithinThePack, boolean needSudo, boolean useCompression) {
+        String compressionOption = useCompression ? "-z" : "";
+
+        if (needSudo) {
+            return format("if sudo test -f %2$s; then " +
+                          "   sudo tar -C %1$s %4$s -rf %2$s %3$s;" +
+                          "else " +
+                          "   sudo tar -C %1$s %4$s -cf %2$s %3$s;" +
+                          "fi;",
+                          fromDir,
+                          packFile,
+                          pathWithinThePack,
+                          compressionOption);
+        } else {
+            return format("if test -f %2$s; then " +
+                          "   tar -C %1$s %4$s -rf %2$s %3$s;" +
+                          "else " +
+                          "   tar -C %1$s %4$s -cf %2$s %3$s;" +
+                          "fi;",
+                          fromDir,
+                          packFile,
+                          pathWithinThePack,
+                          compressionOption);
+        }
+    }
+
+    public static Command createUnpackCommand(Path packFile, Path toDir, String pathWithinThePack, boolean needSudo) {
+        return createCommand(getUnpackCommand(packFile, toDir, pathWithinThePack, needSudo, false));
+    }
+
+    public static Command createUnpackCommand(Path packFile, Path toDir, String pathWithinThePack) {
+        return createCommand(getUnpackCommand(packFile, toDir, pathWithinThePack, false, false));
+    }
+
+    public static Command createUnpackCommand(Path packFile, Path toDir) {
+        return createCommand(getUnpackCommand(packFile, toDir, null, false, false));
+    }
+
+    public static Command createUncompressCommand(Path packFile, Path toDir) {
+        return createCommand(getUnpackCommand(packFile, toDir, null, false, true));
+    }
+
+    public static Command createUnpackCommand(Path packFile, Path toDir, String pathWithinThePack, NodeConfig node) throws AgentException {
+        return createCommand(getUnpackCommand(packFile, toDir, pathWithinThePack, true, false), node);
+    }
+
+    private static String getUnpackCommand(Path packFile, Path toDir, @Nullable String pathWithinThePack, boolean needSudo, boolean useCompression) {
+        String command;
+        String compressionOptions = useCompression ? "-z" : "";
+
+        if (pathWithinThePack == null) {
+            command = format("tar %s -xf %s -C %s",
+                             compressionOptions,
+                             packFile,
+                             toDir);
+        } else {
+            command = format("tar %s -xf %s -C %s %s",
+                             compressionOptions,
+                             packFile,
+                             toDir,
+                             pathWithinThePack);
+        }
+
+        if (needSudo) {
+            command = "sudo " + command;
+        }
+
+        return command;
+    }
+
+    public static Command createCopyFromRemoteToLocalCommand(Path fromPath, Path toPath, NodeConfig remote) {
+        String userNamePrefix = "";
+        if (remote.getUser() != null
+            && !remote.getUser().isEmpty()) {
+            userNamePrefix = format("%s@", remote.getUser());
+        }
+
+        String fromRemotePath = format("%s%s:%s", userNamePrefix, remote.getHost(), fromPath);
+        return createCommand(getScpCommand(fromRemotePath, toPath.toString(), remote.getPort(), remote.getPrivateKeyFile()));
+    }
+
+    public static Command createCopyFromLocalToRemoteCommand(Path fromPath, Path toPath, NodeConfig remote) {
+        String userNamePrefix = "";
+        if (remote.getUser() != null
+            && !remote.getUser().isEmpty()) {
+            userNamePrefix = format("%s@", remote.getUser());
+        }
+
+        String toRemotePath = format("%s%s:%s", userNamePrefix, remote.getHost(), toPath);
+        return createCommand(getScpCommand(fromPath.toString(), toRemotePath, remote.getPort(), remote.getPrivateKeyFile()));
+    }
+
+    private static String getScpCommand(String fromPath, String toPath, int port, Path privateKeyFile) {
+        return format("scp -P %s -i '%s' -r -q -o StrictHostKeyChecking=no %s %s", port, privateKeyFile, fromPath, toPath);
+    }
+
+    public static Command createWaitServiceActiveCommand(String service) {
+        return createCommand(getWaitServiceStatusCommand(service, ACTIVE));
+    }
+
+    public static Command createWaitServiceActiveCommand(String service, NodeConfig node) throws AgentException {
+        return createCommand(getWaitServiceStatusCommand(service, ACTIVE), node);
+    }
+
+    protected static String getWaitServiceStatusCommand(String service, String status) {
+        String operator;
+        switch (status) {
+            case ACTIVE:
+                operator = "-eq";
+                break;
+
+            case INACTIVE:
+                operator = "-ne";
+                break;
+
+            default:
+                throw new IllegalArgumentException(format("Service status '%s' isn't supported", status));
+        }
+
+        return format("doneState=\"Checking\"; " +
+                      "while [ \"${doneState}\" != \"Done\" ]; do " +
+                      "    sudo service %s status | grep 'Active: active (running)'; " +
+                      "    if [ $? %s 0 ]; then doneState=\"Done\"; " +
+                      "    else sleep 5; " +
+                      "    fi; " +
+                      "done", service, operator);
+    }
+
+    /**
+     * Creates command to force running puppet agent.
+     */
+    public static Command createForcePuppetAgentCommand(NodeConfig node) throws AgentException {
+        return createCommand(getForcePuppetAgentCommand(), node);
+    }
+
+
+    /**
+     * Creates command to force running puppet agent.
+     */
+    public static Command createForcePuppetAgentCommand() throws AgentException {
+        return createCommand(getForcePuppetAgentCommand());
+    }
+
+    /**
+     * Creates command to force running puppet agent. Log destination defined by constant PuppetErrorInterrupter.PATH_TO_PUPPET_LOG
+     */
+    private static String getForcePuppetAgentCommand() {
+        return format("sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=%s; exit 0;", // make sure there is no "--detailed-exitcodes" option
+        PuppetErrorInterrupter.PATH_TO_PUPPET_LOG);
+    }
+
+    public static Command createTailCommand(Path file, int bytes, boolean needSudo) {
+        return SimpleCommand.createCommandWithoutLogging(getTailCommand(file, bytes, needSudo));
+    }
+
+    public static Command createTailCommand(Path file, int bytes, NodeConfig node, boolean needSudo) throws AgentException {
+        return SimpleCommand.createCommandWithoutLogging(getTailCommand(file, bytes, needSudo), node);
+    }
+
+    private static String getTailCommand(Path file, int bytes, boolean needSudo) {
+        String command = format("tail -c %s %s", bytes, file);
+        if (needSudo) {
+            command = "sudo " + command;
+        }
+
+        return command;
+    }
+
+    public static Command createChmodCommand(String mode, Path file, boolean useSudo) {
+        return createCommand(getChmodCommand(mode, file, useSudo));
+    }
+
+    public static Command createChmodCommand(String mode, Path file, NodeConfig node, boolean useSudo) throws AgentException {
+        return createCommand(getChmodCommand(mode, file, useSudo), node);
+    }
+
+    private static String getChmodCommand(String mode, Path file, boolean useSudo) {
+        String command = format("chmod %s %s", mode, file);
+
+        if (useSudo) {
+            command = "sudo " + command;
+        }
+
+        return command;
+    }
+
+    public static Command createCopyCommand(Path from, Path to, NodeConfig node, boolean useSudo) throws AgentException {
+        return createCommand(getCopyCommand(from, to, useSudo), node);
+    }
+
+    /**
+     * @return copy bash command where sudo isn't used.
+     */
+    public static Command createCopyCommand(Path from, Path to) {
+        return createCommand(getCopyCommand(from, to, false));
+    }
+
+    public static Command createCopyCommand(Path from, Path to, boolean useSudo) {
+        return createCommand(getCopyCommand(from, to, useSudo));
+    }
+
+    private static String getCopyCommand(Path from, Path to, boolean useSudo) {
+        String command = format("cp %s %s", from, to);
+
+        if (useSudo) {
+            command = "sudo " + command;
+        }
+
+        return command;
+    }
+
+    private static class EmptyCommand implements Command {
+        @Override
+        public String execute() throws CommandException {
+            return "";
+        }
+
+        @Override
+        public String getDescription() {
+            return "Empty command";
+        }
+
+        @Override
+        public String toString() {
+            return getDescription();
+        }
+    }
+}
