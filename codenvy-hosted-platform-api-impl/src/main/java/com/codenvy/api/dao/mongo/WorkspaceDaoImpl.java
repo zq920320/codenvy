@@ -140,7 +140,8 @@ import static java.util.Objects.requireNonNull;
  *          {
  *              "ref" : "some_reference",
  *              "port" : "9090/udp",
- *              "protocol" : "some_protocol"
+ *              "protocol" : "some_protocol",
+ *              "path" : "/some/path"
  *          }
  *      ],
  *      envVariables : [
