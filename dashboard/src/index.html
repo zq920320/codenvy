@@ -1,0 +1,99 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2015] - [2016] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<!doctype html>
+<html class="no-js" ng-app="codenvyDashboard" ng-strict-di>
+<head>
+  <meta charset="utf-8">
+  <title ng-bind="branding.title">Loading Dashboard...</title>
+  <meta name="description" content="">
+  <base href="/">
+  <meta name="viewport" content="width=device-width">
+  <link rel="shortcut icon" ng-href="{{branding.favicon}}">
+
+  <!-- build:css({.tmp/serve,src}) styles/vendor.css -->
+  <link rel="stylesheet" type="text/css" href="../bower_components/codemirror/addon/lint/lint.css">
+  <link rel="stylesheet" type="text/css" href="../bower_components/codemirror/addon/fold/foldgutter.css">
+
+  <!-- bower:css -->
+  <!-- run `gulp inject` to automatically populate bower styles dependencies -->
+  <!-- endbower -->
+  <!-- endbuild -->
+
+  <!-- build:css({.tmp/serve,src}) styles/app.css -->
+  <!-- inject:css -->
+  <!-- css files will be automatically insert here -->
+  <!-- endinject -->
+  <!-- endbuild -->
+</head>
+<body layout="row">
+<div ng-hide="hideLoader" class="main-page-loader">
+  <div layout="column" class="main-page-loader-content">
+    <div class="spinner">
+      <div class="rect1"></div>
+      <div class="rect2"></div>
+      <div class="rect3"></div>
+    </div>
+  </div>
+  <img class="main-page-loader-logo" src="assets/branding/whiteLogo.png" />
+</div>
+<!--[if lt IE 10]>
+<p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+<![endif]-->
+
+<md-sidenav id="codenvynavmenu" class='ide-show not-visible' ng-hide="showIDE" ng-class="waitingLoaded ? 'md-sidenav-left md-whiteframe-z2 dark-menu-bg sidebar-entry' : 'not-visible'" md-component-id="left" md-is-locked-open="$mdMedia('gt-md')">
+  <codenvy-nav-bar id="codenvynavbar" ></codenvy-nav-bar>
+</md-sidenav>
+<div class="main-page ide-show" layout="column" flex ng-show="waitingLoaded && !showIDE">
+  <div role="main" ng-view layout="column" flex>
+  </div>
+  <che-footer che-logo="{{branding.logoURL}}" che-support-help-path="{{branding.helpPath}}" che-support-help-title="{{branding.helpTitle}}" che-support-email="{{branding.supportEmail}}" che-product-name="Codenvy"></che-footer>
+</div>
+<!-- Addons are not automatically injected -->
+
+<!-- DO NOT ADD DIRECTLY JS THERE, THIS IS AUTOMATICALLY ADDED -->
+<!-- build:js(src) scripts/vendor.js -->
+<script src="../bower_components/codemirror/lib/codemirror.js"></script>
+<script src="../bower_components/jsonlint/lib/jsonlint.js"></script>
+<script src="../bower_components/codemirror/addon/lint/lint.js"></script>
+<script src="../bower_components/codemirror/addon/lint/json-lint.js"></script>
+<script src="../bower_components/codemirror/mode/javascript/javascript.js"></script>
+<script src="../bower_components/codemirror/addon/edit/matchbrackets.js"></script>
+<script src="../bower_components/codemirror/addon/edit/closebrackets.js"></script>
+<script src="../bower_components/codemirror/addon/fold/foldcode.js"></script>
+<script src="../bower_components/codemirror/addon/fold/foldgutter.js"></script>
+<script src="../bower_components/codemirror/addon/fold/brace-fold.js"></script>
+<script src="../bower_components/codemirror/addon/selection/active-line.js"></script>
+<!-- bower:js -->
+<!-- run `gulp inject` to automatically populate bower script dependencies -->
+<!-- endbower -->
+<!-- endbuild -->
+
+<!-- build:js({.tmp/serve,.tmp/partials}) scripts/app.js -->
+<!-- inject:js -->
+<!-- js files will be automatically insert here -->
+<!-- endinject -->
+
+<!-- inject:partials -->
+<!-- angular templates will be automatically converted in js and inserted here -->
+<!-- endinject -->
+<!-- endbuild -->
+
+</body>
+</html>

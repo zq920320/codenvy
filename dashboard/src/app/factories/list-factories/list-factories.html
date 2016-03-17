@@ -1,0 +1,48 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2015] - [2016] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<che-toolbar che-title="All factories"
+             che-dropdown-menu="listFactoriesCtrl.menuOptions"
+             che-search-placeholder="Search for factories"
+             che-search-model="listFactoriesCtrl.factoriesFilter.originFactory.name"
+             che-add-button-name="Create Factory"
+             che-add-button-href="#/factories/create-factory"></che-toolbar>
+<md-content md-scroll-y flex layout="column" md-theme="maincontent-theme" class="factories-list-factories">
+  <md-progress-linear md-mode="indeterminate" class="factories-list-factories-progress"
+                      ng-if="listFactoriesCtrl.isLoading"></md-progress-linear>
+  <md-content flex class="md-maincontent-theme-theme" ng-show="!listFactoriesCtrl.isLoading"
+              che-list-on-scroll-bottom="listFactoriesCtrl.loadNextPage()">
+    <div ng-if="listFactoriesCtrl.factories.length === 0" layout="row" layout-align="center center">
+      <che-empty-state che-value="There are no factories yet."
+                        che-icon-class="chefont cheico-rocket-chefont icon"></che-empty-state>
+    </div>
+    <div ng-if="listFactoriesCtrl.factories.length > 0">
+      <div class="factories-list-notification">
+      <span
+        ng-show="(listFactoriesCtrl.factories | filter:listFactoriesCtrl.factoriesFilter).length === 0 && listFactoriesCtrl.factories.length > 0"
+        class="factories-list-empty">No factories found</span>
+      </div>
+      <che-list ng-show="(listFactoriesCtrl.factories | filter:listFactoriesCtrl.factoriesFilter).length > 0">
+        <cdvy-factory-item
+          ng-repeat="factory in listFactoriesCtrl.factories | filter:listFactoriesCtrl.factoriesFilter | orderBy:listFactoriesCtrl.factoriesOrderBy"
+          cdvy-factory="factory" cdvy-is-selectable="true" ng-model="listFactoriesCtrl.factoriesSelectedStatus[factory.originFactory.id]"/>
+      </che-list>
+    </div>
+  </md-content>
+</md-content>

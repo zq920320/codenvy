@@ -1,0 +1,64 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2015] - [2016] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<div layout="row" flex layout-align="center center">
+  <che-panel che-title="Developer Mode Login" flex="50">
+    <ng-form name="loginDeveloperForm">
+
+      <che-input che-form="loginDeveloperForm"
+                 che-name="login"
+                 che-label-name="Login"
+                 che-place-holder="Login of the user"
+                  ng-model="loginCtrl.username"
+                  required
+                  ng-maxlength="128">
+        <div ng-message="required">A login is required.</div>
+      </che-input>
+
+      <che-input che-form="loginDeveloperForm"
+                 che-name="password"
+                 che-label-name="Password"
+                 che-place-holder="Password of the user"
+                  ng-model="loginCtrl.password"
+                  ng-keyup="$event.keyCode == 13 && loginCtrl.submit()"
+                  type="password"
+                  required
+                  ng-maxlength="128">
+        <div ng-message="required">A password is required.</div>
+      </che-input>
+
+      <che-label-container che-label-name="Mode">
+
+        <che-toggle ng-model="loginCtrl.usermode" >
+          <che-toggle-button che-font-icon="fa fa-user" che-title="User"></che-toggle-button>
+          <che-toggle-button che-font-icon="material-design icon-ic_verified_user_24px" che-title="Admin"></che-toggle-button>
+        </che-toggle>
+      </che-label-container>
+
+      <che-button-primary ng-click="loginCtrl.submit()" che-button-title="Login"></che-button-primary>
+      <div layout="column" layout-align="center center">
+        <md-progress-circular ng-show="loginCtrl.loginInProgress" class="md-hue-2"  md-mode="indeterminate" md-theme="default"></md-progress-circular>
+        <div class="login-error-message" ng-show="loginCtrl.error">
+          {{loginCtrl.error}}
+        </div>
+      </div>
+
+    </ng-form>
+  </che-panel>
+</div>

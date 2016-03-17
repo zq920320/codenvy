@@ -1,0 +1,74 @@
+<!--
+
+    CODENVY CONFIDENTIAL
+    __________________
+
+     [2015] - [2016] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<div class="load-factory-main-container">
+  <div flex class="ide-loader" layout-align="center center" layout="column">
+    <div class="load-factory-content">
+      <!--crane and terminals-->
+      <che-loader layout="column" layout-aling="center center">
+        <div layout="row" class="che-loader-animation-panel main-page">
+          <div flex="initial" flex-gt-sm="60">
+            <che-loader-crane che-all-steps="loadFactoryCtrl.getLoadingSteps()"
+                              che-exclude-steps="[loadFactoryCtrl.getLoadingSteps().length-1]"
+                              che-step="{{loadFactoryCtrl.getCurrentProgressStep()}}"
+                              che-switch-on-iteration="true">
+            </che-loader-crane>
+          </div>
+          <div flex="noshrink" flex-gt-sm="40" layout="column" layout-align="center center"
+               layout-align-gt-sm="start center">
+            <div class="load-factory-working-log">
+              <che-accordion ng-repeat="step in loadFactoryCtrl.getLoadingSteps()" che-index="{{$index}}"
+                             che-current-step="{{loadFactoryCtrl.getCurrentProgressStep()}}">
+                <div class="che-accordion-title">
+                  <span>{{loadFactoryCtrl.getLoadingSteps()[$index].text}}{{$index < loadFactoryCtrl.getCurrentProgressStep() ? ' ... completed' : ''}}</span>
+                </div>
+                <div class="che-accordion-body" ng-show="$index>0 && $index<loadFactoryCtrl.getLoadingSteps().length-1">
+                  <che-logs-output che-title="{{loadFactoryCtrl.getLoadingSteps()[$index].inProgressText}}"
+                                   che-text="{{loadFactoryCtrl.getLoadingSteps()[$index].logs}}"></che-logs-output>
+                </div>
+              </che-accordion>
+            </div>
+          </div>
+        </div>
+        <!--bottom bar-->
+        <div class="che-loader-bottom-bar">
+          <div layout="row" layout-align="center stretch" class="main-page">
+            <div flex="50" layout="column" layout-align="start start">
+              <che-link ng-click="loadFactoryCtrl.backToDashboard()" che-link-text="&larr; Back to Dashboard"
+                        class="load-factory-back-link"></che-link>
+            </div>
+            <div flex="50">
+              <div class="load-factory-retry-block"
+                   layout="column" layout-align="start end"
+                   ng-show="loadFactoryCtrl.getLoadingSteps()[loadFactoryCtrl.getCurrentProgressStep()].hasError">
+                <che-button-danger che-button-title="Retry"
+                                   ng-click="loadFactoryCtrl.resetLoadFactoryInProgress()"></che-button-danger>
+                <che-link class="load-factory-download-link"
+                          ng-click="loadFactoryCtrl.downloadLogs()"
+                          che-link-text="Problem? download logs"></che-link>
+              </div>
+            </div>
+          </div>
+        </div>
+      </che-loader>
+    </div>
+
+    <div layout="row" layout-align="center center"><img class="load-factory-logo" src="assets/branding/whiteLogo.png"/></div>
+  </div>
+</div>
