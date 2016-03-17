@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+
+     [2012] - [2016] Codenvy, S.A.
+     All Rights Reserved.
+
+    NOTICE:  All information contained herein is, and remains
+    the property of Codenvy S.A. and its suppliers,
+    if any.  The intellectual and technical concepts contained
+    herein are proprietary to Codenvy S.A.
+    and its suppliers and may be covered by U.S. and Foreign Patents,
+    patents in process, and are protected by trade secret or copyright law.
+    Dissemination of this information or reproduction of this material
+    is strictly forbidden unless prior written permission is obtained
+    from Codenvy S.A..
+
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <artifactId>maven-depmgt-pom</artifactId>
+        <groupId>com.codenvy.che.depmgt</groupId>
+        <version>4.0.0-RC14-SNAPSHOT</version>
+    </parent>
+    <groupId>com.codenvy.plugin</groupId>
+    <artifactId>codenvy-plugin-parent</artifactId>
+    <version>4.0.0-RC14-SNAPSHOT</version>
+    <packaging>pom</packaging>
+    <name>Codenvy Plugin Parent</name>
+    <modules>
+        <module>plugin-google</module>
+        <module>plugin-bitbucket</module>
+        <module>plugin-wso2</module>
+        <module>plugin-projectlocker</module>
+        <module>plugin-microsoft</module>
+        <module>plugin-contribution</module>
+        <module>plugin-hosted</module>
+        <module>plugin-webhooks</module>
+    </modules>
+    <scm>
+        <connection>scm:git:git@github.com:codenvy/plugins.git</connection>
+        <developerConnection>scm:git:git@github.com:codenvy/plugins.git</developerConnection>
+        <tag>HEAD</tag>
+        <url>https://github.com/codenvy/plugins</url>
+    </scm>
+    <properties>
+        <dto-generator-out-directory>${project.build.directory}/generated-sources/dto/</dto-generator-out-directory>
+        <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
+        <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
+        <specification.version>1.0-beta2</specification.version>
+    </properties>
+    <repositories>
+        <repository>
+            <id>codenvy-public-repo</id>
+            <name>codenvy public</name>
+            <url>https://maven.codenvycorp.com/content/groups/public/</url>
+        </repository>
+        <repository>
+            <id>codenvy-public-snapshots-repo</id>
+            <name>codenvy public snapshots</name>
+            <url>https://maven.codenvycorp.com/content/repositories/codenvy-public-snapshots/</url>
+        </repository>
+    </repositories>
+    <pluginRepositories>
+        <pluginRepository>
+            <id>codenvy-public-repo</id>
+            <name>codenvy public</name>
+            <url>https://maven.codenvycorp.com/content/groups/public/</url>
+        </pluginRepository>
+        <pluginRepository>
+            <id>codenvy-public-snapshots-repo</id>
+            <name>codenvy public snapshots</name>
+            <url>https://maven.codenvycorp.com/content/repositories/codenvy-public-snapshots/</url>
+        </pluginRepository>
+    </pluginRepositories>
+</project>
