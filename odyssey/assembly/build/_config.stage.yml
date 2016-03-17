@@ -1,0 +1,5 @@
+# jekyll configuration used for the staging build
+
+port: 4000
+destination: ../stage
+profile: stage
