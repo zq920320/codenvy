@@ -35,10 +35,6 @@
             <artifactId>metrics-servlets</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.factory</groupId>
-            <artifactId>codenvy-factory-storage-mongo</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-api-admin</artifactId>
         </dependency>
