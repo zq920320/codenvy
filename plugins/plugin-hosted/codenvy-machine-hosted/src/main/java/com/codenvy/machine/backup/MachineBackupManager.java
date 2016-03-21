@@ -20,7 +20,6 @@ import org.eclipse.che.api.core.util.ListLineConsumer;
 import org.eclipse.che.api.core.util.ProcessUtil;
 import org.eclipse.che.api.core.util.ValueHolder;
 import org.eclipse.che.api.core.util.Watchdog;
-import org.eclipse.che.commons.lang.WorkspaceIdHashLocationFinder;
 import org.slf4j.Logger;
 
 import javax.inject.Inject;
@@ -93,7 +92,7 @@ public class MachineBackupManager {
 
     private void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress, boolean removeSourceOnSuccess)
             throws ServerException {
-        final File destPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId);
+        final File destPath = new File(backupsRootDir, workspaceId);
 
         CommandLine commandLine = new CommandLine(backupScript,
                                                   srcPath,
@@ -130,7 +129,7 @@ public class MachineBackupManager {
                                        final String userId,
                                        final String groupId,
                                        final String destAddress) throws ServerException {
-        final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
+        final String srcPath = new File(backupsRootDir, workspaceId).toString();
 
         CommandLine commandLine = new CommandLine(restoreScript,
                                                   srcPath,

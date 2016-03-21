@@ -16,14 +16,12 @@ package com.codenvy.workspace;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
-import org.eclipse.che.api.core.ServerException;
-
 import org.eclipse.che.api.workspace.server.model.impl.UsersWorkspaceImpl;
-import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.inject.Singleton;
 import java.io.File;
 
@@ -39,22 +37,19 @@ public class CreateWsRootDirInterceptor implements MethodInterceptor {
     private static final Logger LOG = LoggerFactory.getLogger(CreateWsRootDirInterceptor.class);
 
     @Inject
-    private LocalFSMountStrategy mountStrategy;
+    @Named("che.user.workspaces.storage")
+    private File rootDirectory;
 
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable {
         Object result = invocation.proceed();
         String wsId = ((UsersWorkspaceImpl)result).getId();
 
-        try {
-            File wsPath = mountStrategy.getMountPath(wsId);
-            if (!wsPath.exists()) {
-                if (!wsPath.mkdirs()) {
-                    LOG.warn("Can not create root folder for workspace VFS {}", wsId);
-                }
+        File wsPath = new File(rootDirectory, wsId);
+        if (!wsPath.exists()) {
+            if (!wsPath.mkdirs()) {
+                LOG.warn("Can not create root folder for workspace VFS {}", wsId);
             }
-        } catch (ServerException e) {
-            LOG.warn("Can not calculate path to root folder for workspace VFS {}", wsId);
         }
         return result;
     }
