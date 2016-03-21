@@ -67,10 +67,10 @@ import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
 import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
-import org.eclipse.che.api.project.server.ProjectTemplateDescriptionLoader;
-import org.eclipse.che.api.project.server.ProjectTemplateRegistry;
-import org.eclipse.che.api.project.server.ProjectTemplateService;
 import org.eclipse.che.api.project.server.handlers.ProjectHandler;
+import org.eclipse.che.api.project.server.template.ProjectTemplateDescriptionLoader;
+import org.eclipse.che.api.project.server.template.ProjectTemplateRegistry;
+import org.eclipse.che.api.project.server.template.ProjectTemplateService;
 import org.eclipse.che.api.ssh.server.spi.SshDao;
 import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.UserProfileService;
@@ -78,8 +78,6 @@ import org.eclipse.che.api.user.server.UserService;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-import org.eclipse.che.api.vfs.server.VirtualFileFilter;
-import org.eclipse.che.api.vfs.server.search.SearcherProvider;
 import org.eclipse.che.api.workspace.server.WorkspaceConfigValidator;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
@@ -93,10 +91,6 @@ import org.eclipse.che.inject.DynaModule;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProviderImpl;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorTokenProvider;
-import org.eclipse.che.vfs.impl.fs.CleanableSearcherProvider;
-import org.eclipse.che.vfs.impl.fs.LocalFSMountStrategy;
-import org.eclipse.che.vfs.impl.fs.MountPointCacheCleaner;
-import org.eclipse.che.vfs.impl.fs.WorkspaceHashLocalFSMountStrategy;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.ServiceBindingHelper;
@@ -138,21 +132,13 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         install(new org.eclipse.che.api.core.rest.CoreRestModule());
         install(new org.eclipse.che.api.analytics.AnalyticsModule());
-        install(new org.eclipse.che.api.vfs.server.VirtualFileSystemModule());
+        install(new org.eclipse.che.api.vfs.VirtualFileSystemModule());
+        /*
+        install(new org.eclipse.che.api.factory.FactoryModule());
+        */
         install(new org.eclipse.che.api.machine.server.MachineModule());
 
         install(new org.eclipse.che.swagger.deploy.DocsModule());
-
-
-        //Temporary FS change
-        final Multibinder<VirtualFileFilter> multibinder = Multibinder.newSetBinder(binder(),
-                                                                                    VirtualFileFilter.class,
-                                                                                    Names.named("vfs.index_filter"));
-        multibinder.addBinding().toInstance(virtualFile -> !virtualFile.getPath().endsWith("/.codenvy/misc.xml"));
-        bind(SearcherProvider.class).to(CleanableSearcherProvider.class);
-        bind(MountPointCacheCleaner.Finalizer.class).asEagerSingleton();
-
-        bind(LocalFSMountStrategy.class).to(WorkspaceHashLocalFSMountStrategy.class); // (RemoteDockerNode class want it)
 
         //oauth 2
         bind(OAuthAuthenticatorProvider.class).to(OAuthAuthenticatorProviderImpl.class);
