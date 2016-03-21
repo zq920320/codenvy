@@ -30,7 +30,6 @@
     <modules>
         <module>core</module>
         <module>plugins</module>
-        <module>factory</module>
         <module>dashboard</module>
         <module>odyssey</module>
         <module>platform-api-client-java</module>
@@ -111,11 +110,6 @@
                 <artifactId>codenvy-factory-packaging-war</artifactId>
                 <version>${project.version}</version>
                 <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.factory</groupId>
-                <artifactId>codenvy-factory-storage-mongo</artifactId>
-                <version>${project.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.codenvy.hosted-infrastructure</groupId>
