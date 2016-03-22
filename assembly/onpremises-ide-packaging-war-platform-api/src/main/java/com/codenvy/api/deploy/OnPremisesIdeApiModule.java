@@ -41,11 +41,9 @@ import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
-import com.codenvy.workspace.CreateWsRootDirInterceptor;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
-import com.google.inject.matcher.Matchers;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mongodb.client.MongoDatabase;
@@ -283,12 +281,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                  .toProvider(MachineMongoDatabaseProvider.class);
 
         install(new ScheduleModule());
-
-        CreateWsRootDirInterceptor createWsRootDirInterceptor = new CreateWsRootDirInterceptor();
-        requestInjection(createWsRootDirInterceptor);
-        bindInterceptor(Matchers.subclassesOf(WorkspaceManager.class),
-                        names("createWorkspace"),
-                        createWsRootDirInterceptor);
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
 
