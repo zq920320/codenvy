@@ -528,8 +528,8 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
         commands.add(createCommand(format("sudo grep \"dns_alt_names = .*,%1$s.*\" /etc/puppet/puppet.conf; "
                                           + "if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,%1$s/' /etc/puppet/puppet.conf; fi", newHostName)));  // add new host name to dns_alt_names
 
-        commands.add(createCommand("sudo systemctl restart puppetmaster"));
         commands.add(createCommand("sudo systemctl restart puppet"));
+        commands.add(createCommand("sudo systemctl restart puppetmaster"));
 
         return new MacroCommand(commands, "Update puppet.conf commands");
     }
