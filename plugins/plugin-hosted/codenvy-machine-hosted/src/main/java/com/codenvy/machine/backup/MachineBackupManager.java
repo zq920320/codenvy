@@ -26,6 +26,8 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
@@ -92,7 +94,7 @@ public class MachineBackupManager {
 
     private void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress, boolean removeSourceOnSuccess)
             throws ServerException {
-        final File destPath = new File(backupsRootDir, workspaceId);
+        final File destPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId);
 
         CommandLine commandLine = new CommandLine(backupScript,
                                                   srcPath,
@@ -129,16 +131,18 @@ public class MachineBackupManager {
                                        final String userId,
                                        final String groupId,
                                        final String destAddress) throws ServerException {
-        final String srcPath = new File(backupsRootDir, workspaceId).toString();
-
-        CommandLine commandLine = new CommandLine(restoreScript,
-                                                  srcPath,
-                                                  destPath,
-                                                  destAddress,
-                                                  userId,
-                                                  groupId);
-
         try {
+            final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
+
+            Files.createDirectories(Paths.get(srcPath));
+
+            CommandLine commandLine = new CommandLine(restoreScript,
+                                                      srcPath,
+                                                      destPath,
+                                                      destAddress,
+                                                      userId,
+                                                      groupId);
+
             execute(commandLine.asArray(), restoreDuration);
         } catch (TimeoutException e) {
             throw new ServerException("Restoring of workspace " + workspaceId + " filesystem terminated due to timeout.");
