@@ -25,12 +25,8 @@ PUPPET_SERVER_PACKAGE=puppet-server-3.8.6-1.el7.noarch
 
 EXTERNAL_DEPENDENCIES=("https://codenvy.com||0"
                        "https://install.codenvycorp.com||0"
-                       "http://archive.apache.org/dist/ant/binaries||0"
                        "http://dl.fedoraproject.org/pub/epel/||1"
-                       "https://storage.googleapis.com/appengine-sdks/||0"
-                       "http://www.us.apache.org/dist/maven/||0"
                        "https://repo.mongodb.org/yum/redhat/||0"
-                       "http://repo.mysql.com/||0"
                        "http://nginx.org/packages/centos/||1"
                        "http://yum.postgresql.org/||0"
                        "http://yum.puppetlabs.com/||1"
