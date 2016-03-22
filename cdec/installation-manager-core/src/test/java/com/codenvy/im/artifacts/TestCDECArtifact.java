@@ -682,8 +682,8 @@ public class TestCDECArtifact extends BaseTest {
         assertEquals(commands.get(3).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
         assertEquals(commands.get(4).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
         assertEquals(commands.get(5).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(6).toString(), "{'command'='sudo systemctl restart puppetmaster', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(7).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(6).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(7).toString(), "{'command'='sudo systemctl restart puppetmaster', 'agent'='LocalAgent'}");
 
 
         MacroCommand updateCodenvyConfigCommand = (MacroCommand) testHelper.getUpdateConfigCommand(testConfig, properties);
@@ -747,8 +747,8 @@ public class TestCDECArtifact extends BaseTest {
         assertEquals(commands.get(5).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
         assertEquals(commands.get(6).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
         assertEquals(commands.get(7).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(8).toString(), "{'command'='sudo systemctl restart puppetmaster', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(9).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(8).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(9).toString(), "{'command'='sudo systemctl restart puppetmaster', 'agent'='LocalAgent'}");
 
 
         MacroCommand updateCodenvyConfigCommand = (MacroCommand) testHelper.getUpdateConfigCommand(testConfig, properties);
