@@ -37,6 +37,7 @@ import org.eclipse.che.ide.api.app.CurrentProject;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedEvent;
 import org.eclipse.che.ide.api.event.project.CurrentProjectChangedHandler;
 import org.eclipse.che.ide.api.extension.Extension;
+import org.eclipse.che.ide.dto.DtoFactory;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
@@ -62,11 +63,12 @@ import static java.util.Collections.singletonList;
 public class ContributionExtension {
 
     private final ContributePartPresenter   contributionPartPresenter;
-    private final AppContext        appContext;
+    private final AppContext                appContext;
     private final WorkflowExecutor          workflowExecutor;
     private final VcsHostingServiceProvider hostingServiceProvider;
     private final VcsServiceProvider        vcsServiceProvider;
     private final ProjectServiceClient      projectService;
+    private final DtoFactory dtoFactory;
 
     private String  lastSelectedProjectName;
     private boolean partWasOpened;
@@ -79,26 +81,41 @@ public class ContributionExtension {
                                  final WorkflowExecutor workflow,
                                  final VcsHostingServiceProvider vcsHostingServiceProvider,
                                  final VcsServiceProvider vcsServiceProvider,
-                                 final ProjectServiceClient projectService) {
+                                 final ProjectServiceClient projectService,
+                                 final DtoFactory dtoFactory) {
         this.workflowExecutor = workflow;
         this.contributionPartPresenter = contributionPartPresenter;
         this.appContext = appContext;
         this.hostingServiceProvider = vcsHostingServiceProvider;
         this.vcsServiceProvider = vcsServiceProvider;
         this.projectService = projectService;
+        this.dtoFactory = dtoFactory;
 
         eventBus.addHandler(CurrentProjectChangedEvent.TYPE, new CurrentProjectChangedHandler() {
             @Override
             public void onCurrentProjectChanged(CurrentProjectChangedEvent event) {
                 final ProjectConfigDto rootProject = appContext.getCurrentProject().getRootProject();
                 if (!rootProject.getName().equals(lastSelectedProjectName) || !partWasOpened) {
-                    initializeContributorExtension(rootProject);
+                    initializeContributorExtension(copy(rootProject));//here need to use copy of object because it can be changed in other thread
                 }
                 lastSelectedProjectName = rootProject.getName();
             }
         });
 
         resources.contributeCss().ensureInjected();
+    }
+
+    private ProjectConfigDto copy(ProjectConfigDto origin) {
+        return dtoFactory.createDto(ProjectConfigDto.class)
+                         .withAttributes(origin.getAttributes())
+                         .withDescription(origin.getDescription())
+                         .withLinks(origin.getLinks())
+                         .withName(origin.getName())
+                         .withMixins(origin.getMixins())
+                         .withPath(origin.getPath())
+                         .withProblems(origin.getProblems())
+                         .withSource(origin.getSource())
+                         .withType(origin.getType());
     }
 
     private void initializeContributorExtension(final ProjectConfigDto project) {
