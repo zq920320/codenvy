@@ -43,6 +43,9 @@ import org.eclipse.che.ide.util.loging.Log;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_TO_BRANCH_VARIABLE_NAME;
 import static com.codenvy.plugin.contribution.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTION_PROJECT_TYPE_ID;
 import static java.util.Collections.singletonList;
@@ -96,7 +99,7 @@ public class ContributionExtension {
             public void onCurrentProjectChanged(CurrentProjectChangedEvent event) {
                 final ProjectConfigDto rootProject = appContext.getCurrentProject().getRootProject();
                 if (!rootProject.getName().equals(lastSelectedProjectName) || !partWasOpened) {
-                    initializeContributorExtension(copy(rootProject));//here need to use copy of object because it can be changed in other thread
+                    initializeContributorExtension(copy(rootProject)); //here need to use copy of object because it can be changed in other thread
                 }
                 lastSelectedProjectName = rootProject.getName();
             }
@@ -106,16 +109,9 @@ public class ContributionExtension {
     }
 
     private ProjectConfigDto copy(ProjectConfigDto origin) {
-        return dtoFactory.createDto(ProjectConfigDto.class)
-                         .withAttributes(origin.getAttributes())
-                         .withDescription(origin.getDescription())
-                         .withLinks(origin.getLinks())
-                         .withName(origin.getName())
-                         .withMixins(origin.getMixins())
-                         .withPath(origin.getPath())
-                         .withProblems(origin.getProblems())
-                         .withSource(origin.getSource())
-                         .withType(origin.getType());
+        String json = dtoFactory.toJson(origin);
+        ProjectConfigDto copy = dtoFactory.createDtoFromJson(json, ProjectConfigDto.class);
+        return copy;
     }
 
     private void initializeContributorExtension(final ProjectConfigDto project) {
@@ -150,8 +146,8 @@ public class ContributionExtension {
                              .thenPromise(new Function<String, Promise<ProjectConfigDto>>() {
                                  @Override
                                  public Promise<ProjectConfigDto> apply(String branchName) throws FunctionException {
-                                     project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
-                                     project.getAttributes().put(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME, singletonList(branchName));
+                                         project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
+                                         project.getAttributes().put(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME, singletonList(branchName));
                                      return projectService.updateProject(appContext.getWorkspaceId(),
                                                                          project.getPath(),
                                                                          project);
