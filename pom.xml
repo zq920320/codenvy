@@ -20,7 +20,7 @@
     <parent>
         <artifactId>maven-depmgt-pom</artifactId>
         <groupId>com.codenvy.che.depmgt</groupId>
-        <version>4.0.0-RC14</version>
+        <version>4.0.0-GA-SNAPSHOT</version>
     </parent>
     <groupId>com.codenvy.onpremises</groupId>
     <artifactId>onpremises-assembly-parent</artifactId>
