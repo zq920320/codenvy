@@ -18,14 +18,11 @@ import com.codenvy.service.http.AccountIdEnvironmentInitializationFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.servlet.ServletModule;
 
-import org.apache.catalina.filters.CorsFilter;
 import org.eclipse.che.inject.DynaModule;
 import org.eclipse.che.swagger.deploy.BasicSwaggerConfigurationModule;
 import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Servlet module composer for api war.
@@ -57,7 +54,7 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                                                               ImmutableMap.of("accountIdPosition", "5"));
         filterRegex("/resources/.*").through(new AccountIdEnvironmentInitializationFilter(), ImmutableMap.of("accountIdPosition", "3"));
         filterRegex("^/saas/resources/[\\w-]*/provided").through(new AccountIdEnvironmentInitializationFilter(),
-                                                                     ImmutableMap.of("accountIdPosition", "4"));
+                                                                 ImmutableMap.of("accountIdPosition", "4"));
 
         filter("/factory/*",
                "/workspace/*",
@@ -118,35 +115,10 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/ssh")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
 
-        final Map<String, String> corsFilterParams = new HashMap<>();
-        corsFilterParams.put("cors.allowed.origins", "*");
-        corsFilterParams.put("cors.allowed.methods", "GET," +
-                                                     "POST," +
-                                                     "HEAD," +
-                                                     "OPTIONS," +
-                                                     "PUT," +
-                                                     "DELETE");
-        corsFilterParams.put("cors.allowed.headers", "Content-Type," +
-                                                     "X-Requested-With," +
-                                                     "accept," +
-                                                     "Origin," +
-                                                     "Access-Control-Request-Method," +
-                                                     "Access-Control-Request-Headers");
-        corsFilterParams.put("cors.support.credentials", "true");
-        // preflight cache is available for 10 minutes
-        corsFilterParams.put("cors.preflight.maxage", "10");
-        bind(CorsFilter.class).in(Singleton.class);
-        filter("/*").through(CorsFilter.class, corsFilterParams);
-
         bind(com.codahale.metrics.servlets.ThreadDumpServlet.class).in(Singleton.class);
         bind(com.codahale.metrics.servlets.PingServlet.class).in(Singleton.class);
         serve("/metrics/ping").with(com.codahale.metrics.servlets.PingServlet.class);
         serve("/metrics/threaddump").with(com.codahale.metrics.servlets.ThreadDumpServlet.class);
-
-        bind(org.eclipse.che.api.machine.server.proxy.MachineExtensionProxyServlet.class);
-//                .to(com.codenvy.router.RouterExtServerProxyServlet.class);
-        serve("/ext/*").with(org.eclipse.che.api.machine.server.proxy.MachineExtensionProxyServlet.class);
-
 
         serve("/oauth").with(com.codenvy.auth.sso.oauth.OAuthLoginServlet.class);
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
