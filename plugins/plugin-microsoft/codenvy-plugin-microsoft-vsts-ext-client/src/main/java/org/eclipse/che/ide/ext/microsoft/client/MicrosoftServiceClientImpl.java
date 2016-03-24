@@ -15,8 +15,8 @@
 package org.eclipse.che.ide.ext.microsoft.client;
 
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 
-import org.eclipse.che.api.machine.gwt.client.WsAgentUrlProvider;
 import org.eclipse.che.api.promises.client.Promise;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftPullRequest;
@@ -25,7 +25,9 @@ import org.eclipse.che.ide.ext.microsoft.shared.dto.MicrosoftUserProfile;
 import org.eclipse.che.ide.ext.microsoft.shared.dto.NewMicrosoftPullRequest;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
+import org.eclipse.che.ide.rest.StringUnmarshaller;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
+
 
 import java.util.List;
 
@@ -42,19 +44,17 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
     private final AsyncRequestFactory    asyncRequestFactory;
     private final LoaderFactory          loaderFactory;
     private final String                 baseHttpUrl;
-    private final WsAgentUrlProvider     urlProvider;
 
     @Inject
-    public MicrosoftServiceClientImpl(WsAgentUrlProvider urlProvider,
+    public MicrosoftServiceClientImpl(@Named("cheExtensionPath") String extPath,
                                       DtoUnmarshallerFactory dtoUnmarshallerFactory,
                                       AsyncRequestFactory asyncRequestFactory,
                                       AppContext appContext,
                                       LoaderFactory loaderFactory) {
-        this.urlProvider = urlProvider;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.asyncRequestFactory = asyncRequestFactory;
         this.loaderFactory = loaderFactory;
-        this.baseHttpUrl = "/microsoft/" + appContext.getWorkspaceId();
+        this.baseHttpUrl = extPath + "/microsoft/" + appContext.getWorkspaceId();
     }
 
     @Override
@@ -62,12 +62,10 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                                       String collection,
                                                       String project,
                                                       String repository) {
-        return asyncRequestFactory
-                .createGetRequest(
-                        urlProvider.get() + baseHttpUrl + "/repository/" + account + '/' + collection + '/' + project + '/' + repository)
-                .header(ACCEPT, APPLICATION_JSON)
-                .loader(loaderFactory.newLoader("Getting VSTS repository"))
-                .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftRepository.class));
+        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/repository/" + account + '/' + collection + '/' + project + '/' + repository)
+                                  .header(ACCEPT, APPLICATION_JSON)
+                                  .loader(loaderFactory.newLoader("Getting VSTS repository"))
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftRepository.class));
 
     }
 
@@ -76,12 +74,10 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                                                String collection,
                                                                String project,
                                                                String repository) {
-        return asyncRequestFactory
-                .createGetRequest(
-                        urlProvider.get() + baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository)
-                .header(ACCEPT, APPLICATION_JSON)
-                .loader(loaderFactory.newLoader("Getting VSTS pull request list"))
-                .send(dtoUnmarshallerFactory.newListUnmarshaller(MicrosoftPullRequest.class));
+        return asyncRequestFactory.createGetRequest(baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository)
+                                  .header(ACCEPT, APPLICATION_JSON)
+                                  .loader(loaderFactory.newLoader("Getting VSTS pull request list"))
+                                  .send(dtoUnmarshallerFactory.newListUnmarshaller(MicrosoftPullRequest.class));
 
     }
 
@@ -91,13 +87,10 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                                            String project,
                                                            String repository,
                                                            NewMicrosoftPullRequest input) {
-        return asyncRequestFactory
-                .createPostRequest(
-                        urlProvider.get() + baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository,
-                        input)
-                .header(ACCEPT, APPLICATION_JSON)
-                .loader(loaderFactory.newLoader("Creating new pul request"))
-                .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftPullRequest.class));
+        return asyncRequestFactory.createPostRequest(baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository, input)
+                                  .header(ACCEPT, APPLICATION_JSON)
+                                  .loader(loaderFactory.newLoader("Creating new pul request"))
+                                  .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftPullRequest.class));
     }
 
     @Override
@@ -107,8 +100,7 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
                                                            String repository,
                                                            String pullRequestId,
                                                            MicrosoftPullRequest pullRequest) {
-        final String url = urlProvider.get() + baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' +
-                           repository + '/' + pullRequestId;
+        final String url = baseHttpUrl + "/pullrequests/" + account + '/' + collection + '/' + project + '/' + repository + '/' + pullRequestId;
         return asyncRequestFactory.createRequest(PUT, url, pullRequest, false)
                                   .header(ACCEPT, APPLICATION_JSON)
                                   .loader(loaderFactory.newLoader("updatePullRequest"))
@@ -117,7 +109,7 @@ public class MicrosoftServiceClientImpl implements MicrosoftServiceClient {
 
     @Override
     public Promise<MicrosoftUserProfile> getUserProfile() {
-        String url = urlProvider.get() + baseHttpUrl + "/profile";
+        String url = baseHttpUrl + "/profile";
         return asyncRequestFactory.createGetRequest(url)
                                   .loader(loaderFactory.newLoader("Getting user profile"))
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(MicrosoftUserProfile.class));
