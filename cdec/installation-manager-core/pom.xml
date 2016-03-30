@@ -209,6 +209,41 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                        <RedHatOSVersion>6</RedHatOSVersion>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-antrun-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>buildnumber</id>
+                        <phase>compile</phase>
+                        <goals>
+                            <goal>run</goal>
+                        </goals>
+                        <configuration>
+                            <target>
+                                <?SORTPOM IGNORE?>
+                                <echo append="false" file="${project.build.directory}/classes/codenvy/BuildInfo.properties">
+                                    version = ${project.version}
+                                </echo>
+                                <?SORTPOM RESUME?>
+                            </target>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
     <profiles>
         <profile>
             <id>default</id>
@@ -255,37 +290,6 @@
                             </execution>
                         </executions>
                     </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <RedHatOSVersion>6</RedHatOSVersion>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-antrun-plugin</artifactId>
-                        <executions>
-                            <execution>
-                                <id>buildnumber</id>
-                                <phase>compile</phase>
-                                <goals>
-                                    <goal>run</goal>
-                                </goals>
-                                <configuration>
-                                    <target>
-                                        <?SORTPOM IGNORE?>
-                                        <echo append="false" file="${project.build.directory}/classes/codenvy/BuildInfo.properties">
-                                            version = ${project.version}
-                                        </echo>
-                                        <?SORTPOM RESUME?>
-                                    </target>
-                                </configuration>
-                            </execution>
-                        </executions>
-                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -307,15 +311,6 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <RedHatOSVersion>6</RedHatOSVersion>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
@@ -326,11 +321,6 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <?SORTPOM IGNORE?>
-                                        <echo append="false" file="${project.build.directory}/classes/codenvy/BuildInfo.properties">
-                                            version = ${project.version}
-                                        </echo>
-                                        <?SORTPOM RESUME?>
                                         <replace file="${project.build.directory}/classes/codenvy/installation-manager.properties">
                                             <replacetoken>codenvy.com</replacetoken>
                                             <replacevalue>codenvy-stg.com</replacevalue>
@@ -370,15 +360,6 @@
                     </plugin>
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-surefire-plugin</artifactId>
-                        <configuration>
-                            <systemPropertyVariables>
-                                <RedHatOSVersion>6</RedHatOSVersion>
-                            </systemPropertyVariables>
-                        </configuration>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-antrun-plugin</artifactId>
                         <executions>
                             <execution>
@@ -389,11 +370,6 @@
                                 </goals>
                                 <configuration>
                                     <target>
-                                        <?SORTPOM IGNORE?>
-                                        <echo append="false" file="${project.build.directory}/classes/codenvy/BuildInfo.properties">
-                                            version = ${project.version}
-                                        </echo>
-                                        <?SORTPOM RESUME?>
                                         <replace file="${project.build.directory}/classes/codenvy/installation-manager.properties">
                                             <replacetoken>installation-manager.update_server_endpoint=https://codenvy.com/update</replacetoken>
                                             <replacevalue>installation-manager.update_server_endpoint=http://updater-nightly.codenvy-dev.com/update</replacevalue>
