@@ -184,7 +184,12 @@
       </div>
       <md-divider md-theme="factory-theme" ng-show="codenvyNavbarCtrl.isUser()"></md-divider>
       <section class="left-sidebar-menu" layout="column" layout-align="center center">
-        <md-list layout="row">
+        <md-list layout="row" layout-align="start center">
+          <md-button ng-href="http://c3.codenvy.com/"
+                     class="codenvy-navbar-button"
+                     tooltip="Go to Codenvy Classic"
+                     layout-align="center">Codenvy Classic
+          </md-button>
           <md-list-item>
             <logout-widget></logout-widget>
           </md-list-item>
