@@ -117,12 +117,12 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-github-ext-github</artifactId>
+            <artifactId>che-plugin-github-provider-github</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.plugin</groupId>
-            <artifactId>che-plugin-github-provider-github</artifactId>
+            <artifactId>che-plugin-github-server</artifactId>
             <type>jar</type>
         </dependency>
         <dependency>
