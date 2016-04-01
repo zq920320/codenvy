@@ -16,9 +16,10 @@ package com.codenvy.activity.server;
 
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.Service;
-import org.eclipse.che.api.workspace.server.RuntimeWorkspaceRegistry;
-import org.eclipse.che.api.workspace.server.model.impl.RuntimeWorkspaceImpl;
+import org.eclipse.che.api.workspace.server.WorkspaceManager;
+import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.commons.env.EnvironmentContext;
 
 import javax.inject.Inject;
@@ -29,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 
 /**
  * Monitors the activity of the runtime workspace.
@@ -40,21 +42,24 @@ import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 public class WorkspaceActivityService extends Service {
 
     private final WorkspaceActivityManager workspaceActivityManager;
-    private final RuntimeWorkspaceRegistry registry;
+    private final WorkspaceManager         workspaceManager;
 
     @Inject
-    public WorkspaceActivityService(WorkspaceActivityManager workspaceActivityManager, RuntimeWorkspaceRegistry registry) {
+    public WorkspaceActivityService(WorkspaceActivityManager workspaceActivityManager, WorkspaceManager wsManager) {
         this.workspaceActivityManager = workspaceActivityManager;
-        this.registry = registry;
+        this.workspaceManager = wsManager;
     }
 
     @PUT
     @Path("/{wsId}")
     @Consumes(APPLICATION_JSON)
-    public void active(@PathParam("wsId") String wsId) throws ForbiddenException, NotFoundException {
-        final RuntimeWorkspaceImpl runtimeWorkspace = registry.get(wsId);
-        if (!runtimeWorkspace.getOwner().equals(EnvironmentContext.getCurrent().getUser().getId())) {
+    public void active(@PathParam("wsId") String wsId) throws ForbiddenException, NotFoundException, ServerException {
+        final WorkspaceImpl workspace = workspaceManager.getWorkspace(wsId);
+        if (!workspace.getNamespace().equals(EnvironmentContext.getCurrent().getUser().getId())) {
             throw new ForbiddenException("Notify activity operation allowed only for workspace owner");
+        }
+        if (workspace.getStatus() == STOPPED) {
+            throw new NotFoundException("Can't notify activity of the workspace '" + workspace.getId() + "' because it's not running");
         }
         workspaceActivityManager.update(wsId, System.currentTimeMillis());
     }

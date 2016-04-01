@@ -14,7 +14,6 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.activity.server.WorkspaceActivityService;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.ldap.AdminUserDaoImpl;
@@ -77,9 +76,9 @@ import org.eclipse.che.api.user.server.UserService;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
-import org.eclipse.che.api.workspace.server.WorkspaceConfigValidator;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.WorkspaceValidator;
 import org.eclipse.che.api.workspace.server.event.WorkspaceMessenger;
 import org.eclipse.che.api.workspace.server.spi.WorkspaceDao;
 import org.eclipse.che.commons.schedule.executor.ScheduleModule;
@@ -95,7 +94,6 @@ import org.everrest.core.impl.async.AsynchronousJobService;
 import org.everrest.guice.ServiceBindingHelper;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static org.eclipse.che.inject.Matchers.names;
 
 /**
  * Guice container configuration file. Replaces old REST application composers and servlet context listeners.
@@ -185,7 +183,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.workspace.server.spi.StackDao.class).to(com.codenvy.api.dao.mongo.StackDaoImpl.class);
         bind(org.eclipse.che.api.workspace.server.stack.StackLoader.class);
 
-        bind(WorkspaceConfigValidator.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceConfigValidator.class);
+        bind(WorkspaceValidator.class).to(org.eclipse.che.api.workspace.server.DefaultWorkspaceValidator.class);
         bind(WorkspaceManager.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceManager.class);
         bind(WorkspaceMessenger.class).asEagerSingleton();
 
