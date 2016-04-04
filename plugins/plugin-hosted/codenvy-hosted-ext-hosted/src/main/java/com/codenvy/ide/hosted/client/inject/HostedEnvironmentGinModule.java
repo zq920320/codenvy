@@ -19,6 +19,9 @@ import com.codenvy.ide.hosted.client.notifier.BadConnectionNotifierViewImpl;
 import com.codenvy.ide.hosted.client.informers.HostedEnvConnectionClosedInformer;
 import com.codenvy.ide.hosted.client.login.PromptToLoginView;
 import com.codenvy.ide.hosted.client.login.PromptToLoginViewImpl;
+import com.codenvy.ide.hosted.client.workspace.HostedWorkspaceStoppedHandler;
+import com.codenvy.ide.hosted.client.workspace.WorkspaceNotRunningView;
+import com.codenvy.ide.hosted.client.workspace.WorkspaceNotRunningViewImpl;
 import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Singleton;
 
@@ -37,5 +40,7 @@ public class HostedEnvironmentGinModule extends AbstractGinModule {
         bind(ConnectionClosedInformer.class).to(HostedEnvConnectionClosedInformer.class).in(javax.inject.Singleton.class);
         bind(PromptToLoginView.class).to(PromptToLoginViewImpl.class);
         bind(BadConnectionNotifierView.class).to(BadConnectionNotifierViewImpl.class);
+        bind(WorkspaceNotRunningView.class).to(WorkspaceNotRunningViewImpl.class);
+        bind(HostedWorkspaceStoppedHandler.class).asEagerSingleton();
     }
 }

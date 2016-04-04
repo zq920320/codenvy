@@ -71,4 +71,16 @@ public interface HostedLocalizationConstant extends Messages {
 
     @Key("support.title")
     String supportTitle();
+
+    @Key("open.dashboard.button")
+    String openDashboardTitle();
+
+    @Key("restart.ws.button")
+    String restartWsButton();
+
+    @Key("workspace.not.running.message")
+    String workspaceNotRunningMessage();
+
+    @Key("workspace.not.running.title")
+    String workspaceNotRunningTitle();
 }
