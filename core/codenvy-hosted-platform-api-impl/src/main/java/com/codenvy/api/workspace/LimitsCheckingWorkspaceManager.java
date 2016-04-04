@@ -40,6 +40,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.locks.Lock;
 
@@ -73,8 +74,8 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                           UserManager userManager) {
         super(workspaceDao, runtimes, eventService, machineManager, userManager);
         this.workspacesPerUser = workspacesPerUser;
-        this.maxRamPerEnv = Size.parseSizeToMegabytes(maxRamPerEnv);
-        this.ramPerUser = Size.parseSizeToMegabytes(ramPerUser);
+        this.maxRamPerEnv = "-1".equals(maxRamPerEnv) ? -1 : Size.parseSizeToMegabytes(maxRamPerEnv);
+        this.ramPerUser = "-1".equals(ramPerUser) ? -1 : Size.parseSizeToMegabytes(ramPerUser);
     }
 
     @Override
@@ -83,6 +84,17 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                          @Nullable String accountId) throws ServerException,
                                                                             ConflictException,
                                                                             NotFoundException {
+        checkMaxEnvironmentRam(config);
+        return checkCountAndPropagateCreation(namespace, () -> super.createWorkspace(config, namespace, accountId));
+    }
+
+    @Override
+    public WorkspaceImpl createWorkspace(WorkspaceConfig config,
+                                         String namespace,
+                                         Map<String, String> attributes,
+                                         @Nullable String accountId) throws ServerException,
+                                                                            NotFoundException,
+                                                                            ConflictException {
         checkMaxEnvironmentRam(config);
         return checkCountAndPropagateCreation(namespace, () -> super.createWorkspace(config, namespace, accountId));
     }
@@ -144,6 +156,9 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                                           WorkspaceCallback<T> callback) throws ServerException,
                                                                                                 NotFoundException,
                                                                                                 ConflictException {
+        if (ramPerUser < 0) {
+            return callback.call();
+        }
         Optional<? extends Environment> envOptional = findEnv(config.getEnvironments(), envName);
         if (!envOptional.isPresent()) {
             envOptional = findEnv(config.getEnvironments(), config.getDefaultEnv());
@@ -186,6 +201,9 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                                                WorkspaceCallback<T> callback) throws ServerException,
                                                                                                      NotFoundException,
                                                                                                      ConflictException {
+        if (workspacesPerUser < 0) {
+            return callback.call();
+        }
         // It is important to lock in this place because:
         // if workspace per user limit is 10 and user has 9, then if he sends 2 separate requests to create
         // a new workspace, it may create both of them, because workspace count check is not atomic one
@@ -207,6 +225,9 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
 
     @VisibleForTesting
     void checkMaxEnvironmentRam(WorkspaceConfig config) throws LimitExceededException {
+        if (maxRamPerEnv < 0) {
+            return;
+        }
         for (Environment environment : config.getEnvironments()) {
             final long workspaceRam = environment.getMachineConfigs()
                                                  .stream()
