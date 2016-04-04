@@ -17,23 +17,18 @@
  */
  
 (function(window){
-	define (["jquery", "underscore","backbone", "models/account", "handlebars", "text!templates/login.html", "text!templates/create.html", "text!templates/oauthbtn.html"],
-	function($,_,Backbone,Account, Handlebars, loginTemplate, createTemplate, oauthTemplate){
+	define (["jquery", "underscore","views/accountformbase","backbone", "models/account", "handlebars", "text!templates/login.html", "text!templates/create.html", "text!templates/oauthbtn.html"],
+	function($,_,AccountFormBase,Backbone,Account, Handlebars, loginTemplate, createTemplate, oauthTemplate){
         var action,
         errorContainer,
 		oauthProviderButtons;
         oauthProviderButtons = ["google", "github","microsoft"]; // the list of oauth provider buttons
-        var LoginForm = Backbone.View.extend({
+        var LoginForm = AccountFormBase.extend({
             loginTemplate : Handlebars.compile(loginTemplate),
             createTemplate : Handlebars.compile(createTemplate),
             oauthTemplate : Handlebars.compile(oauthTemplate),
-            initialize : function(){
-                $.validator.addMethod("validDomain", function(value) {
-                    return Account.isValidDomain(value.toLowerCase());
-                });
-                $.validator.addMethod("checkEmail", function(value) {
-                    return Account.isValidEmail(value);
-                });
+            initialize : function(attributes){
+                AccountFormBase.prototype.initialize.apply(this,attributes);
                 Account.isApiAvailable()
                 .then(function(apiAvailable){
                     if (!apiAvailable){
@@ -205,17 +200,6 @@
                 this.$("input[type='submit']").attr("disabled","disabled");
             },
             
-            settings : {
-                noDomainErrorMessage : "Please specify a workspace name",
-                noUsernameErrorMessage : "We have not detected a valid user name",
-                noEmailErrorMessage : "Please provide an email address",
-                noPasswordErrorMessage : "Please provide your password",
-                noConfirmPasswordErrorMessage : "Please type your new password again. Both passwords must match",
-                invalidEmailErrorMessage : "Emails with '+' and '/' are not allowed",
-                invalidDomainNameErrorMessage : "Your workspace name should start with a Latin letter or a digit, and must only contain Latin letters, digits, underscores, dots or dashes. You are allowed to use from 3 to 20 characters in a workspace name",
-                notSecuredPassword : "Password should contain between 8-100 characters, both letters and digits"
-            },
-
             __submit : function(form){
                 if (Account.isWebsocketEnabled()) {
 	                this.trigger("submitting");
