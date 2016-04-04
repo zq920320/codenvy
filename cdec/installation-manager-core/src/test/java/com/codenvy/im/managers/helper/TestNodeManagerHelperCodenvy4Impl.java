@@ -65,6 +65,7 @@ public class TestNodeManagerHelperCodenvy4Impl extends BaseTest {
     private static final String TEST_VALUE_WITH_NODE           = TEST_NODE_DNS + ":2375";
 
     private NodeManagerHelperCodenvy4Impl spyHelperCodenvy4;
+    private int i;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -78,6 +79,8 @@ public class TestNodeManagerHelperCodenvy4Impl extends BaseTest {
         doReturn(mockNodesConfigHelper).when(spyHelperCodenvy4).getNodesConfigHelper(any(Config.class));
 
         initConfigs();
+
+        i = 0;
     }
 
     private void initConfigs() throws IOException {
@@ -95,35 +98,36 @@ public class TestNodeManagerHelperCodenvy4Impl extends BaseTest {
         assertTrue(result instanceof MacroCommand);
 
         List<Command> commands = ((MacroCommand) result).getCommands();
-        assertEquals(commands.size(), 15);
+        assertEquals(commands.size(), 16);
 
-        assertEquals(commands.get(0).toString(), "{'command'='if [[ \"$(grep \"node1.hostname\" /etc/puppet/autosign.conf)\" == \"\" ]]; then sudo sh -c \"echo -e 'node1.hostname' >> /etc/puppet/autosign.conf\"; fi', "
-                                                 + "'agent'='LocalAgent'}");
-        assertEquals(commands.get(1).toString(), "{'command'='yum clean all', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(2).toString(), format("{'command'='if [[ \"$(yum list installed | grep puppetlabs-release)\" == \"\" ]]; then   sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(3).toString(), format("{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', "
-                                                        + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(4).toString(), format("{'command'='sudo systemctl enable puppet', "
-                                                        + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertTrue(commands.get(5).toString().matches(".*'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; "
-                                                      + "sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]+.*"), "Actual result: " + commands.get(5).toString());
-        assertEquals(commands.get(6).toString(), format("{'command'='if [[ \"$(grep \"server = hostname\" /etc/puppet/puppet.conf)\" == \"\" ]]; then   sudo sed -i 's/\\[main\\]/\\[main\\]\\n    server = hostname\\n    runinterval = 420\\n    configtimeout = 600\\n/g' /etc/puppet/puppet.conf;   sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n    show_diff = true\\n    pluginsync = true\\n    report = true\\n    default_schedules = false\\n    certname = node1.hostname\\n/g' /etc/puppet/puppet.conf; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(7).toString(), format("{'command'='if [[ \"$(grep \"PUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\" /etc/sysconfig/puppetagent)\" == \"\" ]]; then   sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\" >> /etc/sysconfig/puppetagent'; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(8).toString(), format("{'command'='sudo systemctl start puppet', "
-                                                        + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(9).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', "
-                                                        + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(10).toString(), format("PuppetErrorInterrupter{ {'command'='doneState=\"Checking\"; while [ \"${doneState}\" != \"Done\" ]; do     sudo service docker status | grep 'Active: active (running)';     if [ $? -eq 0 ]; then doneState=\"Done\";     else sleep 5;     fi; done', " +
-                                                         "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'} }; looking on errors in file /var/log/puppet/puppet-agent.log locally and at the nodes: " + 
-                                                         "[{'host':'node1.hostname', 'port':'22', 'privateKeyFile':'~/.ssh/id_rsa', 'type':'MACHINE'}]", SYSTEM_USER_NAME));
-        assertTrue(commands.get(11).toString().matches("\\{'command'='sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back ; "
-                                                       + "sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back.[0-9]+ ; ', "
-                                                       + "'agent'='LocalAgent'\\}"), "Actual result: " + commands.get(11).toString());
-        assertEquals(commands.get(12).toString(), "{'command'='sudo cat /etc/puppet/manifests/nodes/codenvy/codenvy.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$swarm_nodes *= *\"[^\"]*\"|$swarm_nodes = \"node1.hostname:2375\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp /etc/puppet/manifests/nodes/codenvy/codenvy.pp', "
-                                                  + "'agent'='LocalAgent'}");
-        assertEquals(commands.get(13).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(14).toString(), "{'command'='doneState=\"Checking\"; while [ \"${doneState}\" != \"Done\" ]; do     curl http://hostname:23750/info | grep 'node1.hostname';     if [ $? -eq 0 ]; then doneState=\"Done\";     else sleep 5;     fi; done', "
-                                                  + "'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='if [[ \"$(grep \"node1.hostname\" /etc/puppet/autosign.conf)\" == \"\" ]]; then sudo sh -c \"echo -e 'node1.hostname' >> /etc/puppet/autosign.conf\"; fi', "
+                                                   + "'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), format("{'command'='if sudo test -d /var/lib/puppet/ssl; then   sudo find /var/lib/puppet/ssl -name node1.hostname.pem -delete; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), "{'command'='yum clean all', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), format("{'command'='if [[ \"$(yum list installed | grep puppetlabs-release)\" == \"\" ]]; then   sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', "
+                                                          + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("{'command'='sudo systemctl enable puppet', "
+                                                          + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertTrue(commands.get(i++).toString().matches(".*'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; "
+                                                        + "sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]+.*"), "Actual result: " + commands.get(5).toString());
+        assertEquals(commands.get(i++).toString(), format("{'command'='if [[ \"$(grep \"server = hostname\" /etc/puppet/puppet.conf)\" == \"\" ]]; then   sudo sed -i 's/\\[main\\]/\\[main\\]\\n    server = hostname\\n    runinterval = 420\\n    configtimeout = 600\\n/g' /etc/puppet/puppet.conf;   sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n    show_diff = true\\n    pluginsync = true\\n    report = true\\n    default_schedules = false\\n    certname = node1.hostname\\n/g' /etc/puppet/puppet.conf; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("{'command'='if [[ \"$(grep \"PUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\" /etc/sysconfig/puppetagent)\" == \"\" ]]; then   sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\" >> /etc/sysconfig/puppetagent'; fi', 'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("{'command'='sudo systemctl start puppet', "
+                                                          + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', "
+                                                          + "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(i++).toString(), format("PuppetErrorInterrupter{ {'command'='doneState=\"Checking\"; while [ \"${doneState}\" != \"Done\" ]; do     sudo service docker status | grep 'Active: active (running)';     if [ $? -eq 0 ]; then doneState=\"Done\";     else sleep 5;     fi; done', " +
+                                                          "'agent'='{'host'='node1.hostname', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'} }; looking on errors in file /var/log/puppet/puppet-agent.log locally and at the nodes: " +
+                                                          "[{'host':'node1.hostname', 'port':'22', 'privateKeyFile':'~/.ssh/id_rsa', 'type':'MACHINE'}]", SYSTEM_USER_NAME));
+        assertTrue(commands.get(i++).toString().matches("\\{'command'='sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back ; "
+                                                        + "sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back.[0-9]+ ; ', "
+                                                        + "'agent'='LocalAgent'\\}"), "Actual result: " + commands.get(11).toString());
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo cat /etc/puppet/manifests/nodes/codenvy/codenvy.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$swarm_nodes *= *\"[^\"]*\"|$swarm_nodes = \"node1.hostname:2375\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp /etc/puppet/manifests/nodes/codenvy/codenvy.pp', "
+                                                   + "'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='doneState=\"Checking\"; while [ \"${doneState}\" != \"Done\" ]; do     curl http://hostname:23750/info | grep 'node1.hostname';     if [ $? -eq 0 ]; then doneState=\"Done\";     else sleep 5;     fi; done', "
+                                                   + "'agent'='LocalAgent'}");
     }
 
     @Test
@@ -199,17 +203,22 @@ public class TestNodeManagerHelperCodenvy4Impl extends BaseTest {
         Command removeNodeCommand = spyHelperCodenvy4.getRemoveNodeCommand(TEST_NODE, ADDITIONAL_NODES_PROPERTY_NAME);
 
         List<Command> commands = ((MacroCommand) removeNodeCommand).getCommands();
-        assertEquals(commands.size(), 4);
+        assertEquals(commands.size(), 7);
 
-        assertTrue(commands.get(0).toString().matches("\\{'command'='sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back ; "
+        assertTrue(commands.get(i++).toString().matches("\\{'command'='sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back ; "
                                                       + "sudo cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /etc/puppet/manifests/nodes/codenvy/codenvy.pp.back.[0-9]+ ; ', "
                                                       + "'agent'='LocalAgent'\\}"), "Actual command: " + commands.get(0).toString());
-        assertEquals(commands.get(1).toString(), "{'command'='sudo cat /etc/puppet/manifests/nodes/codenvy/codenvy.pp | "
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo cat /etc/puppet/manifests/nodes/codenvy/codenvy.pp | "
                                                  + "sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$swarm_nodes *= *\"[^\"]*\"|$swarm_nodes = \"null\"|g' | "
                                                  + "sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp /etc/puppet/manifests/nodes/codenvy/codenvy.pp', "
                                                  + "'agent'='LocalAgent'}");
-        assertEquals(commands.get(2).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(3).toString(), "{'command'='testFile=\"/usr/local/swarm/node_list\"; while true; do     if ! sudo grep \"node1.hostname\" ${testFile}; then break; fi;     sleep 5; done; ', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
+
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo sed -i '/^node1.hostname$/d' /etc/puppet/autosign.conf', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet node clean node1.hostname', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(i++).toString(), "{'command'='sudo systemctl restart puppetmaster', 'agent'='LocalAgent'}");
+
+        assertEquals(commands.get(i++).toString(), "{'command'='testFile=\"/usr/local/swarm/node_list\"; while true; do     if ! sudo grep \"node1.hostname\" ${testFile}; then break; fi;     sleep 5; done; ', 'agent'='LocalAgent'}");
     }
 
     @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "error")

@@ -70,6 +70,11 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
                 puppetMasterNodeDns = config.getHostUrl();
             }
 
+            // remove outdated certificate of agent from puppet agent, if exists
+            commands.add(createCommand(format("if sudo test -d /var/lib/puppet/ssl; then "
+                                              + "  sudo find /var/lib/puppet/ssl -name %s.pem -delete; "
+                                              + "fi", node.getHost()), node));
+
             // install and enable puppet agent on adding node
             commands.add(createCommand("yum clean all"));   // cleanup to avoid yum install failures
             commands.add(createCommand(format("if [[ \"$(yum list installed | grep puppetlabs-release)\" == \"\" ]]; then "
@@ -165,6 +170,13 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
 
             // force applying updated puppet config on puppet agent locally
             commands.add(createForcePuppetAgentCommand());
+
+            // remove node from autosign.conf
+            commands.add(createCommand(format("sudo sed -i '/^%1$s$/d' /etc/puppet/autosign.conf", node.getHost())));
+
+            // remove out-date puppet agent's certificate from puppet master
+            commands.add(createCommand(format("sudo puppet node clean %s", node.getHost())));
+            commands.add(createCommand("sudo systemctl restart puppetmaster"));
 
             // wait until there is no removing node in the /usr/local/swarm/node_list
             commands.add(createCommand(format("testFile=\"/usr/local/swarm/node_list\"; " +

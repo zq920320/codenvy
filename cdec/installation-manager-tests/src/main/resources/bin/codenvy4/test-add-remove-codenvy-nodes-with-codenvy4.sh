@@ -102,6 +102,7 @@ validateExpectedString ".*Nodes\",\"3\".*\[\" node1.${NEW_HOST_URL}\",\"node1.${
 
 # remove node2
 executeIMCommand "im-remove-node" "node2.${NEW_HOST_URL}"
+executeSshCommand "sudo find /var/lib/puppet/ssl -name node2.${NEW_HOST_URL}.pem -delete" "node2.${NEW_HOST_URL}"  # remove puppet agent certificate
 validateExpectedString ".*\"type\".\:.\"MACHINE\".*\"host\".\:.\"node2.${NEW_HOST_URL}\".*"
 doSleep "1m"  "Wait until Docker machine takes into account /usr/local/swarm/node_list config"
 executeSshCommand "sudo systemctl stop iptables"  # open port 23750
