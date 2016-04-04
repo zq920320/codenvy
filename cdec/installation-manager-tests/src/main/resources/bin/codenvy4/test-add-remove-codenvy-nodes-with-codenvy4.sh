@@ -34,7 +34,7 @@ validateExpectedString ".*Use.the.following.syntax\:.im-add-node.--codenvy-ip.<C
 
 # throw error if no Codenvy license
 executeIMCommand "--valid-exit-code=1" "im-add-node" "--codenvy-ip 192.168.56.110" "node1.${HOST_URL}"
-validateExpectedString ".*Codenvy.License.can.t.be.validated.*"
+validateExpectedString ".*Your.Codenvy.subscription.only.allows.a.single.server.*\"status\".\:.\"ERROR\".*"
 
 addCodenvyLicenseConfiguration
 storeCodenvyLicense

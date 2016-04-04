@@ -23,6 +23,7 @@ import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -30,6 +31,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Properties;
 
 import static java.nio.file.Files.createDirectories;
@@ -62,7 +64,7 @@ public class StorageManager {
      */
     public void storeProperties(@Nullable Map<String, String> newProperties) throws IOException {
         if (newProperties != null && !newProperties.isEmpty()) {
-            Path storageFile = getStorageFile();
+            Path storageFile = getStorageFile().orElse(createStorage());
             Properties properties = loadProperties(storageFile);
 
             for (Map.Entry<String, String> entry : newProperties.entrySet()) {
@@ -82,7 +84,7 @@ public class StorageManager {
      *         if any I/O error occurred
      */
     public Map<String, String> loadProperties() throws IOException {
-        Path storageFile = getStorageFile();
+        Path storageFile = getStorageFile().orElseThrow(() -> new StorageNotFoundException());
         Properties properties = loadProperties(storageFile);
 
         return new HashMap<>((Map)properties);
@@ -91,7 +93,7 @@ public class StorageManager {
     /** Loads property with certain key. */
     @Nullable
     public String loadProperty(@NotNull String key) throws IOException {
-        Path storageFile = getStorageFile();
+        Path storageFile = getStorageFile().orElseThrow(() -> new StorageNotFoundException());
         Properties properties = loadProperties(storageFile);
 
         if (!properties.containsKey(key)) {
@@ -103,7 +105,7 @@ public class StorageManager {
 
     /** Stores property with certain key. */
     public void storeProperty(@NotNull String key, @NotNull String value) throws IOException {
-        Path storageFile = getStorageFile();
+        Path storageFile = getStorageFile().orElse(createStorage());
         Properties properties = loadProperties(storageFile);
 
         if (!properties.containsKey(key)) {
@@ -119,7 +121,7 @@ public class StorageManager {
 
     /** Deletes property with certain key. */
     public void deleteProperty(@NotNull String key) throws IOException {
-        Path storageFile = getStorageFile();
+        Path storageFile = getStorageFile().orElseThrow(FileNotFoundException::new);
         Properties properties = loadProperties(storageFile);
 
         if (!properties.containsKey(key)) {
@@ -144,11 +146,16 @@ public class StorageManager {
         return properties;
     }
 
-    private Path getStorageFile() throws IOException {
+    private Optional<Path> getStorageFile() throws IOException {
         if (!exists(storageFile.getParent())) {
-            createDirectories(storageFile.getParent());
+            return Optional.empty();
         }
 
+        return Optional.of(storageFile);
+    }
+
+    private Path createStorage() throws IOException {
+        createDirectories(storageFile.getParent());
         return storageFile;
     }
 }

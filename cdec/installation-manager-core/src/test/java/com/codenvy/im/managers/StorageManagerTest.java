@@ -25,6 +25,9 @@ import java.nio.file.Paths;
 import java.util.Collections;
 import java.util.Map;
 
+import static java.nio.file.Files.createDirectory;
+import static java.nio.file.Files.createFile;
+import static java.nio.file.Files.write;
 import static org.apache.commons.io.FileUtils.deleteDirectory;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -38,6 +41,7 @@ public class StorageManagerTest {
 
     private StorageManager storageManager;
     private Path           storageDir;
+    private Path           configProperties;
 
     @BeforeMethod
     public void setUp() throws Exception {
@@ -45,6 +49,7 @@ public class StorageManagerTest {
         deleteDirectory(storageDir.toFile());
 
         storageManager = new StorageManager(storageDir.toString());
+        configProperties = storageDir.resolve(StorageManager.STORAGE_FILE_NAME);
     }
 
     @Test
@@ -70,10 +75,9 @@ public class StorageManagerTest {
         storageManager.storeProperties(Collections.<String, String>emptyMap());
     }
 
-    @Test
+    @Test(expectedExceptions = StorageNotFoundException.class)
     public void testLoadEmptyMap() throws Exception {
         Map<String, String> m = storageManager.loadProperties();
-        assertTrue(m.isEmpty());
     }
 
     @Test
@@ -87,6 +91,8 @@ public class StorageManagerTest {
     @Test(expectedExceptions = PropertyNotFoundException.class,
           expectedExceptionsMessageRegExp = "Property 'x1' not found")
     public void testLoadNonExistedProperty() throws IOException {
+        createStorage("x=y");
+
         String value = storageManager.loadProperty("x1");
         assertEquals(value, "y1");
     }
@@ -120,6 +126,13 @@ public class StorageManagerTest {
     @Test(expectedExceptions = PropertyNotFoundException.class,
           expectedExceptionsMessageRegExp = "Property 'x1' not found")
     public void testDeleteNonExistedProperty() throws IOException {
+        createStorage("x=y");
         storageManager.deleteProperty("x1");
+    }
+
+    private void createStorage(String content) throws IOException {
+        createDirectory(storageDir);
+        createFile(configProperties);
+        write(configProperties, content.getBytes());
     }
 }
