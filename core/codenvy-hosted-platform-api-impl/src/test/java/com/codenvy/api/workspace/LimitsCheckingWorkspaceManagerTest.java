@@ -25,9 +25,11 @@ import static com.codenvy.api.workspace.TestObjects.createConfig;
 import static com.codenvy.api.workspace.TestObjects.createRuntime;
 import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 
@@ -56,6 +58,28 @@ public class LimitsCheckingWorkspaceManagerTest {
 
         manager.checkCountAndPropagateCreation("user123", null);
     }
+
+    @Test
+    public void shouldNotCheckAllowedWorkspacesPerUserWhenItIsSetToMinusOne() throws Exception {
+        final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(-1, // <- workspaces max count
+                                                                                              "2gb",
+                                                                                              "1gb",
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null));
+        doReturn(ImmutableList.of(mock(WorkspaceImpl.class), mock(WorkspaceImpl.class))) // <- currently used 2
+                                                                                         .when(manager)
+                                                                                         .getWorkspaces(anyString());
+        final WorkspaceCallback callback = mock(WorkspaceCallback.class);
+
+        manager.checkCountAndPropagateCreation("user123", callback);
+
+        verify(callback).call();
+        verify(manager, never()).getWorkspaces(any());
+    }
+
 
     @Test
     public void shouldCallCreateCallBackIfEverythingIsOkayWithLimits() throws Exception {
@@ -94,6 +118,26 @@ public class LimitsCheckingWorkspaceManagerTest {
     }
 
     @Test
+    public void shouldSkipWorkspacesRamCheckIfItIsSetToMinusOne() throws Exception {
+        final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
+                                                                                              "-1", // <- workspaces ram limit
+                                                                                              "1gb",
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null));
+        doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getWorkspaces(anyString()); // <- currently running 2gb
+        final WorkspaceCallback callback = mock(WorkspaceCallback.class);
+
+        manager.checkRamAndPropagateStart(createConfig("1gb"), null, "user123", callback);
+
+        verify(callback).call();
+        verify(manager, never()).getWorkspaces(any());
+    }
+
+
+    @Test
     public void shouldCallStartCallbackIfEverythingIsOkayWithLimits() throws Exception {
         final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
                                                                                               "3gb", // <- workspaces ram limit
@@ -119,6 +163,21 @@ public class LimitsCheckingWorkspaceManagerTest {
         final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
                                                                                               "3gb",
                                                                                               "2gb", // <- workspaces env ram limit
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null,
+                                                                                              null));
+
+        manager.checkMaxEnvironmentRam(config);
+    }
+
+    @Test
+    public void shouldNotCheckWorkspaceRamLimitIfItIsSetToMinusOne() throws Exception {
+        final WorkspaceConfig config = createConfig("3gb");
+        final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
+                                                                                              "3gb",
+                                                                                              "-1", // <- workspaces env ram limit
                                                                                               null,
                                                                                               null,
                                                                                               null,
