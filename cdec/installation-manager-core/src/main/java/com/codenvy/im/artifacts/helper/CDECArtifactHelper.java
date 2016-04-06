@@ -49,7 +49,7 @@ public abstract class CDECArtifactHelper {
                                 "Configure puppet agent",
                                 "Launch puppet master",
                                 "Launch puppet agent",
-                                "Install Codenvy (~25 min)",
+                                "Install Codenvy (~10 min)",
                                 "Boot Codenvy");
     }
 
