@@ -21,7 +21,6 @@ package com.codenvy.activity.shared;
  */
 public final class Constants {
 
-    public static final String WORKSPACE_STOPPED_BY = "stopped_by";
     public static final String ACTIVITY_CHECKER     = "activity-checker";
 
     private Constants() {

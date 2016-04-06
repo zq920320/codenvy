@@ -22,6 +22,7 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.workspace.gwt.client.WorkspaceServiceClient;
 import org.eclipse.che.api.workspace.gwt.client.event.WorkspaceStoppedEvent;
 import org.eclipse.che.api.workspace.gwt.client.event.WorkspaceStoppedHandler;
+import org.eclipse.che.api.workspace.shared.Constants;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceDto;
 import org.eclipse.che.ide.api.component.Component;
 import org.eclipse.che.ide.workspace.start.StartWorkspacePresenter;
@@ -32,7 +33,6 @@ import javax.inject.Singleton;
 import java.util.List;
 
 import static com.codenvy.activity.shared.Constants.ACTIVITY_CHECKER;
-import static com.codenvy.activity.shared.Constants.WORKSPACE_STOPPED_BY;
 
 /**
  * Shows dialog after workspace stopped event.
@@ -77,7 +77,7 @@ public class HostedWorkspaceStoppedHandler implements WorkspaceStoppedHandler {
             @Override
             public void apply(WorkspaceDto workspace) throws OperationException {
 
-                if (ACTIVITY_CHECKER.equals(workspace.getAttributes().get(WORKSPACE_STOPPED_BY))) {
+                if (ACTIVITY_CHECKER.equals(workspace.getAttributes().get(Constants.WORKSPACE_STOPPED_BY))) {
                     workspaceNotRunningPresenterProvider.get().show(workspace);
                 } else {
                     workspaceServiceClient.getWorkspaces(SKIP_COUNT, MAX_COUNT)
