@@ -65,6 +65,8 @@ import org.eclipse.che.api.machine.server.recipe.PermissionsCheckerImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
 import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
+import org.eclipse.che.api.machine.wsagent.WsAgentLauncher;
+import org.eclipse.che.api.machine.wsagent.WsAgentLauncherImpl;
 import org.eclipse.che.api.project.server.handlers.ProjectHandler;
 import org.eclipse.che.api.project.server.template.ProjectTemplateDescriptionLoader;
 import org.eclipse.che.api.project.server.template.ProjectTemplateRegistry;
@@ -317,9 +319,11 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
 
-        bind(org.eclipse.che.api.machine.server.WsAgentLauncher.class).to(org.eclipse.che.api.machine.server.WsAgentLauncherImpl.class);
+        bind(WsAgentLauncher.class).to(WsAgentLauncherImpl.class);
 
         //workspace activity service
         install(new com.codenvy.activity.server.inject.WorkspaceActivityModule());
+
+        bind(org.eclipse.che.api.machine.server.terminal.MachineTerminalLauncher.class);
     }
 }

@@ -21,12 +21,13 @@ import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.machine.server.MachineInstanceProviders;
 import org.eclipse.che.api.machine.server.MachineManager;
 import org.eclipse.che.api.machine.server.MachineRegistry;
-import org.eclipse.che.api.machine.server.WsAgentLauncher;
+import org.eclipse.che.api.machine.wsagent.WsAgentLauncher;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
+import org.eclipse.che.api.machine.server.util.RecipeDownloader;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -49,9 +50,9 @@ public class RouterMachineManager extends MachineManager {
     private final String                   machineLogsDir;
     private final EventService             eventService;
     private final int                      defaultMachineMemorySizeMB;
-    private final String                   apiEndpoint;
     private final RouterRulesRegistry      routerRulesRegistry;
     private final WsAgentLauncher          wsAgentLauncher;
+    private final RecipeDownloader         recipeDownloader;
 
     @Inject
     public RouterMachineManager(SnapshotDao snapshotDao,
@@ -60,26 +61,26 @@ public class RouterMachineManager extends MachineManager {
                                 @Named("machine.logs.location") String machineLogsDir,
                                 EventService eventService,
                                 @Named("machine.default_mem_size_mb") int defaultMachineMemorySizeMB,
-                                @Named("api.endpoint") String apiEndpoint,
                                 RouterRulesRegistry routerRulesRegistry,
-                                WsAgentLauncher wsAgentLauncher) {
+                                WsAgentLauncher wsAgentLauncher,
+                                RecipeDownloader recipeDownloader) {
         super(snapshotDao,
               machineRegistry,
               machineInstanceProviders,
               machineLogsDir,
               eventService,
               defaultMachineMemorySizeMB,
-              apiEndpoint,
-              wsAgentLauncher);
+              wsAgentLauncher,
+              recipeDownloader);
         this.snapshotDao = snapshotDao;
         this.machineRegistry = machineRegistry;
         this.machineInstanceProviders = machineInstanceProviders;
         this.machineLogsDir = machineLogsDir;
         this.eventService = eventService;
         this.defaultMachineMemorySizeMB = defaultMachineMemorySizeMB;
-        this.apiEndpoint = apiEndpoint;
         this.routerRulesRegistry = routerRulesRegistry;
         this.wsAgentLauncher = wsAgentLauncher;
+        this.recipeDownloader = recipeDownloader;
     }
 
     /**
@@ -92,9 +93,9 @@ public class RouterMachineManager extends MachineManager {
              manager.machineLogsDir,
              manager.eventService,
              manager.defaultMachineMemorySizeMB,
-             manager.apiEndpoint,
              manager.routerRulesRegistry,
-             manager.wsAgentLauncher);
+             manager.wsAgentLauncher,
+             manager.recipeDownloader);
     }
 
     private Map<String, ServerImpl> rewriteServersUrls(String machineId, Map<String, ? extends Server> servers) {
