@@ -39,7 +39,7 @@ public class VersionCommand extends AbstractIMCommand {
     private static final String LATEST_STABLE_VERSION_MESSAGE = "You are running the latest stable version of Codenvy!";
     private static final String NEW_STABLE_VERSION_MESSAGE    = "There is a new stable version of Codenvy available. %s";
     private static final String SUFFIX_WHEN_DOWNLOADED        = "Run im-install to install it.";
-    private static final String SUFFIX_WHEN_NOT_DOWNLOADED    = "Run im-download %s.";
+    private static final String SUFFIX_WHEN_NOT_DOWNLOADED    = "Run im-download to download it.";
 
     @Override
     protected void doExecuteCommand() throws Exception {
