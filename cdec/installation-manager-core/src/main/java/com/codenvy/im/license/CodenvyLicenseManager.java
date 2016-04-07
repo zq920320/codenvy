@@ -16,6 +16,7 @@ package com.codenvy.im.license;
 
 import com.codenvy.im.managers.PropertyNotFoundException;
 import com.codenvy.im.managers.StorageManager;
+import com.codenvy.im.managers.StorageNotFoundException;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -77,7 +78,7 @@ public class CodenvyLicenseManager {
         String licenseText;
         try {
             licenseText = storageManager.loadProperty(CODENVY_LICENSE_KEY);
-        } catch (PropertyNotFoundException e) {
+        } catch (StorageNotFoundException | PropertyNotFoundException e) {
             throw new LicenseNotFoundException("Codenvy license not found");
         } catch (IOException e) {
             throw new LicenseException(e.getMessage(), e);
