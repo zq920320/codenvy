@@ -100,6 +100,9 @@ public class Config {
 
     public static final String CODENVY_INSTALL_TYPE = "codenvy_install_type";
 
+    public static final String HTTP_PROXY = "http_proxy";
+    public static final String HTTPS_PROXY = "https_proxy";
+
     public static final List<String> MULTI_SERVER_PROPERTIES = ImmutableList.of(MULTI_SERVER_BASE_CONFIG_PP,
                                                                                 MULTI_SERVER_4_0_PROPERTIES,
                                                                                 MULTI_SERVER_BASE_4_0_PROPERTIES,

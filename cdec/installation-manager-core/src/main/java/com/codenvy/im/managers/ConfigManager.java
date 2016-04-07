@@ -251,46 +251,6 @@ public class ConfigManager {
         return replacements;
     }
 
-    protected Map<String, String> doLoadCodenvyProperties(Path file) throws IOException {
-        Map<String, String> m = new HashMap<>();
-
-        try (BufferedReader in = newBufferedReader(file, Charset.forName("UTF-8"))) {
-            String line;
-            while ((line = in.readLine()) != null) {
-                Matcher matcher = CODENVY_PROP_TEMPLATE.matcher(line);
-                while (matcher.find()) {
-                    String key = matcher.group(1);
-                    String value = matcher.group(2).replace("\\n", "\n");
-                    m.put(key, value);
-                }
-            }
-        }
-
-        return m;
-    }
-
-    protected Map<String, String> doLoadInstalledCodenvyProperties(Path file) throws IOException {
-        Map<String, String> m = new HashMap<>();
-
-        StringBuilder data = new StringBuilder();
-        try (BufferedReader reader = Files.newReader(file.toFile(), Charset.forName("UTF-8"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (!line.trim().startsWith("#")) {
-                    data.append(line);
-                    data.append('\n');
-                }
-            }
-        }
-
-        Matcher matcher = PUPPET_PROP_TEMPLATE.matcher(data.toString());
-        while (matcher.find()) {
-            m.put(matcher.group(1), matcher.group(2));
-        }
-
-        return m;
-    }
-
     public static String getBaseNodeDomain(NodeConfig node) {
         String regex = format("^%s\\d+", node.getType().toString().toLowerCase());
         return node.getHost().toLowerCase().replaceAll(regex, "");
@@ -365,24 +325,6 @@ public class ConfigManager {
         } catch (ConfigurationException e) {
             throw new UnknownInstallationTypeException(e);
         }
-    }
-
-    /**
-     * @return true if only there is "main" section without "server" property in the puppet.conf file
-     */
-    private boolean isSingleTypeConfig(HierarchicalINIConfiguration iniFile) {
-        Set<String> sections = iniFile.getSections();
-        return sections.contains("main")
-               && iniFile.getSection("main").getString("server", "").isEmpty();
-    }
-
-    /**
-     * @return true if only there is "main" section with "server" property in the puppet.conf file
-     */
-    private boolean isMultiTypeConfig(HierarchicalINIConfiguration iniFile) {
-        Set<String> sections = iniFile.getSections();
-        return sections.contains("main")
-               && !iniFile.getSection("main").getString("server", "").isEmpty();
     }
 
     /**
@@ -478,9 +420,10 @@ public class ConfigManager {
                     }
 
                     if (installType == InstallType.MULTI_SERVER) {
-                        setSSHAccessProperties(properties);
+                        setupSSHAccessProperties(properties);
                     }
-                    setSshKeyParts(properties);
+                    setupSshKeyParts(properties);
+                    setupProxyProperties(properties);
 
                 } else { // update
                     if (binaries != null) {
@@ -508,10 +451,14 @@ public class ConfigManager {
         }
     }
 
+    public Path getPuppetConfigFile(String configFilename) {
+        return Paths.get(puppetBaseDir).resolve(configFilename);
+    }
+
     /**
      * Loads properties from the binaries archive.
      */
-    protected Map<String, String> loadConfigProperties(Path binaries, InstallType installType) throws IOException {
+    Map<String, String> loadConfigProperties(Path binaries, InstallType installType) throws IOException {
         SimpleCommand command = createCommand(format("rm -rf /tmp/codenvy; " +
                                                      "mkdir /tmp/codenvy/; " +
                                                      "unzip -o %s -d /tmp/codenvy", binaries.toString()));
@@ -522,14 +469,54 @@ public class ConfigManager {
         return configManager.loadInstalledCodenvyProperties(installType);
     }
 
-    public Path getPuppetConfigFile(String configFilename) {
-        return Paths.get(puppetBaseDir).resolve(configFilename);
+    Map<String, String> getEnvironment() {
+        return System.getenv();
+    }
+
+    protected Map<String, String> doLoadCodenvyProperties(Path file) throws IOException {
+        Map<String, String> m = new HashMap<>();
+
+        try (BufferedReader in = newBufferedReader(file, Charset.forName("UTF-8"))) {
+            String line;
+            while ((line = in.readLine()) != null) {
+                Matcher matcher = CODENVY_PROP_TEMPLATE.matcher(line);
+                while (matcher.find()) {
+                    String key = matcher.group(1);
+                    String value = matcher.group(2).replace("\\n", "\n");
+                    m.put(key, value);
+                }
+            }
+        }
+
+        return m;
+    }
+
+    private Map<String, String> doLoadInstalledCodenvyProperties(Path file) throws IOException {
+        Map<String, String> m = new HashMap<>();
+
+        StringBuilder data = new StringBuilder();
+        try (BufferedReader reader = Files.newReader(file.toFile(), Charset.forName("UTF-8"))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                if (!line.trim().startsWith("#")) {
+                    data.append(line);
+                    data.append('\n');
+                }
+            }
+        }
+
+        Matcher matcher = PUPPET_PROP_TEMPLATE.matcher(data.toString());
+        while (matcher.find()) {
+            m.put(matcher.group(1), matcher.group(2));
+        }
+
+        return m;
     }
 
     /**
      * Sets properties needed for SSH access to other nodes.
      */
-    protected void setSSHAccessProperties(Map<String, String> properties) throws IOException {
+    private void setupSSHAccessProperties(Map<String, String> properties) throws IOException {
         String userName = System.getProperty("user.name");
         Path pathToIdRsa = Paths.get(System.getProperty("user.home")).resolve(".ssh").resolve("id_rsa");
         String sshKey = readSSHKey(pathToIdRsa);
@@ -541,16 +528,50 @@ public class ConfigManager {
     /**
      * Generates and sets private and public parts of the ssh key.
      */
-    protected void setSshKeyParts(Map<String, String> properties) throws IOException {
+    private void setupSshKeyParts(Map<String, String> properties) throws IOException {
         SshKey sshKey = new SshKey();
         properties.put(Config.PUBLIC_KEY, sshKey.getPublicPart());
         properties.put(Config.PRIVATE_KEY, sshKey.getPrivatePart().replace("\n", "\\n"));
     }
 
-    protected String readSSHKey(Path pathToIdRsa) throws IOException {
+    private String readSSHKey(Path pathToIdRsa) throws IOException {
         if (!exists(pathToIdRsa)) {
             throw new RuntimeException("SSH private key not found: " + pathToIdRsa.toString());
         }
         return Files.toString(pathToIdRsa.toFile(), Charsets.UTF_8);
+    }
+
+    /**
+     * Sets properties needed to configure Codenvy to work behind the proxy basing on the system environment.
+     * @param properties
+     */
+    private void setupProxyProperties(Map<String,String> properties) {
+        Map<String, String> environment = getEnvironment();
+
+        if (environment.containsKey(Config.HTTP_PROXY)) {
+            properties.put(Config.HTTP_PROXY, environment.get(Config.HTTP_PROXY));
+        }
+
+        if (environment.containsKey(Config.HTTPS_PROXY)) {
+            properties.put(Config.HTTPS_PROXY, environment.get(Config.HTTPS_PROXY));
+        }
+    }
+
+    /**
+     * @return true if only there is "main" section without "server" property in the puppet.conf file
+     */
+    private boolean isSingleTypeConfig(HierarchicalINIConfiguration iniFile) {
+        Set<String> sections = iniFile.getSections();
+        return sections.contains("main")
+               && iniFile.getSection("main").getString("server", "").isEmpty();
+    }
+
+    /**
+     * @return true if only there is "main" section with "server" property in the puppet.conf file
+     */
+    private boolean isMultiTypeConfig(HierarchicalINIConfiguration iniFile) {
+        Set<String> sections = iniFile.getSections();
+        return sections.contains("main")
+               && !iniFile.getSection("main").getString("server", "").isEmpty();
     }
 }
