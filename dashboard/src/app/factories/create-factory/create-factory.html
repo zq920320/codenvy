@@ -20,8 +20,10 @@
 <che-toolbar che-title="New Factory"></che-toolbar>
 
 <md-content md-scroll-y flex md-theme="maincontent-theme">
-  <md-progress-linear md-mode="indeterminate" class="create-factory-progress" ng-show="createFactoryCtrl.isLoading"></md-progress-linear>
-  <div class="create-factory" ng-hide="createFactoryCtrl.isLoading">
+  <md-progress-linear md-mode="indeterminate" class="create-factory-progress"
+                      ng-show="createFactoryCtrl.isLoading"></md-progress-linear>
+  <div class="create-factory"
+       ng-hide="createFactoryCtrl.isLoading">
     <che-panel che-title="Select Source">
       <md-tabs md-dynamic-height md-stretch-tabs="always" md-selected="selectedIndex" class="project-details-menu">
         <md-tab>
@@ -31,8 +33,8 @@
           </md-tab-label>
           <md-tab-body>
             <cdvy-factory-from-workspace cdvy-factory-content="createFactoryCtrl.factoryContent"
-                                       cdvy-is-loading="createFactoryCtrl.isLoading"
-                                       cdvy-is-importing="createFactoryCtrl.isImporting"/>
+                                         cdvy-is-loading="createFactoryCtrl.isLoading"
+                                         cdvy-is-importing="createFactoryCtrl.isImporting"/>
           </md-tab-body>
         </md-tab>
         <md-tab>
@@ -57,11 +59,37 @@
         </md-tab>
       </md-tabs>
     </che-panel>
+
+    <ng-form name="factoryMetadataForm">
+      <che-panel che-title="Factory Metadata" ng-init="createFactoryCtrl.setFactoryMetadataForm(factoryMetadataForm)">
+        <che-input che-form="factoryMetadataForm"
+                   che-name="name"
+                   che-label-name="Name"
+                   che-place-holder="Name of the factory"
+                   ng-change="createFactoryCtrl.onFactoryNameChange()"
+                   ng-model="createFactoryCtrl.factoryName"
+                   required
+                   ng-trim
+                   ng-minlength="3"
+                   ng-maxlength="20"
+                   ng-pattern="/^[ A-Za-z0-9_\-\.]+$/">
+          <div ng-message="required">A name is required.</div>
+          <div ng-message="pattern">Factory name may contain digits, latin letters, spaces, _ , . , - and should start only with
+            digits, latin letters or underscores
+          </div>
+          <div ng-message="minlength">The name has to be more then 3 characters long.</div>
+          <div ng-message="maxlength">The name has to be less than 20 characters long.</div>
+        </che-input>
+      </che-panel>
+    </ng-form>
+
     <che-panel che-title="Factory Configuration" ng-class="{ 'disabled-state': !createFactoryCtrl.factoryContent }">
       <div class="factory-configuration-panel">
         <md-content layout="column" layout-fill>
           <div class="json-editor" ng-if="createFactoryCtrl.factoryContent !== null">
-            <textarea ui-codemirror ng-model="createFactoryCtrl.factoryContent"></textarea>
+            <textarea ui-codemirror
+                      ng-model="createFactoryCtrl.factoryContent"
+                      ng-change="createFactoryCtrl.onFactoryContentChange()"></textarea>
           </div>
         </md-content>
         <a href="http://docs.codenvy.com/user/factories/#configuration-reference" target="_blank">Factory reference documentation</a>
@@ -73,8 +101,8 @@
     </div>
     <che-button-primary id="create-project-button-import"
                         che-button-title="Create Factory"
-                         ng-click="createFactoryCtrl.createFactoryByContent(createFactoryCtrl.factoryContent)"
-                         ng-disabled="!createFactoryCtrl.factoryContent || createFactoryCtrl.isImporting || createFactoryCtrl.isLoading"
-                         class="projects-create-project-button"/>
+                        ng-click="createFactoryCtrl.createFactoryByContent(createFactoryCtrl.factoryContent)"
+                        ng-disabled="!createFactoryCtrl.factoryContent || createFactoryCtrl.isImporting || createFactoryCtrl.isLoading || factoryMetadataForm.$invalid"
+                        class="projects-create-project-button"/>
   </div>
 </md-content>

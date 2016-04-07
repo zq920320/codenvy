@@ -30,12 +30,16 @@
     </div>
     <div flex="40" layout="column" layout-align-gt-sm="center start" layout-align="center center"
          ng-click="factoryItemCtrl.redirectToFactoryDetails()">
-      <div class="factory-name  codenvy-hover">
-        <span ng-if="factoryItemCtrl.factory.originFactory.name">
+      <div ng-if="factoryItemCtrl.factory.originFactory.name">
+        <div class="factory-name  codenvy-hover">
           {{factoryItemCtrl.factory.originFactory.name}}
-        </span>
+        </div>
+        <div class="factory-id-url codenvy-hover">
+          {{factoryItemCtrl.factory.nameURL}}
+        </div>
       </div>
-      <div class="factory-id-url codenvy-hover" ng-show="!factoryItemCtrl.factory.originFactory.name">
+      <div class="factory-id-url codenvy-hover"
+           ng-show="!factoryItemCtrl.factory.originFactory.name">
         {{factoryItemCtrl.factory.idURL ? factoryItemCtrl.factory.idURL : factoryItemCtrl.factory.originFactory.id}}
       </div>
     </div>
