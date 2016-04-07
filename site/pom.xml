@@ -24,7 +24,7 @@
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy</groupId>
-    <artifactId>odyssey</artifactId>
+    <artifactId>site</artifactId>
     <version>4.1.0-RC1-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy :: Website</name>

@@ -31,7 +31,7 @@
         <module>core</module>
         <module>plugins</module>
         <module>dashboard</module>
-        <module>odyssey</module>
+        <module>site</module>
         <module>platform-api-client-java</module>
         <module>cli</module>
         <module>cdec</module>
@@ -60,7 +60,6 @@
         <license_years>[${project.inceptionYear}] - [${currentYear}]</license_years>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
-        <odyssey.classifier>onprem-se</odyssey.classifier>
         <org.apache.apacheds.version>1.5.7</org.apache.apacheds.version>
         <org.apache.karaf.version>3.0.2</org.apache.karaf.version>
         <org.apache.sshd.version>0.9.0</org.apache.sshd.version>
@@ -70,6 +69,7 @@
         <org.powermock.version>1.5.5</org.powermock.version>
         <org.scala.lang.version>2.10.4</org.scala.lang.version>
         <org.thymeleaf.version>2.1.4.RELEASE</org.thymeleaf.version>
+        <site.classifier>onprem-se</site.classifier>
         <version.license-header>codenvy-codenvy-license-resource-bundle</version.license-header>
         <version.license.header.artifactid>codenvy-codenvy-license-resource-bundle</version.license.header.artifactid>
         <version.license.header.groupid>com.codenvy.resources</version.license.header.groupid>
@@ -95,21 +95,21 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy</groupId>
-                <artifactId>odyssey</artifactId>
+                <artifactId>site</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>stage</classifier>
             </dependency>
             <dependency>
                 <groupId>com.codenvy</groupId>
-                <artifactId>odyssey</artifactId>
+                <artifactId>site</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>prod</classifier>
             </dependency>
             <dependency>
                 <groupId>com.codenvy</groupId>
-                <artifactId>odyssey</artifactId>
+                <artifactId>site</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
                 <classifier>onprem-se</classifier>

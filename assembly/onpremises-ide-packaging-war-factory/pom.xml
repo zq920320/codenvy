@@ -137,7 +137,7 @@
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
                     <execution>
-                        <id>copy-odyssey</id>
+                        <id>copy-site</id>
                         <phase>generate-sources</phase>
                         <goals>
                             <goal>copy</goal>
@@ -147,9 +147,9 @@
                             <artifactItems>
                                 <artifactItem>
                                     <groupId>com.codenvy</groupId>
-                                    <artifactId>odyssey</artifactId>
-                                    <version>${codenvy.odyssey.version}</version>
-                                    <classifier>${odyssey.classifier}</classifier>
+                                    <artifactId>site</artifactId>
+                                    <version>${codenvy.site.version}</version>
+                                    <classifier>${site.classifier}</classifier>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
@@ -169,10 +169,10 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-invalid-factory-url.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/browser-not-supported.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
-                                <copy file="${project.build.directory}/unzip/odyssey/site/war/factory/error/error-factory-creation.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-factory-creation.html" />
+                                <unzip dest="${project.build.directory}/unzip/site" src="${project.build.directory}/dependency/site-${site.classifier}.zip" />
+                                <copy file="${project.build.directory}/unzip/site/site/war/factory/error/error-invalid-factory-url.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-invalid-factory-url.jsp" />
+                                <copy file="${project.build.directory}/unzip/site/site/war/factory/error/browser-not-supported.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/browser-not-supported.jsp" />
+                                <copy file="${project.build.directory}/unzip/site/site/war/factory/error/error-factory-creation.html" tofile="${project.build.directory}/${project.artifactId}-${project.version}/resources/error-factory-creation.html" />
                             </tasks>
                         </configuration>
                     </execution>

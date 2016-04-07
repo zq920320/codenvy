@@ -46,6 +46,6 @@
         <module>onpremises-ide-packaging-tomcat-im</module>
     </modules>
     <properties>
-        <odyssey.classifier>onprem-se</odyssey.classifier>
+        <site.classifier>onprem-se</site.classifier>
     </properties>
 </project>

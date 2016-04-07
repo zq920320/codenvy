@@ -318,11 +318,11 @@
                         </goals>
                         <configuration>
                             <tasks>
-                                <unzip dest="${project.build.directory}/unzip/odyssey" src="${project.build.directory}/dependency/odyssey-${odyssey.classifier}.zip" />
+                                <unzip dest="${project.build.directory}/unzip/site" src="${project.build.directory}/dependency/site-${site.classifier}.zip" />
                                 <copy todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates">
-                                    <fileset dir="${project.build.directory}/unzip/odyssey/site/email-templates" />
+                                    <fileset dir="${project.build.directory}/unzip/site/site/email-templates" />
                                 </copy>
-                                <copy file="${project.build.directory}/unzip/odyssey/site/images/mail/header.png" todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates" />
+                                <copy file="${project.build.directory}/unzip/site/site/images/mail/header.png" todir="${project.build.directory}/${project.artifactId}-${project.version}/WEB-INF/classes/email-templates" />
                             </tasks>
                         </configuration>
                     </execution>
@@ -357,9 +357,9 @@
                                 </artifactItem>
                                 <artifactItem>
                                     <groupId>com.codenvy</groupId>
-                                    <artifactId>odyssey</artifactId>
-                                    <version>${codenvy.odyssey.version}</version>
-                                    <classifier>${odyssey.classifier}</classifier>
+                                    <artifactId>site</artifactId>
+                                    <version>${codenvy.site.version}</version>
+                                    <classifier>${site.classifier}</classifier>
                                     <type>zip</type>
                                 </artifactItem>
                             </artifactItems>
