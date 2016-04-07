@@ -22,6 +22,7 @@ import org.eclipse.che.api.core.model.workspace.Workspace;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
+import org.eclipse.che.api.workspace.shared.Constants;
 import org.eclipse.che.api.workspace.shared.dto.event.WorkspaceStatusEvent;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
@@ -36,7 +37,7 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static com.codenvy.activity.shared.Constants.ACTIVITY_CHECKER;
-import static com.codenvy.activity.shared.Constants.WORKSPACE_STOPPED_BY;
+import static org.eclipse.che.api.workspace.shared.Constants.WORKSPACE_STOPPED_BY;
 
 /**
  * Stops the inactive workspaces by given expiration time.

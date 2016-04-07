@@ -23,20 +23,35 @@
                che-name="name"
                che-label-name="Name"
                che-place-holder="Name of the factory"
-                ng-model="factoryInformationCtrl.copyOriginFactory.name">
+               ng-model="factoryInformationCtrl.copyOriginFactory.name"
+               required
+               ng-trim
+               ng-minlength="3"
+               ng-maxlength="20"
+               ng-pattern="/^[ A-Za-z0-9_\-\.]+$/">
+      <div ng-message="required">A name is required.</div>
+      <div ng-message="pattern">Factory name may contain digits, latin letters, spaces, _ , . , - and should start only
+        with digits, latin letters or underscores
+      </div>
+      <div ng-message="minlength">The name has to be more then 3 characters long.</div>
+      <div ng-message="maxlength">The name has to be less than 20 characters long.</div>
     </che-input>
   </ng-form>
-    <che-text-info che-label-name="URL"
-                    che-text="factoryInformationCtrl.factory.idURL ? factoryInformationCtrl.factory.idURL : 'No value'"
-                    che-href="factoryInformationCtrl.factory.idURL"
-                    che-copy-clipboard="true" class="factory-information-panel-spacing factory-information-panel-item factory-information-panel-url"></che-text-info>
-    <che-text-info ng-show="factoryInformationCtrl.factory.nameURL"
-                   che-text="factoryInformationCtrl.factory.nameURL ? factoryInformationCtrl.factory.nameURL : 'No value'"
-                   che-href="factoryInformationCtrl.factory.nameURL"
-                   che-copy-clipboard="true" class="factory-information-panel-item che-text-info-subline"></che-text-info>
-    <che-text-info che-label-name="Creation Date" class="factory-information-panel-spacing factory-information-panel-caption"
-                    che-text="factoryInformationCtrl.factory.originFactory.creator.created | amDateFormat:'Do MMMM YYYY'">
-    </che-text-info>
+  <che-text-info ng-show="factoryInformationCtrl.factory.nameURL"
+                 che-label-name="URL"
+                 che-text="factoryInformationCtrl.factory.nameURL ? factoryInformationCtrl.factory.nameURL : 'No value'"
+                 che-href="factoryInformationCtrl.factory.nameURL"
+                 che-copy-clipboard="true"
+                 class="factory-information-panel-spacing factory-information-panel-item factory-information-panel-url"></che-text-info>
+  <che-text-info che-label-name="{{factoryInformationCtrl.factory.nameURL ? '' : 'URL'}}"
+                 che-text="factoryInformationCtrl.factory.idURL ? factoryInformationCtrl.factory.idURL : 'No value'"
+                 che-href="factoryInformationCtrl.factory.idURL"
+                 che-copy-clipboard="true"
+                 class="{{factoryInformationCtrl.factory.nameURL ? 'factory-information-panel-item che-text-info-subline' : 'factory-information-panel-spacing factory-information-panel-item factory-information-panel-url'}}"></che-text-info>
+  <che-text-info che-label-name="Creation Date"
+                 class="factory-information-panel-spacing factory-information-panel-caption"
+                 che-text="factoryInformationCtrl.factory.originFactory.creator.created | amDateFormat:'Do MMMM YYYY'">
+  </che-text-info>
   <che-button-primary
     ng-disabled="factoryInformationForm.$invalid
                  || (factoryInformationCtrl.copyOriginFactory.name === factoryInformationCtrl.factory.originFactory.name)"

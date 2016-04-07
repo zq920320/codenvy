@@ -24,8 +24,9 @@ export class CreateFactoryCtrl {
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
    */
-  constructor($location, codenvyAPI, cheNotification) {
+  constructor($scope, $location, $log, codenvyAPI, cheNotification) {
     this.$location = $location;
+    this.$log = $log;
     this.codenvyAPI = codenvyAPI;
     this.cheNotification = cheNotification;
 
@@ -33,8 +34,24 @@ export class CreateFactoryCtrl {
     this.isImporting = false;
 
     this.factoryContent = null;
-  }
 
+    this.factoryName = '';
+    this.factoryMetadataForm = null;
+
+    $scope.$watch(() => {
+      return this.factoryContent;
+    }, () => {
+      if (this.factoryMetadataForm.$dirty && this.factoryName) {
+        // user has already set the factory's name
+        // so update factory content
+        this.onFactoryNameChange();
+      } else if (this.factoryMetadataForm.$pristine) {
+        // factory name is empty or it was set automatically
+        // so try to set factory name from factory content if it present there
+        this.onFactoryContentChange();
+      }
+    })
+  }
 
   /**
    * Create a new factory by factory content
@@ -55,8 +72,34 @@ export class CreateFactoryCtrl {
     }, (error) => {
       this.isImporting = false;
       this.cheNotification.showError(error.data.message ? error.data.message : 'Create factory failed.');
-      console.log('error', error);
+      this.$log.error(error);
     });
   }
 
+  /**
+   * Updates factory content on factory name change
+   */
+  onFactoryNameChange() {
+    if (!this.factoryContent) {
+      return;
+    }
+    let factoryContentObject = angular.fromJson(this.factoryContent);
+    factoryContentObject.name = this.factoryName;
+    this.factoryContent = angular.toJson(factoryContentObject, true);
+  }
+
+  /**
+   * Updates factory name on factory content change
+   */
+  onFactoryContentChange() {
+    if (!this.factoryContent) {
+      return;
+    }
+    let factoryContentObject = angular.fromJson(this.factoryContent);
+    this.factoryName = factoryContentObject.name || '';
+  }
+
+  setFactoryMetadataForm(form) {
+    this.factoryMetadataForm = form;
+  }
 }
