@@ -104,10 +104,10 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
             case 1:
                 return new MacroCommand(new ArrayList<Command>() {{
                     add(createCommand("if ! sudo grep -Eq \"127.0.0.1.*puppet\" /etc/hosts; then\n" +
-                                      " echo '127.0.0.1 puppet' | sudo tee --append /etc/hosts > /dev/null\n" +
+                                      " echo '\n127.0.0.1 puppet' | sudo tee --append /etc/hosts > /dev/null\n" +
                                       "fi"));
                     add(createCommand(format("if ! sudo grep -Eq \" %1$s$\" /etc/hosts; then\n" +
-                                             "  echo \"127.0.0.1 %1$s\" | sudo tee --append /etc/hosts > /dev/null\n" +
+                                             "  echo \"\n127.0.0.1 %1$s\" | sudo tee --append /etc/hosts > /dev/null\n" +
                                              "fi", config.getHostUrl())));
 
                     // install puppet rpm
