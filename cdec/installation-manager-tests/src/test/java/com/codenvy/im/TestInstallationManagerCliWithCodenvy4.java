@@ -59,4 +59,8 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
         doTest("codenvy4/test-login-to-saas-through-ims-with-codenvy4.sh");
     }
 
+    @Test
+    public void testUpdateSingleNodeFromBinaryWithCodenvy4() throws Exception {
+        doTest("codenvy4/test-update-single-node-from-binary-with-codenvy4.sh");
+    }
 }
