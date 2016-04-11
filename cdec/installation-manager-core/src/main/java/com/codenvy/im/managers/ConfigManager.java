@@ -123,12 +123,8 @@ public class ConfigManager {
     /**
      * Merges two bunches of the properties from current and new configurations.
      */
-    public Map<String, String> merge(Version curVersion,
-                                     Map<String, String> curProps,
+    public Map<String, String> merge(Map<String, String> curProps,
                                      Map<String, String> newProps) throws IOException {
-
-        InstallType installType = detectInstallationType();
-        Map<String, String> curDefaultProps = loadCodenvyDefaultProperties(curVersion, installType);
 
         Map<String, String> props = new HashMap<>(newProps);
 
@@ -136,14 +132,9 @@ public class ConfigManager {
             String name = e.getKey();
             String curValue = e.getValue();
 
+            // don't change existed variable
             if (props.containsKey(name)) {
-                if (curDefaultProps.containsKey(name) && !curValue.equals(curDefaultProps.get(name))) {
-                    props.put(name, curValue);
-                } else if (name.contains("pass") || name.contains("pwd") || name.contains("client_id")
-                           || name.contains("secret") || name.contains("private_key") || name.contains("username")
-                           || name.contains("user_name")) {
-                    props.put(name, curValue);
-                }
+                props.put(name, curValue);
             }
         }
 
@@ -426,19 +417,23 @@ public class ConfigManager {
                     setupProxyProperties(properties);
 
                 } else { // update
+                    Map<String, String> newProperties;
                     if (binaries != null) {
-                        properties = loadConfigProperties(binaries, installType);
+                        newProperties = loadConfigProperties(binaries, installType);
                     } else {
                         Optional<Version> installVersion = artifact.getInstalledVersion();
                         if (!installVersion.isPresent()) {
                             throw new IOException("It is impossible to obtain installed version.");
                         }
 
-                        properties = merge(artifact.getInstalledVersion().get(),
-                                           loadInstalledCodenvyProperties(installType),
-                                           configFile != null ? loadConfigProperties(configFile)
-                                                              : loadCodenvyDefaultProperties(version2Install, installType));
+                        newProperties = configFile != null ? loadConfigProperties(configFile)
+                            : loadCodenvyDefaultProperties(version2Install, installType);
                     }
+
+                    properties = merge(loadInstalledCodenvyProperties(installType),
+                                       newProperties);
+
+                    properties.put(Config.VERSION, version2Install.toString());
 
                     if (installType == InstallType.MULTI_SERVER) {
                         properties.put(Config.PUPPET_MASTER_HOST_NAME, fetchMasterHostName());  // set puppet master host name
@@ -463,7 +458,6 @@ public class ConfigManager {
                                                      "mkdir /tmp/codenvy/; " +
                                                      "unzip -o %s -d /tmp/codenvy", binaries.toString()));
         command.execute();
-
 
         ConfigManager configManager = new ConfigManager(updateEndpoint, "/tmp/codenvy", transport);
         return configManager.loadInstalledCodenvyProperties(installType);

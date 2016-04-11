@@ -23,27 +23,17 @@ vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
 installCodenvy ${PREV_CODENVY4_VERSION}
 validateInstalledCodenvyVersion ${PREV_CODENVY4_VERSION}
-auth "admin" "password"
+authWithoutRealmAndServerDns "admin" "password"
 
 executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY4_VERSION}"
 
 # put correct config into binaries
 BINARIES="/home/vagrant/codenvy-im-data/updates/codenvy/${LATEST_CODENVY4_VERSION}/codenvy-${LATEST_CODENVY4_VERSION}.zip"
-executeSshCommand "rm -rf /tmp/codenvy"
-executeSshCommand "unzip ${BINARIES} -d /tmp/codenvy"
-
-executeSshCommand "cat /tmp/codenvy/manifests/nodes/codenvy/codenvy.pp | grep '\$version\\s=' | sed 's/\\s*\$version\\s*=\\s*\"\\(.*\\)\"/\\1/'"
-LATEST_PUPPET_VERSION=${OUTPUT}
-
-executeSshCommand "cp /etc/puppet/manifests/nodes/codenvy/codenvy.pp /tmp/codenvy/manifests/nodes/codenvy/codenvy.pp"
-executeSshCommand "sed -i s/${PREV_CODENVY4_VERSION}/${LATEST_PUPPET_VERSION}/g /tmp/codenvy/manifests/nodes/codenvy/codenvy.pp"
-executeSshCommand "sudo yum install zip -y -q"
-executeSshCommand "cd /tmp/codenvy && zip -r /tmp/codenvy.zip ."
 
 # install from local folder
-executeIMCommand "im-install" "--binaries=/tmp/codenvy.zip" "codenvy" "${LATEST_CODENVY4_VERSION}"
+executeIMCommand "im-install" "--binaries=$BINARIES" "codenvy" "${LATEST_CODENVY4_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
-auth "admin" "password"
+authWithoutRealmAndServerDns "admin" "password"
 
 printAndLog "RESULT: PASSED"
 vagrantDestroy
