@@ -63,4 +63,9 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
     public void testUpdateSingleNodeFromBinaryWithCodenvy4() throws Exception {
         doTest("codenvy4/test-update-single-node-from-binary-with-codenvy4.sh");
     }
+
+    @Test
+    public void testInstallSingleNodeBehindTheProxyWithCodenvy4() throws Exception {
+        doTest("codenvy4/test-install-single-node-behind-the-proxy-with-codenvy4.sh");
+    }
 }

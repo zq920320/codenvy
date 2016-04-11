@@ -10,7 +10,9 @@
 # --systemAdminName=<SYSTEM ADMIN NAME>
 # --systemAdminPassword=<SYSTEM ADMIN PASSWORD>
 # --fair-source-license=accept
-# --install-directory=<PATH_TO_SINGLE_DIRECTORY_FOR_ALL_RESOURCES>
+# --install-directory=<PATH TO SINGLE DIRECTORY FOR ALL RESOURCES>
+# --http-proxy=<HTTP PROXY URL>
+# --https-proxy=<HTTPS PROXY URL>
 
 trap cleanUp EXIT
 
@@ -125,6 +127,10 @@ setRunOptions() {
             FAIR_SOURCE_LICENSE_ACCEPTED=true
         elif [[ "$var" =~ --install-directory=.* ]]; then
             INSTALL_DIRECTORY=$(echo "$var" | sed -e "s/--install-directory=//g")
+        elif [[ "$var" =~ --http-proxy=.* ]]; then
+            HTTP_PROXY=$(echo "$var" | sed -e "s/--http-proxy=//g")
+        elif [[ "$var" =~ --https-proxy=.* ]]; then
+            HTTPS_PROXY=$(echo "$var" | sed -e "s/--https-proxy=//g")
         fi
     done
 
@@ -201,6 +207,135 @@ doConfigureSystem() {
 
     doEvalWaitReconnection installPackageIfNeed net-tools
     validateExitCode $?
+}
+
+configureProxySettings() {
+    if [[ -n $HTTP_PROXY || -n $HTTPS_PROXY ]]; then
+
+        local PROXY_WITH_USER_AUTH_REGEXP="https?://([^:]*):?(.*)@.*"
+        local proxyUserName
+        local proxyPassword
+        local proxyWithoutAuth
+
+        local bashrcToDisplay
+        local yumConfToDisplay
+        local wgetrcToDisplay
+
+        if [[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]]; then
+            proxyUser=$([[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[1]})
+            proxyPassword=$([[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[2]})
+        fi
+
+        if [[ -n $proxyUser ]]; then
+            # remove "<proxyUser>:<proxyPassword>@" token from the proxy URL
+            proxyWithoutAuth=$(echo $HTTP_PROXY | sed "s/@//")
+            proxyWithoutAuth=$(echo $proxyWithoutAuth | sed "s/$proxyUser//")
+
+            if [[ -n $proxyPassword ]]; then
+                proxyWithoutAuth=$(echo $proxyWithoutAuth | sed "s/:$proxyPassword//")
+            fi
+        fi
+
+        wgetrcToDisplay="${wgetrcToDisplay}$(print "use_proxy=on")\n"
+
+        if [[ -n $HTTP_PROXY ]]; then
+            bashrcToDisplay="${bashrcToDisplay}$(print "export http_proxy=$HTTP_PROXY")\n"
+
+            if [[ -n $proxyUser ]]; then
+                yumConfToDisplay="${yumConfToDisplay}$(print "proxy=$proxyWithoutAuth")\n"
+                yumConfToDisplay="${yumConfToDisplay}$(print "proxy_username=$proxyUser")\n"
+            fi
+
+            if [[ -n $proxyPassword ]]; then
+                yumConfToDisplay="${yumConfToDisplay}$(print "proxy_password=$proxyPassword")\n"
+            fi
+
+            wgetrcToDisplay="${wgetrcToDisplay}$(print "http_proxy=$HTTP_PROXY")\n"
+        fi
+
+        if [[ -n $HTTPS_PROXY ]]; then
+            bashrcToDisplay="${bashrcToDisplay}$(print "export https_proxy=$HTTPS_PROXY")\n"
+            wgetrcToDisplay="${wgetrcToDisplay}$(print "https_proxy=$HTTPS_PROXY")\n"
+        fi
+
+        if [[ ${SILENT} == false ]]; then
+            println "Proxy options found! This server needs the following to install:"
+            println "================================"
+            println $(printImportantInfo "# In ~/.bashrc:")
+            echo -en "${bashrcToDisplay}"
+            println
+
+            if [[ -n $yumConfToDisplay ]]; then
+                println $(printImportantInfo "# In /etc/yum.conf:")
+                echo -en  "${yumConfToDisplay}"
+                println
+            fi
+
+            println $(printImportantInfo "# In /etc/wgetrc:")
+            echo -en  "${wgetrcToDisplay}"
+            println "================================"
+            println
+
+            print -n "Can Codenvy configure your system with these properties? [y/N]: "
+            read ANSWER
+            if [[ ! "${ANSWER}" == "y" ]]; then
+                exit 1
+            fi
+
+            println
+        fi
+
+        # setup /etc/wgetrc
+        insertLineIntoFile "use_proxy=on" /etc/wgetrc
+
+        if [[ -n $HTTP_PROXY ]]; then
+            # setup ~/.bashrc
+            insertLineIntoFile "export http_proxy=$HTTP_PROXY" ~/.bashrc
+            source ~/.bashrc
+
+            # setup /etc/yum.conf
+            if [[ -n $proxyUser ]]; then
+                insertLineIntoFile "proxy=$proxyWithoutAuth" /etc/yum.conf
+                insertLineIntoFile "proxy_username=$proxyUser" /etc/yum.conf
+            fi
+
+            if [[ -n $proxyPassword ]]; then
+                insertLineIntoFile "proxy_password=$proxyPassword" /etc/yum.conf
+            fi
+
+            # setup /etc/wgetrc
+            insertLineIntoFile "http_proxy=$HTTP_PROXY" /etc/wgetrc
+        fi
+
+        if [[ -n $HTTPS_PROXY ]]; then
+            # setup ~/.bashrc
+            insertLineIntoFile "export https_proxy=$HTTPS_PROXY" ~/.bashrc
+            source ~/.bashrc
+
+            # setup /etc/wgetrc
+            insertLineIntoFile "https_proxy=$HTTPS_PROXY" /etc/wgetrc
+        fi
+    fi
+}
+
+# Safe insert: avoid duplication and create backup file "<path_to_file>.<time>" before inserting
+# parameter $1 - line to insert
+# parameter $2 - path to the file
+insertLineIntoFile() {
+    if [[ -n $1 && -n $2 ]]; then
+        if ! sudo grep -Eq "^$1$" $2; then
+            createFileBackup $2
+            echo $1 | sudo tee --append $2 &> /dev/null
+        fi
+    fi
+}
+
+# parameter $1 - path to file which should be copied into the $1.<time>
+createFileBackup() {
+    if [[ -n $1 ]]; then
+        local currentTimeInMillis=$(($(date +%s%N)/1000000))
+        sudo cp -f $1 $1.$currentTimeInMillis
+    fi
 }
 
 doInstallJava() {
@@ -395,7 +530,7 @@ preConfigureSystem() {
 
     installPackageIfNeed wget
     validateExitCode $?
-    
+
     # back up file to prevent installation with wrong configuration
     if [[ -f ${CONFIG} ]] && [[ ! $(cat ${CONFIG}) =~ .*${VERSION}.* ]]; then
         mv ${CONFIG} ${CONFIG}.back
@@ -475,11 +610,11 @@ updateFooter() {
         cursorUp
         cursorUp
         cursorUp
-        
+
         for ((line=4; line>=1; line--));  do
             local prev_text=$(cat /tmp/im_prev_line_${line} 2>/dev/null)
             local text=$(cat /tmp/im_line_${line} 2>/dev/null | tail -1)
-            
+
             if [[ ! ${prev_text} == ${text} ]]; then
                 clearLine
                 println "${text}"
@@ -654,7 +789,7 @@ doValidatePort() {
         println $(printWarning "NOTE: already running. Run 'sudo lsof -i ${protocol}:${port} | grep LISTEN' on '${host}' to identify")
         println $(printWarning "NOTE: the running process. We recommend restarting installation on a bare system.")
         exit 1
-    fi  
+    fi
 }
 
 doGetHostsVariables() {
@@ -680,25 +815,25 @@ doCheckAvailablePorts_single() {
 
 doCheckInstalledPuppet() {
     # check puppet agent
-    rpm -qa | grep "^puppet-[0-9]" &> /dev/null; 
+    rpm -qa | grep "^puppet-[0-9]" &> /dev/null;
     if [ $? -eq 0 ]; then
         rpm -qa | grep "$PUPPET_AGENT_PACKAGE" &> /dev/null;
         if [ $? -ne 0 ]; then
             println $(printError "ERROR: Your system has the wrong puppet agent version!")
             println $(printWarning "NOTE: Please, uninstall it or update to package '$PUPPET_AGENT_PACKAGE', and then start installation again.")
             exit 1;
-        fi 
+        fi
     fi
 
     # check puppet server
-    rpm -qa | grep "^puppet-server-[0-9]" &> /dev/null; 
+    rpm -qa | grep "^puppet-server-[0-9]" &> /dev/null;
     if [ $? -eq 0 ]; then
         rpm -qa | grep "$PUPPET_SERVER_PACKAGE" &> /dev/null;
         if [ $? -ne 0 ]; then
             println $(printError "ERROR: Your system has the wrong puppet server version!")
             println $(printWarning "NOTE: Please, uninstall it or update to package '$PUPPET_SERVER_PACKAGE', and then start installation again.")
             exit 1;
-        fi 
+        fi
     fi
 }
 
@@ -758,7 +893,10 @@ printPreInstallInfo_single() {
     println
 
     preConfigureSystem
+
     doCheckAvailableResourcesLocally 2500000 1 1000000 8000000 4 300000000
+
+    configureProxySettings
 
     println "Checking access to external dependencies..."
     println
@@ -863,7 +1001,7 @@ doCheckAvailableResourcesLocally() {
         osIssueFound=true
     fi
 
-    local osInfoToDisplay=$(printf "%-30s" "${osInfo}")
+    local osInfoToDisplay=$(printf "%-47s" "${osInfo}")
     local osStateToDisplay=$([ ${osIssueFound} == false ] && printSuccess "[OK]" || printError "[NOT OK]")
     println "DETECTED OS: ${osInfoToDisplay} ${osStateToDisplay}"
 
@@ -1016,8 +1154,10 @@ printPreInstallInfo_multi() {
     println
 
     preConfigureSystem
+
     doCheckAvailableResourcesLocally 1000000 1 1000000 2000000 2 50000000
 
+    configureProxySettings
 
     if [[ ${ARTIFACT} == "codenvy" ]]; then
         println "Configuring system properties with file://${CONFIG}..."
@@ -1203,7 +1343,7 @@ doCheckAvailableResourcesOnNodes() {
             local nodeStateToDisplay=$([ ${osIssueFound} == true ] && echo $(printError "[NOT OK]") || echo $(printWarning "[WARNING]"))
             println "$(printf "%-43s" "${HOST}" ${nodeStateToDisplay})"
 
-            osInfoToDisplay=$(printf "%-30s" "${osInfo}")
+            osInfoToDisplay=$(printf "%-47s" "${osInfo}")
             if [[ ${osIssueFound} == true ]]; then
                 println "> DETECTED OS: ${osInfoToDisplay} $(printError "[NOT OK]")"
                 println
@@ -1319,7 +1459,7 @@ updatePuppetInfo() {
 
 runPuppetInfoPrinter() {
     updatePuppetInfo &
-    PRINTER_PID=$!    
+    PRINTER_PID=$!
 }
 
 killPuppetInfoPrinter() {
@@ -1360,7 +1500,7 @@ updateProgress() {
 
 runFooterUpdater() {
     updateFooter &
-    LINE_UPDATER_PID=$!    
+    LINE_UPDATER_PID=$!
 }
 
 killFooterUpdater() {
@@ -1392,7 +1532,7 @@ initFooterPosition() {
     PUPPET_LINE=3
     PROGRESS_LINE=2
     TIMER_LINE=1
-    
+
     echo "" > /tmp/im_line_1 2>/dev/null
     echo "" > /tmp/im_line_2 2>/dev/null
     echo "" > /tmp/im_line_3 2>/dev/null
@@ -1442,7 +1582,7 @@ updateInternetAccessChecker() {
         else
             updateLine ${STEP_LINE} "${INSTALLATION_STEPS[${CURRENT_STEP}]}"
         fi
-       
+
         sleep 1m &>/dev/null
     done
 }
@@ -1532,5 +1672,3 @@ pauseInternetAccessChecker
 pauseFooterUpdater
 
 printPostInstallInfo_${ARTIFACT}
-
-
