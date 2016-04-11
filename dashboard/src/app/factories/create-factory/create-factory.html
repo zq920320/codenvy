@@ -77,7 +77,7 @@
             <md-tab-body>
               <cdvy-factory-from-workspace cdvy-factory-content="createFactoryCtrl.factoryContent"
                                            cdvy-is-loading="createFactoryCtrl.isLoading"
-                                           cdvy-is-importing="createFactoryCtrl.isImporting"/>
+                                           cdvy-is-importing="createFactoryCtrl.isImporting"></cdvy-factory-from-workspace>
             </md-tab-body>
           </md-tab>
           <md-tab>
@@ -88,7 +88,7 @@
             <md-tab-body>
               <div layout-fill layout="row" layout-align="start center">
                 <cdvy-factory-from-file cdvy-factory-content="createFactoryCtrl.factoryContent"
-                                        cdvy-is-importing="createFactoryCtrl.isImporting" layout="column" flex/>
+                                        cdvy-is-importing="createFactoryCtrl.isImporting" layout="column" flex></cdvy-factory-from-file>
               </div>
             </md-tab-body>
           </md-tab>
@@ -100,7 +100,7 @@
             <md-tab-body>
               <div layout-fill layout="row" layout-align="start center">
                 <cdvy-factory-from-template cdvy-factory-content="createFactoryCtrl.factoryContent"
-                                            cdvy-is-importing="createFactoryCtrl.isImporting" layout="column" flex/>
+                                            cdvy-is-importing="createFactoryCtrl.isImporting" layout="column" flex></cdvy-factory-from-template>
               </div>
             </md-tab-body>
           </md-tab>
@@ -111,7 +111,7 @@
         <che-button-primary id="create-factory-next-button"
                             che-button-title="Next"
                             ng-click="createFactoryCtrl.createFactoryByContent(createFactoryCtrl.factoryContent)"
-                            ng-disabled="!createFactoryCtrl.factoryContent || createFactoryCtrl.isImporting || createFactoryCtrl.isLoading"/>
+                            ng-disabled="!createFactoryCtrl.factoryContent || createFactoryCtrl.isImporting || createFactoryCtrl.isLoading"></che-button-primary>
       </div>
     </div>
     <div ng-if="createFactoryCtrl.flow === 'configure'">
@@ -155,7 +155,7 @@
                                     che-stack="stack"
                                     che-stack-change="createFactoryCtrl.cheStackLibrarySelecter(stack)"
                                     che-recipe-script="createFactoryCtrl.recipeScript"
-                                    che-recipe-url="createFactoryCtrl.recipeUrl"/>
+                                    che-recipe-url="createFactoryCtrl.recipeUrl"></che-workspace-select-stack>
         <che-button-primary che-button-title="Validate" ng-click="createFactoryCtrl.validateStack()"></che-button-primary>
         </div>
       </che-panel>
@@ -227,7 +227,7 @@
                           che-button-title="Done"
                           ng-click="createFactoryCtrl.finishFlow()"
                           ng-disabled="!createFactoryCtrl.factoryContent"
-                          class="projects-create-project-button"/>
+                          class="projects-create-project-button"></che-button-primary>
     </div>
   </div>
 </md-content>

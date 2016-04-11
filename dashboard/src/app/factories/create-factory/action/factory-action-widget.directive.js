@@ -30,7 +30,7 @@ export class FactoryAction {
     this.templateUrl = 'app/factories/create-factory/action/factory-action-widget.html';
     this.replace = false;
 
-    this.controller = 'FactoryActionCtrl';
+    this.controller = 'FactoryActionController';
     this.controllerAs = 'factoryActionCtrl';
 
     this.bindToController = true;
