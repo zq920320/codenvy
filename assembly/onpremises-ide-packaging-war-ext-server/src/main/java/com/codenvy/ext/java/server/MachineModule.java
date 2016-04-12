@@ -37,11 +37,12 @@ import org.eclipse.che.generator.archetype.ArchetypeGenerator;
 import org.eclipse.che.generator.archetype.ArchetypeGeneratorModule;
 import org.eclipse.che.git.impl.nativegit.LocalGitUserResolver;
 import org.eclipse.che.git.impl.nativegit.NativeGitConnectionFactory;
-import org.eclipse.che.plugin.github.server.inject.GitHubModule;
-import org.eclipse.che.ide.ext.java.jdi.server.DebuggerService;
+import org.eclipse.che.ide.ext.java.jdi.server.JavaDebuggerService;
 import org.eclipse.che.ide.ext.microsoft.server.inject.MicrosoftModule;
 import org.eclipse.che.ide.extension.maven.server.inject.MavenModule;
+import org.eclipse.che.ide.gdb.server.GdbDebuggerService;
 import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.plugin.github.server.inject.GitHubModule;
 import org.eclipse.che.security.oauth.RemoteOAuthTokenProvider;
 import org.everrest.core.impl.async.AsynchronousJobPool;
 import org.everrest.core.impl.async.AsynchronousJobService;
@@ -78,7 +79,8 @@ public class MachineModule extends AbstractModule {
         install(new org.eclipse.che.swagger.deploy.DocsModule());
 
         bind(ArchetypeGenerator.class);
-        bind(DebuggerService.class);
+        bind(JavaDebuggerService.class);
+        bind(GdbDebuggerService.class);
 
         bind(GitUserResolver.class).to(LocalGitUserResolver.class);
         bind(GitConnectionFactory.class).to(NativeGitConnectionFactory.class);
