@@ -21,7 +21,7 @@
 
 <md-content md-scroll-y flex md-theme="maincontent-theme">
   <md-tabs md-dynamic-height md-stretch-tabs="always" md-selected="accountCtrl.selectedTabIndex" class="account-menu">
-    <md-tab che-event-logger="account/profile">
+    <md-tab>
       <md-tab-label>
         <md-icon md-font-icon="fa-user" class="fa che-tab-label-icon"></md-icon>
         <span class="che-tab-label-title">Profile</span>
@@ -32,7 +32,6 @@
             <account-profile></account-profile>
             <che-button-default che-button-title="save"
                                  ng-click="accountCtrl.setProfileAttributes()"
-                                che-event-logger="account/profile/edit"
                                  ng-disabled="profileInformationForm.$invalid || !accountCtrl.isAttributesChanged()">
             </che-button-default>
           </ng-form>
@@ -40,7 +39,7 @@
       </md-tab-body>
     </md-tab>
 
-    <md-tab che-event-logger="account/billing" ng-if="accountCtrl.isCreditCardServiceAvailable">
+    <md-tab ng-if="accountCtrl.isCreditCardServiceAvailable">
       <md-tab-label>
         <md-icon md-font-icon="material-design icon-ic_credit_card_24px" class="che-tab-label-icon"></md-icon>
         <span class="che-tab-label-title">Billing</span>
@@ -52,7 +51,6 @@
               <add-creditcard style="display: block;" loaded="{{creditCardCtrl.loadedCreditCards}}" ng-init="creditCardCtrl.setCreditCard(this.addCreditcardCtrl.creditCard);"></add-creditcard>
               <che-button-default che-button-title="add"
                                    ng-disabled="creditCardInformationForm.$invalid"
-                                   che-event-logger="account/billing/add-credit-card"
                                    ng-click="creditCardCtrl.addCreditCard();">
               </che-button-default>
             </ng-form>
@@ -64,14 +62,13 @@
                 <p>{{card.type}} ...{{card.number.slice(-4)}} ({{card.expiration}})</p>
               </div>
               <che-button-danger flex="15" che-button-title="Remove"
-                                 che-event-logger="account/billing/remove-credit-card"
                                   ng-click="creditCardCtrl.removeCreditCard(card, $event);"/>
             </div>
           </che-panel>
         </div>
       </md-tab-body>
     </md-tab>
-    <md-tab che-event-logger="account/security">
+    <md-tab>
       <md-tab-label>
         <md-icon md-font-icon="material-design icon-ic_settings_24px" class="che-tab-label-icon"></md-icon>
         <span class="che-tab-label-title">Security</span>
@@ -82,7 +79,6 @@
                                     cdvy-reset-password="accountCtrl.resetPasswordForm">
             </account-update-password>
             <che-button-default che-button-title="Update Password"
-                                che-event-logger="account/security/update-password"
                                 ng-disabled="!newPassword"
                                 ng-click="accountCtrl.setPassword(newPassword)">
             </che-button-default>

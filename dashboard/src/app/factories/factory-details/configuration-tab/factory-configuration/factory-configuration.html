@@ -29,14 +29,12 @@
     <div class="configuration-panel-button">
           <span>
             <che-button-default che-button-title="Reload"
-                                che-event-logger="factory-details/information-tab/delete-factory"
                                 ng-click="factoryConfigurationCtrl.updateFactory(factoryConfigurationCtrl.factoryId)"></che-button-default>
           </span>
           <span>
             <che-button-primary
               ng-disabled="factoryConfigurationCtrl.factoryContent === factoryConfigurationCtrl.$filter('json')(factoryConfigurationCtrl.originFactoryContent, 2);"
               che-button-title="Update"
-              che-event-logger="factory-details/information-tab/delete-factory"
               ng-click="factoryConfigurationCtrl.setFactoryContent(factoryConfigurationCtrl.factoryId, factoryConfigurationCtrl.factoryContent)"></che-button-primary>
           </span>
     </div>
