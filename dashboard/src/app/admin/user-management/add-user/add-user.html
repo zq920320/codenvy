@@ -85,11 +85,9 @@
   </div>
   <che-button-primary che-button-title="Create"
                       ng-click="adminsAddUserCtrl.createUser()"
-                      che-event-logger="admin/add-user/add"
                       ng-disabled="createUserForm.$invalid || confirmNewUserPassword !== adminsAddUserCtrl.newUserPassword">
   </che-button-primary>
   <che-button-notice che-button-title="Cancel"
-                     ng-click="adminsAddUserCtrl.abort()"
-                     che-event-logger="admin/add-user/cancel">
+                     ng-click="adminsAddUserCtrl.abort()">
   </che-button-notice>
 </ng-form>
