@@ -28,6 +28,7 @@ import com.codenvy.api.factory.FactoryMongoDatabaseProvider;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.user.server.AdminUserService;
 import com.codenvy.api.user.server.dao.AdminUserDao;
+import com.codenvy.api.workspace.server.dao.WorkerDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.TokenHandler;
@@ -173,6 +174,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserProfileDao.class).to(com.codenvy.api.dao.ldap.UserProfileDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
         bind(SshDao.class).to(com.codenvy.api.dao.mongo.ssh.SshDaoImpl.class);
+        bind(WorkerDao.class).to(com.codenvy.api.dao.mongo.WorkerDaoImpl.class);
         bind(AccountDao.class).to(AccountDaoImpl.class);
         bind(org.eclipse.che.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
         bind(RecipeDao.class).to(RecipeDaoImpl.class);
@@ -295,6 +297,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new org.eclipse.che.plugin.docker.machine.proxy.DockerProxyModule());
 
         install(new com.codenvy.api.permission.server.PermissionsModule());
+        install(new com.codenvy.api.workspace.server.WorkspaceApiModule());
 
         install(new FactoryModuleBuilder()
                         .implement(org.eclipse.che.api.machine.server.spi.Instance.class,
