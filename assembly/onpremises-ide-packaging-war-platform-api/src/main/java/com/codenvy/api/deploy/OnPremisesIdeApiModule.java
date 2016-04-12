@@ -54,7 +54,6 @@ import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
-import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.factory.server.FactoryAcceptValidator;
 import org.eclipse.che.api.factory.server.FactoryCreateValidator;
 import org.eclipse.che.api.factory.server.FactoryEditValidator;
@@ -151,7 +150,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(MongoDatabase.class).annotatedWith(Names.named("mongo.db.factory"))
                                  .toProvider(FactoryMongoDatabaseProvider.class);
-
 
 
         bind(org.eclipse.che.api.factory.server.FactoryStore.class).to(com.codenvy.api.dao.mongo.MongoDBFactoryStore.class);
@@ -287,6 +285,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerTerminalModule());
         install(new org.eclipse.che.plugin.docker.machine.proxy.DockerProxyModule());
 
+        install(new com.codenvy.api.permission.server.PermissionsModule());
+
         install(new FactoryModuleBuilder()
                         .implement(org.eclipse.che.api.machine.server.spi.Instance.class,
                                    org.eclipse.che.plugin.docker.machine.DockerInstance.class)
@@ -309,10 +309,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                           .to(Key.get(String.class, Names.named("api.endpoint")));
 
 //        install(new com.codenvy.router.MachineRouterModule());
-
-        // TODO rebind to WorkspacePermissionManager after account is established
-        bind(PermissionManager.class).annotatedWith(Names.named("service.workspace.permission_manager"))
-                                     .to(DummyPermissionManager.class);
 
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
