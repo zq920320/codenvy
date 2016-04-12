@@ -185,6 +185,7 @@
       <section class="left-sidebar-menu" layout="column" layout-align="center center">
         <md-list layout="row" layout-align="start center">
           <md-button ng-href="https://codenvy.com/"
+                     ng-if="!codenvyNavbarCtrl.ims.isAvailable"
                      class="codenvy-navbar-button"
                      tooltip="Go to Codenvy Classic"
                      layout-align="center">Codenvy Classic
