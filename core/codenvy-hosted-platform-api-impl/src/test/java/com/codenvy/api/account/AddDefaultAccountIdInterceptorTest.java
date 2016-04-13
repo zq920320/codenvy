@@ -81,7 +81,7 @@ public class AddDefaultAccountIdInterceptorTest {
     private Object[][] serviceMethodsProvider() {
         return new Object[][] {
                 {new Object[] {"create", WorkspaceConfigDto.class, List.class, Boolean.class, String.class}},
-                {new Object[] {"startById", String.class, String.class, Boolean.class, String.class}},
+                {new Object[] {"startById", String.class, String.class, String.class}},
                 {new Object[] {"startFromConfig", WorkspaceConfigDto.class, Boolean.class, String.class}},
                 {new Object[] {"recoverWorkspace", String.class, String.class, String.class}}
         };
