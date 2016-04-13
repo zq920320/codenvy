@@ -21,8 +21,8 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.eclipse.che.api.machine.server.impl.InstanceKeyImpl;
-import org.eclipse.che.api.machine.server.impl.SnapshotImpl;
+import org.eclipse.che.api.machine.server.spi.impl.InstanceKeyImpl;
+import org.eclipse.che.api.machine.server.model.impl.SnapshotImpl;
 
 import java.util.List;
 
