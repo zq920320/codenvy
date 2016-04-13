@@ -34,8 +34,8 @@ LATEST_CODENVY4_VERSION=$(echo ${AVAILABLE_CODENVY_VERSIONS} | sed 's/.*"\(4[^"]
 LATEST_STABLE_CODENVY_VERSION=$(echo ${AVAILABLE_CODENVY_VERSIONS} | sed 's/.*"\([^"]*[0-9]\)".*\]/\1/')
 
 AVAILABLE_IM_CLI_CLIENT_VERSIONS=$(curl -s -X GET ${UPDATE_SERVICE}/repository/updates/installation-manager-cli)
-PREV_IM_CLI_CLIENT_VERSION=`echo ${AVAILABLE_IM_CLI_CLIENT_VERSIONS} | sed 's/.*"\([^"]*\)","[^"]*"\]/\1/'`
-LATEST_IM_CLI_CLIENT_VERSION=`echo ${AVAILABLE_IM_CLI_CLIENT_VERSIONS} | sed 's/.*"\([^"]*\)".*/\1/'`
+PREV_IM_CLI_CLIENT_VERSION=$(echo ${AVAILABLE_IM_CLI_CLIENT_VERSIONS} | sed 's/.*"\([^"]*\)","[^"]*"\]/\1/')
+LATEST_IM_CLI_CLIENT_VERSION=$(echo ${AVAILABLE_IM_CLI_CLIENT_VERSIONS} | sed 's/.*"\([^"]*\)".*/\1/')
 
 SINGLE_NODE_VAGRANT_FILE="../vagrant/single/CentOS7/Vagrantfile"
 MULTI_NODE_VAGRANT_FILE="../vagrant/multi/CentOS7/Vagrantfile"
@@ -47,3 +47,8 @@ CODENVY_LICENSE=d9a53efe56c19eaaae2d14be98de42ce76cfeaf8bc63c00c6f40651d08b9c814
 
 STORAGE_DIR=/usr/local/codenvy/im/storage
 STORAGE_FILE=/usr/local/codenvy/im/storage/config.properties
+
+HTTP_PROXY=http://testuser:testpassword@proxy.ua.codenvy-dev.com:3128
+HTTPS_PROXY=http://testuser:testpassword@proxy.ua.codenvy-dev.com:3128
+PROXY_SERVER=$(echo $HTTP_PROXY | sed 's|http://.*@\(.*\):.*|\1|')
+PROXY_IP=172.19.11.156

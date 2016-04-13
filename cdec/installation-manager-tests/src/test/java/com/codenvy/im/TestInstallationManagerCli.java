@@ -41,11 +41,6 @@ public class TestInstallationManagerCli extends BaseTest{
     }
 
     @Test
-    public void testUsingSystemProxy() throws Exception {
-        doTest("im-download/test-download-using-system-proxy.sh");
-    }
-
-    @Test
     public void testHelpCommand() throws Exception {
         doTest("help/test-help.sh");
     }
