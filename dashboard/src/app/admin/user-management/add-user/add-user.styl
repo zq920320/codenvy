@@ -32,17 +32,22 @@
   margin 5px
 
 .admins-add-user-form .password-prompt
-  display block
-  width 15%
-  height 80px
   font-size 12px
-  padding-right 10px
-  margin-bottom 20px
   color $disabled-color
 
 .admins-add-user-form .password-prompt p
   margin-top 5px
   margin-bottom 5px
+
+.admins-add-user-form .password-prompt
+  .password-prompt-text
+    min-width 125px
+
+  .pass-strength
+    width 100%
+
+  & > div
+    margin-bottom 10px
 
 .admins-add-user-form che-button-primary,
 .admins-add-user-form che-button-notice

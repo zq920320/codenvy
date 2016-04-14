@@ -59,12 +59,15 @@
       <div ng-message="minlength">User Password should contain at least 8 characters.</div>
       <div ng-message="maxlength">User Password has to be less than 100 characters long.</div>
     </che-input>
-    <div class="password-prompt">
-      <span>Minimum 8 characters, both letters and digits.</span>
-
-      <p>Password strength:</p>
-
-      <div ng-password-strength="adminsAddUserCtrl.newUserPassword" strength="passStrength" inner-class="password-meter" class="ng-isolate-scope"></div>
+    <div class="password-prompt"
+         layout-xs="column" layout-sm="column" layout-md="column"
+         layout-gt-md="row" flex="100">
+      <div flex="50" flex-gt-md="15" class="password-prompt-text">
+        <span>Minimum 8 characters, both letters and digits.</span>
+      </div>
+      <div flex="50" flex-gt-md="25" layout="column" layout-align="center center">
+        <div class="pass-strength" ng-password-strength="adminsAddUserCtrl.newUserPassword" strength="passStrength" inner-class="password-meter" class="ng-isolate-scope"></div>
+      </div>
     </div>
     <che-input che-form="createUserForm"
                che-name="confirmPassword"
