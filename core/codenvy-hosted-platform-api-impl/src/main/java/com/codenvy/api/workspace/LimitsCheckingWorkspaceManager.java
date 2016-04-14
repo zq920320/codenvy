@@ -39,6 +39,7 @@ import org.eclipse.che.commons.lang.Size;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -56,6 +57,7 @@ import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 @Singleton
 public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
 
+    private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#0.#");
     private static final Striped<Lock> CREATE_LOCKS = Striped.lazyWeakLock(100);
     private static final Striped<Lock> START_LOCKS  = Striped.lazyWeakLock(100);
 
@@ -169,21 +171,24 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
         final Lock lock = START_LOCKS.get(user);
         lock.lock();
         try {
-            final long currentlyUsedRamMB = getWorkspaces(user).stream()
-                                                               .filter(ws -> STOPPED != ws.getStatus())
-                                                               .map(ws -> ws.getConfig()
-                                                                            .getEnvironment(ws.getRuntime().getActiveEnv())
-                                                                            .get()
-                                                                            .getMachineConfigs())
-                                                               .mapToLong(this::sumRam)
-                                                               .sum();
+            final List<WorkspaceImpl> workspacesPerUser = getWorkspaces(user);
+            final long runningWorkspaces = workspacesPerUser.stream().filter(ws -> STOPPED != ws.getStatus()).count();
+            final long currentlyUsedRamMB = workspacesPerUser.stream().filter(ws -> STOPPED != ws.getStatus())
+                                                             .map(ws -> ws.getConfig()
+                                                                          .getEnvironment(ws.getRuntime().getActiveEnv())
+                                                                          .get()
+                                                                          .getMachineConfigs())
+                                                             .mapToLong(this::sumRam)
+                                                             .sum();
+            final long currentlyFreeRamMB = ramPerUser - currentlyUsedRamMB;
             final long allocating = sumRam(envOptional.get().getMachineConfigs());
-            if (currentlyUsedRamMB + allocating > ramPerUser) {
-                throw new LimitExceededException(format("This workspace cannot be started as it would exceed the maximum available RAM " +
-                                                        "allocated to you. Users are each currently allocated '%dmb' RAM across their " +
-                                                        "active workspaces. This value is set by your admin with the " +
-                                                        "'limits.user.workspaces.ram' property",
-                                                        ramPerUser));
+            if (allocating > currentlyFreeRamMB) {
+                throw new LimitExceededException(format("There are %d running workspaces consuming" +
+                                                        " %sGB RAM. Your current RAM limit is %sGB." +
+                                                        " You can stop other workspaces to free resources.",
+                                                        runningWorkspaces,
+                                                        DECIMAL_FORMAT.format(currentlyUsedRamMB / 1024D),
+                                                        DECIMAL_FORMAT.format(currentlyFreeRamMB / 1024D)));
             }
             return callback.call();
         } finally {
