@@ -17,6 +17,7 @@ package com.codenvy.api.dao.ldap;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 
 import org.eclipse.che.api.account.server.dao.AccountDao;
+import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
@@ -97,22 +98,22 @@ public class AdminUserDaoTest extends BaseTest {
 
     @Test
     public void getAllShouldReturnEmptyListIfNoMoreUsers() throws Exception {
-        List<User> users = userDao.getAll(1, 4);
+        List<User> users = userDao.getAll(1, 4).getItems();
         assertTrue(users.isEmpty());
     }
 
     @Test
     public void getAllShouldReturnPageByPage() throws Exception {
-        List<User> users = userDao.getAll(2, 0);
+        List<User> users = userDao.getAll(2, 0).getItems();
         assertEquals(users.size(), 2);
         assertEquals(users.get(0).getId(), "1");
         assertEquals(users.get(1).getId(), "2");
 
-        users = userDao.getAll(2, 2);
+        users = userDao.getAll(2, 2).getItems();
         assertEquals(users.size(), 1);
         assertEquals(users.get(0).getId(), "3");
 
-        users = userDao.getAll(2, 0);
+        users = userDao.getAll(2, 0).getItems();
         assertEquals(users.size(), 2);
         assertEquals(users.get(0).getId(), "1");
         assertEquals(users.get(1).getId(), "2");
@@ -120,7 +121,7 @@ public class AdminUserDaoTest extends BaseTest {
 
     @Test
     public void getAllShouldReturnAllUsersWithinSingleResponse() throws Exception {
-        List<User> users = userDao.getAll(4, 0);
+        List<User> users = userDao.getAll(4, 0).getItems();
         assertEquals(users.size(), 3);
         assertEquals(users.get(0).getId(), "1");
         assertEquals(users.get(1).getId(), "2");
@@ -129,7 +130,7 @@ public class AdminUserDaoTest extends BaseTest {
 
     @Test
     public void getAllShouldReturnRestUsers() throws Exception {
-        List<User> users = userDao.getAll(3, 1);
+        List<User> users = userDao.getAll(3, 1).getItems();
         assertEquals(users.size(), 2);
         assertEquals(users.get(0).getId(), "2");
         assertEquals(users.get(1).getId(), "3");
@@ -143,5 +144,13 @@ public class AdminUserDaoTest extends BaseTest {
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void getAllShouldThrowIllegalArgumentExceptionIfSkipCountWrong() throws Exception {
         userDao.getAll(2, -1);
+    }
+
+    @Test
+    public void shouldReturnCorrectTotalCountAlongWithRequestedUsers() throws Exception {
+        final Page<User> page = userDao.getAll(2, 0);
+
+        assertEquals(page.getItems().size(), 2);
+        assertEquals(page.getTotalItemsCount(), 3);
     }
 }
