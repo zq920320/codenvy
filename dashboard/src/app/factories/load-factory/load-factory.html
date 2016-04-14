@@ -63,7 +63,7 @@
             <div flex="50" layout="column" layout-align="end end" class="load-factory-bottom-bar-right">
               <div class="load-factory-retry-block"
                    layout="column" layout-align="start end">
-                <che-button-danger che-button-title="Retry"
+                <che-button-danger che-button-title="{{loadFactoryCtrl.isResourceProblem() ? 'Stop running workspaces' :  'Retry'}}"
                                    ng-click="loadFactoryCtrl.resetLoadFactoryInProgress()"
                                    ng-show="loadFactoryCtrl.getLoadingSteps()[loadFactoryCtrl.getCurrentProgressStep()].hasError"></che-button-danger>
                 <che-link class="load-factory-download-link"
