@@ -24,16 +24,18 @@ export class LoadFactoryCtrl {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(cheAPI, codenvyAPI, $websocket, $scope, $route, $timeout, $mdDialog, loadFactoryService, lodash, $location, routeHistory) {
+  constructor(cheAPI, codenvyAPI, $websocket, $route, $timeout, $mdDialog, loadFactoryService, lodash, cheNotification, $location, routeHistory) {
     this.cheAPI = cheAPI;
     this.codenvyAPI = codenvyAPI;
     this.$websocket = $websocket;
     this.$timeout = $timeout;
     this.$mdDialog = $mdDialog;
-    this.$location = $location;
-    this.routeHistory = routeHistory;
     this.loadFactoryService = loadFactoryService;
     this.lodash = lodash;
+    this.cheNotification = cheNotification;
+    this.$location = $location;
+    this.routeHistory = routeHistory;
+
     this.workspaces = [];
     this.workspace = {};
 
@@ -82,6 +84,7 @@ export class LoadFactoryCtrl {
   handleError(error) {
     if (error.data.message) {
       this.getLoadingSteps()[this.getCurrentProgressStep()].logs = error.data.message;
+      this.cheNotification.showError(error.data.message);
     }
     this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
   }
@@ -197,7 +200,11 @@ export class LoadFactoryCtrl {
     startWorkspacePromise.then((data) => {
       console.log('Workspace started', data);
     }, (error) => {
-      this.handleError(error);
+      let errorMessage = 'This factory is unable to start a new workspace. ';
+      if (error.data && error.data.message !== null) {
+        errorMessage += error.data.message;
+      }
+      this.handleError({data: {message: errorMessage}});
     });
   }
 
@@ -423,10 +430,13 @@ export class LoadFactoryCtrl {
   }
 
   setLoadFactoryInProgress() {
-    this.loadFactoryService.setFactoryLoadInProgress(true);
+    this.loadFactoryService.setLoadFactoryInProgress(true);
   }
 
   resetLoadFactoryInProgress() {
+    this.restoreMenuAndFooter();
+    let newLocation = this.isResourceProblem() ? '/workspaces' : '/factories';
+    this.$location.path(newLocation);
     this.loadFactoryService.resetLoadProgress();
   }
 
@@ -445,5 +455,10 @@ export class LoadFactoryCtrl {
       logs += step.logs + '\n';
     });
     window.open('data:text/csv,' + encodeURIComponent(logs));
+  }
+
+  isResourceProblem() {
+    let currentCreationStep = this.getLoadingSteps()[this.getCurrentProgressStep()];
+    return currentCreationStep.hasError && currentCreationStep.logs.includes('You can stop other workspaces');
   }
 }
