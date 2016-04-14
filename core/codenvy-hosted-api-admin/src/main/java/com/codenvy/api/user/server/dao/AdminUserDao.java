@@ -14,11 +14,10 @@
  */
 package com.codenvy.api.user.server.dao;
 
+import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-
-import java.util.List;
 
 /**
  * @author Anatoliy Bazko
@@ -38,5 +37,5 @@ public interface AdminUserDao extends UserDao {
      * @throws ServerException
      *         when any other error occurs
      */
-    List<User> getAll(int maxItems, int skipCount) throws ServerException, IllegalArgumentException;
+    Page<User> getAll(int maxItems, int skipCount) throws ServerException;
 }
