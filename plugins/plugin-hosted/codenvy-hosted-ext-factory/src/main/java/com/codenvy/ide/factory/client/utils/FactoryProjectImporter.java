@@ -132,6 +132,10 @@ public class FactoryProjectImporter extends AbstractImporter {
                 Set<String> projectNames = new HashSet<>();
                 String createPolicy = factory.getPolicies() != null ? factory.getPolicies().getCreate() : null;
                 for (ProjectConfigDto projectConfig : projectConfigs) {
+                    if (projectConfig.getSource() == null && projectConfig.getSource().getLocation() == null) {
+                        continue;
+                    }
+
                     if (isProjectExistOnFileSystem(projectConfig)) {
                         // to prevent warning when reusing same workspace
                         if (!("perUser".equals(createPolicy) || "perAccount".equals(createPolicy))) {
