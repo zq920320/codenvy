@@ -172,10 +172,10 @@ public class TestConfigManager extends BaseTest {
         doReturn(InstallType.SINGLE_SERVER).when(spyConfigManager).detectInstallationType();
         doReturn(ImmutableMap.of("a", "1", "b", "1")).when(spyConfigManager).loadCodenvyDefaultProperties(curVersion, InstallType.SINGLE_SERVER);
 
-        Map<String, String> m = spyConfigManager.merge(curVersion, curProps, newProps);
+        Map<String, String> m = spyConfigManager.merge(curProps, newProps);
 
         assertEquals(m.size(), 3);
-        assertEquals(m.get("a"), "2");
+        assertEquals(m.get("a"), "1");
         assertEquals(m.get("b"), "1");
         assertEquals(m.get("c"), "3");
     }
@@ -493,17 +493,21 @@ public class TestConfigManager extends BaseTest {
         doReturn(new HashMap<String, String>() {{
             put("a", "1");
             put("b", "2");
-        }}).when(spyConfigManager).merge(any(Version.class), anyMap(), anyMap());
+            put(Config.VERSION, "1.0.0");
+        }}).when(spyConfigManager).merge(anyMap(), anyMap());
 
+        String version2Install = "3.1.0";
         Map<String, String> actualProperties = spyConfigManager.prepareInstallProperties("file",
-                                                                                      null,
-                                                                                      InstallType.SINGLE_SERVER,
-                                                                                      artifact,
-                                                                                      Version.valueOf("3.1.0"),
-                                                                                      false);
-        assertEquals(actualProperties.size(), 2);
+                                                                                         null,
+                                                                                         InstallType.SINGLE_SERVER,
+                                                                                         artifact,
+                                                                                         Version.valueOf(version2Install),
+                                                                                         false);
+
+        assertEquals(actualProperties.size(), 3);
         assertEquals(actualProperties.get("a"), "1");
         assertEquals(actualProperties.get("b"), "2");
+        assertEquals(actualProperties.get(Config.VERSION), version2Install);
     }
 
     @Test
@@ -513,19 +517,23 @@ public class TestConfigManager extends BaseTest {
         doReturn(new HashMap<String, String>() {{
             put("a", "1");
             put("b", "2");
-        }}).when(spyConfigManager).merge(any(Version.class), anyMap(), anyMap());
-        doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
+            put(Config.VERSION, "1.0.0");
+        }}).when(spyConfigManager).merge(anyMap(), anyMap());
+        final String version2Install = "3.1.0";
+        doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf(version2Install), InstallType.SINGLE_SERVER);
         doReturn(ImmutableMap.of("b", "2")).when(spyConfigManager).loadInstalledCodenvyProperties(InstallType.SINGLE_SERVER);
 
         Map<String, String> actualProperties = spyConfigManager.prepareInstallProperties(null,
                                                                                       null,
                                                                                       InstallType.SINGLE_SERVER,
                                                                                       spyCdec,
-                                                                                      Version.valueOf("3.1.0"),
+                                                                                      Version.valueOf(version2Install),
                                                                                       false);
-        assertEquals(actualProperties.size(), 2);
+
+        assertEquals(actualProperties.size(), 3);
         assertEquals(actualProperties.get("a"), "1");
         assertEquals(actualProperties.get("b"), "2");
+        assertEquals(actualProperties.get(Config.VERSION), version2Install);
     }
 
     @Test
@@ -535,9 +543,11 @@ public class TestConfigManager extends BaseTest {
         doReturn(new HashMap<String, String>() {{
             put("a", "1");
             put("b", "2");
-        }}).when(spyConfigManager).merge(any(Version.class), anyMap(), anyMap());
+            put(Config.VERSION, "1.0.0");
+        }}).when(spyConfigManager).merge(anyMap(), anyMap());
 
-        doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.MULTI_SERVER);
+        final String version2Install = "3.1.0";
+        doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf(version2Install), InstallType.MULTI_SERVER);
         doReturn(ImmutableMap.of("b", "2")).when(spyConfigManager).loadInstalledCodenvyProperties(InstallType.MULTI_SERVER);
         doReturn("master").when(spyConfigManager).fetchMasterHostName();
 
@@ -546,12 +556,14 @@ public class TestConfigManager extends BaseTest {
                                                                                       null,
                                                                                       InstallType.MULTI_SERVER,
                                                                                       spyCdec,
-                                                                                      Version.valueOf("3.1.0"),
+                                                                                      Version.valueOf(version2Install),
                                                                                       false);
-        assertEquals(actualProperties.size(), 3);
+
+        assertEquals(actualProperties.size(), 4);
         assertEquals(actualProperties.get("a"), "1");
         assertEquals(actualProperties.get("b"), "2");
         assertEquals(actualProperties.get(Config.PUPPET_MASTER_HOST_NAME), "master");
+        assertEquals(actualProperties.get(Config.VERSION), version2Install);
     }
 
     @Test

@@ -259,12 +259,12 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
             }
 
             case 5:
-                return createCommand("sudo systemctl start puppetmaster");
+                return createStartServiceCommand("puppetmaster");
 
             case 6:
                 List<Command> commands = new ArrayList<>();
                 commands.add(createCommand("sudo systemctl start puppet", nodeConfigs));
-                commands.add(createCommand("sudo systemctl start puppet"));
+                commands.add(createStartServiceCommand("puppet"));
 
                 return new MacroCommand(commands, "Launch puppet agent");
 
@@ -299,9 +299,13 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
 
         switch (step) {
             case 0:
-                return createCommand(format("rm -rf %1$s; " +
-                                            "mkdir %1$s; " +
-                                            "unzip -o %2$s -d %1$s", getTmpCodenvyDir(), pathToBinaries.toString()));
+                return new MacroCommand(ImmutableList.of(
+                    createCommand(format("rm -rf %1$s; " +
+                                         "mkdir %1$s; " +
+                                         "unzip -o %2$s -d %1$s; ", getTmpCodenvyDir(), pathToBinaries.toString())),
+                    createStopServiceCommand("crond"),
+                    createStopServiceCommand("puppet"),
+                    createStopServiceCommand("codenvy")), "Prepare to update");
 
             case 1:
                 List<Command> commands = new ArrayList<>();
@@ -309,6 +313,8 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                 Iterator<Path> propertiesFiles = configManager.getCodenvyPropertiesFiles(getTmpCodenvyDir(), InstallType.MULTI_SERVER);
                 while (propertiesFiles.hasNext()) {
                     Path file = propertiesFiles.next();
+
+                    commands.add(createFileBackupCommand(file));
 
                     for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
                         String property = e.getKey();
@@ -338,11 +344,12 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                                           installOptions);
 
             case 3:
-                return createCommand(format("sudo rm -rf %1$s/files; " +
+                return new MacroCommand(ImmutableList.of(createCommand(format("sudo rm -rf %1$s/files; " +
                                      "sudo rm -rf %1$s/modules; " +
                                      "sudo rm -rf %1$s/manifests; " +
                                      "sudo rm -rf %1$s/patches; " +
-                                     "sudo mv %2$s/* %1$s", getPuppetDir(), getTmpCodenvyDir()));
+                                     "sudo mv %2$s/* %1$s", getPuppetDir(), getTmpCodenvyDir())),
+                                     createStartServiceCommand("puppet")), "Copy binaries to puppet and start it");
 
             case 4:
                 return new PuppetErrorInterrupter(new WaitOnAliveArtifactOfCorrectVersionCommand(original, versionToUpdate), configManager);

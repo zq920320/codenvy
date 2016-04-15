@@ -176,12 +176,12 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                                         "Configure puppet agent");
 
             case 5:
-                return createCommand("sudo systemctl start puppetmaster");
+                return createStartServiceCommand("puppetmaster");
 
             case 6:
                 return new MacroCommand(ImmutableList.<Command>of(
                     createCommand("sleep 30"),
-                    createCommand("sudo systemctl start puppet")),
+                    createStartServiceCommand("puppet")),
                                         "Launch puppet agent");
 
             case 7:
@@ -210,9 +210,13 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
 
         switch (step) {
             case 0:
-                return createCommand(format("rm -rf %1$s; " +
-                                            "mkdir %1$s; " +
-                                            "unzip -o %2$s -d %1$s", getTmpCodenvyDir(), pathToBinaries.toString()));
+                return new MacroCommand(ImmutableList.of(
+                    createCommand(format("rm -rf %1$s; " +
+                                         "mkdir %1$s; " +
+                                         "unzip -o %2$s -d %1$s; ", getTmpCodenvyDir(), pathToBinaries.toString())),
+                    createStopServiceCommand("crond"),
+                    createStopServiceCommand("puppet"),
+                    createStopServiceCommand("codenvy")), "Prepare to update");
 
             case 1:
                 List<Command> commands = new ArrayList<>();
@@ -220,6 +224,8 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                 Iterator<Path> propertiesFiles = configManager.getCodenvyPropertiesFiles(getTmpCodenvyDir(), InstallType.SINGLE_SERVER);
                 while (propertiesFiles.hasNext()) {
                     Path file = propertiesFiles.next();
+
+                    commands.add(createFileBackupCommand(file));
 
                     commands.add(createReplaceCommand(file, "YOUR_DNS_NAME", config.getHostUrl()));
                     for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
@@ -238,11 +244,12 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                                           installOptions);
 
             case 3:
-                return createCommand(format("sudo rm -rf %1$s/files; " +
+                return new MacroCommand(ImmutableList.of(createCommand(format("sudo rm -rf %1$s/files; " +
                                             "sudo rm -rf %1$s/modules; " +
                                             "sudo rm -rf %1$s/manifests; " +
                                             "sudo rm -rf %1$s/patches; " +
-                                            "sudo mv %2$s/* %1$s", getPuppetDir(), getTmpCodenvyDir()));
+                                            "sudo mv %2$s/* %1$s", getPuppetDir(), getTmpCodenvyDir())),
+                                createStartServiceCommand("puppet")), "Copy binaries to puppet and start it");
 
             case 4:
                 return new PuppetErrorInterrupter(new WaitOnAliveArtifactOfCorrectVersionCommand(original, versionToUpdate), configManager);
