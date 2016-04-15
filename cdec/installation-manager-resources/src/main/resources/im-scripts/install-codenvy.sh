@@ -45,14 +45,14 @@ INSTALLATION_STEPS=("Configuring system..."
                     "Installing required packages... [java]"
                     "Install the Codenvy installation manager..."
                     "Downloading Codenvy binaries... "
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
-                    "Installing Codenvy... ~20 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
+                    "Installing Codenvy... ~10 mins"
                     "Booting Codenvy... "
                     "");                      
 
@@ -90,7 +90,7 @@ cleanUp() {
 
 validateExitCode() {
     local exitCode=$1
-    if [[ -n "${exitCode}" ]] && [[ ! ${exitCode} == "0" ]]; then
+    if [[ -n "${exitCode}" ]] && [[ ! "${exitCode}" == "0" ]]; then
         pauseTimer
         pausePuppetInfoPrinter
         pauseInternetAccessChecker
@@ -134,10 +134,10 @@ setRunOptions() {
         fi
     done
 
-    if [[ ${ARTIFACT} == "codenvy" ]]; then
+    if [[ "${ARTIFACT}" == "codenvy" ]]; then
         LAST_INSTALLATION_STEP=13
         ARTIFACT_DISPLAY="Codenvy"
-        if [[ -z ${VERSION} ]]; then
+        if [[ -z "${VERSION}" ]]; then
             VERSION=$(fetchProperty "https://codenvy.com/update/repository/properties/${ARTIFACT}?label=stable" "version")
         fi
     else
@@ -148,7 +148,7 @@ setRunOptions() {
                             "Installing required packages... [java]"
                             "Install the Codenvy installation manager..."
                             "");
-        if [[ -z ${VERSION} ]]; then
+        if [[ -z "${VERSION}" ]]; then
             VERSION=$(fetchProperty "https://codenvy.com/update/repository/properties/${ARTIFACT}" "version")
         fi
     fi
@@ -156,7 +156,7 @@ setRunOptions() {
     CONFIG="codenvy.properties"
     EXTERNAL_DEPENDENCIES[0]="https://codenvy.com/update/repository/public/download/${ARTIFACT}/${VERSION}||0"
 
-    if [[ ${CODENVY_TYPE} == "single" ]] && [[ ! -z ${HOST_NAME} ]] && [[ ! -z ${SYSTEM_ADMIN_PASSWORD} ]] && [[ ! -z ${SYSTEM_ADMIN_NAME} ]]; then
+    if [[ "${CODENVY_TYPE}" == "single" ]] && [[ ! -z "${HOST_NAME}" ]] && [[ ! -z "${SYSTEM_ADMIN_PASSWORD}" ]] && [[ ! -z "${SYSTEM_ADMIN_NAME}" ]]; then
         SILENT=true
     fi
 }
@@ -210,7 +210,7 @@ doConfigureSystem() {
 }
 
 configureProxySettings() {
-    if [[ -n $HTTP_PROXY || -n $HTTPS_PROXY ]]; then
+    if [[ -n "$HTTP_PROXY" || -n "$HTTPS_PROXY" ]]; then
 
         local PROXY_WITH_USER_AUTH_REGEXP="https?://([^:]*):?(.*)@.*"
         local proxyUserName
@@ -221,39 +221,39 @@ configureProxySettings() {
         local yumConfToDisplay
         local wgetrcToDisplay
 
-        if [[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]]; then
-            proxyUser=$([[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[1]})
-            proxyPassword=$([[ $HTTP_PROXY =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[2]})
+        if [[ "$HTTP_PROXY" =~ $PROXY_WITH_USER_AUTH_REGEXP ]]; then
+            proxyUser=$([[ "$HTTP_PROXY" =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[1]})
+            proxyPassword=$([[ "$HTTP_PROXY" =~ $PROXY_WITH_USER_AUTH_REGEXP ]] && echo ${BASH_REMATCH[2]})
         fi
 
-        if [[ -n $proxyUser ]]; then
+        if [[ -n "$proxyUser" ]]; then
             # remove "<proxyUser>:<proxyPassword>@" token from the proxy URL
-            proxyWithoutAuth=$(echo $HTTP_PROXY | sed "s/@//")
-            proxyWithoutAuth=$(echo $proxyWithoutAuth | sed "s/$proxyUser//")
+            proxyWithoutAuth=$(echo "$HTTP_PROXY" | sed "s/@//")
+            proxyWithoutAuth=$(echo "$proxyWithoutAuth" | sed "s/$proxyUser//")
 
-            if [[ -n $proxyPassword ]]; then
-                proxyWithoutAuth=$(echo $proxyWithoutAuth | sed "s/:$proxyPassword//")
+            if [[ -n "$proxyPassword" ]]; then
+                proxyWithoutAuth=$(echo "$proxyWithoutAuth" | sed "s/:$proxyPassword//")
             fi
         fi
 
         wgetrcToDisplay="${wgetrcToDisplay}$(print "use_proxy=on")\n"
 
-        if [[ -n $HTTP_PROXY ]]; then
+        if [[ -n "$HTTP_PROXY" ]]; then
             bashrcToDisplay="${bashrcToDisplay}$(print "export http_proxy=$HTTP_PROXY")\n"
 
-            if [[ -n $proxyUser ]]; then
+            if [[ -n "$proxyUser" ]]; then
                 yumConfToDisplay="${yumConfToDisplay}$(print "proxy=$proxyWithoutAuth")\n"
                 yumConfToDisplay="${yumConfToDisplay}$(print "proxy_username=$proxyUser")\n"
             fi
 
-            if [[ -n $proxyPassword ]]; then
+            if [[ -n "$proxyPassword" ]]; then
                 yumConfToDisplay="${yumConfToDisplay}$(print "proxy_password=$proxyPassword")\n"
             fi
 
             wgetrcToDisplay="${wgetrcToDisplay}$(print "http_proxy=$HTTP_PROXY")\n"
         fi
 
-        if [[ -n $HTTPS_PROXY ]]; then
+        if [[ -n "$HTTPS_PROXY" ]]; then
             bashrcToDisplay="${bashrcToDisplay}$(print "export https_proxy=$HTTPS_PROXY")\n"
             wgetrcToDisplay="${wgetrcToDisplay}$(print "https_proxy=$HTTPS_PROXY")\n"
         fi
@@ -265,7 +265,7 @@ configureProxySettings() {
             echo -en "${bashrcToDisplay}"
             println
 
-            if [[ -n $yumConfToDisplay ]]; then
+            if [[ -n "$yumConfToDisplay" ]]; then
                 println $(printImportantInfo "# In /etc/yum.conf:")
                 echo -en  "${yumConfToDisplay}"
                 println
@@ -286,55 +286,69 @@ configureProxySettings() {
         fi
 
         # setup /etc/wgetrc
-        insertLineIntoFile "use_proxy=on" /etc/wgetrc
+        putLineIntoFile /etc/wgetrc "use_proxy=on" "^use_proxy=.*$"
 
-        if [[ -n $HTTP_PROXY ]]; then
+        if [[ -n "$HTTP_PROXY" ]]; then
             # setup ~/.bashrc
-            insertLineIntoFile "export http_proxy=$HTTP_PROXY" ~/.bashrc
+            putLineIntoFile ~/.bashrc "export http_proxy=$HTTP_PROXY" "^export.*http_proxy=.*$"
             source ~/.bashrc
 
             # setup /etc/yum.conf
-            if [[ -n $proxyUser ]]; then
-                insertLineIntoFile "proxy=$proxyWithoutAuth" /etc/yum.conf
-                insertLineIntoFile "proxy_username=$proxyUser" /etc/yum.conf
+            if [[ -n "$proxyUser" ]]; then
+                putLineIntoFile /etc/yum.conf "proxy=$proxyWithoutAuth" "^proxy=.*$"
+                putLineIntoFile /etc/yum.conf "proxy_username=$proxyUser" "^proxy_username=.*$"
             fi
 
-            if [[ -n $proxyPassword ]]; then
-                insertLineIntoFile "proxy_password=$proxyPassword" /etc/yum.conf
+            if [[ -n "$proxyPassword" ]]; then
+                putLineIntoFile /etc/yum.conf "proxy_password=$proxyPassword" "^proxy_password=.*$"
             fi
 
             # setup /etc/wgetrc
-            insertLineIntoFile "http_proxy=$HTTP_PROXY" /etc/wgetrc
+            putLineIntoFile /etc/wgetrc "http_proxy=$HTTP_PROXY" "^http_proxy=.*$"
         fi
 
-        if [[ -n $HTTPS_PROXY ]]; then
+        if [[ -n "$HTTPS_PROXY" ]]; then
             # setup ~/.bashrc
-            insertLineIntoFile "export https_proxy=$HTTPS_PROXY" ~/.bashrc
+            putLineIntoFile ~/.bashrc "export https_proxy=$HTTPS_PROXY" "^export.*https_proxy=.*$"
             source ~/.bashrc
 
             # setup /etc/wgetrc
-            insertLineIntoFile "https_proxy=$HTTPS_PROXY" /etc/wgetrc
+            putLineIntoFile /etc/wgetrc "https_proxy=$HTTPS_PROXY" "^https_proxy=.*$"
         fi
     fi
 }
 
-# Safe insert: avoid duplication and create backup file "<path_to_file>.<time>" before inserting
-# parameter $1 - line to insert
-# parameter $2 - path to the file
-insertLineIntoFile() {
-    if [[ -n $1 && -n $2 ]]; then
-        if ! sudo grep -Eq "^$1$" $2; then
-            createFileBackup $2
-            echo $1 | sudo tee --append $2 &> /dev/null
+# Safe update: replace token by replacement to if regexForReplacement matches pathToFile, or insert replacement to the end of file as a seperate line otherwise.
+# Create backup file "<path_to_file>.<time>" before replacing.
+# parameter $1 - pathToFile
+# parameter $2 - replacement
+# parameter $3 - regexForReplacement (optional)
+putLineIntoFile() {
+    local pathToFile=$1
+    local replacement=$2
+    local regexForReplacement=$3
+
+    if [[ -n "$pathToFile" && -n "$replacement" ]]; then
+        if test -n "$regexForReplacement" && sudo grep -Eq "$regexForReplacement" "$pathToFile"; then
+            createFileBackup "$pathToFile"
+            sudo sed -i "s|$regexForReplacement|$replacement|" "$pathToFile" &> /dev/null
+            return
+        fi
+
+        if ! sudo grep -Eq "^${replacement}$" "$pathToFile"; then
+            createFileBackup "$pathToFile"
+            echo "$replacement" | sudo tee --append "$pathToFile" &> /dev/null
+            return
         fi
     fi
 }
 
 # parameter $1 - path to file which should be copied into the $1.<time>
 createFileBackup() {
-    if [[ -n $1 ]]; then
+    local pathToFile=$1
+    if [[ -a "$pathToFile" ]]; then
         local currentTimeInMillis=$(($(date +%s%N)/1000000))
-        sudo cp -f $1 $1.$currentTimeInMillis
+        sudo cp -f "$pathToFile" "${pathToFile}.$currentTimeInMillis"
     fi
 }
 
@@ -357,13 +371,13 @@ doDownloadBinaries() {
     for ((;;)); do
         OUTPUT=$(doEvalWaitReconnection executeIMCommand im-download ${ARTIFACT} ${VERSION})
         local exitCode=$?
-        echo ${OUTPUT} | sed 's/\[[=> ]*\]//g'  >> install.log
+        echo "${OUTPUT}" | sed 's/\[[=> ]*\]//g'  >> install.log
 
         if [[ ${exitCode} == 0 ]]; then
             break
         fi
 
-        if [[ ${OUTPUT} =~ .*File.corrupted.* ]]; then
+        if [[ "${OUTPUT}" =~ .*File.corrupted.* ]]; then
             echo "Codenvy binaries will be redownloaded" >> install.log
             continue
         else
@@ -406,8 +420,8 @@ updateDownloadProgress() {
     for ((;;)); do
         local size
         local localFile="${HOME}/codenvy-im-data/updates/${ARTIFACT}/${VERSION}/${file}"
-        if [[ -f ${localFile} ]]; then
-            size=$(du -b ${localFile} | cut -f1)
+        if [[ -f "${localFile}" ]]; then
+            size=$(du -b "${localFile}" | cut -f1)
         else
             size=0
         fi
@@ -477,7 +491,7 @@ downloadConfig() {
         local updates=$(curl --silent "https://codenvy.com/update/repository/updates/${ARTIFACT}")
         println $(printError "ERROR: Version '${VERSION}' is not available")
         println
-        if [[ -n ${VERSION} ]] && [[ ! ${updates} =~ .*\"${VERSION}\".* ]]; then
+        if [[ -n "${VERSION}" ]] && [[ ! "${updates}" =~ .*\"${VERSION}\".* ]]; then
             println $(printWarning "NOTE: You've used '--version' flag to install a specific version.")
             println $(printWarning "NOTE: We could not find this version in the repository. Versions found:")
             println $(printWarning "NOTE: ${updates}")
@@ -532,11 +546,11 @@ preConfigureSystem() {
     validateExitCode $?
 
     # back up file to prevent installation with wrong configuration
-    if [[ -f ${CONFIG} ]] && [[ ! $(cat ${CONFIG}) =~ .*${VERSION}.* ]]; then
-        mv ${CONFIG} ${CONFIG}.back
+    if [[ -f "${CONFIG}" ]] && [[ ! $(cat "${CONFIG}") =~ .*${VERSION}.* ]]; then
+        mv "${CONFIG}" "${CONFIG}.back"
     fi
 
-    if [[ ! -f ${CONFIG} ]] && [[ ${ARTIFACT} == "codenvy" ]]; then
+    if [[ ! -f "${CONFIG}" ]] && [[ "${ARTIFACT}" == "codenvy" ]]; then
         downloadConfig
     fi
 }
@@ -615,7 +629,7 @@ updateFooter() {
             local prev_text=$(cat /tmp/im_prev_line_${line} 2>/dev/null)
             local text=$(cat /tmp/im_line_${line} 2>/dev/null | tail -1)
 
-            if [[ ! ${prev_text} == ${text} ]]; then
+            if [[ ! "${prev_text}" == "${text}" ]]; then
                 clearLine
                 println "${text}"
                 echo "${text}" > /tmp/im_prev_line_${line} 2>/dev/null
@@ -668,7 +682,7 @@ askProperty() {
 }
 
 insertProperty() {
-    sed -i s/$1=.*/$1=$2/g ${CONFIG}
+    sed -i s|$1=.*|$1=$2|g "${CONFIG}"
 }
 
 validateHostname() {
@@ -729,7 +743,7 @@ pressAnyKeyToContinue() {
 
 pressYKeyToContinue() {
     if [[ ${SILENT} == false ]]; then
-        if [[ ! -z $1 ]]; then
+        if [[ ! -z "$1" ]]; then
             print $@
         else
             print "Continue installation"
@@ -850,21 +864,21 @@ doCheckAvailablePorts_multi() {
     doGetHostsVariables
 
     for HOST in ${PUPPET_MASTER_HOST_NAME} ${DATA_HOST_NAME} ${API_HOST_NAME} ${BUILDER_HOST_NAME} ${DATASOURCE_HOST_NAME} ${ANALYTICS_HOST_NAME} ${SITE_HOST_NAME} ${RUNNER_HOST_NAME}; do
-        if [[ ${HOST} == ${PUPPET_MASTER_HOST_NAME} ]]; then
+        if [[ "${HOST}" == "${PUPPET_MASTER_HOST_NAME}" ]]; then
             PORTS=${PUPPET_MASTER_PORTS[@]}
-        elif [[ ${HOST} == ${DATA_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${DATA_HOST_NAME}" ]]; then
             PORTS=${DATA_PORTS[@]}
-        elif [[ ${HOST} == ${API_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${API_HOST_NAME}" ]]; then
             PORTS=${API_PORTS[@]}
-        elif [[ ${HOST} == ${BUILDER_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${BUILDER_HOST_NAME}" ]]; then
             PORTS=${BUILDER_PORTS[@]}
-        elif [[ ${HOST} == ${DATASOURCE_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${DATASOURCE_HOST_NAME}" ]]; then
             PORTS=${DATASOURCE_PORTS[@]}
-        elif [[ ${HOST} == ${ANALYTICS_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${ANALYTICS_HOST_NAME}" ]]; then
             PORTS=${ANALYTICS_PORTS[@]}
-        elif [[ ${HOST} == ${SITE_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${SITE_HOST_NAME}" ]]; then
             PORTS=${SITE_PORTS[@]}
-        elif [[ ${HOST} == ${RUNNER_HOST_NAME} ]]; then
+        elif [[ "${HOST}" == "${RUNNER_HOST_NAME}" ]]; then
             PORTS=${RUNNER_PORTS[@]}
         fi
 
@@ -872,7 +886,7 @@ doCheckAvailablePorts_multi() {
             PROTOCOL=$(echo ${PORT}|awk -F':' '{print $1}');
             PORT_ONLY=$(echo ${PORT}|awk -F':' '{print $2}');
 
-            if [[ ${HOST} == ${PUPPET_MASTER_HOST_NAME} ]]; then
+            if [[ "${HOST}" == "${PUPPET_MASTER_HOST_NAME}" ]]; then
                 validatePortLocal "${PROTOCOL}" "${PORT_ONLY}"
             else
                 validatePortRemote "${PROTOCOL}" "${PORT_ONLY}" ${HOST}
@@ -903,7 +917,7 @@ printPreInstallInfo_single() {
 
     checkResourceAccess
 
-    if [[ ${ARTIFACT} == "codenvy" ]]; then
+    if [[ "${ARTIFACT}" == "codenvy" ]]; then
         println "Configuring system properties with file://${CONFIG}..."
         println
     fi
@@ -941,7 +955,7 @@ doEnsureFairSourceLicenseAgreement() {
     print "Accept? [y/N]: "
     read VALUE
 
-    if [[ ${VALUE} != "y" && ${VALUE} != "Y" ]]; then
+    if [[ "${VALUE}" != "y" && "${VALUE}" != "Y" ]]; then
         exit 1;
     fi
 
@@ -997,7 +1011,7 @@ doCheckAvailableResourcesLocally() {
     esac
 
     # check on OS CentOS 7
-    if [[ ${osType} != "CentOS" ||  "7.1" > "${osVersion}" ]]; then
+    if [[ "${osType}" != "CentOS" ||  "7.1" > "${osVersion}" ]]; then
         osIssueFound=true
     fi
 
@@ -1128,7 +1142,7 @@ doCheckResourceAccess() {
     local cookie=$(echo ${resource} | awk -F'|' '{print $2}');
     local checkFailed=0
 
-    if [[ ${cookie} == "" ]]; then
+    if [[ "${cookie}" == "" ]]; then
         wget --timeout=10 --tries=5 --quiet --spider ${url} || checkFailed=1
     else
         wget --timeout=10 --tries=5 --quiet --spider --no-cookies --no-check-certificate --header "${cookie}" ${url} || checkFailed=1
@@ -1159,7 +1173,7 @@ printPreInstallInfo_multi() {
 
     configureProxySettings
 
-    if [[ ${ARTIFACT} == "codenvy" ]]; then
+    if [[ "${ARTIFACT}" == "codenvy" ]]; then
         println "Configuring system properties with file://${CONFIG}..."
         println
     fi
@@ -1277,7 +1291,7 @@ doCheckAvailableResourcesOnNodes() {
             exit 1
         fi
 
-        if [[ ${HOST} == ${RUNNER_HOST_NAME} ]]; then
+        if [[ "${HOST}" == "${RUNNER_HOST_NAME}" ]]; then
             MIN_RAM_KB=1500000
             MIN_DISK_SPACE_KB=40000000
         else
@@ -1318,7 +1332,7 @@ doCheckAvailableResourcesOnNodes() {
         esac
 
         # check on OS CentOS 7
-        if [[ ${osType} != "CentOS" || "7.1" > "${osVersion}" ]]; then
+        if [[ "${osType}" != "CentOS" || "7.1" > "${osVersion}" ]]; then
             osIssueFound=true
             globalOsIssueFound=true
         fi
@@ -1329,11 +1343,11 @@ doCheckAvailableResourcesOnNodes() {
         local availableDiskSpace=$(${sshPrefix} "sudo df ${HOME} | tail -1" | awk '{print $4}') # available
         local availableDiskSpaceIssue=false
 
-        if [[ -z ${availableRAM} || ${availableRAM} < ${MIN_RAM_KB} ]]; then
+        if [[ -z "${availableRAM}" || ${availableRAM} < ${MIN_RAM_KB} ]]; then
             availableRAMIssue=true
         fi
 
-        if [[ -z ${availableDiskSpace} || ${availableDiskSpace} < ${MIN_DISK_SPACE_KB} ]]; then
+        if [[ -z "${availableDiskSpace}" || ${availableDiskSpace} < ${MIN_DISK_SPACE_KB} ]]; then
             availableDiskSpaceIssue=true
         fi
 
@@ -1620,7 +1634,7 @@ printPostInstallInfo_codenvy() {
     fi
 
     if [ -z ${HOST_NAME} ]; then
-        HOST_NAME=$(grep host_url\\s*=\\s*.* ${CONFIG} | sed 's/host_url\s*=\s*\(.*\)/\1/')
+        HOST_NAME=$(grep host_url\\s*=\\s*.* "${CONFIG}" | sed 's/host_url\s*=\s*\(.*\)/\1/')
     fi
 
     println
@@ -1652,7 +1666,7 @@ doConfigureSystem
 doInstallJava
 doInstallImCli
 
-if [[ ${ARTIFACT} == "codenvy" ]]; then
+if [[ "${ARTIFACT}" == "codenvy" ]]; then
     runDownloadProgressUpdater
     doDownloadBinaries
     pauseDownloadProgressUpdater
