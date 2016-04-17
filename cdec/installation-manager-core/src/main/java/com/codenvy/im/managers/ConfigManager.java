@@ -66,6 +66,8 @@ public class ConfigManager {
     public static final Pattern PUPPET_PROP_TEMPLATE  = Pattern.compile(" *\\$([^\\s]+) *= *\"([^\"]*)\"");
     public static final Pattern CODENVY_PROP_TEMPLATE = Pattern.compile("^([^\\s=#]+)=(.*)");
 
+    public static final String PATH_TO_MANIFEST_PATCH_VARIABLE = "PATH_TO_MANIFEST";
+
     private final HttpTransport transport;
     private final String        updateEndpoint;
     private final String        puppetBaseDir;
