@@ -15,15 +15,12 @@
 package com.codenvy.ext.java.server;
 
 
+import org.eclipse.che.api.core.cors.CheCorsFilter;
 import com.google.common.collect.ImmutableMap;
 import com.google.inject.Singleton;
 import com.google.inject.servlet.ServletModule;
 
-import org.apache.catalina.filters.CorsFilter;
 import org.eclipse.che.inject.DynaModule;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author Sergii Kabashniuk
@@ -42,24 +39,8 @@ public class MachineServletModule extends ServletModule {
         filter("/*").through(com.codenvy.workspace.LastAccessTimeFilter.class);
         filterRegex("/(?!_sso/).*$").through(com.codenvy.auth.sso.client.LoginFilter.class);
 
-        final Map<String, String> corsFilterParams = new HashMap<>();
-        corsFilterParams.put("cors.allowed.origins", "*");
-        corsFilterParams.put("cors.allowed.methods", "GET," +
-                                                     "POST," +
-                                                     "HEAD," +
-                                                     "OPTIONS," +
-                                                     "PUT," +
-                                                     "DELETE");
-        corsFilterParams.put("cors.allowed.headers", "Content-Type," +
-                                                     "X-Requested-With," +
-                                                     "accept," +
-                                                     "Origin," +
-                                                     "Access-Control-Request-Method," +
-                                                     "Access-Control-Request-Headers");
-        // preflight cache is available for 10 minutes
-        corsFilterParams.put("cors.preflight.maxage", "10");
-        bind(CorsFilter.class).in(Singleton.class);
-        filter("/*").through(CorsFilter.class, corsFilterParams);
+        bind(CheCorsFilter.class).in(Singleton.class);
+        filter("/*").through(CheCorsFilter.class);
         //servlets
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
         serveRegex("^/ext((?!(/(ws|eventbus)($|/.*)))/.*)").with(org.everrest.guice.servlet.GuiceEverrestServlet.class);
@@ -68,7 +49,6 @@ public class MachineServletModule extends ServletModule {
         serve("/swaggerinit").with(io.swagger.jaxrs.config.DefaultJaxrsConfig.class, ImmutableMap
                 .of("api.version", "1.0",
                     "swagger.api.title", "Eclipse Che",
-                    "swagger.api.basepath", "/api/ext"
-                ));
+                    "swagger.api.basepath", "/api/ext"));
     }
 }

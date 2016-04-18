@@ -21,6 +21,8 @@
     <inherits name="com.google.gwt.i18n.I18N"/>
     <inherits name="com.google.gwt.json.JSON"/>
     <inherits name="com.google.gwt.inject.Inject"/>
+    <inherits name="org.eclipse.che.ide.Api"/>
+    <inherits name="com.codenvy.plugin.pullrequest.projecttype.ContributionProjectType"/>
 
     <source path="client"/>
 </module>

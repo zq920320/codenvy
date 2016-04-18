@@ -22,7 +22,6 @@ import org.eclipse.che.api.promises.client.js.JsPromiseError;
 import org.eclipse.che.api.promises.client.js.Promises;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
-import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
@@ -30,12 +29,9 @@ import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
 import org.eclipse.che.ide.rest.AsyncRequestCallback;
 import org.eclipse.che.ide.rest.AsyncRequestFactory;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
-import org.eclipse.che.ide.rest.RestContext;
 import org.eclipse.che.ide.ui.loaders.request.LoaderFactory;
 
-import javax.inject.Named;
 import javax.validation.constraints.NotNull;
-
 import java.util.List;
 
 import static org.eclipse.che.ide.ext.bitbucket.shared.Preconditions.checkArgument;
@@ -52,21 +48,25 @@ public class BitbucketClientService {
     private static final String REPOSITORIES = "/repositories";
     private static final String SSH_KEYS     = "/ssh-keys";
 
-    private final String                 baseUrl;
     private final LoaderFactory          loaderFactory;
     private final AsyncRequestFactory    asyncRequestFactory;
+    private final AppContext             appContext;
     private final DtoUnmarshallerFactory dtoUnmarshallerFactory;
 
     @Inject
-    protected BitbucketClientService(@Named("cheExtensionPath") String extPath,
-                                     AppContext appContext,
+    protected BitbucketClientService(AppContext appContext,
                                      LoaderFactory loaderFactory,
                                      AsyncRequestFactory asyncRequestFactory,
                                      DtoUnmarshallerFactory dtoUnmarshallerFactory) {
+        this.appContext = appContext;
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
-        this.baseUrl = extPath + "/bitbucket/" + appContext.getWorkspace().getId();
         this.loaderFactory = loaderFactory;
         this.asyncRequestFactory = asyncRequestFactory;
+    }
+
+
+    private String getBaseUrl() {
+        return appContext.getDevMachine().getWsAgentBaseUrl() + "/bitbucket/" + appContext.getWorkspaceId();
     }
 
     /**
@@ -80,7 +80,7 @@ public class BitbucketClientService {
     public void getUser(@NotNull AsyncRequestCallback<BitbucketUser> callback) throws IllegalArgumentException {
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + USER;
+        final String requestUrl = getBaseUrl() + USER;
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -88,7 +88,7 @@ public class BitbucketClientService {
      * Returns the promise which resolves authorized user information or rejects with an error.
      */
     public Promise<BitbucketUser> getUser() {
-        final String requestUrl = baseUrl + USER;
+        final String requestUrl = getBaseUrl() + USER;
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketUser.class));
@@ -115,7 +115,7 @@ public class BitbucketClientService {
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug;
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug;
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -135,7 +135,7 @@ public class BitbucketClientService {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug;
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug;
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepository.class));
@@ -158,12 +158,13 @@ public class BitbucketClientService {
     @Deprecated
     public void getRepositoryForks(@NotNull final String owner,
                                    @NotNull final String repositorySlug,
-                                   @NotNull final AsyncRequestCallback<List<BitbucketRepository>> callback) throws IllegalArgumentException {
+                                   @NotNull final AsyncRequestCallback<List<BitbucketRepository>> callback)
+            throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/forks";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/forks";
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -182,7 +183,7 @@ public class BitbucketClientService {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
 
-        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/forks";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/forks";
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newListUnmarshaller(BitbucketRepository.class));
@@ -215,9 +216,8 @@ public class BitbucketClientService {
         checkArgument(forkName != null && !isNullOrEmpty(forkName), "forkName");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl =
-                baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/fork?forkName=" + forkName + "&isForkPrivate=" +
-                isForkPrivate;
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/fork" +
+                                  "?forkName=" + forkName + "&isForkPrivate=" + isForkPrivate;
         asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -243,8 +243,8 @@ public class BitbucketClientService {
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(forkName != null && !isNullOrEmpty(forkName), "forkName");
 
-        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/fork?forkName=" + forkName +
-                                  "&isForkPrivate=" + isForkPrivate;
+        final String requestUrl = getBaseUrl() + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/fork" +
+                                  "?forkName=" + forkName + "&isForkPrivate=" + isForkPrivate;
         return asyncRequestFactory.createPostRequest(requestUrl, null)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketRepositoryFork.class));
@@ -270,7 +270,7 @@ public class BitbucketClientService {
         checkArgument(repositorySlug != null, "repositorySlug");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -285,11 +285,11 @@ public class BitbucketClientService {
      *         if one parameter is not valid.
      */
     public Promise<List<BitbucketPullRequest>> getRepositoryPullRequests(final String owner,
-                                                                    final String repositorySlug) throws IllegalArgumentException {
+                                                                         final String repositorySlug) throws IllegalArgumentException {
         checkArgument(owner != null, "owner");
         checkArgument(repositorySlug != null, "repositorySlug");
 
-        final String requestUrl = baseUrl + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/pullrequests";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + '/' + owner + '/' + repositorySlug + "/pullrequests";
         return asyncRequestFactory.createGetRequest(requestUrl)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newListUnmarshaller(BitbucketPullRequest.class));
@@ -318,7 +318,7 @@ public class BitbucketClientService {
         checkArgument(pullRequest != null, "pullRequest");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
         asyncRequestFactory.createPostRequest(requestUrl, pullRequest).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -340,7 +340,7 @@ public class BitbucketClientService {
         checkArgument(!isNullOrEmpty(owner), "owner");
         checkArgument(!isNullOrEmpty(repositorySlug), "repositorySlug");
         checkArgument(pullRequest != null, "pullRequest");
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner + "/" + repositorySlug + "/pullrequests";
         return asyncRequestFactory.createPostRequest(requestUrl, pullRequest)
                                   .loader(loaderFactory.newLoader())
                                   .send(dtoUnmarshallerFactory.newUnmarshaller(BitbucketPullRequest.class));
@@ -361,7 +361,7 @@ public class BitbucketClientService {
         checkArgument(owner != null, "owner");
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + REPOSITORIES + "/" + owner;
+        final String requestUrl = getBaseUrl() + REPOSITORIES + "/" + owner;
         asyncRequestFactory.createGetRequest(requestUrl).loader(loaderFactory.newLoader()).send(callback);
     }
 
@@ -376,7 +376,7 @@ public class BitbucketClientService {
     public void generateAndUploadSSHKey(@NotNull AsyncRequestCallback<Void> callback) throws IllegalArgumentException {
         checkArgument(callback != null, "callback");
 
-        final String requestUrl = baseUrl + SSH_KEYS;
+        final String requestUrl = getBaseUrl() + SSH_KEYS;
         asyncRequestFactory.createPostRequest(requestUrl, null).loader(loaderFactory.newLoader()).send(callback);
     }
 

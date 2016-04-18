@@ -62,11 +62,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import static com.google.common.base.MoreObjects.*;
-import static org.eclipse.che.api.core.ErrorCodes.UNABLE_GET_PRIVATE_SSH_KEY;
-import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
+import static com.google.common.base.MoreObjects.firstNonNull;
 import static org.eclipse.che.api.core.ErrorCodes.FAILED_CHECKOUT;
 import static org.eclipse.che.api.core.ErrorCodes.FAILED_CHECKOUT_WITH_START_POINT;
+import static org.eclipse.che.api.core.ErrorCodes.UNABLE_GET_PRIVATE_SSH_KEY;
+import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
 import static org.eclipse.che.api.git.shared.ProviderInfo.AUTHENTICATE_URL;
 import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
@@ -126,7 +126,7 @@ public class FactoryProjectImporter extends AbstractImporter {
      * Import source projects
      */
     private void importProjects() {
-        projectService.getProjects(workspaceId).then(new Operation<List<ProjectConfigDto>>() {
+        projectService.getProjects(appContext.getDevMachine()).then(new Operation<List<ProjectConfigDto>>() {
             @Override
             public void apply(List<ProjectConfigDto> projectConfigs) throws OperationException {
                 Set<String> projectNames = new HashSet<>();
@@ -250,11 +250,11 @@ public class FactoryProjectImporter extends AbstractImporter {
             messageBus.subscribe(channel, successImportHandler);
         } catch (WebSocketException ignore) {
         }
-        return projectService.importProject(workspaceId, projectName, true, sourceStorage)
+        return projectService.importProject(appContext.getDevMachine(), projectName, true, sourceStorage)
                              .thenPromise(new Function<Void, Promise<Void>>() {
                                  @Override
                                  public Promise<Void> apply(Void aVoid) throws FunctionException {
-                                     return projectService.getProject(workspaceId, pathToProject)
+                                     return projectService.getProject(appContext.getDevMachine(), pathToProject)
                                                           .then(new Function<ProjectConfigDto, Void>() {
                                                               @Override
                                                               public Void apply(ProjectConfigDto projectConfigDto)
