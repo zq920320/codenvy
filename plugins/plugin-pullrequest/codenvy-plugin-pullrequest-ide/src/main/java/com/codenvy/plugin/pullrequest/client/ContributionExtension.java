@@ -145,7 +145,7 @@ public class ContributionExtension {
                                  public Promise<ProjectConfigDto> apply(String branchName) throws FunctionException {
                                      project.getMixins().add(CONTRIBUTION_PROJECT_TYPE_ID);
                                      project.getAttributes().put(CONTRIBUTE_TO_BRANCH_VARIABLE_NAME, singletonList(branchName));
-                                     return projectService.updateProject(appContext.getWorkspaceId(),
+                                     return projectService.updateProject(appContext.getDevMachine(),
                                                                          project.getPath(),
                                                                          project);
                                  }

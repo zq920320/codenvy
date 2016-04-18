@@ -28,6 +28,10 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <artifactId>codenvy-hosted-commons-j2ee</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.hosted-infrastructure</groupId>
             <artifactId>codenvy-hosted-sso-client</artifactId>
         </dependency>
         <dependency>
@@ -168,11 +172,6 @@
         <dependency>
             <groupId>javax.servlet</groupId>
             <artifactId>javax.servlet-api</artifactId>
-            <scope>provided</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat</groupId>
-            <artifactId>tomcat-catalina</artifactId>
             <scope>provided</scope>
         </dependency>
     </dependencies>
