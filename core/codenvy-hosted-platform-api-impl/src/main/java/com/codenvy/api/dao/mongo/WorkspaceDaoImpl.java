@@ -103,7 +103,6 @@ import static java.util.Objects.requireNonNull;
  *                          "isDev" : true,
  *                          "name" : "dev",
  *                          "type" : "machine-type",
- *                          "architecture" : "linux_amd64",
  *                          "limits" : {
  *                              "ram" : 512
  *                          },
