@@ -233,8 +233,10 @@ public class TestCDECArtifact extends BaseTest {
         prepareSingleNodeEnv(spyConfigManager, mockTransport);
 
         InstallOptions options = new InstallOptions();
-        options.setConfigProperties(ImmutableMap.of("some property", "some value",
-                                                    Config.HOST_URL, "host_url"));
+        options.setConfigProperties(new HashMap() {{
+            put("some property", "some value");
+            put(Config.HOST_URL, "host_url");
+        }});
         options.setInstallType(InstallType.SINGLE_SERVER);
 
         final String updateVersion = "4.0.0";
@@ -260,11 +262,10 @@ public class TestCDECArtifact extends BaseTest {
 //                     + "{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"host_url\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}]", TMP_CODENVY));
 
         assertEquals(spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(2)).toString(),
-                     "[{'command'='sudo cat " + TMP_CODENVY + "/patches/single_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property|some value|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp " + TMP_CODENVY + "/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
-                     + "{'command'='sudo cat " + TMP_CODENVY +
-                     "/patches/single_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp " +
-                     TMP_CODENVY + "/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
-                     + "{'command'='bash " + TMP_CODENVY + "/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}]");
+                     format("[{'command'='sudo cat %1$s/patches/single_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='sudo cat target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property|some value|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='sudo cat target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$PATH_TO_MANIFEST|target/TestCDECArtifact/codenvy/manifests/nodes/single_server/base_config.pp|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='bash target/TestCDECArtifact/codenvy/patches/single_server/patch_before_update.sh', 'agent'='LocalAgent'}]", TMP_CODENVY));
 
         assertEquals(spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(3)).toString(),
                      format("[{'command'='sudo rm -rf %1$s/files; sudo rm -rf %1$s/modules; sudo rm -rf %1$s/manifests; sudo rm -rf %1$s/patches; sudo mv target/TestCDECArtifact/codenvy/* %1$s', 'agent'='LocalAgent'}, "
@@ -274,11 +275,10 @@ public class TestCDECArtifact extends BaseTest {
                      "PuppetErrorInterrupter{ Expected to be installed 'codenvy' of the version '4.0.0' }; looking on errors in file /var/log/puppet/puppet-agent.log locally");
 
         assertEquals(spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(5)).toString(),
-                     "[{'command'='sudo cat " + ETC_PUPPET + "/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property|some value|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp " + ETC_PUPPET + "/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, " +
-                     "{'command'='sudo cat " + ETC_PUPPET +
-                     "/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp " +
-                     ETC_PUPPET + "/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, " +
-                     "{'command'='bash " + ETC_PUPPET + "/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}]");
+                     format("[{'command'='sudo cat %1$s/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='sudo cat %1$s/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property|some value|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='sudo cat %1$s/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$PATH_TO_MANIFEST|target/TestCDECArtifact/codenvy/manifests/nodes/single_server/base_config.pp|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
+                            + "{'command'='bash %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}]", ETC_PUPPET));
     }
 
     @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "Codenvy On-Prem can be updated on CentOS 7 only")

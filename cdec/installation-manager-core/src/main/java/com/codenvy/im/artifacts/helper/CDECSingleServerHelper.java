@@ -239,6 +239,15 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                 return new MacroCommand(commands, "Configure Codenvy");
 
             case 2:
+                if (versionToUpdate.is4Major()) {
+                    propertiesFiles = configManager.getCodenvyPropertiesFiles(getTmpCodenvyDir(), InstallType.SINGLE_SERVER);
+
+                    if (propertiesFiles.hasNext()) {
+                        Path file = propertiesFiles.next();
+                        installOptions.getConfigProperties().put(ConfigManager.PATH_TO_MANIFEST_PATCH_VARIABLE, file.toString());
+                    }
+                }
+
                 return createPatchCommand(Paths.get(getTmpCodenvyDir(), "patches"),
                                           CommandLibrary.PatchType.BEFORE_UPDATE,
                                           installOptions);
@@ -255,6 +264,15 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                 return new PuppetErrorInterrupter(new WaitOnAliveArtifactOfCorrectVersionCommand(original, versionToUpdate), configManager);
 
             case 5:
+                if (versionToUpdate.is4Major()) {
+                    propertiesFiles = configManager.getCodenvyPropertiesFiles(getPuppetDir(), InstallType.SINGLE_SERVER);
+
+                    if (propertiesFiles.hasNext()) {
+                        Path file = propertiesFiles.next();
+                        installOptions.getConfigProperties().put(ConfigManager.PATH_TO_MANIFEST_PATCH_VARIABLE, file.toString());
+                    }
+                }
+
                 return createPatchCommand(Paths.get(getPuppetDir(), "patches"),
                                           CommandLibrary.PatchType.AFTER_UPDATE,
                                           installOptions);
