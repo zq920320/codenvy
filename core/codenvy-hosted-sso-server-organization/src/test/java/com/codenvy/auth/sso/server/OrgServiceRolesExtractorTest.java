@@ -21,11 +21,9 @@ import org.eclipse.che.api.account.server.dao.Account;
 import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.user.server.dao.MembershipDo;
 import org.eclipse.che.api.user.server.dao.PreferenceDao;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.api.user.server.dao.UserDao;
-import org.eclipse.che.api.user.shared.model.Membership;
 import org.eclipse.che.commons.user.UserImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -167,14 +165,6 @@ public class OrgServiceRolesExtractorTest {
                                                                                     null,
                                                                                     null));
         doReturn(Collections.<String>emptySet()).when(extractor).getRoles(ticket.getPrincipal().getId());
-        final Membership membership = new MembershipDo("workspace",
-                                                       asList("workspace/admin", "workspace/developer"),
-                                                       null,
-                                                       null,
-                                                       "wsId",
-                                                       null);
-
-        //final HashSet<String> expectedRoles = new HashSet<>(asList("user", "workspace/developer", "workspace/admin"));
         final HashSet<String> expectedRoles = new HashSet<>(asList("user"));
         assertEquals(extractor.extractRoles(ticket, "wsId", "accId"), expectedRoles);
     }
