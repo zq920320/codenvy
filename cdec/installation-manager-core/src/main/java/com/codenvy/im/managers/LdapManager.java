@@ -41,6 +41,7 @@ import javax.naming.directory.SearchResult;
 import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Objects;
 
 import static com.codenvy.im.utils.Commons.combinePaths;
 import static java.lang.String.format;
@@ -123,14 +124,19 @@ public class LdapManager {
             SearchControls ldapControls = new SearchControls();
             ldapControls.setSearchScope(SearchControls.ONELEVEL_SCOPE);
 
+            NamingEnumeration<SearchResult> results = null;
             try {
-                NamingEnumeration<SearchResult> results = ldapContext.search(ldapSearchBase, ldapSearchFilter, ldapControls);
+                results = ldapContext.search(ldapSearchBase, ldapSearchFilter, ldapControls);
                 while (results.hasMore()) {
                     resultCounter++;
                     results.next();
                 }
             } finally {
                 ldapContext.close();
+
+                if (Objects.nonNull(results)) {
+                    results.close();
+                }
             }
         } catch (Exception e) {
             throw new IOException("Error in getting a number of users", e);

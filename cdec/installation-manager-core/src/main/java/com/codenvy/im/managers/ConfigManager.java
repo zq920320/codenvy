@@ -193,7 +193,7 @@ public class ConfigManager {
         }
 
         for (String relPathPropertyFile : properties) {
-            Path absPathCandidate = Paths.get(baseDir + File.separator + relPathPropertyFile);
+            Path absPathCandidate = Paths.get(baseDir, relPathPropertyFile);
             if (exists(absPathCandidate)) {
                 propertiesFiles.add(absPathCandidate);
             }

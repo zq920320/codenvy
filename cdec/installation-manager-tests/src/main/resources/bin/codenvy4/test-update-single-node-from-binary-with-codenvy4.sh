@@ -18,12 +18,12 @@
 
 . ./lib.sh
 
-printAndLog "TEST CASE: Update single-node Codenvy from binary with Codenvy 4"
+printAndLog "TEST CASE: Update single-node Codenvy with non-default admin name and password from binary with Codenvy 4"
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
-installCodenvy ${PREV_CODENVY4_VERSION}
+installCodenvy ${PREV_CODENVY4_VERSION} --systemAdminName="newadmin" --systemAdminPassword="new-password"
 validateInstalledCodenvyVersion ${PREV_CODENVY4_VERSION}
-authWithoutRealmAndServerDns "admin" "password"
+authWithoutRealmAndServerDns "newadmin" "new-password"
 
 executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY4_VERSION}"
 
@@ -33,7 +33,7 @@ BINARIES="/home/vagrant/codenvy-im-data/updates/codenvy/${LATEST_CODENVY4_VERSIO
 # install from local folder
 executeIMCommand "im-install" "--binaries=$BINARIES" "codenvy" "${LATEST_CODENVY4_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
-authWithoutRealmAndServerDns "admin" "password"
+authWithoutRealmAndServerDns "newadmin" "new-password"
 
 printAndLog "RESULT: PASSED"
 vagrantDestroy

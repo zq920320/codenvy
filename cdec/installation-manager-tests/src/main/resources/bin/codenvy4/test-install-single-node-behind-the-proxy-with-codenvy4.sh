@@ -18,15 +18,15 @@
 
 . ./lib.sh
 
-printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy with non-default admin name and password"
+printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy"
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
 # install Codenvy 4.x behind the proxy
 executeSshCommand "echo '$PROXY_IP $PROXY_SERVER' | sudo tee --append /etc/hosts > /dev/null"
 
-installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY --systemAdminName="newadmin" --systemAdminPassword="new-password"
+installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
-authWithoutRealmAndServerDns "newadmin" "new-password"
+authWithoutRealmAndServerDns "admin" "password"
 
 # create user "cdec.im.test@gmail.com"
 doPost "application/json" "{\"name\":\"cdec\",\"email\":\"cdec.im.test@gmail.com\",\"password\":\"pwd123ABC\"}" "http://${HOST_URL}/api/user/create?token=${TOKEN}"
