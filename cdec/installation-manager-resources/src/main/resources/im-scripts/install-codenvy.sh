@@ -13,6 +13,7 @@
 # --install-directory=<PATH TO SINGLE DIRECTORY FOR ALL RESOURCES>
 # --http-proxy=<HTTP PROXY URL>
 # --https-proxy=<HTTPS PROXY URL>
+# --im-cli: to IM CLI client only
 
 trap cleanUp EXIT
 
@@ -54,7 +55,7 @@ INSTALLATION_STEPS=("Configuring system..."
                     "Installing Codenvy... ~10 mins"
                     "Installing Codenvy... ~10 mins"
                     "Booting Codenvy... "
-                    "");                      
+                    "");
 
 PUPPET_MASTER_PORTS=("tcp:8140");
 SITE_PORTS=("tcp:80" "tcp:443" "tcp:10050" "tcp:32001" "tcp:32101");
@@ -682,7 +683,7 @@ askProperty() {
 }
 
 insertProperty() {
-    sed -i s|$1=.*|$1=$2|g "${CONFIG}"
+    sed -i "s|$1=.*|$1=$2|g" "${CONFIG}"
 }
 
 validateHostname() {
