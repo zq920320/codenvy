@@ -173,11 +173,11 @@
       <md-divider md-theme="factory-theme" ng-show="codenvyNavbarCtrl.isUser()"></md-divider>
       <section class="left-sidebar-menu" layout="column" layout-align="center center">
         <md-list layout="row" layout-align="start center">
-          <md-button ng-href="https://codenvy.com/"
-                     ng-if="!codenvyNavbarCtrl.ims.isAvailable"
+          <md-button ng-href="{{branding.navbarButton.link}}"
+                     ng-if="branding.navbarButton"
                      class="codenvy-navbar-button"
-                     tooltip="Go to Codenvy Classic"
-                     layout-align="center">Codenvy Classic
+                     tooltip="{{branding.navbarButton.tooltip}}"
+                     layout-align="center">{{branding.navbarButton.title}}
           </md-button>
           <md-list-item>
             <logout-widget></logout-widget>
