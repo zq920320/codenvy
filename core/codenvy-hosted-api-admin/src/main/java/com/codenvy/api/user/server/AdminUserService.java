@@ -24,11 +24,11 @@ import io.swagger.annotations.ApiResponses;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 
 import org.eclipse.che.api.core.BadRequestException;
+import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.Service;
 import org.eclipse.che.api.core.rest.annotations.GenerateLink;
 import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.api.user.shared.dto.UserDescriptor;
 
 import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
@@ -38,9 +38,8 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.SecurityContext;
-import java.util.List;
-import java.util.stream.Collectors;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.che.api.user.server.DtoConverter.toDescriptor;
@@ -83,12 +82,15 @@ public class AdminUserService extends Service {
     @ApiResponses({@ApiResponse(code = 200, message = "OK"),
                    @ApiResponse(code = 400, message = "Bad Request"),
                    @ApiResponse(code = 500, message = "Internal Server Error")})
-    public List<UserDescriptor> getAll(@ApiParam(value = "Max items") @QueryParam("maxItems") @DefaultValue("30") int maxItems,
-                                       @ApiParam(value = "Skip count") @QueryParam("skipCount") @DefaultValue("0") int skipCount,
-                                       @Context SecurityContext context) throws ServerException, BadRequestException {
+    public Response getAll(@ApiParam(value = "Max items") @QueryParam("maxItems") @DefaultValue("30") int maxItems,
+                           @ApiParam(value = "Skip count") @QueryParam("skipCount") @DefaultValue("0") int skipCount,
+                           @Context SecurityContext context) throws ServerException, BadRequestException {
         try {
-            List<User> users = adminUserDao.getAll(maxItems, skipCount);
-            return users.stream().map(user -> injectLinks(toDescriptor(user), getServiceContext())).collect(Collectors.toList());
+            final Page<User> usersPage = adminUserDao.getAll(maxItems, skipCount);
+            return Response.ok()
+                           .entity(usersPage.getItems(user -> injectLinks(toDescriptor(user), getServiceContext())))
+                           .header("Link", createLinkHeader(usersPage))
+                           .build();
         } catch (IllegalArgumentException e) {
             throw new BadRequestException(e.getMessage());
         }
