@@ -22,7 +22,6 @@ import org.eclipse.che.api.core.model.workspace.Workspace;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
-import org.eclipse.che.api.workspace.shared.Constants;
 import org.eclipse.che.api.workspace.shared.dto.event.WorkspaceStatusEvent;
 import org.eclipse.che.commons.schedule.ScheduleRate;
 import org.slf4j.Logger;
@@ -32,7 +31,6 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Named;
 import javax.inject.Singleton;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -73,7 +71,7 @@ public class WorkspaceActivityManager {
                     case RUNNING:
                         try {
                             Workspace workspace = workspaceManager.getWorkspace(event.getWorkspaceId());
-                            if (workspace.getAttributes().remove(WORKSPACE_STOPPED_BY) != null); {
+                            if (workspace.getAttributes().remove(WORKSPACE_STOPPED_BY) != null) {
                                 workspaceManager.updateWorkspace(event.getWorkspaceId(), workspace);
                             }
                         } catch (Exception ex) {
