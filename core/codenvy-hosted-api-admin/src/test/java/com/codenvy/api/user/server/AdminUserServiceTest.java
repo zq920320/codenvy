@@ -17,7 +17,6 @@ package com.codenvy.api.user.server;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 
 import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.eclipse.che.api.user.server.dao.User;
@@ -46,7 +45,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.SecurityContext;
 import javax.ws.rs.core.UriInfo;
 import java.lang.reflect.Field;
-import java.net.URI;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -113,7 +111,6 @@ public class AdminUserServiceTest {
         when(environmentContext.get(SecurityContext.class)).thenReturn(securityContext);
 
         when(uriInfo.getBaseUriBuilder()).thenReturn(new UriBuilderImpl());
-        when(uriInfo.getRequestUri()).thenReturn(URI.create(SERVICE_PATH));
 
         org.eclipse.che.commons.env.EnvironmentContext.getCurrent().setUser(new org.eclipse.che.commons.user.User() {
 
@@ -146,7 +143,7 @@ public class AdminUserServiceTest {
 
     private User createUser() throws NotFoundException, ServerException {
         final User testUser = new User().withId("test_id").withEmail("test@email");
-        when(userDao.getAll(anyInt(), anyInt())).thenReturn(new Page<>(singletonList(testUser), 0, 1, 1));
+        when(userDao.getAll(anyInt(), anyInt())).thenReturn(Collections.singletonList(testUser));
         return testUser;
     }
 
