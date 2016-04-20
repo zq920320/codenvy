@@ -52,16 +52,21 @@ doPost "application/json" "{}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}
 
 # verify is workspace running
 doSleep "6m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
+
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
+fetchJsonParameter "network.ports"
+NETWORK_PORTS=${OUTPUT}
+EXT_HOST_PORT_REGEX="4401/tcp=\[PortBinding\{hostIp='127.0.0.1', hostPort='([0-9]*)'\}\]"
+EXT_HOST_PORT=$([[ "$NETWORK_PORTS" =~ $EXT_HOST_PORT_REGEX ]] && echo ${BASH_REMATCH[1]})
+
+HOST_URL_FOR_PROJECT="${HOST_URL}:${EXT_HOST_PORT}"
 
 # create project "project-1" of type "console-java" in workspace "workspace-1"
-doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "http://${HOST_URL}/api/ext/project/${WORKSPACE_ID}/import/project-1?token=${TOKEN}"
+doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "http://${HOST_URL_FOR_PROJECT}/api/ext/project/${WORKSPACE_ID}/import/project-1?token=${TOKEN}"
 
-doPost "application/json" "{\"links\":[], \"name\":\"project-1\", \"attributes\":{}, \"type\":\"maven\", \"source\":{\"location\":\"https://github.com/che-samples/console-java-simple.git\", \"type\":\"git\", \"parameters\":{}}, \"path\":\"project-1\", \"description\":null, \"problems\":[], \"mixins\":[]}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}/project?token=${TOKEN}"
+doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
-
-doPut "application/json" "{\"links\":[], \"name\":\"project-1\", \"attributes\":{}, \"type\":\"maven\", \"source\":{\"location\":\"https://github.com/che-samples/console-java-simple.git\", \"type\":\"git\", \"parameters\":{}}, \"path\":\"project-1\", \"description\":null, \"problems\":[], \"mixins\":[]}" "http://${HOST_URL}/api/ext/project/${WORKSPACE_ID}/project-1?token=${TOKEN}"
 validateExpectedString ".*\"path\":\"/project-1.*"
 
 # create factory from template "minimal"
