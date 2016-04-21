@@ -185,18 +185,21 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
             final long allocating = sumRam(envOptional.get().getMachineConfigs());
             if (allocating > currentlyFreeRamMB) {
                 final String usedRamGb = DECIMAL_FORMAT.format(currentlyUsedRamMB / 1024D);
-                final String freeRamGb = DECIMAL_FORMAT.format(currentlyFreeRamMB / 1024D);
+                final String limitRamGb = DECIMAL_FORMAT.format(ramPerUser / 1024D);
+                final String requiredRamGb = DECIMAL_FORMAT.format(allocating / 1024D);
                 throw new LimitExceededException(format("There are %d running workspaces consuming" +
                                                         " %sGB RAM. Your current RAM limit is %sGB." +
+                                                        " This workspaces requires an additional %sGB." +
                                                         " You can stop other workspaces to free resources.",
                                                         runningWorkspaces,
                                                         usedRamGb,
-                                                        freeRamGb),
+                                                        limitRamGb,
+                                                        requiredRamGb),
                                                  ImmutableMap.of("workspaces_count", Long.toString(runningWorkspaces),
                                                                  "used_ram", usedRamGb,
-                                                                 "used_ram_unit", "gb",
-                                                                 "free_ram", freeRamGb,
-                                                                 "free_ram_unit", "gb"));
+                                                                 "limit_ram", limitRamGb,
+                                                                 "required_ram", requiredRamGb,
+                                                                 "ram_unit", "GB"));
             }
             return callback.call();
         } finally {

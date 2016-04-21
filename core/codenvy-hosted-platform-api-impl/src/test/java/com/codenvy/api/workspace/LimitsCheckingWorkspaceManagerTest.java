@@ -101,7 +101,7 @@ public class LimitsCheckingWorkspaceManagerTest {
 
     @Test(expectedExceptions = LimitExceededException.class,
             expectedExceptionsMessageRegExp = "There are 1 running workspaces consuming 2GB RAM. Your current RAM " +
-                                              "limit is 0GB. You can stop other workspaces to free resources.")
+                                              "limit is 2GB. This workspaces requires an additional 1GB. You can stop other workspaces to free resources.")
     public void shouldNotBeAbleToStartNewWorkspaceIfRamLimitIsExceeded() throws Exception {
         final LimitsCheckingWorkspaceManager manager = spy(new LimitsCheckingWorkspaceManager(2,
                                                                                               "2gb", // <- workspaces ram limit

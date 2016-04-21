@@ -200,10 +200,24 @@ export class LoadFactoryCtrl {
     startWorkspacePromise.then((data) => {
       console.log('Workspace started', data);
     }, (error) => {
-      let errorMessage = 'This factory is unable to start a new workspace. ';
-      if (error.data && error.data.message !== null) {
-        errorMessage += error.data.message;
+      let errorMessage;
+
+      if (!error || !error.data) {
+        errorMessage = 'This factory is unable to start a new workspace.';
+      } else if (error.data.errorCode === 10000 && error.data.attributes) {
+        let attributes = error.data.attributes;
+
+        errorMessage = 'This factory is unable to start a new workspace.' +
+        ' Your running workspaces are consuming ' +
+        attributes.used_ram + attributes.ram_unit + ' RAM.' +
+        ' Your current RAM limit is ' + attributes.limit_ram + attributes.ram_unit +
+        '. This factory requested an additional ' +
+        attributes.required_ram + attributes.ram_unit + '.' +
+        '  You can stop other workspaces to free resources.';
+      } else {
+        errorMessage = error.data.message;
       }
+
       this.handleError({data: {message: errorMessage}});
     });
   }
