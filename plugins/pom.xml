@@ -38,5 +38,6 @@
         <module>plugin-bitbucket</module>
         <module>plugin-github</module>
         <module>plugin-microsoft</module>
+        <module>plugin-product-info</module>
     </modules>
 </project>

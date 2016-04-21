@@ -12,49 +12,51 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.hosted.client.inject;
+package com.codenvy.plugin.product.info.client;
 
-import com.codenvy.ide.hosted.client.HostedLocalizationConstant;
-import com.codenvy.ide.hosted.client.HostedResources;
-import com.google.inject.Inject;
+import com.google.inject.Singleton;
 
 import org.eclipse.che.ide.api.ProductInfoDataProvider;
 import org.vectomatic.dom.svg.ui.SVGResource;
+
+import javax.inject.Inject;
+
 
 /**
  * Implementation of {@link ProductInfoDataProvider}
  *
  * @author Alexander Andrienko
+ * @author Oleksii Orel
  */
+@Singleton
 public class CodenvyProductInfoDataProvider implements ProductInfoDataProvider {
-
-    private final HostedLocalizationConstant hostedLocalizationConstant;
-    private final HostedResources            resources;
+    private final CodenvyLocalizationConstant locale;
+    private final CodenvyResources            resources;
 
     @Inject
-    public CodenvyProductInfoDataProvider(HostedLocalizationConstant hostedLocalizationConstant, HostedResources resources) {
-        this.hostedLocalizationConstant = hostedLocalizationConstant;
+    public CodenvyProductInfoDataProvider(CodenvyLocalizationConstant locale, CodenvyResources resources) {
+        this.locale = locale;
         this.resources = resources;
     }
 
     @Override
     public String getName() {
-        return hostedLocalizationConstant.getProductName();
+        return locale.getProductName();
     }
 
     @Override
     public String getSupportLink() {
-        return hostedLocalizationConstant.getSupportLink();
+        return locale.getSupportLink();
     }
 
     @Override
     public String getDocumentTitle() {
-        return hostedLocalizationConstant.codenvyTabTitle();
+        return locale.codenvyTabTitle();
     }
 
     @Override
     public String getDocumentTitle(String workspaceName) {
-        return hostedLocalizationConstant.codenvyTabTitle(workspaceName);
+        return locale.codenvyTabTitle(workspaceName);
     }
 
     @Override
@@ -64,6 +66,6 @@ public class CodenvyProductInfoDataProvider implements ProductInfoDataProvider {
 
     @Override
     public String getSupportTitle() {
-        return hostedLocalizationConstant.supportTitle();
+        return locale.supportTitle();
     }
 }

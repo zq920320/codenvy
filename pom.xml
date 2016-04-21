@@ -505,6 +505,11 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-product-info</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
                 <artifactId>codenvy-plugin-projectlocker-git-provider</artifactId>
                 <version>${project.version}</version>
             </dependency>
