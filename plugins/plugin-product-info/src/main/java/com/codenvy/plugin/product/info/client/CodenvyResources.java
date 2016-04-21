@@ -12,36 +12,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.ide.hosted.client;
+package com.codenvy.plugin.product.info.client;
 
 import com.google.gwt.resources.client.ClientBundle;
-import com.google.gwt.resources.client.CssResource;
 
 import org.vectomatic.dom.svg.ui.SVGResource;
 
 /**
- * Hosted extension resources (css styles, images).
+ * Hosted extension resources.
  *
- * @author Ann Shumilova
+ * @author Oleksii Orel
  */
-public interface HostedResources extends ClientBundle {
-    interface HostedCSS extends CssResource {
-        String bottomMenuTooltip();
-
-        String bottomMenuTooltipBody();
-
-        String bottomMenuTooltipHeader();
-
-        String temporary();
-
-        String temporaryLabel();
-
-        String blueButton();
-    }
-
-    @Source({"Hosted.css", "org/eclipse/che/ide/api/ui/style.css"})
-    HostedCSS hostedCSS();
-
-    @Source("temporary/temporary.svg")
-    SVGResource temporaryButton();
+public interface CodenvyResources extends ClientBundle {
+    @Source("logo/codenvy-logo.svg")
+    SVGResource logo();
 }
