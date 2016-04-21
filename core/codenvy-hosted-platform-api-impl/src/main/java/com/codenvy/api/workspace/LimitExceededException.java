@@ -14,7 +14,13 @@
  */
 package com.codenvy.api.workspace;
 
+import com.codenvy.api.ErrorCodes;
+
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.rest.shared.dto.ExtendedError;
+import org.eclipse.che.dto.server.DtoFactory;
+
+import java.util.Map;
 
 /**
  * Should be thrown when limit of some resource is exceeded
@@ -27,5 +33,12 @@ public class LimitExceededException extends ServerException {
 
     public LimitExceededException(String message) {
         super(message);
+    }
+
+    public LimitExceededException(String message, Map<String, String> attributes) {
+        super(DtoFactory.newDto(ExtendedError.class)
+                        .withMessage(message)
+                        .withAttributes(attributes)
+                        .withErrorCode(ErrorCodes.LIMIT_EXCEEDED));
     }
 }

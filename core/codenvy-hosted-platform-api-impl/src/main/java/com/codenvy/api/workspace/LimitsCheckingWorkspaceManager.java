@@ -15,6 +15,7 @@
 package com.codenvy.api.workspace;
 
 import com.google.common.annotations.VisibleForTesting;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.util.concurrent.Striped;
 
 import org.eclipse.che.api.core.BadRequestException;
@@ -58,8 +59,8 @@ import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
 
     private static final DecimalFormat DECIMAL_FORMAT = new DecimalFormat("#0.#");
-    private static final Striped<Lock> CREATE_LOCKS = Striped.lazyWeakLock(100);
-    private static final Striped<Lock> START_LOCKS  = Striped.lazyWeakLock(100);
+    private static final Striped<Lock> CREATE_LOCKS   = Striped.lazyWeakLock(100);
+    private static final Striped<Lock> START_LOCKS    = Striped.lazyWeakLock(100);
 
     private final int  workspacesPerUser;
     private final long maxRamPerEnv;
@@ -183,12 +184,19 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
             final long currentlyFreeRamMB = ramPerUser - currentlyUsedRamMB;
             final long allocating = sumRam(envOptional.get().getMachineConfigs());
             if (allocating > currentlyFreeRamMB) {
+                final String usedRamGb = DECIMAL_FORMAT.format(currentlyUsedRamMB / 1024D);
+                final String freeRamGb = DECIMAL_FORMAT.format(currentlyFreeRamMB / 1024D);
                 throw new LimitExceededException(format("There are %d running workspaces consuming" +
                                                         " %sGB RAM. Your current RAM limit is %sGB." +
                                                         " You can stop other workspaces to free resources.",
                                                         runningWorkspaces,
-                                                        DECIMAL_FORMAT.format(currentlyUsedRamMB / 1024D),
-                                                        DECIMAL_FORMAT.format(currentlyFreeRamMB / 1024D)));
+                                                        usedRamGb,
+                                                        freeRamGb),
+                                                 ImmutableMap.of("workspaces_count", Long.toString(runningWorkspaces),
+                                                                 "used_ram", usedRamGb,
+                                                                 "used_ram_unit", "gb",
+                                                                 "free_ram", freeRamGb,
+                                                                 "free_ram_unit", "gb"));
             }
             return callback.call();
         } finally {
@@ -220,7 +228,8 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                 throw new LimitExceededException(format("The maximum workspaces allowed per user is set to '%d' and " +
                                                         "you are currently at that limit. This value is set by your admin with the " +
                                                         "'limits.user.workspaces.count' property",
-                                                        workspacesPerUser));
+                                                        workspacesPerUser),
+                                                 ImmutableMap.of("workspace_max_count", Integer.toString(workspacesPerUser)));
             }
             return callback.call();
         } finally {
@@ -243,7 +252,11 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                 throw new LimitExceededException(format("The maximum RAM per workspace is set to '%dmb' and you requested '%dmb'. " +
                                                         "This value is set by your admin with the 'limits.workspace.env.ram' property",
                                                         maxRamPerEnv,
-                                                        workspaceRam));
+                                                        workspaceRam),
+                                                 ImmutableMap.of("environment_max_ram", Long.toString(maxRamPerEnv),
+                                                                 "environment_max_ram_unit", "mb",
+                                                                 "environment_ram", Long.toString(workspaceRam),
+                                                                 "environment_ram_unit", "mb"));
             }
         }
     }
