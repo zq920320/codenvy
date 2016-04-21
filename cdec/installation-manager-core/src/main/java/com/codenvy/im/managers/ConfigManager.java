@@ -541,7 +541,7 @@ public class ConfigManager {
      * Sets properties needed to configure Codenvy to work behind the proxy basing on the system environment.
      * @param properties
      */
-    private void setupProxyProperties(Map<String,String> properties) {
+    public void setupProxyProperties(Map<String,String> properties) {
         Map<String, String> environment = getEnvironment();
 
         if (environment.containsKey(Config.HTTP_PROXY)) {
