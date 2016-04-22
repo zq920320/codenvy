@@ -14,6 +14,8 @@
  */
 package com.codenvy.api.permission.server;
 
+import com.google.common.collect.ImmutableSet;
+
 import java.util.Objects;
 import java.util.Set;
 
@@ -23,13 +25,16 @@ import java.util.Set;
  * @author gazarenkov
  * @author Sergii Leschenko
  */
-public class PermissionsDomain {
+public abstract class PermissionsDomain {
+    public static final String SET_PERMISSIONS  = "setPermissions";
+    public static final String READ_PERMISSIONS = "readPermissions";
+
     private final String      id;
     private final Set<String> allowedActions;
 
     public PermissionsDomain(String id, Set<String> allowedActions) {
         this.id = id;
-        this.allowedActions = allowedActions;
+        this.allowedActions = ImmutableSet.copyOf(allowedActions);
     }
 
     /**

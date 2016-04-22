@@ -27,12 +27,15 @@ import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import static com.codenvy.api.workspace.server.WorkspaceDomain.DELETE;
 import static com.codenvy.api.workspace.server.WorkspaceDomain.DOMAIN_ID;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.READ;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.USE;
+import static java.util.Arrays.asList;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
@@ -59,49 +62,15 @@ public class WorkspacePermissionStorageTest {
         permissionStorage.store(new PermissionsImpl("user123",
                                                     "workspace",
                                                     "workspace123",
-                                                    Arrays.asList("read", "use")));
+                                                    asList(READ, USE)));
 
-        verify(workerDao).store(eq(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                           WorkspaceAction.USE))));
-    }
-
-    @Test
-    public void shouldBeAbleToGetPermissionsByUser() throws Exception {
-        when(workerDao.getWorkersByUser(anyString()))
-                .thenReturn(Collections.singletonList(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                                              WorkspaceAction.USE))));
-
-        List<PermissionsImpl> result = permissionStorage.get("user123");
-
-        verify(workerDao).getWorkersByUser(eq("user123"));
-        assertEquals(result.size(), 1);
-        assertEquals(result.get(0), new PermissionsImpl("user123",
-                                                        "workspace",
-                                                        "workspace123",
-                                                        Arrays.asList("read", "use")));
-    }
-
-    @Test
-    public void shouldBeAbleToGetPermissionsByUserAndDomain() throws Exception {
-        when(workerDao.getWorkersByUser(anyString()))
-                .thenReturn(Collections.singletonList(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                                              WorkspaceAction.USE))));
-
-        List<PermissionsImpl> result = permissionStorage.get("user123", DOMAIN_ID);
-
-        assertEquals(result.size(), 1);
-        verify(workerDao).getWorkersByUser(eq("user123"));
-        assertEquals(result.get(0), new PermissionsImpl("user123",
-                                                        "workspace",
-                                                        "workspace123",
-                                                        Arrays.asList("read", "use")));
+        verify(workerDao).store(eq(new WorkerImpl("user123", "workspace123", asList(READ, USE))));
     }
 
     @Test
     public void shouldBeAbleToGetPermissionsByUserAndDomainAndInstance() throws Exception {
         when(workerDao.getWorker(anyString(), anyString()))
-                .thenReturn(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                    WorkspaceAction.USE)));
+                .thenReturn(new WorkerImpl("user123", "workspace123", asList(READ, USE)));
 
         PermissionsImpl result = permissionStorage.get("user123", DOMAIN_ID, "workspace123");
 
@@ -109,14 +78,13 @@ public class WorkspacePermissionStorageTest {
         assertEquals(result, new PermissionsImpl("user123",
                                                  "workspace",
                                                  "workspace123",
-                                                 Arrays.asList("read", "use")));
+                                                 asList(READ, USE)));
     }
 
     @Test
     public void shouldBeAbleToGetPermissionsByDomainAndInstance() throws Exception {
         when(workerDao.getWorkers(anyString()))
-                .thenReturn(Collections.singletonList(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                                              WorkspaceAction.USE))));
+                .thenReturn(Collections.singletonList(new WorkerImpl("user123", "workspace123", asList(READ, USE))));
 
         List<PermissionsImpl> result = permissionStorage.getByInstance(DOMAIN_ID, "workspace123");
 
@@ -125,17 +93,17 @@ public class WorkspacePermissionStorageTest {
         assertEquals(result.get(0), new PermissionsImpl("user123",
                                                         "workspace",
                                                         "workspace123",
-                                                        Arrays.asList("read", "use")));
+                                                        asList(READ, USE)));
     }
 
     @Test
     public void shouldBeAbleToCheckPermissionExistence() throws Exception {
         when(workerDao.getWorker(anyString(), anyString()))
-                .thenReturn(new WorkerImpl("user123", "workspace123", Arrays.asList(WorkspaceAction.READ,
-                                                                                    WorkspaceAction.USE)));
+                .thenReturn(new WorkerImpl("user123", "workspace123", asList(READ,
+                                                                             USE)));
 
-        boolean existence = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", "read");
-        boolean nonExistence = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", "delete");
+        boolean existence = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", READ);
+        boolean nonExistence = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", DELETE);
 
         assertTrue(existence);
         assertFalse(nonExistence);
@@ -145,7 +113,7 @@ public class WorkspacePermissionStorageTest {
     public void shouldReturnFalseOnCheckPermissionExistenceWhenWorkerDoesNotExist() throws Exception {
         when(workerDao.getWorker(anyString(), anyString())).thenThrow(new NotFoundException(""));
 
-        boolean result = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", "delete");
+        boolean result = permissionStorage.exists("user123", DOMAIN_ID, "workspace123", DELETE);
 
         assertFalse(result);
     }

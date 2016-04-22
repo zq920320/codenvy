@@ -14,9 +14,6 @@
  */
 package com.codenvy.api.workspace.server.model;
 
-import com.codenvy.api.workspace.server.WorkspaceAction;
-import com.google.common.base.Preconditions;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -25,11 +22,11 @@ import java.util.Objects;
  * @author Sergii Leschenko
  */
 public class WorkerImpl implements Worker {
-    private String                user;
-    private String                workspace;
-    private List<WorkspaceAction> actions;
+    private String       user;
+    private String       workspace;
+    private List<String> actions;
 
-    public WorkerImpl(String user, String workspace, List<WorkspaceAction> actions) {
+    public WorkerImpl(String user, String workspace, List<String> actions) {
         this.user = user;
         this.workspace = workspace;
         this.actions = new ArrayList<>();
@@ -49,7 +46,7 @@ public class WorkerImpl implements Worker {
     }
 
     @Override
-    public List<WorkspaceAction> getActions() {
+    public List<String> getActions() {
         return actions;
     }
 

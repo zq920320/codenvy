@@ -21,6 +21,7 @@ import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.IndexOptions;
 import com.mongodb.client.model.UpdateOptions;
+import com.mongodb.client.result.DeleteResult;
 
 import org.bson.Document;
 import org.eclipse.che.api.core.NotFoundException;
@@ -94,10 +95,14 @@ public class WorkerDaoImpl implements WorkerDao {
     }
 
     @Override
-    public void removeWorker(String workspace, String user) throws ServerException {
+    public void removeWorker(String workspace, String user) throws ServerException, NotFoundException {
         try {
-            collection.deleteOne(and(eq("user", user),
-                                     eq("workspace", workspace)));
+            final DeleteResult deleteResult = collection.deleteOne(and(eq("user", user),
+                                                                       eq("workspace", workspace)));
+
+            if (deleteResult.getDeletedCount() == 0) {
+                throw new NotFoundException(format("Worker with user '%s' and workspace '%s' was not found", user, workspace));
+            }
         } catch (MongoException e) {
             throw new ServerException(e.getMessage(), e);
         }

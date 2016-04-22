@@ -15,7 +15,6 @@
 package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.permission.server.PermissionsImpl;
-import com.codenvy.api.workspace.server.WorkspaceAction;
 import com.codenvy.api.workspace.server.model.WorkerImpl;
 
 import org.bson.BsonReader;
@@ -27,7 +26,6 @@ import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Encodes & decodes {@link PermissionsImpl}.
@@ -51,19 +49,14 @@ public class WorkerImplCodec implements Codec<WorkerImpl> {
 
         return new WorkerImpl(document.getString("user"),
                               document.getString("workspace"),
-                              actions.stream()
-                                     .map(WorkspaceAction::getAction)
-                                     .collect(Collectors.toList()));
+                              actions);
     }
 
     @Override
     public void encode(BsonWriter writer, WorkerImpl permissions, EncoderContext encoderContext) {
         final Document document = new Document().append("user", permissions.getUser())
                                                 .append("workspace", permissions.getWorkspace())
-                                                .append("actions", permissions.getActions()
-                                                                              .stream()
-                                                                              .map(WorkspaceAction::toString)
-                                                                              .collect(Collectors.toList()));
+                                                .append("actions", permissions.getActions());
 
         codec.encode(writer, document, encoderContext);
     }
