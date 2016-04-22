@@ -13,6 +13,8 @@
 # --install-directory=<PATH TO SINGLE DIRECTORY FOR ALL RESOURCES>
 # --http-proxy=<HTTP PROXY URL>
 # --https-proxy=<HTTPS PROXY URL>
+# --http-proxy-for-codenvy=<HTTP PROXY URL>
+# --http-proxy-for-codenvy=<HTTPS PROXY URL>
 # --im-cli: to IM CLI client only
 
 trap cleanUp EXIT
@@ -112,26 +114,42 @@ setRunOptions() {
     for var in "$@"; do
         if [[ "$var" == "--multi" ]]; then
             CODENVY_TYPE="multi"
+
         elif [[ "$var" == "--silent" ]]; then
             SILENT=true
+
         elif [[ "$var" == "--im-cli" ]]; then
             ARTIFACT="installation-manager-cli"
+
         elif [[ "$var" =~ --version=.* ]]; then
             VERSION=$(echo "$var" | sed -e "s/--version=//g")
+
         elif [[ "$var" =~ --hostname=.* ]]; then
             HOST_NAME=$(echo "$var" | sed -e "s/--hostname=//g")
+
         elif [[ "$var" =~ --systemAdminName=.* ]]; then
             SYSTEM_ADMIN_NAME=$(echo "$var" | sed -e "s/--systemAdminName=//g")
+
         elif [[ "$var" =~ --systemAdminPassword=.* ]]; then
             SYSTEM_ADMIN_PASSWORD=$(echo "$var" | sed -e "s/--systemAdminPassword=//g")
+
         elif [[ "$var" =~ --fair-source-license=accept ]]; then
             FAIR_SOURCE_LICENSE_ACCEPTED=true
+
         elif [[ "$var" =~ --install-directory=.* ]]; then
             INSTALL_DIRECTORY=$(echo "$var" | sed -e "s/--install-directory=//g")
+
         elif [[ "$var" =~ --http-proxy=.* ]]; then
             HTTP_PROXY=$(echo "$var" | sed -e "s/--http-proxy=//g")
+
         elif [[ "$var" =~ --https-proxy=.* ]]; then
             HTTPS_PROXY=$(echo "$var" | sed -e "s/--https-proxy=//g")
+
+        elif [[ "$var" =~ --http-proxy-for-codenvy=.* ]]; then
+            HTTP_PROXY_FOR_CODENVY=$(echo "$var" | sed -e "s/--http-proxy-for-codenvy=//g")
+
+        elif [[ "$var" =~ --https-proxy-for-codenvy=.* ]]; then
+            HTTPS_PROXY_FOR_CODENVY=$(echo "$var" | sed -e "s/--https-proxy-for-codenvy=//g")
         fi
     done
 
@@ -937,6 +955,14 @@ printPreInstallInfo_single() {
 
     if [ -n "${HOST_NAME}" ]; then
         insertProperty "host_url" ${HOST_NAME}
+    fi
+
+    if [ -n "${HTTP_PROXY_FOR_CODENVY}" ]; then
+        insertProperty "http_proxy_for_codenvy" ${HTTP_PROXY_FOR_CODENVY}
+    fi
+
+    if [ -n "${HTTPS_PROXY_FOR_CODENVY}" ]; then
+        insertProperty "https_proxy_for_codenvy" ${HTTPS_PROXY_FOR_CODENVY}
     fi
 
     doCheckAvailablePorts_single

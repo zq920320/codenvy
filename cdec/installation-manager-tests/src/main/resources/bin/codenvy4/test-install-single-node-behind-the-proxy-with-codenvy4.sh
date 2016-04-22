@@ -24,7 +24,7 @@ vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 # install Codenvy 4.x behind the proxy
 executeSshCommand "echo '$PROXY_IP $PROXY_SERVER' | sudo tee --append /etc/hosts > /dev/null"
 
-installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY
+installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY --http-proxy-for-codenvy=$HTTP_PROXY --https-proxy-for-codenvy=$HTTPS_PROXY
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 authWithoutRealmAndServerDns "admin" "password"
 
