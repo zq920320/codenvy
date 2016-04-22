@@ -30,6 +30,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.RUNNING;
 import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 
 /**
@@ -58,9 +59,8 @@ public class WorkspaceActivityService extends Service {
         if (!workspace.getNamespace().equals(EnvironmentContext.getCurrent().getUser().getId())) {
             throw new ForbiddenException("Notify activity operation allowed only for workspace owner");
         }
-        if (workspace.getStatus() == STOPPED) {
-            throw new NotFoundException("Can't notify activity of the workspace '" + workspace.getId() + "' because it's not running");
+        if (workspace.getStatus() == RUNNING) {
+            workspaceActivityManager.update(wsId, System.currentTimeMillis());
         }
-        workspaceActivityManager.update(wsId, System.currentTimeMillis());
     }
 }
