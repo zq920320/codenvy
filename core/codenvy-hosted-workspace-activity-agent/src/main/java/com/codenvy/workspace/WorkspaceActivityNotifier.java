@@ -34,35 +34,59 @@ import java.util.concurrent.atomic.AtomicBoolean;
 public class WorkspaceActivityNotifier {
     private static final Logger LOG = LoggerFactory.getLogger(WorkspaceActivityNotifier.class);
 
-    private final AtomicBoolean          active;
+    private final AtomicBoolean          activeDuringThreshold;
     private final HttpJsonRequestFactory httpJsonRequestFactory;
     private final String                 apiEndpoint;
     private final String                 wsId;
+    private final long                   threshold;
+
+    private long lastUpdateTime;
+
 
     @Inject
     public WorkspaceActivityNotifier(HttpJsonRequestFactory httpJsonRequestFactory,
                                      @Named("api.endpoint") String apiEndpoint,
-                                     @Named("env.CHE_WORKSPACE_ID") String wsId) {
+                                     @Named("env.CHE_WORKSPACE_ID") String wsId,
+                                     @Named("workspace.activity.notify_time_threshold_ms") long threshold) {
         this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.apiEndpoint = apiEndpoint;
         this.wsId = wsId;
-        this.active = new AtomicBoolean(false);
+        this.activeDuringThreshold = new AtomicBoolean(false);
+        this.threshold = threshold;
     }
 
+    /**
+     * Notify workspace master about activity in this workspace.
+     * <p/>
+     * After last notification, any consecutive activities that come within specific amount of time
+     * - {@code threshold}, will not notify immediately, but trigger notification in scheduler method
+     * {@link WorkspaceActivityNotifier#scheduleActivityNotification}
+     */
     public void onActivity() {
-        active.set(true);
+        long currentTime = System.currentTimeMillis();
+        if (currentTime < (lastUpdateTime + threshold)) {
+            activeDuringThreshold.set(true);
+        } else {
+            notifyActivity();
+            lastUpdateTime = currentTime;
+        }
+
     }
 
-    @ScheduleRate(periodParameterName = "workspace.activity.schedule.period")
-    void notifyActivity() {
-        if (active.compareAndSet(true, false)) {
-            try {
-                httpJsonRequestFactory.fromUrl(apiEndpoint + "/activity/" + wsId)
-                                      .usePutMethod()
-                                      .request();
-            } catch (Exception e) {
-                LOG.error("Cannot notify master about workspace " + wsId + " activity", e);
-            }
+    @ScheduleRate(periodParameterName = "workspace.activity.schedule_period_s")
+    private void scheduleActivityNotification() {
+        if (activeDuringThreshold.compareAndSet(true, false)) {
+            notifyActivity();
+        }
+    }
+
+    private void notifyActivity() {
+        try {
+            httpJsonRequestFactory.fromUrl(apiEndpoint + "/activity/" + wsId)
+                                  .usePutMethod()
+                                  .request();
+        } catch (Exception e) {
+            LOG.error("Cannot notify master about workspace " + wsId + " activity", e);
         }
     }
 }
