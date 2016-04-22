@@ -20,7 +20,7 @@ export class CodenvyNavBarCtrl {
    * Default constructor
    * @ngInject for Dependency injection
    */
-  constructor($mdSidenav, $scope, $location, $route, userDashboardConfig, cheAPI, codenvyAPI, onBoarding, imsArtifactApi) {
+  constructor($mdSidenav, $scope, $location, $route, userDashboardConfig, cheAPI, codenvyAPI, onBoarding, imsArtifactApi, $rootScope, $http) {
     this.mdSidenav = $mdSidenav;
     this.$scope = $scope;
     this.$location = $location;
@@ -31,6 +31,7 @@ export class CodenvyNavBarCtrl {
     this.imsArtifactApi = imsArtifactApi;
     this.cheUser = cheAPI.getUser();
     this.links = [{href: '#/create-workspace', name: 'New Workspace'}];
+    this.$rootScope = $rootScope;
 
     this.displayLoginItem = userDashboardConfig.developmentMode;
     let promiseService = this.cheAPI.getService().fetchServices();
@@ -93,6 +94,18 @@ export class CodenvyNavBarCtrl {
       }
       else {
         $scope.$broadcast('navbar-selected:clear');
+      }
+    });
+
+    // update branding
+    let assetPrefix = 'assets/branding/';
+    $http.get(assetPrefix + 'product.json').then((data) => {
+      if (data.data.navbarButton) {
+        this.$rootScope.branding.navbarButton = {
+          title: data.data.navbarButton.title,
+          tooltip: data.data.navbarButton.tooltip,
+          link: data.data.navbarButton.link
+        };
       }
     });
   }
