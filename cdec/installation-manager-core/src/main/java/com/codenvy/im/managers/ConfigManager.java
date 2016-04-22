@@ -415,7 +415,7 @@ public class ConfigManager {
                         setupSSHAccessProperties(properties);
                     }
                     setupSshKeyParts(properties);
-                    properties.putAll(obtainProxyProperties());
+                    setupProxyProperties(properties);
 
                 } else { // update
                     Map<String, String> newProperties;
@@ -444,6 +444,20 @@ public class ConfigManager {
                 return properties;
             default:
                 throw new ArtifactNotFoundException(artifact);
+        }
+    }
+
+    private void setupProxyProperties(Map<String, String> properties) {
+        if (properties.containsKey(Config.HTTP_PROXY_FOR_CODENVY) || properties.containsKey(Config.HTTPS_PROXY_FOR_CODENVY)) {
+            if (properties.containsKey(Config.HTTP_PROXY_FOR_CODENVY)) {
+                properties.put(Config.HTTP_PROXY, properties.get(Config.HTTP_PROXY_FOR_CODENVY));
+            }
+
+            if (properties.containsKey(Config.HTTPS_PROXY_FOR_CODENVY)) {
+                properties.put(Config.HTTPS_PROXY, properties.get(Config.HTTPS_PROXY_FOR_CODENVY));
+            }
+        } else {
+            properties.putAll(obtainProxyProperties());
         }
     }
 
