@@ -35,22 +35,9 @@
           <div layout="column"
                layout-align="center center"
                flex="auto">
-            <div class="load-factory-working-log">
-              <che-accordion ng-repeat="step in loadFactoryCtrl.getLoadingSteps()" che-index="{{$index}}"
-                             che-open-condition="(loadFactoryCtrl.getLoadingSteps()[$index].logs.length > 0)"
-                             ng-class="{'che-accordion-active': ($index == loadFactoryCtrl.getCurrentProgressStep()),
-                                       'che-accordion-error': loadFactoryCtrl.getLoadingSteps()[$index].hasError}">
-                <div class="che-accordion-title">
-                  <span>{{loadFactoryCtrl.getLoadingSteps()[$index].text}}{{$index < loadFactoryCtrl.getCurrentProgressStep() ? ' ... completed' : ''}}</span>
-                </div>
-                <div class="che-accordion-body" ng-show="(loadFactoryCtrl.getLoadingSteps()[$index].logs.length > 0)">
-                  <che-logs-output che-title="{{loadFactoryCtrl.getLoadingSteps()[$index].inProgressText}}"
-                                   che-text="loadFactoryCtrl.getLoadingSteps()[$index].logs"
-                                   che-scrollback="100"
-                                   che-refresh-time="500"></che-logs-output>
-                </div>
-              </che-accordion>
-            </div>
+            <che-steps-container class="load-factory-working-log"
+                                 che-all-steps="loadFactoryCtrl.getLoadingSteps()"
+                                 che-current-step="loadFactoryCtrl.getCurrentProgressStep()"></che-steps-container>
           </div>
         </div>
         <!--bottom bar-->
