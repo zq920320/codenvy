@@ -37,6 +37,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -137,11 +138,18 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
 
             case 1:
                 return new MacroCommand(new ArrayList<Command>() {{
-                    // install puppet rpm
                     add(createCommand("yum clean all"));   // cleanup to avoid yum install failures
+
+                    String setProxyCommandStr = "";
+                    Map<String, String> proxySettings = new HashMap<>();
+                    configManager.setupProxyProperties(proxySettings);
+                    for (Map.Entry<String, String> item : proxySettings.entrySet()) {
+                        setProxyCommandStr += format("export %s = %s; ", item.getKey(), item.getValue());
+                    }
+
                     add(createCommand(format("if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; "
-                        + "then sudo yum -y -q install %s; "
-                        + "fi", config.getValue(Config.PUPPET_RESOURCE_URL))));
+                                             + "then %s sudo -E yum -y -q install %s; "
+                                             + "fi", setProxyCommandStr, config.getValue(Config.PUPPET_RESOURCE_URL))));
                         
                     // install and enable puppet server
                     add(createCommand(format("sudo yum -y -q install %s", config.getValue(Config.PUPPET_SERVER_PACKAGE))));

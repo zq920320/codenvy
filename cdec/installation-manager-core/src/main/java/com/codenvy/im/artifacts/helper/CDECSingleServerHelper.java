@@ -36,6 +36,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -111,11 +112,19 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                                              "  echo \"\n127.0.0.1 %1$s\" | sudo tee --append /etc/hosts > /dev/null\n" +
                                              "fi", config.getHostUrl())));
 
-                    // install puppet rpm
+                    // install puppet
                     add(createCommand("yum clean all"));   // cleanup to avoid yum install failures
+
+                    String setProxyCommandStr = "";
+                    Map<String, String> proxySettings = new HashMap<>();
+                    configManager.setupProxyProperties(proxySettings);
+                    for (Map.Entry<String, String> item : proxySettings.entrySet()) {
+                        setProxyCommandStr += format("export %s = %s; ", item.getKey(), item.getValue());
+                    }
+
                     add(createCommand(format("if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; "
-                        + "then sudo yum -y -q install %s; "
-                        + "fi", config.getValue(Config.PUPPET_RESOURCE_URL))));
+                                             + "then %s sudo -E yum -y -q install %s; "
+                                             + "fi", setProxyCommandStr, config.getValue(Config.PUPPET_RESOURCE_URL))));
 
                     // install and enable puppet server
                     add(createCommand(format("sudo yum -y -q install %s", config.getValue(Config.PUPPET_SERVER_PACKAGE))));
@@ -136,7 +145,6 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                 commands.add(createCommand("sudo sed -i \"\\$a[file]\"                      /etc/puppet/fileserver.conf"));
                 commands.add(createCommand("sudo sed -i \"\\$a    path /etc/puppet/files\"  /etc/puppet/fileserver.conf"));
                 commands.add(createCommand("sudo sed -i \"\\$a    allow *\"                 /etc/puppet/fileserver.conf"));
-
 
                 Iterator<Path> propertiesFiles = configManager.getCodenvyPropertiesFiles(InstallType.SINGLE_SERVER);
                 while (propertiesFiles.hasNext()) {
