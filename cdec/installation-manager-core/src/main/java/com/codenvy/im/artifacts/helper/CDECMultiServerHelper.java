@@ -140,12 +140,9 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                 return new MacroCommand(new ArrayList<Command>() {{
                     add(createCommand("yum clean all"));   // cleanup to avoid yum install failures
 
-                    String setProxyCommandStr = "";
-                    Map<String, String> proxySettings = new HashMap<>();
-                    configManager.setupProxyProperties(proxySettings);
-                    for (Map.Entry<String, String> item : proxySettings.entrySet()) {
-                        setProxyCommandStr += format("export %s = %s; ", item.getKey(), item.getValue());
-                    }
+                    Map<String, String> proxySettings = configManager.obtainProxyProperties();
+                    StringBuilder setProxyCommandStr = new StringBuilder();
+                    proxySettings.forEach((key, value) -> setProxyCommandStr.append(String.format("export %s = %s; ", key, value)));
 
                     add(createCommand(format("if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; "
                                              + "then %s sudo -E yum -y -q install %s; "

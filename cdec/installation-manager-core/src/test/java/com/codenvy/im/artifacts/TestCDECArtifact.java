@@ -79,7 +79,7 @@ public class TestCDECArtifact extends BaseTest {
     public static final String CODENVY_3_VERSION = "3.0.0";
     public static final String CODENVY_4_VERSION = "4.0.0-beta-2";
 
-    public static Integer i;
+    public static Integer k;
 
     @Mock
     private HttpTransport mockTransport;
@@ -189,6 +189,111 @@ public class TestCDECArtifact extends BaseTest {
         }
     }
 
+    @Test
+    public void testInstallPuppetCommandsForSingleServer() throws IOException {
+        final String installVersionStr = "4.0.0";
+        Version versionToInstall = Version.valueOf(installVersionStr);
+        Path pathToBinaries = Paths.get("some path");
+
+        InstallOptions options = new InstallOptions();
+        options.setInstallType(InstallType.SINGLE_SERVER);
+        options.setConfigProperties(ImmutableMap.of("some property", "some value", Config.HOST_URL, "host_url"));
+
+        // check install puppet commands
+        List<Command> commands = ((MacroCommand) spyCdecArtifact.getInstallCommand(versionToInstall, pathToBinaries, options.setStep(1))).getCommands();
+        assertEquals(commands.size(), 8);
+        assertEquals(commands.toString(), "[{'command'='if ! sudo grep -Eq \"127.0.0.1.*puppet\" /etc/hosts; then\n"
+                                          + " echo '\n"
+                                          + "127.0.0.1 puppet' | sudo tee --append /etc/hosts > /dev/null\n"
+                                          + "fi', 'agent'='LocalAgent'}, {'command'='if ! sudo grep -Eq \" host_url$\" /etc/hosts; then\n"
+                                          + "  echo \"\n"
+                                          + "127.0.0.1 host_url\" | sudo tee --append /etc/hosts > /dev/null\n"
+                                          + "fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='yum clean all', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}]");
+
+        // test installing puppet with proxy settings
+        final String testHttpProxy = "http://proxy.net:8080";
+        final String testHttpsProxy = "https://proxy.net:8080";
+        final ImmutableMap<String, Object> environment = ImmutableMap.of(Config.HTTP_PROXY, testHttpProxy,
+                                                                         Config.HTTPS_PROXY, testHttpsProxy);
+        doReturn(environment).when(spyConfigManager).getEnvironment();
+        commands = ((MacroCommand) spyCdecArtifact.getInstallCommand(versionToInstall, pathToBinaries, options.setStep(1))).getCommands();
+        assertEquals(commands.size(), 8);
+        assertEquals(commands.toString(), "[{'command'='if ! sudo grep -Eq \"127.0.0.1.*puppet\" /etc/hosts; then\n"
+                                          + " echo '\n"
+                                          + "127.0.0.1 puppet' | sudo tee --append /etc/hosts > /dev/null\n"
+                                          + "fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if ! sudo grep -Eq \" host_url$\" /etc/hosts; then\n"
+                                          + "  echo \"\n"
+                                          + "127.0.0.1 host_url\" | sudo tee --append /etc/hosts > /dev/null\n"
+                                          + "fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='yum clean all', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then export http_proxy = http://proxy.net:8080; export https_proxy = https://proxy.net:8080;  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}]");
+    }
+
+    @Test
+    public void testInstallPuppetCommandsForMultiServer() throws Exception {
+        final String installVersionStr = "4.0.0";
+        Version versionToInstall = Version.valueOf(installVersionStr);
+        Path pathToBinaries = Paths.get("some path");
+
+        prepareMultiNodeEnv(spyConfigManager, mockTransport);
+
+        InstallOptions options = new InstallOptions();
+        options.setConfigProperties(getTestMultiNodeProperties());
+        options.setInstallType(InstallType.MULTI_SERVER);
+
+        // check install puppet commands
+        List<Command> commands = ((MacroCommand) spyCdecArtifact.getInstallCommand(versionToInstall, pathToBinaries, options.setStep(1))).getCommands();
+        assertEquals(commands.size(), 10);
+        assertEquals(commands.toString(), "[{'command'='yum clean all', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}, [{'command'='yum clean all', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='yum clean all', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='yum clean all', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='sudo systemctl enable puppet', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}]]");
+
+        // test installing puppet with proxy settings
+        final String testHttpProxy = "http://proxy.net:8080";
+        final String testHttpsProxy = "https://proxy.net:8080";
+        final ImmutableMap<String, Object> environment = ImmutableMap.of(Config.HTTP_PROXY, testHttpProxy,
+                                                                         Config.HTTPS_PROXY, testHttpsProxy);
+        doReturn(environment).when(spyConfigManager).getEnvironment();
+        commands = ((MacroCommand) spyCdecArtifact.getInstallCommand(versionToInstall, pathToBinaries, options.setStep(1))).getCommands();
+        assertEquals(commands.size(), 10);
+        assertEquals(commands.toString(), "[{'command'='yum clean all', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then export http_proxy = http://proxy.net:8080; export https_proxy = https://proxy.net:8080;  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}, [{'command'='yum clean all', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='yum clean all', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='yum clean all', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then sudo yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}], [{'command'='sudo systemctl enable puppet', 'agent'='{'host'='data.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='{'host'='analytics.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}, "
+                                          + "{'command'='sudo systemctl enable puppet', 'agent'='{'host'='api.example.com', 'port'='22', 'user'='ndp', 'identity'='[~/.ssh/id_rsa]'}'}]]");
+    }
+
     @Test(expectedExceptions = IllegalArgumentException.class)
     public void testGetInstallSingleServerCommandError() throws Exception {
         InstallOptions options = new InstallOptions();
@@ -262,21 +367,21 @@ public class TestCDECArtifact extends BaseTest {
 
         List<Command> commands = ((MacroCommand) spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(1))).getCommands();
         assertEquals(commands.size(), 8);
-        i = 0;
+        k = 0;
 
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back ; sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back.\\d+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                                                      "Actual command: " + commands.get(i++).toString());
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back ; sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back.\\d+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                                                      "Actual command: " + commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|YOUR_DNS_NAME|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"host_url\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property *= *\"[^\"]*\"|$some property = \"some value\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|YOUR_DNS_NAME|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"host_url\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property *= *\"[^\"]*\"|$some property = \"some value\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
 
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back ; sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   "Actual command: " + commands.get(i++).toString());
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back ; sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                   "Actual command: " + commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|YOUR_DNS_NAME|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"host_url\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property *= *\"[^\"]*\"|$some property = \"some value\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|YOUR_DNS_NAME|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"host_url\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property *= *\"[^\"]*\"|$some property = \"some value\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
 
         doReturn(ImmutableList.of(Paths.get(TMP_CODENVY, Config.SINGLE_SERVER_BASE_CONFIG_PP),
                                   Paths.get(TMP_CODENVY, Config.SINGLE_SERVER_PP)).iterator())
@@ -330,31 +435,31 @@ public class TestCDECArtifact extends BaseTest {
 
         List<Command> commands = ((MacroCommand) spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(1))).getCommands();
         assertEquals(commands.size(), 18);
-        i = 0;
+        k = 0;
 
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                                                      "Actual command: " + commands.get(i++).toString());
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                                                      "Actual command: " + commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$data_host_name *= *\"[^\"]*\"|$data_host_name = \"data.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$puppet_master_host_name *= *\"[^\"]*\"|$puppet_master_host_name = \"master.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"hostname\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$api_host_name *= *\"[^\"]*\"|$api_host_name = \"api.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$analytics_host_name *= *\"[^\"]*\"|$analytics_host_name = \"analytics.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$version *= *\"[^\"]*\"|$version = \"3.3.0\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$data_host_name *= *\"[^\"]*\"|$data_host_name = \"data.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$puppet_master_host_name *= *\"[^\"]*\"|$puppet_master_host_name = \"master.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"hostname\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$api_host_name *= *\"[^\"]*\"|$api_host_name = \"api.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$analytics_host_name *= *\"[^\"]*\"|$analytics_host_name = \"analytics.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$version *= *\"[^\"]*\"|$version = \"3.3.0\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
 
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                                                      "Actual command: " + commands.get(i++).toString());
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                                                      "Actual command: " + commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$data_host_name *= *\"[^\"]*\"|$data_host_name = \"data.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$puppet_master_host_name *= *\"[^\"]*\"|$puppet_master_host_name = \"master.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"hostname\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$api_host_name *= *\"[^\"]*\"|$api_host_name = \"api.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$analytics_host_name *= *\"[^\"]*\"|$analytics_host_name = \"analytics.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$version *= *\"[^\"]*\"|$version = \"3.3.0\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|api.example.com|api.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|data.example.com|data.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|analytics.example.com|analytics.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|puppet-master.example.com|master.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$data_host_name *= *\"[^\"]*\"|$data_host_name = \"data.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$puppet_master_host_name *= *\"[^\"]*\"|$puppet_master_host_name = \"master.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"hostname\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$api_host_name *= *\"[^\"]*\"|$api_host_name = \"api.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$analytics_host_name *= *\"[^\"]*\"|$analytics_host_name = \"analytics.example.com\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$version *= *\"[^\"]*\"|$version = \"3.3.0\"|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|api.example.com|api.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|data.example.com|data.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|analytics.example.com|analytics.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/nodes.pp | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|puppet-master.example.com|master.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/nodes.pp', 'agent'='LocalAgent'}", TMP_CODENVY));
 
         assertEquals(spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(2)).toString(),
                      format("[{'command'='sudo cat %1$s/patches/multi_server/patch_before_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$data_host_name|data.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/multi_server/patch_before_update.sh', 'agent'='LocalAgent'}, "
@@ -698,65 +803,65 @@ public class TestCDECArtifact extends BaseTest {
 
         MacroCommand updatePuppetConfigCommand = (MacroCommand) testHelper.getUpdatePuppetConfigCommand(testConfig, oldHostName, newHostName);
         List<Command> commands = updatePuppetConfigCommand.getCommands();
-        i = 0;
+        k = 0;
         assertEquals(commands.size(), 8);
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches("\\{'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}"),
-                   "Actual command: " + commands.get(i++).toString());
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='while true; do\n"
-                                                 + "  local COUNTER=0\n"
-                                                 + "  sudo puppet cert list --all | grep '\"new\"' &>/dev/null\n"
-                                                 + "  hasCertificate=$?\n"
-                                                 + "  if [[ $hasCertificate == 0 ]]; then\n"
-                                                 + "     sudo systemctl restart puppetmaster\n"
-                                                 + "     break\n"
-                                                 + "  fi\n"
-                                                 + "  sleep 10\n"
-                                                 + "  let COUNTER=COUNTER+1\n"
-                                                 + "  if [[ $COUNTER -eq 30 ]]; then\n"
-                                                 + "     echo 'Puppet agent error' >&2\n"
-                                                 + "     exit 1\n"
-                                                 + "  fi\n"
-                                                 + "done\n"
-                                                 + "', 'agent'='LocalAgent'}");
+        assertTrue(commands.get(k).toString().matches("\\{'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}"),
+                   "Actual command: " + commands.get(k++).toString());
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='while true; do\n"
+                                                   + "  local COUNTER=0\n"
+                                                   + "  sudo puppet cert list --all | grep '\"new\"' &>/dev/null\n"
+                                                   + "  hasCertificate=$?\n"
+                                                   + "  if [[ $hasCertificate == 0 ]]; then\n"
+                                                   + "     sudo systemctl restart puppetmaster\n"
+                                                   + "     break\n"
+                                                   + "  fi\n"
+                                                   + "  sleep 10\n"
+                                                   + "  let COUNTER=COUNTER+1\n"
+                                                   + "  if [[ $COUNTER -eq 30 ]]; then\n"
+                                                   + "     echo 'Puppet agent error' >&2\n"
+                                                   + "     exit 1\n"
+                                                   + "  fi\n"
+                                                   + "done\n"
+                                                   + "', 'agent'='LocalAgent'}");
 
         MacroCommand updateCodenvyConfigCommand = (MacroCommand) testHelper.getUpdateConfigCommand(testConfig, properties);
         commands = updateCodenvyConfigCommand.getCommands();
         assertEquals(commands.size(), 6);
-        i = 0;
-        assertTrue(commands.get(i).toString().matches(
+        k = 0;
+        assertTrue(commands.get(k).toString().matches(
                 format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back ; " +
                 "sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches(
+        assertTrue(commands.get(k).toString().matches(
                 format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back ; " +
                 "sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertEquals(commands.get(i++).toString(), "{'command'='testFile=\"/home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties\"; while true; do     if sudo grep \"api.endpoint=http://new/api\" ${testFile}; then break; fi;     sleep 5; done; "
-                                                  + "sleep 15; # delay to involve into start of rebooting api server', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "Wait until artifact 'codenvy' becomes alive");
+        assertEquals(commands.get(k++).toString(), "{'command'='testFile=\"/home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties\"; while true; do     if sudo grep \"api.endpoint=http://new/api\" ${testFile}; then break; fi;     sleep 5; done; "
+                                                   + "sleep 15; # delay to involve into start of rebooting api server', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "Wait until artifact 'codenvy' becomes alive");
     }
 
     @Test
@@ -778,66 +883,66 @@ public class TestCDECArtifact extends BaseTest {
         MacroCommand updatePuppetConfigCommand = (MacroCommand) testHelper.getUpdatePuppetConfigCommand(testConfig, oldHostName, newHostName);
         List<Command> commands = updatePuppetConfigCommand.getCommands();
         assertEquals(commands.size(), 10);
-        i = 0;
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/\\^node\\\\d+\\\\.old\\$/\\^node\\\\d+\\\\.new\\$/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo sed -i 's/\\^node\\\\d+\\\\.old\\$/\\^node\\\\d+\\\\.new\\$/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        k = 0;
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/\\^node\\\\d+\\\\.old\\$/\\^node\\\\d+\\\\.new\\$/g' %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/node \"old\"/node \"new\"/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo sed -i 's/\\^node\\\\d+\\\\.old\\$/\\^node\\\\d+\\\\.new\\$/g' %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches("\\{'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]* ; ', 'agent'='LocalAgent'\\}"),
-                   "Actual command: " + commands.get(i++).toString());
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='while true; do\n"
-                                                 + "  local COUNTER=0\n"
-                                                 + "  sudo puppet cert list --all | grep '\"new\"' &>/dev/null\n"
-                                                 + "  hasCertificate=$?\n"
-                                                 + "  if [[ $hasCertificate == 0 ]]; then\n"
-                                                 + "     sudo systemctl restart puppetmaster\n"
-                                                 + "     break\n"
-                                                 + "  fi\n"
-                                                 + "  sleep 10\n"
-                                                 + "  let COUNTER=COUNTER+1\n"
-                                                 + "  if [[ $COUNTER -eq 30 ]]; then\n"
-                                                 + "     echo 'Puppet agent error' >&2\n"
-                                                 + "     exit 1\n"
-                                                 + "  fi\n"
-                                                 + "done\n"
-                                                 + "', 'agent'='LocalAgent'}");
+        assertTrue(commands.get(k).toString().matches("\\{'command'='sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back ; sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back.[0-9]* ; ', 'agent'='LocalAgent'\\}"),
+                   "Actual command: " + commands.get(k++).toString());
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo sed -i 's/certname = old/certname = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo sed -i 's/server = old/server = new/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo grep \"dns_alt_names = .*,new.*\" /etc/puppet/puppet.conf; if [ $? -ne 0 ]; then sudo sed -i 's/dns_alt_names = .*/&,new/' /etc/puppet/puppet.conf; fi', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo systemctl restart puppet', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='while true; do\n"
+                                                   + "  local COUNTER=0\n"
+                                                   + "  sudo puppet cert list --all | grep '\"new\"' &>/dev/null\n"
+                                                   + "  hasCertificate=$?\n"
+                                                   + "  if [[ $hasCertificate == 0 ]]; then\n"
+                                                   + "     sudo systemctl restart puppetmaster\n"
+                                                   + "     break\n"
+                                                   + "  fi\n"
+                                                   + "  sleep 10\n"
+                                                   + "  let COUNTER=COUNTER+1\n"
+                                                   + "  if [[ $COUNTER -eq 30 ]]; then\n"
+                                                   + "     echo 'Puppet agent error' >&2\n"
+                                                   + "     exit 1\n"
+                                                   + "  fi\n"
+                                                   + "done\n"
+                                                   + "', 'agent'='LocalAgent'}");
 
         MacroCommand updateCodenvyConfigCommand = (MacroCommand) testHelper.getUpdateConfigCommand(testConfig, properties);
         commands = updateCodenvyConfigCommand.getCommands();
         assertEquals(commands.size(), 6);
-        i = 0;
-        assertTrue(commands.get(i).toString().matches(
+        k = 0;
+        assertTrue(commands.get(k).toString().matches(
             format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back ; " +
             "sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches(
+        assertTrue(commands.get(k).toString().matches(
             format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back ; " +
             "sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertEquals(commands.get(i++).toString(), "{'command'='testFile=\"/home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties\"; while true; do     if sudo grep \"api.endpoint=http://new/api\" ${testFile}; then break; fi;     sleep 5; done; "
-                                                 + "sleep 15; # delay to involve into start of rebooting api server', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "Wait until artifact 'codenvy' becomes alive");
+        assertEquals(commands.get(k++).toString(), "{'command'='testFile=\"/home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties\"; while true; do     if sudo grep \"api.endpoint=http://new/api\" ${testFile}; then break; fi;     sleep 5; done; "
+                                                   + "sleep 15; # delay to involve into start of rebooting api server', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "Wait until artifact 'codenvy' becomes alive");
     }
 
 
@@ -857,47 +962,47 @@ public class TestCDECArtifact extends BaseTest {
 
         List<Command> commands = ((MacroCommand) command).getCommands();
         assertEquals(commands.size(), 8);
-        i = 0;
-        assertTrue(commands.get(i).toString().matches(
+        k = 0;
+        assertTrue(commands.get(k).toString().matches(
                 format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back ; " +
                 "sudo cp %1$s/manifests/nodes/single_server/base_config.pp %1$s/manifests/nodes/single_server/base_config.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$ldap_host *= *\"[^\"]*\"|$ldap_host = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/base_config.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"old\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/base_config.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches(
+        assertTrue(commands.get(k).toString().matches(
                 format("\\{'command'='sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back ; " +
                 "sudo cp %1$s/manifests/nodes/single_server/single_server.pp %1$s/manifests/nodes/single_server/single_server.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$ldap_host *= *\"[^\"]*\"|$ldap_host = \"new\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/single_server/single_server.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"old\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/single_server/single_server.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "Wait until artifact 'codenvy' becomes alive");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "Wait until artifact 'codenvy' becomes alive");
     }
 
 
@@ -917,30 +1022,30 @@ public class TestCDECArtifact extends BaseTest {
         Command command = spyCDECMultiServerHelper.getUpdateConfigCommand(testConfig, properties);
         List<Command> commands = ((MacroCommand) command).getCommands();
         assertEquals(commands.size(), 8);
-        i = 0;
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   commands.get(i++).toString());
+        k = 0;
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/custom_configurations.pp %1$s/manifests/nodes/multi_server/custom_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                   commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/custom_configurations.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"a\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/custom_configurations.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
 
-        assertTrue(commands.get(i).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
-                   "Actual result: " + commands.get(i++).toString());
+        assertTrue(commands.get(k).toString().matches(format("\\{'command'='sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back ; sudo cp %1$s/manifests/nodes/multi_server/base_configurations.pp %1$s/manifests/nodes/multi_server/base_configurations.pp.back.[0-9]+ ; ', 'agent'='LocalAgent'\\}", ETC_PUPPET)),
+                   "Actual result: " + commands.get(k++).toString());
 
-        assertEquals(commands.get(i++).toString(),
+        assertEquals(commands.get(k++).toString(),
                      format("{'command'='sudo cat %1$s/manifests/nodes/multi_server/base_configurations.pp " +
                      "| sed ':a;N;$!ba;s/\\n/~n/g' " +
                      "| sed 's|$host_url *= *\"[^\"]*\"|$host_url = \"a\"|g' " +
                      "| sed 's|~n|\\n|g' > tmp.tmp " +
                      "&& sudo mv tmp.tmp %1$s/manifests/nodes/multi_server/base_configurations.pp', 'agent'='LocalAgent'}", ETC_PUPPET));
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='{'host'='data.dev.com', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(i++).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='{'host'='api.dev.com', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
-        assertEquals(commands.get(i++).toString(), "Wait until artifact 'codenvy' becomes alive");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='{'host'='data.dev.com', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(k++).toString(), format("{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='{'host'='api.dev.com', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+        assertEquals(commands.get(k++).toString(), "Wait until artifact 'codenvy' becomes alive");
     }
 
     @Test
@@ -955,12 +1060,12 @@ public class TestCDECArtifact extends BaseTest {
         Command command = spyCdecArtifact.getReinstallCommand();
         List<Command> commands = ((MacroCommand) command).getCommands();
         assertEquals(commands.size(), 5);
-        i = 0;
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo rm -rf /home/codenvy/archives', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo rm -rf /home/codenvy-im/archives', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='/bin/systemctl status codenvy.service; if [ $? -eq 0 ]; then   sudo /bin/systemctl stop codenvy.service; fi; ', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
-        assertEquals(commands.get(i++).toString(), "PuppetErrorInterrupter{ Wait until artifact 'codenvy' becomes alive }; looking on errors in file /var/log/puppet/puppet-agent.log locally");
+        k = 0;
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo rm -rf /home/codenvy/archives', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo rm -rf /home/codenvy-im/archives', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='/bin/systemctl status codenvy.service; if [ $? -eq 0 ]; then   sudo /bin/systemctl stop codenvy.service; fi; ', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "{'command'='sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay --logdest=/var/log/puppet/puppet-agent.log; exit 0;', 'agent'='LocalAgent'}");
+        assertEquals(commands.get(k++).toString(), "PuppetErrorInterrupter{ Wait until artifact 'codenvy' becomes alive }; looking on errors in file /var/log/puppet/puppet-agent.log locally");
     }
 
     @Test
