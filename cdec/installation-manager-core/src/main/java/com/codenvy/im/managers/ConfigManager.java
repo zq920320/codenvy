@@ -35,7 +35,6 @@ import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Named;
 import javax.validation.constraints.NotNull;
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
@@ -416,7 +415,7 @@ public class ConfigManager {
                         setupSSHAccessProperties(properties);
                     }
                     setupSshKeyParts(properties);
-                    setupProxyProperties(properties);
+                    properties.putAll(obtainProxyProperties());
 
                 } else { // update
                     Map<String, String> newProperties;
@@ -465,7 +464,10 @@ public class ConfigManager {
         return configManager.loadInstalledCodenvyProperties(installType);
     }
 
-    Map<String, String> getEnvironment() {
+    /**
+     * @return system environment
+     */
+    public Map<String, String> getEnvironment() {
         return System.getenv();
     }
 
@@ -538,19 +540,21 @@ public class ConfigManager {
     }
 
     /**
-     * Sets properties needed to configure Codenvy to work behind the proxy basing on the system environment.
-     * @param properties
+     * Returns proxy settings which are needed to configure Codenvy to work behind the proxy basing on the system environment.
      */
-    public void setupProxyProperties(Map<String,String> properties) {
+    public Map<String, String> obtainProxyProperties() {
+        Map<String, String> proxyProperties = new HashMap<>();
         Map<String, String> environment = getEnvironment();
 
         if (environment.containsKey(Config.HTTP_PROXY)) {
-            properties.put(Config.HTTP_PROXY, environment.get(Config.HTTP_PROXY));
+            proxyProperties.put(Config.HTTP_PROXY, environment.get(Config.HTTP_PROXY));
         }
 
         if (environment.containsKey(Config.HTTPS_PROXY)) {
-            properties.put(Config.HTTPS_PROXY, environment.get(Config.HTTPS_PROXY));
+            proxyProperties.put(Config.HTTPS_PROXY, environment.get(Config.HTTPS_PROXY));
         }
+
+        return proxyProperties;
     }
 
     /**
