@@ -126,7 +126,7 @@ public class CommandLibrary {
         return format("sudo cp %1$s %1$s.back ; " +
                       "sudo cp %1$s %1$s.back.%2$s ; ",
                       file,
-                      new Date().getTime());
+                      System.nanoTime());
     }
 
     public static Command createPatchCommand(Path patchDir, PatchType patchType, InstallOptions installOptions) throws IOException {

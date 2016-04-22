@@ -70,6 +70,7 @@ import static com.codenvy.im.managers.BackupConfig.getComponentTempPath;
 import static com.codenvy.im.managers.NodeConfig.extractConfigFrom;
 import static com.codenvy.im.managers.NodeConfig.extractConfigsFrom;
 import static java.lang.String.format;
+import static java.nio.file.Files.exists;
 
 /**
  * @author Dmytro Nochevnov
@@ -312,15 +313,20 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
 
                 Iterator<Path> propertiesFiles = configManager.getCodenvyPropertiesFiles(getTmpCodenvyDir(), InstallType.MULTI_SERVER);
                 while (propertiesFiles.hasNext()) {
-                    Path file = propertiesFiles.next();
+                    Path propertiesFileOfCodenvyBinary = propertiesFiles.next();
 
-                    commands.add(createFileBackupCommand(file));
+                    // make a copy of actual codenvy properties file
+                    Path propertiesFileOfInstalledCodenvy = Paths.get(getPuppetDir(), propertiesFileOfCodenvyBinary.toString().replace(getTmpCodenvyDir(), ""));
+                    if (exists(propertiesFileOfInstalledCodenvy)) {
+                        commands.add(createFileBackupCommand(propertiesFileOfInstalledCodenvy));
+                    }
 
+                    // replace propertiesFileOfCodenvyBinary on actual codenvy properties
                     for (Map.Entry<String, String> e : config.getProperties().entrySet()) {
                         String property = e.getKey();
                         String value = e.getValue();
 
-                        commands.add(createPropertyReplaceCommand(file, "$" + property, value));
+                        commands.add(createPropertyReplaceCommand(propertiesFileOfCodenvyBinary, "$" + property, value));
                     }
                 }
 
@@ -339,17 +345,27 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                 return new MacroCommand(commands, "Configure Codenvy");
 
             case 2:
+                if (versionToUpdate.is4Major()) {
+                    propertiesFiles = configManager.getCodenvyPropertiesFiles(getTmpCodenvyDir(), InstallType.SINGLE_SERVER);
+
+                    if (propertiesFiles.hasNext()) {
+                        Path file = propertiesFiles.next();
+                        installOptions.getConfigProperties().put(ConfigManager.PATH_TO_MANIFEST_PATCH_VARIABLE, file.toString());
+                    }
+                }
+
                 return createPatchCommand(Paths.get(getTmpCodenvyDir(), "patches"),
                                           CommandLibrary.PatchType.BEFORE_UPDATE,
                                           installOptions);
 
             case 3:
+                // don't remove /etc/puppet/manifests directory in time of updating it
                 return new MacroCommand(ImmutableList.of(createCommand(format("sudo rm -rf %1$s/files; " +
-                                     "sudo rm -rf %1$s/modules; " +
-                                     "sudo rm -rf %1$s/manifests; " +
-                                     "sudo rm -rf %1$s/patches; " +
-                                     "sudo mv %2$s/* %1$s", getPuppetDir(), getTmpCodenvyDir())),
-                                     createStartServiceCommand("puppet")), "Copy binaries to puppet and start it");
+                                                                              "sudo rm -rf %1$s/modules; " +
+                                                                              "sudo rm -rf %1$s/patches; " +
+                                                                              "sudo cp -rf %2$s/* %1$s; " +
+                                                                              "sudo rm -rf %2$s", getPuppetDir(), getTmpCodenvyDir())),
+                                                         createStartServiceCommand("puppet")), "Copy binaries to puppet and start it");
 
             case 4:
                 return new PuppetErrorInterrupter(new WaitOnAliveArtifactOfCorrectVersionCommand(original, versionToUpdate), configManager);
