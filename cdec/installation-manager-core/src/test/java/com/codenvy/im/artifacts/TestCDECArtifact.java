@@ -211,9 +211,9 @@ public class TestCDECArtifact extends BaseTest {
                                           + "fi', 'agent'='LocalAgent'}, "
                                           + "{'command'='yum clean all', 'agent'='LocalAgent'}, "
                                           + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'=' sudo -E yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'=' sudo -E yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}]");
 
         // test installing puppet with proxy settings
@@ -233,10 +233,10 @@ public class TestCDECArtifact extends BaseTest {
                                           + "127.0.0.1 host_url\" | sudo tee --append /etc/hosts > /dev/null\n"
                                           + "fi', 'agent'='LocalAgent'}, "
                                           + "{'command'='yum clean all', 'agent'='LocalAgent'}, "
-                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then export http_proxy = http://proxy.net:8080; export https_proxy = https://proxy.net:8080;  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='if [ \"`yum list installed | grep puppetlabs-release`\" == \"\" ]; then export http_proxy=\"http://proxy.net:8080\"; export https_proxy=\"https://proxy.net:8080\";  sudo -E yum -y -q install https://yum.puppetlabs.com/el/7/products/x86_64/puppetlabs-release-7-11.noarch.rpm; fi', 'agent'='LocalAgent'}, "
+                                          + "{'command'='export http_proxy=\"http://proxy.net:8080\"; export https_proxy=\"https://proxy.net:8080\";  sudo -E yum -y -q install puppet-server-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo systemctl enable puppetmaster', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
+                                          + "{'command'='export http_proxy=\"http://proxy.net:8080\"; export https_proxy=\"https://proxy.net:8080\";  sudo -E yum -y -q install puppet-3.8.6-1.el7.noarch', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo systemctl enable puppet', 'agent'='LocalAgent'}]");
     }
 
