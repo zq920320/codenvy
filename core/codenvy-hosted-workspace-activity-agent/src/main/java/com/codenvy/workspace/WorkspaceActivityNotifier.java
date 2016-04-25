@@ -39,6 +39,7 @@ public class WorkspaceActivityNotifier {
     private final String                 apiEndpoint;
     private final String                 wsId;
     private final long                   threshold;
+    private final String                 token;
 
     private long lastUpdateTime;
 
@@ -47,12 +48,14 @@ public class WorkspaceActivityNotifier {
     public WorkspaceActivityNotifier(HttpJsonRequestFactory httpJsonRequestFactory,
                                      @Named("api.endpoint") String apiEndpoint,
                                      @Named("env.CHE_WORKSPACE_ID") String wsId,
-                                     @Named("workspace.activity.notify_time_threshold_ms") long threshold) {
+                                     @Named("workspace.activity.notify_time_threshold_ms") long threshold,
+                                     @Named("user.token") String token) {
         this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.apiEndpoint = apiEndpoint;
         this.wsId = wsId;
         this.activeDuringThreshold = new AtomicBoolean(false);
         this.threshold = threshold;
+        this.token = token;
     }
 
     /**
@@ -84,6 +87,7 @@ public class WorkspaceActivityNotifier {
         try {
             httpJsonRequestFactory.fromUrl(apiEndpoint + "/activity/" + wsId)
                                   .usePutMethod()
+                                  .setAuthorizationHeader(token)
                                   .request();
         } catch (Exception e) {
             LOG.error("Cannot notify master about workspace " + wsId + " activity", e);
