@@ -78,10 +78,9 @@ public class TestConsole {
 
     @Test
     public void testPrintError() throws IOException {
-        Console spyConsole = createInteractiveConsole();
         String testErrorMessage = "error";
 
-        spyConsole = createNonInteractiveConsole();
+        Console spyConsole = createNonInteractiveConsole();
         spyConsole.printError(testErrorMessage, true);
         assertEquals(getOutputContent(), "\u001B[31m" + testErrorMessage + "\n\u001B[m");
         verify(spyConsole, never()).exit(1);

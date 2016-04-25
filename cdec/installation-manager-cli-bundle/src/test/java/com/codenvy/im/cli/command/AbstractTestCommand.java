@@ -15,7 +15,9 @@
 package com.codenvy.im.cli.command;
 
 import com.codenvy.im.console.Console;
+import org.fusesource.jansi.AnsiOutputStream;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 import static org.mockito.Matchers.anyInt;
@@ -37,18 +39,34 @@ public abstract class AbstractTestCommand {
                    .exit(anyInt());  // avoid error "The forked VM terminated without properly saying goodbye. VM crash or System.exit called?"
     }
 
+    String removeAnsi(final String content) {
+        if (content == null) {
+            return null;
+        }
+        try {
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            AnsiOutputStream aos = new AnsiOutputStream(baos);
+            aos.write(content.getBytes());
+            aos.flush();
+            return baos.toString();
+        } catch (IOException e) {
+            return content;
+        }
+    }
+
     private Console getSpyConsole(boolean isInstallable) throws IOException {
         return spy(new ConsoleTested(isInstallable));
     }
-    
+
     static class ConsoleTested extends Console {
+
         private ConsoleTested(boolean interactive) throws IOException {
             super(interactive);
         }
-
         @Override
         public void printProgress(String message) {
             // disable progressor
-        }        
+        }
+
     }
 }
