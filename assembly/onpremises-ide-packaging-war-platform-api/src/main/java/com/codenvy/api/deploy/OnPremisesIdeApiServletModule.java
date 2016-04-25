@@ -57,6 +57,7 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                                                                  ImmutableMap.of("accountIdPosition", "4"));
 
         filter("/factory/*",
+               "/activity/*",
                "/workspace/*",
                "/account/*",
                "/java-name-environment/*",

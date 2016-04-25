@@ -21,6 +21,8 @@ import org.eclipse.che.api.core.rest.Service;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.commons.env.EnvironmentContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -31,7 +33,6 @@ import javax.ws.rs.PathParam;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.RUNNING;
-import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 
 /**
  * Monitors the activity of the runtime workspace.
@@ -41,6 +42,8 @@ import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 @Singleton
 @Path("/activity")
 public class WorkspaceActivityService extends Service {
+
+    private static final Logger LOG = LoggerFactory.getLogger(WorkspaceActivityService.class);
 
     private final WorkspaceActivityManager workspaceActivityManager;
     private final WorkspaceManager         workspaceManager;
@@ -61,6 +64,7 @@ public class WorkspaceActivityService extends Service {
         }
         if (workspace.getStatus() == RUNNING) {
             workspaceActivityManager.update(wsId, System.currentTimeMillis());
+            LOG.debug("Updated activity on workspace " + wsId);
         }
     }
 }
