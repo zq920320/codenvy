@@ -543,15 +543,6 @@ installPackageIfNeed() {
 }
 
 preConfigureSystem() {
-    # valid sudo rights
-    sudo -k -n true 2> /dev/null
-    if [[ ! $? == 0 ]]; then
-        println $(printError "ERROR: User '${USER}' doesn't have sudo rights without password")
-        println
-        println $(printWarning "NOTE: Grant privileges to run sudo without password to '${USER}' user and restart installation")
-        exit 1
-    fi
-
     doCheckSystemManager
 
     doCheckInstalledPuppet
@@ -925,9 +916,9 @@ printPreInstallInfo_single() {
     println "Checking system pre-requisites..."
     println
 
-    preConfigureSystem
-
     doCheckAvailableResourcesLocally 2500000 1 1000000 8000000 4 300000000
+
+    preConfigureSystem
 
     configureProxySettings
 
@@ -1038,7 +1029,7 @@ doCheckAvailableResourcesLocally() {
     esac
 
     # check on OS CentOS 7
-    if [[ "${osType}" != "CentOS" ||  "7.1" > "${osVersion}" ]]; then
+    if [[ "${osType}" != "CentOS" ||  "${osVersion}" < "7.1" ]]; then
         osIssueFound=true
     fi
 
@@ -1047,21 +1038,18 @@ doCheckAvailableResourcesLocally() {
     println "DETECTED OS: ${osInfoToDisplay} ${osStateToDisplay}"
 
     local resourceIssueFound="none"
-    local writePermIssueFound=false
 
     local availableRAM=$(cat /proc/meminfo | grep MemTotal | awk '{print $2}')
     local availableRAMIssue=false
     local RAMStateToDisplay=$(printSuccess "[OK]")
 
-    local availableDiskSpace=$(sudo df /home | tail -1 | awk '{print $4}')  # available
+    local availableDiskSpace=$(df /home | tail -1 | awk '{print $4}')  # available
     local availableDiskSpaceIssue=false
     local diskStateToDisplay=$(printSuccess "[OK]")
 
     local availableCores=$(grep -c ^processor /proc/cpuinfo)
     local availableCoresIssue=false
     local coresStateToDisplay=$(printSuccess "[OK]")
-
-    local writePermStateToDisplay=$(printf "%-44s" && printSuccess "[OK]")
 
     if (( ${availableRAM} < ${MIN_RAM_KB} )); then
         resourceIssueFound="blocker"
@@ -1101,9 +1089,27 @@ doCheckAvailableResourcesLocally() {
     local availableDiskSpaceToDisplay=$(( availableDiskSpace /1000/1000 ))
     local availableDiskSpaceToDisplay=$(printf "%-11s" "${availableDiskSpaceToDisplay} GB")
 
+    local writePermIssueFound=false
+    local writePermStateToDisplay=$(printf "%-44s" && printSuccess "[OK]")
+
     if (( $(touch "$INSTALL_DIRECTORY/tmp_file" &>/dev/null; echo $?; rm "$INSTALL_DIRECTORY/tmp_file" &>/dev/null) == 1 )); then
         writePermIssueFound=true
         writePermStateToDisplay=$(printf "%-44s" && printError "[NOT OK]")
+    fi
+
+    local sudoerRightsIssueFound="none"
+    local sudoerRightsToDisplay=$(printf "%-44s" && printSuccess "[OK]")
+
+    # validate sudo rights without password
+    sudo -k -n true 2> /dev/null
+    if [[ ! $? == 0 ]]; then
+        sudoerRightsIssueFound="blocker"
+        sudoerRightsToDisplay=$(printf "%-44s" && printError "[NOT OK]")
+    else
+        if ! sudo grep "^#includedir.*/etc/sudoers.d" /etc/sudoers &>/dev/null; then
+            [ ${sudoerRightsIssueFound} == "none" ] && sudoerRightsIssueFound="warning"
+            sudoerRightsToDisplay=$(printf "%-44s" && printWarning "[WARNING]")
+        fi
     fi
 
     println
@@ -1112,32 +1118,50 @@ doCheckAvailableResourcesLocally() {
     println "CPU              $minCoresToDisplay $recCoresToDisplay $availableCoresToDisplay $coresStateToDisplay"
     println "Disk Space       $minDiskSpaceToDisplay $recDiskSpaceToDisplay $availableDiskSpaceToDisplay $diskStateToDisplay"
     println "Write Permission $writePermStateToDisplay"
+    println "Sudoer Rights    $sudoerRightsToDisplay"
     println
 
     if [[ ${osIssueFound} == true ]]; then
         println $(printError "ERROR: The OS version doesn't match requirements.")
-        println
         println $(printWarning "NOTE: You need a CentOS 7.1 node.")
-        exit 1;
+        println
+    fi
+
+    if [[ ${resourceIssueFound} == "blocker" ]]; then
+        println $(printError "ERROR: The resources available are lower than minimum.")
+        println
+    fi
+
+    if [[ ${resourceIssueFound} == "warning" ]]; then
+        println $(printWarning "!!! The resources available are lower than recommended.")
+        println
     fi
 
     if [[ ${writePermIssueFound} == true ]]; then
         println "$(printError "ERROR: Installation directory \"")$(printImportantLink $INSTALL_DIRECTORY)$(printError "\" cannot be written to.")"
-        exit 1
+        println
     fi
 
-    if [[ ! ${resourceIssueFound} == "none" ]]; then
-        if [[ ${resourceIssueFound} == "blocker" ]]; then
-            println $(printError "ERROR: The resources available are lower than minimum.")
-            exit 1
-        else
-            println $(printWarning "!!! The resources available are lower than recommended.")
-            println
-            if [[ ${SILENT} == false ]]; then
-                pressYKeyToContinue "Proceed?"
-                println
-            fi
-        fi
+    if [[ ${sudoerRightsIssueFound} == "blocker" ]]; then
+        println $(printError "ERROR: This account '${USER}' does not have sufficient sudo rights to perform an installation.")
+        println $(printWarning "NOTE: Grant privileges to run sudo without password to '${USER}' user and restart installation.")
+        println
+    fi
+
+    if [[ ${sudoerRightsIssueFound} == "warning" ]]; then
+        println $(printWarning "We could not find '#includedir /etc/sudoers.d' in /etc/sudoers. This entry can be removed by security teams. Codenvy will install but workspaces may fail to start.")
+        println $(printWarning "During installation we will create a new user named 'codenvy' which will be granted passwordless sudoer rights. These rights are provided in the '/etc/sudoers.d' directory.")
+        println $(printWarning "Contact your system administrator to discuss security options.")
+        println
+    fi
+
+    if [[ ${osIssueFound} == true ]] || [[ ${resourceIssueFound} == "blocker" ]] || [[ ${writePermIssueFound} == true ]] || [[ ${sudoerRightsIssueFound} == "blocker" ]]; then
+        exit 1;
+    fi
+
+    if [[ ${sudoerRightsIssueFound} == "warning" || ${resourceIssueFound} == "warning" ]] && [[ ${SILENT} == false ]]; then
+        pressYKeyToContinue "Proceed?"
+        println
     fi
 }
 
@@ -1194,9 +1218,9 @@ printPreInstallInfo_multi() {
     println "Checking system pre-requisites..."
     println
 
-    preConfigureSystem
-
     doCheckAvailableResourcesLocally 1000000 1 1000000 2000000 2 50000000
+
+    preConfigureSystem
 
     configureProxySettings
 
@@ -1367,7 +1391,7 @@ doCheckAvailableResourcesOnNodes() {
         local availableRAM=$(${sshPrefix} "cat /proc/meminfo | grep MemTotal" | awk '{print $2}')
         local availableRAMIssue=false
 
-        local availableDiskSpace=$(${sshPrefix} "sudo df ${HOME} | tail -1" | awk '{print $4}') # available
+        local availableDiskSpace=$(${sshPrefix} "df ${HOME} | tail -1" | awk '{print $4}') # available
         local availableDiskSpaceIssue=false
 
         if [[ -z "${availableRAM}" || ${availableRAM} < ${MIN_RAM_KB} ]]; then
