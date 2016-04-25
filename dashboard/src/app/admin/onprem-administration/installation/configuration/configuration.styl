@@ -23,12 +23,12 @@
 
      .config-row
        min-height max-content
-       padding 18px
 
        .config-cell
          display inline-block
 
          .config-key
+           margin-left 15px
            line-height 22px
 
          .config-value
@@ -36,13 +36,9 @@
            border none
            resize none
            outline none
-           margin-bottom 10px
+           padding 5px 5px 5px 15px
            text-decoration none
            border 1px solid $list-separator-color
-
-         .config-value[rows='1']
-           text-decoration underline
-           border none
 
   .update-config-warning
     frame($config-frame-warning-bg-color, $config-frame-warning-color)
