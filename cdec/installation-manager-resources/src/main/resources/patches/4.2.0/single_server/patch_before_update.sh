@@ -13,7 +13,7 @@ createFileBackup() {
 createFileBackup "$PATH_TO_MANIFEST"
 
 if [[ "$machine_ws_agent_max_start_time_ms" == "60000" ]]; then
-    sudo sed -i "s/${dollar_symbol}machine_ws_agent_max_start_time_ms.*=.*/${dollar_symbol}machine_ws_agent_max_start_time_ms = 300000/" "$PATH_TO_MANIFEST" &> update_manifest.log
+    sudo sed -i "s/${dollar_symbol}machine_ws_agent_max_start_time_ms.*=.*/${dollar_symbol}machine_ws_agent_max_start_time_ms = \"300000\"/" "$PATH_TO_MANIFEST" &> update_manifest.log
 fi
 
 
