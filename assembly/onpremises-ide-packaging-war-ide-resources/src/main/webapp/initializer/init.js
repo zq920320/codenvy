@@ -331,7 +331,7 @@ var Initializer = new function () {
         "hiddenFiles": ".*",
         "facebookLikeURL": "/ide-resources/_app/facebook-like.html",
         "googleLikeURL": "/ide-resources/_app/google-like.html",
-        "cheExtensionPath": "/api/ext"
+        "cheExtensionPath": "/wsagent/ext"
     };
 
     /**
