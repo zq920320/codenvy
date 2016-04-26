@@ -72,15 +72,11 @@ export class AdminsUserManagementCtrl {
   loadNextPage() {
     this.skipCount = this.users.length;
 
-    this.isLoading = true;
-
     let promise = this.codenvyAPI.getUser().fetchUsers(this.maxItems, this.skipCount);
 
     promise.then(() => {
-      this.isLoading = false;
       this.updateUsers();
     }, (error) => {
-      this.isLoading = false;
       if (error.status !== 304) {
         this.cheNotification.showError(error.data.message ? error.data.message : 'Update information failed.');
       }
