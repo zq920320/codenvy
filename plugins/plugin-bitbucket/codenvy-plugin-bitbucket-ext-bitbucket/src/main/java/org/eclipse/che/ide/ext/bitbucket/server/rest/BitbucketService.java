@@ -25,8 +25,6 @@ import org.eclipse.che.ide.ext.bitbucket.server.Bitbucket;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketException;
 import org.eclipse.che.ide.ext.bitbucket.server.BitbucketKeyUploader;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequest;
-import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketPullRequests;
-import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositories;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepository;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketRepositoryFork;
 import org.eclipse.che.ide.ext.bitbucket.shared.BitbucketUser;
