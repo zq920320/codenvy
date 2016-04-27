@@ -16,12 +16,12 @@
     <parent>
         <artifactId>onpremises-assembly-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>4.2.1</version>
+        <version>4.2.2-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <groupId>com.codenvy.cli</groupId>
     <artifactId>codenvy-cli</artifactId>
-    <version>4.2.1</version>
+    <version>4.2.2-SNAPSHOT</version>
     <packaging>pom</packaging>
     <name>Codenvy CLI</name>
     <licenses>
