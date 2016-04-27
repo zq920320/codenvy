@@ -164,7 +164,22 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-api-permission</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
                 <artifactId>codenvy-hosted-api-subscription</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-api-workspace</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-authorization</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>

@@ -25,10 +25,13 @@ import com.codenvy.api.dao.mongo.RecipeDaoImpl;
 import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.api.factory.FactoryMongoDatabaseProvider;
+import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.user.server.AdminUserService;
 import com.codenvy.api.user.server.dao.AdminUserDao;
+import com.codenvy.api.workspace.server.dao.WorkerDao;
 import com.codenvy.auth.sso.client.EnvironmentContextResolver;
 import com.codenvy.auth.sso.client.SSOContextResolver;
+import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
 import com.codenvy.auth.sso.client.filter.DisjunctionRequestFilter;
 import com.codenvy.auth.sso.client.filter.NegationRequestFilter;
@@ -54,7 +57,6 @@ import org.eclipse.che.api.account.server.dao.AccountDao;
 import org.eclipse.che.api.auth.AuthenticationService;
 import org.eclipse.che.api.core.notification.WSocketEventBusServer;
 import org.eclipse.che.api.core.rest.ApiInfoService;
-import org.eclipse.che.api.core.rest.permission.PermissionManager;
 import org.eclipse.che.api.factory.server.FactoryAcceptValidator;
 import org.eclipse.che.api.factory.server.FactoryCreateValidator;
 import org.eclipse.che.api.factory.server.FactoryEditValidator;
@@ -153,7 +155,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                  .toProvider(FactoryMongoDatabaseProvider.class);
 
 
-
         bind(org.eclipse.che.api.factory.server.FactoryStore.class).to(com.codenvy.api.dao.mongo.MongoDBFactoryStore.class);
         bind(FactoryAcceptValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryAcceptValidatorImpl.class);
         bind(FactoryCreateValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryCreateValidatorImpl.class);
@@ -173,6 +174,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserProfileDao.class).to(com.codenvy.api.dao.ldap.UserProfileDaoImpl.class);
         bind(PreferenceDao.class).to(com.codenvy.api.dao.mongo.PreferenceDaoImpl.class);
         bind(SshDao.class).to(com.codenvy.api.dao.mongo.ssh.SshDaoImpl.class);
+        bind(WorkerDao.class).to(com.codenvy.api.dao.mongo.WorkerDaoImpl.class);
         bind(AccountDao.class).to(AccountDaoImpl.class);
         bind(org.eclipse.che.api.auth.AuthenticationDao.class).to(com.codenvy.api.dao.authentication.AuthenticationDaoImpl.class);
         bind(RecipeDao.class).to(RecipeDaoImpl.class);
@@ -216,8 +218,11 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(SSOContextResolver.class).to(EnvironmentContextResolver.class);
 
-        bind(com.codenvy.auth.sso.client.TokenHandler.class)
-                .to(com.codenvy.auth.sso.client.NoUserInteractionTokenHandler.class);
+        bind(PermissionChecker.class).to(com.codenvy.api.permission.server.PermissionCheckerImpl.class);
+
+        bind(TokenHandler.class).to(com.codenvy.api.permission.server.PermissionTokenHandler.class);
+        bind(TokenHandler.class).annotatedWith(Names.named("delegated.handler"))
+                                .to(com.codenvy.auth.sso.client.NoUserInteractionTokenHandler.class);
 
         bindConstant().annotatedWith(Names.named("auth.jaas.realm")).to("default_realm");
         bindConstant().annotatedWith(Names.named("auth.handler.default")).to("org");
@@ -254,9 +259,13 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                 new UriStartFromRequestFilter("/api/oauth/authenticate"),
                                 r -> isNullOrEmpty(r.getParameter("userId"))
                         ),
-                        new UriStartFromRequestFilter("/api/user/settings")
+                        new UriStartFromRequestFilter("/api/user/settings"),
+                        new ConjunctionRequestFilter(
+                                new RegexpRequestFilter("^/api/permissions(/\\w*)?$"),
+                                new RequestMethodFilter("GET")
+                        )
                 )
-                                            );
+        );
 
 
         bindConstant().annotatedWith(Names.named("notification.server.propagate_events")).to("vfs,workspace");
@@ -287,6 +296,9 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerTerminalModule());
         install(new org.eclipse.che.plugin.docker.machine.proxy.DockerProxyModule());
 
+        install(new com.codenvy.api.permission.server.PermissionsModule());
+        install(new com.codenvy.api.workspace.server.WorkspaceApiModule());
+
         install(new FactoryModuleBuilder()
                         .implement(org.eclipse.che.api.machine.server.spi.Instance.class,
                                    org.eclipse.che.plugin.docker.machine.DockerInstance.class)
@@ -309,10 +321,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                           .to(Key.get(String.class, Names.named("api.endpoint")));
 
 //        install(new com.codenvy.router.MachineRouterModule());
-
-        // TODO rebind to WorkspacePermissionManager after account is established
-        bind(PermissionManager.class).annotatedWith(Names.named("service.workspace.permission_manager"))
-                                     .to(DummyPermissionManager.class);
 
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
