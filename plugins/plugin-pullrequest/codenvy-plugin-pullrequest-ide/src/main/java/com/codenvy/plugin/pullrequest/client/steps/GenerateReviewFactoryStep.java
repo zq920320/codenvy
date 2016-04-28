@@ -15,10 +15,10 @@
 package com.codenvy.plugin.pullrequest.client.steps;
 
 import com.codenvy.plugin.pullrequest.client.ContributeMessages;
+import com.codenvy.plugin.pullrequest.client.utils.FactoryHelper;
 import com.codenvy.plugin.pullrequest.client.workflow.Context;
 import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.utils.FactoryHelper;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -37,6 +37,7 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 
 import javax.inject.Inject;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.NOT_EMERGE_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
@@ -80,7 +81,7 @@ public class GenerateReviewFactoryStep implements Step {
                                                 public void apply(PromiseError arg) throws OperationException {
                                                     notificationManager.notify(messages.stepGenerateReviewFactoryErrorCreateFactory(),
                                                                                FAIL,
-                                                                               false);
+                                                                               NOT_EMERGE_MODE);
                                                     executor.done(GenerateReviewFactoryStep.this, context);
                                                 }
                                             });
@@ -91,7 +92,7 @@ public class GenerateReviewFactoryStep implements Step {
                           public void apply(PromiseError arg) throws OperationException {
                               notificationManager.notify(messages.stepGenerateReviewFactoryErrorCreateFactory(),
                                                          FAIL,
-                                                         false);
+                                                         NOT_EMERGE_MODE);
                               executor.done(GenerateReviewFactoryStep.this, context);
                           }
                       });

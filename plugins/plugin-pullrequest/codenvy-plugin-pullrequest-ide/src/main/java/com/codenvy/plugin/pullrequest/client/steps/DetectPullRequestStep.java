@@ -15,10 +15,10 @@
 package com.codenvy.plugin.pullrequest.client.steps;
 
 import com.codenvy.plugin.pullrequest.client.ContributeMessages;
+import com.codenvy.plugin.pullrequest.client.dto.PullRequest;
 import com.codenvy.plugin.pullrequest.client.workflow.Context;
 import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.dto.PullRequest;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -29,6 +29,7 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 
 import static com.codenvy.plugin.pullrequest.client.workflow.WorkflowStatus.READY_TO_UPDATE_PR;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 
 /**
  * Detects if pull request exists for current working branch,
@@ -62,7 +63,7 @@ public class DetectPullRequestStep implements Step {
                        notificationManager.notify(messages.stepDetectPrExistsTitle(),
                                                   messages.stepDetectPrExistsTitle(context.getWorkBranchName()),
                                                   StatusNotification.Status.FAIL,
-                                                  true);
+                                                  FLOAT_MODE);
                        context.setPullRequest(pr);
                        context.setPullRequestIssueNumber(pr.getNumber());
                        context.setForkedRepositoryName(context.getOriginRepositoryName());

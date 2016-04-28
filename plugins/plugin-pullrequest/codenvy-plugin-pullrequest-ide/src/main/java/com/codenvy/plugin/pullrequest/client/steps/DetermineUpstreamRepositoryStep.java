@@ -14,11 +14,11 @@
  */
 package com.codenvy.plugin.pullrequest.client.steps;
 
+import com.codenvy.plugin.pullrequest.client.dto.Repository;
+import com.codenvy.plugin.pullrequest.client.vcs.hosting.VcsHostingService;
 import com.codenvy.plugin.pullrequest.client.workflow.Context;
 import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.vcs.hosting.VcsHostingService;
-import com.codenvy.plugin.pullrequest.client.dto.Repository;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -27,6 +27,7 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
@@ -72,7 +73,7 @@ public class DetermineUpstreamRepositoryStep implements Step {
                       .catchError(new Operation<PromiseError>() {
                           @Override
                           public void apply(PromiseError error) throws OperationException {
-                              notificationManager.notify(error.getMessage(), FAIL, true);
+                              notificationManager.notify(error.getMessage(), FAIL, FLOAT_MODE);
                               executor.fail(DetermineUpstreamRepositoryStep.this, context, error.getMessage());
                           }
                       });

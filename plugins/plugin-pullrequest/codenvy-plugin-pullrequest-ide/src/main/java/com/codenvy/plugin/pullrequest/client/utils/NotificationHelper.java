@@ -28,6 +28,8 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.NOT_EMERGE_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
 
@@ -60,7 +62,7 @@ public final class NotificationHelper {
      *         the info message.
      */
     public void showInfo(@NotNull final String message) {
-        notificationManager.notify(message, SUCCESS, false);
+        notificationManager.notify(message, SUCCESS, NOT_EMERGE_MODE);
     }
 
     /**
@@ -101,8 +103,7 @@ public final class NotificationHelper {
      * Log the exception, display the error message in the notification.
      */
     public void showError(@NotNull final Class<?> cls, @NotNull final String errorMessage, @NotNull final Throwable exception) {
-        // workaround IDEX-2381
-        notificationManager.notify(errorMessage, FAIL, true);
+        notificationManager.notify(errorMessage, FAIL, FLOAT_MODE);
     }
 
 

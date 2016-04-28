@@ -26,6 +26,8 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.notification.StatusNotification;
 import org.eclipse.che.ide.dto.DtoFactory;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.NOT_EMERGE_MODE;
+
 /**
  * Imports project from factory.json file
  *
@@ -95,8 +97,7 @@ public class ImportFromConfigPresenter implements ImportFromConfigView.ActionDel
             return;
         }
 
-        notification = notificationManager.notify(factoryLocalization.cloningSource(), null, StatusNotification.Status.PROGRESS, false
-                                                 );
+        notification = notificationManager.notify(factoryLocalization.cloningSource(), null, StatusNotification.Status.PROGRESS, NOT_EMERGE_MODE);
         projectImporter.startImporting(factoryJson, importerCallback);
     }
 
