@@ -119,8 +119,19 @@ public class NodeManager {
     }
 
     void validate(NodeConfig node) throws IOException {
-        String puppetMasterNodeDns;
+        Command validateSudoRightsWithoutPasswordCommand = getHelper().getValidateSudoRightsWithoutPasswordCommand(node);
+        try {
+            validateSudoRightsWithoutPasswordCommand.execute();
+        } catch (IOException e) {
+            String errorMessage = e.getMessage();
+            if (e.getCause() instanceof AgentException) {
+                errorMessage = format("It seems user doesn't have sudo rights without password on node '%s'.", node.getHost());
+            }
 
+            throw new NodeException(errorMessage, e);
+        }
+
+        String puppetMasterNodeDns;
         if (configManager.detectInstallationType() == InstallType.MULTI_SERVER) {
             puppetMasterNodeDns = configManager.fetchMasterHostName();
         } else  {

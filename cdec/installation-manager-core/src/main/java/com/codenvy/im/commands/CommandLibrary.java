@@ -435,6 +435,14 @@ public class CommandLibrary {
         return command;
     }
 
+    public static Command createCheckSudoRightsWithoutPasswordCommand(NodeConfig node) throws AgentException {
+        return createCommand(getCheckSudoRightsWithoutPasswordCommand(), node);
+    }
+
+    private static String getCheckSudoRightsWithoutPasswordCommand() {
+        return "sudo -k -n true 2> /dev/null";
+    }
+
     /**
      * @param remoteHost to check
      * @param remotePort to check

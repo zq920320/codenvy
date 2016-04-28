@@ -84,6 +84,13 @@ public abstract class NodeManagerHelper {
     public abstract Map<String,List<String>> getNodes() throws IOException;
 
     /**
+     * Check sudo rights without password on node.
+     */
+    public Command getValidateSudoRightsWithoutPasswordCommand(NodeConfig node) throws IOException {
+        return CommandLibrary.createCheckSudoRightsWithoutPasswordCommand(node);
+    }
+
+    /**
      * Check accessibility of puppet master from the node.
      */
     public Command getValidatePuppetMasterAccessibilityCommand(String puppetMasterNodeDns, NodeConfig node) throws IOException {

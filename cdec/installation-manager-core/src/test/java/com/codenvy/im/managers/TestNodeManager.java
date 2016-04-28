@@ -34,7 +34,9 @@ import java.nio.file.Paths;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
@@ -81,7 +83,7 @@ public class TestNodeManager extends BaseTest {
     @Test
     public void testAddNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
+
         doNothing().when(spyManager).validate(TEST_NODE);
         doReturn(TEST_NODE).when(mockHelper).recognizeNodeConfigFromDns(TEST_NODE_DNS);
         doReturn(mockCommand).when(mockHelper)
@@ -93,10 +95,10 @@ public class TestNodeManager extends BaseTest {
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class,
-          expectedExceptionsMessageRegExp = "This type of node isn't supported")
+        expectedExceptionsMessageRegExp = "This type of node isn't supported")
     public void testAddNodeWhichIsNotSupported() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
+
         doReturn(TEST_NODE).when(mockHelper).recognizeNodeConfigFromDns(TEST_NODE_DNS);
         doReturn(null).when(mockHelper).getPropertyNameBy(TEST_NODE.getType());
 
@@ -113,7 +115,7 @@ public class TestNodeManager extends BaseTest {
     @Test
     public void testRemoveNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
+
         doReturn(TEST_NODE_TYPE).when(mockHelper).recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
         doReturn(mockCommand).when(mockHelper)
                              .getRemoveNodeCommand(TEST_NODE, ADDITIONAL_RUNNERS_PROPERTY_NAME);
@@ -138,11 +140,11 @@ public class TestNodeManager extends BaseTest {
     }
 
     @Test(expectedExceptions = NodeException.class,
-          expectedExceptionsMessageRegExp = "Node 'localhost' is not found in Codenvy configuration")
+        expectedExceptionsMessageRegExp = "Node 'localhost' is not found in Codenvy configuration")
     public void testRemoveNonExistsNodeError() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
         doReturn(null).when(mockHelper)
-                             .recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
+                      .recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
 
         spyManager.remove(TEST_NODE_DNS);
     }
@@ -158,21 +160,25 @@ public class TestNodeManager extends BaseTest {
     public void testValidateSingleServerNode() throws Exception {
         prepareSingleNodeEnv(mockConfigManager);
 
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
         doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
         spyManager.validate(TEST_NODE);
-        verify(mockCommand).execute();
+
+        verify(mockCommand, times(2)).execute();
     }
 
     @Test
     public void testValidateMultiServerNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
 
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+
         doReturn(HOSTNAME).when(mockConfigManager).fetchMasterHostName();
         doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
 
         spyManager.validate(TEST_NODE);
 
-        verify(mockCommand).execute();
+        verify(mockCommand, times(2)).execute();
     }
 
     @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "agent error")
@@ -181,7 +187,19 @@ public class TestNodeManager extends BaseTest {
 
         doReturn(HOSTNAME).when(mockConfigManager).fetchMasterHostName();
 
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+
         doThrow(new AgentException("agent error")).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
+        spyManager.validate(TEST_NODE);
+    }
+
+    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "It seems user doesn't have sudo rights without password on node 'localhost'.")
+    public void testValidateSudoRightsWithoutPasswordCommandException() throws Exception {
+        prepareSingleNodeEnv(mockConfigManager);
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+        doThrow(new CommandException("command error", new AgentException("agent error", null))).when(mockCommand).execute();
+
         spyManager.validate(TEST_NODE);
     }
 
@@ -189,6 +207,7 @@ public class TestNodeManager extends BaseTest {
     public void testValidatePuppetMasterAccessibilityCommandException() throws Exception {
         prepareSingleNodeEnv(mockConfigManager);
 
+        doReturn(mock(Command.class)).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
         doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
         doThrow(new CommandException("command error", new AgentException("agent error", null))).when(mockCommand).execute();
 
@@ -199,7 +218,7 @@ public class TestNodeManager extends BaseTest {
     public void testValidateNodeConnectionException() throws Exception {
         prepareSingleNodeEnv(mockConfigManager);
 
-        doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
         doThrow(new CommandException("command error", new ConnectionException("Connection error", null))).when(mockCommand).execute();
 
         spyManager.validate(TEST_NODE);
