@@ -33,7 +33,7 @@ executeSshCommand "sudo sed -i -e 's/vagrant.*/vagrant ALL=\(ALL\) ALL/g' /etc/s
 executeSshCommand "--valid-exit-code=1" "sudo -n -k true"
 
 executeSshCommand "--valid-exit-code=1" "bash <(curl -L -s ${UPDATE_SERVICE}/repository/public/download/install-codenvy) --silent --fair-source-license=accept"
-validateExpectedString ".*ERROR\:.User.'vagrant'.doesn't.have.sudo.rights.without.password.*NOTE\:.Grant.privileges.to.run.sudo.without.password.to.'vagrant'.user.and.restart.installation.*"
+validateExpectedString ".*ERROR\:.This.account.'vagrant'.does.not.have.sufficient.sudo.rights.to.perform.an.installation.*NOTE\:.Grant.privileges.to.run.sudo.without.password.to.'vagrant'.user.and.restart.installation.*"
 
 printAndLog "RESULT: PASSED"
 vagrantDestroy
