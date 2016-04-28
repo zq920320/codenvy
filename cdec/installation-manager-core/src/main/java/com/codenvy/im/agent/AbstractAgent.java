@@ -61,13 +61,6 @@ public abstract class AbstractAgent implements Agent {
         return false;
     }
 
-    protected AgentException makeAgentException(String errorMessage, Exception e) {
-        if (e.getMessage() != null) {
-            errorMessage += " " + e.getMessage();
-        }
-        return new AgentException(errorMessage, e);
-    }
-
     private String readOutput(InputStream in) throws IOException {
         try {
             String output = IOUtils.toString(in, Charset.forName("UTF-8"));

@@ -43,16 +43,17 @@ import static org.mockito.Mockito.when;
  * @author Anatoliy Bazko
  */
 public class BaseTest {
-    protected static final String PUPPET_BASE_DIR     = "target/puppet";
-    protected static final String TEST_DIR            = "target";
-    protected static final String DOWNLOAD_DIR        = "target/download";
-    protected static final String UPDATE_API_ENDPOINT = "update/endpoint";
-    protected static final String ASSEMBLY_PROPERTIES = "target/assembly.properties";
-    protected static final String SAAS_API_ENDPOINT   = "saas/endpoint";
-    public static final    Path   PUPPET_CONF_FILE    = Paths.get("target", "puppet", Config.PUPPET_CONF_FILE_NAME).toAbsolutePath();
-    public static final    String TEST_VERSION_STR    = "3.3.0";
-    public static final    String INITIAL_OS_VERSION  = OSUtils.VERSION;
-    protected static final String UNSUPPORTED_VERSION = "1.0.0";
+    public static final String PUPPET_BASE_DIR     = "target/puppet";
+    public static final String TEST_DIR            = "target";
+    public static final String DOWNLOAD_DIR        = "target/download";
+    public static final String UPDATE_API_ENDPOINT = "update/endpoint";
+    public static final String ASSEMBLY_PROPERTIES = "target/assembly.properties";
+    public static final String SAAS_API_ENDPOINT   = "saas/endpoint";
+    public static final Path   PUPPET_CONF_FILE    = Paths.get("target", "puppet", Config.PUPPET_CONF_FILE_NAME).toAbsolutePath();
+    public static final String TEST_VERSION_STR    = "3.3.0";
+    public static final String INITIAL_OS_VERSION  = OSUtils.VERSION;
+    public static final String HOSTNAME            = "hostname";
+    public static final String UNSUPPORTED_VERSION = "1.0.0";
 
     @BeforeMethod
     public void clear() throws Exception {
@@ -156,7 +157,7 @@ public class BaseTest {
     }
 
     protected Map<String, String> getTestSingleNodeProperties() {
-        return ImmutableMap.of("host_url", "hostname",
+        return ImmutableMap.of("host_url", HOSTNAME,
                                Config.VERSION, TEST_VERSION_STR);
     }
 
