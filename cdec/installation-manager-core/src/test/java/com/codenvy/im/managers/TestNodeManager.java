@@ -16,6 +16,7 @@ package com.codenvy.im.managers;
 
 import com.codenvy.im.BaseTest;
 import com.codenvy.im.agent.AgentException;
+import com.codenvy.im.agent.ConnectionException;
 import com.codenvy.im.artifacts.UnsupportedArtifactVersionException;
 import com.codenvy.im.commands.Command;
 import com.codenvy.im.commands.CommandException;
@@ -30,24 +31,24 @@ import org.testng.annotations.Test;
 import java.io.IOException;
 import java.nio.file.Paths;
 
-import static java.lang.String.format;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
 /** @author Dmytro Nochevnov */
 public class TestNodeManager extends BaseTest {
-    public static final String SYSTEM_USER_NAME = System.getProperty("user.name");
 
     @Mock
     private ConfigManager     mockConfigManager;
     @Mock
     private Command           mockCommand;
     @Mock
-    private NodeManagerHelper mockHelperCodenvy;
+    private NodeManagerHelper mockHelper;
 
     private static final String              TEST_NODE_DNS  = "localhost";
     private static final NodeConfig.NodeType TEST_NODE_TYPE = NodeConfig.NodeType.RUNNER;
@@ -63,7 +64,7 @@ public class TestNodeManager extends BaseTest {
 
         spyManager = spy(new NodeManager(mockConfigManager));
 
-        doReturn(mockHelperCodenvy).when(spyManager).getHelper();
+        doReturn(mockHelper).when(spyManager).getHelper();
 
         doReturn(ImmutableList.of(Paths.get("/etc/puppet/" + Config.MULTI_SERVER_CUSTOM_CONFIG_PP),
                                   Paths.get("/etc/puppet/" + Config.MULTI_SERVER_BASE_CONFIG_PP)).iterator())
@@ -76,16 +77,16 @@ public class TestNodeManager extends BaseTest {
     }
 
     private void initConfigs() throws IOException {
-        doReturn(ADDITIONAL_RUNNERS_PROPERTY_NAME).when(mockHelperCodenvy).getPropertyNameBy(TEST_NODE_TYPE);
+        doReturn(ADDITIONAL_RUNNERS_PROPERTY_NAME).when(mockHelper).getPropertyNameBy(TEST_NODE_TYPE);
     }
 
     @Test
     public void testAddNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
+
         doNothing().when(spyManager).validate(TEST_NODE);
-        doReturn(TEST_NODE).when(mockHelperCodenvy).recognizeNodeConfigFromDns(TEST_NODE_DNS);
-        doReturn(mockCommand).when(mockHelperCodenvy)
+        doReturn(TEST_NODE).when(mockHelper).recognizeNodeConfigFromDns(TEST_NODE_DNS);
+        doReturn(mockCommand).when(mockHelper)
                              .getAddNodeCommand(TEST_NODE, ADDITIONAL_RUNNERS_PROPERTY_NAME);
 
         assertEquals(spyManager.add(TEST_NODE_DNS), TEST_NODE);
@@ -94,12 +95,12 @@ public class TestNodeManager extends BaseTest {
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class,
-          expectedExceptionsMessageRegExp = "This type of node isn't supported")
+        expectedExceptionsMessageRegExp = "This type of node isn't supported")
     public void testAddNodeWhichIsNotSupported() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
-        doReturn(TEST_NODE).when(mockHelperCodenvy).recognizeNodeConfigFromDns(TEST_NODE_DNS);
-        doReturn(null).when(mockHelperCodenvy).getPropertyNameBy(TEST_NODE.getType());
+
+        doReturn(TEST_NODE).when(mockHelper).recognizeNodeConfigFromDns(TEST_NODE_DNS);
+        doReturn(null).when(mockHelper).getPropertyNameBy(TEST_NODE.getType());
 
         spyManager.add(TEST_NODE_DNS);
     }
@@ -107,18 +108,18 @@ public class TestNodeManager extends BaseTest {
     @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "error")
     public void testAddNodeWhenWrongInstallTypeException() throws Exception {
         prepareSingleNodeEnv(mockConfigManager);
-        doThrow(new IllegalStateException("error")).when(mockHelperCodenvy).checkInstallType();
+        doThrow(new IllegalStateException("error")).when(mockHelper).checkInstallType();
         spyManager.add(TEST_NODE_DNS);
     }
 
     @Test
     public void testRemoveNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        
-        doReturn(TEST_NODE_TYPE).when(mockHelperCodenvy).recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
-        doReturn(mockCommand).when(mockHelperCodenvy)
+
+        doReturn(TEST_NODE_TYPE).when(mockHelper).recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
+        doReturn(mockCommand).when(mockHelper)
                              .getRemoveNodeCommand(TEST_NODE, ADDITIONAL_RUNNERS_PROPERTY_NAME);
-        doReturn(TEST_NODE).when(mockHelperCodenvy).recognizeNodeConfigFromDns(TEST_NODE_DNS);
+        doReturn(TEST_NODE).when(mockHelper).recognizeNodeConfigFromDns(TEST_NODE_DNS);
 
         assertEquals(spyManager.remove(TEST_NODE_DNS), TEST_NODE);
         verify(mockCommand).execute();
@@ -132,18 +133,18 @@ public class TestNodeManager extends BaseTest {
         doReturn(new Config(ImmutableMap.of(Config.VERSION, "4.0.0")))
             .when(mockConfigManager).loadInstalledCodenvyConfig();
 
-        doReturn(mockCommand).when(mockHelperCodenvy).getUpdatePuppetConfigCommand(oldHostName, newHostName);
+        doReturn(mockCommand).when(mockHelper).getUpdatePuppetConfigCommand(oldHostName, newHostName);
 
         spyManager.updatePuppetConfig(oldHostName, newHostName);
         verify(mockCommand).execute();
     }
 
     @Test(expectedExceptions = NodeException.class,
-          expectedExceptionsMessageRegExp = "Node 'localhost' is not found in Codenvy configuration")
+        expectedExceptionsMessageRegExp = "Node 'localhost' is not found in Codenvy configuration")
     public void testRemoveNonExistsNodeError() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        doReturn(null).when(mockHelperCodenvy)
-                             .recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
+        doReturn(null).when(mockHelper)
+                      .recognizeNodeTypeFromConfigBy(TEST_NODE_DNS);
 
         spyManager.remove(TEST_NODE_DNS);
     }
@@ -151,51 +152,76 @@ public class TestNodeManager extends BaseTest {
     @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "error")
     public void testRemoveNodeWhenWrongInstallTypeException() throws Exception {
         prepareSingleNodeEnv(mockConfigManager);
-        doThrow(new IllegalStateException("error")).when(mockHelperCodenvy).checkInstallType();
+        doThrow(new IllegalStateException("error")).when(mockHelper).checkInstallType();
         spyManager.remove(TEST_NODE_DNS);
     }
 
     @Test
-    public void testValidateNode() throws AgentException, CommandException, NodeException {
-        doReturn(mockCommand).when(spyManager).getShellAgentCommand("sudo ls", TEST_NODE);
-        doReturn("").when(mockCommand).execute();
+    public void testValidateSingleServerNode() throws Exception {
+        prepareSingleNodeEnv(mockConfigManager);
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+        doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
         spyManager.validate(TEST_NODE);
-    }
 
-    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "error")
-    public void testAddNodeWhenValidationCommandFailed() throws Exception {
-        prepareMultiNodeEnv(mockConfigManager);
-        
-        doReturn(ADDITIONAL_RUNNERS_PROPERTY_NAME).when(mockHelperCodenvy).getPropertyNameBy(TEST_NODE.getType());
-        doReturn(TEST_NODE).when(mockHelperCodenvy).recognizeNodeConfigFromDns(TEST_NODE_DNS);
-
-        doReturn(mockCommand).when(spyManager).getShellAgentCommand("sudo ls", TEST_NODE);
-        doThrow(new CommandException("error", null)).when(mockCommand).execute();
-
-        spyManager.add(TEST_NODE_DNS);
-    }
-
-    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "error")
-    public void testValidateNodeCommandException() throws Exception {
-        prepareMultiNodeEnv(mockConfigManager);
-        doReturn(mockCommand).when(spyManager).getShellAgentCommand("sudo ls", TEST_NODE);
-        doThrow(new CommandException("error", null)).when(mockCommand).execute();
-        spyManager.validate(TEST_NODE);
-    }
-
-    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "error")
-    public void testValidateNodeAgentException() throws Exception {
-        prepareMultiNodeEnv(mockConfigManager);
-        doThrow(new AgentException("error")).when(spyManager).getShellAgentCommand("sudo ls", TEST_NODE);
-        spyManager.validate(TEST_NODE);
+        verify(mockCommand, times(2)).execute();
     }
 
     @Test
-    public void testShellAgentCommand() throws Exception {
+    public void testValidateMultiServerNode() throws Exception {
         prepareMultiNodeEnv(mockConfigManager);
-        Command command = spyManager.getShellAgentCommand("test", TEST_NODE);
-        assertEquals(command.toString(), format("{'command'='test', " +
-                                                "'agent'='{'host'='localhost', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+
+        doReturn(HOSTNAME).when(mockConfigManager).fetchMasterHostName();
+        doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
+
+        spyManager.validate(TEST_NODE);
+
+        verify(mockCommand, times(2)).execute();
+    }
+
+    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "agent error")
+    public void testValidateNodeAgentException() throws Exception {
+        prepareMultiNodeEnv(mockConfigManager);
+
+        doReturn(HOSTNAME).when(mockConfigManager).fetchMasterHostName();
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+
+        doThrow(new AgentException("agent error")).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
+        spyManager.validate(TEST_NODE);
+    }
+
+    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "It seems user doesn't have sudo rights without password on node 'localhost'.")
+    public void testValidateSudoRightsWithoutPasswordCommandException() throws Exception {
+        prepareSingleNodeEnv(mockConfigManager);
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+        doThrow(new CommandException("command error", new AgentException("agent error", null))).when(mockCommand).execute();
+
+        spyManager.validate(TEST_NODE);
+    }
+
+    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "It seems Puppet Master 'hostname:8140' is not accessible from the node 'localhost'.")
+    public void testValidatePuppetMasterAccessibilityCommandException() throws Exception {
+        prepareSingleNodeEnv(mockConfigManager);
+
+        doReturn(mock(Command.class)).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+        doReturn(mockCommand).when(mockHelper).getValidatePuppetMasterAccessibilityCommand(HOSTNAME, TEST_NODE);
+        doThrow(new CommandException("command error", new AgentException("agent error", null))).when(mockCommand).execute();
+
+        spyManager.validate(TEST_NODE);
+    }
+
+    @Test(expectedExceptions = NodeException.class, expectedExceptionsMessageRegExp = "command error")
+    public void testValidateNodeConnectionException() throws Exception {
+        prepareSingleNodeEnv(mockConfigManager);
+
+        doReturn(mockCommand).when(mockHelper).getValidateSudoRightsWithoutPasswordCommand(TEST_NODE);
+        doThrow(new CommandException("command error", new ConnectionException("Connection error", null))).when(mockCommand).execute();
+
+        spyManager.validate(TEST_NODE);
     }
 
     @Test(expectedExceptions = UnsupportedArtifactVersionException.class,

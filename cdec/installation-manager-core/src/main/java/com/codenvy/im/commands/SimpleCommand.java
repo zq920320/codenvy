@@ -22,6 +22,8 @@ import com.codenvy.im.managers.NodeConfig;
 import com.codenvy.im.utils.InjectorBootstrap;
 
 import org.eclipse.che.commons.annotation.Nullable;
+
+import java.io.IOException;
 import java.nio.file.Path;
 import java.util.logging.Logger;
 
@@ -100,7 +102,7 @@ public class SimpleCommand implements Command {
             }
 
             return agent.execute(command);
-        } catch (AgentException e) {
+        } catch (IOException e) {
             throw makeCommandException(e);
         }
     }

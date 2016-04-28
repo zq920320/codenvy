@@ -15,15 +15,21 @@
 package com.codenvy.im.managers.helper;
 
 import com.codenvy.im.commands.Command;
+import com.codenvy.im.commands.CommandLibrary;
+import com.codenvy.im.commands.MacroCommand;
 import com.codenvy.im.managers.Config;
 import com.codenvy.im.managers.ConfigManager;
+import com.codenvy.im.managers.InstallType;
 import com.codenvy.im.managers.NodeConfig;
 import com.codenvy.im.managers.UnknownInstallationTypeException;
+import com.google.common.collect.ImmutableList;
 import org.eclipse.che.commons.annotation.Nullable;
 
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
+
+import static com.codenvy.im.commands.SimpleCommand.createCommand;
 
 /**
  * @author Dmytro Nochevnov
@@ -76,5 +82,19 @@ public abstract class NodeManagerHelper {
 
     /** @return Map<NodeType, List<NodeDns>> */
     public abstract Map<String,List<String>> getNodes() throws IOException;
+
+    /**
+     * Check sudo rights without password on node.
+     */
+    public Command getValidateSudoRightsWithoutPasswordCommand(NodeConfig node) throws IOException {
+        return CommandLibrary.createCheckSudoRightsWithoutPasswordCommand(node);
+    }
+
+    /**
+     * Check accessibility of puppet master from the node.
+     */
+    public Command getValidatePuppetMasterAccessibilityCommand(String puppetMasterNodeDns, NodeConfig node) throws IOException {
+        return CommandLibrary.createCheckRemotePortOpenedCommand(puppetMasterNodeDns, 8140, node);
+    }
 
 }

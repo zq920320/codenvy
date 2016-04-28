@@ -14,6 +14,8 @@
  */
 package com.codenvy.im.agent;
 
+import static com.codenvy.im.agent.AgentException.create;
+
 /**
  * Execute local command in asynchronous mode.
  * @author Dmytro Nochevnov
@@ -36,7 +38,7 @@ public class LocalAsyncAgent extends AbstractAgent {
             return null;
         } catch (Exception e) {
             String errMessage = String.format("Can't execute command '%s'.", command);
-            throw makeAgentException(errMessage, e);
+            throw create(errMessage, e);
         }
     }
 }

@@ -25,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static com.codenvy.im.agent.AgentException.create;
+
 /**
  * @author Anatoliy Bazko
  * @author Dmytro Nochevnov
@@ -77,7 +79,7 @@ public class LocalAgent extends AbstractAgent {
             return processOutput(command, exitStatus, in, err);
         } catch (Exception e) {
             String errMessage = String.format("Can't execute command '%s'.", command);
-            throw makeAgentException(errMessage, e);
+            throw create(errMessage, e);
         }
     }
 
@@ -92,7 +94,7 @@ public class LocalAgent extends AbstractAgent {
             return processOutput(command, exitStatus, in, err);
         } catch (Exception e) {
             String errMessage = String.format("Can't execute command '%s'.", command);
-            throw makeAgentException(errMessage, e);
+            throw create(errMessage, e);
         }
     }
 
@@ -216,7 +218,7 @@ public class LocalAgent extends AbstractAgent {
     protected boolean isConsoleAccessible() {
         try {
             getConsole();
-        } catch(AgentException e) {
+        } catch (AgentException e) {
             return false;
         }
 

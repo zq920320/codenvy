@@ -435,6 +435,30 @@ public class CommandLibrary {
         return command;
     }
 
+    public static Command createCheckSudoRightsWithoutPasswordCommand(NodeConfig node) throws AgentException {
+        return createCommand(getCheckSudoRightsWithoutPasswordCommand(), node);
+    }
+
+    private static String getCheckSudoRightsWithoutPasswordCommand() {
+        return "sudo -k -n true 2> /dev/null";
+    }
+
+    /**
+     * @param remoteHost to check
+     * @param remotePort to check
+     * @param node from where to check
+     */
+    public static Command createCheckRemotePortOpenedCommand(String remoteHost, int remotePort, NodeConfig node) throws AgentException {
+        return createCommand(getCheckRemotePortOpenedCommand(remoteHost, remotePort), node);
+    }
+
+    /**
+     * @see "http://www.unix.com/302910488-post2.html?s=c351328813d6bc7a509c0a5dee5dc9e7"
+     */
+    private static String getCheckRemotePortOpenedCommand(String remoteHost, int remotePort) {
+        return format("2>/dev/null >/dev/tcp/%s/%s", remoteHost, remotePort);
+    }
+
     private static class EmptyCommand implements Command {
         @Override
         public String execute() throws CommandException {

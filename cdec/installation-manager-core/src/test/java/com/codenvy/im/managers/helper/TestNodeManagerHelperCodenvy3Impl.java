@@ -287,4 +287,5 @@ public class TestNodeManagerHelperCodenvy3Impl extends BaseTest {
         expected.putAll(testRunners);
         assertEquals(result, expected);
     }
+
 }

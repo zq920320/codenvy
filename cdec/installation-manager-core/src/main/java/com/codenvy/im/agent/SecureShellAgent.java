@@ -24,6 +24,7 @@ import java.io.InputStream;
 import java.nio.file.Path;
 import java.util.Properties;
 
+import static com.codenvy.im.agent.AgentException.create;
 import static java.lang.String.format;
 
 /**
@@ -46,13 +47,13 @@ public class SecureShellAgent extends AbstractAgent {
 //            JSch.setLogger(new JschLogger());  // turn on if you need to get detailed log for all ssh operation in output. Be careful: it is verbose and could hang up IM.
         } catch (Exception e) {
             String errorMessage = format("Can't connect to host '%s@%s:%s' by using private key '%s'.", user, host, port, privateKeyFileAbsolutePath);
-            throw makeAgentException(errorMessage, e);
+            throw create(errorMessage, e);
         }
     }
 
     /** {@inheritDoc} */
     @Override
-    public String execute(String command) throws AgentException {
+    public String execute(String command) throws AgentException, ConnectionException {
         try {
             // we need to recreate session each execute time to avoid error "com.jcraft.jsch.JSchException: socket is not established" in
             // PuppetErrorInterrupter
@@ -64,7 +65,7 @@ public class SecureShellAgent extends AbstractAgent {
                                          session.getUserName(),
                                          session.getHost(),
                                          session.getPort());
-            throw makeAgentException(errorMessage, e);
+            throw ConnectionException.create(errorMessage, e);
         }
 
         ChannelExec channel = null;
@@ -85,7 +86,7 @@ public class SecureShellAgent extends AbstractAgent {
             return processOutput(command, channel.getExitStatus(), in, error);
         } catch (Exception e) {
             String errorMessage = format("Can't execute command '%s' on node '%s'.", command, session.getHost());
-            throw makeAgentException(errorMessage, e);
+            throw create(errorMessage, e);
         } finally {
             if (channel != null) {
                 channel.disconnect();

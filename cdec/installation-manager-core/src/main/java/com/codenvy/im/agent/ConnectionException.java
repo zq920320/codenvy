@@ -14,9 +14,19 @@
  */
 package com.codenvy.im.agent;
 
-/** @author Dmytro Nochevnov */
-public interface Agent {
+import java.io.IOException;
 
-    /** Executes commands. */
-    String execute(String command) throws AgentException, ConnectionException;
+/** @author Dmytro Nochevnov */
+public class ConnectionException extends IOException {
+    public ConnectionException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public static ConnectionException create(String errorMessage, Exception e) {
+        if (e.getMessage() != null) {
+            errorMessage += " " + e.getMessage();
+        }
+
+        return new ConnectionException(errorMessage, e);
+    }
 }

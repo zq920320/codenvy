@@ -19,7 +19,6 @@ import com.codenvy.im.artifacts.ArtifactFactory;
 import com.codenvy.im.artifacts.CDECArtifact;
 import com.codenvy.im.artifacts.UnsupportedArtifactVersionException;
 import com.codenvy.im.commands.Command;
-import com.codenvy.im.commands.CommandException;
 import com.codenvy.im.managers.helper.NodeManagerHelper;
 import com.codenvy.im.managers.helper.NodeManagerHelperCodenvy3Impl;
 import com.codenvy.im.managers.helper.NodeManagerHelperCodenvy4Impl;
@@ -32,7 +31,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
-import static com.codenvy.im.commands.SimpleCommand.createCommand;
 import static java.lang.String.format;
 
 /** @author Dmytro Nochevnov */
@@ -116,25 +114,48 @@ public class NodeManager {
         updatePuppetConfigCommand.execute();
     }
 
-    protected void validate(NodeConfig node) throws NodeException {
-        String testCommand = "sudo ls";
-        try {
-            Command nodeCommand = getShellAgentCommand(testCommand, node);
-            nodeCommand.execute();
-        } catch (AgentException | CommandException e) {
-            throw new NodeException(e.getMessage(), e);
-        }
+    public Map<String, List<String>> getNodes() throws IOException {
+        return getHelper().getNodes();
     }
 
-    /** for testing propose */
-    protected Command getShellAgentCommand(String command, NodeConfig node) throws AgentException {
-        return createCommand(command, node);
+    void validate(NodeConfig node) throws IOException {
+        Command validateSudoRightsWithoutPasswordCommand = getHelper().getValidateSudoRightsWithoutPasswordCommand(node);
+        try {
+            validateSudoRightsWithoutPasswordCommand.execute();
+        } catch (IOException e) {
+            String errorMessage = e.getMessage();
+            if (e.getCause() instanceof AgentException) {
+                errorMessage = format("It seems user doesn't have sudo rights without password on node '%s'.", node.getHost());
+            }
+
+            throw new NodeException(errorMessage, e);
+        }
+
+        String puppetMasterNodeDns;
+        if (configManager.detectInstallationType() == InstallType.MULTI_SERVER) {
+            puppetMasterNodeDns = configManager.fetchMasterHostName();
+        } else  {
+            Config config = configManager.loadInstalledCodenvyConfig();
+            puppetMasterNodeDns = config.getHostUrl();
+        }
+
+        try {
+            Command validatePuppetMasterAccessibilityCommand = getHelper().getValidatePuppetMasterAccessibilityCommand(puppetMasterNodeDns, node);
+            validatePuppetMasterAccessibilityCommand.execute();
+        } catch (IOException e) {
+            String errorMessage = e.getMessage();
+            if (e.getCause() instanceof AgentException) {
+                errorMessage = format("It seems Puppet Master '%s:%s' is not accessible from the node '%s'.", puppetMasterNodeDns, 8140, node.getHost());
+            }
+
+            throw new NodeException(errorMessage, e);
+        }
     }
 
     /**
      * @throws IOException, UnsupportedArtifactVersionException
      */
-    protected NodeManagerHelper getHelper() throws IOException {
+    NodeManagerHelper getHelper() throws IOException {
         Version codenvyVersion = Version.valueOf(configManager.loadInstalledCodenvyConfig().getValue(Config.VERSION));
         if (codenvyVersion.is3Major()) {
             return HELPERS.get(3);
@@ -143,9 +164,5 @@ public class NodeManager {
         } else {
             throw new UnsupportedArtifactVersionException(ArtifactFactory.createArtifact(CDECArtifact.NAME), codenvyVersion);
         }
-    }
-
-    public Map<String, List<String>> getNodes() throws IOException {
-        return getHelper().getNodes();
     }
 }
