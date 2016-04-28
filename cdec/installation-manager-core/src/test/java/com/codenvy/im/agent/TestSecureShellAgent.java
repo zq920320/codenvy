@@ -55,7 +55,7 @@ public class TestSecureShellAgent {
         assertEquals(result, TEST_COMMAND_OUTPUT);
     }
 
-    @Test(expectedExceptions = ConnectionException.class, expectedExceptionsMessageRegExp = "Can't connect to host 'testUser@unexisted:2224'. java.net.UnknownHostException: unexisted")
+    @Test(expectedExceptions = ConnectionException.class, expectedExceptionsMessageRegExp = "Can't connect to host 'testUser@unexisted:2224'.*")
     public void testAuthKeyError() throws Exception {
         testAgent = new SecureShellAgent(UNEXISTED_HOST, sshd.getPort(), SshServerFactory.TEST_SSH_USER, SshServerFactory.TEST_SSH_AUTH_PRIVATE_KEY);
 
