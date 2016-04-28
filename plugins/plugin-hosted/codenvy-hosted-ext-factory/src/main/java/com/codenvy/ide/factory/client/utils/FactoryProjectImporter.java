@@ -69,6 +69,7 @@ import static org.eclipse.che.api.core.ErrorCodes.UNABLE_GET_PRIVATE_SSH_KEY;
 import static org.eclipse.che.api.core.ErrorCodes.UNAUTHORIZED_GIT_OPERATION;
 import static org.eclipse.che.api.git.shared.ProviderInfo.AUTHENTICATE_URL;
 import static org.eclipse.che.api.git.shared.ProviderInfo.PROVIDER_NAME;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.PROGRESS;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.SUCCESS;
@@ -139,7 +140,7 @@ public class FactoryProjectImporter extends AbstractImporter {
                     if (isProjectExistOnFileSystem(projectConfig)) {
                         // to prevent warning when reusing same workspace
                         if (!("perUser".equals(createPolicy) || "perAccount".equals(createPolicy))) {
-                            notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, true);
+                            notificationManager.notify("Import", locale.projectAlreadyImported(projectConfig.getName()), FAIL, FLOAT_MODE);
                         }
                         continue;
                     }
@@ -209,7 +210,7 @@ public class FactoryProjectImporter extends AbstractImporter {
     protected Promise<Void> doImport(@NotNull final String pathToProject,
                                      @NotNull final String projectName,
                                      @NotNull final SourceStorageDto sourceStorage) {
-        final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, true);
+        final StatusNotification notification = notificationManager.notify(locale.cloningSource(projectName), null, PROGRESS, FLOAT_MODE);
         final ProjectNotificationSubscriber subscriber = subscriberFactory.createSubscriber();
         subscriber.subscribe(projectName, notification);
         String location = sourceStorage.getLocation();
@@ -229,12 +230,12 @@ public class FactoryProjectImporter extends AbstractImporter {
                     notificationManager.notify(locale.clonedSource(projectName),
                                                locale.clonedSourceWithCheckout(projectName, repository, result.getBranchRef(), branch),
                                                SUCCESS,
-                                               true);
+                                               FLOAT_MODE);
                 } else {
                     notificationManager.notify(locale.clonedSource(projectName),
                                                locale.clonedWithCheckoutOnStartPoint(projectName, repository, startPoint, branch),
                                                SUCCESS,
-                                               true);
+                                               FLOAT_MODE);
                 }
             }
 

@@ -28,6 +28,7 @@ import org.eclipse.che.ide.api.notification.NotificationManager;
 import javax.inject.Inject;
 
 import static com.codenvy.plugin.pullrequest.client.dialogs.commit.CommitPresenter.CommitActionHandler.CommitAction.CANCEL;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
@@ -68,7 +69,7 @@ public class CommitWorkingTreeStep implements Step {
         commitPresenter.hasUncommittedChanges(new AsyncCallback<Boolean>() {
             @Override
             public void onFailure(final Throwable exception) {
-                notificationManager.notify(exception.getLocalizedMessage(), FAIL, true);
+                notificationManager.notify(exception.getLocalizedMessage(), FAIL, FLOAT_MODE);
                 executor.fail(CommitWorkingTreeStep.this, context, exception.getLocalizedMessage());
             }
 

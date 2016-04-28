@@ -15,10 +15,10 @@
 package com.codenvy.plugin.pullrequest.client.steps;
 
 import com.codenvy.plugin.pullrequest.client.ContributeMessages;
+import com.codenvy.plugin.pullrequest.client.dto.HostUser;
 import com.codenvy.plugin.pullrequest.client.workflow.Context;
 import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.dto.HostUser;
 import com.google.inject.Singleton;
 
 import org.eclipse.che.api.promises.client.Operation;
@@ -30,6 +30,7 @@ import org.eclipse.che.ide.commons.exception.UnauthorizedException;
 
 import javax.inject.Inject;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
@@ -99,7 +100,7 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
                            notificationManager.notify(messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostTitle(),
                                                       messages.stepAuthorizeCodenvyOnVCSHostErrorCannotAccessVCSHostContent(),
                                                       FAIL,
-                                                      true);
+                                                      FLOAT_MODE);
                            executor.fail(AuthorizeCodenvyOnVCSHostStep.this, context, unEx.getLocalizedMessage());
                        } catch (Throwable thr) {
                            handleThrowable(thr, executor, context);
@@ -109,7 +110,7 @@ public class AuthorizeCodenvyOnVCSHostStep implements Step {
     }
 
     private void handleThrowable(final Throwable thr, final WorkflowExecutor workflow, final Context context) {
-        notificationManager.notify(thr.getLocalizedMessage(), FAIL, true);
+        notificationManager.notify(thr.getLocalizedMessage(), FAIL, FLOAT_MODE);
         workflow.fail(this, context, thr.getLocalizedMessage());
     }
 }

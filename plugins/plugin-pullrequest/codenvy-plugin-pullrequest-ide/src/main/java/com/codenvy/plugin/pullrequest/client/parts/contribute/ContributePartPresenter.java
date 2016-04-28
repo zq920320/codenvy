@@ -17,17 +17,17 @@ package com.codenvy.plugin.pullrequest.client.parts.contribute;
 import com.codenvy.plugin.pullrequest.client.ContributeMessages;
 import com.codenvy.plugin.pullrequest.client.events.ContextInvalidatedEvent;
 import com.codenvy.plugin.pullrequest.client.events.ContextInvalidatedHandler;
-import com.codenvy.plugin.pullrequest.client.steps.CommitWorkingTreeStep;
-import com.codenvy.plugin.pullrequest.client.workflow.Context;
-import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.events.ContextPropertyChangeEvent;
 import com.codenvy.plugin.pullrequest.client.events.ContextPropertyChangeHandler;
 import com.codenvy.plugin.pullrequest.client.events.CurrentContextChangedEvent;
 import com.codenvy.plugin.pullrequest.client.events.CurrentContextChangedHandler;
 import com.codenvy.plugin.pullrequest.client.events.StepEvent;
 import com.codenvy.plugin.pullrequest.client.events.StepHandler;
+import com.codenvy.plugin.pullrequest.client.steps.CommitWorkingTreeStep;
 import com.codenvy.plugin.pullrequest.client.utils.NotificationHelper;
+import com.codenvy.plugin.pullrequest.client.workflow.Context;
+import com.codenvy.plugin.pullrequest.client.workflow.Step;
+import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowStatus;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.Window;
@@ -37,21 +37,19 @@ import com.google.gwt.user.client.ui.IsWidget;
 import com.google.web.bindery.event.shared.EventBus;
 
 import org.eclipse.che.api.git.shared.Branch;
+import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.api.app.AppContext;
 import org.eclipse.che.ide.api.notification.NotificationManager;
 import org.eclipse.che.ide.api.parts.WorkspaceAgent;
 import org.eclipse.che.ide.api.parts.base.BasePresenter;
 import org.eclipse.che.ide.ui.dialogs.CancelCallback;
 import org.eclipse.che.ide.ui.dialogs.DialogFactory;
-
-import javax.validation.constraints.NotNull;
-
-import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.ide.ui.dialogs.InputCallback;
 import org.eclipse.che.ide.ui.dialogs.input.InputValidator;
 import org.eclipse.che.ide.util.loging.Log;
 
 import javax.inject.Inject;
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
@@ -62,9 +60,8 @@ import java.util.Set;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static java.util.Arrays.asList;
-import static java.util.Arrays.copyOf;
-import static java.util.Arrays.copyOfRange;
 import static org.eclipse.che.ide.api.constraints.Constraints.LAST;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 import static org.eclipse.che.ide.api.parts.PartStackType.TOOLING;
 
@@ -739,7 +736,7 @@ public class ContributePartPresenter extends BasePresenter implements Contribute
                                new AsyncCallback<String>() {
                                    @Override
                                    public void onFailure(final Throwable exception) {
-                                       notificationManager.notify(exception.getLocalizedMessage(), FAIL, true);
+                                       notificationManager.notify(exception.getLocalizedMessage(), FAIL, FLOAT_MODE);
                                    }
 
                                    @Override

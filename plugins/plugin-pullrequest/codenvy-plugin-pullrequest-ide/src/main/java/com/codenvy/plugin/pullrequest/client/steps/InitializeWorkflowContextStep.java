@@ -15,11 +15,11 @@
 package com.codenvy.plugin.pullrequest.client.steps;
 
 import com.codenvy.plugin.pullrequest.client.ContributeMessages;
+import com.codenvy.plugin.pullrequest.client.vcs.VcsServiceProvider;
 import com.codenvy.plugin.pullrequest.client.vcs.hosting.VcsHostingService;
 import com.codenvy.plugin.pullrequest.client.workflow.Context;
 import com.codenvy.plugin.pullrequest.client.workflow.Step;
 import com.codenvy.plugin.pullrequest.client.workflow.WorkflowExecutor;
-import com.codenvy.plugin.pullrequest.client.vcs.VcsServiceProvider;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
@@ -31,12 +31,14 @@ import org.eclipse.che.api.promises.client.OperationException;
 import org.eclipse.che.api.promises.client.PromiseError;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.ide.api.notification.NotificationManager;
+
 import javax.inject.Inject;
 import java.util.List;
 import java.util.Map;
 
 import static com.codenvy.plugin.pullrequest.projecttype.shared.ContributionProjectTypeConstants.CONTRIBUTE_TO_BRANCH_VARIABLE_NAME;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 import static org.eclipse.che.ide.api.notification.StatusNotification.Status.FAIL;
 
 /**
@@ -95,7 +97,7 @@ public class InitializeWorkflowContextStep implements Step {
 
                     executor.done(InitializeWorkflowContextStep.this, context);
                 } else {
-                    notificationManager.notify(messages.stepInitWorkflowOriginRemoteNotFound(), FAIL, true);
+                    notificationManager.notify(messages.stepInitWorkflowOriginRemoteNotFound(), FAIL, FLOAT_MODE);
                     executor.fail(InitializeWorkflowContextStep.this, context, messages.stepInitWorkflowOriginRemoteNotFound());
                 }
             }
@@ -122,7 +124,7 @@ public class InitializeWorkflowContextStep implements Step {
             public void apply(final PromiseError error) throws OperationException {
                 notificationManager.notify(messages.contributorExtensionErrorSetupOriginRepository(error.getMessage()),
                                            FAIL,
-                                           true);
+                                           FLOAT_MODE);
                 executor.fail(InitializeWorkflowContextStep.this, context, error.getMessage());
             }
         };

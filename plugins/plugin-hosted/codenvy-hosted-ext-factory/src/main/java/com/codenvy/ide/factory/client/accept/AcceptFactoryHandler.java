@@ -32,6 +32,8 @@ import org.eclipse.che.ide.api.notification.StatusNotification;
 
 import javax.inject.Inject;
 
+import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.NOT_EMERGE_MODE;
+
 /**
  * @author Sergii Leschenko
  * @author Anton Korneta
@@ -80,7 +82,7 @@ public class AcceptFactoryHandler {
 
                 isImportingStarted = true;
 
-                notification = notificationManager.notify(factoryLocalization.cloningSource(), StatusNotification.Status.PROGRESS, false);
+                notification = notificationManager.notify(factoryLocalization.cloningSource(), StatusNotification.Status.PROGRESS, NOT_EMERGE_MODE);
                 performOnAppLoadedActions(factory);
                 startImporting(factory);
             }
