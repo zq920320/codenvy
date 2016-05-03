@@ -62,10 +62,10 @@ Vagrant.configure("2") do |config|
     s.args = [http_proxy, https_proxy]
   end
 
-   config.vm.provision "shell", run: "always", inline: <<-SHELL
+  config.vm.provision "shell", run: "always", inline: <<-SHELL
     echo "."
     echo "."
-    echo "CODENVY: INSTALLED!"
+    echo "CODENVY:   INSTALLED IN VAGRANT!"
     echo "AVAILABLE: http://192.168.56.110"
     echo "USER NAME: admin"
     echo "PASSWORD:  password"
