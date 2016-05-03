@@ -52,7 +52,7 @@ Vagrant.configure("2") do |config|
     if [ -n "$HTTP_PROXY" ] || [ -n "$HTTPS_PROXY" ]; then
       bash <(curl -L -s --proxy ${HTTPS_PROXY} https://start.codenvy.com/install-codenvy) --silent --fair-source-license=accept --http-proxy=${HTTP_PROXY} --https-proxy=${HTTPS_PROXY}
     else
-      bash <(curl -L -s https://start.codenvy.com/install-codenvy) --silent --fair-source-license=accept --hostname=codenvy
+      bash <(curl -L -s https://start.codenvy.com/install-codenvy) --silent --fair-source-license=accept
     fi
 
   SHELL
