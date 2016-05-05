@@ -1161,8 +1161,10 @@ doCheckAvailableResourcesLocally() {
     fi
 
     if [[ ${sudoerRightsIssueFound} == "warning" ]]; then
-        println $(printWarning "We could not find '#includedir /etc/sudoers.d' in /etc/sudoers. This entry can be removed by security teams. Codenvy will install but workspaces may fail to start.")
-        println $(printWarning "During installation we will create a new user named 'codenvy' which will be granted passwordless sudoer rights. These rights are provided in the '/etc/sudoers.d' directory.")
+        println $(printWarning "We could not find '#includedir /etc/sudoers.d' in /etc/sudoers. This entry can be removed by security teams.")
+        println $(printWarning "Codenvy will install but workspaces may fail to start.")
+        println $(printWarning "During installation we will create a new user named 'codenvy' which will be granted passwordless sudoer rights.")
+        println $(printWarning "These rights are provided in the '/etc/sudoers.d' directory.")
         println $(printWarning "Contact your system administrator to discuss security options.")
         println
     fi
