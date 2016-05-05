@@ -80,12 +80,13 @@ public class HttpSsoServerClient implements ServerClient {
     @Override
     public void unregisterClient(String token, String clientUrl) {
         try {
-            requestFactory.fromUrl(apiEndpoint + UriBuilder.fromUri(apiEndpoint)
-                                                           .path(SsoService.class)
-                                                           .path(SsoService.class, "unregisterToken")
-                                                           .build(token))
+            requestFactory.fromUrl(UriBuilder.fromUri(apiEndpoint)
+                                             .path(SsoService.class)
+                                             .path(SsoService.class, "unregisterToken")
+                                             .build(token)
+                                             .toString())
                           .useDeleteMethod()
-                          .addQueryParam("clienturl", URLEncoder.encode(clientUrl, "UTF-8"))
+                          .addQueryParam("clienturl", clientUrl)
                           .request();
         } catch (ApiException | IOException e) {
             LOG.warn(e.getLocalizedMessage());
