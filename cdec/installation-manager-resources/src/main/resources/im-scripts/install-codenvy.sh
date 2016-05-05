@@ -833,7 +833,7 @@ doGetHostsVariables() {
 }
 
 doCheckAvailablePorts_single() {
-    for PORT in ${PUPPET_MASTER_PORTS[@]} ${SITE_PORTS[@]} ${API_PORTS[@]} ${DATA_PORTS[@]} ${DATASOURCE_PORTS[@]} ${RUNNER_PORTS[@]} ${BUILDER_PORTS[@]}; do
+    for PORT in ${SITE_PORTS[@]} ${API_PORTS[@]} ${DATA_PORTS[@]} ${DATASOURCE_PORTS[@]} ${RUNNER_PORTS[@]} ${BUILDER_PORTS[@]}; do
         PROTOCOL=$(echo ${PORT}|awk -F':' '{print $1}');
         PORT_ONLY=$(echo ${PORT}|awk -F':' '{print $2}');
 
@@ -862,6 +862,14 @@ doCheckInstalledPuppet() {
             println $(printWarning "NOTE: Please, uninstall it or update to package '$PUPPET_SERVER_PACKAGE', and then start installation again.")
             exit 1;
         fi
+    else
+        # check if puppet master ports has been already opened
+        for PORT in ${PUPPET_MASTER_PORTS[@]}; do
+            PROTOCOL=$(echo ${PORT}|awk -F':' '{print $1}');
+            PORT_ONLY=$(echo ${PORT}|awk -F':' '{print $2}');
+
+            validatePortLocal "${PROTOCOL}" "${PORT_ONLY}"
+        done
     fi
 }
 
