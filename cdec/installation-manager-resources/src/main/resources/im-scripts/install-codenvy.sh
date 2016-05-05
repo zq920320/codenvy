@@ -78,6 +78,7 @@ STEP_LINE=
 PUPPET_LINE=
 PROGRESS_LINE=
 TIMER_LINE=
+CURL_PROXY_OPTION=
 
 DEPENDENCIES_STATUS_OFFSET=85  # fit screen width = 100 cols
 PROGRESS_FACTOR=2
@@ -141,9 +142,11 @@ setRunOptions() {
 
         elif [[ "$var" =~ --http-proxy=.* ]]; then
             HTTP_PROXY=$(echo "$var" | sed -e "s/--http-proxy=//g")
+            CURL_PROXY_OPTION="--proxy $HTTP_PROXY"
 
         elif [[ "$var" =~ --https-proxy=.* ]]; then
             HTTPS_PROXY=$(echo "$var" | sed -e "s/--https-proxy=//g")
+            CURL_PROXY_OPTION="--proxy $HTTPS_PROXY"
 
         elif [[ "$var" =~ --http-proxy-for-codenvy=.* ]]; then
             HTTP_PROXY_FOR_CODENVY=$(echo "$var" | sed -e "s/--http-proxy-for-codenvy=//g")
@@ -180,12 +183,13 @@ setRunOptions() {
     fi
 }
 
-
+# $1 - url
+# $2 - property
 fetchProperty() {
     local url=$1
     local property=$2
     local seq="s/.*\"${property}\":\"\([^\"]*\)\".*/\1/"
-    echo $(curl -s ${url} | sed ${seq})
+    echo $(curl -s $CURL_PROXY_OPTION ${url} | sed ${seq})
 }
 
 # run specific function and don't break installation if connection lost
@@ -505,9 +509,9 @@ downloadConfig() {
     local url="https://codenvy.com/update/repository/public/download/codenvy-${CODENVY_TYPE}-server-properties/${VERSION}"
 
     # check url to config on http error
-    http_code=$(curl --silent --write-out '%{http_code}' --output /dev/null ${url})
+    http_code=$(curl $CURL_PROXY_OPTION --silent --write-out '%{http_code}' --output /dev/null ${url})
     if [[ ! ${http_code} -eq 200 ]]; then    # if response code != "200 OK"
-        local updates=$(curl --silent "https://codenvy.com/update/repository/updates/${ARTIFACT}")
+        local updates=$(curl $CURL_PROXY_OPTION --silent "https://codenvy.com/update/repository/updates/${ARTIFACT}")
         println $(printError "ERROR: Version '${VERSION}' is not available")
         println
         if [[ -n "${VERSION}" ]] && [[ ! "${updates}" =~ .*\"${VERSION}\".* ]]; then
@@ -523,7 +527,7 @@ downloadConfig() {
     fi
 
     # load config into the ${CONFIG} file
-    curl --silent --output ${CONFIG} ${url}
+    curl $CURL_PROXY_OPTION --silent --output ${CONFIG} ${url}
 }
 
 # $1 - command name
