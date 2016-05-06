@@ -10,7 +10,7 @@
 # --hostname=<CODENVY HOSTNAME>
 # --systemAdminName=<SYSTEM ADMIN NAME>
 # --systemAdminPassword=<SYSTEM ADMIN PASSWORD>
-# --fair-source-license=accept
+# --license=accept
 # --install-directory=<PATH TO SINGLE DIRECTORY FOR ALL RESOURCES>
 # --http-proxy=<HTTP PROXY URL>
 # --https-proxy=<HTTPS PROXY URL>
@@ -114,7 +114,7 @@ setRunOptions() {
     IM_CLI=false
     SILENT=false
     SUPPRESS=false
-    FAIR_SOURCE_LICENSE_ACCEPTED=false
+    LICENSE_ACCEPTED=false
     for var in "$@"; do
         if [[ "$var" == "--multi" ]]; then
             CODENVY_TYPE="multi"
@@ -141,8 +141,8 @@ setRunOptions() {
         elif [[ "$var" =~ --systemAdminPassword=.* ]]; then
             SYSTEM_ADMIN_PASSWORD=$(echo "$var" | sed -e "s/--systemAdminPassword=//g")
 
-        elif [[ "$var" =~ --fair-source-license=accept ]]; then
-            FAIR_SOURCE_LICENSE_ACCEPTED=true
+        elif [[ "$var" =~ --license=accept ]]; then
+            LICENSE_ACCEPTED=true
 
         elif [[ "$var" =~ --install-directory=.* ]]; then
             INSTALL_DIRECTORY=$(echo "$var" | sed -e "s/--install-directory=//g")
@@ -938,7 +938,7 @@ printPreInstallInfo_single() {
     println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
     println
 
-    doEnsureFairSourceLicenseAgreement
+    doEnsureLicenseAgreement
 
     println "Checking system pre-requisites..."
     println
@@ -988,16 +988,16 @@ printPreInstallInfo_single() {
     fi
 }
 
-doEnsureFairSourceLicenseAgreement() {
-    if [[ ${FAIR_SOURCE_LICENSE_ACCEPTED} == true ]]; then
-        println "You have accepted the Codenvy Fair Source license agreement to "
-        println "install this software: http://codenvy.com/legal/fair-source"
+doEnsureLicenseAgreement() {
+    if [[ ${LICENSE_ACCEPTED} == true ]]; then
+        println "You have accepted the Codenvy license agreement"
+        println "at https://codenvy.com/docs/terms-of-service.pdf"
         println
         return
     fi
 
-    println "You must accept the Codenvy Fair Source license agreement to "
-    println "install this software: http://codenvy.com/legal/fair-source"
+    println "You must accept the Codenvy license agreement to install"
+    println "this software: https://codenvy.com/docs/terms-of-service.pdf"
     println
     print "Accept? [y/N]: "
     read VALUE
@@ -1246,7 +1246,7 @@ printPreInstallInfo_multi() {
     println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
     println
 
-    doEnsureFairSourceLicenseAgreement
+    doEnsureLicenseAgreement
 
     println "Checking system pre-requisites..."
     println
