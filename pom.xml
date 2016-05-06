@@ -584,11 +584,6 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-                <groupId>com.codenvy.plugin</groupId>
-                <artifactId>codenvy-swarm-machine</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
                 <groupId>com.codenvy.resources</groupId>
                 <artifactId>codenvy-tomcat8-slf4j-logback</artifactId>
                 <version>${version.resource-bundle}</version>

@@ -14,7 +14,7 @@
  */
 package com.codenvy.swarm.client;
 
-import com.codenvy.swarm.client.json.DockerNode;
+import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.base.Strings;
 
 import org.eclipse.che.commons.json.JsonHelper;

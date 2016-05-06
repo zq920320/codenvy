@@ -12,23 +12,29 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.swarm.client;
-
-import com.codenvy.swarm.client.json.DockerNode;
-
-import java.io.IOException;
-import java.util.List;
-
-//TODO consider should it be DockerNode || URI || something else
+package com.codenvy.swarm.client.model;
 
 /**
- * Node selection strategy for Swarm.
- * Used for not implemented yet in Swarm docker operations.
- * Should be replaced later with native Swarm methods
+ * Represents node where docker runs.
+ * Used for workarounds because of not implemented APIs in Swarm
  *
  * @author Eugene Voevodin
  */
-public interface NodeSelectionStrategy {
+public class DockerNode {
+    //TODO add ram and containers ?
+    private final String hostname;
+    private final String addr;
 
-    DockerNode select(List<DockerNode> nodes) throws IOException;
+    public DockerNode(String hostname, String addr) {
+        this.hostname = hostname;
+        this.addr = addr;
+    }
+
+    public String getAddr() {
+        return addr;
+    }
+
+    public String getHostname() {
+        return hostname;
+    }
 }

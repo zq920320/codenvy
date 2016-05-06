@@ -14,7 +14,6 @@
  */
 package com.codenvy.machine;
 
-import com.codenvy.swarm.machine.SwarmInstanceRuntimeInfo;
 import com.google.inject.assistedinject.Assisted;
 
 import org.eclipse.che.api.core.model.machine.MachineConfig;
@@ -22,6 +21,7 @@ import org.eclipse.che.api.core.model.machine.Server;
 import org.eclipse.che.api.core.model.machine.ServerConf;
 import org.eclipse.che.api.machine.server.model.impl.ServerImpl;
 import org.eclipse.che.plugin.docker.client.json.ContainerInfo;
+import org.eclipse.che.plugin.docker.machine.DockerInstanceRuntimeInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,7 +38,7 @@ import java.util.Set;
  *
  * @author Alexander Garagatyi
  */
-public class HttpsSupportInstanceRuntimeInfo extends SwarmInstanceRuntimeInfo {
+public class HttpsSupportInstanceRuntimeInfo extends DockerInstanceRuntimeInfo {
     private static final Logger LOG = LoggerFactory.getLogger(HttpsSupportInstanceRuntimeInfo.class);
 
     private final boolean                        isHttpsEnabled;

@@ -14,26 +14,21 @@
  */
 package com.codenvy.swarm.client;
 
-import com.codenvy.swarm.client.json.DockerNode;
+import com.codenvy.swarm.client.model.DockerNode;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Random;
+
+//TODO consider should it be DockerNode || URI || something else
 
 /**
- * Random selection strategy for Swarm connector.
+ * Node selection strategy for Swarm.
+ * Used for not implemented yet in Swarm docker operations.
+ * Should be replaced later with native Swarm methods
  *
  * @author Eugene Voevodin
  */
-public class RandomNodeSelectionStrategy implements NodeSelectionStrategy {
+public interface NodeSelectionStrategy {
 
-    private static final Random random = new Random();
-
-    @Override
-    public DockerNode select(List<DockerNode> uris) throws IOException {
-        if (uris.size() == 0) {
-            throw new IOException("No docker nodes available");
-        }
-        return uris.get(random.nextInt(uris.size()));
-    }
+    DockerNode select(List<DockerNode> nodes) throws IOException;
 }
