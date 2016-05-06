@@ -45,6 +45,7 @@ import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
+import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.mongodb.client.MongoDatabase;
@@ -300,7 +301,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         .implement(org.eclipse.che.plugin.docker.machine.node.DockerNode.class,
                                    com.codenvy.machine.RemoteDockerNode.class)
                         .implement(org.eclipse.che.plugin.docker.machine.DockerInstanceRuntimeInfo.class,
-                                   com.codenvy.machine.HttpsSupportInstanceRuntimeInfo.class)
+                                   com.codenvy.machine.HostedServersInstanceRuntimeInfo.class)
                         .build(org.eclipse.che.plugin.docker.machine.DockerMachineFactory.class));
 
         bind(org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider.class)
@@ -325,5 +326,14 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new com.codenvy.activity.server.inject.WorkspaceActivityModule());
 
         bind(org.eclipse.che.api.machine.server.terminal.MachineTerminalLauncher.class);
+
+        MapBinder<String, com.codenvy.machine.MachineServerProxyTransformer> mapBinder =
+                MapBinder.newMapBinder(binder(),
+                                       String.class,
+                                       com.codenvy.machine.MachineServerProxyTransformer.class);
+        mapBinder.addBinding(org.eclipse.che.api.machine.shared.Constants.TERMINAL_REFERENCE)
+                 .to(com.codenvy.machine.TerminalServerProxyTransformer.class);
+        mapBinder.addBinding(org.eclipse.che.api.machine.shared.Constants.WSAGENT_REFERENCE)
+                 .to(com.codenvy.machine.WsAgentServerProxyTransformer.class);
     }
 }
