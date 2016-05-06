@@ -5,6 +5,7 @@
 # allowed options:
 # --multi
 # --silent
+# --suppress
 # --version=<VERSION TO INSTALL>
 # --hostname=<CODENVY HOSTNAME>
 # --systemAdminName=<SYSTEM ADMIN NAME>
@@ -110,7 +111,9 @@ setRunOptions() {
     DIR="${HOME}/codenvy-im"
     ARTIFACT="codenvy"
     CODENVY_TYPE="single"
+    IM_CLI=false
     SILENT=false
+    SUPPRESS=false
     FAIR_SOURCE_LICENSE_ACCEPTED=false
     for var in "$@"; do
         if [[ "$var" == "--multi" ]]; then
@@ -119,7 +122,11 @@ setRunOptions() {
         elif [[ "$var" == "--silent" ]]; then
             SILENT=true
 
+        elif [[ "$var" == "--suppress" ]]; then
+            SUPPRESS=true
+
         elif [[ "$var" == "--im-cli" ]]; then
+            IM_CLI=true
             ARTIFACT="installation-manager-cli"
 
         elif [[ "$var" =~ --version=.* ]]; then
@@ -179,7 +186,7 @@ setRunOptions() {
     EXTERNAL_DEPENDENCIES[0]="https://codenvy.com/update/repository/public/download/${ARTIFACT}/${VERSION}||0"
 
     if [[ "${CODENVY_TYPE}" == "single" ]] && [[ ! -z "${HOST_NAME}" ]] && [[ ! -z "${SYSTEM_ADMIN_PASSWORD}" ]] && [[ ! -z "${SYSTEM_ADMIN_NAME}" ]]; then
-        SILENT=true
+        SUPPRESS=true
     fi
 }
 
@@ -281,7 +288,7 @@ configureProxySettings() {
             wgetrcToDisplay="${wgetrcToDisplay}$(print "https_proxy=$HTTPS_PROXY")\n"
         fi
 
-        if [[ ${SILENT} == false ]]; then
+        if [[ ${SUPPRESS} == false ]]; then
             println "Proxy options found! This server needs the following to install:"
             println "================================"
             println $(printImportantInfo "# In ~/.bashrc:")
@@ -414,6 +421,10 @@ doDownloadBinaries() {
 }
 
 runDownloadProgressUpdater() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     updateDownloadProgress &
     DOWNLOAD_PROGRESS_UPDATER_PID=$!
 }
@@ -456,6 +467,10 @@ updateDownloadProgress() {
 }
 
 doUpdateDownloadProgress() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     local percent=$1
     local bars=$(( ${LAST_INSTALLATION_STEP}*${PROGRESS_FACTOR} ))
     local progress_field=
@@ -584,7 +599,7 @@ installJava() {
 
 installIm() {
     IM_URL="https://codenvy.com/update/repository/public/download/installation-manager-cli"
-    if [[ "${ARTIFACT}" == "installation-manager-cli" ]]; then
+    if [[ $IM_CLI == true ]]; then
         IM_URL=${IM_URL}"/"${VERSION}
     fi
     echo ${IM_URL} >> install.log
@@ -741,7 +756,7 @@ executeIMCommand() {
 }
 
 pressAnyKeyToContinueAndClearConsole() {
-    if [[ ${SILENT} == false ]]; then
+    if [[ ${SUPPRESS} == false ]]; then
         println  "Press any key to continue"
         read -n1 -s
         clear
@@ -749,14 +764,14 @@ pressAnyKeyToContinueAndClearConsole() {
 }
 
 pressAnyKeyToContinue() {
-    if [[ ${SILENT} == false ]]; then
+    if [[ ${SUPPRESS} == false ]]; then
         println  "Press any key to continue"
         read -n1 -s
     fi
 }
 
 pressYKeyToContinue() {
-    if [[ ${SILENT} == false ]]; then
+    if [[ ${SUPPRESS} == false ]]; then
         if [[ ! -z "$1" ]]; then
             print $@
         else
@@ -968,7 +983,9 @@ printPreInstallInfo_single() {
         insertProperty "https_proxy_for_codenvy" ${HTTPS_PROXY_FOR_CODENVY}
     fi
 
-    doCheckAvailablePorts_single
+    if [[ $IM_CLI == false ]]; then
+        doCheckAvailablePorts_single
+    fi
 }
 
 doEnsureFairSourceLicenseAgreement() {
@@ -1173,7 +1190,7 @@ doCheckAvailableResourcesLocally() {
         exit 1;
     fi
 
-    if [[ ${sudoerRightsIssueFound} == "warning" || ${resourceIssueFound} == "warning" ]] && [[ ${SILENT} == false ]]; then
+    if [[ ${sudoerRightsIssueFound} == "warning" || ${resourceIssueFound} == "warning" ]] && [[ ${SUPPRESS} == false ]]; then
         pressYKeyToContinue "Proceed?"
         println
     fi
@@ -1255,7 +1272,7 @@ printPreInstallInfo_multi() {
         fi
     fi
 
-    if [[ ${SILENT} == true ]]; then
+    if [[ ${SUPPRESS} == true ]]; then
         if [ -n "${HOST_NAME}" ]; then
             insertProperty "host_url" ${HOST_NAME}
         fi
@@ -1298,7 +1315,9 @@ printPreInstallInfo_multi() {
 
     doCheckAvailableResourcesOnNodes
 
-    doCheckAvailablePorts_multi
+    if [[ $IM_CLI == false ]]; then
+        doCheckAvailablePorts_multi
+    fi
 
     println "Checking access to external dependencies..."
     println
@@ -1466,7 +1485,7 @@ doCheckAvailableResourcesOnNodes() {
 
         println $(printWarning "!!! Some nodes do not match recommended.")
         println
-        if [[ ${SILENT} != true ]]; then
+        if [[ ${SUPPRESS} == false ]]; then
             pressYKeyToContinue "Proceed?"
             println
         fi
@@ -1488,6 +1507,10 @@ initTimer() {
 }
 
 runTimer() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     updateTimer &
     TIMER_PID=$!
 }
@@ -1511,6 +1534,10 @@ pauseTimer() {
 }
 
 updateTimer() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     for ((;;)); do
         END_TIME=$(date +%s)
         DURATION=$(( $END_TIME-$START_TIME))
@@ -1525,6 +1552,10 @@ updateTimer() {
 
 ################ Puppet Info Printer
 updatePuppetInfo() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     for ((;;)); do
         local line=$(sudo tail -n 1 /var/log/puppet/puppet-agent.log 2>/dev/null)
         if [[ -n "$line" ]]; then
@@ -1537,6 +1568,10 @@ updatePuppetInfo() {
 }
 
 runPuppetInfoPrinter() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     updatePuppetInfo &
     PRINTER_PID=$!
 }
@@ -1560,6 +1595,10 @@ pausePuppetInfoPrinter() {
 }
 
 updateProgress() {
+    if [[ ${SILENT} == true ]]; then
+        return
+    fi
+
     local current_step=$1
     local last_step=${LAST_INSTALLATION_STEP}
 
@@ -1745,6 +1784,12 @@ setStepIndicator ${LAST_INSTALLATION_STEP}
 updateLine ${PUPPET_LINE} " "
 
 sleep 2
+
+if [[ ${SILENT} == true ]]; then
+    cursorUp
+    cursorUp
+    cursorUp
+fi
 
 pauseTimer
 pauseInternetAccessChecker
