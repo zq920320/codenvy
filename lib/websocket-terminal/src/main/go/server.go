@@ -33,7 +33,11 @@ import (
 	"unicode/utf8"
 )
 
+
+
 var addrFlag, cmdFlag, staticFlag string
+
+
 
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1,
@@ -47,6 +51,8 @@ type wsPty struct {
 	Cmd *exec.Cmd // pty builds on os.exec
 	Pty *os.File  // a pty is simply an os.File
 }
+
+var activity = &WorkspaceActivity{};
 
 func (wp *wsPty) Start() {
 	var err error
@@ -131,7 +137,6 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		Data json.RawMessage `json:"data"`
 	}
 
-
 	// read from the web socket, copying to the pty master
 	// messages are expected to be text and base64 encoded
 	for {
@@ -160,6 +165,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 					log.Printf("Invalid resize message: %s\n", err);
 				} else{
 					pty.Setsize(wp.Pty,uint16(size[1]), uint16(size[0]));
+					activity.Notify();
 				}
 
 			case "data" :
@@ -169,6 +175,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 					log.Printf("Invalid data message %s\n", err);
 				} else{
 					wp.Pty.Write([]byte(dat));
+					activity.Notify();
 				}
 
 			default:
@@ -185,6 +192,8 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	wp.Stop()
 }
 
+
+
 func init() {
 	cwd, _ := os.Getwd()
 	flag.StringVar(&addrFlag, "addr", ":9000", "IP:PORT or :PORT address to listen on")
@@ -195,7 +204,7 @@ func init() {
 
 func main() {
 	flag.Parse()
-
+	go activity.StartTracking();
 	http.HandleFunc("/pty", ptyHandler)
 
 	// serve html & javascript

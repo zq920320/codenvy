@@ -66,6 +66,7 @@
                 <artifactId>license-maven-plugin</artifactId>
                 <configuration>
                     <excludes>
+                        <exclude>src/main/go/activity.go</exclude>
                         <exclude>src/main/go/server.go</exclude>
                         <exclude>src/main/resources/index.html</exclude>
                         <exclude>src/main/resources/term.js</exclude>
@@ -136,6 +137,7 @@
                                     <configuration>
                                         <target>
                                             <copy file="src/main/go/server.go" todir="${project.build.directory}/${item}/go" />
+                                            <copy file="src/main/go/activity.go" todir="${project.build.directory}/${item}/go" />
                                             <unzip dest="${project.build.directory}/${item}" src="${project.build.directory}/dependency/che-websocket-terminal-${item}.zip" />
                                         </target>
                                     </configuration>
