@@ -15,7 +15,7 @@
 # --http-proxy=<HTTP PROXY URL>
 # --https-proxy=<HTTPS PROXY URL>
 # --http-proxy-for-codenvy=<HTTP PROXY URL>
-# --http-proxy-for-codenvy=<HTTPS PROXY URL>
+# --https-proxy-for-codenvy=<HTTPS PROXY URL>
 # --im-cli: to IM CLI client only
 
 trap cleanUp EXIT
