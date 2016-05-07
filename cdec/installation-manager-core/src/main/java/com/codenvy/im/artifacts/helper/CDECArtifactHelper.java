@@ -104,15 +104,15 @@ public abstract class CDECArtifactHelper {
 
         StringBuilder proxySettings = new StringBuilder("\\n\\[user\\]\\n");
         if (! Objects.isNull(systemSettings.getHttpUser())) {
-            proxySettings.append(format("  http_proxy_user = '%s'\\n", systemSettings.getHttpUser()));
+            proxySettings.append(format("  http_proxy_user = %s\\n", systemSettings.getHttpUser()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpPassword())) {
-            proxySettings.append(format("  http_proxy_password = '%s'\\n", systemSettings.getHttpPassword()));
+            proxySettings.append(format("  http_proxy_password = %s\\n", systemSettings.getHttpPassword()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpHost())) {
-            proxySettings.append(format("  http_proxy_host = '%s'\\n", systemSettings.getHttpHost()));
+            proxySettings.append(format("  http_proxy_host = %s\\n", systemSettings.getHttpHost()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpPort())) {
@@ -120,15 +120,15 @@ public abstract class CDECArtifactHelper {
         }
 
         if (! Objects.isNull(systemSettings.getHttpsUser())) {
-            proxySettings.append(format("  https_proxy_user = '%s'\\n", systemSettings.getHttpsUser()));
+            proxySettings.append(format("  https_proxy_user = %s\\n", systemSettings.getHttpsUser()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpsPassword())) {
-            proxySettings.append(format("  https_proxy_password = '%s'\\n", systemSettings.getHttpsPassword()));
+            proxySettings.append(format("  https_proxy_password = %s\\n", systemSettings.getHttpsPassword()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpsHost())) {
-            proxySettings.append(format("  https_proxy_host = '%s'\\n", systemSettings.getHttpsHost()));
+            proxySettings.append(format("  https_proxy_host = %s\\n", systemSettings.getHttpsHost()));
         }
 
         if (! Objects.isNull(systemSettings.getHttpsPort())) {
