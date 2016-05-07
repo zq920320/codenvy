@@ -173,8 +173,9 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                                          "  certname = %1$s\\n" +
                                          "  runinterval = 300\\n" +
                                          "  configtimeout = 600\\n" +
-                                         "  server = %1$s\\n" +        // is needed to add nodes in All-In-One Codenvy
-                                         "/g' /etc/puppet/puppet.conf", config.getHostUrl())),
+                                         "  server = %1$s\\n" +     // is needed to add nodes in All-In-One Codenvy
+                                         "%2$s" +
+                                         "/g' /etc/puppet/puppet.conf", config.getHostUrl(), getProxySettingsForPuppetConf())),
                     // log puppet messages into the /var/log/puppet/puppet-agent.log file instead of /var/log/messages
                     createCommand("sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\\n\" >> /etc/sysconfig/puppetagent'")),
                                         "Configure puppet agent");
