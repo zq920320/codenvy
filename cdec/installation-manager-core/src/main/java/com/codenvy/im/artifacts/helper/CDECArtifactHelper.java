@@ -102,7 +102,7 @@ public abstract class CDECArtifactHelper {
             return "";
         }
 
-        StringBuilder proxySettings = new StringBuilder("\\n\\[user\\]\\n");
+        StringBuilder proxySettings = new StringBuilder("\\[user\\]\\n");
         if (! Objects.isNull(systemSettings.getHttpUser())) {
             proxySettings.append(format("  http_proxy_user = %s\\n", systemSettings.getHttpUser()));
         }

@@ -320,7 +320,7 @@ public class TestCDECArtifact extends BaseTest {
         assertEquals(commands.size(), 4);
         assertEquals(commands.toString(), "[{'command'='if sudo test -f /etc/puppet/puppet.conf; then     if ! sudo test -f /etc/puppet/puppet.conf.back; then         sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back;     else         sudo cp /etc/puppet/puppet.conf.back /etc/puppet/puppet.conf;     fi fi', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo sed -i 's/\\[main\\]/\\[main\\]\\n  dns_alt_names = puppet,host_url\\n/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo sed -i 's/\\[agent\\]/[master]\\n  certname = host_url\\n\\n\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = true\\n  default_schedules = false\\n  certname = host_url\\n  runinterval = 300\\n  configtimeout = 600\\n  server = host_url\\n\\n\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = paswd1\\n  http_proxy_host = user1\\n  http_proxy_port = 8081\\n  https_proxy_user = user2\\n  https_proxy_password = paswd2\\n  https_proxy_host = user2\\n  https_proxy_port = 8082\\n\\n/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo sed -i 's/\\[agent\\]/[master]\\n  certname = host_url\\n\\n\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = paswd1\\n  http_proxy_host = user1\\n  http_proxy_port = 8081\\n  https_proxy_user = user2\\n  https_proxy_password = paswd2\\n  https_proxy_host = user2\\n  https_proxy_port = 8082\\n\\n\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = true\\n  default_schedules = false\\n  certname = host_url\\n  runinterval = 300\\n  configtimeout = 600\\n  server = host_url\\n/g' /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\\n\" >> /etc/sysconfig/puppetagent'', 'agent'='LocalAgent'}]");
     }
 
@@ -1194,15 +1194,15 @@ public class TestCDECArtifact extends BaseTest {
             },
             {
                 "user1", "password1", "proxy.net1", "8081", null, null, null, null,
-                "\\n\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = password1\\n  http_proxy_host = proxy.net1\\n  http_proxy_port = 8081\\n\\n"
+                "\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = password1\\n  http_proxy_host = proxy.net1\\n  http_proxy_port = 8081\\n\\n"
             },
             {
                 null, null, null, null, "user2", "password2", "proxy.net2", "8082",
-                "\\n\\[user\\]\\n  https_proxy_user = user2\\n  https_proxy_password = password2\\n  https_proxy_host = proxy.net2\\n  https_proxy_port = 8082\\n\\n"
+                "\\[user\\]\\n  https_proxy_user = user2\\n  https_proxy_password = password2\\n  https_proxy_host = proxy.net2\\n  https_proxy_port = 8082\\n\\n"
             },
             {
                 "user1", "password1", "proxy.net1", "8081", "user2", "password2", "proxy.net2", "8082",
-                "\\n\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = password1\\n  http_proxy_host = proxy.net1\\n  http_proxy_port = 8081\\n  https_proxy_user = user2\\n  https_proxy_password = password2\\n  https_proxy_host = proxy.net2\\n  https_proxy_port = 8082\\n\\n"
+                "\\[user\\]\\n  http_proxy_user = user1\\n  http_proxy_password = password1\\n  http_proxy_host = proxy.net1\\n  http_proxy_port = 8081\\n  https_proxy_user = user2\\n  https_proxy_password = password2\\n  https_proxy_host = proxy.net2\\n  https_proxy_port = 8082\\n\\n"
             }
         };
     }
