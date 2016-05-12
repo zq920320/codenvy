@@ -155,7 +155,7 @@ public abstract class AbstractArtifact implements Artifact {
      */
     protected List<Map.Entry<Artifact, Version>> getAllUpdates() throws IOException {
         DownloadManager downloadManager = getDownloadManager();
-        return downloadManager.getAllUpdates(this)
+        return downloadManager.getAllUpdates(this, true)
                               .stream()
                               .filter((Map.Entry<Artifact, Version> update) -> {
                                   Artifact artifact = update.getKey();

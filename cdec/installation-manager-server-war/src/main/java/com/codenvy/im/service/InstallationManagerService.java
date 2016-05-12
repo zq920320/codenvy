@@ -238,7 +238,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getUpdates() {
         try {
-            Collection<UpdateArtifactInfo> updates = delegate.getAllUpdates(createArtifact(CDECArtifact.NAME));
+            Collection<UpdateArtifactInfo> updates = delegate.getAllUpdates(createArtifact(CDECArtifact.NAME), true);
             return Response.ok(updates).build();
         } catch (Exception e) {
             return handleException(e);

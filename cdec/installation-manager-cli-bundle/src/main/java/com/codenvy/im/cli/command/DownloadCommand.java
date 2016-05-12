@@ -16,15 +16,17 @@ package com.codenvy.im.cli.command;
 
 
 import com.codenvy.im.artifacts.Artifact;
+import com.codenvy.im.artifacts.ArtifactFactory;
+import com.codenvy.im.artifacts.CDECArtifact;
 import com.codenvy.im.managers.DownloadAlreadyStartedException;
 import com.codenvy.im.managers.DownloadNotStartedException;
 import com.codenvy.im.response.DownloadArtifactInfo;
 import com.codenvy.im.response.DownloadProgressResponse;
 import com.codenvy.im.response.DownloadResponse;
 import com.codenvy.im.response.ResponseCode;
+import com.codenvy.im.response.UpdateArtifactInfo;
 import com.codenvy.im.utils.Commons;
 import com.codenvy.im.utils.Version;
-
 import org.apache.karaf.shell.commands.Argument;
 import org.apache.karaf.shell.commands.Command;
 import org.apache.karaf.shell.commands.Option;
@@ -32,9 +34,11 @@ import org.eclipse.che.commons.json.JsonParseException;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Objects;
 
 import static com.codenvy.im.utils.Commons.createArtifactOrNull;
 import static com.codenvy.im.utils.Commons.createVersionOrNull;
+import static com.codenvy.im.utils.Commons.toJson;
 import static java.lang.Thread.sleep;
 
 /**
@@ -52,12 +56,22 @@ public class DownloadCommand extends AbstractIMCommand {
     @Option(name = "--list-local", aliases = "-l", description = "To show the list of downloaded artifacts", required = false)
     private boolean listLocal;
 
+    @Option(name = "--list-remote", aliases = "-lr", description = "To show the list of remote versions of certain artifact (default artifact is 'codenvy')", required = false)
+    private boolean listRemote;
+
     @Override
     protected void doExecuteCommand() throws Exception {
-        if (listLocal) {
-            doList();
-        } else {
+        if (! listLocal && ! listRemote) {
             doDownload();
+            return;
+        }
+
+        if (listLocal) {
+            doListLocal();
+        }
+
+        if (listRemote) {
+            doListRemote();
         }
     }
 
@@ -102,7 +116,7 @@ public class DownloadCommand extends AbstractIMCommand {
         }
     }
 
-    private void doList() throws JsonParseException, IOException {
+    private void doListLocal() throws JsonParseException, IOException {
         Artifact artifact = Commons.createArtifactOrNull(artifactName);
         Version version = Commons.createVersionOrNull(versionNumber);
 
@@ -113,5 +127,16 @@ public class DownloadCommand extends AbstractIMCommand {
         downloadResponse.setArtifacts(downloads);
 
         console.printResponseExitInError(downloadResponse);
+    }
+
+    private void doListRemote() throws JsonParseException, IOException {
+        Artifact artifact = Commons.createArtifactOrNull(artifactName);
+
+        if (Objects.isNull(artifact)) {
+            artifact = ArtifactFactory.createArtifact(CDECArtifact.NAME);
+        }
+
+        Collection<UpdateArtifactInfo> versions = facade.getAllUpdates(artifact, false);
+        console.println(toJson(versions));
     }
 }

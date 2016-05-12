@@ -148,13 +148,13 @@ public class IMArtifactLabeledFacadeTest extends BaseTest {
     public void testGetAllUpdates() throws Exception {
         doReturn(new ArrayList<Map.Entry<Artifact, Version>>() {{
             add(new AbstractMap.SimpleEntry<>(artifact, version));
-        }}).when(downloadManager).getAllUpdates(artifact);
+        }}).when(downloadManager).getAllUpdates(artifact, true);
         doReturn(new TreeMap<Version, Path>() {{
             put(version, Paths.get("path"));
         }}).when(downloadManager).getDownloadedVersions(artifact);
         doReturn(VersionLabel.UNSTABLE).when(facade).fetchVersionLabel("codenvy", "1.0.1");
 
-        Collection<UpdateArtifactInfo> updates = facade.getAllUpdates(artifact);
+        Collection<UpdateArtifactInfo> updates = facade.getAllUpdates(artifact, true);
 
         assertEquals(updates.size(), 1);
 

@@ -15,6 +15,8 @@
 package com.codenvy.im.cli.command;
 
 import com.codenvy.im.artifacts.Artifact;
+import com.codenvy.im.artifacts.ArtifactFactory;
+import com.codenvy.im.artifacts.CDECArtifact;
 import com.codenvy.im.artifacts.InstallManagerArtifact;
 import com.codenvy.im.facade.IMArtifactLabeledFacade;
 import com.codenvy.im.managers.InstallOptions;
@@ -26,6 +28,7 @@ import com.codenvy.im.response.InstallArtifactStepInfo;
 import com.codenvy.im.response.UpdateArtifactInfo;
 import com.codenvy.im.utils.Version;
 
+import com.google.common.collect.ImmutableList;
 import org.apache.felix.service.command.CommandSession;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -132,6 +135,41 @@ public class TestDownloadCommand extends AbstractTestCommand {
     }
 
     @Test
+    public void testListRemoteOption() throws Exception {
+        final Artifact codenvy = ArtifactFactory.createArtifact(CDECArtifact.NAME);
+
+        doReturn(ImmutableList.of(UpdateArtifactInfo.createInstance(codenvy.getName(),
+                                                                    "1.0.0",
+                                                                    UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD),
+                                  UpdateArtifactInfo.createInstance(codenvy.getName(),
+                                                                    "1.0.1",
+                                                                    UpdateArtifactInfo.Status.DOWNLOADED),
+                                  UpdateArtifactInfo.createInstance(codenvy.getName(),
+                                                                    "1.0.2",
+                                                                    UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD)))
+            .when(service).getAllUpdates(codenvy, false);
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
+        commandInvoker.option("--list-remote", Boolean.TRUE);
+
+        CommandInvoker.Result result = commandInvoker.invoke();
+        String output = result.getOutputStream();
+        assertEquals(output, "[ {\n"
+                             + "  \"artifact\" : \"codenvy\",\n"
+                             + "  \"version\" : \"1.0.0\",\n"
+                             + "  \"status\" : \"AVAILABLE_TO_DOWNLOAD\"\n"
+                             + "}, {\n"
+                             + "  \"artifact\" : \"codenvy\",\n"
+                             + "  \"version\" : \"1.0.1\",\n"
+                             + "  \"status\" : \"DOWNLOADED\"\n"
+                             + "}, {\n"
+                             + "  \"artifact\" : \"codenvy\",\n"
+                             + "  \"version\" : \"1.0.2\",\n"
+                             + "  \"status\" : \"AVAILABLE_TO_DOWNLOAD\"\n"
+                             + "} ]\n");
+    }
+
+    @Test
     public void testAutomaticUpdateCli() throws Exception {
         final Version versionToUpdate = Version.valueOf("1.0.0");
         final Artifact imArtifact = createArtifact(InstallManagerArtifact.NAME);
@@ -139,7 +177,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.DOWNLOADED, null, 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();
@@ -172,7 +210,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
     public void testAutomaticUpdateCliWhenException() throws Exception {
         final Artifact imArtifact = createArtifact(InstallManagerArtifact.NAME);
 
-        doThrow(new RuntimeException("Error")).when(spyCommand.facade).getAllUpdates(imArtifact);
+        doThrow(new RuntimeException("Error")).when(spyCommand.facade).getAllUpdates(imArtifact, true);
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
         commandInvoker.option("--list-local", Boolean.TRUE);
@@ -195,7 +233,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.FAILED, "Download error.", 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();
@@ -223,7 +261,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.DOWNLOADED, null, 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();

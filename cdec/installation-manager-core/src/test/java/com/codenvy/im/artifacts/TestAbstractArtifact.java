@@ -159,7 +159,7 @@ public class TestAbstractArtifact extends BaseTest {
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.2")));
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.3")));
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.4")));
-        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact);
+        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact, true);
 
         doReturn("1\\.0\\.(.*)").when(spyTestArtifact).getProperty(Version.valueOf("0.0.9"), PREVIOUS_VERSION_PROPERTY);
         doReturn("1\\.0\\.(.*)").when(spyTestArtifact).getProperty(Version.valueOf("1.0.0"), PREVIOUS_VERSION_PROPERTY);
@@ -187,7 +187,7 @@ public class TestAbstractArtifact extends BaseTest {
         doReturn(new ArrayList<Map.Entry<Artifact, Version>>() {{
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.0")));
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.1")));
-        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact);
+        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact, true);
 
         doReturn("1\\.0\\.(.*)").when(spyTestArtifact).getProperty(Version.valueOf("1.0.0"), PREVIOUS_VERSION_PROPERTY);
         doReturn("1\\.0\\.(.*)").when(spyTestArtifact).getProperty(Version.valueOf("1.0.1"), PREVIOUS_VERSION_PROPERTY);
@@ -207,7 +207,7 @@ public class TestAbstractArtifact extends BaseTest {
 
         doReturn(new ArrayList<Map.Entry<Artifact, Version>>() {{
             add(new AbstractMap.SimpleEntry<>(spyTestArtifact, Version.valueOf("1.0.3")));
-        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact);
+        }}).when(mockDownloadManager).getAllUpdates(spyTestArtifact, true);
 
         doReturn("1\\.0\\.2").when(spyTestArtifact).getProperty(Version.valueOf("1.0.3"), PREVIOUS_VERSION_PROPERTY);
         doReturn(VersionLabel.STABLE.toString()).when(spyTestArtifact).getProperty(Version.valueOf("1.0.3"), LABEL_PROPERTY);
