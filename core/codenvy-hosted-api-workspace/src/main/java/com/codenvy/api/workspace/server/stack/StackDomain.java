@@ -12,7 +12,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.workspace.server;
+package com.codenvy.api.workspace.server.stack;
 
 import com.codenvy.api.permission.server.PermissionsDomain;
 import com.google.common.collect.ImmutableSet;
@@ -20,22 +20,18 @@ import com.google.common.collect.ImmutableSet;
 /**
  * @author Sergii Leschenko
  */
-public class WorkspaceDomain extends PermissionsDomain {
-    public static final String READ      = "read";
-    public static final String RUN       = "run";
-    public static final String USE       = "use";
-    public static final String CONFIGURE = "configure";
-    public static final String DELETE    = "delete";
+public class StackDomain extends PermissionsDomain {
+    public static final String DOMAIN_ID = "stack";
 
-    public static final String DOMAIN_ID = "workspace";
+    public static final String READ   = "read";
+    public static final String UPDATE = "update";
+    public static final String DELETE = "delete";
 
-    public WorkspaceDomain() {
+    public StackDomain() {
         super(DOMAIN_ID, ImmutableSet.of(SET_PERMISSIONS,
                                          READ_PERMISSIONS,
                                          READ,
-                                         RUN,
-                                         USE,
-                                         CONFIGURE,
+                                         UPDATE,
                                          DELETE));
     }
 }

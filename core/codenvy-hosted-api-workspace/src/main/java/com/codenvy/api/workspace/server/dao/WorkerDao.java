@@ -71,7 +71,7 @@ public interface WorkerDao {
      * @throws ServerException
      *         when any other error occurs during worker removing
      */
-    void removeWorker(String workspace, String user) throws ServerException;
+    void removeWorker(String workspace, String user) throws ServerException, NotFoundException;
 
     /**
      * Gets workers by workspace

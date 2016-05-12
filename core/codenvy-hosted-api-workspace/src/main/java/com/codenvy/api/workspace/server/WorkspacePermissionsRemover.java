@@ -17,6 +17,7 @@ package com.codenvy.api.workspace.server;
 import com.codenvy.api.workspace.server.dao.WorkerDao;
 import com.codenvy.api.workspace.server.model.WorkerImpl;
 
+import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
@@ -64,6 +65,8 @@ public class WorkspacePermissionsRemover implements EventSubscriber<WorkspaceRem
                 workerDao.removeWorker(worker.getWorkspace(), worker.getUser());
             } catch (ServerException e) {
                 LOG.error(String.format("Can't remove worker with user '%s' and workspace '%s'", worker.getUser(), worker.getWorkspace()), e);
+            } catch (NotFoundException ignored) {
+                // do nothing. Worker is already removed
             }
         }
     }

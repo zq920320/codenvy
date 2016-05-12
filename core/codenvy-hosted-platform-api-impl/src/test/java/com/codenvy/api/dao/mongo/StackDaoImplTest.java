@@ -14,19 +14,24 @@
  */
 package com.codenvy.api.dao.mongo;
 
+import com.codenvy.api.dao.mongo.stack.StackDaoImpl;
+import com.codenvy.api.dao.mongo.stack.StackImplCodec;
 import com.github.fakemongo.Fongo;
+import com.google.common.collect.ImmutableSet;
 import com.mongodb.MongoClient;
 import com.mongodb.client.MongoCollection;
 import com.mongodb.client.MongoDatabase;
 import com.mongodb.client.model.Filters;
 
+import org.bson.BsonWriter;
 import org.bson.Document;
 import org.bson.codecs.DocumentCodec;
-import org.bson.codecs.configuration.CodecRegistries;
+import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.acl.AclEntryImpl;
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.core.model.project.ProjectConfig;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
@@ -34,11 +39,7 @@ import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
-import org.eclipse.che.api.machine.server.recipe.GroupImpl;
-import org.eclipse.che.api.machine.server.recipe.PermissionsImpl;
 import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
-import org.eclipse.che.api.machine.shared.Group;
-import org.eclipse.che.api.machine.shared.Permissions;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
@@ -55,9 +56,8 @@ import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -78,7 +78,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
+import static org.testng.Assert.assertNull;
 
 /**
  * Test for {@link StackDaoImpl}
@@ -102,7 +102,7 @@ public class StackDaoImplTest extends BaseDaoTest {
     private static final String COMPONENT_NAME    = "Java";
     private static final String COMPONENT_VERSION = "1.8_45";
 
-    private List<String>        tags      = Arrays.asList("java", "maven");
+    private List<String>        tags      = asList("java", "maven");
     private WorkspaceConfigImpl workspace = createWorkspace();
     private StackImpl stackTest;
     private StackImpl stackTest2;
@@ -115,10 +115,12 @@ public class StackDaoImplTest extends BaseDaoTest {
     @BeforeMethod
     public void setUp() throws ServerException {
         final Fongo fongo = new Fongo("Stack test server");
-        final CodecRegistry defaultRegistry = MongoClient.getDefaultCodecRegistry();
 
-        StackImplCodec codec = new StackImplCodec(defaultRegistry);
-        database = fongo.getDatabase("stacks").withCodecRegistry(fromRegistries(defaultRegistry, fromCodecs(codec)));
+        CodecRegistry codecRegistry = MongoClient.getDefaultCodecRegistry();
+        codecRegistry = fromRegistries(codecRegistry, fromCodecs(new AclEntryImplCodec(codecRegistry)));
+        codecRegistry = fromRegistries(codecRegistry, fromCodecs(new StackImplCodec(codecRegistry)));
+
+        database = fongo.getDatabase("stacks").withCodecRegistry(codecRegistry);
         collection = database.getCollection(BD_COLLECTION_NAME, StackImpl.class);
 
         stackDao = new StackDaoImpl(database, "stacks");
@@ -126,9 +128,6 @@ public class StackDaoImplTest extends BaseDaoTest {
         List<String> tags = asList("Java", "Maven");
         StackComponentImpl stackComponent = new StackComponentImpl("some component", "1.0.0");
         StackSourceImpl stackSource = new StackSourceImpl("location", "http://some/url");
-        Map<String, List<String>> users = singletonMap("user", singletonList("read"));
-        List<Group> groups = singletonList(new GroupImpl("public", null, singletonList("search")));
-        PermissionsImpl permissions = new PermissionsImpl(users, groups);
         stackTest = StackImpl.builder().setId("testId")
                              .setName("name")
                              .setCreator("creator")
@@ -137,7 +136,7 @@ public class StackDaoImplTest extends BaseDaoTest {
                              .setTags(tags)
                              .setComponents(singletonList(stackComponent))
                              .setSource(stackSource)
-                             .setPermissions(permissions)
+                             .setAcl(singletonList(new AclEntryImpl("creator", asList("read", "delete"))))
                              .build();
         stackTest2 = StackImpl.builder()
                               .setId("testId2")
@@ -145,7 +144,7 @@ public class StackDaoImplTest extends BaseDaoTest {
                               .setScope("advanced")
                               .setSource(stackSource)
                               .setTags(tags)
-                              .setPermissions(permissions)
+                              .setAcl(singletonList(new AclEntryImpl("creator", asList("read", "delete"))))
                               .build();
     }
 
@@ -199,8 +198,9 @@ public class StackDaoImplTest extends BaseDaoTest {
 
         stackDao.remove(stackTest.getId());
 
-        StackImpl StackImpl = collection.find(Filters.eq("_id", stackTest.getId())).first();
-        assertTrue(StackImpl == null);
+        StackImpl stackImpl = collection.find(Filters.eq("_id", stackTest.getId())).first();
+
+        assertNull(stackImpl);
     }
 
     @Test
@@ -233,46 +233,15 @@ public class StackDaoImplTest extends BaseDaoTest {
     }
 
     @Test
-    public void stacksByCreatorShouldBeReturned() throws ServerException {
-        collection.insertOne(stackTest);
-        collection.insertOne(stackTest2);
-
-        List<StackImpl> StackImpls = stackDao.getByCreator("creator", 0, 30);
-        List<StackImpl> expected = collection.find(Filters.eq("creator", "creator")).into(new ArrayList<>());
-
-        assertEquals(StackImpls.size(), 2);
-        assertTrue(StackImpls.equals(expected));
-    }
-
-    @Test
-    public void shouldReturnEmptyListWhenWereFoundStacksByCreator() throws ServerException {
-        List<StackImpl> StackImpls = stackDao.getByCreator("creator", 0, 30);
-        assertTrue(StackImpls.isEmpty());
-    }
-
-    @Test
-    public void shouldReturnOnlyOneStackByCreator() throws ServerException {
-        collection.insertOne(stackTest);
-        collection.insertOne(stackTest2);
-
-        List<StackImpl> StackImpls = stackDao.getByCreator("creator", 0, 1);
-        StackImpl expected = collection.find(Filters.eq("creator", "creator")).first();
-
-        assertEquals(StackImpls.size(), 1);
-        assertTrue(StackImpls.get(0).equals(expected));
-    }
-
-    @Test
     public void stacksByTagsShouldBeFound() throws ServerException {
         collection.insertOne(stackTest);
         collection.insertOne(stackTest2);
 
         List<String> tags = singletonList("Java");
-        List<StackImpl> StackImpls = stackDao.searchStacks(tags, 0, 30);
-        List<StackImpl> expected = collection.find(Filters.eq("creator", "creator")).into(new ArrayList<>());
+        List<StackImpl> stackImpls = stackDao.searchStacks("creator", tags, 0, 30);
 
-        assertEquals(StackImpls.size(), 2);
-        assertTrue(StackImpls.equals(expected));
+        assertEquals(stackImpls.size(), 2);
+        assertEquals(new HashSet<>(stackImpls), ImmutableSet.of(stackTest, stackTest2));
     }
 
     @Test
@@ -281,11 +250,10 @@ public class StackDaoImplTest extends BaseDaoTest {
         collection.insertOne(stackTest2);
 
         List<String> tags = singletonList("Java");
-        List<StackImpl> StackImpls = stackDao.searchStacks(tags, 0, 1);
-        StackImpl expected = collection.find(Filters.eq("creator", "creator")).first();
+        List<StackImpl> stackImpls = stackDao.searchStacks("creator", tags, 0, 1);
 
-        assertEquals(StackImpls.size(), 1);
-        assertTrue(StackImpls.get(0).equals(expected));
+        assertEquals(stackImpls.size(), 1);
+        assertEquals(stackImpls.get(0), stackTest);
     }
 
     // suppress warnings about unchecked cast because we have to cast Mongo documents to lists
@@ -295,7 +263,10 @@ public class StackDaoImplTest extends BaseDaoTest {
         // mocking DocumentCodec
         final DocumentCodec documentCodec = mock(DocumentCodec.class);
         when(documentCodec.getEncoderClass()).thenReturn(Document.class);
-        StackImplCodec stackImplCodec = new StackImplCodec(CodecRegistries.fromCodecs(documentCodec));
+
+        CodecRegistry codecRegistry = fromCodecs(documentCodec);
+        codecRegistry = fromRegistries(codecRegistry, fromCodecs(new AclEntryImplCodec(codecRegistry)));
+        StackImplCodec stackImplCodec = new StackImplCodec(codecRegistry);
 
         //prepare test stackTest
         final StackImpl stack = createStack();
@@ -446,7 +417,9 @@ public class StackDaoImplTest extends BaseDaoTest {
         // mocking DocumentCodec
         final DocumentCodec documentCodec = mock(DocumentCodec.class);
         when(documentCodec.getEncoderClass()).thenReturn(Document.class);
-        final StackImplCodec stackImplCodec = new StackImplCodec(CodecRegistries.fromCodecs(documentCodec));
+        CodecRegistry codecRegistry = fromCodecs(documentCodec);
+        codecRegistry = fromRegistries(codecRegistry, fromCodecs(new AclEntryImplCodec(codecRegistry)));
+        StackImplCodec stackImplCodec = new StackImplCodec(codecRegistry);
 
         // prepare test workspace
         final StackImpl stack = createStack();
@@ -466,13 +439,8 @@ public class StackDaoImplTest extends BaseDaoTest {
     }
 
     private StackImpl createStack() {
-        List<StackComponent> componentsImpl = Collections.singletonList(new StackComponentImpl(COMPONENT_NAME, COMPONENT_VERSION));
+        List<StackComponent> componentsImpl = singletonList(new StackComponentImpl(COMPONENT_NAME, COMPONENT_VERSION));
         StackSourceImpl source = new StackSourceImpl(SOURCE_TYPE, SOURCE_ORIGIN);
-        List<String> list = Arrays.asList("read", "write");
-        Map<String, List<String>> users = new HashMap<>();
-        users.put("user", list);
-        List<Group> groups = Collections.singletonList(new GroupImpl("public", null, list));
-        Permissions permissions = new PermissionsImpl(users, groups);
         return StackImpl.builder()
                         .setId(ID_TEST)
                         .setName(NAME)
@@ -483,7 +451,7 @@ public class StackDaoImplTest extends BaseDaoTest {
                         .setSource(source)
                         .setWorkspaceConfig(workspace)
                         .setComponents(componentsImpl)
-                        .setPermissions(permissions)
+                        .setAcl(singletonList(new AclEntryImpl(CREATOR, asList("read", "delete"))))
                         .build();
     }
 
@@ -499,29 +467,29 @@ public class StackDaoImplTest extends BaseDaoTest {
                                                                     "machine-type",
                                                                     machineSource,
                                                                     new LimitsImpl(512),
-                                                                    Arrays.asList(new ServerConfImpl("ref1",
-                                                                                                     "8080",
-                                                                                                     "https",
-                                                                                                     "some/path"),
-                                                                                  new ServerConfImpl("ref2",
-                                                                                                     "9090/udp",
-                                                                                                     "someprotocol",
-                                                                                                     "/some/path")),
-                                                                    Collections.singletonMap("key1", "value1"));
+                                                                    asList(new ServerConfImpl("ref1",
+                                                                                              "8080",
+                                                                                              "https",
+                                                                                              "some/path"),
+                                                                           new ServerConfImpl("ref2",
+                                                                                              "9090/udp",
+                                                                                              "someprotocol",
+                                                                                              "/some/path")),
+                                                                    singletonMap("key1", "value1"));
         final MachineConfigImpl machineCfg2 = new MachineConfigImpl(false,
                                                                     "non-dev-machine",
                                                                     "machine-type-2",
                                                                     machineSource,
                                                                     new LimitsImpl(2048),
-                                                                    Arrays.asList(new ServerConfImpl("ref1",
-                                                                                                     "8080",
-                                                                                                     "https",
-                                                                                                     "some/path"),
-                                                                                  new ServerConfImpl("ref2",
-                                                                                                     "9090/udp",
-                                                                                                     "someprotocol",
-                                                                                                     "/some/path")),
-                                                                    Collections.singletonMap("key1", "value1"));
+                                                                    asList(new ServerConfImpl("ref1",
+                                                                                              "8080",
+                                                                                              "https",
+                                                                                              "some/path"),
+                                                                           new ServerConfImpl("ref2",
+                                                                                              "9090/udp",
+                                                                                              "someprotocol",
+                                                                                              "/some/path")),
+                                                                    singletonMap("key1", "value1"));
 
         final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
         final EnvironmentImpl env2 = new EnvironmentImpl("my-environment-2", recipe, singletonList(machineCfg1));

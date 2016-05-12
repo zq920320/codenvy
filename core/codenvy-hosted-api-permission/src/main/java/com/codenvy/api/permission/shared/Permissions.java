@@ -24,6 +24,8 @@ import java.util.List;
 public interface Permissions {
     /**
      * Returns used id
+     *
+     * <p>Note: also supported '*' for marking all users
      */
     String getUser();
 

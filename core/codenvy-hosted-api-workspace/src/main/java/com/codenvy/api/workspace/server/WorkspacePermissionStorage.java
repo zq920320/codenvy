@@ -23,13 +23,11 @@ import com.codenvy.api.workspace.server.model.Worker;
 import com.codenvy.api.workspace.server.model.WorkerImpl;
 import com.google.common.collect.ImmutableSet;
 
-import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -44,36 +42,25 @@ import java.util.stream.Collectors;
  */
 @Singleton
 public class WorkspacePermissionStorage implements PermissionsStorage {
-    private final WorkerDao workerDao;
+    private final Set<PermissionsDomain> supportedDomain;
+    private final WorkerDao              workerDao;
 
     @Inject
-    public WorkspacePermissionStorage(WorkerDao workerDao) throws IOException {
+    public WorkspacePermissionStorage(WorkerDao workerDao) {
         this.workerDao = workerDao;
+        this.supportedDomain = ImmutableSet.of(new WorkspaceDomain());
     }
 
     @Override
     public Set<PermissionsDomain> getDomains() {
-        return ImmutableSet.of(new WorkspaceDomain());
+        return supportedDomain;
     }
 
     @Override
     public void store(PermissionsImpl permissions) throws ServerException {
         workerDao.store(new WorkerImpl(permissions.getUser(),
                                        permissions.getInstance(),
-                                       permissions.getActions()
-                                                  .stream()
-                                                  .map(WorkspaceAction::getAction)
-                                                  .collect(Collectors.toList())));
-    }
-
-    @Override
-    public List<PermissionsImpl> get(String user) throws ServerException {
-        return toPermissions(workerDao.getWorkersByUser(user));
-    }
-
-    @Override
-    public List<PermissionsImpl> get(String user, String domain) throws ServerException {
-        return toPermissions(workerDao.getWorkersByUser(user));
+                                       permissions.getActions()));
     }
 
     @Override
@@ -91,16 +78,14 @@ public class WorkspacePermissionStorage implements PermissionsStorage {
         try {
             return workerDao.getWorker(instance, user).getActions()
                             .stream()
-                            .filter(actualAction -> actualAction.toString().equals(action))
-                            .findAny()
-                            .isPresent();
+                            .anyMatch(action::equals);
         } catch (NotFoundException e) {
             return false;
         }
     }
 
     @Override
-    public void remove(String user, String domain, String instance) throws ServerException {
+    public void remove(String user, String domain, String instance) throws ServerException, NotFoundException {
         workerDao.removeWorker(instance, user);
     }
 
@@ -108,10 +93,7 @@ public class WorkspacePermissionStorage implements PermissionsStorage {
         return new PermissionsImpl(worker.getUser(),
                                    WorkspaceDomain.DOMAIN_ID,
                                    worker.getWorkspace(),
-                                   worker.getActions()
-                                         .stream()
-                                         .map(WorkspaceAction::toString)
-                                         .collect(Collectors.toList()));
+                                   worker.getActions());
     }
 
     private List<PermissionsImpl> toPermissions(List<WorkerImpl> workers) {

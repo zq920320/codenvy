@@ -14,7 +14,6 @@
  */
 package com.codenvy.api.workspace.server.model;
 
-import com.codenvy.api.workspace.server.WorkspaceAction;
 
 import java.util.List;
 
@@ -37,5 +36,5 @@ public interface Worker {
     /**
      * Returns list of workspace actions which can be performed by current user
      */
-    List<WorkspaceAction> getActions();
+    List<String> getActions();
 }

@@ -14,9 +14,6 @@
  */
 package com.codenvy.api.workspace.server.filters;
 
-import com.codenvy.api.workspace.server.WorkspaceAction;
-import com.codenvy.api.workspace.server.WorkspaceDomain;
-
 import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -32,6 +29,11 @@ import org.everrest.core.resource.GenericMethodResource;
 import javax.inject.Inject;
 import javax.ws.rs.Path;
 
+import static com.codenvy.api.workspace.server.WorkspaceDomain.CONFIGURE;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.DELETE;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.DOMAIN_ID;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.READ;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.RUN;
 import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
 
 /**
@@ -56,11 +58,13 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
     }
 
     @Override
-    public void filter(GenericMethodResource genericMethodResource, Object[] arguments) throws ForbiddenException, ServerException {
+    public void filter(GenericMethodResource genericMethodResource, Object[] arguments) throws ForbiddenException,
+                                                                                               ServerException,
+                                                                                               NotFoundException {
         final String methodName = genericMethodResource.getMethod().getName();
 
         final User currentUser = EnvironmentContext.getCurrent().getUser();
-        WorkspaceAction action;
+        String action;
         String workspaceId;
 
         switch (methodName) {
@@ -77,7 +81,7 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
 
             case "delete":
                 workspaceId = ((String)arguments[0]);
-                action = WorkspaceAction.DELETE;
+                action = DELETE;
                 break;
             case "recoverWorkspace":
             case "createMachine":
@@ -85,22 +89,17 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
             case "startById":
             case "createSnapshot":
                 workspaceId = ((String)arguments[0]);
-                action = WorkspaceAction.RUN;
+                action = RUN;
                 break;
 
             case "getSnapshot":
                 workspaceId = ((String)arguments[0]);
-                action = WorkspaceAction.READ;
+                action = READ;
                 break;
 
             case "getByKey":
-                try {
-                    workspaceId = getWorkspaceFromKey(((String)arguments[0]));
-                } catch (NotFoundException e) {
-                    //Can't authorize operation
-                    throw new ServerException(e);
-                }
-                action = WorkspaceAction.READ;
+                workspaceId = getWorkspaceFromKey(((String)arguments[0]));
+                action = READ;
                 break;
 
             case "update":
@@ -114,7 +113,7 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
             case "deleteCommand":
             case "updateCommand":
                 workspaceId = ((String)arguments[0]);
-                action = WorkspaceAction.CONFIGURE;
+                action = CONFIGURE;
                 break;
 
             case "getWorkspaces": //method accessible to every user
@@ -124,9 +123,8 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
                 throw new ForbiddenException("The user does not have permission to perform this operation");
         }
 
-        if (!currentUser.hasPermission(WorkspaceDomain.DOMAIN_ID, workspaceId, action.toString())) {
-            throw new ForbiddenException("The user does not have permission to "
-                                         + action.toString() + " workspace with id '" + workspaceId + "'");
+        if (!currentUser.hasPermission(DOMAIN_ID, workspaceId, action)) {
+            throw new ForbiddenException("The user does not have permission to " + action + " workspace with id '" + workspaceId + "'");
         }
     }
 

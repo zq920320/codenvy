@@ -14,7 +14,6 @@
  */
 package com.codenvy.api.workspace.server.filters;
 
-import com.codenvy.api.workspace.server.WorkspaceAction;
 import com.jayway.restassured.response.Response;
 import com.jayway.restassured.specification.RequestSpecification;
 
@@ -42,9 +41,9 @@ import org.testng.annotations.Test;
 
 import java.lang.reflect.Method;
 
-import static com.codenvy.api.workspace.server.WorkspaceAction.CONFIGURE;
-import static com.codenvy.api.workspace.server.WorkspaceAction.READ;
-import static com.codenvy.api.workspace.server.WorkspaceAction.RUN;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.CONFIGURE;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.READ;
+import static com.codenvy.api.workspace.server.WorkspaceDomain.RUN;
 import static com.jayway.restassured.RestAssured.given;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_NAME;
 import static org.everrest.assured.JettyHttpServer.ADMIN_USER_PASSWORD;
@@ -78,7 +77,7 @@ public class WorkspacePermissionsFilterTest {
 
     @SuppressWarnings("unused")
     @InjectMocks
-    WorkspacePermissionsFilter PERMISSIONS_FILTER;
+    WorkspacePermissionsFilter permissionsFilter;
 
     @Mock
     private static User user;
@@ -409,13 +408,13 @@ public class WorkspacePermissionsFilterTest {
         Method injectLinks = WorkspaceService.class.getMethod("getServiceDescriptor");
         when(mock.getMethod()).thenReturn(injectLinks);
 
-        PERMISSIONS_FILTER.filter(mock, new Object[]{});
+        permissionsFilter.filter(mock, new Object[] {});
     }
 
     @Test(dataProvider = "coveredPaths")
     public void shouldThrowForbiddenExceptionWhenUserDoesNotHavePermissionsForPerformOperation(String path,
                                                                                                String method,
-                                                                                               WorkspaceAction action)
+                                                                                               String action)
             throws Exception {
         when(user.hasPermission(anyString(), anyString(), anyString())).thenReturn(false);
 
@@ -427,14 +426,14 @@ public class WorkspacePermissionsFilterTest {
                                     method);
 
         assertEquals(response.getStatusCode(), 403);
-        assertEquals(unwrapError(response), "The user does not have permission to " + action.toString() + " workspace with id 'ws123'");
+        assertEquals(unwrapError(response), "The user does not have permission to " + action + " workspace with id 'ws123'");
 
         verifyZeroInteractions(service);
     }
 
     @DataProvider(name = "coveredPaths")
     public Object[][] pathsProvider() {
-        return new Object[][]{
+        return new Object[][] {
                 {"/workspace/ws123", "get", READ},
                 {"/workspace/ws123", "put", CONFIGURE},
                 {"/workspace/ws123/runtime", "post", RUN},

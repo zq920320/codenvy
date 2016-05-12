@@ -14,7 +14,6 @@
  */
 package com.codenvy.api.dao.mongo;
 
-import com.codenvy.api.workspace.server.WorkspaceAction;
 import com.codenvy.api.workspace.server.model.WorkerImpl;
 import com.github.fakemongo.Fongo;
 import com.mongodb.MongoClient;
@@ -86,7 +85,7 @@ public class WorkerDaoImplTest {
         WorkerImpl worker = createWorker();
         workerDao.store(worker);
 
-        WorkerImpl newWorker = new WorkerImpl(worker.getUser(), worker.getWorkspace(), singletonList(WorkspaceAction.CONFIGURE));
+        WorkerImpl newWorker = new WorkerImpl(worker.getUser(), worker.getWorkspace(), singletonList("configure"));
         workerDao.store(newWorker);
 
         final WorkerImpl result = collection.find(and(eq("user", newWorker.getUser()),
@@ -125,7 +124,7 @@ public class WorkerDaoImplTest {
     public void shouldBeAbleToGetWorkersByUser() throws Exception {
         final WorkerImpl worker = createWorker();
         collection.insertOne(worker);
-        collection.insertOne(new WorkerImpl("anotherUser", "workspace123", singletonList(WorkspaceAction.READ)));
+        collection.insertOne(new WorkerImpl("anotherUser", "workspace123", singletonList("read")));
 
         List<WorkerImpl> workersByUser = workerDao.getWorkersByUser(worker.getUser());
 
@@ -144,7 +143,7 @@ public class WorkerDaoImplTest {
     public void shouldBeAbleToGetWorker() throws Exception {
         final WorkerImpl worker = createWorker();
         collection.insertOne(worker);
-        collection.insertOne(new WorkerImpl("anotherUser", "workspace123", singletonList(WorkspaceAction.READ)));
+        collection.insertOne(new WorkerImpl("anotherUser", "workspace123", singletonList("read")));
 
         WorkerImpl workersByUser = workerDao.getWorker(worker.getWorkspace(), worker.getUser());
 
@@ -152,7 +151,7 @@ public class WorkerDaoImplTest {
     }
 
     @Test(expectedExceptions = NotFoundException.class,
-    expectedExceptionsMessageRegExp = "Worker with user 'tempUser' and workspace 'fakeWorkspace' was not found")
+          expectedExceptionsMessageRegExp = "Worker with user 'tempUser' and workspace 'fakeWorkspace' was not found")
     public void shouldThrowNotFoundExceptionWhenRequestedWorkerDoesNotExist() throws Exception {
         workerDao.getWorker("fakeWorkspace", "tempUser");
     }
@@ -169,7 +168,7 @@ public class WorkerDaoImplTest {
     public void shouldBeAbleToGetWorkersByWorkspace() throws Exception {
         final WorkerImpl worker = createWorker();
         collection.insertOne(worker);
-        WorkerImpl anotherWorker = new WorkerImpl("user", "workspace123", singletonList(WorkspaceAction.READ));
+        WorkerImpl anotherWorker = new WorkerImpl("user", "workspace123", singletonList("read"));
         collection.insertOne(anotherWorker);
 
         final List<WorkerImpl> result = workerDao.getWorkers(worker.getWorkspace());
@@ -189,7 +188,7 @@ public class WorkerDaoImplTest {
     private WorkerImpl createWorker() {
         return new WorkerImpl("user123",
                               "workspace123",
-                              Arrays.asList(WorkspaceAction.READ, WorkspaceAction.USE, WorkspaceAction.RUN));
+                              Arrays.asList("read", "use", "run"));
     }
 
     private MongoDatabase mockDatabase(Consumer<MongoCollection<WorkerImpl>> consumer) {

@@ -29,8 +29,7 @@ import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
+import java.util.ArrayList;
 
 /**
  * Adds permissions for creator after workspace creation
@@ -65,8 +64,7 @@ public class WorkspaceCreatorPermissionsProvider implements EventSubscriber<Work
         try {
             workerDao.store(new WorkerImpl(EnvironmentContext.getCurrent().getUser().getId(),
                                            event.getWorkspace().getId(),
-                                           Stream.of(WorkspaceAction.values())
-                                                 .collect(Collectors.toList())));
+                                           new ArrayList<>(new WorkspaceDomain().getAllowedActions())));
         } catch (ServerException e) {
             LOG.error("Can't add creator's permissions for workspace with id '" + event.getWorkspace().getId() + "'", e);
         }
