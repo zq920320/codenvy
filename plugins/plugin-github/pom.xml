@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-plugin-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
-        <version>4.2.2-SNAPSHOT</version>
+        <version>4.2.2</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <artifactId>codenvy-plugin-github-parent</artifactId>
@@ -40,7 +40,7 @@
     <scm>
         <connection>scm:git:git@github.com:codenvy/plugin-contribution.git</connection>
         <developerConnection>scm:git:git@github.com:codenvy/plugin-contribution.git</developerConnection>
-        <tag>4.2.0</tag>
+        <tag>4.2.2</tag>
     </scm>
     <repositories>
         <repository>
