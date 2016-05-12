@@ -34,7 +34,9 @@ import org.eclipse.che.commons.json.JsonParseException;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static com.codenvy.im.utils.Commons.createArtifactOrNull;
 import static com.codenvy.im.utils.Commons.createVersionOrNull;
@@ -136,7 +138,9 @@ public class DownloadCommand extends AbstractIMCommand {
             artifact = ArtifactFactory.createArtifact(CDECArtifact.NAME);
         }
 
-        Collection<UpdateArtifactInfo> versions = facade.getAllUpdates(artifact, false);
-        console.println(toJson(versions));
+        List<UpdateArtifactInfo> versions = facade.getAllUpdates(artifact, false);
+        List<UpdateArtifactInfo> versionsInReverseOrder = versions.stream().sorted((v1, v2) -> v1.compareTo(v2)).collect(Collectors.toList());
+
+        console.println(toJson(versionsInReverseOrder));
     }
 }

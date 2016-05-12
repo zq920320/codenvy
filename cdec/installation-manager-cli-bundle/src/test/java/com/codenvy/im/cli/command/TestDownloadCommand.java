@@ -156,7 +156,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         String output = result.getOutputStream();
         assertEquals(output, "[ {\n"
                              + "  \"artifact\" : \"codenvy\",\n"
-                             + "  \"version\" : \"1.0.0\",\n"
+                             + "  \"version\" : \"1.0.2\",\n"
                              + "  \"status\" : \"AVAILABLE_TO_DOWNLOAD\"\n"
                              + "}, {\n"
                              + "  \"artifact\" : \"codenvy\",\n"
@@ -164,7 +164,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
                              + "  \"status\" : \"DOWNLOADED\"\n"
                              + "}, {\n"
                              + "  \"artifact\" : \"codenvy\",\n"
-                             + "  \"version\" : \"1.0.2\",\n"
+                             + "  \"version\" : \"1.0.0\",\n"
                              + "  \"status\" : \"AVAILABLE_TO_DOWNLOAD\"\n"
                              + "} ]\n");
     }
