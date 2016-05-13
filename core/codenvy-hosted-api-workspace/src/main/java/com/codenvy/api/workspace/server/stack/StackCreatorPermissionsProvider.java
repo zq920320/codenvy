@@ -14,6 +14,8 @@
  */
 package com.codenvy.api.workspace.server.stack;
 
+import com.codenvy.api.workspace.server.recipe.RecipeDomain;
+
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.eclipse.che.api.core.acl.AclEntryImpl;
@@ -21,6 +23,7 @@ import org.eclipse.che.api.workspace.server.model.impl.stack.StackImpl;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Adds acl entry for creator before stack creation
@@ -33,9 +36,15 @@ public class StackCreatorPermissionsProvider implements MethodInterceptor {
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         final StackImpl stack = (StackImpl)methodInvocation.getArguments()[0];
         final String creator = stack.getCreator();
-        stack.getAcl().removeIf(aclEntry -> aclEntry.getUser().equals(creator));
-        stack.getAcl().add(new AclEntryImpl(creator,
-                                            new ArrayList<>(new StackDomain().getAllowedActions())));
+        List<AclEntryImpl> acl = stack.getAcl();
+        if (acl == null) {
+            acl = new ArrayList<>();
+        } else {
+            acl.removeIf(aclEntry -> aclEntry.getUser().equals(creator));
+        }
+        acl.add(new AclEntryImpl(creator,
+                                 new ArrayList<>(new RecipeDomain().getAllowedActions())));
+        stack.setAcl(acl);
         return methodInvocation.proceed();
     }
 }
