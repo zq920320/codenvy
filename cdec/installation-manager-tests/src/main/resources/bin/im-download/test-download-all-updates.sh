@@ -32,7 +32,7 @@ executeIMCommand "im-download" "--list-local"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_STABLE_CODENVY_VERSION}\".*\"file\".\:.\".*codenvy-${LATEST_STABLE_CODENVY_VERSION}.zip\".*\"status\".\:.\"READY_TO_INSTALL\".*"
 
 executeIMCommand "im-download" "--list-remote"
-validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${PREV_CODENVY3_VERSION}\".*\"file\".\:.\".*codenvy-${PREV_CODENVY3_VERSION}.zip\".*\"status\".\:.\"AVAILABLE_TO_DOWNLOAD\".*"
+validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_STABLE_CODENVY_VERSION}\".*\"status\".\:.\"DOWNLOADED\".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${PREV_CODENVY3_VERSION}\".*\"status\".\:.\"AVAILABLE_TO_DOWNLOAD\".*"
 
 executeIMCommand "--valid-exit-code=1" "im-download" "unknown"
 executeIMCommand "--valid-exit-code=1" "im-download" "codenvy" "1.0.0"
