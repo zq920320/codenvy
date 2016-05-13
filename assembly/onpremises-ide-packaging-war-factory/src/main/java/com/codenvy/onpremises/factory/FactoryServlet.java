@@ -30,6 +30,8 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
+import java.util.Enumeration;
 
 import static com.google.common.base.Strings.nullToEmpty;
 import static javax.ws.rs.core.UriBuilder.fromUri;
@@ -79,8 +81,31 @@ public class FactoryServlet extends HttpServlet {
                  "", //TODO: use from policy
                  "" //TODO: use from policy
                 );
-        UriBuilder redirectAfterStateOnline = UriBuilder.fromPath("/dashboard/").fragment("load-factory/" + requestedFactory.getId());
-        resp.sendRedirect(redirectAfterStateOnline.build().toString());
+
+        String redirectUrl = UriBuilder.fromPath("/dashboard/").fragment("load-factory/").build().toString();
+
+        boolean firstParam = true;
+        Enumeration<String> parameterNames = req.getParameterNames();
+
+        // send to dashboard all parameters provided in the request
+        if (parameterNames != null) {
+            while (parameterNames.hasMoreElements()) {
+                String key = parameterNames.nextElement();
+                String value = req.getParameter(key);
+                if (value != null) {
+                    if (firstParam) {
+                        redirectUrl = redirectUrl.concat("?");
+                        firstParam = false;
+                    } else {
+                        redirectUrl = redirectUrl.concat("&");
+                    }
+                    // encode parameter
+                    redirectUrl = redirectUrl.concat(key).concat("=").concat(URLEncoder.encode(value, "UTF-8"));
+                }
+            }
+        }
+
+        resp.sendRedirect(redirectUrl);
     }
 
 

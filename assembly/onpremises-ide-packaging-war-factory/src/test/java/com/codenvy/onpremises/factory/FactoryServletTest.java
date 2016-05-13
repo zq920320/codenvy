@@ -36,8 +36,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.security.Principal;
-import java.util.Collections;
 
+import static java.util.Arrays.asList;
+import static java.util.Collections.enumeration;
+import static java.util.Collections.singletonList;
 import static org.eclipse.che.api.core.rest.HttpJsonHelper.HttpJsonHelperImpl;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.mockito.Matchers.contains;
@@ -88,13 +90,32 @@ public class FactoryServletTest {
     @Test(dataProvider = "validFactoryProvider")
     public void shouldBeAbleToAcceptFactory(String host, String referrer, Factory factory) throws Exception {
         when(req.getAttribute("factory")).thenReturn(factory);
+        when(req.getParameterNames()).thenReturn(enumeration(singletonList("id")));
+        when(req.getParameter("id")).thenReturn(factory.getId());
+
         when(req.getServerName()).thenReturn(host);
         when(req.getHeader("Referer")).thenReturn(referrer);
         when(req.getAttribute("factory")).thenReturn(factory);
 
         servlet.doGet(req, res);
 
-        verify(res).sendRedirect(contains("/dashboard/#load-factory/" + factory.getId()));
+        verify(res).sendRedirect(contains("/dashboard/#load-factory/?id=" + factory.getId()));
+    }
+
+    @Test
+    public void shouldBeAbleToAcceptFactoryWithoutId() throws Exception {
+        String urlOrigin = "https://github.com/eclipse/che/tree/master/dashboard";
+        String githubUrl = "https%3A%2F%2Fgithub.com%2Feclipse%2Fche%2Ftree%2Fmaster%2Fdashboard";
+        Factory factory = prepareFactory();
+        when(req.getAttribute("factory")).thenReturn(factory);
+        when(req.getParameterNames()).thenReturn(enumeration(asList("github", "anotherParameter")));
+        when(req.getParameter("github")).thenReturn(urlOrigin);
+        when(req.getParameter("anotherParameter")).thenReturn("foo");
+        when(req.getServerName()).thenReturn("codenvy.com");
+
+        servlet.doGet(req, res);
+
+        verify(res).sendRedirect(contains("/dashboard/#load-factory/?github=" + githubUrl + "&anotherParameter=foo"));
     }
 
     @DataProvider(name = "validFactoryProvider")
@@ -127,7 +148,7 @@ public class FactoryServletTest {
                 .withV("4.0")
                 .withId("ygfskjsjdaqws")
                 .withWorkspace(newDto(WorkspaceConfigDto.class)
-                                       .withProjects(Collections.singletonList(newDto(
+                                       .withProjects(singletonList(newDto(
                                                ProjectConfigDto.class)
                                                                                        .withSource(
                                                                                                newDto(

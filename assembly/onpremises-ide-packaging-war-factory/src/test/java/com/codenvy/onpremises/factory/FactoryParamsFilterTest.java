@@ -87,7 +87,7 @@ public class FactoryParamsFilterTest {
     }
 
     @Test
-    public void shouldThrowExceptionIfNoIdParamPresentInFactory() throws Exception {
+    public void shouldNotThrowExceptionIfNoIdParamPresentInFactory() throws Exception {
         Map<String, String[]> parametersMap = new HashMap<>();
         parametersMap.put("any", new String[] {"anything"});
         when(req.getParameterMap()).thenReturn(parametersMap);
@@ -95,9 +95,9 @@ public class FactoryParamsFilterTest {
 
         filter.doFilter(req, res, chain);
 
-        verify(req).setAttribute(eq(RequestDispatcher.ERROR_MESSAGE), eq(FactoryConstants.INVALID_PARAMETER_MESSAGE));
-        verify(requestDispatcher).forward(req, res);
-        verify(chain, never()).doFilter(any(ServletRequest.class), any(ServletResponse.class));
+        verify(req, never()).setAttribute(eq(RequestDispatcher.ERROR_MESSAGE), eq(FactoryConstants.INVALID_PARAMETER_MESSAGE));
+        verify(requestDispatcher, never()).forward(req, res);
+        verify(chain).doFilter(any(ServletRequest.class), any(ServletResponse.class));
     }
 
     @Test

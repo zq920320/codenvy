@@ -36,6 +36,7 @@ export class CodenvyFactory {
 
     this.factories = [];
     this.factoriesById = new Map();
+    this.parametersFactories = new Map();
     this.factoryContentsByWorkspaceId = new Map();
 
     // remote calls
@@ -43,6 +44,7 @@ export class CodenvyFactory {
     this.remoteFactoryAPI = this.$resource('/api/factory/:factoryId', {factoryId: '@id'}, {
       put: {method: 'PUT', url: '/api/factory/:factoryId'},
       getFactoryContentFromWorkspace: {method: 'GET', url: '/api/factory/workspace/:workspaceId'},
+      getParametersFactory: {method: 'POST', url: '/api/factory/resolver/'},
       createFactoryByContent: {
         method: 'POST',
         url: '/api/factory',
@@ -181,6 +183,46 @@ export class CodenvyFactory {
     }, (error) => {
       if (error.status === 304) {
         let findFactory = this.factoriesById.get(factoryId);
+        deferred.resolve(findFactory);
+      } else {
+        deferred.reject(error);
+      }
+    });
+    return deferred.promise;
+  }
+
+
+  /**
+   * Ask for getting parameter the factory in asynchronous way
+   * If there are no changes, it's not updated
+   * @param githubUrl the github URL
+   * @returns {*} the promise
+   */
+  fetchParameterFactory(parameters) {
+    var deferred = this.$q.defer();
+
+    let promise = this.remoteFactoryAPI.getParametersFactory({}, parameters).$promise;
+    promise.then((tmpFactory) => {
+      if (!tmpFactory) {
+        deferred.resolve(tmpFactory);
+        return;
+      }
+      //set default fields
+      if (!tmpFactory.name) {
+        tmpFactory.name = '';
+      }
+
+      let factory = {
+        originFactory: tmpFactory
+      };
+
+      //update factories map
+      this.parametersFactories.set(parameters, factory);
+
+      deferred.resolve(factory);
+    }, (error) => {
+      if (error.status === 304) {
+        let findFactory = this.parametersFactories.get(parameters);
         deferred.resolve(findFactory);
       } else {
         deferred.reject(error);

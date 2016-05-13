@@ -24,7 +24,7 @@ export class LoadFactoryCtrl {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(cheAPI, codenvyAPI, $websocket, $route, $timeout, $mdDialog, loadFactoryService, lodash, cheNotification, $location, routeHistory) {
+  constructor(cheAPI, codenvyAPI, $websocket, $route, $timeout, $mdDialog, loadFactoryService, lodash, cheNotification, $location, routeHistory, $window) {
     this.cheAPI = cheAPI;
     this.codenvyAPI = codenvyAPI;
     this.$websocket = $websocket;
@@ -35,6 +35,7 @@ export class LoadFactoryCtrl {
     this.cheNotification = cheNotification;
     this.$location = $location;
     this.routeHistory = routeHistory;
+    this.$window = $window;
 
     this.workspaces = [];
     this.workspace = {};
@@ -45,8 +46,9 @@ export class LoadFactoryCtrl {
 
     this.loadFactoryService.resetLoadProgress();
     this.loadFactoryService.setLoadFactoryInProgress(true);
-    this.getFactoryData($route.current.params.id);
 
+    this.routeParams = $route.current.params;
+    this.getFactoryData();
   }
 
   hideMenuAndFooter() {
@@ -62,23 +64,32 @@ export class LoadFactoryCtrl {
   /**
    * Retrieve factory data.
    */
-  getFactoryData(factoryId) {
-    this.factory = this.codenvyAPI.getFactory().getFactoryById(factoryId);
+  getFactoryData() {
+    var promise;
+    if (this.routeParams.id) {
+      this.factory = this.codenvyAPI.getFactory().getFactoryById(this.routeParams.id);
+      promise = this.codenvyAPI.getFactory().fetchFactory(this.routeParams.id);
+    } else if (this.routeParams) {
+      promise = this.codenvyAPI.getFactory().fetchParameterFactory(this.routeParams);
+    } else {
+      this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
+      this.getLoadingSteps()[this.getCurrentProgressStep()].logs = 'Required parameters for loading factory are not there.';
+    }
+    if (promise) {
+      promise.then((factory) => {
+        this.factory = factory.originFactory;
 
-    let promise = this.codenvyAPI.getFactory().fetchFactory(factoryId);
-    promise.then((factory) => {
-      this.factory = factory.originFactory;
-
-      //Check factory contains workspace config:
-      if (!this.factory.workspace) {
-        this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
-        this.getLoadingSteps()[this.getCurrentProgressStep()].logs = 'Factory has no workspace config.';
-      } else {
-        this.fetchWorkspaces();
-      }
-    }, (error) => {
-      this.handleError(error);
-    });
+        //Check factory contains workspace config:
+        if (!this.factory.workspace) {
+          this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
+          this.getLoadingSteps()[this.getCurrentProgressStep()].logs = 'Factory has no workspace config.';
+        } else {
+          this.fetchWorkspaces();
+        }
+      }, (error) => {
+        this.handleError(error);
+      });
+    }
   }
 
   handleError(error) {
@@ -418,7 +429,19 @@ export class LoadFactoryCtrl {
     // people should go back to the dashboard after factory is initialized
     this.routeHistory.pushPath('/');
 
-    this.$location.path(this.getIDELink()).search('ideParams', ['factory:' + this.factory.id, 'workspaceId:' + this.workspace.id]);
+    var ideParams = [];
+    if (this.routeParams) {
+      // add every factory parameter by prefix
+      Object.keys(this.routeParams).forEach((key) => {
+        ideParams.push('factory-' + key + ':' + this.$window.encodeURIComponent(this.routeParams[key]));
+      });
+      // add factory mode
+      ideParams.push('factory:' + 'true');
+    }
+    // add workspace Id
+    ideParams.push('workspaceId:' + this.workspace.id);
+
+    this.$location.path(this.getIDELink()).search('ideParams', ideParams);
 
     // restore elements
     angular.element('#codenvynavmenu').show();

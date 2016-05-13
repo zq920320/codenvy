@@ -42,6 +42,7 @@ import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
+import com.codenvy.plugin.factory.github.factory.resolver.GithubFactoryParametersResolver;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -57,6 +58,7 @@ import org.eclipse.che.api.core.rest.ApiInfoService;
 import org.eclipse.che.api.factory.server.FactoryAcceptValidator;
 import org.eclipse.che.api.factory.server.FactoryCreateValidator;
 import org.eclipse.che.api.factory.server.FactoryEditValidator;
+import org.eclipse.che.api.factory.server.FactoryParametersResolver;
 import org.eclipse.che.api.factory.server.FactoryService;
 import org.eclipse.che.api.machine.server.dao.RecipeDao;
 import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
@@ -154,6 +156,11 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(FactoryCreateValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryCreateValidatorImpl.class);
         bind(FactoryEditValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryEditValidatorImpl.class);
         bind(FactoryService.class);
+
+        Multibinder<FactoryParametersResolver> githubFactoryParametersResolverMultibinder =
+                Multibinder.newSetBinder(binder(), FactoryParametersResolver.class);
+        githubFactoryParametersResolverMultibinder.addBinding()
+                                                  .to(GithubFactoryParametersResolver.class);
 
         Multibinder<ProjectHandler> projectHandlerMultibinder =
                 Multibinder.newSetBinder(binder(), org.eclipse.che.api.project.server.handlers.ProjectHandler.class);

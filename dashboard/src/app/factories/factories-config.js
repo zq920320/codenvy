@@ -42,6 +42,11 @@ export class FactoryConfig {
         controller: 'ListFactoriesCtrl',
         controllerAs: 'listFactoriesCtrl'
       })
+        .accessWhen('/load-factory', {
+          templateUrl: 'app/factories/load-factory/load-factory.html',
+          controller: 'LoadFactoryCtrl',
+          controllerAs: 'loadFactoryCtrl'
+        })
       .accessWhen('/load-factory/:id', {
         templateUrl: 'app/factories/load-factory/load-factory.html',
         controller: 'LoadFactoryCtrl',

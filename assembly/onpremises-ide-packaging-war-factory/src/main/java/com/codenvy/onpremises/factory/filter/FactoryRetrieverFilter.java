@@ -32,10 +32,13 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-
 import java.io.IOException;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import static javax.ws.rs.HttpMethod.POST;
 import static javax.ws.rs.core.UriBuilder.fromUri;
 
 /**
@@ -87,7 +90,8 @@ public class FactoryRetrieverFilter implements Filter {
                                                      .setMethod("GET")
                                                      .request()
                                                      .asDto(Factory.class);
-            } else {
+            } else if (httpReq.getParameter("user") != null && httpReq.getParameter("name") != null) {
+
                 final String getFactoryUrl = fromUri(apiEndPoint).path(FactoryService.class)
                                                                  .path(FactoryService.class, "getFactoryByAttribute")
                                                                  .build().toString();
@@ -109,6 +113,27 @@ public class FactoryRetrieverFilter implements Filter {
                     return;
                 } 
                 requestedFactory = matchedFactories.get(0);
+            } else {
+                // asked for a parameters factory
+
+                // first populate map of parameters
+                Map<String, String> map = new HashMap<>();
+                Enumeration<String> parameterNames = httpReq.getParameterNames();
+                while (parameterNames.hasMoreElements()) {
+                    String parameterName  = parameterNames.nextElement();
+                    map.put(parameterName, httpReq.getParameter(parameterName));
+                }
+
+                // Create URL
+                final String resolveFactoryUrl = fromUri(apiEndPoint).path(FactoryService.class)
+                                                                 .path(FactoryService.class, "resolveFactory")
+                                                                 .build().toString();
+                // perform call
+                requestedFactory = httpRequestFactory.fromUrl(resolveFactoryUrl)
+                                                     .setMethod(POST)
+                                                     .setBody(map)
+                                                     .request()
+                                                     .asDto(Factory.class);
             }
 
             req.setAttribute("factory", requestedFactory);
