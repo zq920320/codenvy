@@ -480,7 +480,7 @@ public class TestInstallationManagerFacade extends BaseTest {
     }
 
     @Test
-    public void testAllGetUpdates() throws Exception {
+    public void testGetAllUpdatesAfterInstalledArtifact() throws Exception {
         doReturn(new ArrayList<Map.Entry<Artifact, Version>>() {{
             add(new AbstractMap.SimpleEntry<>(cdecArtifact, Version.valueOf("1.0.1")));
             add(new AbstractMap.SimpleEntry<>(cdecArtifact, Version.valueOf("1.0.2")));
@@ -504,6 +504,12 @@ public class TestInstallationManagerFacade extends BaseTest {
         assertEquals(info.getVersion(), "1.0.2");
         assertEquals(info.getArtifact(), cdecArtifact.getName());
         assertEquals(info.getStatus(), UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
+    }
+
+    @Test
+    public void testGetAllUpdates() throws Exception {
+        installationManagerFacade.getAllUpdates(cdecArtifact);
+        verify(downloadManager).getAllUpdates(cdecArtifact, false);
     }
 
     @Test

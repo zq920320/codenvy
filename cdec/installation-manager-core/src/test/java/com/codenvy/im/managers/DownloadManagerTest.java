@@ -534,7 +534,7 @@ public class DownloadManagerTest extends BaseTest {
     }
 
     @Test
-    public void testGetAllUpdates() throws Exception {
+    public void testGetAllUpdatesAfterInstalledVersion() throws Exception {
         final Version cdecVersion = Version.valueOf("2.0.0");
         doReturn("[\"2.0.1\", \"2.0.2\"]").when(transport).doGet(endsWith("updates/codenvy?fromVersion=2.0.0"));
         doReturn(Optional.of(cdecVersion)).when(cdecArtifact).getInstalledVersion();
@@ -551,6 +551,17 @@ public class DownloadManagerTest extends BaseTest {
 
         Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact, true);
         assertEquals(updates.size(), 1);
+    }
+
+    @Test
+    public void testGetAllUpdates() throws Exception {
+        final Version cdecVersion = Version.valueOf("2.0.0");
+        doReturn("[\"2.0.0\", \"2.0.1\", \"2.0.2\"]").when(transport).doGet(endsWith("updates/codenvy"));
+        doReturn(Optional.of(cdecVersion)).when(cdecArtifact).getInstalledVersion();
+
+        Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact, false);
+
+        assertEquals(updates.size(), 3);
     }
 
     @Test
