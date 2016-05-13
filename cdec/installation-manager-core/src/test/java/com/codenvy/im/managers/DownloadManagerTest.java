@@ -539,7 +539,7 @@ public class DownloadManagerTest extends BaseTest {
         doReturn("[\"2.0.1\", \"2.0.2\"]").when(transport).doGet(endsWith("updates/codenvy?fromVersion=2.0.0"));
         doReturn(Optional.of(cdecVersion)).when(cdecArtifact).getInstalledVersion();
 
-        Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact);
+        Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact, true);
 
         assertEquals(updates.size(), 2);
     }
@@ -549,7 +549,7 @@ public class DownloadManagerTest extends BaseTest {
         doReturn("[\"2.0.1\"]").when(transport).doGet(endsWith("updates/codenvy"));
         doReturn(Optional.empty()).when(cdecArtifact).getInstalledVersion();
 
-        Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact);
+        Collection<Map.Entry<Artifact, Version>> updates = downloadManager.getAllUpdates(cdecArtifact, true);
         assertEquals(updates.size(), 1);
     }
 

@@ -222,8 +222,8 @@ public class TestInstallationManagerFacade extends BaseTest {
         installationManagerFacade.addNode("builder.node.com");
     }
 
-//    @Test(expectedExceptions = IllegalStateException.class,
-//          expectedExceptionsMessageRegExp = "Codenvy License is invalid or has unappropriated format.")
+    @Test(expectedExceptions = IllegalStateException.class,
+          expectedExceptionsMessageRegExp = "Codenvy License is invalid or has unappropriated format.")
     public void testAddNodeShouldFailedWhenLicenseInvalid() throws IOException {
         doReturn(ImmutableMap.of(cdecArtifact, Version.valueOf("4.0.0"))).when(installManager).getInstalledArtifacts();
         doThrow(new InvalidLicenseException("error")).when(codenvyLicenseManager).load();
@@ -233,8 +233,8 @@ public class TestInstallationManagerFacade extends BaseTest {
         verify(nodeManager, never()).add(anyString());
     }
 
-//    @Test(expectedExceptions = IllegalStateException.class,
-//          expectedExceptionsMessageRegExp = "Your Codenvy subscription only allows a single server.")
+    @Test(expectedExceptions = IllegalStateException.class,
+          expectedExceptionsMessageRegExp = "Your Codenvy subscription only allows a single server.")
     public void testAddNodeShouldFailedWhenLicenseNotFound() throws IOException {
         doReturn(ImmutableMap.of(cdecArtifact, Version.valueOf("4.0.0"))).when(installManager).getInstalledArtifacts();
         doThrow(new LicenseNotFoundException("error")).when(codenvyLicenseManager).load();
@@ -244,7 +244,7 @@ public class TestInstallationManagerFacade extends BaseTest {
         verify(nodeManager, never()).add(anyString());
     }
 
-//    @Test(expectedExceptions = IllegalStateException.class)
+    @Test(expectedExceptions = IllegalStateException.class)
     public void testAddNodeShouldFailedWhenEvaluationKeyExpired() throws IOException {
         doReturn(ImmutableMap.of(cdecArtifact, Version.valueOf("4.0.0"))).when(installManager).getInstalledArtifacts();
         doReturn(codenvyLicense).when(codenvyLicenseManager).load();
@@ -484,13 +484,13 @@ public class TestInstallationManagerFacade extends BaseTest {
         doReturn(new ArrayList<Map.Entry<Artifact, Version>>() {{
             add(new AbstractMap.SimpleEntry<>(cdecArtifact, Version.valueOf("1.0.1")));
             add(new AbstractMap.SimpleEntry<>(cdecArtifact, Version.valueOf("1.0.2")));
-        }}).when(downloadManager).getAllUpdates(cdecArtifact);
+        }}).when(downloadManager).getAllUpdates(cdecArtifact, true);
 
         doReturn(new TreeMap<Version, Path>() {{
             put(Version.valueOf("1.0.1"), Paths.get("file1"));
         }}).when(downloadManager).getDownloadedVersions(cdecArtifact);
 
-        Collection<UpdateArtifactInfo> updates = installationManagerFacade.getAllUpdates(cdecArtifact);
+        Collection<UpdateArtifactInfo> updates = installationManagerFacade.getAllUpdatesAfterInstalledVersion(cdecArtifact);
         assertEquals(updates.size(), 2);
 
         Iterator<UpdateArtifactInfo> iter = updates.iterator();

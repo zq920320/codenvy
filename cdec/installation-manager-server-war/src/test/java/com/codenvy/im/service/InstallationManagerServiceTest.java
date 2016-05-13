@@ -210,7 +210,7 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetUpdatesShouldReturnOkStatus() throws Exception {
-        doReturn(Collections.emptyList()).when(mockFacade).getAllUpdates(any(Artifact.class));
+        doReturn(Collections.emptyList()).when(mockFacade).getAllUpdatesAfterInstalledVersion(any(Artifact.class));
 
         Response result = service.getUpdates();
         assertEquals(result.getStatus(), Response.Status.OK.getStatusCode());
@@ -218,7 +218,7 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetUpdatesShouldReturnErrorStatus() throws Exception {
-        doThrow(new IOException("error")).when(mockFacade).getAllUpdates(any(Artifact.class));
+        doThrow(new IOException("error")).when(mockFacade).getAllUpdatesAfterInstalledVersion(any(Artifact.class));
 
         Response result = service.getUpdates();
         assertEquals(result.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());

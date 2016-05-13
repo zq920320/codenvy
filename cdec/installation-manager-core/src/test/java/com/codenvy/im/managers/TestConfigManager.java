@@ -32,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -427,8 +428,10 @@ public class TestConfigManager extends BaseTest {
     }
 
     @Test
-    public void testPrepareInstallPropertiesLoadPropertiesFromConfigInstallUseCase() throws Exception {
+    public void testPrepareInstallPropertiesLoadPropertiesFromConfigFile() throws Exception {
         Map<String, String> properties = new HashMap<>(ImmutableMap.of("a", "b",
+                                                                       Config.HTTP_PROXY, "",
+                                                                       Config.HTTPS_PROXY, "",
                                                                        Config.HTTP_PROXY_FOR_CODENVY, "",
                                                                        Config.HTTPS_PROXY_FOR_CODENVY, ""));
 
@@ -437,7 +440,7 @@ public class TestConfigManager extends BaseTest {
         final String testHttpProxy = "http://proxy.net:8080";
         final String testHttpsProxy = "https://proxy.net:8080";
         final ImmutableMap<String, Object> environment = ImmutableMap.of(Config.HTTP_PROXY, testHttpProxy,
-                                                                Config.HTTPS_PROXY, testHttpsProxy);
+                                                                         Config.HTTPS_PROXY, testHttpsProxy);
         doReturn(environment).when(spyConfigManager).getEnvironment();
 
         Map<String, String> actualProperties = spyConfigManager.prepareInstallProperties("file",
@@ -457,8 +460,43 @@ public class TestConfigManager extends BaseTest {
     }
 
     @Test
-    public void testPrepareInstallPropertiesLoadDefaultPropertiesInstallUseCase() throws Exception {
-        Map<String, String> expectedProperties = new HashMap<>(ImmutableMap.of("a", "b"));
+    public void testPrepareInstallPropertiesLoadDefaultProperties() throws Exception {
+        Map<String, String> expectedProperties = new HashMap<>(ImmutableMap.of("a", "b",
+                                                                               Config.HTTP_PROXY, "",
+                                                                               Config.HTTPS_PROXY, "",
+                                                                               Config.HTTP_PROXY_FOR_CODENVY, "",
+                                                                               Config.HTTPS_PROXY_FOR_CODENVY, ""));
+
+        doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
+
+        doReturn(Collections.EMPTY_MAP).when(spyConfigManager).getEnvironment();
+
+        Map<String, String> actualProperties = spyConfigManager.prepareInstallProperties(null,
+                                                                                         null,
+                                                                                         InstallType.SINGLE_SERVER,
+                                                                                         ArtifactFactory.createArtifact(CDECArtifact.NAME),
+                                                                                         Version.valueOf("3.1.0"),
+                                                                                         true);
+        assertEquals(actualProperties.size(), 7);
+        assertEquals(actualProperties.get("a"), "b");
+
+        assertTrue(actualProperties.containsKey(Config.PRIVATE_KEY));
+        assertTrue(actualProperties.containsKey(Config.PUBLIC_KEY));
+
+        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY), "");
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY), "");
+
+        assertEquals(actualProperties.get(Config.HTTP_PROXY), "");
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY), "");
+    }
+
+    @Test
+    public void testPrepareInstallPropertiesLoadDefaultPropertiesWithHttpProxyInEnvironment() throws Exception {
+        Map<String, String> expectedProperties = new HashMap<>(ImmutableMap.of("a", "b",
+                                                                               Config.HTTP_PROXY, "",
+                                                                               Config.HTTPS_PROXY, "",
+                                                                               Config.HTTP_PROXY_FOR_CODENVY, "",
+                                                                               Config.HTTPS_PROXY_FOR_CODENVY, ""));
 
         doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
 
@@ -474,7 +512,7 @@ public class TestConfigManager extends BaseTest {
                                                                                       ArtifactFactory.createArtifact(CDECArtifact.NAME),
                                                                                       Version.valueOf("3.1.0"),
                                                                                       true);
-        assertEquals(actualProperties.size(), 5);
+        assertEquals(actualProperties.size(), 7);
         assertEquals(actualProperties.get("a"), "b");
 
         assertTrue(actualProperties.containsKey(Config.PRIVATE_KEY));
@@ -482,6 +520,9 @@ public class TestConfigManager extends BaseTest {
 
         assertEquals(actualProperties.get(Config.HTTP_PROXY), testHttpProxy);
         assertEquals(actualProperties.get(Config.HTTPS_PROXY), testHttpsProxy);
+
+        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY), "");
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY), "");
     }
 
     @Test
@@ -490,8 +531,10 @@ public class TestConfigManager extends BaseTest {
         final String testHttpsProxyForCodenvy = "https://proxy.for.codenvy.net:8080";
 
         Map<String, String> defaultProperties = new HashMap<>(ImmutableMap.of("a", "b",
-                                                                               Config.HTTP_PROXY_FOR_CODENVY, testHttpProxyForCodenvy,
-                                                                               Config.HTTPS_PROXY_FOR_CODENVY, testHttpsProxyForCodenvy));
+                                                                              Config.HTTP_PROXY, "",
+                                                                              Config.HTTPS_PROXY, "",
+                                                                              Config.HTTP_PROXY_FOR_CODENVY, testHttpProxyForCodenvy,
+                                                                              Config.HTTPS_PROXY_FOR_CODENVY, testHttpsProxyForCodenvy));
 
         doReturn(defaultProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
 
@@ -501,6 +544,8 @@ public class TestConfigManager extends BaseTest {
                                                                                          ArtifactFactory.createArtifact(CDECArtifact.NAME),
                                                                                          Version.valueOf("3.1.0"),
                                                                                          true);
+
+        assertEquals(actualProperties.size(), 7);
 
         assertEquals(actualProperties.get("a"), "b");
 

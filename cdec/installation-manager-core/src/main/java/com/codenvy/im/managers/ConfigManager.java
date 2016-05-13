@@ -456,13 +456,13 @@ public class ConfigManager {
 
         if (! StringUtils.isEmpty(httpProxyForCodenvy)) {
             codenvyProperties.put(Config.HTTP_PROXY, codenvyProperties.get(Config.HTTP_PROXY_FOR_CODENVY));
-        } else {
+        } else if (! StringUtils.isEmpty(systemProperties.get(Config.HTTP_PROXY))) {
             codenvyProperties.put(Config.HTTP_PROXY, systemProperties.get(Config.HTTP_PROXY));
         }
 
         if (! StringUtils.isEmpty(httpsProxyForCodenvy)) {
             codenvyProperties.put(Config.HTTPS_PROXY, codenvyProperties.get(Config.HTTPS_PROXY_FOR_CODENVY));
-        } else {
+        } else if (! StringUtils.isEmpty(systemProperties.get(Config.HTTPS_PROXY))) {
             codenvyProperties.put(Config.HTTPS_PROXY, systemProperties.get(Config.HTTPS_PROXY));
         }
     }

@@ -230,7 +230,21 @@ public class InstallationManagerFacade {
      * @see com.codenvy.im.managers.DownloadManager#getAllUpdates
      */
     public List<UpdateArtifactInfo> getAllUpdates(Artifact artifact) throws IOException, JsonParseException {
-        Collection<Map.Entry<Artifact, Version>> allUpdates = downloadManager.getAllUpdates(artifact);
+        return getAllUpdates(artifact, false);
+    }
+
+    /**
+     * @see com.codenvy.im.managers.DownloadManager#getAllUpdates
+     */
+    public List<UpdateArtifactInfo> getAllUpdatesAfterInstalledVersion(Artifact artifact) throws IOException, JsonParseException {
+        return getAllUpdates(artifact, true);
+    }
+
+    /**
+     * @see com.codenvy.im.managers.DownloadManager#getAllUpdates
+     */
+    private List<UpdateArtifactInfo> getAllUpdates(Artifact artifact, boolean afterInstalledVersion) throws IOException, JsonParseException {
+        Collection<Map.Entry<Artifact, Version>> allUpdates = downloadManager.getAllUpdates(artifact, afterInstalledVersion);
 
         List<UpdateArtifactInfo> infos = new ArrayList<>();
 

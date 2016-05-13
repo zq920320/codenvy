@@ -39,6 +39,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -120,7 +121,7 @@ public class TestVersionCommand extends AbstractTestCommand {
     @Test(dataProvider="getTestVersionData")
     public void testCodenvyVersion(List<InstallArtifactInfo> installed, List<UpdateArtifactInfo> updates, String expectedOutput) throws Exception {
         doReturn(installed).when(facade).getInstalledVersions();
-        doReturn(updates).when(facade).getAllUpdates(any(Artifact.class));
+        doReturn(updates).when(facade).getAllUpdatesAfterInstalledVersion(any(Artifact.class));
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
 

@@ -377,10 +377,12 @@ public class DownloadManager {
     /**
      * Gets all updates for given artifact.
      *
+     * @param artifact artifact which versions should be returned;
+     * @param afterInstalledVersion <b>true</b> to return versions newer than installed one; <b>false</b> - to return all versions.
      * @throws java.io.IOException
      *         if an I/O error occurred
      */
-    public Collection<Map.Entry<Artifact, Version>> getAllUpdates(@Nullable final Artifact artifact) throws IOException {
+    public Collection<Map.Entry<Artifact, Version>> getAllUpdates(@Nullable final Artifact artifact, boolean afterInstalledVersion) throws IOException {
         ArrayList<Map.Entry<Artifact, Version>> allUpdates = new ArrayList<>();
 
         Set<Artifact> artifacts2Check;
@@ -392,9 +394,10 @@ public class DownloadManager {
 
         for (final Artifact art2Check : artifacts2Check) {
             Optional<Version> installedVersion = art2Check.getInstalledVersion();
+            boolean fromVersion = afterInstalledVersion && installedVersion.isPresent();
             String requestUrl = combinePaths(updateEndpoint,
                                              "repository/updates",
-                                             art2Check + (installedVersion.isPresent() ? "?fromVersion=" + installedVersion.get().toString() : ""));
+                                             art2Check + (fromVersion ? "?fromVersion=" + installedVersion.get().toString() : ""));
             try {
                 List<String> l = fromJson(transport.doGet(requestUrl), List.class);
                 allUpdates.addAll(FluentIterable.from(l).transform(new Function<String, Map.Entry<Artifact, Version>>() {
