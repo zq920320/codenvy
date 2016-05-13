@@ -21,6 +21,8 @@ import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 
 /**
  * Adds acl entry for creator before recipe creation
@@ -33,9 +35,15 @@ public class RecipeCreatorPermissionsProvider implements MethodInterceptor {
     public Object invoke(MethodInvocation methodInvocation) throws Throwable {
         final RecipeImpl recipe = (RecipeImpl)methodInvocation.getArguments()[0];
         final String creator = recipe.getCreator();
-        recipe.getAcl().removeIf(aclEntry -> aclEntry.getUser().equals(creator));
-        recipe.getAcl().add(new AclEntryImpl(creator,
-                                             new ArrayList<>(new RecipeDomain().getAllowedActions())));
+        List<AclEntryImpl> acl = recipe.getAcl();
+        if (acl == null) {
+            acl = new ArrayList<>();
+        } else {
+            acl.removeIf(aclEntry -> aclEntry.getUser().equals(creator));
+        }
+        acl.add(new AclEntryImpl(creator,
+                                 new ArrayList<>(new RecipeDomain().getAllowedActions())));
+        recipe.setAcl(acl);
         return methodInvocation.proceed();
     }
 }
