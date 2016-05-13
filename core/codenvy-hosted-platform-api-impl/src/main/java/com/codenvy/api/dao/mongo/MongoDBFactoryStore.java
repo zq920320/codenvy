@@ -191,7 +191,7 @@ public class MongoDBFactoryStore implements FactoryStore {
         final List<Factory> result = new ArrayList<>();
         Document query = new Document();
         for (Pair<String, String> one : attributes) {
-            query.append(format("factory.%s", one.first), one.second);
+            query.append(format("factory.%s", one.first), encode(one.second));
         }
         final FindIterable<Document> findIt = factories.find(query).skip(skipCount).limit(maxItems);
         for (Document one : findIt) {
