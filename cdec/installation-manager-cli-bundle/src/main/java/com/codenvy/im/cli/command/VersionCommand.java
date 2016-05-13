@@ -52,7 +52,7 @@ public class VersionCommand extends AbstractIMCommand {
             info.setLabel(installedCDEC.getLabel());
         }
 
-        List<UpdateArtifactInfo> updatesCodenvy = facade.getAllUpdates(ArtifactFactory.createArtifact(CDECArtifact.NAME), true);
+        List<UpdateArtifactInfo> updatesCodenvy = facade.getAllUpdatesAfterInstalledVersion(ArtifactFactory.createArtifact(CDECArtifact.NAME));
         UpdateArtifactInfo latestStableVersionInfo = getLatestStableVersionInfo(updatesCodenvy);
 
         AvailableVersionInfo availableVersion = new AvailableVersionInfo();

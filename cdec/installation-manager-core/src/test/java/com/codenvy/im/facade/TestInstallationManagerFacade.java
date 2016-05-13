@@ -490,7 +490,7 @@ public class TestInstallationManagerFacade extends BaseTest {
             put(Version.valueOf("1.0.1"), Paths.get("file1"));
         }}).when(downloadManager).getDownloadedVersions(cdecArtifact);
 
-        Collection<UpdateArtifactInfo> updates = installationManagerFacade.getAllUpdates(cdecArtifact, true);
+        Collection<UpdateArtifactInfo> updates = installationManagerFacade.getAllUpdatesAfterInstalledVersion(cdecArtifact);
         assertEquals(updates.size(), 2);
 
         Iterator<UpdateArtifactInfo> iter = updates.iterator();

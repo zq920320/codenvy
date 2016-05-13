@@ -147,7 +147,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
                                   UpdateArtifactInfo.createInstance(codenvy.getName(),
                                                                     "1.0.2",
                                                                     UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD)))
-            .when(service).getAllUpdates(codenvy, false);
+            .when(service).getAllUpdates(codenvy);
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
         commandInvoker.option("--list-remote", Boolean.TRUE);
@@ -177,7 +177,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdatesAfterInstalledVersion(imArtifact);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.DOWNLOADED, null, 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();
@@ -210,7 +210,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
     public void testAutomaticUpdateCliWhenException() throws Exception {
         final Artifact imArtifact = createArtifact(InstallManagerArtifact.NAME);
 
-        doThrow(new RuntimeException("Error")).when(spyCommand.facade).getAllUpdates(imArtifact, true);
+        doThrow(new RuntimeException("Error")).when(spyCommand.facade).getAllUpdatesAfterInstalledVersion(imArtifact);
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
         commandInvoker.option("--list-local", Boolean.TRUE);
@@ -233,7 +233,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdatesAfterInstalledVersion(imArtifact);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.FAILED, "Download error.", 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();
@@ -261,7 +261,7 @@ public class TestDownloadCommand extends AbstractTestCommand {
         UpdateArtifactInfo updateInfo = UpdateArtifactInfo.createInstance(imArtifact.getName(),
                                                                           versionToUpdate.toString(),
                                                                           UpdateArtifactInfo.Status.AVAILABLE_TO_DOWNLOAD);
-        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdates(imArtifact, true);
+        doReturn(Collections.singletonList(updateInfo)).when(spyCommand.facade).getAllUpdatesAfterInstalledVersion(imArtifact);
 
         doReturn(new DownloadProgressResponse(DownloadArtifactInfo.Status.DOWNLOADED, null, 100, Collections.EMPTY_LIST))
             .when(spyCommand.facade).getDownloadProgress();

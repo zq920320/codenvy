@@ -96,7 +96,7 @@ public abstract class AbstractIMCommand extends AbsCommand {
         try {
             // get latest update of IM CLI client
             Artifact imArtifact = createArtifact(InstallManagerArtifact.NAME);
-            List<UpdateArtifactInfo> updates = facade.getAllUpdates(imArtifact, true);
+            List<UpdateArtifactInfo> updates = facade.getAllUpdatesAfterInstalledVersion(imArtifact);
             if (updates.isEmpty()) {
                 return;
             }

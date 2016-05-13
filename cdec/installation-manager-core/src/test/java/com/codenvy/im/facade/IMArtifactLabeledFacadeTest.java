@@ -154,7 +154,7 @@ public class IMArtifactLabeledFacadeTest extends BaseTest {
         }}).when(downloadManager).getDownloadedVersions(artifact);
         doReturn(VersionLabel.UNSTABLE).when(facade).fetchVersionLabel("codenvy", "1.0.1");
 
-        Collection<UpdateArtifactInfo> updates = facade.getAllUpdates(artifact, true);
+        Collection<UpdateArtifactInfo> updates = facade.getAllUpdatesAfterInstalledVersion(artifact);
 
         assertEquals(updates.size(), 1);
 

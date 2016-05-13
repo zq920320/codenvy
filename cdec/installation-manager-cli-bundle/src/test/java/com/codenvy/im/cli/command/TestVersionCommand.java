@@ -121,7 +121,7 @@ public class TestVersionCommand extends AbstractTestCommand {
     @Test(dataProvider="getTestVersionData")
     public void testCodenvyVersion(List<InstallArtifactInfo> installed, List<UpdateArtifactInfo> updates, String expectedOutput) throws Exception {
         doReturn(installed).when(facade).getInstalledVersions();
-        doReturn(updates).when(facade).getAllUpdates(any(Artifact.class), eq(true));
+        doReturn(updates).when(facade).getAllUpdatesAfterInstalledVersion(any(Artifact.class));
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
 

@@ -138,7 +138,7 @@ public class DownloadCommand extends AbstractIMCommand {
             artifact = ArtifactFactory.createArtifact(CDECArtifact.NAME);
         }
 
-        List<UpdateArtifactInfo> versions = facade.getAllUpdates(artifact, false);
+        List<UpdateArtifactInfo> versions = facade.getAllUpdates(artifact);
         List<UpdateArtifactInfo> versionsInReverseOrder = versions.stream().sorted((v1, v2) -> v1.compareTo(v2)).collect(Collectors.toList());
 
         console.println(toJson(versionsInReverseOrder));
