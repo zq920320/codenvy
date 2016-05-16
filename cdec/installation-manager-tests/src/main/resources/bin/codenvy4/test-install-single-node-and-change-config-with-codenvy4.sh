@@ -36,8 +36,8 @@ executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts"
 executeIMCommand "im-config" "--hostname" "${NEW_HOST_URL}"
 
 # verify changes on api node
-executeSshCommand "sudo cat /home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties"
-executeSshCommand "sudo grep \"api.endpoint=http://${NEW_HOST_URL}/api\" /home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties"
+executeSshCommand "sudo cat /home/codenvy/codenvy-data/conf/general.properties"
+executeSshCommand "sudo grep \"api.endpoint=http://${NEW_HOST_URL}/api\" /home/codenvy/codenvy-data/conf/general.properties"
 
 # verify changes on installation-manager service
 executeSshCommand "sudo cat /home/codenvy-im/codenvy-im-data/conf/installation-manager.properties"

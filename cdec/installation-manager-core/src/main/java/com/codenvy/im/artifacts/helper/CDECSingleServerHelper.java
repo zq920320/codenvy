@@ -56,6 +56,7 @@ import static com.codenvy.im.managers.BackupConfig.Component.LDAP;
 import static com.codenvy.im.managers.BackupConfig.Component.LDAP_ADMIN;
 import static com.codenvy.im.managers.BackupConfig.Component.MONGO;
 import static com.codenvy.im.managers.BackupConfig.getComponentTempPath;
+import static com.codenvy.im.utils.Version.valueOf;
 import static java.lang.String.format;
 import static java.nio.file.Files.exists;
 
@@ -329,7 +330,7 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
         commands.add(createCommand(format("sudo slapcat > %s", ldapUserBackupPath)));
 
 
-        Version codenvyVersion = Version.valueOf(codenvyConfig.getValue(Config.VERSION));
+        Version codenvyVersion = valueOf(codenvyConfig.getValue(Config.VERSION));
         if (codenvyVersion.is3Major()) {
             // dump LDAP_ADMIN db into {backup_directory}/ldap_admin/ldap.ldif file
             Path ldapAdminBackupPath = getComponentTempPath(tempDir, LDAP_ADMIN);
@@ -413,7 +414,7 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
             commands.add(createCommand("sudo chown -R ldap:ldap /var/lib/ldap"));
         }
 
-        Version codenvyVersion = Version.valueOf(codenvyConfig.getValue(Config.VERSION));
+        Version codenvyVersion = valueOf(codenvyConfig.getValue(Config.VERSION));
         if (codenvyVersion.is3Major()) {
             // restore LDAP_ADMIN db from {temp_backup_directory}/ldap_admin/ladp.ldif file
             Path ldapAdminBackupPath = getComponentTempPath(tempDir, LDAP_ADMIN);
@@ -488,12 +489,14 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
             commands.add(createForcePuppetAgentCommand());
         } else {
             // wait until there is changed configuration on API server
-            commands.add(createCommand(format("testFile=\"/home/codenvy/codenvy-data/cloud-ide-local-configuration/general.properties\"; " +
+            commands.add(createCommand(format("testFile=\"%1$s/general.properties\"; " +
                                               "while true; do " +
-                                              "    if sudo grep \"api.endpoint=http://%s/api\" ${testFile}; then break; fi; " +
+                                              "    if sudo grep \"api.endpoint=http://%2$s/api\" ${testFile}; then break; fi; " +
                                               "    sleep 5; " +  // sleep 5 sec
                                               "done; " +
-                                              "sleep 15; # delay to involve into start of rebooting api server", newHostName)));
+                                              "sleep 15; # delay to involve into start of rebooting api server",
+                                              config.getPathToCodenvyConfigDir(),
+                                              newHostName)));
         }
 
         // wait until API server restarts

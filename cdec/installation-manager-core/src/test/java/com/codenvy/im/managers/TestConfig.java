@@ -22,6 +22,7 @@ import org.testng.annotations.AfterTest;
 import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -136,5 +137,16 @@ public class TestConfig {
 
         String result = config.getValueWithoutSubstitution("prop_1");
         assertEquals(result, "$prop_2");
+    }
+
+    @Test
+    public void shouldReturnPathToCodenvyConfigDir() {
+        Map<String, String> propertiesOf4_3_0_RC1 = ImmutableMap.of(Config.VERSION, "4.3.0-RC1-SNAPSHOT");
+        Config config = new Config(propertiesOf4_3_0_RC1);
+        assertEquals(config.getPathToCodenvyConfigDir(), Paths.get("/home/codenvy/codenvy-data/conf"));
+
+        Map<String, String> propertiesOf4_2_2 = ImmutableMap.of(Config.VERSION, "4.2.2");
+        config = new Config(propertiesOf4_2_2);
+        assertEquals(config.getPathToCodenvyConfigDir(), Paths.get("/home/codenvy/codenvy-data/cloud-ide-local-configuration"));
     }
 }
