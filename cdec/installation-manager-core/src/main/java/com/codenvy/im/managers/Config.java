@@ -14,10 +14,13 @@
  */
 package com.codenvy.im.managers;
 
+import com.codenvy.im.utils.Version;
 import com.google.common.collect.ImmutableList;
 
 import org.eclipse.che.commons.annotation.Nullable;
 
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -29,6 +32,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codenvy.im.utils.OSUtils.getVersion;
+import static com.codenvy.im.utils.Version.valueOf;
 import static java.util.Collections.unmodifiableMap;
 
 /** @author Dmytro Nochevnov */
@@ -224,5 +228,17 @@ public class Config {
     /** @return the either #HOST_URL or #AIO_HOST_URL property value */
     public String getHostUrl() {
         return properties.containsKey(HOST_URL) ? properties.get(HOST_URL) : properties.get(AIO_HOST_URL);
+    }
+
+    /**
+     * @return path to directory with generic codenvy configuration files
+     */
+    public Path getPathToCodenvyConfigDir() {
+        Version codenvyVersion = valueOf(getValue(VERSION));
+        if (codenvyVersion.compareTo(valueOf("4.3.0-RC1-SNAPSHOT")) < 0) {
+            return Paths.get("/home/codenvy/codenvy-data/cloud-ide-local-configuration");
+        } else {
+            return Paths.get("/home/codenvy/codenvy-data/conf");
+        }
     }
 }

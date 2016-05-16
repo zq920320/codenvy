@@ -107,7 +107,7 @@ public class LdapManager {
      * sudo yum install openldap-clients
      * ldapsearch -D "cn=Admin,dc=codenvy-enterprise,dc=com" -w password -b "ou=People,dc=codenvy-enterprise,dc=com" -s base '(objectclass=inetOrgPerson)'
      *
-     * Properties of ldap: /home/codenvy/codenvy-data/cloud-ide-local-configuration/ldap.properties
+     * Properties of ldap: /home/codenvy/codenvy-data/conf/ldap.properties
      * /etc/puppet/manifests/nodes/single_server/base_config.pp
      * /etc/puppet/manifests/nodes/multi_server/base_configurations.pp
      */
