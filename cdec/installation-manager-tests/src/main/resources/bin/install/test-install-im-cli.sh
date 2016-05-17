@@ -19,17 +19,21 @@
 [ -f "./lib.sh" ] && . ./lib.sh
 [ -f "../lib.sh" ] && . ../lib.sh
 
-printAndLog "TEST CASE: Check current installation-manager config"
-
+printAndLog "TEST CASE: Install IM CLI"
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
-installImCliClient
+INSTALL_DIRECTORY=test-codenvy
+
+installImCliClient ${LATEST_IM_CLI_CLIENT_VERSION}
 validateInstalledImCliClientVersion
+executeSshCommand "test -d /home/vagrant/codenvy/cli"
+executeSshCommand --valid-exit-code=1 "test -d /home/vagrant/codenvy-im"
 
-executeIMCommand "config --im-cli"
+executeSshCommand "grep 'export CODENVY_IM_BASE=/home/vagrant/codenvy' ~/.bashrc"
+executeSshCommand "grep 'export PATH=\$PATH:\$CODENVY_IM_BASE/cli/bin' ~/.bashrc"
 
-validateExpectedString ".*download.directory=/home/vagrant/codenvy-im-data/updates.*saas.server.url=$SAAS_SERVER.*update.server.url=$UPDATE_SERVER.*"
+executeIMCommand "config" "--im-cli"
+validateExpectedString ".*backup_directory=/home/vagrant/codenvy/backups.*base_directory=/home/vagrant/codenvy.*download.directory=/home/vagrant/codenvy/updates.*report_directory=/home/vagrant/codenvy/reports.*saas.server.url=$SAAS_SERVER.*update.server.url=$UPDATE_SERVER.*"
 
 printAndLog "RESULT: PASSED"
-
 vagrantDestroy
