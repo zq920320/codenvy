@@ -49,9 +49,7 @@ import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 import static org.testng.AssertJUnit.assertTrue;
 
@@ -432,8 +430,8 @@ public class TestConfigManager extends BaseTest {
         Map<String, String> properties = new HashMap<>(ImmutableMap.of("a", "b",
                                                                        Config.HTTP_PROXY, "",
                                                                        Config.HTTPS_PROXY, "",
-                                                                       Config.HTTP_PROXY_FOR_CODENVY, "",
-                                                                       Config.HTTPS_PROXY_FOR_CODENVY, ""));
+                                                                       Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES, "",
+                                                                       Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES, ""));
 
         doReturn(properties).when(spyConfigManager).loadConfigProperties("file");
 
@@ -464,8 +462,8 @@ public class TestConfigManager extends BaseTest {
         Map<String, String> expectedProperties = new HashMap<>(ImmutableMap.of("a", "b",
                                                                                Config.HTTP_PROXY, "",
                                                                                Config.HTTPS_PROXY, "",
-                                                                               Config.HTTP_PROXY_FOR_CODENVY, "",
-                                                                               Config.HTTPS_PROXY_FOR_CODENVY, ""));
+                                                                               Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES, "",
+                                                                               Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES, ""));
 
         doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
 
@@ -483,8 +481,8 @@ public class TestConfigManager extends BaseTest {
         assertTrue(actualProperties.containsKey(Config.PRIVATE_KEY));
         assertTrue(actualProperties.containsKey(Config.PUBLIC_KEY));
 
-        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY), "");
-        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY), "");
+        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES), "");
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES), "");
 
         assertEquals(actualProperties.get(Config.HTTP_PROXY), "");
         assertEquals(actualProperties.get(Config.HTTPS_PROXY), "");
@@ -495,8 +493,8 @@ public class TestConfigManager extends BaseTest {
         Map<String, String> expectedProperties = new HashMap<>(ImmutableMap.of("a", "b",
                                                                                Config.HTTP_PROXY, "",
                                                                                Config.HTTPS_PROXY, "",
-                                                                               Config.HTTP_PROXY_FOR_CODENVY, "",
-                                                                               Config.HTTPS_PROXY_FOR_CODENVY, ""));
+                                                                               Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES, "",
+                                                                               Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES, ""));
 
         doReturn(expectedProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
 
@@ -521,8 +519,8 @@ public class TestConfigManager extends BaseTest {
         assertEquals(actualProperties.get(Config.HTTP_PROXY), testHttpProxy);
         assertEquals(actualProperties.get(Config.HTTPS_PROXY), testHttpsProxy);
 
-        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY), "");
-        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY), "");
+        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES), "");
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES), "");
     }
 
     @Test
@@ -533,8 +531,8 @@ public class TestConfigManager extends BaseTest {
         Map<String, String> defaultProperties = new HashMap<>(ImmutableMap.of("a", "b",
                                                                               Config.HTTP_PROXY, "",
                                                                               Config.HTTPS_PROXY, "",
-                                                                              Config.HTTP_PROXY_FOR_CODENVY, testHttpProxyForCodenvy,
-                                                                              Config.HTTPS_PROXY_FOR_CODENVY, testHttpsProxyForCodenvy));
+                                                                              Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES, testHttpProxyForCodenvy,
+                                                                              Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES, testHttpsProxyForCodenvy));
 
         doReturn(defaultProperties).when(spyConfigManager).loadCodenvyDefaultProperties(Version.valueOf("3.1.0"), InstallType.SINGLE_SERVER);
 
@@ -555,8 +553,8 @@ public class TestConfigManager extends BaseTest {
         assertEquals(actualProperties.get(Config.HTTP_PROXY), testHttpProxyForCodenvy);
         assertEquals(actualProperties.get(Config.HTTPS_PROXY), testHttpsProxyForCodenvy);
 
-        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY), testHttpProxyForCodenvy);
-        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY), testHttpsProxyForCodenvy);
+        assertEquals(actualProperties.get(Config.HTTP_PROXY_FOR_CODENVY_WORKSPACES), testHttpProxyForCodenvy);
+        assertEquals(actualProperties.get(Config.HTTPS_PROXY_FOR_CODENVY_WORKSPACES), testHttpsProxyForCodenvy);
     }
 
     @Test

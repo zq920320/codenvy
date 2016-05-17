@@ -24,8 +24,41 @@ vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 # install Codenvy 4.x behind the proxy
 executeSshCommand "echo '$PROXY_IP $PROXY_SERVER' | sudo tee --append /etc/hosts > /dev/null"
 
-installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY --http-proxy-for-codenvy=$HTTP_PROXY --https-proxy-for-codenvy=$HTTPS_PROXY
+installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy=$HTTP_PROXY --https-proxy=$HTTPS_PROXY --http-proxy-for-codenvy-workspaces=$HTTP_PROXY --https-proxy-for-codenvy-workspaces=$HTTPS_PROXY --http-proxy-for-docker-daemon=$HTTP_PASSWORDLESS_PROXY --https-proxy-for-docker-daemon=$HTTPS_PASSWORDLESS_PROXY --docker-registry-mirror=$HTTPS_PASSWORDLESS_PROXY
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
+
+# validate proxy settings in system config files
+executeSshCommand "cat ~/.bashrc"
+validateExpectedString ".*export.http_proxy=$HTTP_PROXY.*"
+validateExpectedString ".*export.https_proxy=$HTTPS_PROXY.*"
+
+executeSshCommand "cat /etc/wgetrc"
+validateExpectedString ".*use_proxy=on.*"
+validateExpectedString ".http_proxy=$HTTP_PROXY.*"
+validateExpectedString ".https_proxy=$HTTPS_PROXY.*"
+
+executeSshCommand "cat /etc/yum.conf"
+validateExpectedString ".*proxy=$PROXY_SERVER_WITHOUT_CREDENTIALS.*"
+validateExpectedString ".*proxy_username=$PROXY_USERNAME.*"
+validateExpectedString ".*proxy_password=$PROXY_PASSWORD.*"
+
+# validate codenvy properties which are defined in options of bootstrap script
+executeSshCommand "cat $PATH_TO_CODENVY4_PUPPET_MANIFEST"
+validateExpectedString ".*http_proxy.=.\"$HTTP_PROXY\".*"
+validateExpectedString ".*https_proxy.=.\"$HTTPS_PROXY\".*"
+validateExpectedString ".*http_proxy_for_docker_daemon.=.\"$HTTPS_PASSWORDLESS_PROXY\".*"
+validateExpectedString ".*https_proxy_for_docker_daemon.=.\"$HTTP_PASSWORDLESS_PROXY\".*"
+validateExpectedString ".*docker_registry_mirror.=.\"$HTTP_PASSWORDLESS_PROXY\".*"
+
+# validate docker settings
+executeSshCommand "sudo systemctl status docker"
+validateExpectedString ".*--registry-mirror=$HTTPS_PASSWORDLESS_PROXY.*"
+
+executeSshCommand "cat /etc/sysconfig/docker"
+validateExpectedString ".*HTTP_PROXY=\"$HTTP_PASSWORDLESS_PROXY\".*"
+validateExpectedString ".*HTTPS_PROXY=\"$HTTPS_PASSWORDLESS_PROXY\".*"
+
+## check creation of workspace
 authWithoutRealmAndServerDns "admin" "password"
 
 # create user "cdec.im.test@gmail.com"
