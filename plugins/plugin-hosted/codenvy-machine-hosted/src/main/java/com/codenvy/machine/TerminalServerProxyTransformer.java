@@ -12,23 +12,19 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.swarm.client;
+package com.codenvy.machine;
 
-import com.codenvy.swarm.client.json.DockerNode;
-
-import java.io.IOException;
-import java.util.List;
-
-//TODO consider should it be DockerNode || URI || something else
+import javax.inject.Inject;
+import javax.inject.Named;
 
 /**
- * Node selection strategy for Swarm.
- * Used for not implemented yet in Swarm docker operations.
- * Should be replaced later with native Swarm methods
+ * Modifies websocket terminal machine server to proxy requests to it.
  *
- * @author Eugene Voevodin
+ * @author Alexander Garagatyi
  */
-public interface NodeSelectionStrategy {
-
-    DockerNode select(List<DockerNode> nodes) throws IOException;
+public class TerminalServerProxyTransformer extends UriTemplateServerProxyTransformer {
+    @Inject
+    public TerminalServerProxyTransformer(@Named("machine.proxy_terminal_server_url_template") String serverUrlTemplate) {
+        super(serverUrlTemplate);
+    }
 }

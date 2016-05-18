@@ -31,28 +31,92 @@ import (
 	"bufio"
 	"bytes"
 	"unicode/utf8"
+	"regexp"
+	"strings"
 )
-
-
-
-var addrFlag, cmdFlag, staticFlag string
-
-
-
-var upgrader = websocket.Upgrader{
-	ReadBufferSize:  1,
-	WriteBufferSize: 1,
-	CheckOrigin: func(r *http.Request) bool {
-		return true
-	},
-}
 
 type wsPty struct {
 	Cmd *exec.Cmd // pty builds on os.exec
 	Pty *os.File  // a pty is simply an os.File
 }
 
-var activity = &WorkspaceActivity{};
+type route struct {
+	pattern *regexp.Regexp
+	handler http.Handler
+}
+
+type routes struct {
+	routes []*route
+}
+
+var (
+	addrFlag, cmdFlag, staticFlag, pathFlag string
+	activity = &WorkspaceActivity{}
+	upgrader = websocket.Upgrader{
+		ReadBufferSize:  1,
+		WriteBufferSize: 1,
+		CheckOrigin: func(r *http.Request) bool {
+			return true
+		},
+	}
+	router = &routes{
+		routes : make([]*route, 0, 10),
+	}
+)
+
+func init() {
+	cwd, _ := os.Getwd()
+	flag.StringVar(&addrFlag, "addr", ":9000", "IP:PORT or :PORT address to listen on")
+	flag.StringVar(&cmdFlag, "cmd", "/bin/bash", "command to execute on slave side of the pty")
+	flag.StringVar(&pathFlag, "path", "/", "Path of the pty server. Go regexp syntax is suported.")
+	flag.StringVar(&staticFlag, "static", cwd, "path to static content")
+	// TODO: make sure paths exist and have correct permissions
+}
+
+func main() {
+	flag.Parse()
+
+	go activity.StartTracking();
+
+	basePath := pathFlag
+	if !strings.HasSuffix(pathFlag, "/") {
+		basePath = basePath + "/"
+	}
+	router.addRouteHandlerFunc(basePath + "pty", ptyHandler)
+	// serve html & javascript
+	router.addRouteHandler(basePath + ".*", http.FileServer(http.Dir(staticFlag)))
+
+	err := http.ListenAndServe(addrFlag, router)
+	if err != nil {
+		log.Fatalf("net.http could not listen on address '%s': %s\n", addrFlag, err)
+	}
+}
+
+func (routes *routes) addRouteHandlerFunc(pattern string, handler func(http.ResponseWriter, *http.Request)) {
+	routes.addRouteHandler(pattern, http.HandlerFunc(handler))
+}
+
+func (routes *routes) addRouteHandler(pattern string, handler http.Handler) {
+	reg, err := regexp.Compile(pattern)
+	if err != nil {
+		panic("Can't compile pattern:" + pattern)
+	}
+	router.routes = append(routes.routes, &route{
+		pattern : reg,
+		handler : handler,
+	})
+}
+
+func (router *routes) ServeHTTP(w http.ResponseWriter, r *http.Request) {
+	for _, route := range router.routes {
+		if route.pattern.MatchString(r.URL.Path) {
+			route.handler.ServeHTTP(w, r)
+			return
+		}
+	}
+
+	http.NotFound(w, r)
+}
 
 func (wp *wsPty) Start() {
 	var err error
@@ -95,19 +159,19 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 		for {
 			n, err := reader.Read(buf);
 
-			if err != nil{
+			if err != nil {
 				log.Printf("Failed to read from pty master: %s", err)
 				return
 			}
 			//read byte array as Unicode code points (rune in go)
 
 			bufferBytes := buffer.Bytes()
-			runeReader := bufio.NewReader(bytes.NewReader(append(bufferBytes[:],buf[:n]...)))
+			runeReader := bufio.NewReader(bytes.NewReader(append(bufferBytes[:], buf[:n]...)))
 			buffer.Reset()
 			i := 0;
-			for i< n{
+			for i < n {
 				char, charLen, e := runeReader.ReadRune()
-				if e != nil{
+				if e != nil {
 					log.Printf("Failed to read from pty master: %s", err)
 					return
 				}
@@ -125,14 +189,14 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 				return
 			}
 			buffer.Reset();
-			if i < n{
+			if i < n {
 				buffer.Write(buf[i:n])
 			}
 
 		}
 	}()
 
-	type Message struct{
+	type Message struct {
 		Type string `json:"type"`
 		Data json.RawMessage `json:"data"`
 	}
@@ -153,7 +217,7 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 			log.Printf("Ignoring binary message: %q\n", payload)
 		case websocket.TextMessage:
 			err := json.Unmarshal(payload, &msg);
-			if err != nil{
+			if err != nil {
 				log.Printf("Invalid message %s\n", err);
 				continue
 			}
@@ -161,19 +225,19 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 			case "resize" :
 				var size []float64;
 				err := json.Unmarshal(msg.Data, &size)
-				if err != nil{
+				if err != nil {
 					log.Printf("Invalid resize message: %s\n", err);
-				} else{
-					pty.Setsize(wp.Pty,uint16(size[1]), uint16(size[0]));
+				} else {
+					pty.Setsize(wp.Pty, uint16(size[1]), uint16(size[0]));
 					activity.Notify();
 				}
 
 			case "data" :
 				var dat string;
 				err := json.Unmarshal(msg.Data, &dat);
-				if err != nil{
+				if err != nil {
 					log.Printf("Invalid data message %s\n", err);
-				} else{
+				} else {
 					wp.Pty.Write([]byte(dat));
 					activity.Notify();
 				}
@@ -190,28 +254,4 @@ func ptyHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	wp.Stop()
-}
-
-
-
-func init() {
-	cwd, _ := os.Getwd()
-	flag.StringVar(&addrFlag, "addr", ":9000", "IP:PORT or :PORT address to listen on")
-	flag.StringVar(&cmdFlag, "cmd", "/bin/bash", "command to execute on slave side of the pty")
-	flag.StringVar(&staticFlag, "static", cwd, "path to static content")
-	// TODO: make sure paths exist and have correct permissions
-}
-
-func main() {
-	flag.Parse()
-	go activity.StartTracking();
-	http.HandleFunc("/pty", ptyHandler)
-
-	// serve html & javascript
-	http.Handle("/", http.FileServer(http.Dir(staticFlag)))
-
-	err := http.ListenAndServe(addrFlag, nil)
-	if err != nil {
-		log.Fatalf("net.http could not listen on address '%s': %s\n", addrFlag, err)
-	}
 }
