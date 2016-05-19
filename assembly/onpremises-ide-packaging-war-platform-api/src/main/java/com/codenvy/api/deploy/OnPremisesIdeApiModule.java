@@ -128,10 +128,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(WSocketEventBusServer.class);
 
         install(new org.eclipse.che.api.core.rest.CoreRestModule());
-        install(new org.eclipse.che.api.vfs.VirtualFileSystemModule());
-        /*
-        install(new org.eclipse.che.api.factory.FactoryModule());
-        */
+        install(new org.eclipse.che.api.core.util.FileCleaner.FileCleanerModule());
+
         install(new org.eclipse.che.api.machine.server.MachineModule());
 
         install(new org.eclipse.che.swagger.deploy.DocsModule());
