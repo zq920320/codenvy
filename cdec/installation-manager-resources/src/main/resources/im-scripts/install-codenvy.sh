@@ -14,9 +14,12 @@
 # --install-directory=<PATH TO SINGLE DIRECTORY FOR ALL RESOURCES>
 # --http-proxy=<HTTP PROXY URL>
 # --https-proxy=<HTTPS PROXY URL>
-# --http-proxy-for-codenvy=<HTTP PROXY URL>
-# --https-proxy-for-codenvy=<HTTPS PROXY URL>
-# --im-cli: to IM CLI client only
+# --im-cli: to install IM CLI client only
+# --http-proxy-for-docker-daemon=<HTTP PROXY URL>
+# --https-proxy-for-docker-daemon=<HTTPS PROXY URL>
+# --docker-registry-mirror=<URL>
+# --http-proxy-for-codenvy-workspaces=<HTTP PROXY URL>
+# --https-proxy-for-codenvy-workspaces=<HTTPS PROXY URL>
 
 trap cleanUp EXIT
 
@@ -155,11 +158,19 @@ setRunOptions() {
             HTTPS_PROXY=$(echo "$var" | sed -e "s/--https-proxy=//g")
             CURL_PROXY_OPTION="--proxy $HTTPS_PROXY"
 
-        elif [[ "$var" =~ --http-proxy-for-codenvy=.* ]]; then
-            HTTP_PROXY_FOR_CODENVY=$(echo "$var" | sed -e "s/--http-proxy-for-codenvy=//g")
+        elif [[ "$var" =~ --http-proxy-for-docker-daemon=.* ]]; then
+            HTTP_PROXY_FOR_DOCKER_DAEMON=$(echo "$var" | sed -e "s/--http-proxy-for-docker-daemon=//g")
+        elif [[ "$var" =~ --https-proxy-for-docker-daemon=.* ]]; then
+            HTTPS_PROXY_FOR_DOCKER_DAEMON=$(echo "$var" | sed -e "s/--https-proxy-for-docker-daemon=//g")
 
-        elif [[ "$var" =~ --https-proxy-for-codenvy=.* ]]; then
-            HTTPS_PROXY_FOR_CODENVY=$(echo "$var" | sed -e "s/--https-proxy-for-codenvy=//g")
+        elif [[ "$var" =~ --docker-registry-mirror=.* ]]; then
+            DOCKER_REGISTRY_MIRROR=$(echo "$var" | sed -e "s/--docker-registry-mirror=//g")
+
+        elif [[ "$var" =~ --http-proxy-for-codenvy-workspaces=.* ]]; then
+            HTTP_PROXY_FOR_CODENVY_WORKSPACES=$(echo "$var" | sed -e "s/--http-proxy-for-codenvy-workspaces=//g")
+        elif [[ "$var" =~ --https-proxy-for-codenvy-workspaces=.* ]]; then
+            HTTPS_PROXY_FOR_CODENVY_WORKSPACES=$(echo "$var" | sed -e "s/--https-proxy-for-codenvy-workspaces=//g")
+
         fi
     done
 
@@ -975,12 +986,22 @@ printPreInstallInfo_single() {
         insertProperty "host_url" ${HOST_NAME}
     fi
 
-    if [ -n "${HTTP_PROXY_FOR_CODENVY}" ]; then
-        insertProperty "http_proxy_for_codenvy" ${HTTP_PROXY_FOR_CODENVY}
+    if [ -n "${HTTP_PROXY_FOR_DOCKER_DAEMON}" ]; then
+        insertProperty "http_proxy_for_docker_daemon" ${HTTP_PROXY_FOR_DOCKER_DAEMON}
+    fi
+    if [ -n "${HTTPS_PROXY_FOR_DOCKER_DAEMON}" ]; then
+        insertProperty "https_proxy_for_docker_daemon" ${HTTPS_PROXY_FOR_DOCKER_DAEMON}
     fi
 
-    if [ -n "${HTTPS_PROXY_FOR_CODENVY}" ]; then
-        insertProperty "https_proxy_for_codenvy" ${HTTPS_PROXY_FOR_CODENVY}
+    if [ -n "${DOCKER_REGISTRY_MIRROR}" ]; then
+        insertProperty "docker_registry_mirror" ${DOCKER_REGISTRY_MIRROR}
+    fi
+
+    if [ -n "${HTTP_PROXY_FOR_CODENVY_WORKSPACES}" ]; then
+        insertProperty "http_proxy_for_codenvy_workspaces" ${HTTP_PROXY_FOR_CODENVY_WORKSPACES}
+    fi
+    if [ -n "${HTTPS_PROXY_FOR_CODENVY_WORKSPACES}" ]; then
+        insertProperty "https_proxy_for_codenvy_workspaces" ${HTTPS_PROXY_FOR_CODENVY_WORKSPACES}
     fi
 
     if [[ $IM_CLI == false ]]; then
