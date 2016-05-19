@@ -107,13 +107,13 @@ public abstract class BaseTestPuppetErrorInterrupter {
         when(spyInterrupter.getPuppetLogFile()).thenReturn(puppetLogFile);
 
         // create IM CLI client log
-        Path imLogFile = TEST_TMP_DIRECTORY.resolve(ORIGIN_REPORT_CONSTANTS.getCliNonInteractiveLog().getFileName());
+        Path imLogFile = TEST_TMP_DIRECTORY.resolve(ORIGIN_REPORT_CONSTANTS.getCliLog().getFileName());
         FileUtils.write(imLogFile.toFile(), "");
 
         // create constants
         spyReportConstants = spy(new Constants());
         doReturn(REPORT_TMP_DIRECTORY).when(spyReportConstants).getBaseTmpDir();
-        doReturn(imLogFile).when(spyReportConstants).getCliNonInteractiveLog();
+        doReturn(imLogFile).when(spyReportConstants).getCliLog();
         doReturn(false).when(spyReportConstants).useSudo();   // prevents asking sudo password when running the tests locally
 
         PuppetErrorReport.setConstants(spyReportConstants);
@@ -156,7 +156,7 @@ public abstract class BaseTestPuppetErrorInterrupter {
         String puppetLogFileContent = FileUtils.readFileToString(puppetLogFile.toFile());
         assertEquals(puppetLogFileContent, expectedContentOfLogFile);
 
-        Path imLogfile = TEST_TMP_DIRECTORY.resolve(spyReportConstants.getCliNonInteractiveLog().getFileName());
+        Path imLogfile = TEST_TMP_DIRECTORY.resolve(spyReportConstants.getCliLog().getFileName());
         assertTrue(exists(imLogfile));
     }
 

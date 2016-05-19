@@ -137,12 +137,8 @@ public class PuppetErrorReport {
         }
 
         // copy installation manager logs
-        if (Files.exists(constants.getCliInteractiveLog())) {
-            commands.add(createCopyCommand(constants.getCliInteractiveLog(), constants.getBaseTmpDir()));
-        }
-
-        if (Files.exists(constants.getCliNonInteractiveLog())) {
-            commands.add(createCopyCommand(constants.getCliNonInteractiveLog(), constants.getBaseTmpDir()));
+        if (Files.exists(constants.getCliLog())) {
+            commands.add(createCopyCommand(constants.getCliLog(), constants.getBaseTmpDir()));
         }
 
         if (constants.getInstallationManagerServerLog() != null && Files.exists(constants.getInstallationManagerServerLog())) {
@@ -173,12 +169,8 @@ public class PuppetErrorReport {
             return BASE_TMP_DIR;
         }
 
-        private Path getCliInteractiveLog() {
-            return getBaseTmpDir().getParent().resolve("im-interactive.log");
-        }
-
-        protected Path getCliNonInteractiveLog() {
-            return getBaseTmpDir().getParent().resolve("im-non-interactive.log");
+        Path getCliLog() {
+            return getBaseTmpDir().getParent().resolve("cli.log");
         }
 
         protected Path getInstallationManagerServerLog() {
