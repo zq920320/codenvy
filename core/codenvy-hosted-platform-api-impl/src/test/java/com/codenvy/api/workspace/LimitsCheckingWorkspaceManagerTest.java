@@ -51,7 +51,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(ImmutableList.of(mock(WorkspaceImpl.class), mock(WorkspaceImpl.class))) // <- currently used 2
                                                                                          .when(manager)
                                                                                          .getWorkspaces(anyString());
@@ -68,7 +70,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(ImmutableList.of(mock(WorkspaceImpl.class), mock(WorkspaceImpl.class))) // <- currently used 2
                                                                                          .when(manager)
                                                                                          .getWorkspaces(anyString());
@@ -90,7 +94,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(emptyList()).when(manager).getWorkspaces(anyString()); // <- currently used 0
 
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
@@ -110,7 +116,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getWorkspaces(anyString()); // <- currently running 2gb
 
         manager.checkRamAndPropagateStart(createConfig("1gb"), null, "user123", null);
@@ -125,7 +133,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getWorkspaces(anyString()); // <- currently running 2gb
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
 
@@ -145,7 +155,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getWorkspaces(anyString()); // <- currently running 2gb
 
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
@@ -166,7 +178,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
 
         manager.checkMaxEnvironmentRam(config);
     }
@@ -181,7 +195,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
 
         manager.checkMaxEnvironmentRam(config);
     }
@@ -199,7 +215,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         manager.checkMaxEnvironmentRam(config);
     }
 
@@ -214,7 +232,9 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               null,
-                                                                                              null));
+                                                                                              null,
+                                                                                              false,
+                                                                                              false));
         manager.checkMaxEnvironmentRam(config);
     }
 }

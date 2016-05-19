@@ -74,8 +74,10 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                           WorkspaceRuntimes runtimes,
                                           EventService eventService,
                                           MachineManager machineManager,
-                                          UserManager userManager) {
-        super(workspaceDao, runtimes, eventService, machineManager, userManager);
+                                          UserManager userManager,
+                                          @Named("workspace.runtime.auto_snapshot") boolean defaultAutoSnapshot,
+                                          @Named("workspace.runtime.auto_restore") boolean defaultAutoRestore) {
+        super(workspaceDao, runtimes, eventService, machineManager, userManager, defaultAutoSnapshot, defaultAutoRestore);
         this.workspacesPerUser = workspacesPerUser;
         this.maxRamPerEnv = "-1".equals(maxRamPerEnv) ? -1 : Size.parseSizeToMegabytes(maxRamPerEnv);
         this.ramPerUser = "-1".equals(ramPerUser) ? -1 : Size.parseSizeToMegabytes(ramPerUser);
