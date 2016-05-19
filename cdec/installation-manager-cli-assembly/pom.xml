@@ -156,6 +156,7 @@ cellar       =]]></replacevalue>
                                 <copy file="${project.build.directory}/packager-conf/xml/installation-manager-cli-features-${project.version}-features.xml" tofile="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/im/installation-manager-cli-features/${project.version}/installation-manager-cli-features-${project.version}-features.xml" />
                                 <copy file="${project.build.directory}/classes/codenvy-cli/etc/org.ops4j.pax.logging.cfg" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/org.ops4j.pax.logging.cfg" />
                                 <copy file="${project.build.directory}/classes/codenvy-cli/etc/java.util.logging.properties" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/java.util.logging.properties" />
+                                <mkdir dir="${project.build.directory}/codenvy-cli-${project.version}/logs"/>
                                 <!-- turn off login command in the codenvy cli command jar-->
                                 <unzip dest="${project.build.directory}/archive-tmp/jar" src="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/cli/cli-command/${project.version}/cli-command-${project.version}.jar" />
                                 <replace file="${project.build.directory}/archive-tmp/jar/META-INF/services/org/apache/karaf/shell/commands">
