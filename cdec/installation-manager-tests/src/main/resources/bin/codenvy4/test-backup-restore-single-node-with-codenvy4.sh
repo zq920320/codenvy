@@ -51,7 +51,7 @@ WORKSPACE_ID=${OUTPUT}
 doPost "application/json" "{}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}/runtime?token=${TOKEN}"
 
 # verify is workspace running
-doSleep "6m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
+doSleep "10m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
 
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
@@ -60,10 +60,10 @@ NETWORK_PORTS=${OUTPUT}
 EXT_HOST_PORT_REGEX="4401/tcp=\[PortBinding\{hostIp='127.0.0.1', hostPort='([0-9]*)'\}\]"
 EXT_HOST_PORT=$([[ "$NETWORK_PORTS" =~ $EXT_HOST_PORT_REGEX ]] && echo ${BASH_REMATCH[1]})
 
-HOST_URL_FOR_PROJECT="${HOST_URL}:${EXT_HOST_PORT}"
+URL_OF_PROJECT_API="http://${HOST_URL}:81/${EXT_HOST_PORT}_codenvy/wsagent/ext/project"
 
 # create project "project-1" of type "console-java" in workspace "workspace-1"
-doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "http://${HOST_URL_FOR_PROJECT}/wsagent/ext/project/${WORKSPACE_ID}/import/project-1?token=${TOKEN}"
+doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "${URL_OF_PROJECT_API}/import/project-1?token=${TOKEN}"
 
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
