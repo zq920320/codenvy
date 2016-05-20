@@ -29,14 +29,11 @@ public interface ServerClient {
      *         - sso authentication token.
      * @param clientUrl
      *         - url of client who asking the principal.
-     * @param workspaceId
-     *         - id of workspace for which requested roles.
-     * @param accountId
-     *         - id of account for which requested roles.
      * @return - principal with roles. If token is not valid return null.
+     * @Deprecated use ServerClient.getUser(String token, String clientUrl)
      */
-    Subject getSubject(String token, String clientUrl, String workspaceId, String accountId);
 
+    Subject getSubject(String token, String clientUrl);
     /**
      * Notify server about termination sso session.
      *

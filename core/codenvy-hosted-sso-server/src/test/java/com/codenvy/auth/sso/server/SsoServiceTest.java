@@ -93,14 +93,12 @@ public class SsoServiceTest {
                                  .withRoles(Arrays.asList("workspace/admin", "account/owner"))
                                  .withTemporary(false);
         when(ticketManager.getAccessTicket(eq("t1"))).thenReturn(ticket);
-        when(rolesExtractor.getRoles(eq(ticket), eq("ws-598382047"), eq("ac-938098203874")))
+        when(rolesExtractor.getRoles(eq(ticket)))
                 .thenReturn(new HashSet<>(Arrays.asList("workspace/admin", "account/owner")));
         //when
         final Response response = given()
                 .pathParam("token", "t1")
                 .queryParam("clienturl", "http://dev.box.com/api")
-                .queryParam("workspaceid", "ws-598382047")
-                .queryParam("accountid", "ac-938098203874")
                 .then()
                 .expect().statusCode(200)
                 .when()

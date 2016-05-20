@@ -16,6 +16,9 @@ package com.codenvy.auth.sso.client;
 
 import com.google.inject.name.Named;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import javax.inject.Inject;
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
@@ -26,9 +29,6 @@ import javax.ws.rs.core.UriBuilder;
 import java.io.IOException;
 
 import static java.net.URLEncoder.encode;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * InvalidTokenHandler that user redirection to sso server or login page to recover authentication token.
@@ -57,13 +57,16 @@ public class RecoverableTokenHandler extends NoUserInteractionTokenHandler {
     }
 
     @Override
-    public void handleValidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain, HttpSession session,
-                                 RolesContext rolesContext, SsoClientPrincipal principal) throws IOException, ServletException {
-        if (!allowAnonymous && principal.getUser(rolesContext) != null && principal.getUser(rolesContext).isTemporary()) {
+    public void handleValidToken(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 FilterChain chain,
+                                 HttpSession session,
+                                 SsoClientPrincipal principal) throws IOException, ServletException {
+        if (!allowAnonymous && principal.getUser() != null && principal.getUser().isTemporary()) {
             LOG.warn("Anonymous user is not allowed on this client {} ", clientUrlExtractor.getClientUrl(request));
             handleBadToken(request, response, chain, principal.getToken());
         } else {
-            super.handleValidToken(request, response, chain, session, rolesContext, principal);
+            super.handleValidToken(request, response, chain, session, principal);
         }
     }
 

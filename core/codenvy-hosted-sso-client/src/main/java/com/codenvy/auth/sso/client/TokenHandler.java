@@ -41,15 +41,15 @@ public interface TokenHandler {
      *         - filter chain.
      * @param session
      *         - http session associated with given token.
-     * @param rolesContext
-     *         - roles context.
      * @param principal
      *         - user associated with given token.
      * @throws IOException
      * @throws ServletException
      */
-    void handleValidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain, HttpSession session,
-                          RolesContext rolesContext,
+    void handleValidToken(HttpServletRequest request,
+                          HttpServletResponse response,
+                          FilterChain chain,
+                          HttpSession session,
                           SsoClientPrincipal principal)
             throws IOException, ServletException;
 
@@ -67,7 +67,10 @@ public interface TokenHandler {
      * @throws IOException
      * @throws ServletException
      */
-    void handleBadToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain, String token)
+    void handleBadToken(HttpServletRequest request,
+                        HttpServletResponse response,
+                        FilterChain chain,
+                        String token)
             throws IOException, ServletException;
 
     /**
@@ -82,7 +85,9 @@ public interface TokenHandler {
      * @throws IOException
      * @throws ServletException
      */
-    void handleMissingToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
+    void handleMissingToken(HttpServletRequest request,
+                            HttpServletResponse response,
+                            FilterChain chain)
             throws IOException, ServletException;
 
 }

@@ -16,10 +16,9 @@ package com.codenvy.auth.sso.client;
 
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.token.RequestTokenExtractor;
-
-import org.eclipse.che.commons.subject.Subject;
 import com.google.inject.name.Named;
 
+import org.eclipse.che.commons.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -116,15 +115,12 @@ public class LoginFilter implements Filter {
                 }
 
 
-                final RolesContext rolesContext = contextResolver.getRequestContext(httpReq);
-                final SsoClientPrincipal principal = getPrincipal(session, token, clientUrl, rolesContext);
-                if (principal == null || !principal.hasUserInContext(rolesContext)) {
+                final SsoClientPrincipal principal = getPrincipal(session, token, clientUrl);
+                if (principal == null) {
                     tokenHandler.handleBadToken(httpReq, httpResp, chain, token);
-                    return;
+                } else {
+                    tokenHandler.handleValidToken(httpReq, httpResp, chain, session, principal);
                 }
-
-                tokenHandler.handleValidToken(httpReq, httpResp, chain, session, rolesContext, principal);
-                return;
             } else {
                 //token not exists
                 if (httpReq.getParameter("cookiePresent") != null) {
@@ -132,14 +128,12 @@ public class LoginFilter implements Filter {
                     httpResp.sendRedirect(cookiesDisabledErrorPageUrl);
                 } else {
                     tokenHandler.handleMissingToken(httpReq, httpResp, chain);
-                    return;
-
                 }
             }
         }
     }
 
-    private SsoClientPrincipal getPrincipal(HttpSession session, String token, String clientUrl, RolesContext rolesContext) {
+    private SsoClientPrincipal getPrincipal(HttpSession session, String token, String clientUrl) {
         SsoClientPrincipal principal = (SsoClientPrincipal)session.getAttribute("principal");
         if (principal == null || !principal.getToken().equals(token)) {
             // Case when same client use same http session but different authentication token
@@ -147,9 +141,9 @@ public class LoginFilter implements Filter {
                 sessionStore.removeSessionByToken(principal.getToken());
                 sessionStore.saveSession(token, session);
             }
-            Subject subject = ssoServerClient.getSubject(token, clientUrl, rolesContext.getWorkspaceId(), rolesContext.getAccountId());
+            Subject subject = ssoServerClient.getSubject(token, clientUrl);
             if (subject != null) {
-                principal = new SsoClientPrincipal(token, clientUrl, rolesContext, subject, ssoServerClient);
+                principal = new SsoClientPrincipal(token, clientUrl, subject);
                 session.setAttribute("principal", principal);
             }
         }

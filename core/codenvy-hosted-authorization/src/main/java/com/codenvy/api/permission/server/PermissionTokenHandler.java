@@ -14,7 +14,6 @@
  */
 package com.codenvy.api.permission.server;
 
-import com.codenvy.auth.sso.client.RolesContext;
 import com.codenvy.auth.sso.client.ServerClient;
 import com.codenvy.auth.sso.client.SsoClientPrincipal;
 import com.codenvy.auth.sso.client.TokenHandler;
@@ -60,14 +59,18 @@ public class PermissionTokenHandler implements TokenHandler {
     }
 
     @Override
-    public void handleValidToken(HttpServletRequest request, HttpServletResponse response, FilterChain chain, HttpSession session,
-                                 RolesContext rolesContext, SsoClientPrincipal principal) throws IOException, ServletException {
-        delegate.handleValidToken(request, response, chain, session, rolesContext,
+    public void handleValidToken(HttpServletRequest request,
+                                 HttpServletResponse response,
+                                 FilterChain chain,
+                                 HttpSession session,
+                                 SsoClientPrincipal principal) throws IOException, ServletException {
+        delegate.handleValidToken(request,
+                                  response,
+                                  chain,
+                                  session,
                                   new SsoClientPrincipal(principal.getToken(),
                                                          principal.getClientUrl(),
-                                                         rolesContext,
-                                                         new AuthorizedSubject(principal.getUser(rolesContext)),
-                                                         ssoServerClient));
+                                                         new AuthorizedSubject(principal.getUser())));
     }
 
     @Override

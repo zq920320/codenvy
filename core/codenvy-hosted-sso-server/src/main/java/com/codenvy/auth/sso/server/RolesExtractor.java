@@ -24,5 +24,5 @@ import java.util.Set;
  * @author Sergii Kabashniuk
  */
 public interface RolesExtractor {
-    Set<String> extractRoles(AccessTicket ticket, String workspaceId, String accountId);
+    Set<String> extractRoles(AccessTicket ticketß);
 }

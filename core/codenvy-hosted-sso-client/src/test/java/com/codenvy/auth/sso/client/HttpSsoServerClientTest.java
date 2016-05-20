@@ -84,7 +84,7 @@ public class HttpSsoServerClientTest {
         final SubjectDto subjectDto = createUserDto();
         when(response.asDto(anyObject())).thenReturn(subjectDto);
 
-        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL, null, null);
+        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL);
 
         assertEquals(subject.getUserId(), subject.getUserId());
         assertEquals(subject.getUserName(), subject.getUserName());
@@ -98,84 +98,6 @@ public class HttpSsoServerClientTest {
                                                     .build("token123")
                                                     .toString()));
         verify(request).addQueryParam(eq("clienturl"), eq(CLIENT_URL));
-        verify(request).useGetMethod();
-        verify(request).request();
-        verifyNoMoreInteractions(request);
-    }
-
-    @Test
-    public void shouldRequestUserWithWorkspaceAndAccountIds() throws Exception {
-        final SubjectDto subjectDto = createUserDto();
-        when(response.asDto(anyObject())).thenReturn(subjectDto);
-
-        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL, "workspace123", "account123");
-
-        assertEquals(subject.getUserId(), subject.getUserId());
-        assertEquals(subject.getUserName(), subject.getUserName());
-        assertEquals(subject.getToken(), subject.getToken());
-        assertEquals(subject.isTemporary(), subject.isTemporary());
-        assertTrue(subject.isMemberOf("superUser"));
-        assertFalse(subject.isMemberOf("user"));
-        verify(requestFactory).fromUrl(eq(UriBuilder.fromUri(API_ENDPOINT)
-                                                    .path(SsoService.class)
-                                                    .path(SsoService.class, "getCurrentPrincipal")
-                                                    .build("token123")
-                                                    .toString()));
-        verify(request).addQueryParam(eq("workspaceid"), eq("workspace123"));
-        verify(request).addQueryParam(eq("accountid"), eq("account123"));
-        verify(request).addQueryParam(eq("clienturl"), eq(CLIENT_URL));
-        verify(request).useGetMethod();
-        verify(request).request();
-        verifyNoMoreInteractions(request);
-    }
-
-    @Test
-    public void shouldRequestUserWithWorkspaceId() throws Exception {
-        final SubjectDto subjectDto = createUserDto();
-        when(response.asDto(anyObject())).thenReturn(subjectDto);
-
-        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL, "workspace123", null);
-
-        assertEquals(subject.getUserId(), subject.getUserId());
-        assertEquals(subject.getUserName(), subject.getUserName());
-        assertEquals(subject.getToken(), subject.getToken());
-        assertEquals(subject.isTemporary(), subject.isTemporary());
-        assertTrue(subject.isMemberOf("superUser"));
-        assertFalse(subject.isMemberOf("user"));
-        verify(requestFactory).fromUrl(eq(UriBuilder.fromUri(API_ENDPOINT)
-                                                    .path(SsoService.class)
-                                                    .path(SsoService.class, "getCurrentPrincipal")
-                                                    .build("token123")
-                                                    .toString()));
-        verify(request).addQueryParam(eq("workspaceid"), eq("workspace123"));
-        verify(request, never()).addQueryParam(eq("accountid"), anyString());
-        verify(request).addQueryParam(eq("clienturl"), eq(CLIENT_URL));
-        verify(request).useGetMethod();
-        verify(request).request();
-        verifyNoMoreInteractions(request);
-    }
-
-    @Test
-    public void shouldRequestUserWithAccountId() throws Exception {
-        final SubjectDto subjectDto = createUserDto();
-        when(response.asDto(anyObject())).thenReturn(subjectDto);
-
-        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL, null, "account123");
-
-        assertEquals(subject.getUserId(), subject.getUserId());
-        assertEquals(subject.getUserName(), subject.getUserName());
-        assertEquals(subject.getToken(), subject.getToken());
-        assertEquals(subject.isTemporary(), subject.isTemporary());
-        assertTrue(subject.isMemberOf("superUser"));
-        assertFalse(subject.isMemberOf("user"));
-        verify(requestFactory).fromUrl(eq(UriBuilder.fromUri(API_ENDPOINT)
-                                                    .path(SsoService.class)
-                                                    .path(SsoService.class, "getCurrentPrincipal")
-                                                    .build("token123")
-                                                    .toString()));
-        verify(request, never()).addQueryParam(eq("workspaceid"), anyString());
-        verify(request).addQueryParam(eq("clienturl"), eq(CLIENT_URL));
-        verify(request).addQueryParam(eq("accountid"), eq("account123"));
         verify(request).useGetMethod();
         verify(request).request();
         verifyNoMoreInteractions(request);
@@ -187,7 +109,7 @@ public class HttpSsoServerClientTest {
         when(response.asDto(anyObject())).thenReturn(subjectDto);
         when(request.request()).thenThrow(new NotFoundException("not found"));
 
-        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL, "workspace123", "account123");
+        final Subject subject = ssoClient.getSubject("token123", CLIENT_URL);
 
         assertNull(subject);
         verify(requestFactory).fromUrl(eq(UriBuilder.fromUri(API_ENDPOINT)
@@ -195,8 +117,6 @@ public class HttpSsoServerClientTest {
                                                     .path(SsoService.class, "getCurrentPrincipal")
                                                     .build("token123")
                                                     .toString()));
-        verify(request).addQueryParam(eq("workspaceid"), eq("workspace123"));
-        verify(request).addQueryParam(eq("accountid"), eq("account123"));
         verify(request).addQueryParam(eq("clienturl"), eq(CLIENT_URL));
         verify(request).useGetMethod();
         verify(request).request();
