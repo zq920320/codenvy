@@ -320,6 +320,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(WsAgentLauncher.class).to(WsAgentLauncherImpl.class);
 
+        Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
+                Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
+        machineImageProviderMultibinder.addBinding().to(org.eclipse.che.plugin.docker.machine.DockerInstanceProvider.class);
+
         //workspace activity service
         install(new com.codenvy.activity.server.inject.WorkspaceActivityModule());
 
