@@ -23,7 +23,6 @@ import com.codenvy.im.managers.InstallOptions;
 import com.codenvy.im.managers.InstallType;
 import com.codenvy.im.utils.HttpTransport;
 import com.codenvy.im.utils.Version;
-
 import org.apache.commons.io.FileUtils;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -276,6 +275,11 @@ public class TestAbstractArtifact extends BaseTest {
 
         @Override
         public void updateConfig(Map<String, String> properties) throws IOException {
+        }
+
+        @Override
+        public Map<String, String> getConfig() throws IOException {
+            return null;
         }
     }
 }

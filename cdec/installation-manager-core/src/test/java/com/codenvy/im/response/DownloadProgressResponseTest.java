@@ -53,7 +53,7 @@ public class DownloadProgressResponseTest extends BaseTest {
                                                                  "  \"artifacts\" : [ {\n" +
                                                                  "    \"artifact\" : \"codenvy\",\n" +
                                                                  "    \"version\" : \"1.0.1\",\n" +
-                                                                 "    \"file\" : \"target/download/file\",\n" +
+                                                                 "    \"file\" : \"target/updates/file\",\n" +
                                                                  "    \"status\" : \"DOWNLOADED\"\n" +
                                                                  "  } ],\n" +
                                                                  "  \"percents\" : 100,\n" +

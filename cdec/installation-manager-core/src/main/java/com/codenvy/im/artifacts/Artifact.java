@@ -91,6 +91,9 @@ public interface Artifact extends Comparable<Artifact> {
     /** Updates artifact configuration */
     void updateConfig(Map<String, String> properties) throws IOException;
 
+    /** @return config of installed artifact */
+    Map<String, String> getConfig() throws IOException;
+
     /** Get label property of artifact */
     Optional<VersionLabel> getLabel(Version version) throws IOException;
 }

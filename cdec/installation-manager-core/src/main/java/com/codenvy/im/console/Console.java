@@ -77,6 +77,11 @@ public class Console {
         return consoleInstance.get();
     }
 
+    public void printlnWithoutPrompt(Object message) {
+        print(message, true);
+        println();
+    }
+
     public void println(String message) {
         print(message);
         println();

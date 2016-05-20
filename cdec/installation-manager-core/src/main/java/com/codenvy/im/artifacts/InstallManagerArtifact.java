@@ -37,11 +37,13 @@ import java.net.URL;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
 
+import static com.codenvy.im.utils.Commons.extractServerUrl;
 import static java.lang.String.format;
 
 /**
@@ -55,13 +57,16 @@ public class InstallManagerArtifact extends AbstractArtifact {
     private static final String UPDATE_CLI_SCRIPT_NAME = "update-im-cli";
     private static final String IM_ROOT_DIRECTORY_NAME = "codenvy-im";
     private static final String RELATIVE_PATH_TO_JAVA  = IM_ROOT_DIRECTORY_NAME + "/jre";
+    private String saasServerEndpoint;
 
     @Inject
-    public InstallManagerArtifact(@Named("installation-manager.update_server_endpoint") String updateEndpoint,
+    public InstallManagerArtifact(@Named("installation-manager.update_server_endpoint") String updateServerEndpoint,
                                   @Named("installation-manager.download_dir") String downloadDir,
+                                  @Named("saas.api.endpoint") String saasApiEndpoint,
                                   HttpTransport transport,
                                   ConfigManager configManager) {
-        super(NAME, updateEndpoint, downloadDir, transport, configManager);
+        super(NAME, updateServerEndpoint, downloadDir, transport, configManager);
+        this.saasServerEndpoint = saasApiEndpoint;
     }
 
     /** {@inheritDoc} */
@@ -196,5 +201,17 @@ public class InstallManagerArtifact extends AbstractArtifact {
     @Override
     public void updateConfig(Map<String, String> properties) throws IOException {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    /**
+     * @return configuration of installed Installation Manager
+     */
+    public Map<String, String> getConfig() throws IOException {
+        return new LinkedHashMap<String, String>() {{
+            put("download_directory", downloadDir.toString());
+            put("update_server_url", extractServerUrl(updateServerEndpoint));
+            put("saas_server_url", extractServerUrl(saasServerEndpoint));
+        }};
     }
 }

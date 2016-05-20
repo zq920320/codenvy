@@ -93,9 +93,7 @@ public class IMArtifactLabeledFacadeTest extends BaseTest {
 
         versions = ImmutableMap.of(artifact, version);
 
-        facade = spy(new IMArtifactLabeledFacade(DOWNLOAD_DIR,
-                                                 UPDATE_API_ENDPOINT,
-                                                 SAAS_API_ENDPOINT,
+        facade = spy(new IMArtifactLabeledFacade(SAAS_API_ENDPOINT,
                                                  transport,
                                                  saasAuthServiceProxy,
                                                  saasRepositoryServiceProxy,

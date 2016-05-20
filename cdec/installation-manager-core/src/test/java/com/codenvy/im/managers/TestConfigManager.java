@@ -657,5 +657,25 @@ public class TestConfigManager extends BaseTest {
 
         assertEquals(spyConfigManager.getApiEndpoint(), "http://codenvy.onprem/api");
     }
+
+    @Test
+    public void testPrivateCodenvyPropertyMask() throws IOException {
+        Map<String, String> properties = new ImmutableMap.Builder<String, String>()
+            .put("test_password", "value")
+            .put("test_password_field_name", "value")
+            .put("test_secret", "value")
+            .put("test_secret_field_name", "value")
+            .put("test_pass", "value")
+            .put("test_passenger", "value")
+            .build();
+        Map<String, String> result = spyConfigManager.maskPrivateProperties(properties);
+        assertEquals(result.toString(), "{test_secret=*****, "
+                                        + "test_secret_field_name=value, "
+                                        + "test_passenger=value, "
+                                        + "test_password_field_name=value, "
+                                        + "test_pass=*****, "
+                                        + "test_password=*****}");
+    }
+
 }
 

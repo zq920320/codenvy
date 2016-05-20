@@ -68,6 +68,12 @@ public class ConfigManager {
 
     public static final String PATH_TO_MANIFEST_PATCH_VARIABLE = "PATH_TO_MANIFEST";
 
+
+    private static final String    SECURE_VALUE_MASK    = "*****";
+    private static final Pattern[] PRIVATE_KEY_PATTERNS = new Pattern[]{Pattern.compile("password$"),
+                                                                        Pattern.compile("_pass$"),
+                                                                        Pattern.compile("secret$")};
+
     private final HttpTransport transport;
     private final String        updateEndpoint;
     private final String        puppetBaseDir;
@@ -593,5 +599,32 @@ public class ConfigManager {
         Set<String> sections = iniFile.getSections();
         return sections.contains("main")
                && !iniFile.getSection("main").getString("server", "").isEmpty();
+    }
+
+    /**
+     * @return map where all private keys ("password", "secret" etc.) were been updated to have PASSWORD_MASK value
+     * @param properties to mask
+     */
+    public Map<String, String> maskPrivateProperties(Map<String, String> properties) {
+        Map<String, String> maskedProperties = new HashMap<>(properties);
+        for (Map.Entry<String, String> property : maskedProperties.entrySet()) {
+            String key = property.getKey();
+            if (isPrivateProperty(key)) {
+                property.setValue(SECURE_VALUE_MASK);
+            }
+        }
+
+        return maskedProperties;
+    }
+
+    /** @return true if only key matches one of the patterns from the PRIVATE_KEY_PATTERNS */
+    private boolean isPrivateProperty(String key) {
+        for (Pattern pattern : PRIVATE_KEY_PATTERNS) {
+            if (pattern.matcher(key).find()) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

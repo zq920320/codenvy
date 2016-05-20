@@ -14,11 +14,11 @@
  */
 package com.codenvy.im.utils;
 
+import com.codenvy.im.BaseTest;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
 import com.google.inject.name.Names;
-
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeTest;
 import org.testng.annotations.DataProvider;
@@ -60,17 +60,17 @@ public class TestInjectorBootstrap {
     }
 
     @DataProvider(name = "testProperties")
-    public String[][] getTestProperties() {
-        return new String[][]{
-            {"installation-manager.download_dir", "target/updates"},
+    public Object[][] getTestProperties() {
+        return new Object[][]{
+            {"installation-manager.download_dir", BaseTest.DOWNLOAD_DIR},
             {"installation-manager.backup_dir", "target/backups"},
             {"installation-manager.storage_dir", "target/storage"},
             {"installation-manager.report_dir", "target/reports"},
-            {"installation-manager.update_server_endpoint", "/update/endpoint"},
+            {"installation-manager.update_server_endpoint", BaseTest.UPDATE_API_ENDPOINT},
             {"installation-manager.assembly_properties", "target/assembly.properties"},
             {"installation-manager.min_puppet_errors_to_interrupt_im", "3"},
-            {"api.endpoint", "/api/endpoint"},
-            {"saas.api.endpoint", "/saas/api/endpoint"},
+            {"api.endpoint", BaseTest.API_ENDPOINT},
+            {"saas.api.endpoint", BaseTest.SAAS_API_ENDPOINT},
             {"puppet.base_dir", "target/puppet"},
             {"os.redhat_release_file", "target/redhat-release"}
         };

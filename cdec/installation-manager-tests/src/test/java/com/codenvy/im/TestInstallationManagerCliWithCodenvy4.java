@@ -69,6 +69,11 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
         doTest("codenvy4/test-install-single-node-behind-the-proxy-with-codenvy4.sh");
     }
 
+    @Test
+    public void testUpdateCodenvy4Config() throws Exception {
+        doTest("codenvy4/test-update-codenvy4-config.sh");
+    }
+
     /* Repeat tests in RHEL OS*/
 
     @Test

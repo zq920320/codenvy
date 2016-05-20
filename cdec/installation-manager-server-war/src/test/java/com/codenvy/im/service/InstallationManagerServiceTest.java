@@ -15,6 +15,7 @@
 package com.codenvy.im.service;
 
 import com.codenvy.im.artifacts.Artifact;
+import com.codenvy.im.artifacts.ArtifactFactory;
 import com.codenvy.im.artifacts.ArtifactNotFoundException;
 import com.codenvy.im.artifacts.ArtifactProperties;
 import com.codenvy.im.artifacts.CDECArtifact;
@@ -49,7 +50,6 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -69,11 +69,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.IntStream;
 
-import static com.codenvy.im.artifacts.ArtifactFactory.createArtifact;
 import static java.lang.String.format;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
@@ -117,7 +117,7 @@ public class InstallationManagerServiceTest {
     @Mock
     private Config              mockConfig;
     @Mock
-    private Artifact            mockArtifact;
+    private Artifact            mockCdecArtifact;
 
     protected final String BACKUP_DIR = "target/backup";
 
@@ -140,9 +140,9 @@ public class InstallationManagerServiceTest {
         service = spy(new InstallationManagerService(BACKUP_DIR, mockFacade, configManager));
 
         doReturn(TEST_SYSTEM_ADMIN_NAME).when(mockPrincipal).getName();
-        doReturn(mockArtifact).when(service).createArtifact(anyString());
+        doReturn(mockCdecArtifact).when(service).createArtifact(eq(CDECArtifact.NAME));
 
-        artifact = createArtifact(ARTIFACT_NAME);
+        artifact = ArtifactFactory.createArtifact(ARTIFACT_NAME);
         version = Version.valueOf(VERSION_NUMBER);
     }
 
@@ -152,7 +152,7 @@ public class InstallationManagerServiceTest {
         assertEquals(result.getStatus(), Response.Status.ACCEPTED.getStatusCode());
         assertTrue(result.getEntity() instanceof DownloadToken);
         assertNotNull(((DownloadToken)result.getEntity()).getId());
-        verify(mockFacade).startDownload(createArtifact("codenvy"), version);
+        verify(mockFacade).startDownload(ArtifactFactory.createArtifact("codenvy"), version);
     }
 
     @Test
@@ -257,7 +257,7 @@ public class InstallationManagerServiceTest {
         doReturn(testConfigProperties).when(configManager).prepareInstallProperties(null,
                                                                                     null,
                                                                                     InstallType.SINGLE_SERVER,
-                                                                                    createArtifact(ARTIFACT_NAME),
+                                                                                    ArtifactFactory.createArtifact(ARTIFACT_NAME),
                                                                                     Version.valueOf("3.1.0"),
                                                                                     false);
 
@@ -273,7 +273,7 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetConfig() throws Exception {
-        doReturn(Collections.emptyMap()).when(mockFacade).getInstallationManagerProperties();
+        doReturn(Collections.emptyMap()).when(mockFacade).getArtifactConfig(ArtifactFactory.createArtifact(ARTIFACT_NAME));
 
         Response response = service.getInstallationManagerServerConfig();
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
@@ -428,7 +428,7 @@ public class InstallationManagerServiceTest {
             put(ArtifactProperties.ARTIFACT_PROPERTY, "codenvy");
             put(ArtifactProperties.SIZE_PROPERTY, "796346268");
             put(ArtifactProperties.VERSION_PROPERTY, "1.0.0");
-        }}).when(mockArtifact).getProperties(any(Version.class));
+        }}).when(mockCdecArtifact).getProperties(any(Version.class));
 
         Response response = service.getArtifactProperties("codenvy", "1.0.1");
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
@@ -570,17 +570,17 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetCodenvyPropertiesShouldReturnOkResponse() throws Exception {
-        Config testConfig = new Config(ImmutableMap.of("a", "b", "password", "c"));
-        doReturn(testConfig).when(configManager).loadInstalledCodenvyConfig();
+        Map<String, String> testConfig = ImmutableMap.of("a", "b", "password", "c");
+        doReturn(testConfig).when(mockFacade).getArtifactConfig(mockCdecArtifact);
 
         Response response = service.getCodenvyProperties();
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
-        assertEquals(response.getEntity().toString(), "{a=b, password=*****}");
+        assertEquals(response.getEntity().toString(), testConfig.toString());
     }
 
     @Test
     public void testGetCodenvyPropertiesShouldReturnErrorResponse() throws Exception {
-        doThrow(new IOException("error")).when(configManager).loadInstalledCodenvyConfig();
+        doThrow(new IOException("error")).when(mockFacade).getArtifactConfig(mockCdecArtifact);
 
         Response response = service.getCodenvyProperties();
         assertEquals(response.getStatus(), Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
@@ -588,8 +588,8 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetCodenvyPropertyShouldReturnOkResponse() throws Exception {
-        Config config = new Config(ImmutableMap.of("x", "y"));
-        doReturn(config).when(configManager).loadInstalledCodenvyConfig();
+        Map<String, String> properties = ImmutableMap.of("x", "y");
+        doReturn(properties).when(mockFacade).getArtifactConfig(mockCdecArtifact);
 
         Response response = service.getCodenvyProperty("x");
         assertEquals(response.getStatus(), Response.Status.OK.getStatusCode());
@@ -609,34 +609,10 @@ public class InstallationManagerServiceTest {
 
     @Test
     public void testGetCodenvyPropertyShouldReturnErrorResponse() throws Exception {
-        doThrow(new IOException("error")).when(configManager).loadInstalledCodenvyConfig();
+        doThrow(new IOException("error")).when(mockFacade).getArtifactConfig(mockCdecArtifact);
 
         Response response = service.getCodenvyProperty("x");
         assertErrorResponse(response);
-    }
-
-
-    @Test(dataProvider = "privateCodenvyPropertyMaskTest")
-    public void testPrivateCodenvyPropertyMask(String key, boolean masked) throws IOException {
-        String value = "y";
-        Config testConfig = new Config(ImmutableMap.of(key, value));
-        doReturn(testConfig).when(configManager).loadInstalledCodenvyConfig();
-
-        Response response = service.getCodenvyProperty(key);
-        Map returnValue = (Map)response.getEntity();
-        assertEquals(returnValue.get(key), masked ? "*****" : value);
-    }
-
-    @DataProvider(name = "privateCodenvyPropertyMaskTest")
-    public Object[][] getTestPrivateCodenvyPropertyMaskData() {
-        return new Object[][] {
-            {"test_password", true},
-            {"test_password_field_name", false},
-            {"test_secret", true},
-            {"test_secret_field_name", false},
-            {"test_pass", true},
-            {"test_passenger", false},
-        };
     }
 
     @Test

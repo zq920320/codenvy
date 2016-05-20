@@ -57,9 +57,7 @@ import static com.codenvy.im.artifacts.ArtifactFactory.createArtifact;
 public class IMArtifactLabeledFacade extends InstallationManagerFacade {
 
     @Inject
-    public IMArtifactLabeledFacade(@Named("installation-manager.download_dir") String downloadDir,
-                                   @Named("installation-manager.update_server_endpoint") String updateServerEndpoint,
-                                   @Named("saas.api.endpoint") String saasServerEndpoint,
+    public IMArtifactLabeledFacade(@Named("saas.api.endpoint") String saasServerEndpoint,
                                    HttpTransport transport,
                                    SaasAuthServiceProxy saasAuthServiceProxy,
                                    SaasRepositoryServiceProxy saasRepositoryServiceProxy,
@@ -70,9 +68,7 @@ public class IMArtifactLabeledFacade extends InstallationManagerFacade {
                                    InstallManager installManager,
                                    DownloadManager downloadManager,
                                    CodenvyLicenseManager licenseManager) {
-        super(downloadDir,
-              updateServerEndpoint,
-              saasServerEndpoint,
+        super(saasServerEndpoint,
               transport,
               saasAuthServiceProxy,
               saasRepositoryServiceProxy,
