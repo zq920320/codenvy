@@ -25,6 +25,5 @@ public class SsoClientServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         serve("/_sso/client/logout").with(com.codenvy.auth.sso.client.SSOLogoutServlet.class);
-        serve("/_sso/client/reset").with(com.codenvy.auth.sso.client.ResetRolesServlet.class);
     }
 }

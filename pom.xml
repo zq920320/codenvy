@@ -246,11 +246,6 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.hosted-infrastructure</groupId>
-                <artifactId>codenvy-hosted-sso-server-ldap</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.hosted-infrastructure</groupId>
                 <artifactId>codenvy-hosted-sso-server-organization</artifactId>
                 <version>${project.version}</version>
             </dependency>

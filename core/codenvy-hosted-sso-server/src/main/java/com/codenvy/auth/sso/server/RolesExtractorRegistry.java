@@ -40,16 +40,12 @@ public class RolesExtractorRegistry {
      *
      * @param ticket
      *         - represent user and all his identification information like id for which we have to find all his roles.
-     * @param workspaceId
-     *         - if user have some special roles against workspace with given id - get it.
-     * @param accountId
-     *         - if user have some special roles against account with given id - get it.
      * @return combined set of roles.
      */
-    public Set<String> getRoles(AccessTicket ticket, String workspaceId, String accountId) {
+    public Set<String> getRoles(AccessTicket ticket) {
         Set<String> userRoles = new HashSet<>();
         for (RolesExtractor rolesExtractor : rolesExtractors) {
-            userRoles.addAll(rolesExtractor.extractRoles(ticket, workspaceId, accountId));
+            userRoles.addAll(rolesExtractor.extractRoles(ticket));
         }
         return userRoles;
     }

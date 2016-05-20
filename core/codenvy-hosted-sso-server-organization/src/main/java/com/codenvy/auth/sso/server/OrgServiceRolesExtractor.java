@@ -74,7 +74,7 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
     }
 
     @Override
-    public Set<String> extractRoles(AccessTicket ticket, String workspaceId, String accountId) {
+    public Set<String> extractRoles(AccessTicket ticket) {
         //TODO: find better solution
         //skip roles extraction if ticket handler type equals to 'sysldap'
         if ("sysldap".equals(ticket.getAuthHandlerType())) {
@@ -102,22 +102,6 @@ public class OrgServiceRolesExtractor implements RolesExtractor {
                 userRoles.add("system/manager");
             }
 
-//            User user = userDao.getById(ticket.getPrincipal().getId());
-
-//            if (accountId != null) {
-//                Account account = accountDao.getById(accountId);
-//                if (account != null) {
-//                    accountDao.getMembers(accountId)
-//                              .stream()
-//                              .filter(accountMember -> accountMember.getUserId().equals(user.getId()))
-//                              .forEach(accountMember -> userRoles.addAll(accountMember.getRoles()));
-//                }
-//            }
-
-//            membershipDao.getMemberships(user.getId())
-//                         .stream()
-//                         .filter(membership -> membership.getSubjectId().equals(workspaceId))
-//                         .forEach(membership -> userRoles.addAll(membership.getRoles()));
             return userRoles;
         } catch (NotFoundException e) {
             return emptySet();

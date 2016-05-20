@@ -49,7 +49,7 @@ public class HttpSsoServerClient implements ServerClient {
     }
 
     @Override
-    public Subject getSubject(String token, String clientUrl, String workspaceId, String accountId) {
+    public Subject getSubject(String token, String clientUrl) {
         try {
             final HttpJsonRequest currentPrincipalRequest = requestFactory.fromUrl(UriBuilder.fromUri(apiEndpoint)
                                                                                              .path(SsoService.class)
@@ -59,17 +59,11 @@ public class HttpSsoServerClient implements ServerClient {
                                                                           .useGetMethod()
                                                                           .addQueryParam("clienturl", clientUrl);
 
-            if (workspaceId != null) {
-                currentPrincipalRequest.addQueryParam("workspaceid", workspaceId);
-            }
-
-            if (accountId != null) {
-                currentPrincipalRequest.addQueryParam("accountid", accountId);
-            }
 
             final SubjectDto subjectDto = currentPrincipalRequest.request()
-                                                           .asDto(SubjectDto.class);
-            return new SubjectImpl(subjectDto.getName(), subjectDto.getId(), subjectDto.getToken(), subjectDto.getRoles(), subjectDto.isTemporary());
+                                                                 .asDto(SubjectDto.class);
+            return new SubjectImpl(subjectDto.getName(), subjectDto.getId(), subjectDto.getToken(), subjectDto.getRoles(),
+                                   subjectDto.isTemporary());
         } catch (ApiException | IOException e) {
             LOG.warn(e.getLocalizedMessage());
         }

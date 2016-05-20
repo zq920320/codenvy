@@ -99,9 +99,7 @@ public class SsoService {
     @Path("{token}")
     @GET
     public SubjectDto getCurrentPrincipal(@PathParam("token") String token,
-                                       @QueryParam("clienturl") String clientUrl,
-                                       @QueryParam("workspaceid") String workspaceId,
-                                       @QueryParam("accountid") String accountId) throws AuthenticationException {
+                                          @QueryParam("clienturl") String clientUrl) throws AuthenticationException {
 
         LOG.debug("Request user  with token {}", token);
 
@@ -116,7 +114,7 @@ public class SsoService {
             accessTicket.registerClientUrl(clientUrl);
 
 
-            Set<String> roles = rolesExtractorRegistry.getRoles(accessTicket, workspaceId, accountId);
+            Set<String> roles = rolesExtractorRegistry.getRoles(accessTicket);
             return DtoFactory.newDto(SubjectDto.class)
                              .withName(accessTicket.getPrincipal().getUserName())
                              .withId(accessTicket.getPrincipal().getUserId())

@@ -49,7 +49,6 @@ public abstract class DefaultTokenHandler implements TokenHandler {
                                  HttpServletResponse response,
                                  FilterChain chain,
                                  HttpSession session,
-                                 RolesContext rolesContext,
                                  SsoClientPrincipal principal)
             throws IOException, ServletException {
         LOG.debug("User {} left filter with session id {} token {}", principal.getName(),
@@ -59,7 +58,7 @@ public abstract class DefaultTokenHandler implements TokenHandler {
                                             .replaceQuery(request.getQueryString())
                                             .replaceQueryParam("cookiePresent").build().toString());
         } else {
-            Subject subject = principal.getUser(rolesContext);
+            Subject subject = principal.getUser();
             EnvironmentContext environmentContext = EnvironmentContext.getCurrent();
             environmentContext.setSubject(subject);
             chain.doFilter(requestWrapper.wrapRequest(session, request, subject), response);

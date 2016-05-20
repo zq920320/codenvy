@@ -16,10 +16,10 @@ package com.codenvy.auth.sso.client;
 
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.token.RequestTokenExtractor;
+
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.subject.Subject;
 import org.eclipse.che.commons.subject.SubjectImpl;
-
 import org.everrest.core.impl.RuntimeDelegateImpl;
 import org.everrest.test.mock.MockHttpServletRequest;
 import org.mockito.ArgumentCaptor;
@@ -34,7 +34,13 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import javax.servlet.*;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -48,7 +54,12 @@ import java.security.Principal;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.anyString;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /** Test related to @LoginFilter class. */
@@ -222,9 +233,7 @@ public class LoginFilterTest {
         request.getSession().setAttribute("principal", new SsoClientPrincipal("token",
                                                                               "http://localhost:8080/ws/mypersonal" +
                                                                               ".Workspace",
-                                                                              new RolesContext(),
-                                                                              new SubjectImpl("user@domain"),
-                                                                              ssoServerClient
+                                                                              new SubjectImpl("user@domain")
         ));
         filter.init(filterConfig);
 
@@ -272,9 +281,8 @@ public class LoginFilterTest {
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
                 new SubjectImpl("user@domain"));
-
         //when
         filter.doFilter(request, response, chain);
 
@@ -293,18 +301,16 @@ public class LoginFilterTest {
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
                 new SubjectImpl("user@domain"));
-        when(ssoServerClient.getSubject(eq("t12f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t12f"), anyString())).thenReturn(
                 new SubjectImpl("Anonymous123@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
 
         SsoClientPrincipal anonymous =
                 new SsoClientPrincipal("t12f",
                                        "http://localhost:8080/ws/ws",
-                                       new RolesContext(),
-                                       new SubjectImpl("Anonymous123@domain"),
-                                       ssoServerClient);
+                                       new SubjectImpl("Anonymous123@domain"));
         request.getSession().setAttribute("principal", anonymous);
 
         //when
@@ -325,7 +331,7 @@ public class LoginFilterTest {
                 new MockHttpServletRequest("http://localhost:8080/ws/ws?token=t13f", null, 0, "GET", null);
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(null);
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(null);
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
         setFieldValue(filter, "tokenHandler", new RecoverableTokenHandler(requestWrapper, clientUrlExtractor, false));
 
@@ -346,15 +352,12 @@ public class LoginFilterTest {
 
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
                 new SubjectImpl("user@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
         SsoClientPrincipal principal =
                 new SsoClientPrincipal("t13f", "http://localhost:8080/ws/ws",
-                                       new RolesContext(),
-                                       new SubjectImpl("user@domain"),
-                                       ssoServerClient);
-
+                                       new SubjectImpl("user@domain"));
         request.getSession().setAttribute("principal", principal);
 
         //when
@@ -375,15 +378,12 @@ public class LoginFilterTest {
         //given
         HttpServletRequest request = new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "GET", null);
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
                 new SubjectImpl("user@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
         SsoClientPrincipal principal = new SsoClientPrincipal("t13f", "http://localhost:8080/ws/ws",
-                                                              new RolesContext(),
-                                                              new SubjectImpl("user@domain"),
-                                                              ssoServerClient);
-
+                                                              new SubjectImpl("user@domain"));
         request.getSession().setAttribute("principal", principal);
 
         //when
@@ -409,7 +409,6 @@ public class LoginFilterTest {
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(request.getSession()).thenReturn(session);
         when(session1.getAttribute(eq("principal"))).thenReturn(principal);
-        when(principal.hasUserInContext(any(RolesContext.class))).thenReturn(true);
         when(principal.getToken()).thenReturn("t13f");
         when(sessionStore.getSession(eq("t13f"))).thenReturn(session1);
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
@@ -441,7 +440,6 @@ public class LoginFilterTest {
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(request.getSession()).thenReturn(session);
         when(session.getAttribute(eq("principal"))).thenReturn(principal);
-        when(principal.hasUserInContext(any(RolesContext.class))).thenReturn(true);
         when(principal.getToken()).thenReturn("t12f");
         when(sessionStore.getSession(eq("t13f"))).thenReturn(session);
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
@@ -458,7 +456,6 @@ public class LoginFilterTest {
                                               any(HttpServletResponse.class),
                                               any(FilterChain.class),
                                               captor.capture(),
-                                              any(RolesContext.class),
                                               any(SsoClientPrincipal.class));
 
         assertEquals(captor.getValue(), session);
@@ -544,7 +541,7 @@ public class LoginFilterTest {
         setFieldValue(filter, "attemptToGetNewTokenIfInvalid", false);
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(null);
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(null);
         when(response.getWriter()).thenReturn(writer);
         setFieldValue(filter, "tokenHandler", new NoUserInteractionTokenHandler(requestWrapper));
 
@@ -566,7 +563,7 @@ public class LoginFilterTest {
         setFieldValue(filter, "attemptToGetNewTokenIfInvalid", false);
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(null);
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(null);
         when(response.getWriter()).thenReturn(writer);
         setFieldValue(filter, "tokenHandler", new NoUserInteractionTokenHandler(requestWrapper));
 
@@ -589,9 +586,8 @@ public class LoginFilterTest {
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
         when(contextResolver.getRequestContext(any(HttpServletRequest.class))).thenReturn(new RolesContext());
-        when(ssoServerClient.getSubject(eq("t13f"), anyString(), anyString(), anyString())).thenReturn(
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
                 new SubjectImpl("user@domain"));
-
         //when
         filter.doFilter(request, response, chain);
 
