@@ -97,16 +97,16 @@ public class TestCommandLibrary extends BaseTest {
         Path testFile = Paths.get("target/testFile");
         write(testFile.toFile(), "old\n");
 
-        Command testCommand = createReplaceCommand(testFile.toString(), "old", "\\$new", false);
+        Command testCommand = createReplaceCommand(testFile.toString(), "old", "\\$new &&", false);
         assertEquals(testCommand.toString(), "{'command'='cat target/testFile " +
                                              "| sed ':a;N;$!ba;s/\\n/~n/g' " +
-                                             "| sed 's|old|\\\\$new|g' " +
+                                             "| sed 's|old|\\\\$new \\&\\&|g' " +
                                              "| sed 's|~n|\\n|g' > tmp.tmp " +
                                              "&& mv tmp.tmp target/testFile', 'agent'='LocalAgent'}");
         testCommand.execute();
 
         String content = readFileToString(testFile.toFile());
-        assertEquals(content, "\\$new\n");
+        assertEquals(content, "\\$new &&\n");
     }
 
     @Test
