@@ -37,11 +37,6 @@
         <module>analytics-tomcat-pkg</module>
         <module>analytics-tomcat-local-pkg</module>
     </modules>
-    <scm>
-        <connection>scm:git:git@github.com:codenvy/analytics.git</connection>
-        <developerConnection>scm:git:git@github.com:codenvy/analytics.git</developerConnection>
-        <tag>HEAD</tag>
-    </scm>
     <properties>
         <maven.releases.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-releases/</maven.releases.repo.url>
         <maven.snapshots.repo.url>https://maven.codenvycorp.com/content/repositories/codenvy-private-snapshots/</maven.snapshots.repo.url>
