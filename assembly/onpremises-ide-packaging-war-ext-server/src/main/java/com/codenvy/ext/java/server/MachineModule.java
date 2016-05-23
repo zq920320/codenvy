@@ -30,7 +30,6 @@ import org.eclipse.che.api.core.rest.ApiInfoService;
 import org.eclipse.che.api.core.rest.CoreRestModule;
 import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
 import org.eclipse.che.api.core.util.FileCleaner.FileCleanerModule;
-import org.eclipse.che.api.debugger.server.DebuggerService;
 import org.eclipse.che.api.git.GitConnectionFactory;
 import org.eclipse.che.api.git.GitUserResolver;
 import org.eclipse.che.api.project.server.ProjectApiModule;
@@ -79,9 +78,9 @@ public class MachineModule extends AbstractModule {
         install(new GitHubModule());
         install(new MicrosoftModule());
         install(new org.eclipse.che.swagger.deploy.DocsModule());
+        install(new org.eclipse.che.api.debugger.server.DebuggerModule());
 
         bind(ArchetypeGenerator.class);
-        bind(DebuggerService.class);
 
         bind(GitUserResolver.class).to(LocalGitUserResolver.class);
         bind(GitConnectionFactory.class).to(NativeGitConnectionFactory.class);

@@ -24,7 +24,7 @@
     </parent>
     <artifactId>onpremises-ide-compiling-war-ide</artifactId>
     <packaging>war</packaging>
-    <name>Onpremises IDE :: WAR    :: Compiling App</name>
+    <name>Onpremises IDE :: WAR :: Compiling App</name>
     <properties>
         <generated.sources.directory>${project.build.directory}/generated-sources/gen</generated.sources.directory>
         <maven.compiler.source>1.7</maven.compiler.source>
@@ -95,6 +95,10 @@
         <dependency>
             <groupId>com.google.inject.extensions</groupId>
             <artifactId>guice-assistedinject</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-debug-shared</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
