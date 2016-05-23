@@ -40,8 +40,6 @@ public class IdeModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to("^/ws/_sso/(.+)$");
 
         bind(RequestTokenExtractor.class).to(com.codenvy.auth.sso.client.token.ChainedTokenExtractor.class);
-        bind(com.codenvy.auth.sso.client.SSOContextResolver.class).to(com.codenvy.auth.sso.client.EnvironmentContextResolver.class);
-
         bind(PermissionChecker.class).to(com.codenvy.api.permission.server.HttpPermissionChecker.class);
         bind(TokenHandler.class).to(com.codenvy.api.permission.server.PermissionTokenHandler.class);
         bind(TokenHandler.class).annotatedWith(Names.named("delegated.handler"))

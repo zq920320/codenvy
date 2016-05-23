@@ -56,8 +56,6 @@ public class LoginFilter implements Filter {
     @Inject
     protected ClientUrlExtractor    clientUrlExtractor;
     @Inject
-    protected SSOContextResolver    contextResolver;
-    @Inject
     protected ServerClient          ssoServerClient;
     @Inject
     @Named("auth.sso.login_page_url")

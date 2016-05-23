@@ -15,7 +15,6 @@
 package com.codenvy.ext.java.server;
 
 import com.codenvy.api.permission.server.PermissionChecker;
-import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.google.inject.AbstractModule;
 import com.google.inject.Provides;
@@ -90,8 +89,6 @@ public class MachineModule extends AbstractModule {
 
         bind(String.class).annotatedWith(Names.named("api.endpoint")).toProvider(ApiEndpointProvider.class);
         bind(String.class).annotatedWith(Names.named("user.token")).toProvider(UserTokenProvider.class);
-
-        bind(SSOContextResolver.class).to(com.codenvy.auth.sso.client.EnvironmentContextResolver.class);
 
         bind(PermissionChecker.class).to(com.codenvy.api.permission.server.HttpPermissionChecker.class);
         bind(TokenHandler.class).to(com.codenvy.api.permission.server.PermissionTokenHandler.class);
