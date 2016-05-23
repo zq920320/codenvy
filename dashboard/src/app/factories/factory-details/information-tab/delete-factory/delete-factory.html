@@ -19,9 +19,9 @@
 -->
 <che-panel class="delete-factory" che-title="Delete Factory">
   <div layout="row" flex layout-align="space-around start">
-    <label flex="15">This is irreversible</label>
+    <label flex flex-gt-xs="15">This is irreversible</label>
 
-    <div layout="column" flex="85">
+    <div layout="column" flex-xs="none" flex-gt-xs="85">
       <che-button-danger che-button-title="Delete"
                           ng-click="deleteFactoryCtrl.deleteFactory($event)"></che-button-danger>
     </div>
