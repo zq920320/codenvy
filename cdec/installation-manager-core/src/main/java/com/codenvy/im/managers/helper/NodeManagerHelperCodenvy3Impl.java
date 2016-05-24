@@ -101,7 +101,7 @@ public class NodeManagerHelperCodenvy3Impl extends NodeManagerHelper {
             commands.add(createCommand(format("sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n" +
                                               "  show_diff = true\\n" +
                                               "  pluginsync = true\\n" +
-                                              "  report = true\\n" +
+                                              "  report = false\\n" +
                                               "  default_schedules = false\\n" +
                                               "  certname = %s\\n/g' /etc/puppet/puppet.conf",
                                               node.getHost()),

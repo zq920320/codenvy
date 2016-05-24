@@ -85,7 +85,7 @@ public class BaseTest {
                                                                "[agent]\n" +
                                                                "  show_diff = true\n" +
                                                                "  pluginsync = true\n" +
-                                                               "  report = true\n" +
+                                                               "  report = false\n" +
                                                                "  default_schedules = false\n" +
                                                                "  certname = %s\n" +
                                                                "  runinterval = 300\n" +
@@ -118,7 +118,7 @@ public class BaseTest {
                                                                + "[agent]\n"
                                                                + " show_diff = true\n"
                                                                + " pluginsync = true\n"
-                                                               + " report = true\n"
+                                                               + " report = false\n"
                                                                + " default_schedules = false\n"
                                                                + " certname = master.codenvy.onprem\n"
                                                                + "\n"

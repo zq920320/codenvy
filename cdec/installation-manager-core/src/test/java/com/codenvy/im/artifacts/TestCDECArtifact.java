@@ -306,7 +306,7 @@ public class TestCDECArtifact extends BaseTest {
         assertEquals(commands.size(), 4);
         assertEquals(commands.toString(), "[{'command'='if sudo test -f /etc/puppet/puppet.conf; then     if ! sudo test -f /etc/puppet/puppet.conf.back; then         sudo cp /etc/puppet/puppet.conf /etc/puppet/puppet.conf.back;     else         sudo cp /etc/puppet/puppet.conf.back /etc/puppet/puppet.conf;     fi fi', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo sed -i \"s/\\[main\\]/\\[main\\]\\n  dns_alt_names = puppet,host_url\\n/g\" /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
-                                          + "{'command'='sudo sed -i \"s/\\[agent\\]/[master]\\n  certname = host_url\\n\\n\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = true\\n  default_schedules = false\\n  certname = host_url\\n  runinterval = 300\\n  configtimeout = 600\\n  server = host_url\\n/g\" /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
+                                          + "{'command'='sudo sed -i \"s/\\[agent\\]/[master]\\n  certname = host_url\\n\\n\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = false\\n  default_schedules = false\\n  certname = host_url\\n  runinterval = 300\\n  configtimeout = 600\\n  server = host_url\\n/g\" /etc/puppet/puppet.conf', 'agent'='LocalAgent'}, "
                                           + "{'command'='sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\\n\" >> /etc/sysconfig/puppetagent'', 'agent'='LocalAgent'}]");
     }
 

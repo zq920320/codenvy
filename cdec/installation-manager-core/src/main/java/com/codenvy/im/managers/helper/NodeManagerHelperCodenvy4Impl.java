@@ -94,7 +94,7 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
                                               + "  sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n"
                                               + "    show_diff = true\\n"
                                               + "    pluginsync = true\\n"
-                                              + "    report = true\\n"
+                                              + "    report = false\\n"
                                               + "    default_schedules = false\\n"
                                               + "    certname = %2$s\\n/g' /etc/puppet/puppet.conf; "
                                               + "fi",
