@@ -15,7 +15,6 @@
 package com.codenvy.onpremises;
 
 
-import com.codenvy.auth.sso.client.EmptyContextResolver;
 import com.codenvy.auth.sso.client.LoginFilter;
 import com.codenvy.auth.sso.client.WebAppClientUrlExtractor;
 import com.codenvy.auth.sso.client.deploy.SsoClientServletModule;
@@ -40,7 +39,6 @@ public class OnPremisesIdeWebsiteServletModule extends ServletModule {
         bindConstant().annotatedWith(Names.named("pagehider.exclude.regexppattern")).to("^/(metrics/|zendesk)(.*)$");
 
         bind(WebAppClientUrlExtractor.class);
-        bind(EmptyContextResolver.class);
         bind(ChainedTokenExtractor.class);
         bind(com.codenvy.auth.sso.client.TokenHandler.class).to(com.codenvy.auth.sso.client.RecoverableTokenHandler.class);
 

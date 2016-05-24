@@ -36,7 +36,6 @@ public class UpdateServerServletModule extends ServletModule {
                                                                                            + "|(/util/client-ip)).*");
 
         bind(com.codenvy.auth.sso.client.WebAppClientUrlExtractor.class);
-        bind(com.codenvy.auth.sso.client.EmptyContextResolver.class);
         bind(com.codenvy.auth.sso.client.token.ChainedTokenExtractor.class);
         bind(com.codenvy.auth.sso.client.filter.RequestFilter.class).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
         bind(com.codenvy.auth.sso.client.TokenHandler.class).to(com.codenvy.auth.sso.client.RecoverableTokenHandler.class);

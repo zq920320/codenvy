@@ -27,8 +27,6 @@ import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.user.server.AdminUserService;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.api.workspace.server.dao.WorkerDao;
-import com.codenvy.auth.sso.client.EnvironmentContextResolver;
-import com.codenvy.auth.sso.client.SSOContextResolver;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
 import com.codenvy.auth.sso.client.filter.DisjunctionRequestFilter;
@@ -214,12 +212,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(UserCreator.class).to(com.codenvy.auth.sso.server.OrgServiceUserCreator.class);
 
         bind(UserCreationValidator.class).to(com.codenvy.auth.sso.server.OrgServiceUserValidator.class);
-
-
-        bind(SSOContextResolver.class).to(EnvironmentContextResolver.class);
-
         bind(PermissionChecker.class).to(com.codenvy.api.permission.server.PermissionCheckerImpl.class);
-
         bind(TokenHandler.class).to(com.codenvy.api.permission.server.PermissionTokenHandler.class);
         bind(TokenHandler.class).annotatedWith(Names.named("delegated.handler"))
                                 .to(com.codenvy.auth.sso.client.NoUserInteractionTokenHandler.class);

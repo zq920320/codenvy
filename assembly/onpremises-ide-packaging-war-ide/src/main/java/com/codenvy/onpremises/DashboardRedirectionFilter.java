@@ -83,7 +83,6 @@ public class DashboardRedirectionFilter implements Filter {
             bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to("^/ws/_sso/(.+)$");
 
             bind(RequestTokenExtractor.class).to(com.codenvy.auth.sso.client.token.ChainedTokenExtractor.class);
-            bind(com.codenvy.auth.sso.client.SSOContextResolver.class).to(com.codenvy.auth.sso.client.EnvironmentContextResolver.class);
             bind(ServerClient.class).to(com.codenvy.auth.sso.client.HttpSsoServerClient.class);
             bind(RequestFilter.class).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
         }
