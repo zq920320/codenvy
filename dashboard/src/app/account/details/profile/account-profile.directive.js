@@ -39,8 +39,8 @@ export class AccountProfile {
     this.templateUrl = 'app/account/details/profile/account-profile.html';
     this.replace = false;
 
-    this.controller = 'AccountProfileCtrl';
-    this.controllerAs = 'accountProfileCtrl';
+    this.controller = 'AccountProfileController';
+    this.controllerAs = 'accountProfileController';
 
     this.bindToController = true;
 

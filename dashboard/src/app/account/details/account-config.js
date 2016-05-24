@@ -15,7 +15,7 @@
 'use strict';
 
 import {AccountProfile} from './profile/account-profile.directive';
-import {AccountProfileCtrl} from './profile/account-profile.controller';
+import {AccountProfileController} from './profile/account-profile.controller';
 import {AccountDelete} from './account-delete.directive';
 import {AccountDeleteCtrl} from './account-delete.controller';
 import {AccountUpdatePassword} from './account-update-password.directive';
@@ -27,7 +27,7 @@ export class AccountConfig {
   constructor(register) {
     register.directive('accountUpdatePassword', AccountUpdatePassword);
 
-    register.controller('AccountProfileCtrl', AccountProfileCtrl);
+    register.controller('AccountProfileController', AccountProfileController);
     register.directive('accountProfile', AccountProfile);
 
     register.controller('AccountDeleteCtrl', AccountDeleteCtrl);

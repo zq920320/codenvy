@@ -16,29 +16,21 @@
 
 /**
  * @ngdoc controller
- * @name account.profile.controller:AccountProfileCtrl
+ * @name account.profile.controller:AccountProfileController
  * @description This class is handling the controller for the account's profile
  * @author Florent Benoit
  * @author Oleksii Orel
  */
-export class AccountProfileCtrl {
+export class AccountProfileController {
 
   /**
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(jsonCountries) {
+  constructor(jsonCountries, jsonJobs) {
     'ngInject';
 
-    this.countries = [];
-
-    var fromJsonCountries = angular.fromJson(jsonCountries);
-
-    var that = this;
-    if (fromJsonCountries.all) {
-      angular.forEach(fromJsonCountries.all, function (fromJsonCountry) {
-        that.countries.push({name: fromJsonCountry.name});
-      });
-    }
+    this.countries = angular.fromJson(jsonCountries);
+    this.jobs = angular.fromJson(jsonJobs);
   }
 }

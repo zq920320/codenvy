@@ -31,10 +31,9 @@
   <div ng-message="minlength">The phone number has to be more than 4 characters long.</div>
   <div ng-message="maxlength">The phone number has to be less than 15 characters long.</div>
 </che-input>
-<che-select che-label-name="Country"
-             che-option-values="accountProfileCtrl.countries"
+<che-select  che-label-name="Country"
+             che-option-values="accountProfileController.countries"
              che-place-holder="Select Your Country"
-             che-size="12"
              che-value="accountCtrl.profileAttributes.country">
 </che-select>
 <che-input che-form="profileInformationForm"
@@ -45,11 +44,8 @@
             ng-maxlength="128">
   <div ng-message="maxlength">The name has to be less than 128 characters long.</div>
 </che-input>
-<che-input che-form="profileInformationForm"
-           che-name="jobtitle"
-           che-label-name="Job title"
-           che-place-holder="Job title"
-            ng-model="accountCtrl.profileAttributes.jobtitle"
-            ng-maxlength="128">
-  <div ng-message="maxlength">The name has to be less than 128 characters long.</div>
-</che-input>
+<che-select  che-label-name="Role"
+             che-option-values="accountProfileController.jobs"
+             che-place-holder="Select Your Role"
+             che-value="accountCtrl.profileAttributes.jobtitle">
+</che-select>
