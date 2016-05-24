@@ -54,7 +54,7 @@ public class HttpPermissionChecker implements PermissionChecker {
                                                     final String getCurrentUsersPermissions = UriBuilder.fromUri(apiEndpoint)
                                                                                                         .path(PermissionsService.class)
                                                                                                         .path(PermissionsService.class,
-                                                                                                              "getUsersPermissions")
+                                                                                                              "getCurrentUsersPermissions")
                                                                                                         .build(key.domain, key.instance)
                                                                                                         .toString();
                                                     return new HashSet<>(requestFactory.fromUrl(getCurrentUsersPermissions)

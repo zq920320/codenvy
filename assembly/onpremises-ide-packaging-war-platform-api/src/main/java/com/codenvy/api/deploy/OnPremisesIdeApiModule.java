@@ -14,6 +14,7 @@
  */
 package com.codenvy.api.deploy;
 
+import com.codenvy.api.AdminApiModule;
 import com.codenvy.api.dao.authentication.PasswordEncryptor;
 import com.codenvy.api.dao.authentication.SSHAPasswordEncryptor;
 import com.codenvy.api.dao.ldap.AdminUserDaoImpl;
@@ -24,7 +25,6 @@ import com.codenvy.api.dao.mongo.WorkspaceDaoImpl;
 import com.codenvy.api.dao.util.ProfileMigrator;
 import com.codenvy.api.factory.FactoryMongoDatabaseProvider;
 import com.codenvy.api.permission.server.PermissionChecker;
-import com.codenvy.api.user.server.AdminUserService;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.api.workspace.server.dao.WorkerDao;
 import com.codenvy.auth.sso.client.ServerClient;
@@ -37,8 +37,8 @@ import com.codenvy.auth.sso.client.filter.PathSegmentValueFilter;
 import com.codenvy.auth.sso.client.filter.RegexpRequestFilter;
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.filter.RequestMethodFilter;
+import com.codenvy.auth.sso.client.filter.UriStartFromAndMethodRequestFilter;
 import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
-import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.plugin.github.factory.resolver.GithubFactoryParametersResolver;
@@ -117,11 +117,12 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(AuthenticationService.class);
         bind(WorkspaceService.class);
         bind(UserService.class);
-        bind(AdminUserService.class);
         bind(UserProfileService.class);
 
         //recipe service
         bind(RecipeService.class);
+
+        install(new AdminApiModule());
 
         bind(AsynchronousJobPool.class).to(CheAsynchronousJobPool.class);
         bind(ServiceBindingHelper.bindingKey(AsynchronousJobService.class, "/async/{ws-id}")).to(AsynchronousJobService.class);
@@ -219,11 +220,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                 Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
         handlerBinder.addBinding().to(com.codenvy.auth.sso.server.OrgServiceAuthenticationHandler.class);
 
-
-        Multibinder<RolesExtractor> rolesExtractorBinder = Multibinder.newSetBinder(binder(), RolesExtractor.class);
-
-        rolesExtractorBinder.addBinding().to(com.codenvy.auth.sso.server.OrgServiceRolesExtractor.class);
-
         bind(UserCreator.class).to(com.codenvy.auth.sso.server.OrgServiceUserCreator.class);
 
         bind(UserCreationValidator.class).to(com.codenvy.auth.sso.server.OrgServiceUserValidator.class);
@@ -270,7 +266,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         new ConjunctionRequestFilter(
                                 new RegexpRequestFilter("^/api/permissions(/\\w*)?$"),
                                 new RequestMethodFilter("GET")
-                        )
+                        ),
+                        new UriStartFromAndMethodRequestFilter("POST", "/api/user")
                 )
         );
 

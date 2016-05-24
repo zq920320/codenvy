@@ -94,11 +94,6 @@ public class PermissionTokenHandler implements TokenHandler {
         }
 
         @Override
-        public boolean isMemberOf(String role) {
-            return baseSubject.isMemberOf(role);
-        }
-
-        @Override
         public boolean hasPermission(String domain, String instance, String action) {
             try {
                 return permissionChecker.hasPermission(getUserId(), domain, instance, action);

@@ -14,25 +14,25 @@
  */
 package com.codenvy.user.interceptor;
 
+import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.user.CreationNotificationSender;
 
 import org.aopalliance.intercept.MethodInterceptor;
 import org.aopalliance.intercept.MethodInvocation;
 import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.user.server.UserService;
-import org.eclipse.che.api.user.shared.dto.UserDescriptor;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.dao.UserDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import javax.ws.rs.core.Response;
 
 import static com.codenvy.user.CreationNotificationSender.EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD;
-import static com.codenvy.user.CreationNotificationSender.EMAIL_TEMPLATE_USER_CREATED_WITH_PASSWORD;
 
 /**
- * Intercepts {@link UserService#create(UserDescriptor, String, Boolean)} method.
+ * Intercepts {@link UserCreator#createUser(String, String, String, String)} method.
  *
  * <p>The purpose of the interceptor is to send "welcome to codenvy" email to user after its creation.
  *
@@ -40,8 +40,11 @@ import static com.codenvy.user.CreationNotificationSender.EMAIL_TEMPLATE_USER_CR
  * @author Sergii Leschenko
  */
 @Singleton
-public class CreateUserInterceptor implements MethodInterceptor {
-    private static final Logger LOG = LoggerFactory.getLogger(CreateUserInterceptor.class);
+public class UserCreatorInterceptor implements MethodInterceptor {
+    private static final Logger LOG = LoggerFactory.getLogger(UserCreatorInterceptor.class);
+
+    @Inject
+    private UserDao userDao;
 
     @Inject
     private CreationNotificationSender notificationSender;
@@ -49,26 +52,23 @@ public class CreateUserInterceptor implements MethodInterceptor {
     //Do not remove ApiException. It used to tell dependency plugin that api-core is need not only for tests.
     @Override
     public Object invoke(MethodInvocation invocation) throws Throwable, ApiException {
-        Object proceed = invocation.proceed();
-
-        String userName;
-        String userEmail;
+        //UserCreator should not create user if he already exists
+        final String email = (String)invocation.getArguments()[0];
         try {
-            final Response response = (Response)proceed;
-            final UserDescriptor createdUser = (UserDescriptor)response.getEntity();
-            userName = createdUser.getName();
-            userEmail = createdUser.getEmail();
+            userDao.getByAlias(email);
 
-            String template;
-            String token = (String)invocation.getArguments()[1];
-            if (token == null) {
-                //user was created from entity with password
-                template = EMAIL_TEMPLATE_USER_CREATED_WITH_PASSWORD;
-            } else {
-                template = EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD;
-            }
+            //user is already registered
+            return invocation.proceed();
+        } catch (NotFoundException e) {
+            //user was not found and it will be created
+        }
 
-            notificationSender.sendNotification(userName, userEmail, template);
+        final Object proceed = invocation.proceed();
+        try {
+            final User createdUser = (User)proceed;
+            notificationSender.sendNotification(createdUser.getName(),
+                                                createdUser.getEmail(),
+                                                EMAIL_TEMPLATE_USER_CREATED_WITHOUT_PASSWORD);
         } catch (Exception e) {
             LOG.warn("Unable to send creation notification email", e);
         }

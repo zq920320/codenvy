@@ -42,7 +42,6 @@ import org.eclipse.che.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.annotation.security.RolesAllowed;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.mail.MessagingException;
@@ -233,7 +232,6 @@ public class RepositoryService {
     @GET
     @Path("/download/{artifact}/{version}")
     @Produces(MediaType.APPLICATION_OCTET_STREAM)
-    @RolesAllowed({"user", "system/admin"})
     public Response download(@PathParam("artifact") final String artifact,
                              @PathParam("version") final String version) {
         try {
@@ -367,7 +365,6 @@ public class RepositoryService {
     @POST
     @Path("/upload/{artifact}/{version}")
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @RolesAllowed({"system/admin"})
     public Response upload(@PathParam("artifact") String artifact,
                            @PathParam("version") String version,
                            @Context HttpServletRequest request,

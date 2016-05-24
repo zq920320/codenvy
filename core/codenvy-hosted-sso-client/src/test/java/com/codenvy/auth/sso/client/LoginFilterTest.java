@@ -63,7 +63,6 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /** Test related to @LoginFilter class. */
-@Test
 @Listeners(value = MockitoTestNGListener.class)
 public class LoginFilterTest {
 
@@ -231,7 +230,7 @@ public class LoginFilterTest {
         request.getSession().setAttribute("principal", new SsoClientPrincipal("token",
                                                                               "http://localhost:8080/ws/mypersonal" +
                                                                               ".Workspace",
-                                                                              new SubjectImpl("user@domain")
+                                                                              createSubject("user@domain")
         ));
         filter.init(filterConfig);
 
@@ -278,8 +277,7 @@ public class LoginFilterTest {
                 new MockHttpServletRequest("http://localhost:8080/ws/ws?token=t13f", null, 0, "GET", null);
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
-                new SubjectImpl("user@domain"));
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(createSubject("user@domain"));
         //when
         filter.doFilter(request, response, chain);
 
@@ -297,16 +295,13 @@ public class LoginFilterTest {
                 new MockHttpServletRequest("http://localhost:8080/ws/ws?token=t13f", null, 0, "GET", null);
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
-                new SubjectImpl("user@domain"));
-        when(ssoServerClient.getSubject(eq("t12f"), anyString())).thenReturn(
-                new SubjectImpl("Anonymous123@domain"));
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(createSubject("user@domain"));
+        when(ssoServerClient.getSubject(eq("t12f"), anyString())).thenReturn(createSubject("Anonymous123@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
 
-        SsoClientPrincipal anonymous =
-                new SsoClientPrincipal("t12f",
-                                       "http://localhost:8080/ws/ws",
-                                       new SubjectImpl("Anonymous123@domain"));
+        SsoClientPrincipal anonymous = new SsoClientPrincipal("t12f",
+                                                              "http://localhost:8080/ws/ws",
+                                                              createSubject("Anonymous123@domain"));
         request.getSession().setAttribute("principal", anonymous);
 
         //when
@@ -346,12 +341,11 @@ public class LoginFilterTest {
         HttpServletRequest request = new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "GET", null);
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
-                new SubjectImpl("user@domain"));
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(createSubject("user@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
-        SsoClientPrincipal principal =
-                new SsoClientPrincipal("t13f", "http://localhost:8080/ws/ws",
-                                       new SubjectImpl("user@domain"));
+        SsoClientPrincipal principal = new SsoClientPrincipal("t13f",
+                                                              "http://localhost:8080/ws/ws",
+                                                              createSubject("user@domain"));
         request.getSession().setAttribute("principal", principal);
 
         //when
@@ -372,11 +366,10 @@ public class LoginFilterTest {
         //given
         HttpServletRequest request = new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "GET", null);
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
-                new SubjectImpl("user@domain"));
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(createSubject("user@domain"));
         when(clientUrlExtractor.getClientUrl(eq(request))).thenReturn("http://localhost:8080/ws/ws");
         SsoClientPrincipal principal = new SsoClientPrincipal("t13f", "http://localhost:8080/ws/ws",
-                                                              new SubjectImpl("user@domain"));
+                                                              createSubject("user@domain"));
         request.getSession().setAttribute("principal", principal);
 
         //when
@@ -574,8 +567,7 @@ public class LoginFilterTest {
                                            null, 0, "GET", null);
 
         when(tokenExtractor.getToken(eq(request))).thenReturn("t13f");
-        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(
-                new SubjectImpl("user@domain"));
+        when(ssoServerClient.getSubject(eq("t13f"), anyString())).thenReturn(createSubject("user@domain"));
         //when
         filter.doFilter(request, response, chain);
 
@@ -599,4 +591,7 @@ public class LoginFilterTest {
         verifyNoMoreInteractions(sessionStore, tokenExtractor, clientUrlExtractor, ssoServerClient);
     }
 
+    private SubjectImpl createSubject(String email) {
+        return new SubjectImpl(email, "user123", null, false);
+    }
 }

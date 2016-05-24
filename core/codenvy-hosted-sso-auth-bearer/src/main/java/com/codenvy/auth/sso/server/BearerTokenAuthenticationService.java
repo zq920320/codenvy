@@ -14,26 +14,24 @@
  */
 package com.codenvy.auth.sso.server;
 
-import org.eclipse.che.api.auth.AuthenticationException;
-
 import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
-import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
+import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.mail.MailSenderClient;
 import com.codenvy.mail.shared.dto.AttachmentDto;
 import com.codenvy.mail.shared.dto.EmailBeanDto;
 import com.google.common.io.Files;
 
+import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.user.server.UserNameValidator;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.commons.lang.Deserializer;
 import org.eclipse.che.commons.subject.Subject;
-
 import org.eclipse.che.commons.subject.SubjectImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +65,6 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Service to authenticate users using bearer tokens.
- * <p/>
  *
  * @author Alexander Garagatyi
  * @author Sergey Kabashniuk
@@ -132,10 +129,9 @@ public class BearerTokenAuthenticationService {
         try {
             User user = userCreator.createUser(payload.get("email"), username, payload.get("firstName"), payload.get("lastName"));
             final Subject subject = new SubjectImpl(user.getName(),
-                                                             user.getId(),
-                                                             null,
-                                                             Collections.<String>emptyList(),
-                                                             true);
+                                                    user.getId(),
+                                                    null,
+                                                    true);
 
             Response.ResponseBuilder builder = Response.ok();
             if (tokenAccessCookie != null) {

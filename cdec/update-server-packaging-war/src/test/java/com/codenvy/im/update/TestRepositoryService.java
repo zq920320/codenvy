@@ -120,7 +120,7 @@ public class TestRepositoryService extends BaseTest {
                                                   saasUserServiceProxy,
                                                   mockEventLogger);
 
-        when(mockUserManager.getCurrentUser()).thenReturn(new SubjectImpl("name", TEST_USER_ID, "token", Collections.<String>emptyList(), false));
+        when(mockUserManager.getCurrentUser()).thenReturn(new SubjectImpl("name", TEST_USER_ID, "token", false));
         super.setUp();
     }
 
@@ -355,7 +355,7 @@ public class TestRepositoryService extends BaseTest {
     @Test
     public void testSendNotificationLetterGetEmailFromName() throws Exception {
         repositoryService
-                .sendNotificationLetter("accountId", new SubjectImpl("name@codenvy.com", "id", "token", Collections.<String>emptyList(), false));
+                .sendNotificationLetter("accountId", new SubjectImpl("name@codenvy.com", "id", "token", false));
         verify(mockMailUtil).sendNotificationLetter("accountId", "name@codenvy.com");
     }
 
@@ -363,7 +363,7 @@ public class TestRepositoryService extends BaseTest {
     public void testSendNotificationLetterGetEmailFromRequest() throws Exception {
         doReturn("{\"email\": \"userEmail\"}").when(mockHttpTransport).doGet(endsWith("/user"), eq("token"));
         repositoryService
-                .sendNotificationLetter("accountId", new SubjectImpl("name", "id", "token", Collections.<String>emptyList(), false));
+                .sendNotificationLetter("accountId", new SubjectImpl("name", "id", "token", false));
         verify(mockMailUtil).sendNotificationLetter("accountId", "userEmail");
     }
 
@@ -397,7 +397,7 @@ public class TestRepositoryService extends BaseTest {
         doReturn(testUserIp).when(requestContext).getRemoteAddr();
 
         UserManager spyUserManager = spy(new UserManager());
-        when(spyUserManager.getCurrentUser()).thenReturn(new SubjectImpl(UserManager.ANONYMOUS_USER_NAME, TEST_USER_ID, "token", Collections.<String>emptyList(), false));
+        when(spyUserManager.getCurrentUser()).thenReturn(new SubjectImpl(UserManager.ANONYMOUS_USER_NAME, TEST_USER_ID, "token", false));
 
         repositoryService = new RepositoryService("",
                                                   spyUserManager,
@@ -435,7 +435,7 @@ public class TestRepositoryService extends BaseTest {
         doReturn(testUserIp).when(requestContext).getRemoteAddr();
 
         UserManager spyUserManager = spy(new UserManager());
-        when(spyUserManager.getCurrentUser()).thenReturn(new SubjectImpl(ANY_NAME, TEST_USER_ID, "token", Collections.<String>emptyList(), false));
+        when(spyUserManager.getCurrentUser()).thenReturn(new SubjectImpl(ANY_NAME, TEST_USER_ID, "token", false));
 
         repositoryService = new RepositoryService("",
                                                   spyUserManager,
