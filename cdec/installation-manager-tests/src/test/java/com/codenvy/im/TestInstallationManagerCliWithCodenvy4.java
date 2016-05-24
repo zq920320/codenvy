@@ -68,4 +68,21 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
     public void testInstallSingleNodeBehindTheProxyWithCodenvy4() throws Exception {
         doTest("codenvy4/test-install-single-node-behind-the-proxy-with-codenvy4.sh");
     }
+
+    /* Repeat tests in RHEL OS*/
+
+    @Test
+    public void testAddRemoveCodenvyNodesWithCodenvy4InRhelOs() throws Exception {
+        doTest("codenvy4/test-add-remove-codenvy-nodes-with-codenvy4.sh", RHEL);
+    }
+
+    @Test
+    public void testBackupRestoreSingleNodeWithCodenvy4InRhelOs() throws Exception {
+        doTest("codenvy4/test-backup-restore-single-node-with-codenvy4.sh", RHEL);
+    }
+
+    @Test
+    public void testInstallSingleNodeBehindTheProxyWithCodenvy4InRhelOs() throws Exception {
+        doTest("codenvy4/test-install-single-node-behind-the-proxy-with-codenvy4.sh", RHEL);
+    }
 }

@@ -18,6 +18,14 @@
 
 . ./lib.sh
 
+if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
+    printAndLog "TEST CASE: Add and remove Codenvy 4.x All-In-One nodes in RHEL OS"
+    vagrantUp ${SINGLE_CODENVY4_RHEL_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
+else
+    printAndLog "TEST CASE: Add and remove Codenvy 4.x All-In-One nodes"
+    vagrantUp ${SINGLE_CODENVY4_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
+fi
+
 printAndLog "TEST CASE: Add and remove Codenvy 4.x All-In-One nodes"
 vagrantUp ${SINGLE_CODENVY4_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
 

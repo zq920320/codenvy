@@ -18,8 +18,13 @@
 
 . ./lib.sh
 
-printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy"
-vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
+if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
+    printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy in RHEL OS"
+    vagrantUp ${SINGLE_NODE_RHEL_VAGRANT_FILE}
+else
+    printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy"
+    vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
+fi
 
 # install Codenvy 4.x behind the proxy
 executeSshCommand "echo '$PROXY_IP $PROXY_SERVER' | sudo tee --append /etc/hosts > /dev/null"

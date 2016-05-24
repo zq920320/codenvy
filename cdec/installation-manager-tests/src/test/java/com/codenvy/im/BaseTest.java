@@ -30,6 +30,8 @@ import static org.testng.Assert.assertEquals;
 /** @author Anatoliy Bazko */
 public class BaseTest {
 
+    public static final String RHEL = "rhel";
+
     protected Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Path baseDir;
@@ -45,6 +47,11 @@ public class BaseTest {
     protected void doTest(String testScript) throws Exception {
         doExecute(baseDir.toFile(), "chmod", "+x", testScript);
         doExecute(baseDir.toFile(), "./" + testScript);
+    }
+
+    protected void doTest(String testScript, String argument) throws Exception {
+        doExecute(baseDir.toFile(), "chmod", "+x", testScript);
+        doExecute(baseDir.toFile(), "./" + testScript, argument);
     }
 
     private void doExecute(File directory, String... commands) throws IOException, InterruptedException {

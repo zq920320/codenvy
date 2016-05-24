@@ -18,8 +18,13 @@
 
 . ./lib.sh
 
-printAndLog "TEST CASE: Backup and restore single-node Codenvy 4.x On Premise"
-vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
+if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
+    printAndLog "TEST CASE: Backup and restore single-node Codenvy 4.x On Premise in RHEL OS"
+    vagrantUp ${SINGLE_NODE_RHEL_VAGRANT_FILE}
+else
+    printAndLog "TEST CASE: Backup and restore single-node Codenvy 4.x On Premise"
+    vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
+fi
 
 # install Codenvy 4.x
 installCodenvy ${LATEST_CODENVY4_VERSION}
