@@ -37,7 +37,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.ext.RuntimeDelegate;
 import java.security.Principal;
 
-import static java.util.Arrays.asList;
 import static java.util.Collections.enumeration;
 import static java.util.Collections.singletonList;
 import static org.eclipse.che.api.core.rest.HttpJsonHelper.HttpJsonHelperImpl;
@@ -104,13 +103,11 @@ public class FactoryServletTest {
 
     @Test
     public void shouldBeAbleToAcceptFactoryWithoutId() throws Exception {
-        String urlOrigin = "https://github.com/eclipse/che/tree/master/dashboard";
-        String githubUrl = "https%3A%2F%2Fgithub.com%2Feclipse%2Fche%2Ftree%2Fmaster%2Fdashboard";
+        String githubUrl = "https://github.com/eclipse/che/tree/master/dashboard";
         Factory factory = prepareFactory();
+        factory.setId(null);
+        when(req.getQueryString()).thenReturn("github=" + githubUrl + "&anotherParameter=foo");
         when(req.getAttribute("factory")).thenReturn(factory);
-        when(req.getParameterNames()).thenReturn(enumeration(asList("github", "anotherParameter")));
-        when(req.getParameter("github")).thenReturn(urlOrigin);
-        when(req.getParameter("anotherParameter")).thenReturn("foo");
         when(req.getServerName()).thenReturn("codenvy.com");
 
         servlet.doGet(req, res);
