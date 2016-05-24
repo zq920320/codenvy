@@ -264,7 +264,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         ),
                         new UriStartFromRequestFilter("/api/user/settings"),
                         new ConjunctionRequestFilter(
-                                new RegexpRequestFilter("^/api/permissions(/\\w*)?$"),
+                                new RegexpRequestFilter("^/api/permissions$"),
                                 new RequestMethodFilter("GET")
                         ),
                         new UriStartFromAndMethodRequestFilter("POST", "/api/user")

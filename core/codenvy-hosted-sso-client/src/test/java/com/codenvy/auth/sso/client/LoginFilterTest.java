@@ -450,8 +450,11 @@ public class LoginFilterTest {
     }
 
     @Test
-    public void shouldFilterAsAnonymousIfPostRequestHasNoToken() throws IOException, ServletException {
+    public void shouldRespond401IfPostRequestHasNoToken() throws IOException, ServletException {
         //given
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(bos);
+        when(response.getWriter()).thenReturn(writer);
         HttpServletRequest request =
                 spy(new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "POST", null));
 
@@ -459,18 +462,18 @@ public class LoginFilterTest {
         filter.doFilter(request, response, chain);
 
         //then
-        ArgumentCaptor<HttpServletRequest> captor = ArgumentCaptor.forClass(HttpServletRequest.class);
-        verify(chain).doFilter(captor.capture(), any(HttpServletResponse.class));
-        HttpServletRequest filterRequest = captor.getValue();
-        assertEquals(filterRequest.getUserPrincipal().getName(), Subject.ANONYMOUS.getUserName());
-        //verify(response).sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        assertEquals(new String(bos.toByteArray()), "{\"message\":\"User not authorized to call this method.\"}");
     }
 
     @Test
-    public void shouldFilterAsAnonymousIfGetRequestHasNoToken() throws IOException, ServletException {
+    public void shouldRespond401IfGetRequestHasNoToken() throws IOException, ServletException {
         //given
         HttpServletRequest request =
                 spy(new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "GET", null));
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        PrintWriter writer = new PrintWriter(bos);
+        when(response.getWriter()).thenReturn(writer);
 
         setFieldValue(filter, "tokenHandler", new NoUserInteractionTokenHandler(requestWrapper));
 
@@ -478,26 +481,8 @@ public class LoginFilterTest {
         filter.doFilter(request, response, chain);
 
         //then
-        ArgumentCaptor<HttpServletRequest> captor = ArgumentCaptor.forClass(HttpServletRequest.class);
-        verify(chain).doFilter(captor.capture(), any(HttpServletResponse.class));
-        HttpServletRequest filterRequest = captor.getValue();
-        assertEquals(filterRequest.getUserPrincipal().getName(), Subject.ANONYMOUS.getUserName());
-    }
-
-    @Test
-    public void shouldSetAnonymousIfRequestHasNoToken() throws IOException, ServletException {
-        //given
-        HttpServletRequest request =
-                spy(new MockHttpServletRequest("http://localhost:8080/ws/ws", null, 0, "GET", null));
-
-        //when
-        filter.doFilter(request, response, new FilterChain() {
-            @Override
-            public void doFilter(ServletRequest request, ServletResponse response) throws IOException, ServletException {
-                EnvironmentContext context = EnvironmentContext.getCurrent();
-                assertEquals(context.getSubject(), Subject.ANONYMOUS);
-            }
-        });
+        verify(response).setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        assertEquals(new String(bos.toByteArray()), "{\"message\":\"User not authorized to call this method.\"}");
     }
 
     @Test

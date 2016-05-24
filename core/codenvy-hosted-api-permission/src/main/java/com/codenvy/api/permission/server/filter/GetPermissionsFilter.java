@@ -43,7 +43,7 @@ public class GetPermissionsFilter extends CheMethodInvokerFilter {
     public void filter(GenericMethodResource genericMethodResource, Object[] arguments)
             throws UnauthorizedException, ForbiddenException, ServerException {
         final String methodName = genericMethodResource.getMethod().getName();
-        if (methodName.equals("getUsersPermissionsByInstance")) {
+        if (methodName.equals("getUsersPermissions")) {
             if (!EnvironmentContext.getCurrent().getSubject().hasPermission(domain, instance, "readPermissions")) {
                 throw new ForbiddenException("User can't get list of permissions for this instance");
             }
