@@ -141,7 +141,7 @@ public class TestNodeManagerHelperCodenvy3Impl extends BaseTest {
                      format("{'command'='sudo sed -i 's/\\[main\\]/\\[main\\]\\n  server = null\\n  runinterval = 420\\n  configtimeout = 600\\n/g' /etc/puppet/puppet.conf', 'agent'='{'host'='runner1.hostname', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}",
                             SYSTEM_USER_NAME));
         assertEquals(commands.get(11).toString(),
-                     format("{'command'='sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = true\\n  default_schedules = false\\n  certname = runner1.hostname\\n/g' /etc/puppet/puppet.conf', 'agent'='{'host'='runner1.hostname', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}",
+                     format("{'command'='sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n  show_diff = true\\n  pluginsync = true\\n  report = false\\n  default_schedules = false\\n  certname = runner1.hostname\\n/g' /etc/puppet/puppet.conf', 'agent'='{'host'='runner1.hostname', 'port'='22', 'user'='%1$s', 'identity'='[~/.ssh/id_rsa]'}'}",
                             SYSTEM_USER_NAME));
         assertEquals(commands.get(12).toString(), format("{'command'='sudo sh -c 'echo -e \"\\nPUPPET_EXTRA_OPTS=--logdest /var/log/puppet/puppet-agent.log\\n\" >> /etc/sysconfig/puppetagent'', " +
                                                         "'agent'='{'host'='runner1.hostname', 'port'='22', 'user'='%s', 'identity'='[~/.ssh/id_rsa]'}'}", SYSTEM_USER_NAME));                            

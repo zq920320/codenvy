@@ -169,7 +169,7 @@ public class CDECSingleServerHelper extends CDECArtifactHelper {
                                          "\\[agent\\]\\n" +
                                          "  show_diff = true\\n" +
                                          "  pluginsync = true\\n" +
-                                         "  report = true\\n" +
+                                         "  report = false\\n" +
                                          "  default_schedules = false\\n" +
                                          "  certname = %1$s\\n" +
                                          "  runinterval = 300\\n" +

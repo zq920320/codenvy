@@ -228,7 +228,7 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                                                   "\\[agent\\]\\n" +
                                                   "  show_diff = true\\n" +
                                                   "  pluginsync = true\\n" +
-                                                  "  report = true\\n" +
+                                                  "  report = false\\n" +
                                                   "  default_schedules = false\\n" +
                                                   "  certname = %1$s\\n/g' /etc/puppet/puppet.conf",
                                                   config.getValue(Config.PUPPET_MASTER_HOST_NAME))));
@@ -253,7 +253,7 @@ public class CDECMultiServerHelper extends CDECArtifactHelper {
                     commands.add(createCommand(format("sudo sed -i 's/\\[agent\\]/\\[agent\\]\\n" +
                                                       "  show_diff = true\\n" +
                                                       "  pluginsync = true\\n" +
-                                                      "  report = true\\n" +
+                                                      "  report = false\\n" +
                                                       "  default_schedules = false\\n" +
                                                       "  certname = %s\\n/g' /etc/puppet/puppet.conf", node.getHost()), node));
 
