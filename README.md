@@ -26,10 +26,7 @@ Follow the [step by step guide](http://codenvy.readme.io/docs/installation-getti
 Codenvy is licensed under Codenvy Fair Source 5 for the first five users. You can purchase a commercial Codenvy license from sales.
 
 ### Dependencies
-* Docker 1.8+
-* Maven 3.3.1+
-* Java 1.8
-* CentOS / RHEL 7.1+
+Codenvy requires CentOS / RHEL 7.1+ as the only initial dependency. Our installation scripts will install an installation manager based upon Java, which then coordinates the installation of Puppet. Puppet then configures the rest of the system with dependencies for Docker, Swarm, and a variety of other packages.
 
 ### Clone
 
