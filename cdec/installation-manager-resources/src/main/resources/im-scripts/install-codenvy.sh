@@ -546,10 +546,10 @@ downloadConfig() {
                 exit 1
             fi
 
-            curl $CURL_PROXY_OPTION --silent --output $CONFIG "$CUSTOM_CONFIG"
+            curl $CURL_PROXY_OPTION --silent --output "$CONFIG" "$CUSTOM_CONFIG"
             return
         else
-            cp $CUSTOM_CONFIG $CONFIG
+            cp "$CUSTOM_CONFIG" "$CONFIG"
             return
         fi
     fi
@@ -558,7 +558,7 @@ downloadConfig() {
     local url="https://codenvy.com/update/repository/public/download/codenvy-${CODENVY_TYPE}-server-properties/${VERSION}"
 
     # check url to config on http error
-    http_code=$(curl $CURL_PROXY_OPTION --silent --write-out '%{http_code}' --output /dev/null ${url})
+    http_code=$(curl $CURL_PROXY_OPTION --silent --write-out '%{http_code}' --output /dev/null "${url}")
     if [[ ! ${http_code} -eq 200 ]]; then    # if response code != "200 OK"
         local updates=$(curl $CURL_PROXY_OPTION --silent "https://codenvy.com/update/repository/updates/${ARTIFACT}")
         println $(printError "ERROR: Version '${VERSION}' is not available")
@@ -576,7 +576,7 @@ downloadConfig() {
     fi
 
     # load config into the ${CONFIG} file
-    curl $CURL_PROXY_OPTION --silent --output ${CONFIG} ${url}
+    curl $CURL_PROXY_OPTION --silent --output "${CONFIG}" "${url}"
 }
 
 # $1 - command name
@@ -608,13 +608,17 @@ preConfigureSystem() {
     installPackageIfNeed wget
     validateExitCode $?
 
-    # back up file to prevent installation with wrong configuration
-    if [[ -f "${CONFIG}" ]] && [[ ! $(cat "${CONFIG}") =~ .*${VERSION}.* ]]; then
-        mv "${CONFIG}" "${CONFIG}.back"
-    fi
+    # back up file existed CONFIG file to prevent installation codenvy with wrong configuration
+    if [[ "${ARTIFACT}" == "codenvy" ]]; then
+        if [[ -f "${CONFIG}" ]]; then
+            if [[ -n "${CUSTOM_CONFIG}" ||  ! $(cat "${CONFIG}") =~ .*${VERSION}.* ]]; then
+                mv "${CONFIG}" "${CONFIG}.back"
+            fi
+        fi
 
-    if [[ ! -f "${CONFIG}" ]] && [[ "${ARTIFACT}" == "codenvy" ]]; then
-        downloadConfig
+        if [[ ! -f "${CONFIG}" ]]; then
+            downloadConfig
+        fi
     fi
 }
 

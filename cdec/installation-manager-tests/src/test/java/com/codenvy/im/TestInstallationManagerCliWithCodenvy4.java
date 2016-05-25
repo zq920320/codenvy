@@ -70,8 +70,8 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
     }
 
     @Test
-    public void testUpdateCodenvy4Config() throws Exception {
-        doTest("codenvy4/test-update-codenvy4-config.sh");
+    public void testSetupAndUpdateCodenvy4Config() throws Exception {
+        doTest("codenvy4/test-setup-and-update-codenvy4-config.sh");
     }
 
     /* Repeat tests in RHEL OS*/
