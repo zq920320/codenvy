@@ -20,6 +20,7 @@
 # --docker-registry-mirror=<URL>
 # --http-proxy-for-codenvy-workspaces=<HTTP PROXY URL>
 # --https-proxy-for-codenvy-workspaces=<HTTPS PROXY URL>
+# --config=<PATH/URL TO CUSTOM CODENVY CONFIG>
 
 trap cleanUp EXIT
 
@@ -86,6 +87,7 @@ CURL_PROXY_OPTION=
 
 DEPENDENCIES_STATUS_OFFSET=85  # fit screen width = 100 cols
 PROGRESS_FACTOR=2
+URL_REGEX="^https?:\/\/[\da-zA-Z_\-\.\/?&#+]+"
 
 cleanUp() {
     setterm -cursor on
@@ -118,6 +120,7 @@ setRunOptions() {
     SILENT=false
     SUPPRESS=false
     LICENSE_ACCEPTED=false
+    CONFIG="codenvy.properties"
     for var in "$@"; do
         if [[ "$var" == "--multi" ]]; then
             CODENVY_TYPE="multi"
@@ -171,6 +174,8 @@ setRunOptions() {
         elif [[ "$var" =~ --https-proxy-for-codenvy-workspaces=.* ]]; then
             HTTPS_PROXY_FOR_CODENVY_WORKSPACES=$(echo "$var" | sed -e "s/--https-proxy-for-codenvy-workspaces=//g")
 
+        elif [[ "$var" =~ --config=.* ]]; then
+            CUSTOM_CONFIG=$(echo "$var" | sed -e "s/--config=//g")
         fi
     done
 
@@ -193,7 +198,6 @@ setRunOptions() {
         fi
     fi
 
-    CONFIG="codenvy.properties"
     EXTERNAL_DEPENDENCIES[0]="https://codenvy.com/update/repository/public/download/${ARTIFACT}/${VERSION}||0"
 
     if [[ "${CODENVY_TYPE}" == "single" ]] && [[ ! -z "${HOST_NAME}" ]] && [[ ! -z "${SYSTEM_ADMIN_PASSWORD}" ]] && [[ ! -z "${SYSTEM_ADMIN_NAME}" ]]; then
@@ -532,6 +536,25 @@ doInstallCodenvy() {
 }
 
 downloadConfig() {
+    # load external config into the ${CONFIG} file
+    if [[ -n "$CUSTOM_CONFIG" ]]; then
+        if [[ "$CUSTOM_CONFIG" =~ $URL_REGEX ]]; then
+            # check url to config on http error
+            http_code=$(curl $CURL_PROXY_OPTION --silent --write-out '%{http_code}' --output /dev/null "$CUSTOM_CONFIG")
+            if [[ ! ${http_code} -eq 200 ]]; then    # if response code != "200 OK"
+                println $(printError "ERROR: custom codenvy configuration '$CUSTOM_CONFIG' not found or downloadable.")
+                exit 1
+            fi
+
+            curl $CURL_PROXY_OPTION --silent --output $CONFIG "$CUSTOM_CONFIG"
+            return
+        else
+            cp $CUSTOM_CONFIG $CONFIG
+            return
+        fi
+    fi
+
+    # load config from Update Server
     local url="https://codenvy.com/update/repository/public/download/codenvy-${CODENVY_TYPE}-server-properties/${VERSION}"
 
     # check url to config on http error

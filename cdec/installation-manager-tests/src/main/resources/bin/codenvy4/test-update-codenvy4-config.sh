@@ -23,7 +23,7 @@ printAndLog "TEST CASE: View and update codenvy4 config"
 
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
-installCodenvy ${LATEST_CODENVY4_VERSION}
+installCodenvy ${LATEST_CODENVY4_VERSION} --config=${CUSTOM_SINGLE_NODE_CONFIG_URL}
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 
 PROPERTY_TO_TEST=zabbix_admin_email
