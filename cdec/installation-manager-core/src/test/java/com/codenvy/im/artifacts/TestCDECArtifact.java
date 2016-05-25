@@ -38,7 +38,6 @@ import org.apache.commons.io.FileUtils;
 import org.mockito.Mock;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Test;
 
 import java.io.File;
@@ -1123,6 +1122,23 @@ public class TestCDECArtifact extends BaseTest {
     public void shouldNotBeAlive() {
         doReturn(false).when(spyCdecArtifact).isApiServiceAlive();
         assertFalse(spyCdecArtifact.isAlive());
+    }
+
+    @Test
+    public void shouldReturnConfig() throws IOException {
+        Map<String, String> properties = ImmutableMap.of(Config.VERSION, "1.0.0",
+                                                         "google_secret", "google.secret",
+                                                         Config.USER_LDAP_PASSWORD, "user.ldap.password"
+        );
+
+        Config config = new Config(properties);
+        doReturn(config).when(spyConfigManager).loadInstalledCodenvyConfig();
+
+        Map<String, String> result = spyCdecArtifact.getConfig();
+        assertEquals(result.size(), 3);
+        assertEquals(result.toString(), "{user_ldap_password=*****, "
+                                        + "google_secret=*****, "
+                                        + "version=1.0.0}");
     }
 
     @AfterMethod

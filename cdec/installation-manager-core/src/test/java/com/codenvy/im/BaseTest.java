@@ -45,10 +45,11 @@ import static org.mockito.Mockito.when;
 public class BaseTest {
     public static final String PUPPET_BASE_DIR     = "target/puppet";
     public static final String TEST_DIR            = "target";
-    public static final String DOWNLOAD_DIR        = "target/download";
-    public static final String UPDATE_API_ENDPOINT = "update/endpoint";
+    public static final String DOWNLOAD_DIR        = "target/updates";
+    public static final String UPDATE_API_ENDPOINT = "http://update.endpoint";
     public static final String ASSEMBLY_PROPERTIES = "target/assembly.properties";
-    public static final String SAAS_API_ENDPOINT   = "saas/endpoint";
+    public static final String API_ENDPOINT        = "http://api.endpoint";
+    public static final String SAAS_API_ENDPOINT   = "http://saas.api.endpoint";
     public static final Path   PUPPET_CONF_FILE    = Paths.get("target", "puppet", Config.PUPPET_CONF_FILE_NAME).toAbsolutePath();
     public static final String TEST_VERSION_STR    = "3.3.0";
     public static final String INITIAL_OS_VERSION  = OSUtils.VERSION;
@@ -176,13 +177,13 @@ public class BaseTest {
 
     protected Map<String, String> getTestMultiNodeProperties() {
         return new HashMap<String, String>() {{
-                put("api_host_name", "api.example.com");
-                put("data_host_name", "data.example.com");
-                put("analytics_host_name", "analytics.example.com");
-                put("host_url", "hostname");
-                put(Config.PUPPET_MASTER_HOST_NAME, "master.example.com");
-                put(Config.VERSION, TEST_VERSION_STR);
-            }};
+            put("api_host_name", "api.example.com");
+            put("data_host_name", "data.example.com");
+            put("analytics_host_name", "analytics.example.com");
+            put("host_url", "hostname");
+            put(Config.PUPPET_MASTER_HOST_NAME, "master.example.com");
+            put(Config.VERSION, TEST_VERSION_STR);
+        }};
     }
 
     @AfterMethod

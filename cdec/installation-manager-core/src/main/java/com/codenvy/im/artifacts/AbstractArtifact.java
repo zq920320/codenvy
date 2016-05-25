@@ -49,13 +49,13 @@ public abstract class AbstractArtifact implements Artifact {
     private final   String        name;
     protected final HttpTransport transport;
     protected final ConfigManager configManager;
-    protected final String        updateEndpoint;
-    private final Path            downloadDir;
+    protected final String        updateServerEndpoint;
+    protected final Path          downloadDir;
 
     private static final java.util.logging.Logger LOG = java.util.logging.Logger.getLogger(AbstractArtifact.class.getSimpleName());
 
     public AbstractArtifact(String name,
-                            String updateEndpoint,
+                            String updateServerEndpoint,
                             String downloadDir,
                             HttpTransport transport,
                             ConfigManager configManager) {
@@ -63,7 +63,7 @@ public abstract class AbstractArtifact implements Artifact {
         this.name = name;
         this.transport = transport;
         this.configManager = configManager;
-        this.updateEndpoint = updateEndpoint;
+        this.updateServerEndpoint = updateServerEndpoint;
     }
 
     /** {@inheritDoc} */
@@ -247,7 +247,7 @@ public abstract class AbstractArtifact implements Artifact {
      * If version is not specified then the properties of the latest stable version will be retrieved
      */
     private Map<String, String> fetchPropertiesFromUpdateServer(@Nullable Version version) throws IOException {
-        String requestUrl = combinePaths(updateEndpoint, "repository/properties", getName() + (version != null ? "/" + version.toString()
+        String requestUrl = combinePaths(updateServerEndpoint, "repository/properties", getName() + (version != null ? "/" + version.toString()
                                                                                                                : ""));
         try {
             Map m = asMap(transport.doGet(requestUrl));

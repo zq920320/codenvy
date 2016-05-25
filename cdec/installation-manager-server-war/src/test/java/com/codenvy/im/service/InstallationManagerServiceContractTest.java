@@ -55,8 +55,10 @@ import static java.lang.String.format;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.testng.Assert.fail;
 
@@ -67,17 +69,20 @@ import static org.testng.Assert.fail;
 public class InstallationManagerServiceContractTest extends BaseContractTest {
 
     @Mock
-    public IMCliFilteredFacade facade;
+    public IMCliFilteredFacade mockFacade;
     @Mock
-    public ConfigManager       configManager;
+    public ConfigManager       mockConfigManager;
+    @Mock
+    public Artifact            mockCdecArtifact;
 
-    public InstallationManagerService service;
+    public InstallationManagerService spyService;
 
     @BeforeMethod
     public void setUp() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        service = new InstallationManagerService("", facade, configManager);
+        spyService = spy(new InstallationManagerService("", mockFacade, mockConfigManager));
+        doReturn(mockCdecArtifact).when(spyService).createArtifact(eq(CDECArtifact.NAME));
     }
 
     @Test
@@ -94,7 +99,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.CREATED,                      // response status
             () -> {                                       // before test
                 try {
-                    doReturn(new BackupInfo()).when(facade).backup(any(BackupConfig.class));
+                    doReturn(new BackupInfo()).when(mockFacade).backup(any(BackupConfig.class));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -119,7 +124,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
                 BackupConfig testBackupConfig = new BackupConfig().setArtifactName(CDECArtifact.NAME)
                                                                   .setBackupFile("test");
                 try {
-                    doReturn(new BackupInfo()).when(facade).restore(testBackupConfig);
+                    doReturn(new BackupInfo()).when(mockFacade).restore(testBackupConfig);
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -141,7 +146,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
              Response.Status.CREATED,              // response status
              () -> {                                        // before test
                  try {
-                     doReturn(new NodeInfo()).when(facade).addNode("test");
+                     doReturn(new NodeInfo()).when(mockFacade).addNode("test");
                  } catch (IOException e) {
                      fail(e.getMessage(), e);
                  }
@@ -163,7 +168,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.NO_CONTENT,              // response status
             () -> {                            // before test
                 try {
-                    doReturn(new NodeInfo()).when(facade).removeNode("test");
+                    doReturn(new NodeInfo()).when(mockFacade).removeNode("test");
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -187,7 +192,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,              // response status
             () -> {                           // before test
                 try {
-                    doReturn("id").when(facade).getDownloadIdInProgress();
+                    doReturn("id").when(mockFacade).getDownloadIdInProgress();
                 } catch (DownloadNotStartedException e) {
                     fail(e.getMessage(), e);
                 }
@@ -211,7 +216,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                            // before test
             () -> {                           // before test
                 try {
-                    verify(facade).startDownload(createArtifact(CDECArtifact.NAME), Version.valueOf("1.0.0"));
+                    verify(mockFacade).startDownload(createArtifact(CDECArtifact.NAME), Version.valueOf("1.0.0"));
                 } catch (InterruptedException | DownloadAlreadyStartedException | IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -232,7 +237,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                            // before test
             () -> {                           // before test
                 try {
-                    verify(facade).stopDownload();
+                    verify(mockFacade).stopDownload();
                 } catch (InterruptedException | DownloadNotStartedException e) {
                     fail(e.getMessage(), e);
                 }
@@ -255,7 +260,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             () -> {                           // before test
                 try {
                     DownloadProgressResponse downloadDescriptor = new DownloadProgressResponse();
-                    doReturn(downloadDescriptor).when(facade).getDownloadProgress();
+                    doReturn(downloadDescriptor).when(mockFacade).getDownloadProgress();
                 } catch (IOException | DownloadNotStartedException e) {
                     fail(e.getMessage(), e);
                 }
@@ -279,7 +284,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,              // response status
             () -> {                           // before test
                 try {
-                    doReturn(ImmutableList.of()).when(facade).getInstalledVersions();
+                    doReturn(ImmutableList.of()).when(mockFacade).getInstalledVersions();
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -303,7 +308,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,              // response status
             () -> {                           // before test
                 try {
-                    doReturn(Collections.emptyList()).when(facade).getUpdates();
+                    doReturn(Collections.emptyList()).when(mockFacade).getUpdates();
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -325,16 +330,16 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.ACCEPTED,              // response status
             () -> {                           // before test
                 try {
-                    doReturn(InstallType.SINGLE_SERVER).when(configManager).detectInstallationType();
-                    doReturn(null).when(configManager).prepareInstallProperties(anyString(),
-                                                                                any(Path.class),
-                                                                                any(InstallType.class),
-                                                                                any(Artifact.class),
-                                                                                any(Version.class),
-                                                                                anyBoolean());
-                    doReturn("id").when(facade).update(any(Artifact.class), any(Version.class), any(InstallOptions.class));
-                    doReturn(ImmutableList.of("a", "b")).when(facade).getUpdateInfo(any(Artifact.class), any(InstallType.class));
-                    doReturn(Version.valueOf("1.0.0")).when(facade).getLatestInstallableVersion(any(Artifact.class));
+                    doReturn(InstallType.SINGLE_SERVER).when(mockConfigManager).detectInstallationType();
+                    doReturn(null).when(mockConfigManager).prepareInstallProperties(anyString(),
+                                                                                    any(Path.class),
+                                                                                    any(InstallType.class),
+                                                                                    any(Artifact.class),
+                                                                                    any(Version.class),
+                                                                                    anyBoolean());
+                    doReturn("id").when(mockFacade).update(any(Artifact.class), any(Version.class), any(InstallOptions.class));
+                    doReturn(ImmutableList.of("a", "b")).when(mockFacade).getUpdateInfo(any(Artifact.class), any(InstallType.class));
+                    doReturn(Version.valueOf("1.0.0")).when(mockFacade).getLatestInstallableVersion(any(Artifact.class));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -357,7 +362,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             () -> {                                             // before test
                 try {
                     doReturn(DtoFactory.newDto(Token.class).withValue("token"))
-                            .when(facade)
+                            .when(mockFacade)
                             .loginToCodenvySaaS(Commons.createDtoFromJson("{\"username\": \"test\", \"password\": \"pwd\"}", Credentials.class));
                 } catch (Exception e) {
                     fail(e.getMessage(), e);
@@ -382,7 +387,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,                                // response status
             () -> {                                             // before test
                 try {
-                    doReturn(ImmutableMap.of("a", "b")).when(facade).loadStorageProperties();
+                    doReturn(ImmutableMap.of("a", "b")).when(mockFacade).loadStorageProperties();
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -405,7 +410,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                              // before test
             () -> {                                             // before test
                 try {
-                    verify(facade).storeStorageProperties(ImmutableMap.of("a", "b"));
+                    verify(mockFacade).storeStorageProperties(ImmutableMap.of("a", "b"));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -426,7 +431,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,                               // response status
             () -> {                                            // before test
                 try {
-                    doReturn("b").when(facade).loadStorageProperty("a");
+                    doReturn("b").when(mockFacade).loadStorageProperty("a");
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -449,7 +454,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {                                            // before test
                 try {
-                    verify(facade).storeStorageProperty("a", "b");
+                    verify(mockFacade).storeStorageProperty("a", "b");
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -471,7 +476,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {                                            // before test
                 try {
-                    verify(facade).deleteStorageProperty("a");
+                    verify(mockFacade).deleteStorageProperty("a");
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -495,8 +500,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,                                // response status
             () -> {                                             // before test
                 try {
-                    Config testConfig = new Config(ImmutableMap.of("a", "b", "password", "123"));
-                    doReturn(testConfig).when(configManager).loadInstalledCodenvyConfig();
+                    doReturn(ImmutableMap.of("a", "b", "password", "*****")).when(mockFacade).getArtifactConfig(mockCdecArtifact);
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -520,8 +524,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             Response.Status.OK,                               // response status
             () -> {                                            // before test
                 try {
-                    Config testConfig = new Config(ImmutableMap.of("host_url", "test.com"));
-                    doReturn(testConfig).when(configManager).loadInstalledCodenvyConfig();
+                    doReturn(ImmutableMap.of("host_url", "test.com")).when(mockFacade).getArtifactConfig(mockCdecArtifact);
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -544,7 +547,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    verify(facade).updateArtifactConfig(createArtifact(CDECArtifact.NAME), ImmutableMap.of("a", "b"));
+                    verify(mockFacade).updateArtifactConfig(mockCdecArtifact, ImmutableMap.of("a", "b"));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -584,7 +587,11 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
              + "}",                                               // response body
              Response.Status.OK,                                  // response status
              () -> {                                               // before test
-                 doReturn(ImmutableMap.of("a", "b")).when(facade).getInstallationManagerProperties();
+                 try {
+                     doReturn(ImmutableMap.of("a", "b")).when(mockFacade).getArtifactConfig(mockCdecArtifact);
+                 } catch (IOException e) {
+                     fail(e.getMessage(), e);
+                 }
 
              },
              null                                                 // assertion
@@ -605,7 +612,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    verify(facade).deleteDownloadedArtifact(createArtifact(CDECArtifact.NAME), Version.valueOf("1.0.0"));
+                    verify(mockFacade).deleteDownloadedArtifact(mockCdecArtifact, Version.valueOf("1.0.0"));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -629,8 +636,8 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    doReturn(InstallType.SINGLE_SERVER).when(configManager).detectInstallationType();
-                    doReturn(Collections.emptyList()).when(facade).getUpdateInfo(any(Artifact.class), any(InstallType.class));
+                    doReturn(InstallType.SINGLE_SERVER).when(mockConfigManager).detectInstallationType();
+                    doReturn(Collections.emptyList()).when(mockFacade).getUpdateInfo(any(Artifact.class), any(InstallType.class));
                 } catch (IOException e) {
                     fail(e.getMessage(), e);
                 }
@@ -656,7 +663,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    verify(facade).logSaasAnalyticsEvent(new Event(Event.Type.CDEC_FIRST_LOGIN, ImmutableMap.of("a", "b")), null);
+                    verify(mockFacade).logSaasAnalyticsEvent(new Event(Event.Type.CDEC_FIRST_LOGIN, ImmutableMap.of("a", "b")), null);
                 } catch (Exception e) {
                     fail(e.getMessage(), e);
                 }
@@ -681,7 +688,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    verify(facade).changeAdminPassword("current".getBytes("UTF-8"), "new".getBytes("UTF-8"));
+                    verify(mockFacade).changeAdminPassword("current".getBytes("UTF-8"), "new".getBytes("UTF-8"));
                 } catch (Exception e) {
                     fail(e.getMessage(), e);
                 }
@@ -712,7 +719,7 @@ public class InstallationManagerServiceContractTest extends BaseContractTest {
             null,                                             // before test
             () -> {
                 try {
-                    verify(facade, never()).logSaasAnalyticsEvent(any(Event.class), any(String.class));
+                    verify(mockFacade, never()).logSaasAnalyticsEvent(any(Event.class), any(String.class));
                 } catch (Exception e) {
                     fail(e.getMessage(), e);
                 }

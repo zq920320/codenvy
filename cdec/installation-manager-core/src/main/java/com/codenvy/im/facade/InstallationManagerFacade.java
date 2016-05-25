@@ -97,14 +97,10 @@ public class InstallationManagerFacade {
     protected final DownloadManager            downloadManager;
     protected final CodenvyLicenseManager      licenseManager;
 
-    private final String updateServerEndpoint;
-    private final Path   downloadDir;
     private final String saasServerEndpoint;
 
     @Inject
-    public InstallationManagerFacade(@Named("installation-manager.download_dir") String downloadDir,
-                                     @Named("installation-manager.update_server_endpoint") String updateServerEndpoint,
-                                     @Named("saas.api.endpoint") String saasServerEndpoint,
+    public InstallationManagerFacade(@Named("saas.api.endpoint") String saasServerEndpoint,
                                      HttpTransport transport,
                                      SaasAuthServiceProxy saasAuthServiceProxy,
                                      SaasRepositoryServiceProxy saasRepositoryServiceProxy,
@@ -119,9 +115,7 @@ public class InstallationManagerFacade {
         this.installManager = installManager;
         this.downloadManager = downloadManager;
         this.licenseManager = licenseManager;
-        this.downloadDir = Paths.get(downloadDir);
         this.transport = transport;
-        this.updateServerEndpoint = updateServerEndpoint;
         this.saasAuthServiceProxy = saasAuthServiceProxy;
         this.ldapManager = ldapManager;
         this.nodeManager = nodeManager;
@@ -416,14 +410,10 @@ public class InstallationManagerFacade {
     }
 
     /**
-     * @return configuration of the Installation Manager
+     * @return configuration of installed artifact
      */
-    public Map<String, String> getInstallationManagerProperties() {
-        return new LinkedHashMap<String, String>() {{
-            put("download directory", downloadDir.toString());
-            put("update server url", extractServerUrl(updateServerEndpoint));
-            put("saas server url", extractServerUrl(saasServerEndpoint));
-        }};
+    public Map<String, String> getArtifactConfig(Artifact artifact) throws IOException {
+        return artifact.getConfig();
     }
 
     protected String extractServerUrl(String url) {

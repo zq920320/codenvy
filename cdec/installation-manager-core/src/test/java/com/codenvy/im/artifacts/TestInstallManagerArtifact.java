@@ -18,7 +18,6 @@ import com.codenvy.im.commands.Command;
 import com.codenvy.im.managers.InstallOptions;
 import com.codenvy.im.utils.HttpTransport;
 import com.codenvy.im.utils.Version;
-
 import org.mockito.Mock;
 import org.testng.annotations.BeforeClass;
 import org.testng.annotations.Test;
@@ -27,7 +26,9 @@ import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.Map;
 
+import static com.codenvy.im.artifacts.ArtifactFactory.createArtifact;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
@@ -46,7 +47,7 @@ public class TestInstallManagerArtifact {
     @BeforeClass
     public void setUp() throws Exception {
         testExecutionPath = Paths.get(getClass().getProtectionDomain().getCodeSource().getLocation().toURI()).getParent();
-        imArtifact = (InstallManagerArtifact)ArtifactFactory.createArtifact(InstallManagerArtifact.NAME);
+        imArtifact = (InstallManagerArtifact)createArtifact(InstallManagerArtifact.NAME);
     }
 
     @Test(expectedExceptions = UnsupportedOperationException.class)
@@ -133,5 +134,16 @@ public class TestInstallManagerArtifact {
     @Test
     public void shouldBeAlive() {
         assertTrue(imArtifact.isAlive());
+    }
+
+    @Test
+    public void testGetConfig() throws Exception {
+        Artifact imArtifact = createArtifact(InstallManagerArtifact.NAME);
+
+        Map<String, String> m = imArtifact.getConfig();
+        assertEquals(m.size(), 3);
+        assertEquals(m.toString(), "{download_directory=target/updates, "
+                                   + "update_server_url=http://update.endpoint, "
+                                   + "saas_server_url=http://saas.api.endpoint}");
     }
 }

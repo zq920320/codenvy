@@ -26,11 +26,9 @@ vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 installImCliClient
 validateInstalledImCliClientVersion
 
-executeIMCommand "im-config"
+executeIMCommand "im-config --im-cli"
 
-validateExpectedString ".*\"download.directory\".\:.\"/home/vagrant/codenvy-im-data/updates\".*"
-validateExpectedString ".*\"update.server.url\".\:.\"${UPDATE_SERVER}\".*"
-validateExpectedString ".*\"saas.server.url\".\:.\"${SAAS_SERVER}\".*"
+validateExpectedString ".*download.directory=/home/vagrant/codenvy-im-data/updates.*update.server.url=$UPDATE_SERVER.*saas.server.url=$SAAS_SERVER.*"
 
 printAndLog "RESULT: PASSED"
 

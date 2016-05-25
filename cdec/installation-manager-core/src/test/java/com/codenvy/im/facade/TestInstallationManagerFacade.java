@@ -77,14 +77,13 @@ import static org.mockito.MockitoAnnotations.initMocks;
 import static org.powermock.api.mockito.PowerMockito.spy;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Dmytro Nochevnov
  */
 public class TestInstallationManagerFacade extends BaseTest {
     private InstallationManagerFacade installationManagerFacade;
-    private Artifact cdecArtifact;
+    private Artifact                  cdecArtifact;
 
     @Mock
     private HttpTransport              transport;
@@ -110,14 +109,14 @@ public class TestInstallationManagerFacade extends BaseTest {
     private CodenvyLicenseManager      codenvyLicenseManager;
     @Mock
     private CodenvyLicense             codenvyLicense;
+    @Mock
+    private Artifact                   mockArtifact;
 
     @BeforeMethod
     public void setUp() throws Exception {
         initMocks(this);
         cdecArtifact = ArtifactFactory.createArtifact(CDECArtifact.NAME);
-        installationManagerFacade = spy(new InstallationManagerFacade("target/download",
-                                                                      "update/endpoint",
-                                                                      "saas/endpoint",
+        installationManagerFacade = spy(new InstallationManagerFacade(BaseTest.SAAS_API_ENDPOINT,
                                                                       transport,
                                                                       saasAuthServiceProxy,
                                                                       saasRepositoryServiceProxy,
@@ -223,7 +222,7 @@ public class TestInstallationManagerFacade extends BaseTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-          expectedExceptionsMessageRegExp = "Codenvy License is invalid or has unappropriated format.")
+        expectedExceptionsMessageRegExp = "Codenvy License is invalid or has unappropriated format.")
     public void testAddNodeShouldFailedWhenLicenseInvalid() throws IOException {
         doReturn(ImmutableMap.of(cdecArtifact, Version.valueOf("4.0.0"))).when(installManager).getInstalledArtifacts();
         doThrow(new InvalidLicenseException("error")).when(codenvyLicenseManager).load();
@@ -234,7 +233,7 @@ public class TestInstallationManagerFacade extends BaseTest {
     }
 
     @Test(expectedExceptions = IllegalStateException.class,
-          expectedExceptionsMessageRegExp = "Your Codenvy subscription only allows a single server.")
+        expectedExceptionsMessageRegExp = "Your Codenvy subscription only allows a single server.")
     public void testAddNodeShouldFailedWhenLicenseNotFound() throws IOException {
         doReturn(ImmutableMap.of(cdecArtifact, Version.valueOf("4.0.0"))).when(installManager).getInstalledArtifacts();
         doThrow(new LicenseNotFoundException("error")).when(codenvyLicenseManager).load();
@@ -297,7 +296,7 @@ public class TestInstallationManagerFacade extends BaseTest {
                                                           .setBackupDirectory(testBackupDirectory.toString());
 
         doReturn(testBackupConfig.setBackupFile(testBackupFile.toString()).setArtifactVersion("1.0.0"))
-                .when(backupManager).backup(testBackupConfig);
+            .when(backupManager).backup(testBackupConfig);
 
         assertEquals(toJson(installationManagerFacade.backup(testBackupConfig)), "{\n" +
                                                                                  "  \"file\" : \"test/backup/directory/backup.tar.gz\",\n" +
@@ -429,13 +428,12 @@ public class TestInstallationManagerFacade extends BaseTest {
 
     @Test
     public void testGetConfig() throws Exception {
-        doReturn("update/endpoint").when(installationManagerFacade).extractServerUrl("update/endpoint");
-        doReturn("saas/endpoint").when(installationManagerFacade).extractServerUrl("saas/endpoint");
-        Map<String, String> m = installationManagerFacade.getInstallationManagerProperties();
-        assertEquals(m.size(), 3);
-        assertTrue(m.containsValue("target/download"));
-        assertTrue(m.containsValue("update/endpoint"));
-        assertTrue(m.containsValue("saas/endpoint"));
+        Map<String, String> artifactConfig = ImmutableMap.of("prop1", "value1",
+                                                             "prop2", "value2");
+        doReturn(artifactConfig).when(mockArtifact).getConfig();
+
+        Map<String, String> result = installationManagerFacade.getArtifactConfig(mockArtifact);
+        assertEquals(result, artifactConfig);
     }
 
     @Test

@@ -14,11 +14,12 @@
  */
 package com.codenvy.im.cli.command;
 
+import com.codenvy.im.artifacts.Artifact;
 import com.codenvy.im.artifacts.CDECArtifact;
+import com.codenvy.im.artifacts.InstallManagerArtifact;
 import com.codenvy.im.facade.IMArtifactLabeledFacade;
 import com.codenvy.im.managers.Config;
 import com.google.common.collect.ImmutableMap;
-
 import org.apache.felix.service.command.CommandSession;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
@@ -26,59 +27,231 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
 import java.io.IOException;
-import java.util.Collections;
 import java.util.Map;
 
 import static com.codenvy.im.artifacts.ArtifactFactory.createArtifact;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.testng.Assert.assertEquals;
 
-/** @author Anatoliy Bazko */
+/**
+ * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
+ */
 public class TestConfigCommand extends AbstractTestCommand {
     private AbstractIMCommand spyCommand;
+    private CommandInvoker    commandInvoker;
 
     @Mock
-    private IMArtifactLabeledFacade managerFacade;
+    private IMArtifactLabeledFacade mockFacade;
     @Mock
-    private CommandSession          commandSession;
-    private CommandInvoker          commandInvoker;
+    private CommandSession          mockCommandSession;
 
     @BeforeMethod
     public void initMocks() throws IOException {
         MockitoAnnotations.initMocks(this);
 
         spyCommand = spy(new ConfigCommand());
-        spyCommand.facade = managerFacade;
+        spyCommand.facade = mockFacade;
 
-        commandInvoker = new CommandInvoker(spyCommand, commandSession);
+        commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
 
         performBaseMocks(spyCommand, true);
     }
 
     @Test
-    public void testGetConfig() throws Exception {
-        doReturn(Collections.emptyMap()).when(managerFacade).getInstallationManagerProperties();
+    public void testGetCdecConfig() throws Exception {
+        final ImmutableMap<String, String> unsorted = ImmutableMap.of("prop2", "value2",
+                                                                      "prop1", "value1");
+        doReturn(unsorted).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
 
         CommandInvoker.Result result = commandInvoker.invoke();
 
-        String output = result.getOutputStream();
-        assertEquals(output, "{\n" +
-                             "  \"properties\" : { },\n" +
-                             "  \"status\" : \"OK\"\n" +
-                             "}\n");
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "prop1=value1\n"
+                             + "prop2=value2\n");
     }
 
+    @Test
+    public void testGetInstallationManagerConfig() throws Exception {
+        final ImmutableMap<String, String> unsorted = ImmutableMap.of("prop2", "value2",
+                                                                      "prop1", "value1");
+        doReturn(unsorted).when(mockFacade).getArtifactConfig(createArtifact(InstallManagerArtifact.NAME));
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.option("--im-cli", Boolean.TRUE);
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "prop1=value1\n"
+                             + "prop2=value2\n");
+    }
+
+    @Test
+    public void testGetCdecConfigProperty() throws Exception {
+        final ImmutableMap<String, String> properties = ImmutableMap.of("prop1", "value1",
+                                                                        "prop2", "value2");
+        doReturn(properties).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", "prop2");
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "prop2=value2\n");
+    }
+
+    @Test
+    public void shouldDisplayErrorOnGettingCdecConfigProperty() throws Exception {
+        doThrow(new IOException("IO Error")).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", "prop1");
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "{\n"
+                             + "  \"message\" : \"IO Error\",\n"
+                             + "  \"status\" : \"ERROR\"\n"
+                             + "}\n");
+    }
+
+    @Test
+    public void shouldDisplayErrorOnGettingNonexistsCdecConfigProperty() throws Exception {
+        final ImmutableMap<String, String> properties = ImmutableMap.of("prop1", "value1");
+        doReturn(properties).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", "non-exists");
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "{\n"
+                             + "  \"message\" : \"Property 'non-exists' not found\",\n"
+                             + "  \"status\" : \"ERROR\"\n"
+                             + "}\n");
+    }
+
+    @Test
+    public void testUpdateCdecConfigProperty() throws Exception {
+        final String newValue = "new-value";
+        final String propertyToUpdate = "prop2";
+
+        final ImmutableMap<String, String> properties = ImmutableMap.of("prop1", "value1",
+                                                                        propertyToUpdate, "value2");
+        doReturn(properties).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        String messageToConfirmUpdate = "Do you want to update Codenvy property '" + propertyToUpdate + "' with new value '" + newValue + "'?";
+        doReturn(true).when(spyCommand.console).askUser(messageToConfirmUpdate);
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", propertyToUpdate);
+        commandInvoker.argument("value", newValue);
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "prop2=new-value\n");
+
+        verify(mockFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME),
+                                                ImmutableMap.of(propertyToUpdate, newValue));
+
+        verify(spyCommand.console).askUser(messageToConfirmUpdate);
+    }
+
+    @Test
+    public void testDiscardUpdatingCdecConfigProperty() throws Exception {
+        final String newValue = "new-value";
+        final String propertyToUpdate = "prop2";
+
+        String messageToConfirmUpdate = "Do you want to update Codenvy property '" + propertyToUpdate + "' with new value '" + newValue + "'?";
+        doReturn(false).when(spyCommand.console).askUser(messageToConfirmUpdate);
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", propertyToUpdate);
+        commandInvoker.argument("value", newValue);
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "");
+
+        verify(mockFacade, never()).updateArtifactConfig(createArtifact(CDECArtifact.NAME),
+                                                ImmutableMap.of(anyString(), anyString()));
+
+        verify(mockFacade, never()).getArtifactConfig(any(Artifact.class));
+
+
+        verify(spyCommand.console).askUser(messageToConfirmUpdate);
+    }
+
+    @Test
+    public void shouldDisplayErrorOnUpdatingNonexistsCdecConfigProperty() throws Exception {
+        final String newValue = "new-value";
+        final String propertyToUpdate = "non-exists";
+
+        final ImmutableMap<String, String> properties = ImmutableMap.of("prop1", "value1");
+        doReturn(properties).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        String messageToConfirmUpdate = "Do you want to update Codenvy property '" + propertyToUpdate + "' with new value '" + newValue + "'?";
+        doReturn(true).when(spyCommand.console).askUser(messageToConfirmUpdate);
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", propertyToUpdate);
+        commandInvoker.argument("value", newValue);
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "{\n"
+                             + "  \"message\" : \"Property 'non-exists' not found\",\n"
+                             + "  \"status\" : \"ERROR\"\n"
+                             + "}\n");
+
+        verify(mockFacade, never()).updateArtifactConfig(createArtifact(CDECArtifact.NAME),
+                                                         ImmutableMap.of(anyString(), anyString()));
+
+        verify(spyCommand.console).askUser(messageToConfirmUpdate);
+    }
+
+    @Test
+    public void shouldDisplayErrorOnUpdatingCdecConfigProperty() throws Exception {
+        final String newValue = "new-value";
+        final String propertyToUpdate = "prop1";
+
+        final ImmutableMap<String, String> properties = ImmutableMap.of(propertyToUpdate, "value1");
+        doReturn(properties).when(mockFacade).getArtifactConfig(createArtifact(CDECArtifact.NAME));
+
+        doThrow(new IOException("IO Error")).when(mockFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME),
+                                                                                ImmutableMap.of(propertyToUpdate, newValue));
+
+        String messageToConfirmUpdate = "Do you want to update Codenvy property '" + propertyToUpdate + "' with new value '" + newValue + "'?";
+        doReturn(true).when(spyCommand.console).askUser(messageToConfirmUpdate);
+
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
+        commandInvoker.argument("property", propertyToUpdate);
+        commandInvoker.argument("value", newValue);
+        CommandInvoker.Result result = commandInvoker.invoke();
+
+        String output = result.disableAnsi().getOutputStream();
+        assertEquals(output, "{\n"
+                             + "  \"message\" : \"IO Error\",\n"
+                             + "  \"status\" : \"ERROR\"\n"
+                             + "}\n");
+
+        verify(spyCommand.console).askUser(messageToConfirmUpdate);
+    }
 
     @Test
     public void testChangeCodenvyHostUrl() throws Exception {
         String testDns = "test.com";
         Map<String, String> properties = ImmutableMap.of(Config.HOST_URL, testDns);
-        doNothing().when(managerFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
+        doNothing().when(mockFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
 
-        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
         commandInvoker.option("--hostname", testDns);
 
         CommandInvoker.Result result = commandInvoker.invoke();
@@ -97,9 +270,9 @@ public class TestConfigCommand extends AbstractTestCommand {
                                 + "  \"status\" : \"ERROR\"\n"
                                 + "}";
         doThrow(new RuntimeException("Server Error Exception"))
-                .when(managerFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
+            .when(mockFacade).updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
 
-        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, commandSession);
+        CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
         commandInvoker.option("--hostname", testDns);
 
         CommandInvoker.Result result = commandInvoker.invoke();

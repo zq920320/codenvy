@@ -86,7 +86,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Pattern;
 
 import static com.codenvy.im.utils.Commons.createArtifactOrNull;
 import static com.codenvy.im.utils.Commons.createVersionOrNull;
@@ -107,12 +106,7 @@ public class InstallationManagerService {
     private static final Logger LOG            = LoggerFactory.getLogger(InstallationManagerService.class);
     private static final String DOWNLOAD_TOKEN = UUID.randomUUID().toString();
 
-    private static final String    SECURE_VALUE_MASK    = "*****";
-    private static final Pattern[] PRIVATE_KEY_PATTERNS = new Pattern[]{Pattern.compile("password$"),
-                                                                        Pattern.compile("_pass$"),
-                                                                        Pattern.compile("secret$")};
-
-    protected final InstallationManagerFacade delegate;
+    protected final InstallationManagerFacade facade;
     protected final ConfigManager             configManager;
     protected final String                    backupDir;
 
@@ -120,9 +114,9 @@ public class InstallationManagerService {
 
     @Inject
     public InstallationManagerService(@Named("installation-manager.backup_dir") String backupDir,
-                                      IMCliFilteredFacade delegate,
+                                      IMCliFilteredFacade facade,
                                       ConfigManager configManager) {
-        this.delegate = delegate;
+        this.facade = facade;
         this.configManager = configManager;
         this.backupDir = backupDir;
     }
@@ -149,7 +143,7 @@ public class InstallationManagerService {
             Artifact artifact = createArtifactOrNull(artifactName);
             Version version = createVersionOrNull(versionNumber);
 
-            delegate.startDownload(artifact, version);
+            facade.startDownload(artifact, version);
             return Response.status(Response.Status.ACCEPTED).entity(downloadToken).build();
         } catch (ArtifactNotFoundException | IllegalVersionException e) {
             return handleException(e, Response.Status.BAD_REQUEST);
@@ -172,7 +166,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response stopDownload(@PathParam("id") @ApiParam(value = "Download Id") String downloadId) {
         try {
-            delegate.stopDownload();
+            facade.stopDownload();
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (DownloadNotStartedException e) {
             return handleException(e, Response.Status.CONFLICT);
@@ -194,7 +188,7 @@ public class InstallationManagerService {
     @Produces(MediaType.APPLICATION_JSON)
     public Response getDownloadProgress(@PathParam("id") @ApiParam(value = "Download Id") String downloadId) {
         try {
-            DownloadProgressResponse downloadProgress = delegate.getDownloadProgress();
+            DownloadProgressResponse downloadProgress = facade.getDownloadProgress();
             return Response.ok(downloadProgress).build();
         } catch (DownloadNotStartedException e) {
             return handleException(e, Response.Status.CONFLICT);
@@ -220,7 +214,7 @@ public class InstallationManagerService {
             Artifact artifact = createArtifact(artifactName);
             Version version = Version.valueOf(artifactVersion);
 
-            delegate.deleteDownloadedArtifact(artifact, version);
+            facade.deleteDownloadedArtifact(artifact, version);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (Exception e) {
             return handleException(e);
@@ -238,7 +232,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getUpdates() {
         try {
-            Collection<UpdateArtifactInfo> updates = delegate.getAllUpdatesAfterInstalledVersion(createArtifact(CDECArtifact.NAME));
+            Collection<UpdateArtifactInfo> updates = facade.getAllUpdatesAfterInstalledVersion(createArtifact(CDECArtifact.NAME));
             return Response.ok(updates).build();
         } catch (Exception e) {
             return handleException(e);
@@ -256,7 +250,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 409, message = "Downloading not in progress")})
     public Response getDownloads() {
         try {
-            String id = delegate.getDownloadIdInProgress();
+            String id = facade.getDownloadIdInProgress();
             Map<String, String> ids = ImmutableMap.of("id", id);
 
             return Response.ok(new JsonStringMapImpl<>(ids)).build();
@@ -278,7 +272,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getArtifacts() {
         try {
-            Collection<ArtifactInfo> artifacts = delegate.getArtifacts();
+            Collection<ArtifactInfo> artifacts = facade.getArtifacts();
             return Response.ok(artifacts).build();
         } catch (Exception e) {
             return handleException(e);
@@ -296,7 +290,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getInstalledVersions() {
         try {
-            Collection<InstallArtifactInfo> installedVersions = delegate.getInstalledVersions();
+            Collection<InstallArtifactInfo> installedVersions = facade.getInstalledVersions();
             return Response.ok(installedVersions).build();
         } catch (Exception e) {
             return handleException(e);
@@ -315,7 +309,7 @@ public class InstallationManagerService {
     public Response getUpdateInfo() {
         try {
             InstallType installType = configManager.detectInstallationType();
-            List<String> infos = delegate.getUpdateInfo(createArtifact(CDECArtifact.NAME), installType);
+            List<String> infos = facade.getUpdateInfo(createArtifact(CDECArtifact.NAME), installType);
             return Response.ok(infos).build();
         } catch (Exception e) {
             return handleException(e);
@@ -336,7 +330,7 @@ public class InstallationManagerService {
         try {
             InstallType installType = configManager.detectInstallationType();
             Artifact artifact = createArtifact(CDECArtifact.NAME);
-            Version version = delegate.getLatestInstallableVersion(artifact);
+            Version version = facade.getLatestInstallableVersion(artifact);
             if (version == null) {
                 return handleException(new IllegalStateException("There is no appropriate version to install"),
                                        Response.Status.BAD_REQUEST);
@@ -351,14 +345,14 @@ public class InstallationManagerService {
             installOptions.setInstallType(installType);
             installOptions.setConfigProperties(properties);
 
-            List<String> infos = delegate.getUpdateInfo(artifact, installType);
+            List<String> infos = facade.getUpdateInfo(artifact, installType);
             if (installStep < 0 || installStep >= infos.size()) {
                 return handleException(new IllegalArgumentException(format("Installation step is out of range [0..%d]", infos.size() - 1)),
                                        Response.Status.BAD_REQUEST);
             }
 
             installOptions.setStep(installStep);
-            String id = delegate.update(artifact, version, installOptions);
+            String id = facade.update(artifact, version, installOptions);
 
             Map<String, String> m = ImmutableMap.of("id", id);
             return Response.status(Response.Status.ACCEPTED).entity(new JsonStringMapImpl<>(m)).build();
@@ -381,7 +375,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getUpdateStatus(@PathParam("id") @ApiParam(value = "updating step id") String stepId) {
         try {
-            InstallArtifactStepInfo info = delegate.getUpdateStepInfo(stepId);
+            InstallArtifactStepInfo info = facade.getUpdateStepInfo(stepId);
             return Response.ok(info).build();
         } catch (InstallationNotStartedException e) {
             return handleException(e, Response.Status.NOT_FOUND);
@@ -396,8 +390,12 @@ public class InstallationManagerService {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Gets Installation Manager Server configuration")
     public Response getInstallationManagerServerConfig() {
-        Map<String, String> properties = delegate.getInstallationManagerProperties();
-        return Response.ok(new JsonStringMapImpl<>(properties)).build();
+        try {
+            Map<String, String> properties = facade.getArtifactConfig(createArtifact(CDECArtifact.NAME));
+            return Response.ok(new JsonStringMapImpl<>(properties)).build();
+        } catch (Exception e) {
+            return handleException(e);
+        }
     }
 
     /** Gets Codenvy nodes configuration */
@@ -418,7 +416,7 @@ public class InstallationManagerService {
                 properties.put(Config.HOST_URL, hostUrl);
             }
 
-            properties.putAll(delegate.getNodes());
+            properties.putAll(facade.getNodes());
 
             if (InstallType.SINGLE_SERVER.equals(installType)) {
                 return Response.ok(toJson(properties)).build();
@@ -448,7 +446,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response addNode(@QueryParam(value = "dns") @ApiParam(required = true, value = "node DNS to add") String dns) {
         try {
-            NodeInfo nodeInfo = delegate.addNode(dns);
+            NodeInfo nodeInfo = facade.addNode(dns);
             return Response.status(Response.Status.CREATED).entity(nodeInfo).build();
         } catch (Exception e) {
             return handleException(e);
@@ -466,7 +464,7 @@ public class InstallationManagerService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response removeNode(@QueryParam(value = "dns") @ApiParam(required = true, value = "node DNS to remove") String dns) {
         try {
-            delegate.removeNode(dns);
+            facade.removeNode(dns);
             return Response.status(Response.Status.NO_CONTENT).build();
         } catch (Exception e) {
             return handleException(e);
@@ -491,7 +489,7 @@ public class InstallationManagerService {
             config.setArtifactName(artifactName);
             config.setBackupDirectory(backupDir);
 
-            BackupInfo backupInfo = delegate.backup(config);
+            BackupInfo backupInfo = facade.backup(config);
             return Response.status(Response.Status.CREATED).entity(backupInfo).build();
         } catch (Exception e) {
             return handleException(e);
@@ -519,7 +517,7 @@ public class InstallationManagerService {
             config.setArtifactName(artifactName);
             config.setBackupFile(backupFile);
 
-            BackupInfo backupInfo = delegate.restore(config);
+            BackupInfo backupInfo = facade.restore(config);
             return Response.status(Response.Status.CREATED).entity(backupInfo).build();
         } catch (Exception e) {
             return handleException(e);
@@ -541,7 +539,7 @@ public class InstallationManagerService {
 
             credentials = DtoFactory.cloneDto(credentials);
 
-            Token token = delegate.loginToCodenvySaaS(credentials);
+            Token token = facade.loginToCodenvySaaS(credentials);
             SaasUserCredentials saasUserCredentials = new SaasUserCredentials(token.getValue());
 
             // cache SaaS user credentials into the state of service
@@ -562,7 +560,7 @@ public class InstallationManagerService {
     public Response logoutFromCodenvySaaS() {
         try {
             if (saasUserCredentials != null) {
-                delegate.logoutFromCodenvySaaS(saasUserCredentials.getToken());
+                facade.logoutFromCodenvySaaS(saasUserCredentials.getToken());
             }
 
             return Response.ok().build();
@@ -591,8 +589,8 @@ public class InstallationManagerService {
                                        Response.Status.BAD_REQUEST);
             }
 
-            delegate.changeAdminPassword(passwords.get(currentPwdKey).getBytes("UTF-8"),
-                                         passwords.get(newPwdKey).getBytes("UTF-8"));
+            facade.changeAdminPassword(passwords.get(currentPwdKey).getBytes("UTF-8"),
+                                       passwords.get(newPwdKey).getBytes("UTF-8"));
             return Response.ok().build();
         } catch (Exception e) {
             return handleException(e);
@@ -642,7 +640,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Gets list of properties from the storage")
     public Response getStorageProperties() {
         try {
-            Map<String, String> properties = delegate.loadStorageProperties();
+            Map<String, String> properties = facade.loadStorageProperties();
             return Response.ok(new JsonStringMapImpl<>(properties)).build();
         } catch (Exception e) {
             return handleException(e);
@@ -659,7 +657,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Inserts new properties into the storage and update existed")
     public Response insertStorageProperties(Map<String, String> properties) {
         try {
-            delegate.storeStorageProperties(properties);
+            facade.storeStorageProperties(properties);
             return Response.ok().build();
         } catch (Exception e) {
             return handleException(e);
@@ -677,7 +675,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Gets property value from the storage")
     public Response getStorageProperty(@PathParam("key") String key) {
         try {
-            String value = delegate.loadStorageProperty(key);
+            String value = facade.loadStorageProperty(key);
             return Response.ok(value).build();
         } catch (Exception e) {
             return handleException(e);
@@ -694,7 +692,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Updates property in the storage")
     public Response updateStorageProperty(@PathParam("key") String key, String value) {
         try {
-            delegate.storeStorageProperty(key, value);
+            facade.storeStorageProperty(key, value);
             return Response.ok().build();
         } catch (Exception e) {
             return handleException(e);
@@ -710,7 +708,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Deletes property from the storage")
     public Response deleteStorageProperty(@PathParam("key") String key) {
         try {
-            delegate.deleteStorageProperty(key);
+            facade.deleteStorageProperty(key);
             return Response.noContent().build();
         } catch (Exception e) {
             return handleException(e);
@@ -727,8 +725,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Gets Codenvy configuration properties")
     public Response getCodenvyProperties() {
         try {
-            Config config = configManager.loadInstalledCodenvyConfig();
-            Map<String, String> properties = maskPrivateProperties(config.getProperties());
+            Map<String, String> properties = facade.getArtifactConfig(createArtifact(CDECArtifact.NAME));
             return Response.ok(new JsonStringMapImpl<>(properties)).build();
         } catch (Exception e) {
             return handleException(e);
@@ -746,9 +743,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Gets specific Codenvy configuration property")
     public Response getCodenvyProperty(@PathParam("key") String key) {
         try {
-            Config config = configManager.loadInstalledCodenvyConfig();
-            Map<String, String> properties = maskPrivateProperties(config.getProperties());
-
+            Map<String, String> properties = facade.getArtifactConfig(createArtifact(CDECArtifact.NAME));
             if (properties.containsKey(key)) {
                 Map<String, String> m = ImmutableMap.of(key, properties.get(key));
                 return Response.ok(new JsonStringMapImpl<>(m)).build();
@@ -771,7 +766,7 @@ public class InstallationManagerService {
     @ApiOperation(value = "Updates property of configuration of Codenvy on-prem. It could take 5-7 minutes.")
     public Response updateCodenvyProperties(Map<String, String> properties) {
         try {
-            delegate.updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
+            facade.updateArtifactConfig(createArtifact(CDECArtifact.NAME), properties);
             return Response.status(Response.Status.CREATED).build();
         } catch (Exception e) {
             return handleException(e);
@@ -799,7 +794,7 @@ public class InstallationManagerService {
                 saasUserToken = saasUserCredentials.getToken();
             }
 
-            delegate.logSaasAnalyticsEvent(event, saasUserToken);
+            facade.logSaasAnalyticsEvent(event, saasUserToken);
             return Response.status(Response.Status.ACCEPTED).build();
         } catch (IllegalArgumentException e) {
             return handleException(e, Response.Status.BAD_REQUEST);
@@ -865,32 +860,5 @@ public class InstallationManagerService {
     protected Artifact createArtifact(String artifactName) throws ArtifactNotFoundException {
         return ArtifactFactory.createArtifact(artifactName);
     }
-
-    /**
-     * @return map where all private keys ("password", "secret" etc.) were been updated to have PASSWORD_MASK value
-     */
-    private Map<String, String> maskPrivateProperties(Map<String, String> properties) {
-        Map<String, String> maskedProperties = new HashMap<>(properties);
-        for (Map.Entry<String, String> property : maskedProperties.entrySet()) {
-            String key = property.getKey();
-            if (isPrivateProperty(key)) {
-                property.setValue(SECURE_VALUE_MASK);
-            }
-        }
-
-        return maskedProperties;
-    }
-
-    /** @return true if only key matches one of the patterns from the PRIVATE_KEY_PATTERNS */
-    private boolean isPrivateProperty(String key) {
-        for (Pattern pattern : PRIVATE_KEY_PATTERNS) {
-            if (pattern.matcher(key).find()) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
 
 }

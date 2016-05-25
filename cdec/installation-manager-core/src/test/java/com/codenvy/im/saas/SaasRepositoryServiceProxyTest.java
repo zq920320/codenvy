@@ -18,13 +18,10 @@ import com.codenvy.im.BaseTest;
 import com.codenvy.im.event.Event;
 import com.codenvy.im.utils.HttpTransport;
 import com.google.common.collect.ImmutableMap;
-
 import org.mockito.Mock;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import static org.mockito.Matchers.anyMap;
-import static org.mockito.Matchers.endsWith;
 import static org.mockito.Mockito.verify;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -51,7 +48,7 @@ public class SaasRepositoryServiceProxyTest extends BaseTest {
 
         saasRepositoryServiceProxy.logAnalyticsEvent(event, null);
 
-        verify(transport).doPost("update/endpoint/repository/event", event);
+        verify(transport).doPost(UPDATE_API_ENDPOINT + "/repository/event", event);
     }
 
     @Test
@@ -63,7 +60,7 @@ public class SaasRepositoryServiceProxyTest extends BaseTest {
 
         saasRepositoryServiceProxy.logAnalyticsEvent(event, token);
 
-        verify(transport).doPost("update/endpoint/repository/event", event, token);
+        verify(transport).doPost(UPDATE_API_ENDPOINT + "/repository/event", event, token);
     }
 
 }

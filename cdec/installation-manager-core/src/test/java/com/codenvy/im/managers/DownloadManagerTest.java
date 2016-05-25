@@ -90,7 +90,7 @@ public class DownloadManagerTest extends BaseTest {
     public void setUp() throws Exception {
         initMocks(this);
         cdecArtifact = spy(new CDECArtifact(UPDATE_API_ENDPOINT, DOWNLOAD_DIR, ASSEMBLY_PROPERTIES, transport, configManager, nodeManager));
-        installManagerArtifact = spy(new InstallManagerArtifact(UPDATE_API_ENDPOINT, DOWNLOAD_DIR, transport, configManager));
+        installManagerArtifact = spy(new InstallManagerArtifact(UPDATE_API_ENDPOINT, DOWNLOAD_DIR, SAAS_API_ENDPOINT, transport, configManager));
         downloadManager = spy(new DownloadManager(UPDATE_API_ENDPOINT,
                                                   DOWNLOAD_DIR,
                                                   transport,
@@ -269,8 +269,8 @@ public class DownloadManagerTest extends BaseTest {
 
         SortedMap<Version, Path> versions = downloadManager.getDownloadedVersions(cdecArtifact);
         assertEquals(versions.size(), 2);
-        assertEquals(versions.toString(), "{1.0.2=target/download/codenvy/1.0.2/file2, " +
-                                          "1.0.1=target/download/codenvy/1.0.1/file1" +
+        assertEquals(versions.toString(), "{1.0.2=target/updates/codenvy/1.0.2/file2, " +
+                                          "1.0.1=target/updates/codenvy/1.0.1/file1" +
                                           "}");
     }
 

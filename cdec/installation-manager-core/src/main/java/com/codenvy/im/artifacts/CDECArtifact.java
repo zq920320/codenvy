@@ -264,6 +264,18 @@ public class CDECArtifact extends AbstractArtifact {
         commands.execute();
     }
 
+    /**
+     * @return Codenvy configuration properties where all private keys ("password", "secret" etc.) were been hidden by "*" value
+     * @throws IOException
+     */
+    @Override
+    public Map<String, String> getConfig() throws IOException {
+        Config config = configManager.loadInstalledCodenvyConfig();
+        Map<String, String> properties = configManager.maskPrivateProperties(config.getProperties());
+
+        return properties;
+    }
+
     /** {@inheritDoc} */
     @Override
     public Command getReinstallCommand() throws IOException {
