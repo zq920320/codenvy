@@ -28,7 +28,7 @@ validateInstalledCodenvyVersion
 auth "admin" "password"
 
 # change admin's password
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 auth "admin" "new-password"
 
 # change Codenvy hostname
@@ -41,7 +41,7 @@ executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts" "datasour
 executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts" "analytics.codenvy"
 executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts" "master.codenvy"
 
-executeIMCommand "im-config" "--hostname" "${NEW_HOST_URL}"
+executeIMCommand "config" "--hostname" "${NEW_HOST_URL}"
 
 # verify changes on api node
 executeSshCommand "sudo cat /home/codenvy/codenvy-data/conf/general.properties" "api.codenvy"
@@ -66,7 +66,7 @@ executeSshCommand "sudo rm -rf /home/codenvy/codenvy-tomcat/webapps" "runner1.co
 executeSshCommand "sudo rm -rf /home/codenvy-im/codenvy-im-tomcat/webapps"
 
 # perform re-install
-executeIMCommand "im-install" "--reinstall" "codenvy"
+executeIMCommand "install" "--reinstall" "codenvy"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"status\".\:.\"SUCCESS\".*\"status\".\:.\"OK\".*"
 
 validateInstalledCodenvyVersion

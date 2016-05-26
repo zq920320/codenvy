@@ -28,12 +28,12 @@ validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 authWithoutRealmAndServerDns "admin" "password"
 
 # change admin's password
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 authWithoutRealmAndServerDns "admin" "new-password"
 
 # change Codenvy hostname
 executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts"
-executeIMCommand "im-config" "--hostname" "${NEW_HOST_URL}"
+executeIMCommand "config" "--hostname" "${NEW_HOST_URL}"
 
 # verify changes on api node
 executeSshCommand "sudo cat /home/codenvy/codenvy-data/conf/general.properties"
@@ -51,7 +51,7 @@ executeSshCommand "sudo rm -rf /home/codenvy/codenvy-tomcat/webapps"
 executeSshCommand "sudo rm -rf /home/codenvy-im/codenvy-im-tomcat/webapps"
 
 # preform re-install
-executeIMCommand "im-install" "--reinstall" "codenvy"
+executeIMCommand "install" "--reinstall" "codenvy"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"status\".\:.\"SUCCESS\".*\"status\".\:.\"OK\".*"
 
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}

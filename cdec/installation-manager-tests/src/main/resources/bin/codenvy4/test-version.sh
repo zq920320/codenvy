@@ -19,20 +19,20 @@
 [ -f "./lib.sh" ] && . ./lib.sh
 [ -f "../lib.sh" ] && . ../lib.sh
 
-printAndLog "TEST CASE: Test im-version command with Codenvy 4.x"
+printAndLog "TEST CASE: Test version command with Codenvy 4.x"
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
 installImCliClient
 validateInstalledImCliClientVersion
 
 # test getting latest stable version of codenvy by default
-executeIMCommand "im-version"
+executeIMCommand "version"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"availableVersion\".*.*\"stable\".*"
 
 installCodenvy ${LATEST_CODENVY4_VERSION}
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 
-executeIMCommand "im-version"
+executeIMCommand "version"
 
 # take into account that the latest Codenvy 4 version at the Updater Server could have 'STABLE' label
 if [[ ${LATEST_CODENVY4_VERSION} == ${LATEST_STABLE_CODENVY_VERSION} ]]; then

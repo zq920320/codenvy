@@ -22,7 +22,7 @@ import org.apache.karaf.shell.commands.Command;
 /**
  * @author Anatoliy Bazko
  */
-@Command(scope = "codenvy", name = "im-password", description = "Change Codenvy admin password")
+@Command(scope = "codenvy", name = "password", description = "Change Codenvy admin password")
 public class ChangeAdminPasswordCommand extends AbstractIMCommand {
 
     @Argument(name = "currentPassword", description = "current admin password", required = true, multiValued = false, index = 0)

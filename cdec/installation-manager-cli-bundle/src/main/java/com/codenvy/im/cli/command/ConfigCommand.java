@@ -45,7 +45,7 @@ import static org.fusesource.jansi.Ansi.ansi;
  * @author Anatoliy Bazko
  * @author Dmytro Nochevnov
  */
-@Command(scope = "codenvy", name = "im-config", description = "Configure Codenvy on-prem")
+@Command(scope = "codenvy", name = "config", description = "Configure Codenvy on-prem")
 public class ConfigCommand extends AbstractIMCommand {
 
     @Argument(index = 0, name = "property", description = "Codenvy property name", required = false, multiValued = false)

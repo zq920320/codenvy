@@ -19,7 +19,7 @@
 [ -f "./lib.sh" ] && . ./lib.sh
 [ -f "../lib.sh" ] && . ../lib.sh
 
-printAndLog "TEST CASE: Help command when CLI client is working in non-interractive mode"
+printAndLog "TEST CASE: Help command when CLI client is working in non-interactive mode"
 
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
@@ -28,9 +28,8 @@ validateInstalledImCliClientVersion
 
 executeIMCommand "help"
 
-validateExpectedString ".*login.*"
 validateExpectedString ".*help.*"
-validateExpectedString ".*im-.*"
+validateExpectedString ".*install.*version.....Print.the.list.of.available.latest.versions.and.installed.ones"
 
 printAndLog "RESULT: PASSED"
 

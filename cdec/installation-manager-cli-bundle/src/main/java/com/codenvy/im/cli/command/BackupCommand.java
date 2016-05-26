@@ -26,7 +26,7 @@ import org.apache.karaf.shell.commands.Command;
 /**
  * @author Dmytro Nochevnov
  */
-@Command(scope = "codenvy", name = "im-backup", description = "Backup Codenvy")
+@Command(scope = "codenvy", name = "backup", description = "Backup Codenvy")
 public class BackupCommand extends AbstractIMCommand {
 
     @Argument(name = "directory", description = "Relative path to directory with backup. Default location is ~/.codenvy/backups/", required = false, multiValued = false, index = 0)

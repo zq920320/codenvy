@@ -26,7 +26,7 @@ import org.apache.karaf.shell.commands.Command;
 /**
  * @author Dmytro Nochevnov
  */
-@Command(scope = "codenvy", name = "im-restore", description = "Restore Codenvy")
+@Command(scope = "codenvy", name = "restore", description = "Restore Codenvy")
 public class RestoreCommand extends AbstractIMCommand {
 
     @Argument(name = "backup", description = "Relative path to backup file. There should be <backup_name>.tar.gz file with the compressed " +
