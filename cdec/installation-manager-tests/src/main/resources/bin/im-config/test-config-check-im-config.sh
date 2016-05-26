@@ -28,7 +28,7 @@ validateInstalledImCliClientVersion
 
 executeIMCommand "im-config --im-cli"
 
-validateExpectedString ".*download.directory=/home/vagrant/codenvy-im-data/updates.*update.server.url=$UPDATE_SERVER.*saas.server.url=$SAAS_SERVER.*"
+validateExpectedString ".*download.directory=/home/vagrant/codenvy-im-data/updates.*saas.server.url=$SAAS_SERVER.*update.server.url=$UPDATE_SERVER.*"
 
 printAndLog "RESULT: PASSED"
 
