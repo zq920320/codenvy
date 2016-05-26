@@ -62,6 +62,7 @@ public class AuthDockerInstanceProvider extends DockerInstanceProvider {
                                       @Named("machine.docker.privilege_mode") boolean privilegeMode,
                                       @Named("machine.docker.dev_machine.machine_env") Set<String> devMachineEnvVariables,
                                       @Named("machine.docker.machine_env") Set<String> allMachinesEnvVariables,
+                                      @Named("machine.docker.snapshot_use_registry") boolean snapshotUseRegistry,
                                       MachineTokenRegistry tokenRegistry) throws IOException {
         super(docker,
               dockerConnectorConfiguration,
@@ -78,7 +79,8 @@ public class AuthDockerInstanceProvider extends DockerInstanceProvider {
               doForcePullOnBuild,
               privilegeMode,
               devMachineEnvVariables,
-              allMachinesEnvVariables);
+              allMachinesEnvVariables,
+              snapshotUseRegistry);
         this.tokenRegistry = tokenRegistry;
     }
 

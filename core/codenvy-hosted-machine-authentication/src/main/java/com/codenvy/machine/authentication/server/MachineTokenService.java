@@ -36,6 +36,8 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Machine security token service.
+ * Allows user to retrieve token to access to the particular workspace, and,
+ * in the reverse case, allows get the user by his token.
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com)
  */
@@ -55,6 +57,15 @@ public class MachineTokenService {
         this.apiEndpoint = apiEndpoint;
     }
 
+    /**
+     * Gets the access token for current user for particular workspace.
+     *
+     * @param wsId
+     *        id of workspace to generate token for.
+     * @return entity of machine token
+     * @throws NotFoundException
+     *         if no workspace exists with given id
+     */
     @GET
     @Path("/{wsId}")
     @Produces(MediaType.APPLICATION_JSON)
@@ -66,6 +77,16 @@ public class MachineTokenService {
                                             .withMachineToken(registry.getToken(userId, wsId));
     }
 
+    /**
+     * Finds a user by his machine token.
+     *
+     * @param token
+     *        token to find user by
+     * @return user entity
+     * @throws ApiException
+     *         when token is not found, or there is problem retrieving user via api.
+     * @throws IOException
+     */
     @GET
     @Path("/user/{token}")
     @Produces(MediaType.APPLICATION_JSON)

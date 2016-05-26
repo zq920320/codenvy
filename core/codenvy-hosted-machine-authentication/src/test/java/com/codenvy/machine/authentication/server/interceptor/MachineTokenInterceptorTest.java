@@ -19,6 +19,7 @@ import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
 import com.google.inject.Module;
+import com.google.inject.name.Names;
 import com.google.inject.spi.ConstructorBinding;
 
 import org.eclipse.che.api.core.notification.EventService;
@@ -71,6 +72,8 @@ public class MachineTokenInterceptorTest {
                 bind(EventService.class).toInstance(mock(EventService.class));
                 bind(MachineManager.class).toInstance(mock(MachineManager.class));
                 bind(UserManager.class).toInstance(mock(UserManager.class));
+                bindConstant().annotatedWith(Names.named("workspace.runtime.auto_restore")).to(false);
+                bindConstant().annotatedWith(Names.named("workspace.runtime.auto_snapshot")).to(false);
                 bind(WorkspaceManager.class);
 
                 bind(MachineTokenRegistry.class).toInstance(tokenRegistry);
