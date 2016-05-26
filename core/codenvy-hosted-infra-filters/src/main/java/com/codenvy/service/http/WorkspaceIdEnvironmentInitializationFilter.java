@@ -32,6 +32,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLDecoder;
 
 /**
  * Set information about workspace in request by following path:
@@ -54,10 +56,10 @@ public class WorkspaceIdEnvironmentInitializationFilter extends WorkspaceEnviron
         String requestUrl = httpRequest.getRequestURI();
         String[] pathParts = requestUrl.split("/", 5);
         try {
-            return cache.getById(pathParts[3]);
+            return cache.getById(URLDecoder.decode(pathParts[3], "UTF-8"));
         } catch (NotFoundException e) {
             return null;
-        } catch (ServerException e) {
+        } catch (ServerException | UnsupportedEncodingException e) {
             LOG.warn(e.getLocalizedMessage(), e);
             return null;
         }
