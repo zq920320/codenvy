@@ -61,4 +61,6 @@ HTTP_PASSWORDLESS_PROXY=http://proxy-passwordless.ua.codenvy-dev.com:3128
 HTTPS_PASSWORDLESS_PROXY=http://proxy-passwordless.ua.codenvy-dev.com:3128
 
 PATH_TO_CODENVY4_PUPPET_MANIFEST="/etc/puppet/manifests/nodes/codenvy/codenvy.pp"
-CUSTOM_SINGLE_NODE_CONFIG_URL="${UPDATE_SERVICE}/repository/public/download/codenvy-single-server-properties/${LATEST_CODENVY4_VERSION}"
+
+CUSTOM_SINGLE_NODE_LATEST_VERSION_CONFIG_URL="${UPDATE_SERVICE}/repository/public/download/codenvy-single-server-properties/${LATEST_CODENVY4_VERSION}"
+CUSTOM_SINGLE_NODE_PREV_VERSION_CONFIG_URL="${UPDATE_SERVICE}/repository/public/download/codenvy-single-server-properties/${PREV_CODENVY4_VERSION}"

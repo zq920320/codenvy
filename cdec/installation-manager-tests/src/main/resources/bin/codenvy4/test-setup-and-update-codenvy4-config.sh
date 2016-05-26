@@ -19,11 +19,11 @@
 [ -f "./lib.sh" ] && . ./lib.sh
 [ -f "../lib.sh" ] && . ../lib.sh
 
-printAndLog "TEST CASE: View and update codenvy4 config"
+printAndLog "TEST CASE: Setup and update Codenvy 4.x On Premise configuration"
 
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
-installCodenvy ${LATEST_CODENVY4_VERSION} --config=${CUSTOM_SINGLE_NODE_CONFIG_URL}
+installCodenvy ${LATEST_CODENVY4_VERSION} --config=${CUSTOM_SINGLE_NODE_PREVIOUS_VERSION_CONFIG_URL}
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 
 PROPERTY_TO_TEST=zabbix_admin_email
@@ -41,6 +41,28 @@ validateExpectedString ".*$PROPERTY_TO_TEST=$VALUE_TO_UPDATE.*"
 
 executeIMCommand "im-config $PROPERTY_TO_TEST"
 validateExpectedString ".*$PROPERTY_TO_TEST=$VALUE_TO_UPDATE.*"
+
+## validate using custom config file
+PATH_TO_CUSTOM_CONFIG="codenvy.properties.${LATEST_CODENVY4_VERSION}"
+executeSshCommand "cp codenvy.properties $PATH_TO_CUSTOM_CONFIG"
+
+installCodenvy --valid-exit-code=1 ${LATEST_CODENVY4_VERSION}
+executeSshCommand "cat codenvy.properties | grep ${LATEST_CODENVY4_VERSION}"
+executeSshCommand --valid-exit-code=1 "test -f codenvy.properties.back"
+
+# custom config file defined by url
+installCodenvy --valid-exit-code=1 ${LATEST_CODENVY4_VERSION} --config=${CUSTOM_SINGLE_NODE_PREV_VERSION_CONFIG_URL}
+executeSshCommand "cat codenvy.properties | grep ${PREV_CODENVY4_VERSION}"
+executeSshCommand "cat codenvy.properties.back | grep ${LATEST_CODENVY4_VERSION}"
+
+# custom config file defined by path
+installCodenvy --valid-exit-code=1 ${LATEST_CODENVY4_VERSION} --config=${PATH_TO_CUSTOM_CONFIG}
+executeSshCommand "cat codenvy.properties | grep ${LATEST_CODENVY4_VERSION}"
+executeSshCommand "cat codenvy.properties.back | grep ${PREV_CODENVY4_VERSION}"
+
+installCodenvy --valid-exit-code=1 ${PREV_CODENVY4_VERSION}
+executeSshCommand "cat codenvy.properties | grep ${PREV_CODENVY4_VERSION}"
+executeSshCommand "cat codenvy.properties.back | grep ${LATEST_CODENVY4_VERSION}"
 
 printAndLog "RESULT: PASSED"
 
