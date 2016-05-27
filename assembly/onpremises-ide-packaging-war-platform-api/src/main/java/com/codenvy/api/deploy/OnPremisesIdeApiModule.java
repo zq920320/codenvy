@@ -236,7 +236,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                 new UriStartFromRequestFilter("/api/factory"),
                                 new RequestMethodFilter("GET"),
                                 new DisjunctionRequestFilter(
-                                        new UriStartFromRequestFilter("/api/factory/nonencoded"),
                                         new PathSegmentValueFilter(4, "image"),
                                         new PathSegmentValueFilter(4, "snippet"),
                                         new ConjunctionRequestFilter(
