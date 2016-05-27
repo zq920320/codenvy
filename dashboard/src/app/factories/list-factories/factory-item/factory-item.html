@@ -17,38 +17,53 @@
     from Codenvy S.A..
 
 -->
-<che-list-item flex-gt-sm="100" flex="33" ng-mouseover="hover=true" ng-mouseout="hover=false">
-  <div layout-gt-sm="row" flex="100" layout-align-gt-sm="start stretch" layout="column" class="factory-list-row">
-    <div class="factory-list-static-icon" layout-align="center center"
+<che-list-item flex-gt-xs="100" flex="33"
+               ng-mouseover="hover=true" ng-mouseout="hover=false">
+  <div flex="100"
+       layout-gt-xs="row"
+       layout-align="start center"
+       class="factory-list-row">
+
+    <div layout-align="center center"
+         class="factory-list-static-icon"
          ng-if="factoryItemCtrl.isSelectable === true">
       <che-list-item-checked class="factory-type-icon"
                              ng-model="factoryItemCtrl.isSelect"
                              che-aria-label-checkbox="Factory {{factoryItemCtrl.factory.originFactory.name}}"></che-list-item-checked>
     </div>
-    <div flex="40" layout="column" layout-align-gt-sm="center start" layout-align="center center"
+
+    <div flex
+         layout="column"
+         layout-align-xs="center center" layout-align-gt-xs="start start"
          ng-click="factoryItemCtrl.redirectToFactoryDetails()">
-      <div ng-if="factoryItemCtrl.factory.originFactory.name">
-        <div class="factory-name  codenvy-hover">
-          {{factoryItemCtrl.factory.originFactory.name}}
-        </div>
-        <div class="factory-id-url codenvy-hover">
-          {{factoryItemCtrl.factory.nameURL}}
-        </div>
+      <div class="factory-name che-hover" ng-if="factoryItemCtrl.factory.originFactory.name">
+        {{factoryItemCtrl.factory.originFactory.name}}
       </div>
-      <div class="factory-id-url codenvy-hover"
-           ng-show="!factoryItemCtrl.factory.originFactory.name">
+      <div class="factory-id-url che-hover" ng-if="factoryItemCtrl.factory.originFactory.name">
+        {{factoryItemCtrl.factory.nameURL}}
+      </div>
+      <div class="factory-id-url che-hover" ng-if="!factoryItemCtrl.factory.originFactory.name">
         {{factoryItemCtrl.factory.idURL ? factoryItemCtrl.factory.idURL : factoryItemCtrl.factory.originFactory.id}}
       </div>
     </div>
-    <div flex="20" class="factory-details" layout-align="center center">
-      <span tooltip="Created: {{factoryItemCtrl.factory.originFactory.creator.created | amDateFormat:'dddd, MMMM Do, YYYY'}}"
-            am-time-ago="factoryItemCtrl.factory.originFactory.creator.created"></span>
+
+    <div flex flex-gt-xs="15"
+         layout="column"
+         layout-align="center center"
+         class="factory-details">
+      <div tooltip="Created: {{factoryItemCtrl.factory.originFactory.creator.created | amDateFormat:'dddd, MMMM Do, YYYY'}}"
+           am-time-ago="factoryItemCtrl.factory.originFactory.creator.created"></div>
     </div>
-    <a ng-href="#/load-factory/{{factoryItemCtrl.factory.originFactory.id}}" flex="20" target="_self" layout="row" layout-align="center center"
-       layout-align-gt-sm="end center">
-      <che-button-default ng-show="hover" class="factory-list-details-arrow"
-                          che-button-icon="fa fa fa-chevron-circle-right"
-                          che-button-title="Open in IDE"></che-button-default>
-    </a>
+
+    <div flex="none"
+         layout="row"
+         layout-align="center center"
+         ng-show="hover">
+      <a ng-href="#/load-factory/{{factoryItemCtrl.factory.originFactory.id}}" target="_self">
+        <che-button-default class="che-hover factory-list-details-arrow"
+                            che-button-icon="fa fa fa-chevron-circle-right"
+                            che-button-title="Open in IDE"></che-button-default>
+      </a>
+    </div>
   </div>
 </che-list-item>
