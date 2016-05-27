@@ -16,6 +16,7 @@ package com.codenvy.api.dao.mongo;
 
 import com.codenvy.api.workspace.server.dao.WorkerDao;
 import com.codenvy.api.workspace.server.model.Worker;
+import com.codenvy.api.workspace.server.model.WorkerImpl;
 import com.mongodb.MongoException;
 import com.mongodb.MongoWriteException;
 import com.mongodb.client.FindIterable;
@@ -256,14 +257,17 @@ public class WorkspaceDaoImpl implements WorkspaceDao {
     }
 
     @Override
-    public List<WorkspaceImpl> getWorkspaces(String username) throws ServerException {
+    public List<WorkspaceImpl> getWorkspaces(String userId) throws ServerException {
         List<WorkspaceImpl> workspaces = new ArrayList<>();
-        for (Worker worker : workerDao.getWorkersByUser(username)) {
-            try {
-                workspaces.add(get(worker.getWorkspace()));
-            } catch (NotFoundException e) {
-                LOG.warn(String.format("There is worker with workspace '%s' but this workspace doesn't exist",
-                                       worker.getWorkspace()));
+        final List<WorkerImpl> workers = workerDao.getWorkersByUser(userId);
+        for (Worker worker : workers) {
+            if (worker.getActions().contains("read")) {
+                try {
+                    workspaces.add(get(worker.getWorkspace()));
+                } catch (NotFoundException e) {
+                    LOG.warn(String.format("There is worker with workspace '%s' but this workspace doesn't exist",
+                                           worker.getWorkspace()));
+                }
             }
         }
         return workspaces;

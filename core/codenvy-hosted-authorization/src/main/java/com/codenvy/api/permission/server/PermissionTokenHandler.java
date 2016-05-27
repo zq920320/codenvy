@@ -14,11 +14,11 @@
  */
 package com.codenvy.api.permission.server;
 
-import com.codenvy.auth.sso.client.ServerClient;
 import com.codenvy.auth.sso.client.SsoClientPrincipal;
 import com.codenvy.auth.sso.client.TokenHandler;
 
 import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.commons.subject.Subject;
 import org.slf4j.Logger;
@@ -31,7 +31,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
-import javax.ws.rs.ForbiddenException;
 import java.io.IOException;
 
 import static java.lang.String.format;
@@ -46,15 +45,12 @@ public class PermissionTokenHandler implements TokenHandler {
     private static final Logger LOG = LoggerFactory.getLogger(PermissionTokenHandler.class);
 
     private final PermissionChecker permissionChecker;
-    private final ServerClient      ssoServerClient;
     private final TokenHandler      delegate;
 
     @Inject
     public PermissionTokenHandler(PermissionChecker permissionChecker,
-                                  ServerClient ssoServerClient,
                                   @Named("delegated.handler") TokenHandler delegate) {
         this.permissionChecker = permissionChecker;
-        this.ssoServerClient = ssoServerClient;
         this.delegate = delegate;
     }
 

@@ -15,9 +15,9 @@
 package com.codenvy.api.dao.authentication;
 
 
+import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.commons.subject.Subject;
 
-import javax.ws.rs.ForbiddenException;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.Set;

@@ -18,6 +18,7 @@ import com.codenvy.plugin.webhooks.connectors.Connector;
 import com.codenvy.plugin.webhooks.connectors.JenkinsConnector;
 
 import org.eclipse.che.api.auth.shared.dto.Token;
+import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.Service;
 import org.eclipse.che.api.factory.shared.dto.Factory;
@@ -28,7 +29,6 @@ import org.eclipse.che.commons.subject.Subject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.ws.rs.ForbiddenException;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -332,6 +332,7 @@ public abstract class BaseWebhookService extends Service {
 
         @Override
         public void checkPermission(String domain, String instance, String action) throws ForbiddenException {
+            throw new ForbiddenException("User is not authorized to perform this operation");
         }
 
         @Override
