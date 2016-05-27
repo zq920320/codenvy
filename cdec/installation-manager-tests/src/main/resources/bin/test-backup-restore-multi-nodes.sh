@@ -29,12 +29,12 @@ doSleep "4m" "Wait until mongo is installed on analytics server to avoid im-back
 auth "admin" "password"
 
 # backup
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_AT_START=${OUTPUT}
 
 # modify data: add account, workspace, project, user, factory
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 auth "admin" "new-password"
 
 doPost "application/json" "{\"name\":\"account-1\"}" "http://codenvy/api/account?token=${TOKEN}"
@@ -90,12 +90,12 @@ validateExpectedString ".*\"value\"\:\"1\".*"
 executeSshCommand "sudo systemctl start puppet" "analytics.codenvy"
 
 # backup with modifications
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_WITH_MODIFICATIONS=${OUTPUT}
 
 # restore initial state
-executeIMCommand "im-restore" ${BACKUP_AT_START}
+executeIMCommand "restore" ${BACKUP_AT_START}
 
 # check data
 auth "admin" "password"
@@ -119,7 +119,7 @@ doGet "http://codenvy/api/analytics/metric/users_profiles?token=${TOKEN}"
 validateExpectedString ".*\"value\"\:\"0\".*"
 
 # restore state after modifications
-executeIMCommand "im-restore" ${BACKUP_WITH_MODIFICATIONS}
+executeIMCommand "restore" ${BACKUP_WITH_MODIFICATIONS}
 
 # check if modified data was restored correctly
 auth "admin" "new-password"
@@ -145,12 +145,12 @@ validateExpectedString ".*\"value\"\:\"1\".*"
 authOnSite "user-1" "pwd123ABC"
 
 # update
-executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY3_VERSION}"
-executeIMCommand "im-install" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "install" "codenvy" "${LATEST_CODENVY3_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY3_VERSION}
 
 # restore
-executeIMCommand "--valid-exit-code=1" "im-restore" ${BACKUP_AT_START}
+executeIMCommand "--valid-exit-code=1" "restore" ${BACKUP_AT_START}
 validateExpectedString ".*\"Version.of.backed.up.artifact.'${PREV_CODENVY3_VERSION}'.doesn't.equal.to.restoring.version.'${LATEST_CODENVY3_VERSION}'\".*\"status\".\:.\"ERROR\".*"
 
 printAndLog "RESULT: PASSED"

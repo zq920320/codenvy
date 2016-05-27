@@ -24,9 +24,6 @@
             <action class="com.codenvy.im.cli.command.DownloadCommand"/>
         </command>
         <command>
-            <action class="com.codenvy.im.cli.command.LoginCommand"/>
-        </command>
-        <command>
             <action class="com.codenvy.im.cli.command.ConfigCommand"/>
         </command>
         <command>

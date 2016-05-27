@@ -46,7 +46,7 @@ import static java.lang.Thread.sleep;
 /**
  * @author Dmytro Nochevnov
  */
-@Command(scope = "codenvy", name = "im-download", description = "Download artifacts or print the list of installed ones")
+@Command(scope = "codenvy", name = "download", description = "Download artifacts or print the list of installed ones")
 public class DownloadCommand extends AbstractIMCommand {
 
     @Argument(index = 0, name = "artifact", description = "The name of the artifact to download", required = false, multiValued = false)

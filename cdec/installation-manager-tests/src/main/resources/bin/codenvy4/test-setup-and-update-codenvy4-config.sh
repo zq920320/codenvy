@@ -30,16 +30,16 @@ PROPERTY_TO_TEST=zabbix_admin_email
 VALUE_TO_TEST=root@localhost
 VALUE_TO_UPDATE=user@localhost
 
-executeIMCommand "im-config"
+executeIMCommand "config"
 validateExpectedString ".*admin_ldap_password=*****.*installation_manager_update_server_endpoint=$UPDATE_SERVICE.*version=$LATEST_CODENVY4_VERSION.*$PROPERTY_TO_TEST=$VALUE_TO_TEST.*"
 
-executeIMCommand "im-config $PROPERTY_TO_TEST"
+executeIMCommand "config $PROPERTY_TO_TEST"
 validateExpectedString ".*$PROPERTY_TO_TEST=$VALUE_TO_TEST.*"
 
-executeSshCommand "echo y | codenvy im-config $PROPERTY_TO_TEST $VALUE_TO_UPDATE"
+executeSshCommand "echo y | codenvy config $PROPERTY_TO_TEST $VALUE_TO_UPDATE"
 validateExpectedString ".*$PROPERTY_TO_TEST=$VALUE_TO_UPDATE.*"
 
-executeIMCommand "im-config $PROPERTY_TO_TEST"
+executeIMCommand "config $PROPERTY_TO_TEST"
 validateExpectedString ".*$PROPERTY_TO_TEST=$VALUE_TO_UPDATE.*"
 
 ## validate using custom config file

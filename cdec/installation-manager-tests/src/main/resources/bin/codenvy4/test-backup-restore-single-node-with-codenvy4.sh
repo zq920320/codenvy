@@ -32,12 +32,12 @@ validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 authWithoutRealmAndServerDns "admin" "password"
 
 # backup at start
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_AT_START=${OUTPUT}
 
 # modify data: add account, workspace, project, user
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 authWithoutRealmAndServerDns "admin" "new-password"
 
 # create user "cdec.im.test@gmail.com"
@@ -80,7 +80,7 @@ fetchJsonParameter "id"
 FACTORY_ID=${OUTPUT}
 
 # backup with modifications
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_WITH_MODIFICATIONS=${OUTPUT}
 
@@ -89,7 +89,7 @@ executeSshCommand "sudo ls -R /home/codenvy/codenvy-data/fs"
 validateExpectedString ".*/home/codenvy/codenvy-data/fs/[0-9a-z/]*/${WORKSPACE_ID}/project-1/src/main/java/org/eclipse/che/examples\:.*HelloWorld.java.*"
 
 # restore initial state
-executeIMCommand "im-restore" ${BACKUP_AT_START}
+executeIMCommand "restore" ${BACKUP_AT_START}
 
 # check if data at start was restored correctly
 authWithoutRealmAndServerDns "admin" "password"
@@ -108,7 +108,7 @@ doGet "http://${HOST_URL}/api/factory/${FACTORY_ID}?token=${TOKEN}"
 validateExpectedString ".*Factory.*not.found.*"
 
 # restore state after modifications
-executeIMCommand "im-restore" ${BACKUP_WITH_MODIFICATIONS}
+executeIMCommand "restore" ${BACKUP_WITH_MODIFICATIONS}
 
 # check if modified data was restored correctly
 authWithoutRealmAndServerDns "admin" "new-password"

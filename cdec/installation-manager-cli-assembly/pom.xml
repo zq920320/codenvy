@@ -157,19 +157,15 @@ cellar       =]]></replacevalue>
                                 <copy file="${project.build.directory}/classes/codenvy-cli/etc/org.ops4j.pax.logging.cfg" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/org.ops4j.pax.logging.cfg" />
                                 <copy file="${project.build.directory}/classes/codenvy-cli/etc/java.util.logging.properties" tofile="${project.build.directory}/codenvy-cli-${project.version}/etc/java.util.logging.properties" />
                                 <mkdir dir="${project.build.directory}/codenvy-cli-${project.version}/logs" />
-                                <!-- turn off login command in the codenvy cli command jar-->
+                                <!-- turn off codenvy cli commands in the codenvy cli command jar-->
                                 <unzip dest="${project.build.directory}/archive-tmp/jar" src="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/cli/cli-command/${project.version}/cli-command-${project.version}.jar" />
-                                <replace file="${project.build.directory}/archive-tmp/jar/META-INF/services/org/apache/karaf/shell/commands">
-                                    <replacetoken>com.codenvy.cli.command.builtin.LoginCommand</replacetoken>
-                                    <replacevalue />
-                                </replace>
-                                <replace file="${project.build.directory}/archive-tmp/jar/META-INF/services/org/apache/karaf/shell/commands">
-                                    <replacetoken>com.codenvy.cli.command.builtin.HelpCommand</replacetoken>
-                                    <replacevalue />
-                                </replace>
+                                <replaceregexp file="${project.build.directory}/archive-tmp/jar/META-INF/services/org/apache/karaf/shell/commands" flags="gs">
+                                    <regexp pattern="com.codenvy.cli.command.builtin.*" />
+                                    <substitution expression="com.codenvy.cli.command.builtin.HelpNonInteractiveCommand" />
+                                </replaceregexp>
                                 <replaceregexp file="${project.build.directory}/archive-tmp/jar/OSGI-INF/blueprint/shell-log.xml" flags="gs">
-                                    <regexp pattern="&lt;command&gt;[^&lt;]*&lt;action class=&quot;com.codenvy.cli.command.builtin.LoginCommand&quot; /&gt;[^&lt;]*&lt;/command&gt;" />
-                                    <substitution expression="" />
+                                    <regexp pattern="&lt;command&gt;[^&lt;]*&lt;action class=&quot;com.codenvy.cli.command.builtin.*&quot;.*&lt;/command&gt;" />
+                                    <substitution expression="&lt;command&gt;&lt;action class=&quot;com.codenvy.cli.command.builtin.SwitchToCodenvyCommand&quot;/&gt;&lt;/command&gt;" />
                                 </replaceregexp>
                                 <zip basedir="${project.build.directory}/archive-tmp/jar" destfile="${project.build.directory}/codenvy-cli-${project.version}/system/com/codenvy/cli/cli-command/${project.version}/cli-command-${project.version}.jar" />
                             </target>

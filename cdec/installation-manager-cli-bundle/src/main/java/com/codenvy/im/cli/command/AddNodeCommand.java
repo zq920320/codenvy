@@ -36,7 +36,7 @@ import static com.google.api.client.repackaged.com.google.common.base.Strings.is
 /**
  * @author Dmytro Nochevnov
  */
-@Command(scope = "codenvy", name = "im-add-node", description = "Add node into Codenvy")
+@Command(scope = "codenvy", name = "add-node", description = "Add node into Codenvy")
 public class AddNodeCommand extends AbstractIMCommand {
 
     protected static final String DEFAULT_CODENVY_IP_FOR_THE_DOCKER_CONTAINER = "172.17.42.1";
@@ -84,7 +84,7 @@ public class AddNodeCommand extends AbstractIMCommand {
                 throw new IllegalStateException(
                         "This is the first time you add extra node to Codenvy. " +
                         "It is required to set IP of a Codenvy workspace master host. " +
-                        "Use the following syntax: im-add-node --codenvy-ip <CODENVY_IP_ADDRESS> <NODE_DNS>");
+                        "Use the following syntax: add-node --codenvy-ip <CODENVY_IP_ADDRESS> <NODE_DNS>");
             }
         }
     }

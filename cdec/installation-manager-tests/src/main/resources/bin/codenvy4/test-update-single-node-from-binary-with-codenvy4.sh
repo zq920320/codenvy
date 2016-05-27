@@ -25,12 +25,12 @@ installCodenvy ${PREV_CODENVY4_VERSION} --systemAdminName="newadmin" --systemAdm
 validateInstalledCodenvyVersion ${PREV_CODENVY4_VERSION}
 authWithoutRealmAndServerDns "newadmin" "new-password"
 
-executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY4_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY4_VERSION}"
 
 BINARIES="/home/vagrant/codenvy-im-data/updates/codenvy/${LATEST_CODENVY4_VERSION}/codenvy-${LATEST_CODENVY4_VERSION}.zip"
 
 # install from local folder
-executeIMCommand "im-install" "--binaries=$BINARIES" "codenvy" "${LATEST_CODENVY4_VERSION}"
+executeIMCommand "install" "--binaries=$BINARIES" "codenvy" "${LATEST_CODENVY4_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 authWithoutRealmAndServerDns "newadmin" "new-password"
 

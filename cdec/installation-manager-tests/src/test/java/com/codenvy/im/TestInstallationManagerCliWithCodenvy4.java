@@ -46,7 +46,7 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
 
     @Test
     public void testVersionCommand() throws Exception {
-        doTest("codenvy4/test-im-version.sh");
+        doTest("codenvy4/test-version.sh");
     }
 
     @Test
@@ -75,7 +75,6 @@ public class TestInstallationManagerCliWithCodenvy4 extends BaseTest {
     }
 
     /* Repeat tests in RHEL OS*/
-
     @Test
     public void testAddRemoveCodenvyNodesWithCodenvy4InRhelOs() throws Exception {
         doTest("codenvy4/test-add-remove-codenvy-nodes-with-codenvy4.sh", RHEL);

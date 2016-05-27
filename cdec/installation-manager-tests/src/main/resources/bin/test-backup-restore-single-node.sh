@@ -27,12 +27,12 @@ validateInstalledCodenvyVersion ${PREV_CODENVY3_VERSION}
 auth "admin" "password"
 
 # backup at start
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_AT_START=${OUTPUT}
 
 # modify data: add account, workspace, project, user, factory
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 auth "admin" "new-password"
 
 doPost "application/json" "{\"name\":\"account-1\"}" "http://codenvy/api/account?token=${TOKEN}"
@@ -60,12 +60,12 @@ fetchJsonParameter "id"
 FACTORY_ID=${OUTPUT}
 
 # backup with modifications
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_WITH_MODIFICATIONS=${OUTPUT}
 
 # restore initial state
-executeIMCommand "im-restore" ${BACKUP_AT_START}
+executeIMCommand "restore" ${BACKUP_AT_START}
 
 # check if data at start was restored correctly
 auth "admin" "password"
@@ -86,7 +86,7 @@ doGet "http://codenvy/api/factory/${FACTORY_ID}?token=${TOKEN}"
 validateExpectedString ".*Factory.*not.found.*"
 
 # restore state after modifications
-executeIMCommand "im-restore" ${BACKUP_WITH_MODIFICATIONS}
+executeIMCommand "restore" ${BACKUP_WITH_MODIFICATIONS}
 
 # check if modified data was restored correctly
 auth "admin" "new-password"
@@ -109,12 +109,12 @@ validateExpectedString ".*\"name\"\:\"my-minimalistic-factory\".*"
 authOnSite "user-1" "pwd123ABC"
 
 # update
-executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY3_VERSION}"
-executeIMCommand "im-install" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "install" "codenvy" "${LATEST_CODENVY3_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY3_VERSION}
 
 # restore state at start
-executeIMCommand "--valid-exit-code=1" "im-restore" ${BACKUP_AT_START}
+executeIMCommand "--valid-exit-code=1" "restore" ${BACKUP_AT_START}
 validateExpectedString ".*\"Version.of.backed.up.artifact.'${PREV_CODENVY3_VERSION}'.doesn't.equal.to.restoring.version.'${LATEST_CODENVY3_VERSION}'\".*\"status\".\:.\"ERROR\".*"
 
 printAndLog "RESULT: PASSED"

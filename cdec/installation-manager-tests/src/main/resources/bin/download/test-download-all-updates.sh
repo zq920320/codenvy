@@ -25,17 +25,17 @@ vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 installImCliClient
 validateInstalledImCliClientVersion
 
-executeIMCommand "im-download"
+executeIMCommand "download"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_STABLE_CODENVY_VERSION}\".*\"file\".\:.\".*codenvy-${LATEST_STABLE_CODENVY_VERSION}.zip\".*\"status\".\:.\"DOWNLOADED\".*"
 
-executeIMCommand "im-download" "--list-local"
+executeIMCommand "download" "--list-local"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_STABLE_CODENVY_VERSION}\".*\"file\".\:.\".*codenvy-${LATEST_STABLE_CODENVY_VERSION}.zip\".*\"status\".\:.\"READY_TO_INSTALL\".*"
 
-executeIMCommand "im-download" "--list-remote"
+executeIMCommand "download" "--list-remote"
 validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_STABLE_CODENVY_VERSION}\".*\"status\".\:.\"DOWNLOADED\".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${PREV_CODENVY3_VERSION}\".*\"status\".\:.\"AVAILABLE_TO_DOWNLOAD\".*"
 
-executeIMCommand "--valid-exit-code=1" "im-download" "unknown"
-executeIMCommand "--valid-exit-code=1" "im-download" "codenvy" "1.0.0"
+executeIMCommand "--valid-exit-code=1" "download" "unknown"
+executeIMCommand "--valid-exit-code=1" "download" "codenvy" "1.0.0"
 
 printAndLog "RESULT: PASSED"
 vagrantDestroy

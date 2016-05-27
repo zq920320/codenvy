@@ -22,22 +22,22 @@ public class TestInstallationManagerCli extends BaseTest{
     
     @Test
     public void testInstallExceptionCases() throws Exception {
-        doTest("im-install/test-install-exception-cases.sh");
+        doTest("install/test-install-exception-cases.sh");
     }
 
     @Test
     public void testInstallUpdateImCliClient() throws Exception {
-        doTest("im-install/test-install-update-im-cli-client.sh");
+        doTest("install/test-install-update-im-cli-client.sh");
     }
 
     @Test
     public void testLoginWithUsernameAndPassword() throws Exception {
-        doTest("im-login/test-login-to-saas-through-im-cli.sh");
+        doTest("login/test-login-to-saas-through-im-cli.sh");
     }
 
     @Test
     public void testDownloadAllUpdates() throws Exception {
-        doTest("im-download/test-download-all-updates.sh");
+        doTest("download/test-download-all-updates.sh");
     }
 
     @Test
@@ -47,7 +47,7 @@ public class TestInstallationManagerCli extends BaseTest{
 
     @Test
     public void testCheckImConfigCommand() throws Exception {
-        doTest("im-config/test-config-check-im-config.sh");
+        doTest("config/test-config-check-im-config.sh");
     }
 
 }

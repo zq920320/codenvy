@@ -414,7 +414,7 @@ doDownloadBinaries() {
     setStepIndicator 3
 
     for ((;;)); do
-        OUTPUT=$(doEvalWaitReconnection executeIMCommand im-download ${ARTIFACT} ${VERSION})
+        OUTPUT=$(doEvalWaitReconnection executeIMCommand download ${ARTIFACT} ${VERSION})
         local exitCode=$?
         echo "${OUTPUT}" | sed 's/\[[=> ]*\]//g'  >> install.log
 
@@ -431,7 +431,7 @@ doDownloadBinaries() {
     done
     doUpdateDownloadProgress 100
 
-    executeIMCommand im-download --list-local >> install.log
+    executeIMCommand download --list-local >> install.log
     validateExitCode $?
 }
 
@@ -509,10 +509,10 @@ doInstallCodenvy() {
         for ((;;)); do
             local exitCode
             if [ ${CODENVY_TYPE} == "multi" ]; then
-                doEvalWaitReconnection executeIMCommand im-install --step ${STEP} --forceInstall --multi --config ${CONFIG} ${ARTIFACT} ${VERSION} >> install.log
+                doEvalWaitReconnection executeIMCommand install --step ${STEP} --forceInstall --multi --config ${CONFIG} ${ARTIFACT} ${VERSION} >> install.log
                 exitCode=$?
             else
-                doEvalWaitReconnection executeIMCommand im-install --step ${STEP} --forceInstall --config ${CONFIG} ${ARTIFACT} ${VERSION} >> install.log
+                doEvalWaitReconnection executeIMCommand install --step ${STEP} --forceInstall --config ${CONFIG} ${ARTIFACT} ${VERSION} >> install.log
                 exitCode=$?
             fi
 

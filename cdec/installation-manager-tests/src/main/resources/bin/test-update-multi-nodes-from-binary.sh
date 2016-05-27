@@ -25,7 +25,7 @@ installCodenvy ${PREV_CODENVY3_VERSION}
 validateInstalledCodenvyVersion ${PREV_CODENVY3_VERSION}
 auth "admin" "password"
 
-executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY3_VERSION}"
 
 # put correct config into binaries
 BINARIES="/home/vagrant/codenvy-im-data/updates/codenvy/${LATEST_CODENVY3_VERSION}/codenvy-${LATEST_CODENVY3_VERSION}.zip"
@@ -44,7 +44,7 @@ executeSshCommand "sudo yum install zip -y -q"
 executeSshCommand "cd /tmp/codenvy && zip -r /tmp/codenvy.zip ."
 
 # install from local folder
-executeIMCommand "im-install" "--binaries=/tmp/codenvy.zip" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "install" "--binaries=/tmp/codenvy.zip" "codenvy" "${LATEST_CODENVY3_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY3_VERSION}
 auth "admin" "password"
 

@@ -208,7 +208,7 @@ public class TestVersionCommand extends AbstractTestCommand {
              + "    \"stable\" : \"1.0.2\",\n"
              + "    \"unstable\" : \"1.0.3-SNAPSHOT\"\n"
              + "  },\n"
-             + "  \"status\" : \"There is a new stable version of Codenvy available. Run im-download to download it.\"\n"
+             + "  \"status\" : \"There is a new stable version of Codenvy available. Run 'download' command to download it.\"\n"
              + "}\n"},
 
             {ImmutableList.of(INSTALLED_IM_1_0_1_STABLE,
@@ -224,7 +224,7 @@ public class TestVersionCommand extends AbstractTestCommand {
              + "    \"stable\" : \"1.0.2\",\n"
              + "    \"unstable\" : \"1.0.3-SNAPSHOT\"\n"
              + "  },\n"
-             + "  \"status\" : \"There is a new stable version of Codenvy available. Run im-install to install it.\"\n"
+             + "  \"status\" : \"There is a new stable version of Codenvy available. Run 'install' command to install it.\"\n"
              + "}\n"},
         };
     }

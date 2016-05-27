@@ -27,7 +27,7 @@ validateInstalledCodenvyVersion
 auth "admin" "password"
 
 # modify data: add accout, workspace, project, user, factory
-executeIMCommand "im-password" "password" "new-password"
+executeIMCommand "password" "password" "new-password"
 auth "admin" "new-password"
 
 doPost "application/json" "{\"name\":\"account-1\"}" "http://codenvy/api/account?token=${TOKEN}"
@@ -55,7 +55,7 @@ fetchJsonParameter "id"
 FACTORY_ID=${OUTPUT}
 
 # backup
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP=${OUTPUT}
 
@@ -68,7 +68,7 @@ installCodenvy ${LATEST_CODENVY3_VERSION}
 validateInstalledCodenvyVersion
 executeSshCommand "mkdir /home/vagrant/codenvy-im-data/backups"
 executeSshCommand "cp /vagrant/backup.tar.gz ${BACKUP}"
-executeIMCommand "im-restore" ${BACKUP}
+executeIMCommand "restore" ${BACKUP}
 
 # check data
 auth "admin" "new-password"

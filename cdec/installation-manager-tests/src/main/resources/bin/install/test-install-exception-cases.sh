@@ -19,17 +19,20 @@
 [ -f "./lib.sh" ] && . ./lib.sh
 [ -f "../lib.sh" ] && . ../lib.sh
 
-printAndLog "TEST CASE: Check current installation-manager config"
-
+printAndLog "TEST CASE: Install exception cases"
 vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
 
 installImCliClient
 validateInstalledImCliClientVersion
 
-executeIMCommand "im-config --im-cli"
+executeIMCommand "--valid-exit-code=1" "install" "codenvy" "${LATEST_CODENVY3_VERSION}"
+validateExpectedString ".*\"artifact\".\:.\"codenvy\".*\"version\".\:.\"${LATEST_CODENVY3_VERSION}\".*\"status\".\:.\"FAILURE\".*\"message\".\:.\"Binaries.to.install.codenvy\:${LATEST_CODENVY3_VERSION}.not.found\".*"
 
-validateExpectedString ".*download.directory=/home/vagrant/codenvy-im-data/updates.*saas.server.url=$SAAS_SERVER.*update.server.url=$UPDATE_SERVER.*"
+executeIMCommand "--valid-exit-code=1" "install" "unknown"
+validateExpectedString ".*Artifact..unknown..not.found*"
+
+executeIMCommand "--valid-exit-code=1" "install" "codenvy" "1.0.0"
+validateExpectedString ".*Can.t.download.installation.properties.*"
 
 printAndLog "RESULT: PASSED"
-
 vagrantDestroy

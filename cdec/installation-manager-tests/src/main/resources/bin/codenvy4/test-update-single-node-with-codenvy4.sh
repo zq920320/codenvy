@@ -27,17 +27,17 @@ installCodenvy ${PREV_CODENVY4_VERSION}
 validateInstalledCodenvyVersion ${PREV_CODENVY4_VERSION}
 
 # make backup
-executeIMCommand "im-backup"
+executeIMCommand "backup"
 fetchJsonParameter "file"
 BACKUP_PATH=${OUTPUT}
 
 # update to latest version
-executeIMCommand "im-download" "codenvy" "${LATEST_CODENVY4_VERSION}"
-executeIMCommand "im-install" "codenvy" "${LATEST_CODENVY4_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY4_VERSION}"
+executeIMCommand "install" "codenvy" "${LATEST_CODENVY4_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 
 # should be an error when try to restore from backup of another version
-executeIMCommand "--valid-exit-code=1" "im-restore" ${BACKUP_PATH}
+executeIMCommand "--valid-exit-code=1" "restore" ${BACKUP_PATH}
 validateExpectedString ".*\"Version.of.backed.up.artifact.'${PREV_CODENVY4_VERSION}'.doesn't.equal.to.restoring.version.'${LATEST_CODENVY4_VERSION}'\".*\"status\".\:.\"ERROR\".*"
 
 printAndLog "RESULT: PASSED"

@@ -35,17 +35,17 @@ public class TestInstallationManagerCliWithCodenvy3 extends BaseTest{
 
     @Test
     public void testInstallMultiNodeAndChangeConfig() throws Exception {
-        doTest("im-install/test-install-multi-nodes-and-change-config.sh");
+        doTest("install/test-install-multi-nodes-and-change-config.sh");
     }
 
     @Test
     public void testInstallSingleNodeAndChangeConfig() throws Exception {
-        doTest("im-install/test-install-single-node-and-change-config.sh");
+        doTest("install/test-install-single-node-and-change-config.sh");
     }
 
     @Test
     public void testInstallSudoPasswordRequired() throws Exception {
-        doTest("im-install/test-install-sudo-password-required.sh");
+        doTest("install/test-install-sudo-password-required.sh");
     }
 
     @Test

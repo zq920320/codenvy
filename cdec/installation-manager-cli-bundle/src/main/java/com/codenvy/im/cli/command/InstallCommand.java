@@ -51,7 +51,7 @@ import static java.lang.Math.max;
  * @author Alexander Reshetnyak
  * @author Anatoliy Bazko
  */
-@Command(scope = "codenvy", name = "im-install", description = "Install, update artifact or print the list of already installed ones")
+@Command(scope = "codenvy", name = "install", description = "Install, update artifact or print the list of already installed ones")
 public class InstallCommand extends AbstractIMCommand {
 
     private final ConfigManager configManager;
