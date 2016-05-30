@@ -200,6 +200,26 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-machine-authentication</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-machine-authentication-agent</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-machine-authentication-ide</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
+                <artifactId>codenvy-hosted-machine-authentication-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.hosted-infrastructure</groupId>
                 <artifactId>codenvy-hosted-mail-client</artifactId>
                 <version>${project.version}</version>
             </dependency>

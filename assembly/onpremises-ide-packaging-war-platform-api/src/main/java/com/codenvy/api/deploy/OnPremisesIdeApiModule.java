@@ -27,6 +27,7 @@ import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.user.server.AdminUserService;
 import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.api.workspace.server.dao.WorkerDao;
+import com.codenvy.auth.sso.client.ServerClient;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.auth.sso.client.filter.ConjunctionRequestFilter;
 import com.codenvy.auth.sso.client.filter.DisjunctionRequestFilter;
@@ -63,7 +64,6 @@ import org.eclipse.che.api.machine.server.recipe.RecipeLoader;
 import org.eclipse.che.api.machine.server.recipe.RecipeService;
 import org.eclipse.che.api.machine.server.recipe.providers.RecipeProvider;
 import org.eclipse.che.api.machine.server.wsagent.WsAgentLauncher;
-import org.eclipse.che.api.machine.server.wsagent.WsAgentLauncherImpl;
 import org.eclipse.che.api.project.server.handlers.ProjectHandler;
 import org.eclipse.che.api.project.server.template.ProjectTemplateDescriptionLoader;
 import org.eclipse.che.api.project.server.template.ProjectTemplateRegistry;
@@ -77,6 +77,7 @@ import org.eclipse.che.api.user.server.dao.UserDao;
 import org.eclipse.che.api.user.server.dao.UserProfileDao;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceService;
+import org.eclipse.che.api.workspace.server.WorkspaceServiceLinksInjector;
 import org.eclipse.che.api.workspace.server.WorkspaceValidator;
 import org.eclipse.che.api.workspace.server.event.WorkspaceMessenger;
 import org.eclipse.che.api.workspace.server.spi.StackDao;
@@ -199,6 +200,14 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(TokenValidator.class).to(com.codenvy.auth.sso.server.BearerTokenValidator.class);
         bind(com.codenvy.auth.sso.oauth.SsoOAuthAuthenticationService.class);
 
+        //machine authentication
+        bind(com.codenvy.machine.authentication.server.MachineTokenRegistry.class);
+        bind(com.codenvy.machine.authentication.server.MachineTokenService.class);
+        bind(WorkspaceServiceLinksInjector.class).to(com.codenvy.machine.authentication.server.AuthLinksInjector.class);
+        install(new com.codenvy.machine.authentication.server.interceptor.InterceptorModule());
+        bind(ServerClient.class).to(com.codenvy.auth.sso.client.MachineSsoServerClient.class);
+        bind(com.codenvy.auth.sso.client.MachineSessionInvalidator.class);
+
         //SSO
         Multibinder<com.codenvy.api.dao.authentication.AuthenticationHandler> handlerBinder =
                 Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
@@ -285,6 +294,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
 
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerTerminalModule());
+        bind(org.eclipse.che.api.machine.server.terminal.MachineTerminalLauncher.class);
+
         install(new org.eclipse.che.plugin.docker.machine.proxy.DockerProxyModule());
 
         install(new com.codenvy.api.permission.server.PermissionsModule());
@@ -316,12 +327,11 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
         install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
-
-        bind(WsAgentLauncher.class).to(WsAgentLauncherImpl.class);
-
         Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
                 Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
-        machineImageProviderMultibinder.addBinding().to(org.eclipse.che.plugin.docker.machine.DockerInstanceProvider.class);
+        machineImageProviderMultibinder.addBinding()
+                                       .to(com.codenvy.machine.AuthDockerInstanceProvider.class);
+        bind(WsAgentLauncher.class).to(com.codenvy.machine.launcher.WsAgentWithAuthLauncherImpl.class);
 
         //workspace activity service
         install(new com.codenvy.activity.server.inject.WorkspaceActivityModule());
