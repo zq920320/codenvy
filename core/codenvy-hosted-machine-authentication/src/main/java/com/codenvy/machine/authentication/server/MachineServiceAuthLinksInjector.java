@@ -15,6 +15,7 @@
 package com.codenvy.machine.authentication.server;
 
 import com.codenvy.machine.authentication.shared.dto.MachineTokenDto;
+import com.google.common.annotations.VisibleForTesting;
 
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
@@ -57,30 +58,34 @@ public class MachineServiceAuthLinksInjector extends MachineServiceLinksInjector
         this.httpJsonRequestFactory = httpJsonRequestFactory;
     }
 
+    @VisibleForTesting
     protected void injectTerminalLink(MachineDto machine, ServiceContext serviceContext, List<Link> links) {
-        String token = null;
-        try {
-            token = httpJsonRequestFactory.fromUrl(tokenServiceBaseUrl + machine.getWorkspaceId())
-                                          .setMethod(HttpMethod.GET)
-                                          .request()
-                                          .asDto(MachineTokenDto.class).getMachineToken();
-        } catch (ApiException | IOException ex) {
-            LOG.warn("Failed to get machine token", ex);
+        if (machine.getRuntime() != null) {
+            String token = null;
+            try {
+                token = httpJsonRequestFactory.fromUrl(tokenServiceBaseUrl + machine.getWorkspaceId())
+                                              .setMethod(HttpMethod.GET)
+                                              .request()
+                                              .asDto(MachineTokenDto.class)
+                                              .getMachineToken();
+            } catch (ApiException | IOException ex) {
+                LOG.warn("Failed to get machine token", ex);
+            }
+            final String machineToken = firstNonNull(token, "");
+            final String scheme = serviceContext.getBaseUriBuilder().build().getScheme();
+            final Collection<ServerDto> servers = machine.getRuntime().getServers().values();
+            servers.stream()
+                   .filter(server -> TERMINAL_REFERENCE.equals(server.getRef()))
+                   .findAny()
+                   .ifPresent(terminal -> links.add(createLink("GET",
+                                                               UriBuilder.fromUri(terminal.getUrl())
+                                                                         .scheme("https".equals(scheme) ? "wss"
+                                                                                                        : "ws")
+                                                                         .queryParam("token", machineToken)
+                                                                         .path("/pty")
+                                                                         .build()
+                                                                         .toString(),
+                                                               TERMINAL_REFERENCE)));
         }
-        final String machineToken = firstNonNull(token, "");
-        final String scheme = serviceContext.getBaseUriBuilder().build().getScheme();
-        final Collection<ServerDto> servers = machine.getRuntime().getServers().values();
-        servers.stream()
-               .filter(server -> TERMINAL_REFERENCE.equals(server.getRef()))
-               .findAny()
-               .ifPresent(terminal -> links.add(createLink("GET",
-                                                           UriBuilder.fromUri(terminal.getUrl())
-                                                                     .scheme("https".equals(scheme) ? "wss"
-                                                                                                    : "ws")
-                                                                     .queryParam("token", machineToken)
-                                                                     .path("/pty")
-                                                                     .build()
-                                                                     .toString(),
-                                                           TERMINAL_REFERENCE)));
     }
 }
