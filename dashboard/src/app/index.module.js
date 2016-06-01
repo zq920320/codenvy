@@ -96,6 +96,10 @@ initModule.factory('AuthInterceptor', ($window, $cookies, $q, $location, $log) =
   };
 });
 
+initModule.constant('codenvyDashboardConfig', {
+  developmentMode: DEV
+});
+
 // This can not be moved to separate factory class, because it is not fits into
 // model how Angular works with them. When we override request and responseError
 // functions, they are called in another context, without creating new class instance,
