@@ -112,6 +112,10 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-gitlab-factory-resolver</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-google-oauth2</artifactId>
         </dependency>
         <dependency>
@@ -121,6 +125,10 @@
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-microsoft-vsts-webhooks</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-url-factory</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>

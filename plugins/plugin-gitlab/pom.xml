@@ -18,28 +18,22 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>onpremises-assembly-parent</artifactId>
-        <groupId>com.codenvy.onpremises</groupId>
+        <artifactId>codenvy-plugin-parent</artifactId>
+        <groupId>com.codenvy.plugin</groupId>
         <version>4.3.0-RC1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
-    <groupId>com.codenvy.plugin</groupId>
-    <artifactId>codenvy-plugin-parent</artifactId>
-    <version>4.3.0-RC1-SNAPSHOT</version>
+    <artifactId>codenvy-plugin-gitlab-parent</artifactId>
     <packaging>pom</packaging>
-    <name>Codenvy Plugin Parent</name>
+    <name>Codenvy Plugin :: Gitlab :: Parent</name>
+    <licenses>
+        <license>
+            <name>Eclipse Public License</name>
+            <url>http://www.eclipse.org/legal/epl-v10.html</url>
+            <distribution>repo</distribution>
+        </license>
+    </licenses>
     <modules>
-        <module>plugin-google</module>
-        <module>plugin-wso2</module>
-        <module>plugin-projectlocker</module>
-        <module>plugin-pullrequest</module>
-        <module>plugin-hosted</module>
-        <module>plugin-webhooks</module>
-        <module>plugin-bitbucket</module>
-        <module>plugin-github</module>
-        <module>plugin-gitlab</module>
-        <module>plugin-microsoft</module>
-        <module>plugin-urlfactory</module>
-        <module>plugin-product-info</module>
+        <module>codenvy-plugin-gitlab-factory-resolver</module>
     </modules>
 </project>

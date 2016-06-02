@@ -18,13 +18,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>codenvy-plugin-github-parent</artifactId>
+        <artifactId>codenvy-plugin-gitlab-parent</artifactId>
         <groupId>com.codenvy.plugin</groupId>
         <version>4.3.0-RC1-SNAPSHOT</version>
     </parent>
-    <artifactId>codenvy-plugin-github-factory-resolver</artifactId>
+    <artifactId>codenvy-plugin-gitlab-factory-resolver</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy Plugin :: Github :: Factory Resolver</name>
+    <name>Codenvy Plugin :: Gitlab :: Factory Resolver</name>
     <properties>
         <findbugs.failonerror>true</findbugs.failonerror>
     </properties>

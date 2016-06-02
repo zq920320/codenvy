@@ -41,7 +41,8 @@ import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.codenvy.auth.sso.server.RolesExtractor;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
-import com.codenvy.plugin.factory.github.factory.resolver.GithubFactoryParametersResolver;
+import com.codenvy.plugin.github.factory.resolver.GithubFactoryParametersResolver;
+import com.codenvy.plugin.gitlab.factory.resolver.GitlabFactoryParametersResolver;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
@@ -157,10 +158,12 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(FactoryEditValidator.class).to(org.eclipse.che.api.factory.server.impl.FactoryEditValidatorImpl.class);
         bind(FactoryService.class);
 
-        Multibinder<FactoryParametersResolver> githubFactoryParametersResolverMultibinder =
+        Multibinder<FactoryParametersResolver> factoryParametersResolverMultibinder =
                 Multibinder.newSetBinder(binder(), FactoryParametersResolver.class);
-        githubFactoryParametersResolverMultibinder.addBinding()
+        factoryParametersResolverMultibinder.addBinding()
                                                   .to(GithubFactoryParametersResolver.class);
+        factoryParametersResolverMultibinder.addBinding()
+                                            .to(GitlabFactoryParametersResolver.class);
 
         Multibinder<ProjectHandler> projectHandlerMultibinder =
                 Multibinder.newSetBinder(binder(), org.eclipse.che.api.project.server.handlers.ProjectHandler.class);
