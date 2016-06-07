@@ -20,7 +20,7 @@
 # --docker-registry-mirror=<URL>
 # --http-proxy-for-codenvy-workspaces=<HTTP PROXY URL>
 # --https-proxy-for-codenvy-workspaces=<HTTPS PROXY URL>
-# --no-proxy=<CODENVY NO_PROXY PROPERTY>
+# --no-proxy-for-codenvy-workspaces=<CODENVY NO_PROXY PROPERTY>
 # --config=<PATH/URL TO CUSTOM CODENVY CONFIG>
 
 trap cleanUp EXIT
@@ -174,8 +174,8 @@ setRunOptions() {
         elif [[ "$var" =~ --https-proxy-for-codenvy-workspaces=.* ]]; then
             HTTPS_PROXY_FOR_CODENVY_WORKSPACES=$(echo "$var" | sed -e "s/--https-proxy-for-codenvy-workspaces=//g")
 
-        elif [[ "$var" =~ --no-proxy=.* ]]; then
-            CODENVY_NO_PROXY=$(echo "$var" | sed -e "s/--no-proxy=//g")
+        elif [[ "$var" =~ --no-proxy-for-codenvy-workspaces=.* ]]; then
+            CODENVY_NO_PROXY=$(echo "$var" | sed -e "s/--no-proxy-for-codenvy-workspaces=//g")
 
         elif [[ "$var" =~ --config=.* ]]; then
             CUSTOM_CONFIG=$(echo "$var" | sed -e "s/--config=//g")
