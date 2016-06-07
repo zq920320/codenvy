@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import static org.testng.Assert.assertEquals;
 
 /** @author Anatoliy Bazko */
-public class BaseTest {
+public class BaseIntegrationTest {
 
     public static final String RHEL = "rhel";
 
