@@ -28,13 +28,12 @@ import java.util.stream.Collectors;
 /**
  * Abstract implementation for {@link PermissionsDomain}
  *
- * Note: It supports "setPermission" and "readPermissions" by default
+ * Note: It supports "setPermission" by default
  *
  * @author Sergii Leschenko
  */
 public abstract class AbstractPermissionsDomain implements PermissionsDomain {
     public static final String SET_PERMISSIONS  = "setPermissions";
-    public static final String READ_PERMISSIONS = "readPermissions";
 
     private final String       id;
     private final List<String> allowedActions;
@@ -48,7 +47,6 @@ public abstract class AbstractPermissionsDomain implements PermissionsDomain {
         this.id = id;
         Set<String> resultActions = new HashSet<>(allowedActions);
         resultActions.add(SET_PERMISSIONS);
-        resultActions.add(READ_PERMISSIONS);
         this.allowedActions = ImmutableList.copyOf(resultActions);
         this.requiresInstance = requiresInstance;
     }

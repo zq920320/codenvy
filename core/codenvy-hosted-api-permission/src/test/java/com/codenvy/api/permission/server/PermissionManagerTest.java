@@ -176,8 +176,8 @@ public class PermissionManagerTest {
         final PermissionsDomain testDomain = permissionManager.getDomain("test");
         final List<String> allowedActions = testDomain.getAllowedActions();
 
-        assertEquals(allowedActions.size(), 6);
-        assertTrue(allowedActions.containsAll(ImmutableSet.of(SET_PERMISSIONS, "readPermissions", "read", "write", "use", "delete")));
+        assertEquals(allowedActions.size(), 5);
+        assertTrue(allowedActions.containsAll(ImmutableSet.of(SET_PERMISSIONS, "read", "write", "use", "delete")));
     }
 
     @Test(expectedExceptions = NotFoundException.class,
