@@ -34,8 +34,8 @@ export class CodenvyPermissions {
     // remote call
     this.remotePermissionsAPI = this.$resource('/api/permissions', {}, {
       store: {method: 'POST', url: '/api/permissions'},
-      remove: {method: 'DELETE', url: '/api/permissions/:domain/:instance/:user'},
-      getPermissionsByInstance: {method: 'GET', url: '/api/permissions/:domain/:instance/list', isArray: true}
+      remove: {method: 'DELETE', url: '/api/permissions/:domain?instance=:instance&user=:user'},
+      getPermissionsByInstance: {method: 'GET', url: '/api/permissions/:domain/all?instance=:instance', isArray: true}
     });
   }
 

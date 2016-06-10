@@ -98,7 +98,7 @@ public class MachineTokenInterceptorTest {
         EnvironmentContext.setCurrent(new EnvironmentContext() {
             @Override
             public Subject getSubject() {
-                return new SubjectImpl(USER_NAME, USER_ID, "token", null, false);
+                return new SubjectImpl(USER_NAME, USER_ID, "token", false);
             }
         });
     }
