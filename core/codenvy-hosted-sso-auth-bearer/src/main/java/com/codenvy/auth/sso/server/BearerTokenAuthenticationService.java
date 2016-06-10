@@ -29,6 +29,7 @@ import com.codenvy.mail.shared.dto.EmailBeanDto;
 import com.google.common.io.Files;
 
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.user.server.UserNameValidator;
 import org.eclipse.che.api.user.server.dao.User;
 import org.eclipse.che.commons.lang.Deserializer;
 import org.eclipse.che.commons.subject.Subject;
@@ -58,6 +59,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
+import static org.eclipse.che.api.user.server.UserNameValidator.normalizeUserName;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
@@ -126,7 +128,7 @@ public class BearerTokenAuthenticationService {
         }
         Map<String, String> payload = handler.getPayload(credentials.getToken());
         handler.authenticate(credentials.getToken());
-        final String username =  payload.get("username");
+        final String username = normalizeUserName(payload.get("username"));
         try {
             User user = userCreator.createUser(payload.get("email"), username, payload.get("firstName"), payload.get("lastName"));
             final Subject subject = new SubjectImpl(user.getName(),
@@ -190,12 +192,8 @@ public class BearerTokenAuthenticationService {
     public Response validate(ValidationData validationData, @Context UriInfo uriInfo)
             throws ApiException, MessagingException, IOException {
 
-        try {
-            inputDataValidator.validateUserMail(validationData.getEmail());
-            creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getUsername());
-        } catch (InputDataException e) {
-            return Response.status(500).entity(e.getMessage()).build();
-        }
+        inputDataValidator.validateUserMail(validationData.getEmail());
+        creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getUsername());
 
         Map<String, String> props = new HashMap<>();
         props.put("logo.cid", "codenvyLogo");
