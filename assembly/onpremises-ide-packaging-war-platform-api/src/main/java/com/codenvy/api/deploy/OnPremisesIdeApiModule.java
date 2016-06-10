@@ -351,5 +351,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                  .to(com.codenvy.machine.WsAgentServerProxyTransformer.class);
 
         install(new org.eclipse.che.plugin.machine.ssh.SshMachineModule());
+        bind(com.codenvy.api.factory.server.filters.FactoryPermissionsFilter.class);
     }
 }
