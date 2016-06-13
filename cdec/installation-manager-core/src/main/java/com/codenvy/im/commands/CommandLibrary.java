@@ -80,7 +80,7 @@ public class CommandLibrary {
     public static Command createReplaceCommand(String file, String replacingToken, String replacement, boolean withSudo) {
         String cmd = format("sudo cat %3$s | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|%1$s|%2$2s|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %3$s",
                             replacingToken,
-                            replacement.replace("\\$", "\\\\$").replace("\n", "\\n").replace("&", "\\&"), // http://sed.sourceforge.net/sedfaq3.html: "To enter a literal ampersand on the RHS, type '\&'."
+                            replacement.replace("\\$", "\\\\$").replace("\n", "\\n").replace("|", "\\|").replace("&", "\\&"), // http://sed.sourceforge.net/sedfaq3.html: "To enter a literal ampersand on the RHS, type '\&'."
                             file);
         return createCommand(withSudo ? cmd : cmd.replace("sudo ", ""));
     }
