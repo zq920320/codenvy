@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-hosted-infrastructure-parent</artifactId>
         <groupId>com.codenvy.hosted-infrastructure</groupId>
-        <version>4.3.2</version>
+        <version>4.3.3-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-mail-client</artifactId>
     <packaging>jar</packaging>
