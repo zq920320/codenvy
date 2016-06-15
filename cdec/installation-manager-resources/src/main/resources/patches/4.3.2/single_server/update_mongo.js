@@ -165,42 +165,54 @@ var updateSnapshots = function(){
 
     var organizationDb = db.getSiblingDB("organization");
     organizationDb.snapshots.find().snapshot().forEach(
-        function (snapshot) {
-            var registry = organizationDb.snapshots.findOne(
-                                 {_id: snapshot._id},
-                                 {instanceKey: {$elemMatch: {name: "registry"}}}).instanceKey[0].value;
+    function (snapshot) {
+         var repository = organizationDb.snapshots.findOne(
+                             {_id: snapshot._id},
+                             {instanceKey: {$elemMatch: {name: "repository"}}}).instanceKey[0].value;
+         try {
+         var registry = organizationDb.snapshots.findOne(
+                             {_id: snapshot._id},
+                             {instanceKey: {$elemMatch: {name: "registry"}}}).instanceKey[0].value;
+         } catch (err) {}
+         try {
+         var tag = organizationDb.snapshots.findOne(
+                             {_id: snapshot._id},
+                             {instanceKey: {$elemMatch: {name: "tag"}}}).instanceKey[0].value;
+         } catch (err) {}
+         try {
+         var digest = organizationDb.snapshots.findOne(
+                             {_id: snapshot._id},
+                             {instanceKey: {$elemMatch: {name: "digest"}}}).instanceKey[0].value;
+         } catch (err) {}
+         var location = repository;
+         if (typeof registry != 'undefined') {
+           location = registry + '/' + location;
+         }
+         if (typeof tag != 'undefined') {
+            location = location + ':' + tag;
+         }
+         if (typeof digest != 'undefined') {
+            location = location + '@' + digest;
+         }
 
-            var repository = organizationDb.snapshots.findOne(
-                                 {_id: snapshot._id},
-                                 {instanceKey: {$elemMatch: {name: "repository"}}}).instanceKey[0].value;
+        print("Found snapshot: " + snapshot._id);
 
-
-            var tag = organizationDb.snapshots.findOne(
-                                 {_id: snapshot._id},
-                                 {instanceKey: {$elemMatch: {name: "tag"}}}).instanceKey[0].value;
-
-            var digest = organizationDb.snapshots.findOne(
-                                 {_id: snapshot._id},
-                                 {instanceKey: {$elemMatch: {name: "digest"}}}).instanceKey[0].value;
-
-            print("Found snapshot: " + snapshot._id);
-
-            organizationDb.snapshots.update(
-                {
-                    _id: snapshot._id
-                },
-                {
-                        $set: {"machineSource" : {
-                                                  "type" : "image",
-                                                  "location": registry + '/' + repository + ':' + tag + '@' + digest,
-                                                  "content" : null
-                                                  }
-                             },
-                        $unset: {"instanceKey" : 1}
-                }
-            );
-        }
-    );
+        organizationDb.snapshots.update(
+            {
+                _id: snapshot._id
+            },
+            {
+                    $set: {"machineSource" : {
+                                              "type" : "image",
+                                              "location": location,
+                                              "content" : ""
+                                              }
+                         },
+                     $unset: {"instanceKey" : 1}
+            }
+        );
+      }
+   );
 }
 
 updateSnapshots();
