@@ -75,7 +75,7 @@ validateExpectedString ".*HTTPS_PROXY=\"$HTTPS_PASSWORDLESS_PROXY\".*"
 authWithoutRealmAndServerDns "admin" "password"
 
 # create user "cdec.im.test@gmail.com"
-doPost "application/json" "{\"name\":\"cdec\",\"email\":\"cdec.im.test@gmail.com\",\"password\":\"pwd123ABC\"}" "http://${HOST_URL}/api/user/create?token=${TOKEN}"
+doPost "application/json" "{\"name\":\"cdec\",\"email\":\"cdec.im.test@gmail.com\",\"password\":\"pwd123ABC\"}" "http://${HOST_URL}/api/user/create" "${TOKEN}"
 fetchJsonParameter "id"
 USER_ID=${OUTPUT}
 
