@@ -158,3 +158,49 @@ var createAdminsPermissions = function(admins){
 
 var ADMINS=[];
 createAdminsPermissions(ADMINS);
+
+/* https://jira.codenvycorp.com/browse/CHE-1332 */
+var updateSnapshots = function(){
+    print("Starting updating snapshots.");
+
+    var organizationDb = db.getSiblingDB("organization");
+    organizationDb.snapshots.find().snapshot().forEach(
+        function (snapshot) {
+            var registry = organizationDb.snapshots.findOne(
+                                 {_id: snapshot._id},
+                                 {instanceKey: {$elemMatch: {name: "registry"}}}).instanceKey[0].value;
+
+            var repository = organizationDb.snapshots.findOne(
+                                 {_id: snapshot._id},
+                                 {instanceKey: {$elemMatch: {name: "repository"}}}).instanceKey[0].value;
+
+
+            var tag = organizationDb.snapshots.findOne(
+                                 {_id: snapshot._id},
+                                 {instanceKey: {$elemMatch: {name: "tag"}}}).instanceKey[0].value;
+
+            var digest = organizationDb.snapshots.findOne(
+                                 {_id: snapshot._id},
+                                 {instanceKey: {$elemMatch: {name: "digest"}}}).instanceKey[0].value;
+
+            print("Found snapshot: " + snapshot._id);
+
+            organizationDb.snapshots.update(
+                {
+                    _id: snapshot._id
+                },
+                {
+                        $set: {"machineSource" : {
+                                                  "type" : "image",
+                                                  "location": registry + '/' + repository + ':' + tag + '@' + digest,
+                                                  "content" : null
+                                                  }
+                             },
+                        $unset: {"instanceKey" : 1}
+                }
+            );
+        }
+    );
+}
+
+updateSnapshots();
