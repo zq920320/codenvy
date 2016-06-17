@@ -19,6 +19,7 @@
 . ./lib.sh
 
 if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
+    RHEL_OS=true
     printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy in RHEL OS"
     vagrantUp ${SINGLE_NODE_RHEL_VAGRANT_FILE}
 else
