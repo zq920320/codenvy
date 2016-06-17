@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-agent-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
-        <version>4.3.3</version>
+        <version>4.3.4-SNAPSHOT</version>
     </parent>
     <artifactId>wsagent-codenvy</artifactId>
     <packaging>jar</packaging>
