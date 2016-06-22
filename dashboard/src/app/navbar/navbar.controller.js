@@ -106,7 +106,7 @@ export class CodenvyNavBarCtrl {
     // account dropdown items
     this.accountItems = [
       {
-        name: 'Profile & account',
+        name: 'Profile & Account',
         url: '#/account'
       },
       {
