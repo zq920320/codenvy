@@ -19,6 +19,7 @@
 . ./lib.sh
 
 if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
+    RHEL_OS=true
     printAndLog "TEST CASE: Add and remove Codenvy 4.x All-In-One nodes in RHEL OS"
     vagrantUp ${SINGLE_CODENVY4_RHEL_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
 else
