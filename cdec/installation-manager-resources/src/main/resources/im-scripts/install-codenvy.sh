@@ -30,6 +30,7 @@
 
 # --http-proxy-for-docker-daemon=<HTTP PROXY URL>
 # --https-proxy-for-docker-daemon=<HTTPS PROXY URL>
+# --no-proxy-for-docker-daemon=<NO_PROXY_FOR_DOCKER_DAEMON>
 
 trap cleanUp EXIT
 
@@ -195,6 +196,8 @@ setRunOptions() {
             HTTP_PROXY_FOR_DOCKER_DAEMON=$(echo "$var" | sed -e "s/--http-proxy-for-docker-daemon=//g")
         elif [[ "$var" =~ --https-proxy-for-docker-daemon=.* ]]; then
             HTTPS_PROXY_FOR_DOCKER_DAEMON=$(echo "$var" | sed -e "s/--https-proxy-for-docker-daemon=//g")
+        elif [[ "$var" =~ --no-proxy-for-docker-daemon=.* ]]; then
+            NO_PROXY_FOR_DOCKER_DAEMON=$(echo "$var" | sed -e "s/--no-proxy-for-docker-daemon=//g")
 
         elif [[ "$var" =~ --config=.* ]]; then
             CUSTOM_CONFIG=$(echo "$var" | sed -e "s/--config=//g")
@@ -1066,6 +1069,9 @@ printPreInstallInfo_single() {
     fi
     if [ -n "${HTTPS_PROXY_FOR_DOCKER_DAEMON}" ]; then
         insertProperty "https_proxy_for_docker_daemon" ${HTTPS_PROXY_FOR_DOCKER_DAEMON}
+    fi
+    if [ -n "${NO_PROXY_FOR_DOCKER_DAEMON}" ]; then
+        insertProperty "no_proxy_for_docker_daemon" ${NO_PROXY_FOR_DOCKER_DAEMON}
     fi
 
     if [ -n "${DOCKER_REGISTRY_MIRROR}" ]; then
