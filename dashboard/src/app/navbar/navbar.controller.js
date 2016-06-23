@@ -67,7 +67,7 @@ export class CodenvyNavBarCtrl {
     this.onpremAdminExpanded = true;
 
     this.menuItemUrl = {
-      login: '#/login',
+      login: '/site/login',
       dashboard: '#/',
       projects: '#/projects',
       workspaces: '#/workspaces',
