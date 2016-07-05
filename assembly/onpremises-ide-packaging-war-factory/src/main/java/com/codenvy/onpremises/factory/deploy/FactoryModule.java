@@ -32,7 +32,6 @@ public class FactoryModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("auth.sso.client_skip_filter_regexp")).to("^/factory/(_sso|resources|metrics)/(.+)$");
         bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
         bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url")).to("/site/error/error-cookies-disabled");
-        bindConstant().annotatedWith(Names.named("auth.sso.client_allow_anonymous")).to(false);
 
         bind(com.codenvy.auth.sso.client.filter.RequestFilter.class).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
     }
