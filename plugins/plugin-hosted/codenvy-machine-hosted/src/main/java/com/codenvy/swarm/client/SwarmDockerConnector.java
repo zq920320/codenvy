@@ -17,6 +17,7 @@ package com.codenvy.swarm.client;
 import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.base.Strings;
 
+import org.eclipse.che.plugin.docker.client.DockerApiVersionPathPrefixProvider;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerRegistryAuthResolver;
@@ -58,8 +59,9 @@ public class SwarmDockerConnector extends DockerConnector {
     public SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration,
                                 DockerConnectionFactory connectionFactory,
                                 DockerRegistryAuthResolver authManager,
-                                @Named("swarm.client.node_description_length") int nodeDescriptionLength) {
-        super(connectorConfiguration, connectionFactory, authManager);
+                                @Named("swarm.client.node_description_length") int nodeDescriptionLength,
+                                DockerApiVersionPathPrefixProvider dockerApiVersionPathPrefixProvider) {
+        super(connectorConfiguration, connectionFactory, authManager, dockerApiVersionPathPrefixProvider);
         this.nodeDescriptionLength = nodeDescriptionLength;
         this.strategy = new RandomNodeSelectionStrategy();
         this.nodeDaemonScheme = "http";
