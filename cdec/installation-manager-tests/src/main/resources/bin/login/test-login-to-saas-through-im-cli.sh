@@ -43,13 +43,13 @@ fetchJsonParameter "name"
 ACCOUNT_NAME=${OUTPUT}
 
 # add user with [account/owner] role
-doPost "application/json" "{\"name\":\"${UUID_OWNER}@codenvy.com\",\"password\":\"${PASSWORD}\"}" "${SAAS_SERVER}/api/user/create?token=${TOKEN}"
+doPost "application/json" "{\"name\":\"${UUID_OWNER}@codenvy.com\",\"password\":\"${PASSWORD}\"}" "${SAAS_SERVER}/api/user?token=${TOKEN}"
 fetchJsonParameter "id"
 USER_OWNER_ID=${OUTPUT}
 doPost "application/json" "{\"userId\":\"${USER_OWNER_ID}\",\"roles\":[\"account/owner\"]}" "${SAAS_SERVER}/api/account/${ACCOUNT_ID}/members?token=${TOKEN}"
 
 # add user with [account/member] role
-doPost "application/json" "{\"name\":\"${UUID_MEMBER}@codenvy.com\",\"password\":\"${PASSWORD}\"}" "${SAAS_SERVER}/api/user/create?token=${TOKEN}"
+doPost "application/json" "{\"name\":\"${UUID_MEMBER}@codenvy.com\",\"password\":\"${PASSWORD}\"}" "${SAAS_SERVER}/api/user?token=${TOKEN}"
 fetchJsonParameter "id"
 USER_MEMBER_ID=${OUTPUT}
 doPost "application/json" "{\"userId\":\"${USER_MEMBER_ID}\",\"roles\":[\"account/member\"]}" "${SAAS_SERVER}/api/account/${ACCOUNT_ID}/members?token=${TOKEN}"
