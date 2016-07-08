@@ -18,13 +18,18 @@ import com.codenvy.machine.authentication.server.MachineTokenRegistry;
 import com.google.common.base.MoreObjects;
 
 import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.model.machine.MachineConfig;
 import org.eclipse.che.api.core.model.machine.ServerConf;
+import org.eclipse.che.api.machine.server.exception.MachineException;
+import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.machine.server.spi.InstanceProvider;
 import org.eclipse.che.api.machine.server.util.RecipeRetriever;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
+import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.UserSpecificDockerRegistryCredentialsProvider;
 import org.eclipse.che.plugin.docker.machine.DockerContainerNameGenerator;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceProvider;
@@ -102,5 +107,20 @@ public class AuthDockerInstanceProvider extends DockerInstanceProvider {
         } catch (NotFoundException ignore) {
         }
         return MoreObjects.firstNonNull(userToken, "");
+    }
+
+    /**
+     * Origin pull image is unstable with swarm.
+     * This method workarounds that with performing docker build instead of docker pull.
+     *
+     * {@inheritDoc}
+     */
+    @Override
+    protected void pullImage(MachineConfig machineConfig, String machineImageName, ProgressMonitor progressMonitor)
+            throws NotFoundException, MachineException {
+        MachineConfigImpl machineConfigForBuild = new MachineConfigImpl(machineConfig);
+        machineConfigForBuild.setSource(new MachineSourceImpl(DockerInstanceProvider.DOCKER_FILE_TYPE)
+                                                .setContent("FROM " + machineConfig.getSource().getLocation()));
+        super.buildImage(machineConfigForBuild, machineImageName, true, progressMonitor);
     }
 }
