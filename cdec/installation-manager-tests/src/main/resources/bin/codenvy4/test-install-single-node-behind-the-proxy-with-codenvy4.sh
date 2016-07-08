@@ -21,10 +21,10 @@
 if [[ -n "$1" ]] && [[ "$1" == "rhel" ]]; then
     RHEL_OS=true
     printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy in RHEL OS"
-    vagrantUp ${SINGLE_NODE_RHEL_VAGRANT_FILE}
+    vagrantUp ${SINGLE_CODENVY4_RHEL_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
 else
     printAndLog "TEST CASE: Install Codenvy 4.x single-node behind the proxy"
-    vagrantUp ${SINGLE_NODE_VAGRANT_FILE}
+    vagrantUp ${SINGLE_CODENVY4_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
 fi
 
 # install Codenvy 4.x behind the proxy
@@ -95,6 +95,50 @@ doPost "application/json" "{}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}
 doSleep "10m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
+
+## test work with machine node behind the proxy
+# remove default node
+executeIMCommand "remove-node" "${HOST_URL}"
+validateExpectedString ".*\"type\".\:.\"MACHINE_NODE\".*\"host\".\:.\"${HOST_URL}\".*"
+doSleep "1m"  "Wait until Docker machine takes into account /usr/local/swarm/node_list config"
+executeSshCommand "sudo systemctl stop iptables"  # open port 23750
+doGet "http://${HOST_URL}:23750/info"
+validateExpectedString ".*Nodes\",\"0\".*"
+
+# add node1.${HOST_URL}
+executeIMCommand "add-node" "--codenvy-ip 192.168.56.110" "node1.${HOST_URL}"
+validateExpectedString ".*\"type\".\:.\"MACHINE_NODE\".*\"host\".\:.\"node1.${HOST_URL}\".*"
+executeSshCommand "sudo systemctl stop iptables"  # open port 23750
+doGet "http://${HOST_URL}:23750/info"
+validateExpectedString ".*Nodes\",\"1\".*\[\" node1.${HOST_URL}\",\"node1.${HOST_URL}:2375\"].*"
+
+# validate proxy settings in system config files on node
+executeSshCommand "cat /etc/wgetrc" "node1.${HOST_URL}"
+validateExpectedString ".*use_proxy=on.*"
+validateExpectedString ".http_proxy=$HTTP_PROXY.*"
+validateExpectedString ".https_proxy=$HTTPS_PROXY.*"
+validateExpectedString ".no_proxy='127.0.0.1|localhost'.*"
+
+executeSshCommand "cat /etc/yum.conf" "node1.${HOST_URL}"
+validateExpectedString ".*proxy=$PROXY_SERVER_WITHOUT_CREDENTIALS.*"
+validateExpectedString ".*proxy_username=$PROXY_USERNAME.*"
+validateExpectedString ".*proxy_password=$PROXY_PASSWORD.*"
+
+# run workspace "workspace-1"
+doPost "application/json" "{}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}/runtime?token=${TOKEN}"
+
+# verify is workspace running
+doSleep "10m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
+doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
+validateExpectedString ".*\"status\":\"RUNNING\".*"
+
+# remove node1.${HOST_URL}
+executeIMCommand "remove-node" "node1.${HOST_URL}"
+validateExpectedString ".*\"type\".\:.\"MACHINE_NODE\".*\"host\".\:.\"node1.${HOST_URL}\".*"
+doSleep "1m"  "Wait until Docker machine takes into account /usr/local/swarm/node_list config"
+executeSshCommand "sudo systemctl stop iptables"  # open port 23750
+doGet "http://${HOST_URL}:23750/info"
+validateExpectedString ".*Nodes\",\"0\".*"
 
 printAndLog "RESULT: PASSED"
 vagrantDestroy
