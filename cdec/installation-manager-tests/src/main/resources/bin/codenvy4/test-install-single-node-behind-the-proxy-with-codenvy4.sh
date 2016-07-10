@@ -27,23 +27,25 @@ else
     vagrantUp ${SINGLE_CODENVY4_WITH_ADDITIONAL_NODES_VAGRANT_FILE}
 fi
 
+NO_PROXY="codenvy"
+
 # install Codenvy 4.x behind the proxy
 executeSshCommand "echo '$PROXY_IP $PROXY_SERVER' | sudo tee --append /etc/hosts > /dev/null"
 
-installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy-for-installation=$HTTP_PROXY --https-proxy-for-installation=$HTTPS_PROXY --no-proxy-for-installation="'127.0.0.1|localhost'" --http-proxy-for-codenvy=$HTTP_PASSWORDLESS_PROXY --https-proxy-for-codenvy=$HTTPS_PASSWORDLESS_PROXY --no-proxy-for-codenvy="'127.0.0.1|codenvy'" --http-proxy-for-codenvy-workspaces=$HTTP_PROXY --https-proxy-for-codenvy-workspaces=$HTTPS_PROXY --no-proxy-for-codenvy-workspaces="'127.0.0.1|codenvy'" --http-proxy-for-docker-daemon=$HTTP_PASSWORDLESS_PROXY --https-proxy-for-docker-daemon=$HTTPS_PASSWORDLESS_PROXY --no-proxy-for-docker-daemon="'127.0.0.1|localhost'" --docker-registry-mirror=$HTTPS_PASSWORDLESS_PROXY
+installCodenvy ${LATEST_CODENVY4_VERSION} --http-proxy-for-installation=$HTTP_PROXY --https-proxy-for-installation=$HTTPS_PROXY --no-proxy-for-installation="'$NO_PROXY'" --http-proxy-for-codenvy=$HTTP_PROXY --https-proxy-for-codenvy=$HTTPS_PROXY --no-proxy-for-codenvy="'$NO_PROXY'" --http-proxy-for-codenvy-workspaces=$HTTP_PROXY --https-proxy-for-codenvy-workspaces=$HTTPS_PROXY --no-proxy-for-codenvy-workspaces="'$NO_PROXY'" --http-proxy-for-docker-daemon=$HTTP_PASSWORDLESS_PROXY --https-proxy-for-docker-daemon=$HTTPS_PASSWORDLESS_PROXY --no-proxy-for-docker-daemon="'$NO_PROXY'" --docker-registry-mirror=$HTTPS_PASSWORDLESS_PROXY
 validateInstalledCodenvyVersion ${LATEST_CODENVY4_VERSION}
 
 # validate proxy settings in system config files
 executeSshCommand "cat ~/.bashrc"
 validateExpectedString ".*export.http_proxy=$HTTP_PROXY.*"
 validateExpectedString ".*export.https_proxy=$HTTPS_PROXY.*"
-validateExpectedString ".*export.no_proxy='127.0.0.1|localhost'.*"
+validateExpectedString ".*export.no_proxy='$NO_PROXY'.*"
 
 executeSshCommand "cat /etc/wgetrc"
 validateExpectedString ".*use_proxy=on.*"
 validateExpectedString ".http_proxy=$HTTP_PROXY.*"
 validateExpectedString ".https_proxy=$HTTPS_PROXY.*"
-validateExpectedString ".no_proxy='127.0.0.1|localhost'.*"
+validateExpectedString ".no_proxy='$NO_PROXY'.*"
 
 executeSshCommand "cat /etc/yum.conf"
 validateExpectedString ".*proxy=$PROXY_SERVER_WITHOUT_CREDENTIALS.*"
@@ -52,13 +54,13 @@ validateExpectedString ".*proxy_password=$PROXY_PASSWORD.*"
 
 # validate codenvy properties which are defined in options of bootstrap script
 executeSshCommand "cat $PATH_TO_CODENVY4_PUPPET_MANIFEST"
-validateExpectedString ".*http_proxy_for_codenvy.=.\"$HTTP_PASSWORDLESS_PROXY\".*"
-validateExpectedString ".*https_proxy_for_codenvy.=.\"$HTTPS_PASSWORDLESS_PROXY\".*"
-validateExpectedString ".*no_proxy_for_codenvy.=.\"127.0.0.1|codenvy\".*"
+validateExpectedString ".*http_proxy_for_codenvy.=.\"$HTTP_PROXY\".*"
+validateExpectedString ".*https_proxy_for_codenvy.=.\"$HTTPS_PROXY\".*"
+validateExpectedString ".*no_proxy_for_codenvy.=.\"$NO_PROXY\".*"
 
 validateExpectedString ".*http_proxy_for_codenvy_workspaces.=.\"$HTTP_PROXY\".*"
 validateExpectedString ".*https_proxy_for_codenvy_workspaces.=.\"$HTTPS_PROXY\".*"
-validateExpectedString ".*no_proxy_for_codenvy_workspaces.=.\"127.0.0.1|codenvy\".*"
+validateExpectedString ".*no_proxy_for_codenvy_workspaces.=.\"$NO_PROXY\".*"
 
 validateExpectedString ".*http_proxy_for_docker_daemon.=.\"$HTTPS_PASSWORDLESS_PROXY\".*"
 validateExpectedString ".*https_proxy_for_docker_daemon.=.\"$HTTP_PASSWORDLESS_PROXY\".*"
@@ -71,7 +73,7 @@ validateExpectedString ".*--registry-mirror=$HTTPS_PASSWORDLESS_PROXY.*"
 executeSshCommand "cat /etc/sysconfig/docker"
 validateExpectedString ".*HTTP_PROXY=\"$HTTP_PASSWORDLESS_PROXY\".*"
 validateExpectedString ".*HTTPS_PROXY=\"$HTTPS_PASSWORDLESS_PROXY\".*"
-validateExpectedString ".*NO_PROXY=\"127.0.0.1|localhost\".*"
+validateExpectedString ".*NO_PROXY=\"$NO_PROXY\".*"
 
 ## check creation of workspace
 authWithoutRealmAndServerDns "admin" "password"
@@ -117,20 +119,40 @@ executeSshCommand "cat /etc/wgetrc" "node1.${HOST_URL}"
 validateExpectedString ".*use_proxy=on.*"
 validateExpectedString ".http_proxy=$HTTP_PROXY.*"
 validateExpectedString ".https_proxy=$HTTPS_PROXY.*"
-validateExpectedString ".no_proxy='127.0.0.1|localhost'.*"
+validateExpectedString ".no_proxy='$NO_PROXY'.*"
 
 executeSshCommand "cat /etc/yum.conf" "node1.${HOST_URL}"
 validateExpectedString ".*proxy=$PROXY_SERVER_WITHOUT_CREDENTIALS.*"
 validateExpectedString ".*proxy_username=$PROXY_USERNAME.*"
 validateExpectedString ".*proxy_password=$PROXY_PASSWORD.*"
 
+authWithoutRealmAndServerDns "cdec" "pwd123ABC"
+
 # run workspace "workspace-1"
 doPost "application/json" "{}" "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}/runtime?token=${TOKEN}"
 
-# verify is workspace running
+# obtain network ports
 doSleep "10m"  "Wait until workspace starts to avoid 'java.lang.NullPointerException' error on verifying workspace state"
 doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
 validateExpectedString ".*\"status\":\"RUNNING\".*"
+fetchJsonParameter "network.ports"
+NETWORK_PORTS=${OUTPUT}
+
+EXT_HOST_PORT_REGEX="4401/tcp=\[PortBinding\{hostIp='127.0.0.1', hostPort='([0-9]*)'\}\]"
+EXT_HOST_PORT=$([[ "$NETWORK_PORTS" =~ $EXT_HOST_PORT_REGEX ]] && echo ${BASH_REMATCH[1]})
+URL_OF_PROJECT_API="http://${HOST_URL}:81/${EXT_HOST_PORT}_codenvy/wsagent/ext/project"
+
+# obtain machine token
+doGet "http://${HOST_URL}/api/machine/token/${WORKSPACE_ID}?token=${TOKEN}"
+fetchJsonParameter "machineToken"
+MACHINE_TOKEN=${OUTPUT}
+
+# create project "project-1" of type "console-java" in workspace "workspace-1"
+doPost "application/json" "{\"location\":\"https://github.com/che-samples/console-java-simple.git\",\"parameters\":{},\"type\":\"git\"}" "${URL_OF_PROJECT_API}/import/project-1?token=${MACHINE_TOKEN}"
+
+doGet "http://${HOST_URL}/api/workspace/${WORKSPACE_ID}?token=${TOKEN}"
+validateExpectedString ".*\"status\":\"RUNNING\".*"
+validateExpectedString ".*\"path\":\"/project-1.*"
 
 # remove node1.${HOST_URL}
 executeIMCommand "remove-node" "node1.${HOST_URL}"
