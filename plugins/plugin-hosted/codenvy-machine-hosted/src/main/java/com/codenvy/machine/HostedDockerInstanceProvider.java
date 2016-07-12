@@ -50,31 +50,31 @@ import java.util.Set;
  * @author Anton Korneta
  * @author Roman Iuvshyn
  */
-public class AuthDockerInstanceProvider extends DockerInstanceProvider {
+public class HostedDockerInstanceProvider extends DockerInstanceProvider {
     private final MachineTokenRegistry tokenRegistry;
 
     @Inject
-    public AuthDockerInstanceProvider(DockerConnector docker,
-                                      DockerConnectorConfiguration dockerConnectorConfiguration,
-                                      UserSpecificDockerRegistryCredentialsProvider dockerCredentials,
-                                      DockerMachineFactory dockerMachineFactory,
-                                      DockerInstanceStopDetector dockerInstanceStopDetector,
-                                      DockerContainerNameGenerator containerNameGenerator,
-                                      RecipeRetriever recipeRetriever,
-                                      @Named("machine.docker.dev_machine.machine_servers") Set<ServerConf> devMachineServers,
-                                      @Named("machine.docker.machine_servers") Set<ServerConf> allMachinesServers,
-                                      @Named("machine.docker.dev_machine.machine_volumes") Set<String> devMachineSystemVolumes,
-                                      @Named("machine.docker.machine_volumes") Set<String> allMachinesSystemVolumes,
-                                      @Nullable @Named("machine.docker.machine_extra_hosts") String allMachinesExtraHosts,
-                                      WorkspaceFolderPathProvider workspaceFolderPathProvider,
-                                      @Named("che.machine.projects.internal.storage") String projectFolderPath,
-                                      @Named("machine.docker.pull_image") boolean doForcePullOnBuild,
-                                      @Named("machine.docker.privilege_mode") boolean privilegeMode,
-                                      @Named("machine.docker.dev_machine.machine_env") Set<String> devMachineEnvVariables,
-                                      @Named("machine.docker.machine_env") Set<String> allMachinesEnvVariables,
-                                      @Named("machine.docker.snapshot_use_registry") boolean snapshotUseRegistry,
-                                      @Named("machine.docker.memory_swap_multiplier") double memorySwapMultiplier,
-                                      MachineTokenRegistry tokenRegistry) throws IOException {
+    public HostedDockerInstanceProvider(DockerConnector docker,
+                                        DockerConnectorConfiguration dockerConnectorConfiguration,
+                                        UserSpecificDockerRegistryCredentialsProvider dockerCredentials,
+                                        DockerMachineFactory dockerMachineFactory,
+                                        DockerInstanceStopDetector dockerInstanceStopDetector,
+                                        DockerContainerNameGenerator containerNameGenerator,
+                                        RecipeRetriever recipeRetriever,
+                                        @Named("machine.docker.dev_machine.machine_servers") Set<ServerConf> devMachineServers,
+                                        @Named("machine.docker.machine_servers") Set<ServerConf> allMachinesServers,
+                                        @Named("machine.docker.dev_machine.machine_volumes") Set<String> devMachineSystemVolumes,
+                                        @Named("machine.docker.machine_volumes") Set<String> allMachinesSystemVolumes,
+                                        @Nullable @Named("machine.docker.machine_extra_hosts") String allMachinesExtraHosts,
+                                        WorkspaceFolderPathProvider workspaceFolderPathProvider,
+                                        @Named("che.machine.projects.internal.storage") String projectFolderPath,
+                                        @Named("machine.docker.pull_image") boolean doForcePullOnBuild,
+                                        @Named("machine.docker.privilege_mode") boolean privilegeMode,
+                                        @Named("machine.docker.dev_machine.machine_env") Set<String> devMachineEnvVariables,
+                                        @Named("machine.docker.machine_env") Set<String> allMachinesEnvVariables,
+                                        @Named("machine.docker.snapshot_use_registry") boolean snapshotUseRegistry,
+                                        @Named("machine.docker.memory_swap_multiplier") double memorySwapMultiplier,
+                                        MachineTokenRegistry tokenRegistry) throws IOException {
         super(docker,
               dockerConnectorConfiguration,
               dockerCredentials,
