@@ -17,6 +17,7 @@ package com.codenvy.swarm.client;
 import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.base.Strings;
 
+import org.eclipse.che.plugin.docker.client.DockerApiVersionPathPrefixProvider;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
 import org.eclipse.che.plugin.docker.client.DockerRegistryAuthResolver;
@@ -58,22 +59,28 @@ public class SwarmDockerConnector extends DockerConnector {
     public SwarmDockerConnector(DockerConnectorConfiguration connectorConfiguration,
                                 DockerConnectionFactory connectionFactory,
                                 DockerRegistryAuthResolver authManager,
-                                @Named("swarm.client.node_description_length") int nodeDescriptionLength) {
-        super(connectorConfiguration, connectionFactory, authManager);
+                                @Named("swarm.client.node_description_length") int nodeDescriptionLength,
+                                DockerApiVersionPathPrefixProvider dockerApiVersionPathPrefixProvider) {
+        super(connectorConfiguration, connectionFactory, authManager, dockerApiVersionPathPrefixProvider);
         this.nodeDescriptionLength = nodeDescriptionLength;
         this.strategy = new RandomNodeSelectionStrategy();
         this.nodeDaemonScheme = "http";
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * @deprecated Very unstable behavior with multiple nodes, try to workaround somehow
+     */
+    @Deprecated
     @Override
-    public void pull(PullParams params, ProgressMonitor progressMonitor) throws IOException, InterruptedException {
+    public void pull(PullParams params, ProgressMonitor progressMonitor) throws IOException {
         final DockerNode node = strategy.select(getAvailableNodes());
         super.pull(params, progressMonitor, addrToUri(node.getAddr()));
     }
 
     @Override
-    public String buildImage(BuildImageParams params, ProgressMonitor progressMonitor)
-            throws IOException, InterruptedException {
+    public String buildImage(BuildImageParams params, ProgressMonitor progressMonitor) throws IOException {
         try {
             return super.buildImage(params, progressMonitor);
         } catch (DockerException e) {
@@ -128,22 +135,24 @@ public class SwarmDockerConnector extends DockerConnector {
      * </pre>
      */
     private List<DockerNode> getAvailableNodes() throws IOException {
-        final String[][] systemStatus = getSystemInfo().getSystemStatus();
-        if (systemStatus == null) {
+        SystemInfo systemInfo = getSystemInfo();
+        final String[][] systemDescription = systemInfo.getSystemStatus() != null ? systemInfo.getSystemStatus()
+                                                                                  : systemInfo.getDriverStatus();
+        if (systemDescription == null) {
             throw new DockerException("Can't find available docker nodes. DriverStatus, SystemStatus fields missing.", 500);
         }
         int count = 0;
         int startsFrom = 0;
-        for (int i = 0; i < systemStatus.length; ++i) {
-            if ("Nodes".equals(Strings.nullToEmpty(systemStatus[i][0]).trim())) {
-                count = firstNonNull(tryParse(systemStatus[i][1]), 0);
+        for (int i = 0; i < systemDescription.length; ++i) {
+            if ("Nodes".equals(Strings.nullToEmpty(systemDescription[i][0]).trim())) {
+                count = firstNonNull(tryParse(systemDescription[i][1]), 0);
                 startsFrom = i + 1;
                 break;
             }
         }
         final ArrayList<DockerNode> nodes = new ArrayList<>(count);
         for (int i = 0; i < count; ++i) {
-            final String[] node = systemStatus[i * nodeDescriptionLength + startsFrom];
+            final String[] node = systemDescription[i * nodeDescriptionLength + startsFrom];
             nodes.add(new DockerNode(node[0], node[1]));
         }
         return nodes;

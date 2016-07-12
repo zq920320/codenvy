@@ -16,6 +16,7 @@ package com.codenvy.auth.sso.oauth;
 
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.BearerTokenManager;
+import com.google.common.collect.ImmutableMap;
 
 import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
@@ -23,8 +24,8 @@ import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.user.server.dao.User;
-import org.eclipse.che.api.user.server.dao.UserDao;
+import org.eclipse.che.api.core.model.user.User;
+import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
 import org.eclipse.che.security.oauth.OAuthAuthenticatorProvider;
@@ -54,7 +55,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 public class OAuthLoginServlet extends HttpServlet {
     private static final Logger LOG = LoggerFactory.getLogger(OAuthLoginServlet.class);
     @Inject
-    private UserDao                    userDao;
+    private UserManager                      userManager;
     @Inject
     private OAuthAuthenticatorProvider authenticatorProvider;
     @Inject
@@ -126,13 +127,13 @@ public class OAuthLoginServlet extends HttpServlet {
                                 .replaceQueryParam("signature")
                                 .replaceQueryParam("oauth_provider")
                                 .replaceQueryParam("oauthbearertoken")
-                                .queryParam("bearertoken", handler.generateBearerToken(email,
-                                                                                       userOptional.get().getName(),
-                                                                                       Collections
-                                                                                               .singletonMap(
-                                                                                                       "initiator",
-                                                                                                       oauthProvider)
-                                                                                      ))
+                                .queryParam("bearertoken", handler.generateBearerToken(
+                                        ImmutableMap.of(
+                                                "initiator", oauthProvider,
+                                                "email", email,
+                                                "userName", userOptional.get().getName(),
+                                                "password", "???"
+                                                       )))
                                 .build();
 
             LOG.debug("Oauth login. Redirect after: {}", uri.toString());
@@ -166,7 +167,7 @@ public class OAuthLoginServlet extends HttpServlet {
 
     private Optional<User> getUserByEmail(String email) throws IOException {
         try {
-            User user = userDao.getByAlias(email);
+            User user = userManager.getByEmail(email);
             return Optional.of(user);
         } catch (NotFoundException e) {
             return Optional.empty();
@@ -186,7 +187,7 @@ public class OAuthLoginServlet extends HttpServlet {
 
     private Optional<User> getUserByName(String name) throws IOException {
         try {
-            User user = userDao.getByName(name);
+            User user = userManager.getByName(name);
             return Optional.of(user);
         } catch (NotFoundException e) {
             return Optional.empty();
@@ -199,7 +200,7 @@ public class OAuthLoginServlet extends HttpServlet {
         Map<String, String> profileInfo = new HashMap<>();
         try {
             try {
-                userDao.getByAlias(email);
+                userManager.getByEmail(email);
             } catch (NotFoundException e) {
                 String fullName = authenticator.getUser(token).getName();
                 if (fullName != null && !fullName.isEmpty()) {

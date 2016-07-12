@@ -31,7 +31,6 @@ public class InstallationManagerServerServletModule extends ServletModule {
 
     @Override
     protected void configureServlets() {
-        bindConstant().annotatedWith(Names.named("auth.sso.client_allow_anonymous")).to(false);
         bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
         bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url")).to("/site/error/error-cookies-disabled");
 
