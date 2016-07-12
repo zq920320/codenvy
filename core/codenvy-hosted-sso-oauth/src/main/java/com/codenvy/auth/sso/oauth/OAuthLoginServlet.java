@@ -16,9 +16,9 @@ package com.codenvy.auth.sso.oauth;
 
 import com.codenvy.auth.sso.server.InputDataValidator;
 import com.codenvy.auth.sso.server.BearerTokenManager;
+import com.codenvy.auth.sso.server.InvalidBearerTokenException;
 import com.google.common.collect.ImmutableMap;
 
-import org.eclipse.che.api.auth.AuthenticationException;
 import org.eclipse.che.api.auth.shared.dto.OAuthToken;
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
@@ -91,9 +91,9 @@ public class OAuthLoginServlet extends HttpServlet {
 
 
         try {
-            handler.authenticate(bearertoken);
-        } catch (AuthenticationException e) {
-            resp.sendError(e.getResponseStatus(), e.getLocalizedMessage());
+            handler.checkValid(bearertoken);
+        } catch (InvalidBearerTokenException e) {
+            resp.sendError(403, e.getLocalizedMessage());
             return;
         }
 
@@ -147,6 +147,8 @@ public class OAuthLoginServlet extends HttpServlet {
             // fill user profile if user doesn't exists and login in first time.
             Map<String, String> profileInfo = createProfileInfo(email, authenticator, token);
             profileInfo.put("initiator", oauthProvider);
+            profileInfo.put("email",email);
+            profileInfo.put("userName", findAvailableUsername(email));
 
             try {
                 inputDataValidator.validateUserMail(email);
@@ -156,7 +158,8 @@ public class OAuthLoginServlet extends HttpServlet {
                                   .replaceQueryParam("signature")
                                   .replaceQueryParam("oauth_provider")
                                   .replaceQueryParam("bearertoken",
-                                                     handler.generateBearerToken(email, findAvailableUsername(email), profileInfo)).build();
+                                                     handler.generateBearerToken(profileInfo))
+                                  .build();
 
                 resp.sendRedirect(uri.toString());
             } catch (BadRequestException e) {

@@ -1,3 +1,17 @@
+/*
+ *  [2012] - [2016] Codenvy, S.A.
+ *  All Rights Reserved.
+ *
+ * NOTICE:  All information contained herein is, and remains
+ * the property of Codenvy S.A. and its suppliers,
+ * if any.  The intellectual and technical concepts contained
+ * herein are proprietary to Codenvy S.A.
+ * and its suppliers and may be covered by U.S. and Foreign Patents,
+ * patents in process, and are protected by trade secret or copyright law.
+ * Dissemination of this information or reproduction of this material
+ * is strictly forbidden unless prior written permission is obtained
+ * from Codenvy S.A..
+ */
 package com.codenvy.auth.sso.server;
 
 import com.codenvy.mail.MailSenderClient;
@@ -10,11 +24,12 @@ import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.model.user.User;
 import org.eclipse.che.api.user.server.Constants;
 import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.api.user.server.UserService;
-import org.eclipse.che.api.user.server.dao.PreferenceDao;
-import org.eclipse.che.api.user.server.dao.User;
+import org.eclipse.che.api.user.server.model.impl.UserImpl;
+import org.eclipse.che.api.user.server.spi.PreferenceDao;
 import org.eclipse.che.commons.lang.Deserializer;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.slf4j.Logger;
@@ -60,11 +75,10 @@ public class SelfRegistrationManager {
     PreferenceDao      preferenceDao;
     @Inject
     @Named(UserService.USER_SELF_CREATION_ALLOWED)
-    boolean userSelfCreationAllowed;
+    boolean            userSelfCreationAllowed;
 
 
     public void createUser(String token) {
-
     }
 
     public void createUser(String email, String firstName, String lastName)
@@ -75,10 +89,7 @@ public class SelfRegistrationManager {
         String userName = findAvailableUsername(email);
         String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
         String password = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        final User user = new User().withId(id)
-                                    .withName(userName)
-                                    .withEmail(email)
-                                    .withPassword(password);
+        final User user = new UserImpl(id, email, userName, password, Collections.emptyList());
         userManager.create(user, false);
 
         final Map<String, String> preferences = preferenceDao.getPreferences(id);

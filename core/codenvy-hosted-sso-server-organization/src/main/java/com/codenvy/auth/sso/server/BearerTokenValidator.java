@@ -32,10 +32,11 @@ public class BearerTokenValidator implements TokenValidator {
 
     @Override
     public User validateToken(String token) throws ConflictException {
-        Map<String, String> payload =  handler.getPayload(token);
-        String username =  handler.getPayload(token).get("username");
-        if (username == null || !handler.isValid(token))
+        try {
+            Map<String, String> payload = handler.getPayload(token);
+            return new UserImpl(null, payload.get("email"), payload.get("username"));
+        } catch (InvalidBearerTokenException e) {
             throw new ConflictException("Cannot create user - authentication token is invalid. Request a new one.");
-        return new UserImpl(null, payload.get("email"), payload.get("username"));
+        }
     }
 }

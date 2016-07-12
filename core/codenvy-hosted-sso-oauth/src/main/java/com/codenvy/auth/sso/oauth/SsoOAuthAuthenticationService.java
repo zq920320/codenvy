@@ -71,11 +71,13 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         if ("sso".equals(mode) || "federated_login".equals(mode)) {
             Map<String, String> payload = new HashMap<>();
             payload.put("provider", providerName);
+            payload.put("email", userId);
+            payload.put("userName", userId);
 
             return Response.temporaryRedirect(
                     UriBuilder.fromUri(redirectAfterLogin)
                               .queryParam("email", userId)
-                              .queryParam("oauthbearertoken", authenticationHandler.generateBearerToken(userId, userId, payload))
+                              .queryParam("oauthbearertoken", authenticationHandler.generateBearerToken(payload))
                               .build())
                            .build();
 
