@@ -38,7 +38,7 @@ import java.io.IOException;
 /**
  * Created by sj on 10.06.16.
  */
-@Path("user/selfregister")
+@Path("selfregister")
 public class SelfRegistrationService {
 
     private static final Logger LOG = LoggerFactory.getLogger(SelfRegistrationService.class);

@@ -17,11 +17,11 @@
  */
  
 (function(window){
-	define (["jquery", "underscore","views/accountformbase","backbone", "models/account", "handlebars", "text!templates/login.html", "text!templates/create.html", "text!templates/oauthbtn.html"],
+    define (["jquery", "underscore","views/accountformbase","backbone", "models/account", "handlebars", "text!templates/login.html", "text!templates/create.html", "text!templates/oauthbtn.html"],
 	function($,_,AccountFormBase,Backbone,Account, Handlebars, loginTemplate, createTemplate, oauthTemplate){
         var action,
         errorContainer,
-		oauthProviderButtons;
+        oauthProviderButtons;
         oauthProviderButtons = ["google", "github","microsoft"]; // the list of oauth provider buttons
         var LoginForm = AccountFormBase.extend({
             loginTemplate : Handlebars.compile(loginTemplate),
@@ -222,9 +222,10 @@
 	                            },this)
 	                        );
 	                }else{
-		                Account.createTenant(
+		                Account.verifyEmail(
 		                    $(form).find("input[name='email']").val(),
 		                    $(form).find("input[name='username']").val(),
+                            $(form).find("input[name='password']").val(),
 		                    _.bind(function(errors){
 
 		                        this.__restoreForm();

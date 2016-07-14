@@ -34,6 +34,7 @@ public class BearerSecurityModule extends AbstractModule {
                 Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
         handlerBinder.addBinding().to(BearerAuthenticationHandler.class);
         bind(BearerTokenManager.class);
+        bind(SelfRegistrationService.class);
         bind(com.codenvy.auth.sso.server.InputDataValidator.class);
         bindConstant().annotatedWith(Names.named(InputDataValidator.EMAIL_BLACKLIST_FILE)).to("cloud-ide-user-mail-blacklist.txt");
     }

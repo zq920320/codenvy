@@ -381,7 +381,31 @@
                 );
             },
 
-            //--------------------------------- Recover password module
+            verifyEmail: function (email, username, password, error) {
+                var data = {
+                    email: email.toLowerCase(),
+                    userName: username.toLowerCase(),
+                    password: password
+                };
+                var emailValidateUrl = "/api/selfregister/verify?" + window.location.search.substring(1);
+                $.ajax({
+                    url: emailValidateUrl,
+                    type: "POST",
+                    contentType: "application/json",
+                    data: JSON.stringify(data),
+                    success: function () {
+                        redirectToUrl('../site/thank-you');
+                    },
+                    error: function (response /*, status , err*/) {
+                        error([
+                            new AccountError(null, getResponseMessage(response))
+                        ]);
+                    }
+                });
+            },
+
+
+    //--------------------------------- Recover password module
             // Send recover password request
             recoverPassword: function(email, success, error) {
                 var passwordRecoveryUrl = "/api/password/recover/" + email;
