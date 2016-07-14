@@ -1064,6 +1064,11 @@ printPreInstallInfo_single() {
     fi
 
     if [ -n "${HOST_NAME}" ]; then
+        if [ "$(validateHostname "${HOST_NAME}")" != "success" ]; then
+            println $(printError "ERROR: The hostname '${HOST_NAME}' isn't available or wrong.")
+            exit 1
+        fi
+
         insertProperty "host_url" ${HOST_NAME}
     fi
 
