@@ -296,6 +296,9 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
 
+        bind(String.class).annotatedWith(Names.named("machine.docker.machine_env"))
+                          .toProvider(com.codenvy.machine.MaintenanceConstraintProvider.class);
+
         install(new org.eclipse.che.plugin.docker.machine.ext.DockerTerminalModule());
         bind(org.eclipse.che.api.machine.server.terminal.MachineTerminalLauncher.class);
 
