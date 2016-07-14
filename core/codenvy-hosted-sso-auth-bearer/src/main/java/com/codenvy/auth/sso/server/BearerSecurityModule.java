@@ -16,6 +16,7 @@ package com.codenvy.auth.sso.server;
 
 import com.codenvy.api.dao.authentication.AuthenticationHandler;
 import com.google.inject.AbstractModule;
+import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 
 import org.eclipse.che.inject.DynaModule;
@@ -29,7 +30,9 @@ import org.eclipse.che.inject.DynaModule;
 public class BearerSecurityModule extends AbstractModule {
     @Override
     protected void configure() {
-        bind(AuthenticationHandler.class).to(BearerAuthenticationHandler.class);
+        Multibinder<AuthenticationHandler> handlerBinder =
+                Multibinder.newSetBinder(binder(), com.codenvy.api.dao.authentication.AuthenticationHandler.class);
+        handlerBinder.addBinding().to(BearerAuthenticationHandler.class);
         bind(BearerTokenManager.class);
         bind(com.codenvy.auth.sso.server.InputDataValidator.class);
         bindConstant().annotatedWith(Names.named(InputDataValidator.EMAIL_BLACKLIST_FILE)).to("cloud-ide-user-mail-blacklist.txt");

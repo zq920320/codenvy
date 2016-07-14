@@ -24,6 +24,7 @@ import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.model.user.User;
 import org.eclipse.che.api.user.server.Constants;
 import org.eclipse.che.api.user.server.UserManager;
@@ -78,32 +79,35 @@ public class SelfRegistrationManager {
     boolean            userSelfCreationAllowed;
 
 
-    public void createUser(String token) {
+    public void createUser(String token)
+            throws InvalidBearerTokenException, ServerException, ConflictException, NotFoundException, IOException {
+           Map<String, String> payload = tokenManager.getPayload(token);
+           createUser(payload.get("email"), payload.get("userName"), payload.get("password"));
     }
 
-    public void createUser(String email, String firstName, String lastName)
+    public void createUser(String email, String userName, String password)
             throws IOException, ConflictException, ServerException, NotFoundException {
         if (!userSelfCreationAllowed) {
-            throw new IOException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
+            throw new ConflictException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
         }
-        String userName = findAvailableUsername(email);
-        String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
-        String password = UUID.randomUUID().toString().replace("-", "").substring(0, 12);
-        final User user = new UserImpl(id, email, userName, password, Collections.emptyList());
+        final String availableUsername = userName == null ? findAvailableUsername(email) : findAvailableUsername(userName);
+        final String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
+        final String userPassword = password == null ?  UUID.randomUUID().toString().replace("-", "").substring(0, 12) : password;
+        final User user = new UserImpl(id, email, availableUsername, userPassword, Collections.emptyList());
         userManager.create(user, false);
 
         final Map<String, String> preferences = preferenceDao.getPreferences(id);
         preferences.putAll(ImmutableMap.of(
-                "firstName", firstName,
-                "lastName", lastName,
+//                "firstName", firstName,
+//                "lastName", lastName,
                 "email", email));
         preferenceDao.setPreferences(id, preferences);
 
 
     }
 
-    private String findAvailableUsername(String email) throws IOException {
-        String candidate = email.contains("@") ? email.substring(0, email.indexOf('@')) : email;
+    private String findAvailableUsername(String source) throws IOException {
+        String candidate = source.contains("@") ? source.substring(0, source.indexOf('@')) : source;
         int count = 1;
         while (getUserByName(candidate).isPresent()) {
             candidate = candidate.concat(String.valueOf(count++));

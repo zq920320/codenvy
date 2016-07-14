@@ -8,6 +8,7 @@
  * NOTICE:  All information contained herein is, and remains
  * the property of Codenvy S.A. and its suppliers,
  * if any.  The intellectual and technical concepts contained
+ * if any.  The intellectual and technical concepts contained
  * herein are proprietary to Codenvy S.A.
  * and its suppliers and may be covered by U.S. and Foreign Patents,
  * patents in process, and are protected by trade secret or copyright law.
@@ -119,26 +120,6 @@
                 });
             }
         };
-        var authenticate = function(bearertoken) {
-            var deferredResult = $.Deferred();
-            var data = {
-                token: bearertoken
-            };
-            var authenticateUrl = "/api/internal/token/authenticate";
-            $.ajax({
-                url: authenticateUrl,
-                type: "POST",
-                contentType: "application/json",
-                data: JSON.stringify(data)
-            })
-            .success(function(response){
-                deferredResult.resolve(response);
-            })
-            .error(function(error){
-                deferredResult.reject(error);
-            });
-            return deferredResult;
-        };
 
         var getOwnAccount = function(accounts){
             var ownAccount = {accountReference:{id:false}};
@@ -237,13 +218,16 @@
             return deferredResult;
         };
 
-        var login = function(email, password) {
+        var login = function(email, password, realm) {
             if (isWebsocketEnabled()) {
                 var loginUrl = "/api/auth/login?" + window.location.search.substring(1);
                 var data = {
                     username: email,
                     password: password
                 };
+                if (realm) {
+                    data.realm = realm;
+                }
                 return $.ajax({
                     url: loginUrl,
                     type: "POST",
@@ -315,7 +299,6 @@
             getQueryParameterByName: getQueryParameterByName,
             appendQuery: appendQuery,
             AccountError: AccountError,
-            authenticate: authenticate,
             ensureExistenceAccount: ensureExistenceAccount,
             getOwnAccount: getOwnAccount,
             isApiAvailable: isApiAvailable,
@@ -379,8 +362,8 @@
             },
 
             // signup, oAuth login,
-            processCreate: function(bearertoken, redirect_url,  error) {
-                authenticate(bearertoken)
+            processCreate: function(email, bearertoken, redirect_url,  error) {
+                login(email, bearertoken, "bearer")
                 .then(function(){
                     if (!redirect_url){
                         redirectToUrl("/dashboard/");
@@ -396,28 +379,6 @@
                         }
                     }
                 );
-            },
-
-            createTenant: function(email, username, error) {
-                var data = {
-                    email: email.toLowerCase(),
-                    username: username.toLowerCase()
-                };
-                var emailValidateUrl = "/api/internal/token/validate?" + window.location.search.substring(1);
-                $.ajax({
-                    url: emailValidateUrl,
-                    type: "POST",
-                    contentType: "application/json",
-                    data: JSON.stringify(data),
-                    success: function() {
-                        redirectToUrl('../site/thank-you');
-                    },
-                    error: function(response /*, status , err*/ ) {
-                        error([
-                            new AccountError(null, getResponseMessage(response))
-                        ]);
-                    }
-                });
             },
 
             //--------------------------------- Recover password module
