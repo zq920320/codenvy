@@ -19,7 +19,9 @@ import com.google.common.base.MoreObjects;
 
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.model.machine.MachineConfig;
+import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.core.model.machine.ServerConf;
+import org.eclipse.che.api.core.util.FileCleaner;
 import org.eclipse.che.api.machine.server.exception.MachineException;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
@@ -29,8 +31,10 @@ import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
 import org.eclipse.che.plugin.docker.client.DockerConnectorConfiguration;
+import org.eclipse.che.plugin.docker.client.Dockerfile;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.UserSpecificDockerRegistryCredentialsProvider;
+import org.eclipse.che.plugin.docker.client.params.BuildImageParams;
 import org.eclipse.che.plugin.docker.machine.DockerContainerNameGenerator;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceProvider;
 import org.eclipse.che.plugin.docker.machine.DockerInstanceStopDetector;
@@ -39,8 +43,13 @@ import org.eclipse.che.plugin.docker.machine.node.WorkspaceFolderPathProvider;
 
 import javax.inject.Inject;
 import javax.inject.Named;
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.util.Set;
+
+import static com.codenvy.machine.MaintenanceConstraintProvider.MAINTENANCE_CONSTRAINT_KEY;
+import static com.codenvy.machine.MaintenanceConstraintProvider.MAINTENANCE_CONSTRAINT_VALUE;
 
 /**
  * Docker implementation of {@link InstanceProvider}.
@@ -51,7 +60,11 @@ import java.util.Set;
  * @author Roman Iuvshyn
  */
 public class HostedDockerInstanceProvider extends DockerInstanceProvider {
-    private final MachineTokenRegistry tokenRegistry;
+
+    private final DockerConnector                               docker;
+    private final UserSpecificDockerRegistryCredentialsProvider dockerCredentials;
+    private final RecipeRetriever                               recipeRetriever;
+    private final MachineTokenRegistry                          tokenRegistry;
 
     @Inject
     public HostedDockerInstanceProvider(DockerConnector docker,
@@ -95,6 +108,10 @@ public class HostedDockerInstanceProvider extends DockerInstanceProvider {
               allMachinesEnvVariables,
               snapshotUseRegistry,
               memorySwapMultiplier);
+
+        this.docker = docker;
+        this.dockerCredentials = dockerCredentials;
+        this.recipeRetriever = recipeRetriever;
         this.tokenRegistry = tokenRegistry;
     }
 
@@ -121,6 +138,49 @@ public class HostedDockerInstanceProvider extends DockerInstanceProvider {
         MachineConfigImpl machineConfigForBuild = new MachineConfigImpl(machineConfig);
         machineConfigForBuild.setSource(new MachineSourceImpl(DockerInstanceProvider.DOCKER_FILE_TYPE)
                                                 .setContent("FROM " + machineConfig.getSource().getLocation()));
-        super.buildImage(machineConfigForBuild, machineImageName, true, progressMonitor);
+        buildImage(machineConfigForBuild, machineImageName, true, progressMonitor);
     }
+
+    /**
+     * This method adds constraint to build args for support 'scheduled for maintenance' labels of nodes.
+     * 
+     * {@inheritDoc}
+     */
+    @Override
+    protected void buildImage(MachineConfig machineConfig,
+                              String machineImageName,
+                              boolean doForcePullOnBuild,
+                              ProgressMonitor progressMonitor)
+            throws MachineException {
+
+        Recipe recipe = recipeRetriever.getRecipe(machineConfig);
+        Dockerfile dockerfile = parseRecipe(recipe);
+        long memoryLimit = (long)machineConfig.getLimits().getRam() * 1024 * 1024;
+
+        File workDir = null;
+        try {
+            // build docker image
+            workDir = Files.createTempDirectory(null).toFile();
+            final File dockerfileFile = new File(workDir, "Dockerfile");
+            dockerfile.writeDockerfile(dockerfileFile);
+
+            docker.buildImage(BuildImageParams.create(dockerfileFile)
+                                              .withForceRemoveIntermediateContainers(true)
+                                              .withRepository(machineImageName)
+                                              .withAuthConfigs(dockerCredentials.getCredentials())
+                                              .withDoForcePull(doForcePullOnBuild)
+                                              .withMemoryLimit(memoryLimit)
+                                              .withMemorySwapLimit(-1)
+                                              // don't build an image on a node under maintenance
+                                              .addBuildArg(MAINTENANCE_CONSTRAINT_KEY, MAINTENANCE_CONSTRAINT_VALUE),
+                              progressMonitor);
+        } catch (IOException e) {
+            throw new MachineException(e.getLocalizedMessage(), e);
+        } finally {
+            if (workDir != null) {
+                FileCleaner.addFile(workDir);
+            }
+        }
+    }
+
 }
