@@ -620,7 +620,7 @@ public class TestConfigManager extends BaseTest {
         doReturn(new Config(ImmutableMap.of("host_protocol", protocol, "host_url", hostUrl)))
             .when(spyConfigManager).loadInstalledCodenvyConfig(InstallType.SINGLE_SERVER);
 
-        assertEquals(spyConfigManager.getApiEndpoint(), protocol + "://" + hostUrl + "/api");
+        assertEquals(spyConfigManager.getApiEndpoint(), protocol + "://localhost/api");
     }
 
     @Test
