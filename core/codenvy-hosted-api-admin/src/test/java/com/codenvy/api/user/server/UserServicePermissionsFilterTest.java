@@ -50,6 +50,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.verifyZeroInteractions;
@@ -85,6 +86,7 @@ public class UserServicePermissionsFilterTest {
     @BeforeMethod
     public void setUp() {
         permissionsFilter = new UserServicePermissionsFilter(true);
+        when(subject.getUserId()).thenReturn("userok");
     }
 
     @Test
@@ -130,6 +132,19 @@ public class UserServicePermissionsFilterTest {
         assertEquals(response.getStatusCode(), 204);
         verify(service).remove(eq("user123"));
         verify(subject).checkPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION);
+    }
+
+    @Test
+    public void shouldNotCheckPermissionsOnUserSelfRemoving() throws Exception {
+        final Response response = given().auth()
+                                         .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                         .contentType("application/json")
+                                         .when()
+                                         .delete(SECURE_PATH + "/user/userok");
+
+        assertEquals(response.getStatusCode(), 204);
+        verify(service).remove(eq("userok"));
+        verify(subject, never()).checkPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION);
     }
 
     @Test(expectedExceptions = ForbiddenException.class,
