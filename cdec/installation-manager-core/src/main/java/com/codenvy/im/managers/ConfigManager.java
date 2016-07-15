@@ -371,7 +371,12 @@ public class ConfigManager {
     public String getApiEndpoint() throws IOException {
         InstallType installType = detectInstallationType();
         Config config = loadInstalledCodenvyConfig(installType);
-        return format("%s://%s/api", config.getValue("host_protocol"), config.getValue("host_url"));
+        if (installType == InstallType.SINGLE_SERVER) {
+            // need localhost here instead of '$host_url" because it seems HttpTransport doesn't take System property "http.nonProxyHosts" into account
+            return format("%s://localhost/api", config.getValue("host_protocol"));
+        } else {
+            return format("%s://%s/api", config.getValue("host_protocol"), config.getValue("host_url"));
+        }
     }
 
     /**

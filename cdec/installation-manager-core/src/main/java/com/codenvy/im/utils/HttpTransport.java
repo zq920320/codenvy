@@ -24,9 +24,7 @@ import java.io.BufferedOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.net.Authenticator;
 import java.net.HttpURLConnection;
-import java.net.PasswordAuthentication;
 import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.file.Files;
@@ -36,8 +34,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static com.codenvy.im.utils.Commons.copyInterruptable;
-import static java.nio.file.Files.newOutputStream;
 import static java.lang.String.format;
+import static java.nio.file.Files.newOutputStream;
 import static java.util.regex.Pattern.compile;
 import static org.eclipse.che.commons.lang.IoUtil.deleteRecursive;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
@@ -223,28 +221,30 @@ public class HttpTransport {
                          @Nullable Object body,
                          @Nullable String expectedContentType,
                          HttpURLConnection conn) throws IOException {
-        ProxyAuthenticator.initAuthenticator(conn.getURL().getPath());
+        ProxyAuthenticator.initAuthenticator(conn.getURL().toString());
 
-        conn.setConnectTimeout(30 * 1000);
-        conn.setRequestMethod(method);
-        if (body != null) {
-            conn.addRequestProperty("content-type", "application/json");
-            conn.setDoOutput(true);
-            try (OutputStream output = conn.getOutputStream()) {
-                output.write(DtoFactory.getInstance().toJson(body).getBytes("UTF-8"));
-            } finally {
-                ProxyAuthenticator.resetAuthenticator();
-            }
-        }
-        final int responseCode = conn.getResponseCode();
-
-        if ((responseCode / 100) != 2) {
-            InputStream in = conn.getErrorStream();
-            if (in == null) {
-                in = conn.getInputStream();
+        try {
+            conn.setConnectTimeout(30 * 1000);
+            conn.setRequestMethod(method);
+            if (body != null) {
+                conn.addRequestProperty("content-type", "application/json");
+                conn.setDoOutput(true);
+                try (OutputStream output = conn.getOutputStream()) {
+                    output.write(DtoFactory.getInstance().toJson(body).getBytes("UTF-8"));
+                }
             }
 
-            throw new HttpException(responseCode, readAndCloseQuietly(in));
+            final int responseCode = conn.getResponseCode();
+            if ((responseCode / 100) != 2) {
+                InputStream in = conn.getErrorStream();
+                if (in == null) {
+                    in = conn.getInputStream();
+                }
+
+                throw new HttpException(responseCode, readAndCloseQuietly(in));
+            }
+        } finally {
+            ProxyAuthenticator.resetAuthenticator();
         }
 
         final String contentType = conn.getContentType();
