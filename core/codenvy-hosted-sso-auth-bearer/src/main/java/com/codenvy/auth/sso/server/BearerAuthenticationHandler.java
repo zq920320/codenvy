@@ -48,10 +48,10 @@ public class BearerAuthenticationHandler implements AuthenticationHandler {
         }
         try {
             Map<String, String> payload = tokenManager.checkValid(password);
-            if (!login.equals(payload.get("userName"))) {
+            if (!login.equals(payload.get("userName")) && !login.equals("x-bearer")) {
                 throw new AuthenticationException(401, "Authentication failed. Please check username and password.");
             }
-            User user = userDao.getByName(login);
+            User user = userDao.getByEmail(payload.get("email"));
             return new SubjectImpl(user.getName(), user.getId(), null, false);
         } catch (ApiException | InvalidBearerTokenException e) {
             LOG.debug(e.getLocalizedMessage(), e);

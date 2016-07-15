@@ -26,6 +26,7 @@ define(["jquery","underscore", "backbone", "models/account","views/accountformba
                  redirect_url = Account.getQueryParameterByName("redirect_url");
                 if (bearertoken) {
                     Account.processCreate(
+                        "x-bearer",
                         bearertoken,
                         redirect_url,
                         _.bind(function(errors){

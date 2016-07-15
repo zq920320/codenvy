@@ -169,16 +169,12 @@
             return deferredResult;
         };
 
-        var createAccount = function(accountName) {
+        var createUser = function(token) {
             var deferredResult = $.Deferred();
-            var url = "/api/account";
-            var data = {
-                name: accountName
-            };
+            var url = "/api/selfregister/create/" + token;
             $.ajax({
                 url: url,
                 type: "POST",
-                data: JSON.stringify(data),
                 contentType: "application/json"
             })
             .success(function(response){
@@ -190,33 +186,6 @@
             return deferredResult;
         };
 
-        var ensureExistenceAccount = function(accountName) {
-            var deferredResult = $.Deferred();
-            var url = "/api/account";
-            $.ajax({
-                url: url,
-                type: "GET",
-                success: function(membership) {
-                    var account = getOwnAccount(membership);
-                    if (account.accountReference.id){
-                        deferredResult.resolve(account.accountReference, false); //returns Account
-                    }
-                    else {
-                        // user hasn't memberships
-                        createAccount(accountName)
-                        .fail(function(error){deferredResult.reject(error);})
-                        .then(function(account){
-                        deferredResult.resolve(account, true);
-                        });
-
-                    }
-                },
-                error: function(error){
-                    deferredResult.reject(error);
-                }
-            });
-            return deferredResult;
-        };
 
         var login = function(email, password, realm) {
             if (isWebsocketEnabled()) {
@@ -299,7 +268,7 @@
             getQueryParameterByName: getQueryParameterByName,
             appendQuery: appendQuery,
             AccountError: AccountError,
-            ensureExistenceAccount: ensureExistenceAccount,
+            createUser: createUser,
             getOwnAccount: getOwnAccount,
             isApiAvailable: isApiAvailable,
             getOAuthproviders: getOAuthproviders,
@@ -363,13 +332,16 @@
 
             // signup, oAuth login,
             processCreate: function(email, bearertoken, redirect_url,  error) {
-                login(email, bearertoken, "bearer")
-                .then(function(){
-                    if (!redirect_url){
-                        redirectToUrl("/dashboard/");
-                    } else {
-                        redirectToUrl(redirect_url);
-                    }
+                createUser(bearertoken)
+                .then(function() {
+                    login(email, bearertoken, "bearer")
+                        .then(function(){
+                            if (!redirect_url){
+                                redirectToUrl("/dashboard/");
+                            } else {
+                                redirectToUrl(redirect_url);
+                            }
+                        })
                 })
                 .fail(function(response) {
                         if (response){
