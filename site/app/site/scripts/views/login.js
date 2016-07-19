@@ -55,6 +55,26 @@
 				.fail(function(){ //user is not aouthenticated
                     Account.getUserSettings() //get user props
                     .then(function(settings){ //set parameter to hide/show create account form
+                            var bearertoken = Account.getQueryParameterByName("bearertoken");
+                            var redirect_url = Account.getQueryParameterByName("redirect_url");
+                            if (bearertoken) {
+                                Account.processLogin(
+                                    "x-bearer",
+                                    bearertoken,
+                                    redirect_url,
+                                    _.bind(function(errors){
+
+                                        if(errors.length !== 0){
+                                            this.trigger(
+                                                "invalid",
+                                                errors[0].getFieldName(),
+                                                errors[0].getErrorDescription()
+                                            );
+                                        }
+                                    },this)
+                                );
+                            }
+
     					$(".col-md-12").append(self.loginTemplate());//show Login form
                         Account.getOAuthproviders(_.bind(self.constructOAuthElements,self));
                         self.el = $(".login-form");
