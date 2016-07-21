@@ -183,8 +183,8 @@ public class MachineBackupManager {
         lock.lock();
         try {
             if (workspacesBackupLocks.putIfAbsent(workspaceId, lock) != null) {
-                LOG.error("Attempt to start restore process on {} workspace while it is under backup/restore.", workspaceId);
-                return; // we cannot restore workspace while it under backup/restore process
+                LOG.error("Attempt to start new restore process on {} workspace while it is already under restoring.", workspaceId);
+                return; // it shouldn't happen, but for case when restore of one workspace is invoked simultaneously
             }
 
             final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
