@@ -394,7 +394,7 @@ public class MachineBackupManagerTest {
 
         awaitFinalization();
 
-        verify(backupManager, times(2)).execute(anyObject(), anyInt());
+        verify(backupManager, times(1)).execute(anyObject(), anyInt());
         verify(logger).error(anyString(), Matchers.<String>anyVararg());
     }
 

@@ -123,12 +123,13 @@ public class MachineBackupManager {
         ReentrantLock lock = workspacesBackupLocks.get(workspaceId);
         if (lock != null) {
             lock.lock();
-            if (workspacesBackupLocks.get(workspaceId) == null) {
-                // it is possible to reach here if invoke this method again while previous one is in progress
-                // should never happen
-                LOG.error("Backup with cleanup of the workspace {} was invoked several times simultaneously", workspaceId);
-            }
             try {
+                if (workspacesBackupLocks.get(workspaceId) == null) {
+                    // it is possible to reach here if invoke this method again while previous one is in progress
+                    // should never happen
+                    LOG.error("Backup with cleanup of the workspace {} was invoked several times simultaneously", workspaceId);
+                    return;
+                }
                 backupWorkspace(workspaceId, srcPath, srcAddress, true);
             } finally {
                 workspacesBackupLocks.remove(workspaceId);
@@ -180,12 +181,12 @@ public class MachineBackupManager {
                                        final String destAddress) throws ServerException {
         ReentrantLock lock = new ReentrantLock();
         lock.lock();
-        if (workspacesBackupLocks.putIfAbsent(workspaceId, lock) != null) {
-            LOG.error("Attempt to start backup/restore process on {} workspace while it under restore.", workspaceId);
-            return; // we cannot restore workspace while it under backup/restore process
-        }
-
         try {
+            if (workspacesBackupLocks.putIfAbsent(workspaceId, lock) != null) {
+                LOG.error("Attempt to start restore process on {} workspace while it is under backup/restore.", workspaceId);
+                return; // we cannot restore workspace while it under backup/restore process
+            }
+
             final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
 
             Files.createDirectories(Paths.get(srcPath));

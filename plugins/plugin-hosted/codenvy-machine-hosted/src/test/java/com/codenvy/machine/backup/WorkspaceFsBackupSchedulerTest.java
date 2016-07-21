@@ -94,6 +94,7 @@ public class WorkspaceFsBackupSchedulerTest {
         scheduler = spy(new WorkspaceFsBackupScheduler(machineManager, backupManager, 5 * 60));
 
         when(machineManager.getMachines()).thenReturn(machines);
+        when(machineInstance.getStatus()).thenReturn(MachineStatus.RUNNING);
 
         machine1 = new MachineImpl(new MachineConfigImpl(true,
                                                          "displayName1",
@@ -174,6 +175,7 @@ public class WorkspaceFsBackupSchedulerTest {
 
         // then
         verify(machineManager).getInstance("id1");
+        verify(scheduler).backupWorkspaceInMachine(any(MachineImpl.class));
         verify(backupManager).backupWorkspace("workspaceId1", "/workspace1", "192.168.0.1");
     }
 
