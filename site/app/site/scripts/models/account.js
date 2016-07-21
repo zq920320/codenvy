@@ -341,7 +341,7 @@
                             } else {
                                 redirectToUrl(redirect_url);
                             }
-                        })
+                        });
                 })
                 .fail(function(response) {
                         if (response){

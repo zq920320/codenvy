@@ -235,7 +235,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named("auth.handler.default")).to("org");
         bindConstant().annotatedWith(Names.named("auth.sso.access_cookie_path")).to("/api/internal/sso/server");
         bindConstant().annotatedWith(Names.named("auth.sso.access_ticket_lifetime_seconds")).to(259200);
-        bindConstant().annotatedWith(Names.named("auth.sso.bearer_ticket_lifetime_seconds")).to(3600);
+        bindConstant().annotatedWith(Names.named("auth.sso.bearer_ticket_lifetime_seconds")).to(3600L);
         bindConstant().annotatedWith(Names.named("auth.sso.create_workspace_page_url")).to("/site/auth/create");
         bindConstant().annotatedWith(Names.named("auth.sso.login_page_url")).to("/site/login");
         bindConstant().annotatedWith(Names.named("auth.oauth.access_denied_error_page")).to("/site/login");
