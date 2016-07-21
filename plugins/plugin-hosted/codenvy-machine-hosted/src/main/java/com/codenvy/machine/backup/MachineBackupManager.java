@@ -135,6 +135,8 @@ public class MachineBackupManager {
                 workspacesBackupLocks.remove(workspaceId);
                 lock.unlock();
             }
+        } else {
+            LOG.warn("Attempt to backup workspace {} after cleanup", workspaceId);
         }
     }
 
