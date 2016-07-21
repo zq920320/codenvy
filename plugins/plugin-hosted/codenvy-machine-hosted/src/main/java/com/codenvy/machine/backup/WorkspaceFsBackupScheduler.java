@@ -80,7 +80,7 @@ public class WorkspaceFsBackupScheduler {
                     isTimeToBackup(machineId)) {
 
                     executor.execute(() -> {
-                        // don't start new backup if previous one in progress
+                        // don't start new backup if previous one is in progress
                         if (devMachinesBackupsInProgress.putIfAbsent(machineId, machineId) == null) {
                             try {
                                 lastMachineSynchronizationTime.put(machine.getId(), System.currentTimeMillis());
