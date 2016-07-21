@@ -124,6 +124,7 @@ public class MachineBackupManager {
         if (lock != null) {
             lock.lock();
             if (workspacesBackupLocks.get(workspaceId) == null) {
+                // it is possible to reach here if invoke this method again while previous one is in progress
                 // should never happen
                 LOG.error("Backup with cleanup of the workspace {} was invoked several times simultaneously", workspaceId);
             }

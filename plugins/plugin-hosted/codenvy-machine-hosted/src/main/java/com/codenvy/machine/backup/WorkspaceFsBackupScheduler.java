@@ -83,7 +83,11 @@ public class WorkspaceFsBackupScheduler {
                         // don't start new backup if previous one is in progress
                         if (devMachinesBackupsInProgress.putIfAbsent(machineId, machineId) == null) {
                             try {
+                                backupWorkspaceInMachine(machine);
+
                                 lastMachineSynchronizationTime.put(machine.getId(), System.currentTimeMillis());
+                            } catch (NotFoundException | ServerException e) {
+                                LOG.error(e.getLocalizedMessage(), e);
                             } finally {
                                 devMachinesBackupsInProgress.remove(machineId);
                             }
@@ -99,7 +103,7 @@ public class WorkspaceFsBackupScheduler {
     @VisibleForTesting
     void backupWorkspaceInMachine(MachineImpl machine) throws NotFoundException, ServerException {
         final Instance machineInstance = machineManager.getInstance(machine.getId());
-        // for case if this task was in the executor queue and user stopped this machine before execution
+        // for case if this task is in the executor queue and user stopped this machine before execution
         if (machineInstance.getStatus() != MachineStatus.RUNNING) {
             return;
         }
