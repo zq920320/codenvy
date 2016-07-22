@@ -55,6 +55,7 @@ public class MachineBackupManager {
     private final int                                  maxBackupDuration;
     private final int                                  restoreDuration;
     private final File                                 backupsRootDir;
+    private final WorkspaceIdHashLocationFinder        workspaceIdHashLocationFinder;
     private final ConcurrentMap<String, ReentrantLock> workspacesBackupLocks;
 
     @Inject
@@ -62,12 +63,14 @@ public class MachineBackupManager {
                                 @Named("machine.backup.restore_script") String restoreScript,
                                 @Named("machine.backup.backup_duration_second") int maxBackupDurationSec,
                                 @Named("machine.backup.restore_duration_second") int restoreDurationSec,
-                                @Named("che.user.workspaces.storage") File backupsRootDir) {
+                                @Named("che.user.workspaces.storage") File backupsRootDir,
+                                WorkspaceIdHashLocationFinder workspaceIdHashLocationFinder) {
         this.backupScript = backupScript;
         this.restoreScript = restoreScript;
         this.maxBackupDuration = maxBackupDurationSec;
         this.restoreDuration = restoreDurationSec;
         this.backupsRootDir = backupsRootDir;
+        this.workspaceIdHashLocationFinder = workspaceIdHashLocationFinder;
 
         workspacesBackupLocks = new ConcurrentHashMap<>();
     }
@@ -142,7 +145,7 @@ public class MachineBackupManager {
 
     private void backupWorkspace(final String workspaceId, final String srcPath, final String srcAddress, boolean removeSourceOnSuccess)
             throws ServerException {
-        final File destPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId);
+        final File destPath = workspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId);
 
         CommandLine commandLine = new CommandLine(backupScript,
                                                   srcPath,
@@ -189,7 +192,7 @@ public class MachineBackupManager {
                 return; // it shouldn't happen, but for case when restore of one workspace is invoked simultaneously
             }
 
-            final String srcPath = WorkspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
+            final String srcPath = workspaceIdHashLocationFinder.calculateDirPath(backupsRootDir, workspaceId).toString();
 
             Files.createDirectories(Paths.get(srcPath));
 

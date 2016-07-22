@@ -17,6 +17,7 @@ package com.codenvy.machine.backup;
 import org.eclipse.che.api.core.ServerException;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.mockito.testng.MockitoTestNGListener;
@@ -38,6 +39,7 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReentrantLock;
 
 import static java.lang.Thread.sleep;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
@@ -48,9 +50,10 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
-import static org.testng.Assert.assertTrue;
 import static org.testng.Assert.fail;
+import static org.testng.internal.junit.ArrayAsserts.assertArrayEquals;
 
 /**
  * @author Mykola Morhun
@@ -58,20 +61,32 @@ import static org.testng.Assert.fail;
 @Listeners(value = {MockitoTestNGListener.class})
 public class MachineBackupManagerTest {
 
-    private static final String WORKSPACE_ID             = "workspaceId";
-    private static final String BACKUP_SCRIPT            = "/tmp/backup.sh";
-    private static final String RESTORE_SCRIPT           = "/tmp/restore.sh";
-    private static final int    MAX_BACKUP_DURATION_SEC  = 10;
-    private static final int    MAX_RESTORE_DURATION_SEC = 10;
-    private static final String BACKUPS_ROOT_PATH        = "/tmp/che/backups";
-    private static final String SRC_PATH                 = "srcPath";
-    private static final String SRC_ADDRESS              = "srcAddress";
-    private static final String DEST_PATH                = "/tmp/restore.sh";
-    private static final String DEST_ADDRESS             = "/tmp/restore.sh";
-    private static final String USER_ID                  = "1000";
-    private static final String USER_GID                 = "1000";
+    private static final String WORKSPACE_ID                   = "workspaceId";
+    private static final String BACKUP_SCRIPT                  = "/tmp/backup.sh";
+    private static final String RESTORE_SCRIPT                 = "/tmp/restore.sh";
+    private static final int    MAX_BACKUP_DURATION_SEC        = 10;
+    private static final int    MAX_RESTORE_DURATION_SEC       = 10;
+    private static final String BACKUPS_ROOT_PATH              = "/tmp/che/backups";
+    private static final String SRC_PATH                       = "srcPath";
+    private static final String SRC_ADDRESS                    = "srcAddress";
+    private static final String DEST_PATH                      = "/tmp/restore.sh";
+    private static final String DEST_ADDRESS                   = "/tmp/restore.sh";
+    private static final String USER_ID                        = "1000";
+    private static final String USER_GID                       = "1000";
+    private static final String PATH_TO_WORKSPACE              = "00/00/00/";
+    private static final String ABSOLUTE_PATH_TO_WORKSPACE_DIR = BACKUPS_ROOT_PATH + PATH_TO_WORKSPACE + WORKSPACE_ID;
+
+    private static final String[] BACKUP_WORKSPACE_COMMAND              =
+            {BACKUP_SCRIPT, SRC_PATH, SRC_ADDRESS, ABSOLUTE_PATH_TO_WORKSPACE_DIR, "false"};
+    private static final String[] BACKUP_WORKSPACE_WITH_CLEANUP_COMMAND =
+            {BACKUP_SCRIPT, SRC_PATH, SRC_ADDRESS, ABSOLUTE_PATH_TO_WORKSPACE_DIR, "true"};
+    private static final String[] RESTORE_WORKSPACE_COMMAND             =
+            {RESTORE_SCRIPT, ABSOLUTE_PATH_TO_WORKSPACE_DIR, RESTORE_SCRIPT, RESTORE_SCRIPT, USER_ID, USER_GID};
 
     private static final int FAKE_BACKUP_TIME_MS = 2000;
+
+    @Mock
+    private WorkspaceIdHashLocationFinder workspaceIdHashLocationFinder;
 
     private ArgumentCaptor<String[]> cmdCaptor;
 
@@ -85,7 +100,11 @@ public class MachineBackupManagerTest {
                                                      RESTORE_SCRIPT,
                                                      MAX_BACKUP_DURATION_SEC,
                                                      MAX_RESTORE_DURATION_SEC,
-                                                     new File(BACKUPS_ROOT_PATH)));
+                                                     new File(BACKUPS_ROOT_PATH),
+                                                     workspaceIdHashLocationFinder));
+
+        when(workspaceIdHashLocationFinder.calculateDirPath(any(File.class), any(String.class)))
+                .thenReturn(new File(ABSOLUTE_PATH_TO_WORKSPACE_DIR));
 
         cmdCaptor = ArgumentCaptor.forClass(String[].class);
 
@@ -115,12 +134,7 @@ public class MachineBackupManagerTest {
         verify(backupManager).execute(cmdCaptor.capture(), eq(MAX_BACKUP_DURATION_SEC));
 
         String[] command = cmdCaptor.getValue();
-        assertEquals(command[0], BACKUP_SCRIPT);
-        assertEquals(command[1], SRC_PATH);
-        assertEquals(command[2], SRC_ADDRESS);
-        assertTrue(  command[3].startsWith(BACKUPS_ROOT_PATH));
-        assertTrue(  command[3].endsWith(WORKSPACE_ID));
-        assertEquals(command[4], "false");
+        assertArrayEquals(BACKUP_WORKSPACE_COMMAND, command);
     }
 
     @Test
@@ -148,12 +162,7 @@ public class MachineBackupManagerTest {
         verify(backupManager).execute(cmdCaptor.capture(), eq(MAX_BACKUP_DURATION_SEC));
 
         String[] command = cmdCaptor.getValue();
-        assertEquals(command[0], BACKUP_SCRIPT);
-        assertEquals(command[1], SRC_PATH);
-        assertEquals(command[2], SRC_ADDRESS);
-        assertTrue(  command[3].startsWith(BACKUPS_ROOT_PATH));
-        assertTrue(  command[3].endsWith(WORKSPACE_ID));
-        assertEquals(command[4], "true");
+        assertArrayEquals(BACKUP_WORKSPACE_WITH_CLEANUP_COMMAND, command);
     }
 
     @Test
@@ -165,13 +174,7 @@ public class MachineBackupManagerTest {
         verify(backupManager).execute(cmdCaptor.capture(), eq(MAX_RESTORE_DURATION_SEC));
 
         String[] command = cmdCaptor.getValue();
-        assertEquals(command[0], RESTORE_SCRIPT);
-        assertTrue(  command[1].startsWith(BACKUPS_ROOT_PATH));
-        assertTrue(  command[1].endsWith(WORKSPACE_ID));
-        assertEquals(command[2], RESTORE_SCRIPT);
-        assertEquals(command[3], RESTORE_SCRIPT);
-        assertEquals(command[4], USER_ID);
-        assertEquals(command[5], USER_GID);
+        assertArrayEquals(RESTORE_WORKSPACE_COMMAND, command);
     }
 
     @Test
@@ -551,11 +554,18 @@ public class MachineBackupManagerTest {
         }
     }
 
+    /**
+     * Adds lock for specified workspace into concurrent hash map of {@link MachineBackupManager} class
+     * It allows emulate restore of workspace without invoking it explicit
+     *
+     * @param workspaceId
+     *         id of workspace for which lock will be injected
+     */
     private void injectWorkspaceLock(String workspaceId) {
         try {
             Field locks = MachineBackupManager.class.getDeclaredField("workspacesBackupLocks");
             locks.setAccessible(true);
-            ((ConcurrentHashMap<String, ReentrantLock>) locks.get(backupManager)).put(workspaceId, new ReentrantLock());
+            ((ConcurrentHashMap<String, ReentrantLock>)locks.get(backupManager)).put(workspaceId, new ReentrantLock());
         } catch (NoSuchFieldException | IllegalAccessException e) {
             e.printStackTrace();
         }
