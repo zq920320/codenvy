@@ -330,7 +330,7 @@ export class LoadFactoryCtrl {
   getDisplayMachineLog(log) {
     log = angular.fromJson(log);
     if (angular.isObject(log)) {
-      return '[' + log.machine + '] ' + log.content;
+      return '[' + log.machineName + '] ' + log.content;
     } else {
       return log;
     }
