@@ -30,7 +30,7 @@ import org.everrest.assured.EverrestJetty;
 import org.everrest.core.Filter;
 import org.everrest.core.GenericContainerRequest;
 import org.everrest.core.RequestFilter;
-import org.everrest.core.resource.GenericMethodResource;
+import org.everrest.core.resource.GenericResourceMethod;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
@@ -135,7 +135,7 @@ public class UserServicePermissionsFilterTest {
     @Test(expectedExceptions = ForbiddenException.class,
           expectedExceptionsMessageRegExp = "User is not authorized to perform this operation")
     public void shouldThrowForbiddenExceptionWhenRequestedUnknownMethod() throws Exception {
-        final GenericMethodResource mock = mock(GenericMethodResource.class);
+        final GenericResourceMethod mock = mock(GenericResourceMethod.class);
         Method injectLinks = AdminUserService.class.getMethod("getServiceDescriptor");
         when(mock.getMethod()).thenReturn(injectLinks);
 
@@ -150,7 +150,7 @@ public class UserServicePermissionsFilterTest {
                                     .orElseGet(null);
         assertNotNull(method);
 
-        final GenericMethodResource mock = mock(GenericMethodResource.class);
+        final GenericResourceMethod mock = mock(GenericResourceMethod.class);
         when(mock.getMethod()).thenReturn(method);
 
         permissionsFilter.filter(mock, new Object[] {});
