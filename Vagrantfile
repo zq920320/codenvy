@@ -87,8 +87,8 @@ Vagrant.configure("2") do |config|
     echo "."
     echo "."
     echo "CODENVY: INSTALLED!"
-    echo 'Add "$IP codenvy.onprem" to your hosts file'
-    echo 'Access:   http://codenvy.onprem'
+    echo 'Add       "192.68.56.110 codenvy.onprem" to your hosts file'
+    echo 'Browser:  http://codenvy.onprem'
     echo 'Username: admin'
     echo 'Password: password'
     echo "."
