@@ -41,7 +41,7 @@ export class CodenvyUser {
           'Content-Type': 'application/x-www-form-urlencoded; charset=UTF-8'
         }
       },
-      createUser: {method: 'POST', url: '/api/user/create'},
+      createUser: {method: 'POST', url: '/api/user'},
       getUsers: {
         method: 'GET',
         url: '/api/admin/user?maxItems=:maxItems&skipCount=:skipCount',
