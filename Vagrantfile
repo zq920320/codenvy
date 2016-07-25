@@ -8,7 +8,7 @@ cpus            = '2'
 # Set to "<proto>://<user>:<pass>@<host>:<port>"
 http_proxy      = ENV['HTTP_PROXY'] || ""
 https_proxy     = ENV['HTTPS_PROXY'] || ""
-no_proxy        = ENV['NO_PROXY'] || "localhost,127.0.0.1"
+no_proxy        = ENV['NO_PROXY'] || "codenvy.onprem,localhost,127.0.0.1"
 
 ip              = ENV['CODENVY_IP'] || "192.168.56.110"
 
@@ -20,7 +20,7 @@ Vagrant.configure("2") do |config|
   puts ("CODENVY: REQUIRED: VIRTUALBOX 5.x")
   puts ("CODENVY: REQUIRED: VAGRANT 1.8.x")
   puts ("")
-  if $http_proxy.to_s != '' || https_proxy.to_s != '') && !Vagrant.has_plugin?("vagrant-proxyconf")
+  if (http_proxy.to_s != '' || https_proxy.to_s != '') && !Vagrant.has_plugin?("vagrant-proxyconf")
     puts ("You configured a proxy, but Vagrant's proxy plugin not detected.")
     puts ("Install the plugin with: vagrant plugin install vagrant-proxyconf")
     Process.kill 9, Process.pid
@@ -37,7 +37,11 @@ Vagrant.configure("2") do |config|
   config.vm.box_download_insecure = true
   config.ssh.insert_key           = false
   
-  config.vm.network :private_network, ip: ip
+  if ip.to_s.downcase == "dhcp"
+    config.vm.network :private_network, type: "dhcp"
+  else
+    config.vm.network :private_network, ip: ip
+  end
   config.vm.network "forwarded_port", guest: 5005, host: 5005
 
   config.vm.provider :virtualbox do |vbox|
@@ -56,9 +60,10 @@ Vagrant.configure("2") do |config|
   $script = <<-SHELL
     HTTP_PROXY=$1
     HTTPS_PROXY=$2
-    CODENVY_URL=$3
-    CODENVY_OPTIONS=$4
-    IP=$5
+    NO_PROXY=$3
+    CODENVY_URL=$4
+    CODENVY_OPTIONS=$5
+    IP=$6
 
     if [ -n "$HTTP_PROXY" ] || [ -n "$HTTPS_PROXY" ]; then
       echo "."
@@ -69,7 +74,7 @@ Vagrant.configure("2") do |config|
       echo "HTTP PROXY set to: $HTTP_PROXY"
       echo "HTTPS PROXY set to: $HTTPS_PROXY"
     fi
-    
+
     echo "."
     echo "."
     echo "CODENVY: RUNNING CODENVY INSTALLER"
@@ -79,7 +84,8 @@ Vagrant.configure("2") do |config|
     if [ -n "$HTTP_PROXY" ] || [ -n "$HTTPS_PROXY" ]; then
       bash <(curl -L -s --proxy ${HTTP_PROXY} ${CODENVY_URL}) ${CODENVY_OPTIONS} \
                                                               --http-proxy-for-installation=${HTTP_PROXY} \
-                                                              --https-proxy-for-installation=${HTTPS_PROXY}
+                                                              --https-proxy-for-installation=${HTTPS_PROXY} \
+                                                              --no-proxy-for-installation=${NO_PROXY}
     else
       bash <(curl -L -s ${CODENVY_URL}) ${CODENVY_OPTIONS}
     fi
@@ -87,8 +93,8 @@ Vagrant.configure("2") do |config|
     echo "."
     echo "."
     echo "CODENVY: INSTALLED!"
-    echo 'Add       "192.68.56.110 codenvy.onprem" to your hosts file'
-    echo 'Browser:  http://codenvy.onprem'
+    echo 'Add "'${IP}' codenvy.onprem" to your hosts file'
+    echo 'Access:   http://codenvy.onprem'
     echo 'Username: admin'
     echo 'Password: password'
     echo "."
@@ -97,7 +103,7 @@ Vagrant.configure("2") do |config|
 
   config.vm.provision "shell" do |s|
     s.inline = $script
-    s.args = [http_proxy, https_proxy, codenvy_url, codenvy_options, ip]
+    s.args = [http_proxy, https_proxy, no_proxy, codenvy_url, codenvy_options, ip]
   end
 
 end
