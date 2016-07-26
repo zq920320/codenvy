@@ -6,9 +6,9 @@ cpus            = '2'
 #bridge          = 'eth0'
 
 # Set to "<proto>://<user>:<pass>@<host>:<port>"
-http_proxy      = ENV['HTTP_PROXY'] || ""
-https_proxy     = ENV['HTTPS_PROXY'] || ""
-no_proxy        = ENV['NO_PROXY'] || "codenvy.onprem,localhost,127.0.0.1"
+http_proxy      = ENV['HTTP_PROXY'] || ENV['http_proxy'] || ""
+https_proxy     = ENV['HTTPS_PROXY'] || ENV['https_proxy'] || ""
+no_proxy        = ENV['NO_PROXY'] || ENV['no_proxy'] || "codenvy.onprem,localhost,127.0.0.1"
 
 ip              = ENV['CODENVY_IP'] || "192.168.56.110"
 
@@ -73,6 +73,7 @@ Vagrant.configure("2") do |config|
       echo "."
       echo "HTTP PROXY set to: $HTTP_PROXY"
       echo "HTTPS PROXY set to: $HTTPS_PROXY"
+      echo "NO PROXY set to: $NO_PROXY"
     fi
 
     echo "."
