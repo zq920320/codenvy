@@ -127,22 +127,6 @@ public class WorkspacePermissionsFilterTest {
     }
 
     @Test
-    public void shouldCheckPermissionsOnWorkspaceRecovering() throws Exception {
-        when(subject.hasPermission("workspace", "workspace123", "run")).thenReturn(true);
-
-        final Response response = given().auth()
-                                         .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
-                                         .pathParam("id", "workspace123")
-                                         .contentType("application/json")
-                                         .when()
-                                         .post(SECURE_PATH + "/workspace/{id}/runtime/snapshot");
-
-        assertEquals(response.getStatusCode(), 204);
-        verify(service).recoverWorkspace(eq("workspace123"), any(), anyString());
-        verify(subject).hasPermission(eq("workspace"), eq("workspace123"), eq("run"));
-    }
-
-    @Test
     public void shouldCheckPermissionsOnMachineCreating() throws Exception {
         when(subject.hasPermission("workspace", "workspace123", "run")).thenReturn(true);
 
@@ -186,7 +170,7 @@ public class WorkspacePermissionsFilterTest {
                                          .post(SECURE_PATH + "/workspace/{id}/runtime");
 
         assertEquals(response.getStatusCode(), 204);
-        verify(service).startById(eq("workspace123"), anyString(), anyString());
+        verify(service).startById(eq("workspace123"), anyString(), anyString(), any());
         verify(subject).hasPermission(eq("workspace"), eq("workspace123"), eq("run"));
     }
 
@@ -434,7 +418,6 @@ public class WorkspacePermissionsFilterTest {
                 {"/workspace/ws123", "get", READ},
                 {"/workspace/ws123", "put", CONFIGURE},
                 {"/workspace/ws123/runtime", "post", RUN},
-                {"/workspace/ws123/runtime/snapshot", "post", RUN},
                 {"/workspace/ws123/runtime", "delete", RUN},
                 {"/workspace/ws123/snapshot", "post", RUN},
                 {"/workspace/ws123/snapshot", "get", READ},

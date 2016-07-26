@@ -79,7 +79,6 @@ public class WorkspacePermissionsFilter extends CheMethodInvokerFilter {
                 workspaceId = ((String)arguments[0]);
                 action = DELETE;
                 break;
-            case "recoverWorkspace":
             case "createMachine":
             case "stop":
             case "startById":
