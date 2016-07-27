@@ -73,6 +73,11 @@ public class UserServicePermissionsFilter extends CheMethodInvokerFilter {
                 subject.checkPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION);
                 break;
             case "remove":
+                final String userToRemove = (String)arguments[0];
+                if (subject.getUserId().equals(userToRemove)) {
+                    //everybody should be able to remove himself
+                    return;
+                }
                 subject.checkPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION);
                 break;
             default:
