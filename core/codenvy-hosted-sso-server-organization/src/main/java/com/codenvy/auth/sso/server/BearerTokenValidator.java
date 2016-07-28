@@ -20,6 +20,7 @@ import org.eclipse.che.api.user.server.TokenValidator;
 import org.eclipse.che.api.user.server.model.impl.UserImpl;
 
 import javax.inject.Inject;
+import java.util.Collections;
 import java.util.Map;
 
 /**
@@ -34,7 +35,7 @@ public class BearerTokenValidator implements TokenValidator {
     public User validateToken(String token) throws ConflictException {
         try {
             Map<String, String> payload = handler.getPayload(token);
-            return new UserImpl(null, payload.get("email"), payload.get("username"));
+            return new UserImpl(null, payload.get("email"), payload.get("username"), payload.get("password"), Collections.emptyList());
         } catch (InvalidBearerTokenException e) {
             throw new ConflictException("Cannot create user - authentication token is invalid. Request a new one.");
         }

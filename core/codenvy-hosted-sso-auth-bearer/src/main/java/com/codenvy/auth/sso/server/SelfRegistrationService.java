@@ -18,8 +18,6 @@ import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.ForbiddenException;
-import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,9 +33,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.io.IOException;
 
-/**
- * Created by sj on 10.06.16.
- */
 @Path("selfregister")
 public class SelfRegistrationService {
 
@@ -73,22 +68,6 @@ public class SelfRegistrationService {
         LOG.info("EVENT#signup-validation-email-send# EMAIL#{}#", validationData.getEmail());
         LOG.info("Email validation message send to {}", validationData.getEmail());
 
-        return Response.ok().build();
-    }
-
-    @POST
-    @Path("create/{token}")
-    @Consumes(MediaType.APPLICATION_JSON)
-    public Response confirm(@PathParam("token") String token)
-            throws ForbiddenException, ServerException, NotFoundException, ConflictException {
-        try {
-            selfRegistrationManager.createUser(token);
-        } catch (InvalidBearerTokenException e) {
-            throw new ForbiddenException(e.getLocalizedMessage());
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage(), e);
-            throw new ServerException("Not able to confirm email. Please try again later");
-        }
         return Response.ok().build();
     }
 

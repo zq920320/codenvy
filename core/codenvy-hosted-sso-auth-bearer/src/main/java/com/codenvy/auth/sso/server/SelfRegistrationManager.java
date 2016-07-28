@@ -21,18 +21,9 @@ import com.google.common.collect.ImmutableMap;
 import com.google.common.io.Files;
 
 import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.NotFoundException;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.UnauthorizedException;
-import org.eclipse.che.api.core.model.user.User;
-import org.eclipse.che.api.user.server.Constants;
 import org.eclipse.che.api.user.server.UserManager;
-import org.eclipse.che.api.user.server.UserService;
-import org.eclipse.che.api.user.server.model.impl.UserImpl;
 import org.eclipse.che.api.user.server.spi.PreferenceDao;
 import org.eclipse.che.commons.lang.Deserializer;
-import org.eclipse.che.commons.lang.NameGenerator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,17 +35,13 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Optional;
-import java.util.UUID;
 
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
-/**
- * Created by sj on 14.06.16.
- */
+
 public class SelfRegistrationManager {
     private static final Logger LOG = LoggerFactory.getLogger(SelfRegistrationManager.class);
 
@@ -74,57 +61,6 @@ public class SelfRegistrationManager {
     UserManager        userManager;
     @Inject
     PreferenceDao      preferenceDao;
-    @Inject
-    @Named(UserService.USER_SELF_CREATION_ALLOWED)
-    boolean            userSelfCreationAllowed;
-
-
-    public void createUser(String token)
-            throws InvalidBearerTokenException, ServerException, ConflictException, NotFoundException, IOException {
-           Map<String, String> payload = tokenManager.getPayload(token);
-           createUser(payload.get("email"), payload.get("userName"), payload.get("password"));
-    }
-
-    public void createUser(String email, String userName, String password)
-            throws IOException, ConflictException, ServerException, NotFoundException {
-        if (!userSelfCreationAllowed) {
-            throw new ConflictException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
-        }
-        final String availableUsername = userName == null ? findAvailableUsername(email) : findAvailableUsername(userName);
-        final String id = NameGenerator.generate(User.class.getSimpleName().toLowerCase(), Constants.ID_LENGTH);
-        final String userPassword = password == null ?  UUID.randomUUID().toString().replace("-", "").substring(0, 12) : password;
-        final User user = new UserImpl(id, email, availableUsername, userPassword, Collections.emptyList());
-        userManager.create(user, false);
-
-        final Map<String, String> preferences = preferenceDao.getPreferences(id);
-        preferences.putAll(ImmutableMap.of(
-//                "firstName", firstName,
-//                "lastName", lastName,
-                "email", email));
-        preferenceDao.setPreferences(id, preferences);
-
-
-    }
-
-    private String findAvailableUsername(String source) throws IOException {
-        String candidate = source.contains("@") ? source.substring(0, source.indexOf('@')) : source;
-        int count = 1;
-        while (getUserByName(candidate).isPresent()) {
-            candidate = candidate.concat(String.valueOf(count++));
-        }
-        return candidate;
-    }
-
-    private Optional<User> getUserByName(String name) throws IOException {
-        try {
-            User user = userManager.getByName(name);
-            return Optional.of(user);
-        } catch (NotFoundException e) {
-            return Optional.empty();
-        } catch (ServerException e) {
-            throw new IOException(e.getLocalizedMessage(), e);
-        }
-    }
 
     public void sendVerificationEmail(SelfRegistrationService.ValidationData validationData, String queryParams, String masterHostUrl)
             throws IOException {
