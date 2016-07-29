@@ -16,6 +16,8 @@ package com.codenvy.auth.sso.oauth;
 
 import com.codenvy.auth.sso.server.BearerTokenManager;
 
+import org.eclipse.che.api.auth.shared.dto.OAuthToken;
+import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -25,6 +27,8 @@ import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticationService;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -72,10 +76,13 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
     @Named("user.self.creation.allowed")
     private boolean userSelfCreationAllowed;
 
+    private static final Logger LOG = LoggerFactory.getLogger(SsoOAuthAuthenticationService.class);
+
     @GET
     @Path("callback")
     @Override
-    public Response callback(@QueryParam("errorValues") List<String> errorValues) throws OAuthAuthenticationException, BadRequestException, ServerException {
+    public Response callback(@QueryParam("errorValues") List<String> errorValues)
+            throws OAuthAuthenticationException, BadRequestException, ServerException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
         if (errorValues != null && errorValues.contains("access_denied")) {
@@ -93,8 +100,6 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         Map<String, String> payload = new HashMap<>();
         payload.put("provider", providerName);
         payload.put("email", oauthUserId);
-        payload.put("username", findAvailableUsername(oauthUserId));
-        payload.put("password", NameGenerator.generate("", PASSWORD_LENGTH));
 
         try {
             userManager.getByEmail(oauthUserId);
@@ -109,7 +114,10 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
             if (!userSelfCreationAllowed) {
                 return Response.temporaryRedirect(UriBuilder.fromUri(noAccountFoundErrorPage).build()).build();
             }
-
+            payload.put("username", findAvailableUsername(oauthUserId));
+            payload.put("password", NameGenerator.generate("", PASSWORD_LENGTH));
+//            final OAuthToken token = oauth.getToken(oauthUserId);
+//            payload.putAll(createProfileInfo(oauthUserId, oauth, token));
 
             return Response.temporaryRedirect(UriBuilder.fromUri(createWorkspacePage).replaceQuery(requestUrl.getQuery())
                                                         .replaceQueryParam("signature")
@@ -140,4 +148,35 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
             return Optional.empty();
         }
     }
+
+    Map<String, String> createProfileInfo(String email, OAuthAuthenticator authenticator, OAuthToken token) {
+        Map<String, String> profileInfo = new HashMap<>();
+        try {
+            try {
+                userManager.getByEmail(email);
+            } catch (NotFoundException e) {
+                String fullName = authenticator.getUser(token).getName();
+                if (fullName != null && !fullName.isEmpty()) {
+                    String firstName, lastName = "";
+                    String[] names = fullName.trim().split(" ", 2);
+                    firstName = names[0].trim();
+                    if (names.length > 1)
+                        lastName = names[1].trim();
+                    if (!(firstName.isEmpty() && lastName.isEmpty())) {
+                        if (!firstName.isEmpty()) {
+                            profileInfo.put("firstName", firstName);
+                        }
+                        if (!lastName.isEmpty()) {
+                            profileInfo.put("lastName", lastName);
+                        }
+                    }
+                }
+            }
+        } catch (ApiException | OAuthAuthenticationException e) {
+            LOG.error(e.getLocalizedMessage(), e);
+        }
+
+        return profileInfo;
+    }
+
 }
