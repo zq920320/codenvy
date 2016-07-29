@@ -815,6 +815,7 @@ insertProperty() {
     sed -i "s|$1=.*|$1=$value|g" "${CONFIG}"
 }
 
+
 validateHostname() {
     DNS=$1
     OUTPUT=$(ping -c 1 ${DNS} &> /dev/null && echo success || echo fail)
@@ -840,13 +841,6 @@ askHostnameAndInsertProperty() {
         print "$(printf "%-35s" "${PROMPT}:") "
 
         read VALUE
-
-        OUTPUT=$(validateHostname ${VALUE})
-        if [ "${OUTPUT}" == "success" ]; then
-           break
-        else
-            println $(printError "ERROR: The hostname '${VALUE}' isn't available or wrong. Please try again...")
-        fi
     done
 
     insertProperty "${VARIABLE}" ${VALUE}
@@ -1077,11 +1071,6 @@ printPreInstallInfo_single() {
     fi
 
     if [ -n "${HOST_NAME}" ]; then
-        if [ "$(validateHostname "${HOST_NAME}")" != "success" ]; then
-            println $(printError "ERROR: The hostname '${HOST_NAME}' isn't available or wrong.")
-            exit 1
-        fi
-
         insertProperty "host_url" ${HOST_NAME}
     fi
 

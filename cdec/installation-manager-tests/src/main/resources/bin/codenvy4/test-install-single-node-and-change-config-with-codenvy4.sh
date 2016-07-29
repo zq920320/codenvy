@@ -32,7 +32,7 @@ executeIMCommand "password" "password" "new-password"
 authWithoutRealmAndServerDns "admin" "new-password"
 
 # change Codenvy hostname
-executeSshCommand "sudo sed -i 's/ codenvy/ test.codenvy/' /etc/hosts"
+executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts"
 executeIMCommand "config" "--hostname" "${NEW_HOST_URL}"
 
 # verify changes on api node
