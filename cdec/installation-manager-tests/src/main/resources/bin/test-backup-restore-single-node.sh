@@ -109,8 +109,8 @@ validateExpectedString ".*\"name\"\:\"my-minimalistic-factory\".*"
 authOnSite "user-1" "pwd123ABC"
 
 # update
-executeIMCommand "download" "${HOST_URL}" "${LATEST_CODENVY3_VERSION}"
-executeIMCommand "install" "${HOST_URL}" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "download" "codenvy" "${LATEST_CODENVY3_VERSION}"
+executeIMCommand "install" "codenvy" "${LATEST_CODENVY3_VERSION}"
 validateInstalledCodenvyVersion ${LATEST_CODENVY3_VERSION}
 
 # restore state at start
