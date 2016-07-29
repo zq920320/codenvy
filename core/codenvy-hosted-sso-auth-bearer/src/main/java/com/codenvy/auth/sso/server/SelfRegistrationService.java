@@ -60,7 +60,7 @@ public class SelfRegistrationService {
     public Response verify(ValidationData validationData, @Context UriInfo uriInfo)
             throws BadRequestException, ConflictException, ServerException {
         inputDataValidator.validateUserMail(validationData.getEmail());
-        creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getUserName());
+        creationValidator.ensureUserCreationAllowed(validationData.getEmail(), validationData.getUserName(), validationData.getPassword());
 
         try {
             selfRegistrationManager.sendVerificationEmail(validationData,

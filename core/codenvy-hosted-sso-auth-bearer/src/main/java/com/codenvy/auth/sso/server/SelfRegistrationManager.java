@@ -135,7 +135,7 @@ public class SelfRegistrationManager {
                     ImmutableMap.of(
                             "initiator", "email",
                             "email", validationData.getEmail(),
-                            "userName", validationData.getUserName(),
+                            "username", validationData.getUserName(),
                             "password", validationData.getPassword()
                                    )));
             props.put("additional.query.params", queryParams);

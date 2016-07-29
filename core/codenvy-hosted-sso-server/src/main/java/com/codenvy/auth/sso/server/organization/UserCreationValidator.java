@@ -33,6 +33,8 @@ public interface UserCreationValidator {
      *         - user email. Null or empty value should throw BadRequestException.
      * @param userName
      *         - user name. Null or empty value should throw BadRequestException.
+     * @param password
+     *         - user password. Null or empty value should throw BadRequestException.
      * @throws BadRequestException
      *         - if user's email or name have incorrect values
      * @throws ConflictException
@@ -40,5 +42,5 @@ public interface UserCreationValidator {
      * @throws ServerException
      *         - if other error occurs
      */
-    void ensureUserCreationAllowed(String email, String userName) throws BadRequestException, ConflictException, ServerException;
+    void ensureUserCreationAllowed(String email, String userName, String password) throws BadRequestException, ConflictException, ServerException;
 }

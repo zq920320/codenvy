@@ -21,6 +21,7 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.model.user.User;
 import org.eclipse.che.api.user.server.UserManager;
+import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.security.oauth.OAuthAuthenticationException;
 import org.eclipse.che.security.oauth.OAuthAuthenticationService;
 import org.eclipse.che.security.oauth.OAuthAuthenticator;
@@ -38,6 +39,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+
+import static org.eclipse.che.api.user.server.Constants.PASSWORD_LENGTH;
 
 /**
  * RESTful wrapper for OAuthAuthenticator.
@@ -72,7 +75,7 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
     @GET
     @Path("callback")
     @Override
-    public Response callback(@QueryParam("errorValues") List<String> errorValues) throws OAuthAuthenticationException, BadRequestException {
+    public Response callback(@QueryParam("errorValues") List<String> errorValues) throws OAuthAuthenticationException, BadRequestException, ServerException {
         URL requestUrl = getRequestUrl(uriInfo);
         Map<String, List<String>> params = getRequestParameters(getState(requestUrl));
         if (errorValues != null && errorValues.contains("access_denied")) {
@@ -90,6 +93,8 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         Map<String, String> payload = new HashMap<>();
         payload.put("provider", providerName);
         payload.put("email", oauthUserId);
+        payload.put("username", findAvailableUsername(oauthUserId));
+        payload.put("password", NameGenerator.generate("", PASSWORD_LENGTH));
 
         try {
             userManager.getByEmail(oauthUserId);

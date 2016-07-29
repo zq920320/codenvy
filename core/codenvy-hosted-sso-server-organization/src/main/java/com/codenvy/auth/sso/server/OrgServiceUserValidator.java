@@ -53,7 +53,7 @@ public class OrgServiceUserValidator implements UserCreationValidator {
     }
 
     @Override
-    public void ensureUserCreationAllowed(String email, String userName) throws ConflictException, BadRequestException, ServerException {
+    public void ensureUserCreationAllowed(String email, String userName, String password) throws ConflictException, BadRequestException, ServerException {
         if (!userSelfCreationAllowed) {
             throw new ConflictException("Currently only admins can create accounts. Please contact our Admin Team for further info.");
         }
@@ -69,6 +69,8 @@ public class OrgServiceUserValidator implements UserCreationValidator {
         if (!userValidator.isValidName(userName)) {
             throw new BadRequestException("User name must contain letters and digits only");
         }
+
+        userValidator.checkPassword(password);
 
         if (reservedNames.contains(userName.toLowerCase())) {
             throw new ConflictException(String.format("User name \"%s\" is reserved. Please, choose another one", userName));

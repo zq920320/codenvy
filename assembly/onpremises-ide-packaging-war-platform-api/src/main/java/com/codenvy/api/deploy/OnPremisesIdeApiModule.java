@@ -269,6 +269,11 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         new ConjunctionRequestFilter(
                                 new RegexpRequestFilter("^/api/permissions$"),
                                 new RequestMethodFilter("GET")
+                        ),
+                        new ConjunctionRequestFilter(
+                                new RegexpRequestFilter("^/api/user$"),
+                                new RequestMethodFilter("POST"),
+                                request -> !isNullOrEmpty(request.getParameter("token"))
                         )
                 )
         );
@@ -287,7 +292,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.machine.server.MachineService.class);
         bind(org.eclipse.che.api.machine.server.dao.SnapshotDao.class).to(com.codenvy.api.dao.mongo.SnapshotDaoImpl.class);
         bind(com.mongodb.DB.class).annotatedWith(Names.named("mongo.db.machine"))
-                                  .toProvider(com.codenvy.api.dao.mongo.MachineMongoDBProvider.class);
+                                  .toProvider(com.codenvy.api.dao.mongo.
+                                                      MachineMongoDBProvider.class);
 
         bind(MongoDatabase.class).annotatedWith(Names.named("mongo.db.machine"))
                                  .toProvider(MachineMongoDatabaseProvider.class);
