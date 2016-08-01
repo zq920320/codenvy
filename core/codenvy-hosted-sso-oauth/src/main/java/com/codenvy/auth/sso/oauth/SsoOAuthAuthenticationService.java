@@ -115,7 +115,7 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
                 return Response.temporaryRedirect(UriBuilder.fromUri(noAccountFoundErrorPage).build()).build();
             }
             payload.put("username", findAvailableUsername(oauthUserId));
-            payload.put("password", NameGenerator.generate("", PASSWORD_LENGTH));
+            payload.put("password", createPassword());
 //            final OAuthToken token = oauth.getToken(oauthUserId);
 //            payload.putAll(createProfileInfo(oauthUserId, oauth, token));
 
@@ -131,7 +131,7 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         }
     }
 
-    private String findAvailableUsername(String email) throws ServerException {
+     private String findAvailableUsername(String email) throws ServerException {
         String candidate = email.contains("@") ? email.substring(0, email.indexOf('@')) : email;
         int count = 1;
         while (getUserByName(candidate).isPresent()) {
@@ -177,6 +177,25 @@ public class SsoOAuthAuthenticationService extends OAuthAuthenticationService {
         }
 
         return profileInfo;
+    }
+
+    private String createPassword() {
+        String password;
+        for (;;) {
+            boolean hasLetters = false;
+            boolean hasDigits = false;
+            password = NameGenerator.generate("", PASSWORD_LENGTH);
+            for (char passwordChar : password.toCharArray()) {
+                if (Character.isDigit(passwordChar)) {
+                    hasDigits = true;
+                } else if (Character.isLetter(passwordChar)) {
+                    hasLetters = true;
+                }
+                if (hasLetters && hasDigits) {
+                    return  password;
+                }
+            }
+        }
     }
 
 }

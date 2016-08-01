@@ -35,11 +35,11 @@ import java.util.concurrent.TimeUnit;
  */
 @Singleton
 public class BearerTokenManager {
+
     private final Map<String, Pair<Long, Map<String, String>>> tokenMap;
+
     /** Period of time when bearer ticked keep valid */
-
-    private final Long                                         ticketLifeTimeSeconds;
-
+    private final Long ticketLifeTimeSeconds;
     private final TokenGenerator tokenGenerator;
 
 

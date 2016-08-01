@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.Map;
 
 /**
- * Token validator implementation.
+ * Bearer based token validator implementation.
  */
 public class BearerTokenValidator implements TokenValidator {
 

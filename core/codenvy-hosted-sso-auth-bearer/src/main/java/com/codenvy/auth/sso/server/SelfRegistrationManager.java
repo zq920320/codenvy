@@ -41,6 +41,12 @@ import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
+/**
+ * User self-registrations manager.
+ * Constructs and sends email validation letters.
+ * @author Sergii Kabashniuk
+ * @author Max Shaposhnik
+ */
 
 public class SelfRegistrationManager {
     private static final Logger LOG = LoggerFactory.getLogger(SelfRegistrationManager.class);

@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import java.util.Map;
 
 /**
- * Provide ability to authenticate users with one time token.
+ * Provide ability to authenticate users with disposable token.
  */
 public class BearerAuthenticationHandler implements AuthenticationHandler {
 
