@@ -200,8 +200,7 @@ installCodenvy() {
     ssh -o StrictHostKeyChecking=no -i ~/.vagrant.d/insecure_private_key vagrant@${INSTALL_ON_NODE} "export TERM='xterm' && bash <(curl -L -s ${UPDATE_SERVICE}/repository/public/download/install-codenvy) --suppress --license=accept ${MULTI_OPTION} ${VERSION_OPTION} $@" >> ${TEST_LOG}
     EXIT_CODE=$?
 
-    # to get last several rows from test log file
-    OUTPUT=$(tail ${TEST_LOG})
+    OUTPUT=$(cat ${TEST_LOG})
 
     validateExitCode ${EXIT_CODE} ${validCode} --installCodenvy
 
@@ -228,8 +227,7 @@ installImCliClient() {
     ssh -o StrictHostKeyChecking=no -i ~/.vagrant.d/insecure_private_key vagrant@${INSTALL_ON_NODE} "export TERM='xterm' && bash <(curl -L -s ${UPDATE_SERVICE}/repository/public/download/install-im-cli) --license=accept ${VERSION_OPTION} $@" >> ${TEST_LOG}
     EXIT_CODE=$?
 
-    # to get last several rows from test log file
-    OUTPUT=$(tail ${TEST_LOG})
+    OUTPUT=$(cat ${TEST_LOG})
 
     validateExitCode ${EXIT_CODE} ${validCode}
 

@@ -107,6 +107,8 @@ URL_REGEX="^https?:\/\/[\da-zA-Z_\-\.\/?&#+]+"
 
 MIN_OS_VERSION=7.1
 
+UNRECOGNIZED_PARAMETERS=
+
 cleanUp() {
     setterm -cursor on
     killTimer
@@ -138,6 +140,8 @@ setRunOptions() {
     LICENSE_ACCEPTED=false
     INSTALL_DIR=./codenvy
     DISABLE_MONITORING_TOOLS=false
+
+    local i=0
 
     for var in "$@"; do
         if [[ "$var" == "--multi" ]]; then
@@ -208,6 +212,9 @@ setRunOptions() {
 
         elif [[ "$var" == "--disable-monitoring-tools" ]]; then
             DISABLE_MONITORING_TOOLS=true
+
+        else
+            UNRECOGNIZED_PARAMETERS[$((i++))]="$var"
 
         fi
     done
@@ -1028,11 +1035,6 @@ doCheckAvailablePorts_multi() {
 }
 
 printPreInstallInfo_single() {
-    clear
-
-    println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
-    println
-
     doEnsureLicenseAgreement
 
     println "Checking system pre-requisites..."
@@ -1406,11 +1408,6 @@ doCheckRedhatSubscription() {
 }
 
 printPreInstallInfo_multi() {
-    clear
-
-    println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
-    println
-
     doEnsureLicenseAgreement
 
     println "Checking system pre-requisites..."
@@ -1925,7 +1922,27 @@ printPostInstallInfo_installation-manager-cli() {
     println "Codenvy Installation Manager is installed into ${INSTALL_DIR}/cli directory"
 }
 
+
+clear
+
 setRunOptions "$@"
+
+println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
+println
+
+if [[ ${#UNRECOGNIZED_PARAMETERS[@]} != 0 ]]; then
+    println $(printWarning "!!! You passed next unrecognized parameters:")
+    for var in "${UNRECOGNIZED_PARAMETERS[@]}"; do
+        println $(printWarning "'$var'")
+    done
+
+    if [[ ${SUPPRESS} == false ]]; then
+        pressYKeyToContinue "Proceed?"
+    fi
+
+    println
+fi
+
 printPreInstallInfo_${CODENVY_TYPE}
 
 setterm -cursor off
