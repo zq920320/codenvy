@@ -107,7 +107,7 @@ URL_REGEX="^https?:\/\/[\da-zA-Z_\-\.\/?&#+]+"
 
 MIN_OS_VERSION=7.1
 
-UNRECOGNIZED_PARAMETERS=
+UNRECOGNIZED_PARAMETERS=()
 
 cleanUp() {
     setterm -cursor on
