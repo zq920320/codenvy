@@ -427,7 +427,7 @@ public class TestCDECArtifact extends BaseTest {
         assertEquals(spyCdecArtifact.getUpdateCommand(versionToUpdate, pathToBinaries, options.setStep(5)).toString(),
                      format("[{'command'='sudo cat %1$s/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$host_url|host_url|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
                             + "{'command'='sudo cat %1$s/patches/single_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$some property|some value|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
-                            + "{'command'='bash %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}]", ETC_PUPPET, TMP_CODENVY));
+                            + "{'command'='bash %1$s/patches/single_server/patch_after_update.sh', 'agent'='LocalAgent'}]", ETC_PUPPET));
     }
 
     @Test(expectedExceptions = IllegalStateException.class, expectedExceptionsMessageRegExp = "Codenvy On-Prem can be updated on CentOS 7 only")
@@ -506,7 +506,7 @@ public class TestCDECArtifact extends BaseTest {
                      + "{'command'='sudo cat %1$s/patches/multi_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$api_host_name|api.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/multi_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
                      + "{'command'='sudo cat %1$s/patches/multi_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$analytics_host_name|analytics.example.com|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/multi_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
                      + "{'command'='sudo cat %1$s/patches/multi_server/patch_after_update.sh | sed ':a;N;$!ba;s/\\n/~n/g' | sed 's|$version|3.3.0|g' | sed 's|~n|\\n|g' > tmp.tmp && sudo mv tmp.tmp %1$s/patches/multi_server/patch_after_update.sh', 'agent'='LocalAgent'}, "
-                     + "{'command'='bash %1$s/patches/multi_server/patch_after_update.sh', 'agent'='LocalAgent'}]", ETC_PUPPET, TMP_CODENVY));
+                     + "{'command'='bash %1$s/patches/multi_server/patch_after_update.sh', 'agent'='LocalAgent'}]", ETC_PUPPET));
     }
 
     @Test(expectedExceptions = IllegalArgumentException.class, expectedExceptionsMessageRegExp = "Step number .* is out of update range")
