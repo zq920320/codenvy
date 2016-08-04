@@ -27,7 +27,7 @@
     <name>Onpremises IDE :: WAR    :: Resources</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-commons-j2ee</artifactId>
         </dependency>
         <dependency>

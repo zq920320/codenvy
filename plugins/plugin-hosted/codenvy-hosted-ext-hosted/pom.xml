@@ -31,7 +31,7 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-workspace-activity</artifactId>
         </dependency>
         <dependency>
@@ -101,7 +101,7 @@
                         <id>analyze</id>
                         <configuration>
                             <ignoredDependencies>
-                                <ignoredDependency>com.codenvy.hosted-infrastructure:codenvy-hosted-workspace-activity</ignoredDependency>
+                                <ignoredDependency>com.codenvy.onpremises.wsmaster:codenvy-hosted-workspace-activity</ignoredDependency>
                             </ignoredDependencies>
                         </configuration>
                     </execution>
