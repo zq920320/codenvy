@@ -34,7 +34,7 @@
             <artifactId>logback-core</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-platform-api-impl</artifactId>
         </dependency>
         <dependency>

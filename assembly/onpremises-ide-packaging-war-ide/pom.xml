@@ -27,15 +27,15 @@
     <name>Onpremises IDE :: WAR    :: IDE</name>
     <dependencies>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-authorization</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-infra-filters</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-sso-client</artifactId>
         </dependency>
         <dependency>
@@ -64,7 +64,7 @@
             <scope>provided</scope>
         </dependency>
         <dependency>
-            <groupId>com.codenvy.hosted-infrastructure</groupId>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-commons-j2ee</artifactId>
             <scope>runtime</scope>
         </dependency>
