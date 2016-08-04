@@ -39,7 +39,6 @@ executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts" "
 executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts" "builder1.${HOST_URL}"
 executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts" "datasource.${HOST_URL}"
 executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts" "analytics.${HOST_URL}"
-executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ test.${HOST_URL}/' /etc/hosts" "master.${HOST_URL}"
 
 executeIMCommand "config" "--hostname" "${NEW_HOST_URL}"
 

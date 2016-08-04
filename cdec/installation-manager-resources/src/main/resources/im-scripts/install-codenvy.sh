@@ -1931,7 +1931,7 @@ println "Welcome. This program installs ${ARTIFACT_DISPLAY} ${VERSION}."
 println
 
 if [[ ${#UNRECOGNIZED_PARAMETERS[@]} != 0 ]]; then
-    println $(printWarning "!!! You passed next unrecognized parameters:")
+    println $(printWarning "!!! You passed unrecognized parameters:")
     for var in "${UNRECOGNIZED_PARAMETERS[@]}"; do
         println $(printWarning "'$var'")
     done

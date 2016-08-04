@@ -64,9 +64,6 @@ validateExpectedString ".*Can.t.connect.to.host..vagrant@node3.${HOST_URL}:22.*"
 
 ############# Start of change Codenvy hostname workflow
 # change '${HOST_URL}' hostname on 'test.${HOST_URL}' on puppet master
-executeSshCommand "sudo hostname test.${HOST_URL}"
-executeSshCommand "sudo sed -i 's/192.168.56.110 ${HOST_URL}//' /etc/hosts"
-executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ ${NEW_HOST_URL}/' /etc/hosts"
 executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ ${NEW_HOST_URL}/' /etc/hosts" "node1.${HOST_URL}"
 executeSshCommand "sudo sed -i 's/ ${HOST_URL}/ ${NEW_HOST_URL}/' /etc/hosts" "node2.${NEW_HOST_URL}"
 
