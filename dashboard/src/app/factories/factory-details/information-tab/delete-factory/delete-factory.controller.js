@@ -35,6 +35,9 @@ export class DeleteFactoryCtrl {
 
 //Perform factory deletion.
   deleteFactory(event) {
+    if (!this.factory || !this.factory.originFactory) {
+      return;
+    }
     let confirm = this.$mdDialog.confirm()
       .title('Would you like to delete the factory ' + (this.factory.originFactory.name ? '"' + this.factory.originFactory.name + '"' : this.factory.originFactory.id + '?'))
       .content('Please confirm for the factory removal.')

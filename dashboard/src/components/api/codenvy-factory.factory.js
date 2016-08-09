@@ -258,6 +258,11 @@ export class CodenvyFactory {
    */
   setFactory(originFactory) {
     let deferred = this.$q.defer();
+    // check originFactory
+    if (!originFactory || !originFactory.id) {
+      deferred.reject({data: {message: 'Read factory error.'}});
+      return deferred.promise;
+    }
 
     let promise = this.remoteFactoryAPI.put({factoryId: originFactory.id}, originFactory).$promise;
     // check if was OK or not
