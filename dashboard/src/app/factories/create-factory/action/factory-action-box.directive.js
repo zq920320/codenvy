@@ -40,7 +40,8 @@ export class FactoryActionBox {
       lifecycle: '@cdvyLifecycle',
       actionTitle: '@cdvyActionTitle',
       callbackController: '=cdvyCallbackController',
-      factoryObject: '=cdvyFactoryObject'
+      factoryObject: '=cdvyFactoryObject',
+      onChange: '&cdvyOnChange'
     };
   }
 
