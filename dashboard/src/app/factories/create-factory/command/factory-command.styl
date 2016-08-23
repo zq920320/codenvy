@@ -1,6 +1,9 @@
 .factory-commands-panel
   margin-top -6px
 
+  & > div
+    margin-bottom 10px
+
   .factory-commands-input
     min-height 50px
     height 50px
@@ -10,6 +13,9 @@
 
   .factory-commands-list
     max-width 600px
+
+    md-list
+      margin 0
 
     div
       outline none
@@ -21,10 +27,20 @@
       color $clear-foggy-sky-color
       line-height 18px
 
-    .factory-commands-widget-actionicons
-      outline none
+    .factory-commands-widget-actions
+      display inline-block
+      line-height inherit
+      min-height 100%
       cursor pointer
-      margin-left 10px
+      outline none
+
+      span
+        line-height inherit
+
+      .fa-times-circle::before,
+      .fa-edit::before
+        position relative
+        top 3px
 
     .factory-commands-row-command-name
       min-width 220px
@@ -35,7 +51,3 @@
 
     .factory-commands-row-command
       cursor pointer
-
-    .factory-commands-row-actions
-      height 21px
-      min-width 60px

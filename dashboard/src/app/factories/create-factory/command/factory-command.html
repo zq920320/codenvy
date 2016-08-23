@@ -41,13 +41,9 @@
 
     <div ng-if="factoryCommandCtrl.factoryObject.workspace.commands.length > 0"
          class="factory-commands-list">
-      <che-list-title che-icon="fa fa-terminal">
-        <span class="projects-list-workspace-name">Commands</span>
-      </che-list-title>
       <che-list>
         <che-list-item ng-repeat="command in factoryCommandCtrl.factoryObject.workspace.commands"
-                       flex="100"
-                       ng-mouseover="hover=true" ng-mouseout="hover=false">
+                       flex="100">
           <div layout="row" flex>
             <div layout="column"
                  layout-align="start start"
@@ -62,11 +58,13 @@
               {{command.commandLine}}
             </div>
             <div flex="10" layout="row" layout-align="center start"
-                 class="factory-commands-row-actions">
-              <md-icon ng-show="hover" class="factory-commands-widget-actionicons" md-font-icon="fa fa-times-circle"
-                       ng-click="factoryCommandCtrl.removeCommand($index)"></md-icon>
-              <md-icon ng-show="hover" class="factory-commands-widget-actionicons" md-font-icon="fa fa-edit"
-                       ng-click="factoryCommandCtrl.editCommand($event, $index)"></md-icon>
+                 class="che-list-actions">
+              <div ng-click="factoryCommandCtrl.removeCommand($index)" class="factory-commands-widget-actions">
+                <span class="fa fa-times-circle"></span>
+              </div>
+              <div ng-click="factoryCommandCtrl.editCommand($event, $index)" class="factory-commands-widget-actions">
+                <span class="fa fa-edit"></span>
+              </div>
             </div>
           </div>
         </che-list-item>
