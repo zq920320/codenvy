@@ -17,7 +17,10 @@
     from Codenvy S.A..
 
 -->
-<che-toolbar che-title="All factories"></che-toolbar>
+<che-toolbar che-title="All factories" border-none></che-toolbar>
+<che-description che-link-title="Learn more." che-link="http://codenvy.readme.io/docs/factories">
+  Factories enable workspace automation and are packaged as a consumer-friendly URL. Create new Factories to onboard your team, or integrate with your toolchain.
+</che-description>
 <md-content md-scroll-y flex layout="column" md-theme="maincontent-theme" class="factories-list-factories">
   <md-progress-linear md-mode="indeterminate" class="factories-list-factories-progress"
                       ng-if="listFactoriesCtrl.isLoading"></md-progress-linear>
