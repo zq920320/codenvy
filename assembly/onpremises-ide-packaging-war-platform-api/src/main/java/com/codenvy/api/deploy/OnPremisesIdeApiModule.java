@@ -336,10 +336,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
         install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
-        Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
-                Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
-        machineImageProviderMultibinder.addBinding()
-                                       .to(com.codenvy.machine.HostedDockerInstanceProvider.class);
+
         bind(WsAgentLauncher.class).to(com.codenvy.machine.launcher.WsAgentWithAuthLauncherImpl.class);
 
         //workspace activity service
@@ -360,6 +357,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(com.codenvy.api.factory.server.filters.FactoryPermissionsFilter.class);
 
         bind(org.eclipse.che.api.environment.server.compose.ComposeMachineInstanceProvider.class)
-                .to(org.eclipse.che.plugin.docker.machine.ComposeMachineProviderImpl.class);
+                .to(com.codenvy.machine.HostedComposeMachineProviderImpl.class);
     }
 }
