@@ -59,6 +59,7 @@ import static com.codenvy.machine.MaintenanceConstraintProvider.MAINTENANCE_CONS
  * @author Anton Korneta
  * @author Roman Iuvshyn
  */
+@Deprecated
 public class HostedDockerInstanceProvider extends DockerInstanceProvider {
 
     private final DockerConnector                               docker;

@@ -17,8 +17,6 @@ package com.codenvy.plugin.urlfactory;
 import com.google.common.base.Strings;
 
 import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.api.machine.shared.dto.LimitsDto;
-import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
 import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
@@ -27,7 +25,7 @@ import org.eclipse.che.dto.server.DtoFactory;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 
 /**
  * Handle the creation of some elements used inside a {@link Factory}
@@ -98,7 +96,7 @@ public class URLFactoryBuilder {
 
         // if remote repository contains a codenvy docker file, use it
         // else use the default image.
-        final MachineSourceDto machineSourceDto;
+        /*final MachineSourceDto machineSourceDto;
         if (dockerFileLocation != null && URLChecker.exists(dockerFileLocation)) {
             machineSourceDto = DtoFactory.newDto(MachineSourceDto.class).withType("dockerfile").withLocation(dockerFileLocation);
         } else {
@@ -106,27 +104,26 @@ public class URLFactoryBuilder {
         }
 
         // set the memory limit
-        LimitsDto limitsDto = DtoFactory.newDto(LimitsDto.class).withRam(2000);
+        LimitsDto limitsDto = DtoFactory.newDto(LimitsDto.class).withRam(2000);*/
 
         // Setup machine configuration
-        MachineConfigDto machineConfigDto = DtoFactory.newDto(MachineConfigDto.class)
+        /*MachineConfigDto machineConfigDto = DtoFactory.newDto(MachineConfigDto.class)
                                                       .withLimits(limitsDto)
                                                       .withType("docker")
                                                       .withDev(true)
                                                       .withSource(machineSourceDto)
-                                                      .withName("ws-machine");
+                                                      .withName("ws-machine");*/
 
 
 
         // setup environment
-        EnvironmentDto environmentDto = DtoFactory.newDto(EnvironmentDto.class)
-                                                  .withName(environmentName)
-                                                  .withMachineConfigs(singletonList(machineConfigDto));
+        EnvironmentDto environmentDto = DtoFactory.newDto(EnvironmentDto.class);
+//                                                  .withMachineConfigs(singletonList(machineConfigDto));
 
         // workspace configuration using the environment
         return DtoFactory.newDto(WorkspaceConfigDto.class)
                          .withDefaultEnv(environmentName)
-                         .withEnvironments(singletonList(environmentDto))
+                         .withEnvironments(singletonMap(environmentName, environmentDto))
                          .withName(name);
     }
 }

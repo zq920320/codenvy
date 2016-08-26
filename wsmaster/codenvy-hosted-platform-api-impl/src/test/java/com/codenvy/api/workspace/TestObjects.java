@@ -32,11 +32,10 @@ import org.eclipse.che.commons.lang.Size;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.RUNNING;
 
@@ -60,9 +59,10 @@ public final class TestObjects {
                             .generateId()
                             .setConfig(WorkspaceConfigImpl.builder()
                                                           .setName(NameGenerator.generate("workspace", 2))
-                                                          .setEnvironments(singletonList(new EnvironmentImpl("dev-env",
-                                                                                                             null,
-                                                                                                             machineConfigs)))
+                                                          .setEnvironments(
+                                                                  singletonMap("dev-env", new EnvironmentImpl(null,
+                                                                                                              null)))
+//                                                                                                             machineConfigs)))
                                                           .setDefaultEnv("dev-env")
                                                           .build())
                             .setNamespace(owner)
@@ -80,10 +80,11 @@ public final class TestObjects {
     public static WorkspaceImpl createRuntime(String devMachineRam, String... machineRams) {
         final WorkspaceImpl workspace = createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams);
         final String env = workspace.getConfig().getDefaultEnv();
-        final List<MachineConfigImpl> machineConfigs = workspace.getConfig()
-                                                                .getEnvironment(env)
-                                                                .get()
-                                                                .getMachineConfigs();
+        final List<MachineConfigImpl> machineConfigs = new ArrayList<>();
+//        final List<MachineConfigImpl> machineConfigs = workspace.getConfig()
+//                                                                .getEnvironment(env)
+//                                                                .get()
+//                                                                .getMachineConfigs();
         final MachineConfigImpl devCfg = machineConfigs.stream()
                                                        .filter(MachineConfigImpl::isDev)
                                                        .findFirst()
@@ -109,7 +110,7 @@ public final class TestObjects {
                                      new LimitsImpl(ramLimit),
                                      Arrays.asList(new ServerConfImpl("ref1", "8080/tcp", "https", "some/path"),
                                                    new ServerConfImpl("ref2", "9090/udp", "protocol", "/some/path")),
-                                     Collections.singletonMap("key1", "value1"));
+                                     singletonMap("key1", "value1"));
     }
 
     /** Creates machine impl based on configuration. */

@@ -358,5 +358,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         install(new org.eclipse.che.plugin.machine.ssh.SshMachineModule());
         bind(com.codenvy.api.factory.server.filters.FactoryPermissionsFilter.class);
+
+        bind(org.eclipse.che.api.environment.server.compose.ComposeMachineInstanceProvider.class)
+                .to(org.eclipse.che.plugin.docker.machine.ComposeMachineProviderImpl.class);
     }
 }

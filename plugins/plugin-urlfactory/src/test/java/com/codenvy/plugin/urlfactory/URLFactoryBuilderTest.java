@@ -72,7 +72,8 @@ public class URLFactoryBuilderTest {
 
         WorkspaceConfigDto workspaceConfigDto = urlFactoryBuilder.buildWorkspaceConfig("foo", "dumm", myLocation);
 
-        MachineConfigDto machineConfigDto = workspaceConfigDto.getEnvironments().get(0).devMachine();
+        MachineConfigDto machineConfigDto = null;
+//        MachineConfigDto machineConfigDto = workspaceConfigDto.getEnvironments().get(0).devMachine();
 
         assertEquals(machineConfigDto.getType(), "docker");
         MachineSourceDto machineSourceDto = machineConfigDto.getSource();
@@ -93,7 +94,8 @@ public class URLFactoryBuilderTest {
 
         WorkspaceConfigDto workspaceConfigDto = urlFactoryBuilder.buildWorkspaceConfig("foo", "dumm", myLocation);
 
-        MachineConfigDto machineConfigDto = workspaceConfigDto.getEnvironments().get(0).devMachine();
+        MachineConfigDto machineConfigDto = null;
+//        MachineConfigDto machineConfigDto = workspaceConfigDto.getEnvironments().get(0).devMachine();
 
         assertEquals(machineConfigDto.getType(), "docker");
         MachineSourceDto machineSourceDto = machineConfigDto.getSource();

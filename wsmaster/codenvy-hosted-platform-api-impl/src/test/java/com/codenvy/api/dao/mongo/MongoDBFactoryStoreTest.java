@@ -36,12 +36,8 @@ import org.eclipse.che.api.factory.shared.dto.Ide;
 import org.eclipse.che.api.factory.shared.dto.OnAppLoaded;
 import org.eclipse.che.api.factory.shared.dto.OnProjectsLoaded;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
-import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
-import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
-import org.eclipse.che.api.machine.shared.dto.ServerConfDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
-import org.eclipse.che.api.workspace.shared.dto.RecipeDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.commons.lang.NameGenerator;
@@ -122,9 +118,8 @@ public class MongoDBFactoryStoreTest {
                                                                              .withType("maven")
                                                                              .withCommandLine("mvn test")))
                                        .withDefaultEnv("env1")
-                                       .withEnvironments(singletonList(DtoFactory.getInstance().createDto(EnvironmentDto.class)
-                                                                                 .withName("test")
-                                                                                 .withMachineConfigs(singletonList(
+                                       .withEnvironments(singletonMap("test", DtoFactory.getInstance().createDto(EnvironmentDto.class)
+                                                                                 /*.withMachineConfigs(singletonList(
                                                                                          DtoFactory.getInstance().createDto(
                                                                                                  MachineConfigDto.class)
                                                                                                    .withName("name")
@@ -149,7 +144,8 @@ public class MongoDBFactoryStoreTest {
                                                                                  .withRecipe(DtoFactory.getInstance().createDto(
                                                                                          RecipeDto.class)
                                                                                                        .withType("sometype")
-                                                                                                       .withScript("some script")))));
+                                                                                                       .withScript("some script"))*/
+                                       )));
 
         Ide ide = DtoFactory.getInstance().createDto(Ide.class)
                             .withOnAppLoaded(DtoFactory.getInstance().createDto(OnAppLoaded.class))
