@@ -54,8 +54,8 @@
              class="che-list-item-details">
           <che-list-header-column flex-gt-xs="25"
                                   che-sort-value='listFactoriesCtrl.factoriesOrderBy'
-                                  che-sort-item='originFactory.name'
-                                  che-column-title='Name'></che-list-header-column>
+                                  che-sort-item='[originFactory.name, idURL]'
+                                  che-column-title='Factory'></che-list-header-column>
           <che-list-header-column flex-gt-xs="60"
                                   che-sort-value='listFactoriesCtrl.factoriesOrderBy'
                                   che-sort-item='originFactory.workspace.environments[0].machineConfigs[0].limits.ram'
