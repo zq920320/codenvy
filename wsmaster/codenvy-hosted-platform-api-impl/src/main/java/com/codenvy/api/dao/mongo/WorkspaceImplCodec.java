@@ -21,17 +21,10 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.eclipse.che.api.core.model.machine.Limits;
-import org.eclipse.che.api.core.model.machine.MachineSource;
 import org.eclipse.che.api.core.model.project.ProjectConfig;
 import org.eclipse.che.api.core.model.project.SourceStorage;
 import org.eclipse.che.api.core.model.workspace.EnvironmentRecipe;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
-import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl.MachineConfigImplBuilder;
-import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
-import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentRecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ExtendedMachineImpl;
@@ -301,72 +294,6 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
         document.append("properties", serverConf2.getProperties() == null ?
                                       null :
                                       mapAsDocumentsList(serverConf2.getProperties()));
-
-        return document;
-    }
-
-    private static ServerConfImpl asServerConf(Document document) {
-        return new ServerConfImpl(document.getString("ref"),
-                                  document.getString("port"),
-                                  document.getString("protocol"),
-                                  document.getString("path"));
-    }
-
-    private static MachineConfigImpl asMachineConfig(Document document) {
-        final MachineConfigImplBuilder builder = MachineConfigImpl.builder()
-                                                                  .setDev(document.getBoolean("dev"))
-                                                                  .setName(document.getString("name"))
-                                                                  .setType(document.getString("type"));
-        final Document sourceDocument = document.get("source", Document.class);
-        if (sourceDocument != null) {
-            builder.setSource(new MachineSourceImpl(sourceDocument.getString(MACHINE_SOURCE_TYPE))
-                                      .setContent(sourceDocument.getString(MACHINE_SOURCE_CONTENT))
-                                      .setLocation(sourceDocument.getString(MACHINE_SOURCE_LOCATION)));
-        }
-        final Document limitsDocument = document.get("limits", Document.class);
-        if (limitsDocument != null) {
-            builder.setLimits(new LimitsImpl(limitsDocument.getInteger("ram", 0)));
-        }
-
-        @SuppressWarnings("unchecked") // 'servers' field is always list
-        final List<Document> serversDocuments = (List<Document>)document.get("servers");
-        if (serversDocuments != null) {
-            builder.setServers(serversDocuments.stream()
-                                               .map(WorkspaceImplCodec::asServerConf)
-                                               .collect(toList()));
-        }
-
-        @SuppressWarnings("unchecked") // 'envVariables' field is always list
-        final List<Document> envVariables = (List<Document>)document.get("envVariables");
-        if (envVariables != null) {
-            builder.setEnvVariables(documentsListAsMap(envVariables));
-        }
-        return builder.build();
-    }
-
-    private static Document asDocument(MachineConfigImpl config) {
-        final Document document = new Document().append("dev", config.isDev())
-                                                .append("name", config.getName())
-                                                .append("type", config.getType())
-                                                .append("envVariables", mapAsDocumentsList(config.getEnvVariables()));
-        final MachineSource source = config.getSource();
-        if (source != null) {
-            document.append("source", new Document(MACHINE_SOURCE_TYPE, source.getType())
-                    .append(MACHINE_SOURCE_LOCATION, source.getLocation())
-                    .append(MACHINE_SOURCE_CONTENT, source.getContent()));
-        }
-        final Limits limits = config.getLimits();
-        if (limits != null) {
-            document.append("limits", new Document("ram", limits.getRam()));
-        }
-
-        document.append("servers", config.getServers()
-                                         .stream()
-                                         .map(server -> new Document().append("ref", server.getRef())
-                                                                      .append("port", server.getPort())
-                                                                      .append("protocol", server.getProtocol())
-                                                                      .append("path", server.getPath()))
-                                         .collect(toList()));
 
         return document;
     }

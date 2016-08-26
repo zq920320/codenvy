@@ -27,7 +27,11 @@ import org.eclipse.che.api.core.model.workspace.Environment;
 import org.eclipse.che.api.core.model.workspace.Workspace;
 import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
+import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
+import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.WorkspaceRuntimes;
@@ -45,6 +49,7 @@ import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 import static java.lang.String.format;
+import static java.util.stream.Collectors.toList;
 import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.STOPPED;
 
 /**
@@ -60,11 +65,11 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
     private static final Striped<Lock> CREATE_LOCKS   = Striped.lazyWeakLock(100);
     private static final Striped<Lock> START_LOCKS    = Striped.lazyWeakLock(100);
 
-    private final UserManager userManager;
-
-    private final int  workspacesPerUser;
-    private final long maxRamPerEnv;
-    private final long ramPerUser;
+    private final UserManager       userManager;
+    private final ComposeFileParser composeFileParser;
+    private final int               workspacesPerUser;
+    private final long              maxRamPerEnv;
+    private final long              ramPerUser;
 
     @Inject
     public LimitsCheckingWorkspaceManager(@Named("limits.user.workspaces.count") int workspacesPerUser,
@@ -76,12 +81,14 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
                                           UserManager userManager,
                                           SnapshotDao snapshotDao,
                                           @Named("workspace.runtime.auto_snapshot") boolean defaultAutoSnapshot,
-                                          @Named("workspace.runtime.auto_restore") boolean defaultAutoRestore) {
+                                          @Named("workspace.runtime.auto_restore") boolean defaultAutoRestore,
+                                          ComposeFileParser composeFileParser) {
         super(workspaceDao, runtimes, eventService, defaultAutoSnapshot, defaultAutoRestore, snapshotDao);
         this.userManager = userManager;
         this.workspacesPerUser = workspacesPerUser;
         this.maxRamPerEnv = "-1".equals(maxRamPerEnv) ? -1 : Size.parseSizeToMegabytes(maxRamPerEnv);
         this.ramPerUser = "-1".equals(ramPerUser) ? -1 : Size.parseSizeToMegabytes(ramPerUser);
+        this.composeFileParser = composeFileParser;
     }
 
     @Override
@@ -185,19 +192,20 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
         lock.lock();
         try {
             final List<WorkspaceImpl> workspacesPerUser = getByNamespace(namespace);
-            final long runningWorkspaces = workspacesPerUser.stream().filter(ws -> STOPPED != ws.getStatus()).count();
-            final long currentlyUsedRamMB = 0;
-            // TODO how to do that??? parse each time? or add these values to runtime of machine
-//            final long currentlyUsedRamMB = workspacesPerUser.stream().filter(ws -> STOPPED != ws.getStatus())
-//                                                             .map(ws -> ws.getConfig()
-//                                                                          .getEnvironment(ws.getRuntime().getActiveEnv())
-//                                                                          .get()
-//                                                                          .getMachineConfigs())
-//                                                             .mapToLong(this::sumRam)
-//                                                             .sum();
+            final long runningWorkspaces = workspacesPerUser.stream()
+                                                            .filter(ws -> STOPPED != ws.getStatus())
+                                                            .count();
+            final long currentlyUsedRamMB = workspacesPerUser.stream()
+                                                             .filter(ws -> STOPPED != ws.getStatus())
+                                                             .map(ws -> ws.getRuntime().getMachines())
+                                                             .map(machines -> machines
+                                                                     .stream()// TODO rework, probably flatMap
+                                                                     .map(MachineImpl::getConfig)
+                                                                     .collect(toList()))
+                                                             .mapToLong(this::sumRam)
+                                                             .sum();
             final long currentlyFreeRamMB = ramPerUser - currentlyUsedRamMB;
-//            final long allocating = sumRam(envOptional.get().getMachineConfigs());
-            final long allocating = 0;
+            final long allocating = sumRam(env);
             if (allocating > currentlyFreeRamMB) {
                 final String usedRamGb = DECIMAL_FORMAT.format(currentlyUsedRamMB / 1024D);
                 final String limitRamGb = DECIMAL_FORMAT.format(ramPerUser / 1024D);
@@ -256,17 +264,13 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
     }
 
     @VisibleForTesting
-    void checkMaxEnvironmentRam(WorkspaceConfig config) throws LimitExceededException {
+    void checkMaxEnvironmentRam(WorkspaceConfig config) throws ServerException {
         if (maxRamPerEnv < 0) {
             return;
         }
         for (Map.Entry<String, ? extends Environment> envEntry : config.getEnvironments().entrySet()) {
-            final long workspaceRam = 0;
-//            final long workspaceRam = environment.getMachineConfigs()
-//                                                 .stream()
-//                                                 .filter(machineCfg -> machineCfg.getLimits() != null)
-//                                                 .mapToInt(machineCfg -> machineCfg.getLimits().getRam())
-//                                                 .sum();
+            Environment env = envEntry.getValue();
+            final long workspaceRam = sumRam(env);
             if (workspaceRam > maxRamPerEnv) {
                 throw new LimitExceededException(format("The maximum RAM per workspace is set to '%dmb' and you requested '%dmb'. " +
                                                         "This value is set by your admin with the 'limits.workspace.env.ram' property",
@@ -280,10 +284,20 @@ public class LimitsCheckingWorkspaceManager extends WorkspaceManager {
         }
     }
 
+
     private long sumRam(List<? extends MachineConfig> machineConfigs) {
         return machineConfigs.stream()
                              .mapToInt(m -> m.getLimits().getRam())
                              .sum();
+    }
+
+    private long sumRam(Environment environment) throws ServerException {
+        ComposeEnvironmentImpl composeEnvironment = composeFileParser.parse(environment);
+        return composeEnvironment.getServices()
+                                 .values()
+                                 .stream()
+                                 .mapToLong(ComposeServiceImpl::getMemLimit)
+                                 .sum();
     }
 
     private void checkNamespaceValidity(String namespace, String errorMsg) throws ServerException {
