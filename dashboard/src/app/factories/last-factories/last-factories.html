@@ -17,9 +17,11 @@
     from Codenvy S.A..
 
 -->
-<che-panel che-title="Recent Factories" che-title-icon="material-design icon-ic_widgets_24px">
+<dashboard-panel panel-title="Last Factories">
+
   <md-progress-linear md-mode="indeterminate"
                       ng-show="lastFactoriesController.isLoading"></md-progress-linear>
+
   <div class="dashboard-last-factories" ng-show="!lastFactoriesController.isLoading">
     <span ng-show="lastFactoriesController.getFactories().length === 0">No factories found</span>
     <che-list ng-show="lastFactoriesController.getFactories().length > 0">
@@ -28,4 +30,4 @@
         cdvy-factory="factory" cdvy-is-selectable="false"/>
     </che-list>
   </div>
-</che-panel>
+</dashboard-panel>
