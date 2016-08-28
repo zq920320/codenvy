@@ -17,13 +17,13 @@
     from Codenvy S.A..
 
 -->
-<dashboard-panel panel-title="Last Factories">
+<dashboard-panel panel-title="Recent Factories">
 
   <md-progress-linear md-mode="indeterminate"
                       ng-show="lastFactoriesController.isLoading"></md-progress-linear>
 
   <div class="dashboard-last-factories" ng-show="!lastFactoriesController.isLoading">
-    <span ng-show="lastFactoriesController.getFactories().length === 0">No factories found</span>
+    <span ng-show="lastFactoriesController.getFactories().length === 0" class="last-factories-empty-label">No factories found</span>
     <che-list ng-show="lastFactoriesController.getFactories().length > 0">
       <cdvy-factory-item
         ng-repeat="factory in lastFactoriesController.getFactories() | orderBy:lastFactoriesController.factoriesOrderBy | limitTo:lastFactoriesController.maxItems"
