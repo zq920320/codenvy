@@ -336,6 +336,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.workspace.server.event.MachineStateListener.class).asEagerSingleton();
 
         install(new org.eclipse.che.plugin.docker.machine.DockerMachineModule());
+        Multibinder<org.eclipse.che.api.machine.server.spi.InstanceProvider> machineImageProviderMultibinder =
+                Multibinder.newSetBinder(binder(), org.eclipse.che.api.machine.server.spi.InstanceProvider.class);
+        machineImageProviderMultibinder.addBinding()
+                                       .to(org.eclipse.che.plugin.docker.machine.DockerInstanceProvider.class);
 
         bind(WsAgentLauncher.class).to(com.codenvy.machine.launcher.WsAgentWithAuthLauncherImpl.class);
 

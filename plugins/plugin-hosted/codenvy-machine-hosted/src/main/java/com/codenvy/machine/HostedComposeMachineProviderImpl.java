@@ -48,9 +48,12 @@ import static com.codenvy.machine.MaintenanceConstraintProvider.MAINTENANCE_CONS
 import static com.codenvy.machine.MaintenanceConstraintProvider.MAINTENANCE_CONSTRAINT_VALUE;
 
 /**
- * Docker implementation of {@link org.eclipse.che.api.environment.server.compose.ComposeMachineInstanceProvider}.
- * This implementation provides compose services with environment context
- * that contains the specific machine token instead of user token.
+ * Specific implementation of {@link ComposeMachineProviderImpl} needed for hosted environment.
+ *
+ * <p/> This implementation:
+ * <br/>- provides compose services with environment context that contains the specific machine token instead of user token
+ * <br/>- workarounds buggy pulling on swarm by replacing it with build
+ * <br/>- add constraints to build to avoid docker image building on a node under maintenance
  *
  * @author Anton Korneta
  * @author Roman Iuvshyn
