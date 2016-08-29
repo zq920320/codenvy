@@ -28,8 +28,12 @@ import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import java.net.URI;
 
 import static com.codenvy.api.workspace.TestObjects.createConfig;
 import static com.codenvy.api.workspace.TestObjects.createRuntime;
@@ -51,11 +55,12 @@ import static org.mockito.Mockito.verify;
  *
  * @author Yevhenii Voevodin
  */
+@Listeners(MockitoTestNGListener.class)
 public class LimitsCheckingWorkspaceManagerTest {
     @Mock
     SnapshotDao snapshotDao;
-    @Mock
-    ComposeFileParser composeFileParser;
+
+    ComposeFileParser composeFileParser = new ComposeFileParser(URI.create("localhost:8080"));
 
     @Test(expectedExceptions = LimitExceededException.class,
           expectedExceptionsMessageRegExp = "The maximum workspaces allowed per user is set to '2' and you are currently at that limit. " +

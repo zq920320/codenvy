@@ -14,27 +14,33 @@
  */
 package com.codenvy.api.workspace;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
+
 import org.eclipse.che.api.core.model.machine.MachineStatus;
 import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
+import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
 import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
-import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentRecipeImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ExtendedMachineImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceRuntimeImpl;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.eclipse.che.commons.lang.Size;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
+import static java.util.Collections.emptyMap;
+import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
 import static java.util.stream.Collectors.toList;
 import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.RUNNING;
@@ -43,26 +49,36 @@ import static org.eclipse.che.api.core.model.workspace.WorkspaceStatus.RUNNING;
  * Test util class, helps to create test objects.
  *
  * @author Yevhenii Voevodin
+ * @author Alexander Garagatyi
  */
 public final class TestObjects {
 
-    private static final String DEFAULT_USER_NAME = "user123456";
+    private static final String       DEFAULT_USER_NAME = "user123456";
+    private static final ObjectMapper YAML_PARSER       = new ObjectMapper(new YAMLFactory());
 
     /** Creates users workspace object based on the owner and machines RAM. */
-    public static WorkspaceImpl createWorkspace(String owner, String devMachineRam, String... machineRams) {
-        final List<MachineConfigImpl> machineConfigs = new ArrayList<>(1 + machineRams.length);
-        machineConfigs.add(createMachineConfig(true, (int)Size.parseSizeToMegabytes(devMachineRam)));
-        for (String machineRam : machineRams) {
-            machineConfigs.add(createMachineConfig(false, (int)Size.parseSizeToMegabytes(machineRam)));
+    public static WorkspaceImpl createWorkspace(String owner, String devMachineRam, String... machineRams)
+            throws Exception {
+
+        HashMap<String, ComposeServiceImpl> services = new HashMap<>(1 + machineRams.length);
+        services.put("dev-machine", createService(Size.parseSize(devMachineRam)));
+        for (int i = 0; i < machineRams.length; i++) {
+            services.put("machine" + i, createService(Size.parseSize(machineRams[i])));
         }
+        ComposeEnvironmentImpl composeEnvironment = new ComposeEnvironmentImpl();
+        composeEnvironment.setServices(services);
+        String yaml = YAML_PARSER.writeValueAsString(composeEnvironment);
+        EnvironmentRecipeImpl recipe = new EnvironmentRecipeImpl("compose", "application/x-yaml", yaml, null);
+        Map<String, ExtendedMachineImpl> machines = new HashMap<>();
+        machines.put("dev-machine", new ExtendedMachineImpl(singletonList("ws-agent"), emptyMap()));
+
         return WorkspaceImpl.builder()
                             .generateId()
                             .setConfig(WorkspaceConfigImpl.builder()
                                                           .setName(NameGenerator.generate("workspace", 2))
-                                                          .setEnvironments(
-                                                                  singletonMap("dev-env", new EnvironmentImpl(null,
-                                                                                                              null)))
-//                                                                                                             machineConfigs)))
+                                                          .setEnvironments(singletonMap("dev-env",
+                                                                                        new EnvironmentImpl(recipe,
+                                                                                                            machines)))
                                                           .setDefaultEnv("dev-env")
                                                           .build())
                             .setNamespace(owner)
@@ -72,60 +88,80 @@ public final class TestObjects {
     }
 
     /** Creates workspace config object based on the machines RAM. */
-    public static WorkspaceConfig createConfig(String devMachineRam, String... machineRams) {
+    public static WorkspaceConfig createConfig(String devMachineRam, String... machineRams) throws Exception {
         return createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams).getConfig();
     }
 
     /** Creates runtime workspace object based on the machines RAM. */
-    public static WorkspaceImpl createRuntime(String devMachineRam, String... machineRams) {
+    public static WorkspaceImpl createRuntime(String devMachineRam, String... machineRams) throws Exception {
         final WorkspaceImpl workspace = createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams);
-        final String env = workspace.getConfig().getDefaultEnv();
-        final List<MachineConfigImpl> machineConfigs = new ArrayList<>();
-//        final List<MachineConfigImpl> machineConfigs = workspace.getConfig()
-//                                                                .getEnvironment(env)
-//                                                                .get()
-//                                                                .getMachineConfigs();
-        final MachineConfigImpl devCfg = machineConfigs.stream()
-                                                       .filter(MachineConfigImpl::isDev)
-                                                       .findFirst()
-                                                       .get();
+        final String envName = workspace.getConfig().getDefaultEnv();
+        EnvironmentImpl env = workspace.getConfig().getEnvironments().get(envName);
+        ComposeEnvironmentImpl composeEnvironment = YAML_PARSER.readValue(env.getRecipe().getContent(),
+                                                                          ComposeEnvironmentImpl.class);
+        Map.Entry<String, ExtendedMachineImpl> devMachine = env.getMachines()
+                                                               .entrySet()
+                                                               .stream()
+                                                               .filter(entry -> entry.getValue()
+                                                                                     .getAgents()
+                                                                                     .contains(
+                                                                                             "ws-agent"))
+                                                               .findAny()
+                                                               .get();
         final WorkspaceRuntimeImpl runtime =
                 new WorkspaceRuntimeImpl(workspace.getConfig().getDefaultEnv(),
                                          null,
-                                         machineConfigs.stream()
-                                                       .map(cfg -> createMachine(workspace.getId(), env, cfg))
-                                                       .collect(toList()),
-                                         createMachine(workspace.getId(), env, devCfg));
+                                         composeEnvironment.getServices()
+                                                           .entrySet()
+                                                           .stream()
+                                                           .map(entry -> createMachine(workspace.getId(),
+                                                                                       envName,
+                                                                                       entry.getValue(),
+                                                                                       entry.getKey(),
+                                                                                       devMachine.getKey()
+                                                                                                 .equals(entry.getKey())))
+                                                           .collect(toList()),
+                                         createMachine(workspace.getId(),
+                                                       envName,
+                                                       composeEnvironment.getServices().get(devMachine.getKey()),
+                                                       devMachine.getKey(),
+                                                       true));
         workspace.setStatus(RUNNING);
         workspace.setRuntime(runtime);
         return workspace;
     }
 
-    /** Creates machine config object based on ram and dev flag. */
-    public static MachineConfigImpl createMachineConfig(boolean isDev, int ramLimit) {
-        return new MachineConfigImpl(isDev,
-                                     NameGenerator.generate("machine", 2),
-                                     "docker",
-                                     new MachineSourceImpl("recipe").setLocation("recipe-location"),
-                                     new LimitsImpl(ramLimit),
-                                     Arrays.asList(new ServerConfImpl("ref1", "8080/tcp", "https", "some/path"),
-                                                   new ServerConfImpl("ref2", "9090/udp", "protocol", "/some/path")),
-                                     singletonMap("key1", "value1"));
-    }
+    private static MachineImpl createMachine(String workspaceId,
+                                             String envName,
+                                             ComposeServiceImpl service,
+                                             String serviceName,
+                                             boolean isDev) {
 
-    /** Creates machine impl based on configuration. */
-    public static MachineImpl createMachine(String wsId, String envName, MachineConfigImpl cfg) {
         return MachineImpl.builder()
-                          .setConfig(cfg)
+                          .setConfig(MachineConfigImpl.builder()
+                                                      .setDev(isDev)
+                                                      .setName(serviceName)
+                                                      .setSource(new MachineSourceImpl("some-type")
+                                                                         .setContent("some-content"))
+                                                      .setLimits(new LimitsImpl((int)Size.parseSizeToMegabytes(service.getMemLimit() + "b")))
+                                                      .setType("someType")
+                                                      .build())
                           .setId(NameGenerator.generate("machine", 10))
                           .setOwner(DEFAULT_USER_NAME)
                           .setStatus(MachineStatus.RUNNING)
-                          .setWorkspaceId(wsId)
+                          .setWorkspaceId(workspaceId)
                           .setEnvName(envName)
                           .setRuntime(new MachineRuntimeInfoImpl(new HashMap<>(),
                                                                  new HashMap<>(),
                                                                  new HashMap<>()))
                           .build();
+    }
+
+    private static ComposeServiceImpl createService(long memory) {
+        ComposeServiceImpl service = new ComposeServiceImpl();
+        service.setImage("image");
+        service.setMemLimit(memory);
+        return service;
     }
 
     private TestObjects() {}

@@ -42,8 +42,6 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
 @Singleton
 public class URLFactoryBuilder {
 
-    private static final long MEMORY_LIMIT_BYTES = 2000L * 1024L * 1024L;
-
     /**
      * Default docker image (if repository has no dockerfile)
      */
@@ -53,6 +51,8 @@ public class URLFactoryBuilder {
      * Default docker type (if repository has no dockerfile)
      */
     protected static final String DEFAULT_DOCKER_TYPE = "image";
+    protected static final long   MEMORY_LIMIT_BYTES  = 2000L * 1024L * 1024L;
+    protected static final String MACHINE_NAME        = "ws-machine";
 
     /**
      * Check if URL is existing or not
@@ -93,7 +93,7 @@ public class URLFactoryBuilder {
      * Help to generate default workspace configuration
      * @param environmentName the name of the environment to create
      * @param name the name of the workspace
-     * @param dockerFileLocation the optional location for codenvy dockerfileto use
+     * @param dockerFileLocation the optional location for codenvy dockerfile to use
      * @return a workspace configuration
      */
     public WorkspaceConfigDto buildWorkspaceConfig(String environmentName,
@@ -111,14 +111,14 @@ public class URLFactoryBuilder {
         }
 
         ComposeEnvironmentDto composeEnv =
-                newDto(ComposeEnvironmentDto.class).withServices(singletonMap("ws-machine", composeService));
+                newDto(ComposeEnvironmentDto.class).withServices(singletonMap(MACHINE_NAME, composeService));
 
         // setup environment
         EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
                 .withRecipe(newDto(EnvironmentRecipeDto.class).withContent(composeFileParser.toYaml(composeEnv))
                                                               .withContentType("application/x-yaml")
                                                               .withType("compose"))
-                .withMachines(singletonMap("ws-machine",
+                .withMachines(singletonMap(MACHINE_NAME,
                                            newDto(ExtendedMachineDto.class).withAgents(singletonList("ws-agent"))));
 
         // workspace configuration using the environment
