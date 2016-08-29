@@ -17,7 +17,10 @@
     from Codenvy S.A..
 
 -->
-<che-toolbar che-title="All factories"></che-toolbar>
+<che-toolbar che-title="All factories" border-none></che-toolbar>
+<che-description che-link-title="Learn more." che-link="http://codenvy.readme.io/docs/factories">
+  Factories enable workspace automation and are packaged as a consumer-friendly URL. Create new Factories to onboard your team, or integrate with your toolchain.
+</che-description>
 <md-content md-scroll-y flex layout="column" md-theme="maincontent-theme" class="factories-list-factories">
   <md-progress-linear md-mode="indeterminate" class="factories-list-factories-progress"
                       ng-if="listFactoriesCtrl.isLoading"></md-progress-linear>
@@ -49,15 +52,15 @@
         <div flex hide-xs layout-gt-xs="row"
              layout-align="start center"
              class="che-list-item-details">
-          <che-list-header-column flex-gt-xs="50"
-                                  che-sort-value='listFactoriesCtrl.factoriesOrderBy'
-                                  che-sort-item='originFactory.name'
-                                  che-column-title='Name'></che-list-header-column>
           <che-list-header-column flex-gt-xs="25"
+                                  che-sort-value='listFactoriesCtrl.factoriesOrderBy'
+                                  che-sort-item='[originFactory.name, idURL]'
+                                  che-column-title='Factory'></che-list-header-column>
+          <che-list-header-column flex-gt-xs="60"
                                   che-sort-value='listFactoriesCtrl.factoriesOrderBy'
                                   che-sort-item='originFactory.workspace.environments[0].machineConfigs[0].limits.ram'
                                   che-column-title='RAM'></che-list-header-column>
-          <che-list-header-column flex-gt-xs="25"
+          <che-list-header-column flex-gt-xs="15"
                                   che-column-title='Actions'></che-list-header-column>
         </div>
       </div>
