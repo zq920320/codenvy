@@ -19,7 +19,6 @@ import com.codenvy.plugin.urlfactory.ProjectConfigDtoMerger;
 import com.codenvy.plugin.urlfactory.URLFactoryBuilder;
 
 import org.eclipse.che.api.core.BadRequestException;
-import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.factory.server.FactoryParametersResolver;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
@@ -87,8 +86,7 @@ public class GitlabFactoryParametersResolver implements FactoryParametersResolve
      *         when data are invalid
      */
     @Override
-    public Factory createFactory(@NotNull final Map<String, String> factoryParameters) throws BadRequestException,
-                                                                                              ServerException {
+    public Factory createFactory(@NotNull final Map<String, String> factoryParameters) throws BadRequestException {
 
         // no need to check null value of url parameter as accept() method has performed the check
         final GitlabUrl gitlabUrl = gitlabUrlParser.parse(factoryParameters.get("url"));

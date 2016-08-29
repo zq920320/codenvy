@@ -16,7 +16,6 @@ package com.codenvy.plugin.urlfactory;
 
 import com.google.common.base.Strings;
 
-import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
@@ -42,6 +41,8 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
  */
 @Singleton
 public class URLFactoryBuilder {
+
+    private static final long MEMORY_LIMIT_BYTES = 2000L * 1024L * 1024L;
 
     /**
      * Default docker image (if repository has no dockerfile)
@@ -97,10 +98,9 @@ public class URLFactoryBuilder {
      */
     public WorkspaceConfigDto buildWorkspaceConfig(String environmentName,
                                                    String name,
-                                                   String dockerFileLocation) throws ServerException {
+                                                   String dockerFileLocation) {
 
-        ComposeServiceDto composeService = newDto(ComposeServiceDto.class)
-                .withMemLimit(2000L * 1024L * 1024L);// memory limit in bytes
+        ComposeServiceDto composeService = newDto(ComposeServiceDto.class).withMemLimit(MEMORY_LIMIT_BYTES);
 
         // if remote repository contains a codenvy docker file, use it
         // else use the default image.
