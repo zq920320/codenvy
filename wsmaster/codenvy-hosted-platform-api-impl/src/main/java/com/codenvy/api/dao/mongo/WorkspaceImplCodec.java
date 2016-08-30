@@ -204,7 +204,7 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
         Document recipeDocument = document.get("recipe", Document.class);
         if (recipeDocument != null) {
             EnvironmentRecipeImpl recipe = new EnvironmentRecipeImpl(recipeDocument.getString("type"),
-                                                                     recipeDocument.getString("content-type"),
+                                                                     recipeDocument.getString("contentType"),
                                                                      recipeDocument.getString("content"),
                                                                      recipeDocument.getString("location"));
             environment.setRecipe(recipe);
@@ -231,7 +231,7 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
             document.append("recipe", new Document().append("type", recipe.getType())
                                                     .append("content", recipe.getContent())
                                                     .append("location", recipe.getLocation())
-                                                    .append("content-type", recipe.getContentType()));
+                                                    .append("contentType", recipe.getContentType()));
         }
         if (environment.getMachines() != null) {
             document.append("machines", environment.getMachines()
