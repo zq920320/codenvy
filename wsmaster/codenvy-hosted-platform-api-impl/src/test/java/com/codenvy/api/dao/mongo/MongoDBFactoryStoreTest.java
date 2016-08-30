@@ -37,7 +37,10 @@ import org.eclipse.che.api.factory.shared.dto.OnAppLoaded;
 import org.eclipse.che.api.factory.shared.dto.OnProjectsLoaded;
 import org.eclipse.che.api.machine.shared.dto.CommandDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
+import org.eclipse.che.api.workspace.shared.dto.EnvironmentRecipeDto;
+import org.eclipse.che.api.workspace.shared.dto.ExtendedMachineDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
+import org.eclipse.che.api.workspace.shared.dto.ServerConf2Dto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.commons.lang.NameGenerator;
@@ -46,18 +49,17 @@ import org.eclipse.che.dto.server.DtoFactory;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Test;
 
-import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
+import static java.util.stream.Collectors.toList;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.testng.Assert.assertEquals;
@@ -68,7 +70,6 @@ import static org.testng.Assert.fail;
 
 /**
  * Tests for {@link MongoDBFactoryStore}
- *
  */
 public class MongoDBFactoryStoreTest {
 
@@ -90,68 +91,47 @@ public class MongoDBFactoryStoreTest {
 
     @Test
     public void shouldSaveFactory() throws Exception {
-        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        Factory factory = newDto(Factory.class);
         factory.setV("4.0");
 
-        factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
-                                     .withName("someAuthor")
-                                     .withCreated(777777777L)
-                                     .withEmail("test@test.com"));
+        factory.setCreator(newDto(Author.class)
+                                   .withName("someAuthor")
+                                   .withCreated(777777777L)
+                                   .withEmail("test@test.com"));
 
-        factory.setWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
-                                       .withProjects(Collections.singletonList(DtoFactory.getInstance().createDto(
-                                               ProjectConfigDto.class)
-                                                                                         .withSource(
-                                                                                                 DtoFactory.getInstance().createDto(
-                                                                                                         SourceStorageDto.class)
-                                                                                                           .withType("git")
-                                                                                                           .withLocation("location"))
-                                                                                         .withType("type")
-                                                                                         .withAttributes(
-                                                                                                 singletonMap("key",
-                                                                                                              singletonList("value")))
-                                                                                         .withDescription("description")
-                                                                                         .withName("name")
-                                                                                         .withPath("/path")))
-                                       .withCommands(singletonList(DtoFactory.getInstance().createDto(CommandDto.class)
-                                                                             .withName("command1")
-                                                                             .withType("maven")
-                                                                             .withCommandLine("mvn test")))
-                                       .withDefaultEnv("env1")
-                                       .withEnvironments(singletonMap("test", DtoFactory.getInstance().createDto(EnvironmentDto.class)
-                                                                                 /*.withMachineConfigs(singletonList(
-                                                                                         DtoFactory.getInstance().createDto(
-                                                                                                 MachineConfigDto.class)
-                                                                                                   .withName("name")
-                                                                                                   .withType("docker")
-                                                                                                   .withDev(true)
-                                                                                                   .withSource(
-                                                                                                           DtoFactory.getInstance()
-                                                                                                                     .createDto(
-                                                                                                                             MachineSourceDto.class)
-                                                                                                                     .withType(
-                                                                                                                             "git")
-                                                                                                                     .withLocation(
-                                                                                                                             "https://github.com/123/test.git"))
-                                                                                                   .withServers(Arrays.asList(newDto(ServerConfDto.class).withRef("ref1")
-                                                                                                                                                         .withPort("8080")
-                                                                                                                                                         .withProtocol("https"),
-                                                                                                                              newDto(ServerConfDto.class).withRef("ref2")
-                                                                                                                                                         .withPort("9090/udp")
-                                                                                                                                                         .withProtocol("someprotocol")))
-                                                                                                   .withEnvVariables(Collections.singletonMap("key1", "value1"))
-                                                                                 ))
-                                                                                 .withRecipe(DtoFactory.getInstance().createDto(
-                                                                                         RecipeDto.class)
-                                                                                                       .withType("sometype")
-                                                                                                       .withScript("some script"))*/
-                                       )));
+        ServerConf2Dto conf2Dto = newDto(ServerConf2Dto.class).withPort("8080")
+                                                              .withProtocol("http")
+                                                              .withProperties(singletonMap("prop", "value"));
+        ExtendedMachineDto machine =
+                newDto(ExtendedMachineDto.class).withAgents(singletonList("some-agent"))
+                                                .withServers(singletonMap("some-reference", conf2Dto));
+        EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
+                .withRecipe(newDto(EnvironmentRecipeDto.class).withContent("content")
+                                                              .withType("type")
+                                                              .withContentType("content-type"))
+                .withMachines(singletonMap("machine-name", machine));
 
-        Ide ide = DtoFactory.getInstance().createDto(Ide.class)
-                            .withOnAppLoaded(DtoFactory.getInstance().createDto(OnAppLoaded.class))
-                            .withOnProjectsLoaded(DtoFactory.getInstance().createDto(OnProjectsLoaded.class));
+        ProjectConfigDto projectConfigDto =
+                newDto(ProjectConfigDto.class).withSource(newDto(SourceStorageDto.class).withType("git")
+                                                                                        .withLocation("location"))
+                                              .withType("type")
+                                              .withAttributes(singletonMap("key", singletonList("value")))
+                                              .withDescription("description")
+                                              .withName("name")
+                                              .withPath("/path");
+        factory.setWorkspace(newDto(WorkspaceConfigDto.class)
+                                     .withProjects(singletonList(projectConfigDto))
+                                     .withCommands(singletonList(newDto(CommandDto.class).withName("command1")
+                                                                                         .withType("maven")
+                                                                                         .withCommandLine("mvn test")))
+                                     .withDefaultEnv("env1")
+                                     .withEnvironments(singletonMap("test", environmentDto)));
 
-        Action welcomePage = DtoFactory.getInstance().createDto(Action.class).withId("openWelcomePage");
+        Ide ide = newDto(Ide.class)
+                .withOnAppLoaded(newDto(OnAppLoaded.class))
+                .withOnProjectsLoaded(newDto(OnProjectsLoaded.class));
+
+        Action welcomePage = newDto(Action.class).withId("openWelcomePage");
         Map<String, String> welcomePageProperties = new HashMap<>();
         welcomePageProperties.put("authenticatedContentUrl", "content");
         welcomePageProperties.put("authenticatedTitle", "title");
@@ -163,7 +143,7 @@ public class MongoDBFactoryStoreTest {
 
         ide.getOnAppLoaded().getActions().add(welcomePage);
 
-        Action findReplace = DtoFactory.getInstance().createDto(Action.class).withId("findReplace");
+        Action findReplace = newDto(Action.class).withId("findReplace");
         Map<String, String> findReplaceProperties = new HashMap<>();
         findReplaceProperties.put("in", "content");
         findReplaceProperties.put("find", "title");
@@ -187,6 +167,7 @@ public class MongoDBFactoryStoreTest {
     /**
      * Checks we can't save a null factory
      * Expects a shouldNotSaveNullFactory exception
+     *
      * @throws Exception
      */
     @Test(expectedExceptions = NullPointerException.class)
@@ -204,28 +185,22 @@ public class MongoDBFactoryStoreTest {
 
         assertNull(collection.find(new Document("_id", id)).first());
     }
-    
+
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotSaveFactoryWithSameNameAndUser() throws Exception {
 
         Set<FactoryImage> images = new HashSet<>();
 
-        Factory factory1 = DtoFactory.getInstance().createDto(Factory.class)
-                                        .withName("testName")
-                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
-                                                               .withUserId("userOK"));
+        Factory factory1 = newDto(Factory.class).withName("testName")
+                                                .withCreator(newDto(Author.class).withUserId("userOK"));
 
-        Factory factory2 = DtoFactory.getInstance().createDto(Factory.class)
-                                        .withName("testName")
-                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
-                                                               .withUserId("userOK"))
-                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
-                                                                 .withName("wsName"));
+        Factory factory2 = newDto(Factory.class).withName("testName")
+                                                .withCreator(newDto(Author.class).withUserId("userOK"))
+                                                .withWorkspace(newDto(WorkspaceConfigDto.class).withName("wsName"));
 
         store.saveFactory(factory1, images);
         store.saveFactory(factory2, images);
     }
-
 
 
     @Test
@@ -241,10 +216,11 @@ public class MongoDBFactoryStoreTest {
         image.setImageData(b);
         images.add(image);
 
-        List<DBObject> imageList =
-                images.stream().map(one -> new BasicDBObjectBuilder().add("name", NameGenerator.generate("", 16) + one.getName())
-                                                                     .add("type", one.getMediaType())
-                                                                     .add("data", one.getImageData()).get()).collect(Collectors.toList());
+        List<DBObject> imageList = images.stream()
+                                         .map(one -> new BasicDBObjectBuilder()
+                                                 .add("name", NameGenerator.generate("", 16) + one.getName())
+                                                 .add("type", one.getMediaType())
+                                                 .add("data", one.getImageData()).get()).collect(toList());
 
         Document factoryBuilder = new Document();
 
@@ -270,62 +246,59 @@ public class MongoDBFactoryStoreTest {
 
         Set<FactoryImage> images = new HashSet<>();
 
-        Factory factory1 = DtoFactory.getInstance().createDto(Factory.class)
-                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
-                                                               .withUserId("userOK"));
+        Factory factory1 = newDto(Factory.class).withCreator(newDto(Author.class).withUserId("userOK"));
 
-        Factory factory2 = DtoFactory.getInstance().createDto(Factory.class)
-                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
-                                                               .withUserId("userOK"))
-                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
-                                                                 .withName("wsName"));
+        Factory factory2 = newDto(Factory.class).withCreator(newDto(Author.class).withUserId("userOK"))
+                                                .withWorkspace(newDto(WorkspaceConfigDto.class).withName("wsName"));
 
-        Factory factory3 = DtoFactory.getInstance().createDto(Factory.class)
-                                        .withCreator(DtoFactory.getInstance().createDto(Author.class)
-                                                               .withUserId("userOK"))
-                                        .withWorkspace(DtoFactory.getInstance().createDto(WorkspaceConfigDto.class)
-                                                                 .withName("wsName")
-                                                                 .withProjects(Collections.singletonList(
-                                                                         newDto(ProjectConfigDto.class)
-                                                                                   .withType("projectType"))));
+        ProjectConfigDto projectConfigDto = newDto(ProjectConfigDto.class).withType("projectType");
+        Factory factory3 = newDto(Factory.class).withCreator(newDto(Author.class).withUserId("userOK"))
+                                                .withWorkspace(newDto(WorkspaceConfigDto.class)
+                                                                       .withName("wsName")
+                                                                       .withProjects(singletonList(projectConfigDto)));
 
 
         store.saveFactory(factory1, images);
         store.saveFactory(factory2, images);
         store.saveFactory(factory3, images);
 
-        assertEquals(store.findByAttribute(0, 0, Collections.singletonList(Pair.of("creator.userId", "userOK"))).size(), 3);
-        assertEquals(store.findByAttribute(0, 0, Collections.singletonList(Pair.of("workspace.name", "wsName"))).size(), 2);
-        assertEquals(store.findByAttribute(0, 0, Arrays.asList(Pair.of("workspace.name", "wsName"),
-                                                               Pair.of("workspace.projects.type", "projectType"))).size(), 1);
-        assertEquals(store.findByAttribute(0, 0, Arrays.asList(Pair.of("creator.userId", "userOK"),
-                                                               Pair.of("workspace.projects.type", "projectType"))).size(), 1);
+        assertEquals(store.findByAttribute(0, 0, singletonList(Pair.of("creator.userId", "userOK"))).size(), 3);
+        assertEquals(store.findByAttribute(0, 0, singletonList(Pair.of("workspace.name", "wsName"))).size(), 2);
+        assertEquals(store.findByAttribute(0, 0, asList(Pair.of("workspace.name", "wsName"),
+                                                        Pair.of("workspace.projects.type", "projectType"))).size(), 1);
+        assertEquals(store.findByAttribute(0, 0, asList(Pair.of("creator.userId", "userOK"),
+                                                        Pair.of("workspace.projects.type", "projectType"))).size(), 1);
     }
-    
+
     /**
      * Checks that we can update a factory that has images and images are unchanged after the update
-     * @throws Exception if there is failure
+     *
+     * @throws Exception
+     *         if there is failure
      */
     @Test
     public void shouldUpdateFactory() throws Exception {
-        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        Factory factory = newDto(Factory.class);
         factory.setV("4.0");
 
-        factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
-                                     .withName("Florent")
-                                     .withCreated(System.currentTimeMillis())
-                                     .withEmail("test@codenvy.com"));
+        factory.setCreator(newDto(Author.class)
+                                   .withName("Florent")
+                                   .withCreated(System.currentTimeMillis())
+                                   .withEmail("test@codenvy.com"));
 
-        factory.setWorkspace(newDto(WorkspaceConfigDto.class)
-                                       .withName("wsName")
-                                       .withProjects(Collections.singletonList(newDto(ProjectConfigDto.class).withSource(
-                                               newDto(SourceStorageDto.class).withLocation("gitUrlInitial")))));
-
+        ProjectConfigDto projectConfigDto =
+                newDto(ProjectConfigDto.class).withSource(newDto(SourceStorageDto.class).withLocation("gitUrlInitial"));
+        factory.setWorkspace(newDto(WorkspaceConfigDto.class).withName("wsName")
+                                                             .withProjects(singletonList(projectConfigDto)));
 
 
         // new Factory
         Factory updatedFactory = DtoFactory.getInstance().clone(factory);
-        updatedFactory.getWorkspace().getProjects().get(0).getSource().setLocation("gitUrlChanged");
+        updatedFactory.getWorkspace()
+                      .getProjects()
+                      .get(0)
+                      .getSource()
+                      .setLocation("gitUrlChanged");
 
 
         Set<FactoryImage> images = new HashSet<>();
@@ -367,14 +340,13 @@ public class MongoDBFactoryStoreTest {
     public void shouldUpdateUnnamedFactoryWithNewName() throws Exception {
         // given
 
-        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        Factory factory = newDto(Factory.class);
         factory.setV("4.0");
 
-        factory.setCreator(DtoFactory.getInstance().createDto(Author.class)
-                                     .withName("Florent")
-                                     .withCreated(System.currentTimeMillis())
-                                     .withEmail("test@codenvy.com")
-                                     .withUserId("1234567890"));
+        factory.setCreator(newDto(Author.class).withName("Florent")
+                                               .withCreated(System.currentTimeMillis())
+                                               .withEmail("test@codenvy.com")
+                                               .withUserId("1234567890"));
         String factoryId = null;
         try {
             factoryId = store.saveFactory(factory, null);
@@ -400,34 +372,34 @@ public class MongoDBFactoryStoreTest {
      * Check that exception is thrown when trying to update
      * a factory with name, which already belongs to another
      * existing factory
-     * @throws Exception the ConflictException expected one
+     *
+     * @throws Exception
+     *         the ConflictException expected one
      */
     @Test(expectedExceptions = ConflictException.class)
     public void shouldNotUpdateFactoryWithConflictingName() throws Exception {
         // given
         // prepare original factories and save them
 
-        Factory originalFactory = DtoFactory.getInstance().createDto(Factory.class);
+        Factory originalFactory = newDto(Factory.class);
         originalFactory.setV("4.0");
         originalFactory.setName("factory-1");
 
-        originalFactory.setCreator(DtoFactory.getInstance().createDto(Author.class)
-                                             .withName("Florent")
-                                             .withCreated(System.currentTimeMillis())
-                                             .withEmail("test@codenvy.com")
-                                             .withUserId("1234567890"));
+        originalFactory.setCreator(newDto(Author.class).withName("Florent")
+                                                       .withCreated(System.currentTimeMillis())
+                                                       .withEmail("test@codenvy.com")
+                                                       .withUserId("1234567890"));
         String originalFactoryId = null;
         try {
             originalFactoryId = store.saveFactory(originalFactory, null);
         } catch (Exception e) {
             fail("Unexpected exception occured", e);
         }
-;
+
         Factory updatedFactory = DtoFactory.getInstance().clone(originalFactory);
         updatedFactory.setName("factory-2");
-        String updatedFactoryId;
         try {
-            updatedFactoryId = store.saveFactory(updatedFactory, null);
+            store.saveFactory(updatedFactory, null);
         } catch (Exception e) {
             fail("Unexpected exception occured", e);
         }
@@ -439,11 +411,13 @@ public class MongoDBFactoryStoreTest {
 
     /**
      * Check that exception is thrown when using an unknown id
-     * @throws Exception the NotFoundException expected one
+     *
+     * @throws Exception
+     *         the NotFoundException expected one
      */
     @Test(expectedExceptions = NotFoundException.class)
     public void shouldNotUpdateUnexistingFactory() throws Exception {
-        Factory factory = DtoFactory.getInstance().createDto(Factory.class);
+        Factory factory = newDto(Factory.class);
         factory.setV("2.1");
 
         // new Factory
@@ -461,7 +435,8 @@ public class MongoDBFactoryStoreTest {
     public void shouldEncodedDot() {
         String original = "hello.my.string";
         String encoded = store.encode(original);
-        assertEquals(encoded, "hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOT + "string");
+        assertEquals(encoded,
+                     "hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOT + "string");
         String decoded = store.decode(encoded);
         assertEquals(original, decoded);
     }
@@ -473,7 +448,9 @@ public class MongoDBFactoryStoreTest {
     public void shouldEncodedDollar() {
         String original = "hello$my$string";
         String encoded = store.encode(original);
-        assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOLLAR + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
+        assertEquals(
+                "hello" + MongoDBFactoryStore.ESCAPED_DOLLAR + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string",
+                encoded);
         String decoded = store.decode(encoded);
         assertEquals(original, decoded);
     }
@@ -485,7 +462,8 @@ public class MongoDBFactoryStoreTest {
     public void shouldEncodedDotDollar() {
         String original = "hello.my$string";
         String encoded = store.encode(original);
-        assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string", encoded);
+        assertEquals("hello" + MongoDBFactoryStore.ESCAPED_DOT + "my" + MongoDBFactoryStore.ESCAPED_DOLLAR + "string",
+                     encoded);
         String decoded = store.decode(encoded);
         assertEquals(original, decoded);
     }
