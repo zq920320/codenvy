@@ -525,6 +525,31 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-gitlab-ide</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-gitlab-oauth2</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-gitlab-provider-gitlab</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-gitlab-server</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
+                <artifactId>codenvy-plugin-gitlab-shared</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.plugin</groupId>
                 <artifactId>codenvy-plugin-google-oauth2</artifactId>
                 <version>${project.version}</version>
             </dependency>
