@@ -15,14 +15,14 @@
 package com.codenvy.plugin.urlfactory;
 
 import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
+import org.eclipse.che.api.environment.server.compose.model.BuildContextImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentRecipeDto;
 import org.eclipse.che.api.workspace.shared.dto.ExtendedMachineDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
-import org.eclipse.che.api.workspace.shared.dto.compose.BuildContextDto;
-import org.eclipse.che.api.workspace.shared.dto.compose.ComposeEnvironmentDto;
-import org.eclipse.che.api.workspace.shared.dto.compose.ComposeServiceDto;
 import org.eclipse.che.dto.server.DtoFactory;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -80,10 +80,10 @@ public class URLFactoryBuilderTest {
     @Test
     public void checkDefaultDockerfile() throws Exception {
 
-        ComposeServiceDto composeService = newDto(ComposeServiceDto.class).withMemLimit(MEMORY_LIMIT_BYTES);
+        ComposeServiceImpl composeService = new ComposeServiceImpl().withMemLimit(MEMORY_LIMIT_BYTES);
         composeService.setImage(DEFAULT_DOCKER_IMAGE);
-        ComposeEnvironmentDto composeEnv =
-                newDto(ComposeEnvironmentDto.class).withServices(singletonMap(MACHINE_NAME, composeService));
+        ComposeEnvironmentImpl composeEnv =
+                new ComposeEnvironmentImpl().withServices(singletonMap(MACHINE_NAME, composeService));
 
         // setup environment
         EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
@@ -110,10 +110,10 @@ public class URLFactoryBuilderTest {
     public void checkWithCustomDockerfile() throws Exception {
 
         String myLocation = "http://foo-location";
-        ComposeServiceDto composeService = newDto(ComposeServiceDto.class).withMemLimit(MEMORY_LIMIT_BYTES);
-        composeService.setBuild(newDto(BuildContextDto.class).withContext(myLocation));
-        ComposeEnvironmentDto composeEnv =
-                newDto(ComposeEnvironmentDto.class).withServices(singletonMap(MACHINE_NAME, composeService));
+        ComposeServiceImpl composeService = new ComposeServiceImpl().withMemLimit(MEMORY_LIMIT_BYTES);
+        composeService.setBuild(new BuildContextImpl().withContext(myLocation));
+        ComposeEnvironmentImpl composeEnv =
+                new ComposeEnvironmentImpl().withServices(singletonMap(MACHINE_NAME, composeService));
 
         // setup environment
         EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
@@ -141,10 +141,10 @@ public class URLFactoryBuilderTest {
     public void checkWithNonAccessibleCustomDockerfile() throws Exception {
 
         String myLocation = "http://foo-location";
-        ComposeServiceDto composeService = newDto(ComposeServiceDto.class).withMemLimit(MEMORY_LIMIT_BYTES);
+        ComposeServiceImpl composeService = new ComposeServiceImpl().withMemLimit(MEMORY_LIMIT_BYTES);
         composeService.setImage(DEFAULT_DOCKER_IMAGE);
-        ComposeEnvironmentDto composeEnv =
-                newDto(ComposeEnvironmentDto.class).withServices(singletonMap(MACHINE_NAME, composeService));
+        ComposeEnvironmentImpl composeEnv =
+                new ComposeEnvironmentImpl().withServices(singletonMap(MACHINE_NAME, composeService));
 
         // setup environment
         EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
