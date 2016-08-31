@@ -2169,13 +2169,14 @@ pauseTimer
 pauseInternetAccessChecker
 pauseFooterUpdater
 
-if [[ "${ARTIFACT}" == "codenvy" ]] && [[ "${VERSION}" =~ ^(4).* ]]; then
-    adminName=$(readProperty 'admin_ldap_user_name')
-    adminPassword=$(readProperty 'admin_ldap_password')
-    toolVersion=$(if [[ "${VERSION}" =~ .*SNAPSHOT$ ]]; then echo "nightly"; else echo ${VERSION}; fi)
-
-    postFlightCheckOfCodenvy "$adminName" "$adminPassword" "$toolVersion"
-    println
-fi
+## post-flight check was turned off because of issue https://github.com/eclipse/che/issues/2284
+#if [[ "${ARTIFACT}" == "codenvy" ]] && [[ "${VERSION}" =~ ^(4).* ]]; then
+#    adminName=$(readProperty 'admin_ldap_user_name')
+#    adminPassword=$(readProperty 'admin_ldap_password')
+#    toolVersion=$(if [[ "${VERSION}" =~ .*SNAPSHOT$ ]]; then echo "nightly"; else echo ${VERSION}; fi)
+#
+#    postFlightCheckOfCodenvy "$adminName" "$adminPassword" "$toolVersion"
+#    println
+#fi
 
 printPostInstallInfo_${ARTIFACT}
