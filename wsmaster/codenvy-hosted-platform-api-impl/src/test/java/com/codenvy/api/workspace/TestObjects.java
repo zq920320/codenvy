@@ -22,7 +22,7 @@ import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
 import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
-import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineLimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
@@ -30,6 +30,7 @@ import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentRecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ExtendedMachineImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ResourcesImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceRuntimeImpl;
@@ -60,17 +61,23 @@ public final class TestObjects {
     public static WorkspaceImpl createWorkspace(String owner, String devMachineRam, String... machineRams)
             throws Exception {
 
+        Map<String, ExtendedMachineImpl> machines = new HashMap<>();
+        machines.put("dev-machine", new ExtendedMachineImpl(singletonList("ws-agent"),
+                                                            emptyMap(),
+                                                            new ResourcesImpl(new org.eclipse.che.api.workspace.server.model.impl.LimitsImpl(Size.parseSize(devMachineRam)))));
         HashMap<String, ComposeServiceImpl> services = new HashMap<>(1 + machineRams.length);
-        services.put("dev-machine", createService(Size.parseSize(devMachineRam)));
+        services.put("dev-machine", createService());
         for (int i = 0; i < machineRams.length; i++) {
-            services.put("machine" + i, createService(Size.parseSize(machineRams[i])));
+            services.put("machine" + i, createService());
+            machines.put("dev-machine", new ExtendedMachineImpl(null,
+                                                                null,
+                                                                new ResourcesImpl(new org.eclipse.che.api.workspace.server.model.impl.LimitsImpl(Size.parseSize(machineRams[i])))));
         }
         ComposeEnvironmentImpl composeEnvironment = new ComposeEnvironmentImpl();
         composeEnvironment.setServices(services);
         String yaml = YAML_PARSER.writeValueAsString(composeEnvironment);
         EnvironmentRecipeImpl recipe = new EnvironmentRecipeImpl("compose", "application/x-yaml", yaml, null);
-        Map<String, ExtendedMachineImpl> machines = new HashMap<>();
-        machines.put("dev-machine", new ExtendedMachineImpl(singletonList("ws-agent"), emptyMap()));
+
 
         return WorkspaceImpl.builder()
                             .generateId()
@@ -143,7 +150,7 @@ public final class TestObjects {
                                                       .setName(serviceName)
                                                       .setSource(new MachineSourceImpl("some-type")
                                                                          .setContent("some-content"))
-                                                      .setLimits(new LimitsImpl((int)Size.parseSizeToMegabytes(service.getMemLimit() + "b")))
+                                                      .setLimits(new MachineLimitsImpl((int)Size.parseSizeToMegabytes(service.getMemLimit() + "b")))
                                                       .setType("someType")
                                                       .build())
                           .setId(NameGenerator.generate("machine", 10))
@@ -157,10 +164,9 @@ public final class TestObjects {
                           .build();
     }
 
-    private static ComposeServiceImpl createService(long memory) {
+    private static ComposeServiceImpl createService() {
         ComposeServiceImpl service = new ComposeServiceImpl();
         service.setImage("image");
-        service.setMemLimit(memory);
         return service;
     }
 
