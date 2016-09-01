@@ -22,9 +22,9 @@ import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
 import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
 import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineLimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineImpl;
+import org.eclipse.che.api.machine.server.model.impl.MachineLimitsImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineRuntimeInfoImpl;
 import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
@@ -69,7 +69,7 @@ public final class TestObjects {
         services.put("dev-machine", createService());
         for (int i = 0; i < machineRams.length; i++) {
             services.put("machine" + i, createService());
-            machines.put("dev-machine", new ExtendedMachineImpl(null,
+            machines.put("machine" + i, new ExtendedMachineImpl(null,
                                                                 null,
                                                                 new ResourcesImpl(new org.eclipse.che.api.workspace.server.model.impl.LimitsImpl(Size.parseSize(machineRams[i])))));
         }
@@ -104,34 +104,29 @@ public final class TestObjects {
         final WorkspaceImpl workspace = createWorkspace(DEFAULT_USER_NAME, devMachineRam, machineRams);
         final String envName = workspace.getConfig().getDefaultEnv();
         EnvironmentImpl env = workspace.getConfig().getEnvironments().get(envName);
-        ComposeEnvironmentImpl composeEnvironment = YAML_PARSER.readValue(env.getRecipe().getContent(),
-                                                                          ComposeEnvironmentImpl.class);
         Map.Entry<String, ExtendedMachineImpl> devMachine = env.getMachines()
                                                                .entrySet()
                                                                .stream()
-                                                               .filter(entry -> entry.getValue()
-                                                                                     .getAgents()
-                                                                                     .contains("ws-agent"))
+                                                               .filter(entry -> entry.getValue() .getAgents() != null &&
+                                                                                entry.getValue().getAgents().contains("ws-agent"))
                                                                .findAny()
                                                                .get();
         final WorkspaceRuntimeImpl runtime =
                 new WorkspaceRuntimeImpl(workspace.getConfig().getDefaultEnv(),
                                          null,
-                                         composeEnvironment.getServices()
-                                                           .entrySet()
+                                         env.getMachines().entrySet()
                                                            .stream()
                                                            .map(entry -> createMachine(workspace.getId(),
                                                                                        envName,
-                                                                                       entry.getValue(),
                                                                                        entry.getKey(),
-                                                                                       devMachine.getKey()
-                                                                                                 .equals(entry.getKey())))
+                                                                                       devMachine.getKey().equals(entry.getKey()),
+                                                                                       entry.getValue().getResources().getLimits().getMemoryBytes()))
                                                            .collect(toList()),
                                          createMachine(workspace.getId(),
                                                        envName,
-                                                       composeEnvironment.getServices().get(devMachine.getKey()),
                                                        devMachine.getKey(),
-                                                       true));
+                                                       true,
+                                                       devMachine.getValue().getResources().getLimits().getMemoryBytes()));
         workspace.setStatus(RUNNING);
         workspace.setRuntime(runtime);
         return workspace;
@@ -139,17 +134,17 @@ public final class TestObjects {
 
     private static MachineImpl createMachine(String workspaceId,
                                              String envName,
-                                             ComposeServiceImpl service,
-                                             String serviceName,
-                                             boolean isDev) {
+                                             String machineName,
+                                             boolean isDev,
+                                             Long memoryBytes) {
 
         return MachineImpl.builder()
                           .setConfig(MachineConfigImpl.builder()
                                                       .setDev(isDev)
-                                                      .setName(serviceName)
+                                                      .setName(machineName)
                                                       .setSource(new MachineSourceImpl("some-type")
                                                                          .setContent("some-content"))
-                                                      .setLimits(new MachineLimitsImpl((int)Size.parseSizeToMegabytes(service.getMemLimit() + "b")))
+                                                      .setLimits(new MachineLimitsImpl((int)Size.parseSizeToMegabytes(memoryBytes + "b")))
                                                       .setType("someType")
                                                       .build())
                           .setId(NameGenerator.generate("machine", 10))
