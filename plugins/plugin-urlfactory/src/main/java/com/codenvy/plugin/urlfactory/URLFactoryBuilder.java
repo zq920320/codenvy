@@ -16,14 +16,12 @@ package com.codenvy.plugin.urlfactory;
 
 import com.google.common.base.Strings;
 
-import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
-import org.eclipse.che.api.environment.server.compose.model.BuildContextImpl;
-import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
-import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
 import org.eclipse.che.api.factory.shared.dto.Factory;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentRecipeDto;
 import org.eclipse.che.api.workspace.shared.dto.ExtendedMachineDto;
+import org.eclipse.che.api.workspace.shared.dto.LimitsDto;
+import org.eclipse.che.api.workspace.shared.dto.ResourcesDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.dto.server.DtoFactory;
 
@@ -66,9 +64,6 @@ public class URLFactoryBuilder {
     @Inject
     private URLFetcher URLFetcher;
 
-    @Inject
-    private ComposeFileParser composeFileParser;
-
     /**
      * Build a default factory using the provided json file or create default one
      * @param createFactoryParams optional parameters
@@ -100,26 +95,25 @@ public class URLFactoryBuilder {
                                                    String name,
                                                    String dockerFileLocation) {
 
-        ComposeServiceImpl composeService = new ComposeServiceImpl().withMemLimit(MEMORY_LIMIT_BYTES);
-
         // if remote repository contains a codenvy docker file, use it
         // else use the default image.
+        EnvironmentRecipeDto recipeDto;
         if (dockerFileLocation != null && URLChecker.exists(dockerFileLocation)) {
-            composeService.setBuild(new BuildContextImpl().withContext(dockerFileLocation));
+            recipeDto = newDto(EnvironmentRecipeDto.class).withLocation(dockerFileLocation)
+                                                          .withType("dockerfile")
+                                                          .withContentType("text/x-dockerfile");
         } else {
-            composeService.setImage(DEFAULT_DOCKER_IMAGE);
+            recipeDto = newDto(EnvironmentRecipeDto.class).withLocation(DEFAULT_DOCKER_IMAGE)
+                                                          .withType("dockerimage");
         }
-
-        ComposeEnvironmentImpl composeEnv =
-                new ComposeEnvironmentImpl().withServices(singletonMap(MACHINE_NAME, composeService));
+        ResourcesDto limits = newDto(ResourcesDto.class).withLimits(
+                newDto(LimitsDto.class).withMemoryBytes(MEMORY_LIMIT_BYTES));
+        ExtendedMachineDto machine = newDto(ExtendedMachineDto.class).withAgents(singletonList("ws-agent"))
+                                                                        .withResources(limits);
 
         // setup environment
-        EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
-                .withRecipe(newDto(EnvironmentRecipeDto.class).withContent(composeFileParser.toYaml(composeEnv))
-                                                              .withContentType("application/x-yaml")
-                                                              .withType("compose"))
-                .withMachines(singletonMap(MACHINE_NAME,
-                                           newDto(ExtendedMachineDto.class).withAgents(singletonList("ws-agent"))));
+        EnvironmentDto environmentDto = newDto(EnvironmentDto.class).withRecipe(recipeDto)
+                                                                    .withMachines(singletonMap(MACHINE_NAME, machine));
 
         // workspace configuration using the environment
         return newDto(WorkspaceConfigDto.class)

@@ -111,8 +111,7 @@ public final class TestObjects {
                                                                .stream()
                                                                .filter(entry -> entry.getValue()
                                                                                      .getAgents()
-                                                                                     .contains(
-                                                                                             "ws-agent"))
+                                                                                     .contains("ws-agent"))
                                                                .findAny()
                                                                .get();
         final WorkspaceRuntimeImpl runtime =

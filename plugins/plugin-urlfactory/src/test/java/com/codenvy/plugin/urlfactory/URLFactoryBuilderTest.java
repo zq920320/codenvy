@@ -31,8 +31,6 @@ import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.net.URI;
-
 import static com.codenvy.plugin.urlfactory.URLFactoryBuilder.DEFAULT_DOCKER_IMAGE;
 import static com.codenvy.plugin.urlfactory.URLFactoryBuilder.MACHINE_NAME;
 import static com.codenvy.plugin.urlfactory.URLFactoryBuilder.MEMORY_LIMIT_BYTES;
@@ -66,7 +64,7 @@ public class URLFactoryBuilderTest {
 
     // spy is needed for injection
     @Spy
-    private ComposeFileParser composeFileParser = new ComposeFileParser(URI.create("localhost:8080"));
+    private ComposeFileParser composeFileParser = new ComposeFileParser();
 
     /**
      * Tested instance.
