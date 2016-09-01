@@ -22,7 +22,7 @@ import org.eclipse.che.plugin.ssh.key.client.SshKeyUploaderRegistry;
 import javax.inject.Singleton;
 
 /**
- * @author Mihail Kuznyetsov
+ * @author Michail Kuznyetsov
  */
 @Singleton
 @Extension(title = "GitLab", version = "3.0.0")

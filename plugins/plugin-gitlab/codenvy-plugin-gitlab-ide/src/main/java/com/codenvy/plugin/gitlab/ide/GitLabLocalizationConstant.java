@@ -18,19 +18,27 @@ import com.google.gwt.i18n.client.LocalizableResource;
 import com.google.gwt.i18n.client.Messages;
 
 /**
- * @author Mihail Kuznyetsov
+ * @author Michail Kuznyetsov
  */
 public interface GitLabLocalizationConstant extends Messages {
-    @LocalizableResource.Key("authorization.dialog.title")
+    @Key("authorization.dialog.title")
     String authorizationDialogTitle();
 
-    @LocalizableResource.Key("authorization.dialog.text")
+    @Key("authorization.dialog.text")
     String authorizationDialogText(String name);
 
-    @LocalizableResource.Key("authorization.request.rejected")
+    @Key("authorization.request.rejected")
     String authorizationRequestRejected();
 
-    @LocalizableResource.Key("authorization.failed")
+    @Key("authorization.failed")
     String authorizationFailed();
 
+    @Key("authorization.message.keyUploadSuccess")
+    String authMessageKeyUploadSuccess();
+
+    @Key("authorization.message.unableCreateSshKey")
+    String authMessageUnableCreateSshKey();
+
+    @Key("authorization.generateKeyLabel")
+    String authGenerateKeyLabel();
 }

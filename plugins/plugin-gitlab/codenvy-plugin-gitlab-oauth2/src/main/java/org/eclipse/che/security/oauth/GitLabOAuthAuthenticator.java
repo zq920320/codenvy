@@ -108,6 +108,33 @@ public class GitLabOAuthAuthenticator extends OAuthAuthenticator {
         }
     }
 
+    @Override
+    public OAuthToken getToken(String userId) throws IOException {
+        final OAuthToken token = super.getToken(userId);
+        if (!(token == null || token.getToken() == null || token.getToken().isEmpty())) {
+            // Need to check if token which stored is valid for requests, then if valid - we returns it to caller
+            String tokenVerifyUrl = "http://gitlab.codenvy-stg.com/api/v3/user?access_token=" + token.getToken();
+            HttpURLConnection http = null;
+            try {
+                http = (HttpURLConnection)new URL(tokenVerifyUrl).openConnection();
+                http.setInstanceFollowRedirects(false);
+                http.setRequestMethod("GET");
+                http.setRequestProperty("Accept", "application/json");
+
+                if (http.getResponseCode() == 401) {
+                    return null;
+                }
+            } finally {
+                if (http != null) {
+                    http.disconnect();
+                }
+            }
+
+            return token;
+        }
+        return null;
+    }
+
     public static class GitLabUser implements User {
         private String id;
         private String name;

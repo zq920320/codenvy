@@ -36,7 +36,7 @@ import org.eclipse.che.security.oauth.OAuthStatus;
 import static org.eclipse.che.ide.api.notification.StatusNotification.DisplayMode.FLOAT_MODE;
 
 /**
- * @author Mihail Kuznyetsov
+ * @author Michail Kuznyetsov
  */
 public class GitLabSshKeyUploader implements SshKeyUploader, OAuthCallback {
 
@@ -111,7 +111,7 @@ public class GitLabSshKeyUploader implements SshKeyUploader, OAuthCallback {
 
     private void showPopUp() {
         String authUrl = baseUrl + "/oauth/authenticate?oauth_provider=gitlab.codenvy-stg.com"
-                         + "&scope=user,repo,write:public_key&userId=" + userId + "&redirect_after_login=" +
+                         + "&scope=api&userId=" + userId + "&redirect_after_login=" +
                          Window.Location.getProtocol() + "//" + Window.Location.getHost() + "/ws/" + appContext.getWorkspace()
                                                                                                                .getConfig()
                                                                                                                .getName();

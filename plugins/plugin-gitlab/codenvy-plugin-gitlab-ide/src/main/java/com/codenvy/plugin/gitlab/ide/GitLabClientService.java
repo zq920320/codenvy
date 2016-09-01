@@ -30,7 +30,7 @@ import javax.validation.constraints.NotNull;
  * @author Michail Kuznyetsov
  */
 public class GitLabClientService {
-    private static final String SSH_GEN = "ssh/generate";
+    private static final String SSH_GEN = "/ssh/generate";
     private AsyncRequestFactory asyncRequestFactory;
     private AsyncRequestLoader     loader;
     private DtoUnmarshallerFactory dtoUnmarshallerFactory;

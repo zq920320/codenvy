@@ -36,6 +36,7 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
  *
  * @author Michail Kuznyetsov
  */
+@Path("/gitlab")
 public class GitLabService {
     private static final Logger LOG = LoggerFactory.getLogger(GitLabService.class);
 

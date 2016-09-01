@@ -32,8 +32,8 @@ public class GitLabModule extends AbstractModule {
         Multibinder<OAuthAuthenticator> oAuthAuthenticators = Multibinder.newSetBinder(binder(), OAuthAuthenticator.class);
         oAuthAuthenticators.addBinding().to(GitLabOAuthAuthenticator.class);
 
-        bindConstant().annotatedWith(Names.named("oauth.gitlab.clientid")).to("9fe11ed20cc2583d85d0cc51775d9b23da2922e5493b8cc13767982c63c96423");
-        bindConstant().annotatedWith(Names.named("oauth.gitlab.clientsecret")).to("c4eed8cfd264ffd7b154c9a33654b41a829a0d9f672535a19abee5111e7c7da8");
+        bindConstant().annotatedWith(Names.named("oauth.gitlab.clientid")).to("51dfac8632d4b887023d801cb0962384e21757edd903214fbe8e876a4440fa3b");
+        bindConstant().annotatedWith(Names.named("oauth.gitlab.clientsecret")).to("b9ccdd585e31ddfbbf288229992f44bb89bd5ff08797b1a1201f9a1db2e4a778");
         bindConstant().annotatedWith(Names.named("oauth.gitlab.authuri")).to("http://gitlab.codenvy-stg.com/oauth/authorize");
         bindConstant().annotatedWith(Names.named("oauth.gitlab.tokenuri")).to("http://gitlab.codenvy-stg.com/oauth/token");
         bindConstant().annotatedWith(Names.named("oauth.gitlab.redirecturis")).to("https://aio.codenvy-dev.com/api/oauth/callback");

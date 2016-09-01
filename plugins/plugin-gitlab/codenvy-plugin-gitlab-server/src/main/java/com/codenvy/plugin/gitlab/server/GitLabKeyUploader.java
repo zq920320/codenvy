@@ -53,7 +53,7 @@ public class GitLabKeyUploader implements SshKeyUploader {
 
 
     private static final Logger      LOG                = LoggerFactory.getLogger(GitLabKeyUploader.class);
-    private static final     Pattern GITLAB_URL_PATTERN = Pattern.compile(".*github\\.com.*");
+    private static final     Pattern GITLAB_URL_PATTERN = Pattern.compile(".*gitlab\\.codenvy-stg\\.com.*");
     private OAuthTokenProvider tokenProvider;
 
     private String host;
@@ -74,11 +74,11 @@ public class GitLabKeyUploader implements SshKeyUploader {
             }
 
             StringBuilder answer = new StringBuilder();
-            final String url = String.format("https://" + host + "/api/v3/user/keys?access_token=%s", token.getToken());
+            final String url = String.format("http://" + host + "/api/v3/user/keys?access_token=%s", token.getToken());
 
-            final List<GitLabKey> gitHubUserPublicKeys = getUserPublicKeys(url, answer);
-            for (GitLabKey gitHubUserPublicKey : gitHubUserPublicKeys) {
-                if (publicKey.startsWith(gitHubUserPublicKey.getKey())) {
+            final List<GitLabKey> gitLabUserPublicKeys = getUserPublicKeys(url, answer);
+            for (GitLabKey gitLabUserPublicKey : gitLabUserPublicKeys) {
+                if (publicKey.startsWith(gitLabUserPublicKey.getKey())) {
                     return;
                 }
             }
@@ -114,7 +114,7 @@ public class GitLabKeyUploader implements SshKeyUploader {
             LOG.debug("Upload key response code: {}", responseCode);
 
             if (responseCode != HttpURLConnection.HTTP_CREATED) {
-                throw new IOException(String.format("%d: Failed to upload public key to http://github.com/", responseCode));
+                throw new IOException(String.format("%d: Failed to upload public key to http://gitlab.com/", responseCode));
             }
     }
 

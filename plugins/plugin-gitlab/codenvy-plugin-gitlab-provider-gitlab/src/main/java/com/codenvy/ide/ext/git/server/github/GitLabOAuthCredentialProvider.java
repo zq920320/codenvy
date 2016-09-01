@@ -52,7 +52,7 @@ public class GitLabOAuthCredentialProvider implements CredentialsProvider {
         try {
             OAuthToken token = oAuthTokenProvider.getToken(gitLabAvailableHosts[0], EnvironmentContext.getCurrent().getSubject().getUserId());
             if (token != null) {
-                return new UserCredential(token.getToken(), token.getToken(), OAUTH_PROVIDER_NAME);
+                return new UserCredential("oauth2", token.getToken(), OAUTH_PROVIDER_NAME);
             }
         } catch (IOException e) {
             LOG.warn(e.getLocalizedMessage());
@@ -80,7 +80,7 @@ public class GitLabOAuthCredentialProvider implements CredentialsProvider {
         return new ProviderInfo(OAUTH_PROVIDER_NAME, UriBuilder.fromPath(authorizationServicePath)
                                                                .queryParam("oauth_provider", OAUTH_PROVIDER_NAME)
                                                                .queryParam("userId", EnvironmentContext.getCurrent().getSubject().getUserId())
-                                                               .queryParam("scope", "repo")
+                                                               .queryParam("scope", "api")
                                                                .build()
                                                                .toString());
     }
