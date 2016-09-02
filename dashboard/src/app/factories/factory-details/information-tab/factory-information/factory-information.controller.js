@@ -43,13 +43,13 @@ export class FactoryInformationCtrl {
     });
 
     $scope.$watch(() => {
-      return this.factory ? this.factory.originFactory : null;
-    }, (newOriginFactory) => {
-      if (!newOriginFactory) {
+      return this.factory;
+    }, (newFactory) => {
+      if (!newFactory) {
         return;
       }
 
-      this.copyOriginFactory = newOriginFactory ? angular.copy(newOriginFactory) : null;
+      this.copyOriginFactory = newFactory ? angular.copy(newFactory) : null;
 
       if (this.copyOriginFactory.links) {
         delete this.copyOriginFactory.links;
@@ -85,7 +85,7 @@ export class FactoryInformationCtrl {
       return false;
     }
 
-    let testFactory = angular.copy(this.factory.originFactory);
+    let testFactory = angular.copy(this.factory);
     if (testFactory.links) {
       delete testFactory.links;
     }
@@ -94,10 +94,9 @@ export class FactoryInformationCtrl {
   }
 
   updateFactory() {
-
     this.factoryContent = this.$filter('json')(this.copyOriginFactory);
 
-    if (this.factoryInformationForm.$invalid || !this.isFactoryChanged()){
+    if (this.factoryInformationForm.$invalid || !this.isFactoryChanged()) {
       return;
     }
 
@@ -111,8 +110,8 @@ export class FactoryInformationCtrl {
   doUpdateFactory(factory) {
     let promise = this.codenvyAPI.getFactory().setFactory(factory);
 
-    promise.then(() => {
-      this.factory.originFactory = factory;
+    promise.then((factory) => {
+      this.factory = factory;
       this.cheNotification.showInfo('Factory information successfully updated.');
     }, (error) => {
       this.cheNotification.showError(error.data.message ? error.data.message : 'Update factory failed.');
@@ -132,7 +131,7 @@ export class FactoryInformationCtrl {
   }
 
   updateFactoryContent() {
-    let promise = this.codenvyAPI.getFactory().setFactoryContent(this.factory.originFactory.id, this.factoryContent);
+    let promise = this.codenvyAPI.getFactory().setFactoryContent(this.factory.id, this.factoryContent);
 
     promise.then((factory) => {
       this.factory = factory;
@@ -147,7 +146,7 @@ export class FactoryInformationCtrl {
   //Perform factory deletion.
   deleteFactory(event) {
     let confirm = this.$mdDialog.confirm()
-      .title('Would you like to delete the factory ' + (this.factory.originFactory.name ? '"' + this.factory.originFactory.name + '"' : this.factory.originFactory.id + '?'))
+      .title('Would you like to delete the factory ' + (this.factory.name ? '"' + this.factory.name + '"' : this.factory.id + '?'))
       .content('Please confirm for the factory removal.')
       .ariaLabel('Remove factory')
       .ok('Delete it!')
@@ -156,7 +155,7 @@ export class FactoryInformationCtrl {
       .targetEvent(event);
     this.$mdDialog.show(confirm).then(() => {
       // remove it !
-      let promise = this.codenvyAPI.getFactory().deleteFactoryById(this.factory.originFactory.id);
+      let promise = this.codenvyAPI.getFactory().deleteFactoryById(this.factory.id);
       promise.then(() => {
         this.$location.path('/factories');
       }, (error) => {
@@ -180,6 +179,7 @@ export class FactoryInformationCtrl {
   cheStackLibrarySelecter(stack) {
     this.stack = stack
   }
+
   /**
    * Callback when user ask to validate a stack
    * We need then to create (if required) recipe and update JSON factory configuration
