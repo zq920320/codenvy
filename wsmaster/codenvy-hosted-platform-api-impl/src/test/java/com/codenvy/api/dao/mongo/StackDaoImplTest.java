@@ -33,13 +33,11 @@ import org.eclipse.che.api.core.acl.AclEntryImpl;
 import org.eclipse.che.api.core.model.machine.Command;
 import org.eclipse.che.api.core.model.project.ProjectConfig;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
-import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
-import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
-import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentRecipeImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ExtendedMachineImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ServerConf2Impl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.stack.StackComponentImpl;
@@ -64,9 +62,9 @@ import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
 import static com.codenvy.api.dao.mongo.MongoUtilTest.mockWriteEx;
 import static com.mongodb.ErrorCategory.DUPLICATE_KEY;
 import static java.util.Arrays.asList;
+import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.Collections.singletonMap;
-import static java.util.stream.Collectors.toList;
 import static org.bson.codecs.configuration.CodecRegistries.fromCodecs;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 import static org.mockito.Matchers.any;
@@ -294,14 +292,14 @@ public class StackDaoImplTest extends BaseDaoTest {
         assertEquals(componentDocument.getString("version"), COMPONENT_VERSION, "Stack component origin");
 
         //verify workspaceConfig
-        Document worspaceDocument = (Document)stackDocument.get("workspaceConfig");
+        Document workspaceDocument = (Document)stackDocument.get("workspaceConfig");
 
-        assertEquals(worspaceDocument.getString("name"), workspace.getName(), "Workspace name");
-        assertEquals(worspaceDocument.getString("description"), workspace.getDescription(), "Workspace description");
-        assertEquals(worspaceDocument.getString("defaultEnv"), workspace.getDefaultEnv(), "Workspace defaultEnvName");
+        assertEquals(workspaceDocument.getString("name"), workspace.getName(), "Workspace name");
+        assertEquals(workspaceDocument.getString("description"), workspace.getDescription(), "Workspace description");
+        assertEquals(workspaceDocument.getString("defaultEnv"), workspace.getDefaultEnv(), "Workspace defaultEnvName");
 
         // check commands
-        final List<Document> commands = (List<Document>)worspaceDocument.get("commands");
+        final List<Document> commands = (List<Document>)workspaceDocument.get("commands");
         assertEquals(commands.size(), workspace.getCommands().size(), "Workspace commands size");
         for (int i = 0; i < commands.size(); i++) {
             final Command command = workspace.getCommands().get(i);
@@ -313,7 +311,7 @@ public class StackDaoImplTest extends BaseDaoTest {
         }
 
         // check projects
-        final List<Document> projects = (List<Document>)worspaceDocument.get("projects");
+        final List<Document> projects = (List<Document>)workspaceDocument.get("projects");
         assertEquals(projects.size(), workspace.getProjects().size());
         for (int i = 0; i < projects.size(); i++) {
             final ProjectConfig project = workspace.getProjects().get(i);
@@ -349,62 +347,62 @@ public class StackDaoImplTest extends BaseDaoTest {
         }
 
         // check environments
-        final List<Document> environments = (List<Document>)worspaceDocument.get("environments");
+        final Map<String, Document> environments = (Map<String, Document>)workspaceDocument.get("environments");
         assertEquals(environments.size(), workspace.getEnvironments().size());
-        for (Document envDoc : environments) {
-            String envName = envDoc.getString("name");
+        for (Map.Entry<String, Document> envEntry : environments.entrySet()) {
             final EnvironmentImpl environment = workspace.getEnvironments()
-                                                         .stream()
-                                                         .filter(environmentState -> envName.equals(environmentState.getName()))
-                                                         .collect(toList()).get(0);
-
-            assertEquals(envDoc.getString("name"), environment.getName());
-
+                                                         .get(envEntry.getKey());
+            assertNotNull(environment);
             if (environment.getRecipe() != null) {
-                final Document document = envDoc.get("recipe", Document.class);
-                assertEquals(document.getString("type"), environment.getRecipe().getType(), "Environment recipe type");
-                assertEquals(document.getString("script"), environment.getRecipe().getScript(), "Environment recipe script");
+                final Document document = envEntry.getValue().get("recipe", Document.class);
+                assertEquals(document.getString("type"),
+                             environment.getRecipe().getType(),
+                             "Environment recipe type");
+                assertEquals(document.getString("contentType"),
+                             environment.getRecipe().getContentType(),
+                             "Environment recipe content type");
+                assertEquals(document.getString("content"),
+                             environment.getRecipe().getContent(),
+                             "Environment recipe content");
+                assertEquals(document.getString("location"),
+                             environment.getRecipe().getLocation(),
+                             "Environment recipe location");
             }
+            if (environment.getMachines() != null) {
+                Map<String, Document> machinesDocs = (Map<String, Document>)envEntry.getValue().get("machines");
+                for (Map.Entry<String, ExtendedMachineImpl> machineEntry : environment.getMachines()
+                                                                                      .entrySet()) {
 
-            final List<Document> machineConfigs = (List<Document>)envDoc.get("machineConfigs");
-            assertEquals(machineConfigs.size(), environment.getMachineConfigs().size());
-            for (int i = 0; i < machineConfigs.size(); i++) {
-                final Document machineDoc = machineConfigs.get(i);
-                final MachineConfigImpl machine = environment.getMachineConfigs().get(i);
+                    if (machineEntry.getValue() != null) {
+                        Document machineDoc = machinesDocs.get(machineEntry.getKey());
+                        assertNotNull(machineDoc);
+                        ExtendedMachineImpl machine = machineEntry.getValue();
+                        if (machine.getAgents() != null) {
+                            List<String> agents = (List<String>)machineDoc.get("agents");
+                            assertEquals(agents, machine.getAgents());
+                        }
+                        if (machine.getServers() != null) {
+                            Map<String, Document> serversDocs = (Map<String, Document>)machineDoc.get("servers");
+                            for (Map.Entry<String, ServerConf2Impl> serverEntry : machine.getServers()
+                                                                                         .entrySet()) {
+                                if (serverEntry.getValue() != null) {
+                                    Document serverDoc = serversDocs.get(serverEntry.getKey());
+                                    assertNotNull(serverDoc);
 
-                assertEquals(machineDoc.getBoolean("dev"), Boolean.valueOf(machine.isDev()));
-                assertEquals(machineDoc.getString("name"), machine.getName(), "Machine name");
-                assertEquals(machineDoc.getString("type"), machine.getType(), "Machine type");
-                if (machine.getSource() != null) {
-                    final Document sourceDoc = machineDoc.get("source", Document.class);
+                                    assertEquals(serverDoc.getString("port"), serverEntry.getValue().getPort());
 
-                    assertEquals(sourceDoc.getString("type"), machine.getSource().getType(), "Machine source type");
-                    assertEquals(sourceDoc.getString("location"), machine.getSource().getLocation(), "Machine source location");
-                }
-                if (machine.getLimits() != null) {
-                    final Document limitsDoc = machineDoc.get("limits", Document.class);
+                                    assertEquals(serverDoc.getString("protocol"), serverEntry.getValue().getProtocol());
 
-                    assertEquals(limitsDoc.getInteger("ram", 0), machine.getLimits().getRam(), "Machine RAM limit");
-                }
-
-                List<Document> serversDocs = (List<Document>)machineDoc.get("servers");
-                assertEquals(serversDocs.size(), machine.getServers().size());
-                for (int j = 0; j < serversDocs.size(); ++j) {
-                    Document serverDoc = serversDocs.get(j);
-                    ServerConfImpl server = machine.getServers().get(j);
-                    assertEquals(serverDoc.getString("ref"), server.getRef());
-                    assertEquals(serverDoc.getString("port"), server.getPort());
-                    assertEquals(serverDoc.getString("protocol"), server.getProtocol());
-                    assertEquals(serverDoc.getString("path"), server.getPath());
-                }
-
-                List<Document> envVariablesDocs = (List<Document>)machineDoc.get("envVariables");
-                assertEquals(envVariablesDocs.size(), machine.getEnvVariables().size());
-                for (Document envVarDoc : envVariablesDocs) {
-                    final String envVarName = envVarDoc.getString("name");
-                    final String envVarValue = envVarDoc.getString("value");
-
-                    assertEquals(machine.getEnvVariables().get(envVarName), envVarValue, "envVariable value");
+                                    List<Document> properties = (List<Document>)serverDoc.get("properties");
+                                    if (serverEntry.getValue().getProperties() != null) {
+                                        assertEquals(documentsListAsMap(properties),
+                                                     serverEntry.getValue().getProperties(),
+                                                     "Server properties");
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -455,46 +453,73 @@ public class StackDaoImplTest extends BaseDaoTest {
 
     private static WorkspaceConfigImpl createWorkspace() {
         // environments
-        final RecipeImpl recipe = new RecipeImpl();
-        recipe.setType("dockerfile");
-        recipe.setScript("FROM codenvy/jdk7\nCMD tail -f /dev/null");
+        Map<String, EnvironmentImpl> environments = new HashMap<>();
 
-        final MachineSourceImpl machineSource = new MachineSourceImpl("recipe").setLocation("recipe-url");
-        final MachineConfigImpl machineCfg1 = new MachineConfigImpl(true,
-                                                                    "dev-machine",
-                                                                    "machine-type",
-                                                                    machineSource,
-                                                                    new LimitsImpl(512),
-                                                                    asList(new ServerConfImpl("ref1",
-                                                                                              "8080",
-                                                                                              "https",
-                                                                                              "some/path"),
-                                                                           new ServerConfImpl("ref2",
-                                                                                              "9090/udp",
-                                                                                              "someprotocol",
-                                                                                              "/some/path")),
-                                                                    singletonMap("key1", "value1"));
-        final MachineConfigImpl machineCfg2 = new MachineConfigImpl(false,
-                                                                    "non-dev-machine",
-                                                                    "machine-type-2",
-                                                                    machineSource,
-                                                                    new LimitsImpl(2048),
-                                                                    asList(new ServerConfImpl("ref1",
-                                                                                              "8080",
-                                                                                              "https",
-                                                                                              "some/path"),
-                                                                           new ServerConfImpl("ref2",
-                                                                                              "9090/udp",
-                                                                                              "someprotocol",
-                                                                                              "/some/path")),
-                                                                    singletonMap("key1", "value1"));
+        Map<String, ExtendedMachineImpl> machines;
+        Map<String, ServerConf2Impl> servers;
+        Map<String, String> properties;
+        EnvironmentImpl env;
 
-        final EnvironmentImpl env1 = new EnvironmentImpl("my-environment", recipe, asList(machineCfg1, machineCfg2));
-        final EnvironmentImpl env2 = new EnvironmentImpl("my-environment-2", recipe, singletonList(machineCfg1));
+        servers = new HashMap<>();
+        properties = new HashMap<>();
+        properties.put("prop1", "value1");
+        properties.put("prop2", "value2");
+        servers.put("ref1", new ServerConf2Impl("port1", "proto1", properties));
+        properties = new HashMap<>();
+        properties.put("prop3", "value3");
+        properties.put("prop4", "value4");
+        servers.put("ref2", new ServerConf2Impl("port2", "proto2", properties));
+        machines = new HashMap<>();
+        machines.put("machine1", new ExtendedMachineImpl(asList("ws-agent", "someAgent"),
+                                                         servers,
+                                                         new HashMap<>(singletonMap("memoryLimitBytes", "10000"))));
+        servers = new HashMap<>();
+        properties = new HashMap<>();
+        properties.put("prop5", "value5");
+        properties.put("prop6", "value6");
+        servers.put("ref3", new ServerConf2Impl("port3", "proto3", properties));
+        properties = new HashMap<>();
+        properties.put("prop7", "value7");
+        properties.put("prop8", "value8");
+        servers.put("ref4", new ServerConf2Impl("port4", "proto4", properties));
+        machines = new HashMap<>();
+        machines.put("machine2", new ExtendedMachineImpl(asList("ws-agent2", "someAgent2"),
+                                                         servers,
+                                                         new HashMap<>(singletonMap("memoryLimitBytes", "10000"))));
+        env = new EnvironmentImpl();
+        env.setRecipe(new EnvironmentRecipeImpl("type", "contentType", "content", null));
+        env.setMachines(machines);
 
-        final List<EnvironmentImpl> environments = new ArrayList<>(4);
-        environments.add(env1);
-        environments.add(env2);
+        environments.put("my-environment", env);
+
+        env = new EnvironmentImpl();
+        servers = new HashMap<>();
+        properties = new HashMap<>();
+        servers.put("ref11", new ServerConf2Impl("port11", "proto11", properties));
+        servers.put("ref12", new ServerConf2Impl("port12", "proto12", null));
+        machines = new HashMap<>();
+        machines.put("machine11", new ExtendedMachineImpl(emptyList(),
+                                                          servers,
+                                                          new HashMap<>(singletonMap("memoryLimitBytes", "10000"))));
+        servers.put("ref13", new ServerConf2Impl("port13", "proto13", singletonMap("prop11", "value11")));
+        servers.put("ref14", new ServerConf2Impl("port4", null, null));
+        servers.put("ref15", new ServerConf2Impl(null, null, null));
+        machines.put("machine12", new ExtendedMachineImpl(null,
+                                                          servers,
+                                                          new HashMap<>(singletonMap("memoryLimitBytes", "10000"))));
+        machines.put("machine13", new ExtendedMachineImpl(null,
+                                                          null,
+                                                          new HashMap<>(singletonMap("memoryLimitBytes", "10000"))));
+        env.setRecipe(new EnvironmentRecipeImpl("type", "contentType", "content", null));
+        env.setMachines(machines);
+
+        environments.put("my-environment-2", env);
+
+        env = new EnvironmentImpl();
+        env.setRecipe(new EnvironmentRecipeImpl(null, null, null, null));
+        env.setMachines(null);
+
+        environments.put("my-environment-3", env);
 
         // projects
         final ProjectConfigImpl project1 = new ProjectConfigImpl();
@@ -522,19 +547,13 @@ public class StackDaoImplTest extends BaseDaoTest {
         commands.add(new CommandImpl("bower install", "bower install", "bower"));
         commands.add(new CommandImpl("build without tests", "mvn clean install -Dmaven.test.skip", "maven"));
 
-        // attributes
-        final Map<String, String> attributes = new HashMap<>(8);
-        attributes.put("test.attribute1", "test-value1");
-        attributes.put("test.attribute2", "test-value2");
-        attributes.put("test.attribute3", "test-value3");
-
         return WorkspaceConfigImpl.builder()
                                   .setName("workspace-name")
                                   .setDescription("This is test workspace")
                                   .setCommands(commands)
                                   .setProjects(projects)
                                   .setEnvironments(environments)
-                                  .setDefaultEnv(env1.getName())
+                                  .setDefaultEnv("my-environment")
                                   .build();
     }
 
