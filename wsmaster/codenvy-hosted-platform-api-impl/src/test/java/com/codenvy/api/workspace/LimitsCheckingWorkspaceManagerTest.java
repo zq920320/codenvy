@@ -20,6 +20,7 @@ import com.google.common.collect.ImmutableList;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.model.workspace.WorkspaceConfig;
+import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
 import org.eclipse.che.api.machine.server.dao.SnapshotDao;
 import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.api.user.server.model.impl.UserImpl;
@@ -27,8 +28,12 @@ import org.eclipse.che.api.workspace.server.WorkspaceManager;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.testng.MockitoTestNGListener;
 import org.testng.Assert;
+import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import java.net.URI;
 
 import static com.codenvy.api.workspace.TestObjects.createConfig;
 import static com.codenvy.api.workspace.TestObjects.createRuntime;
@@ -50,10 +55,12 @@ import static org.mockito.Mockito.verify;
  *
  * @author Yevhenii Voevodin
  */
+@Listeners(MockitoTestNGListener.class)
 public class LimitsCheckingWorkspaceManagerTest {
     @Mock
     SnapshotDao snapshotDao;
 
+    ComposeFileParser composeFileParser = new ComposeFileParser(URI.create("localhost:8080"));
 
     @Test(expectedExceptions = LimitExceededException.class,
           expectedExceptionsMessageRegExp = "The maximum workspaces allowed per user is set to '2' and you are currently at that limit. " +
@@ -68,7 +75,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(ImmutableList.of(mock(WorkspaceImpl.class), mock(WorkspaceImpl.class))) // <- currently used 2
                                                                                          .when(manager)
                                                                                          .getByNamespace(anyString());
@@ -87,7 +95,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(ImmutableList.of(mock(WorkspaceImpl.class), mock(WorkspaceImpl.class))) // <- currently used 2
                                                                                          .when(manager)
                                                                                          .getByNamespace(anyString());
@@ -111,7 +120,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(emptyList()).when(manager).getByNamespace(anyString()); // <- currently used 0
 
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
@@ -133,7 +143,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getByNamespace(anyString()); // <- currently running 2gb
 
         manager.checkRamAndPropagateStart(createConfig("1gb"), null, "user123", null);
@@ -150,7 +161,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getByNamespace(anyString()); // <- currently running 2gb
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
 
@@ -172,7 +184,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(singletonList(createRuntime("1gb", "1gb"))).when(manager).getByNamespace(anyString()); // <- currently running 2gb
 
         final WorkspaceCallback callback = mock(WorkspaceCallback.class);
@@ -195,7 +208,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
 
         manager.checkMaxEnvironmentRam(config);
     }
@@ -212,7 +226,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
 
         manager.checkMaxEnvironmentRam(config);
     }
@@ -232,7 +247,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         manager.checkMaxEnvironmentRam(config);
     }
 
@@ -249,7 +265,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               null,
                                                                                               null,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         manager.checkMaxEnvironmentRam(config);
     }
 
@@ -270,7 +287,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               userManager,
                                                                                               snapshotDao,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
 
         doReturn(ws).when(manager).getWorkspace(anyString()); // <- currently running 2gb
         doReturn(ws).when(manager).checkRamAndPropagateStart(anyObject(), anyString(), anyString(), anyObject());
@@ -301,7 +319,8 @@ public class LimitsCheckingWorkspaceManagerTest {
                                                                                               userManager,
                                                                                               snapshotDao,
                                                                                               false,
-                                                                                              false));
+                                                                                              false,
+                                                                                              composeFileParser));
         doReturn(ws).when(manager).getWorkspace(anyString()); // <- currently running 2gb
 
         manager.startWorkspace(ws.getId(), null, null, null);

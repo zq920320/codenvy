@@ -16,11 +16,14 @@ package com.codenvy.plugin.urlfactory;
 
 import com.google.common.base.Strings;
 
+import org.eclipse.che.api.environment.server.compose.ComposeFileParser;
+import org.eclipse.che.api.environment.server.compose.model.BuildContextImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeEnvironmentImpl;
+import org.eclipse.che.api.environment.server.compose.model.ComposeServiceImpl;
 import org.eclipse.che.api.factory.shared.dto.Factory;
-import org.eclipse.che.api.machine.shared.dto.LimitsDto;
-import org.eclipse.che.api.machine.shared.dto.MachineConfigDto;
-import org.eclipse.che.api.machine.shared.dto.MachineSourceDto;
 import org.eclipse.che.api.workspace.shared.dto.EnvironmentDto;
+import org.eclipse.che.api.workspace.shared.dto.EnvironmentRecipeDto;
+import org.eclipse.che.api.workspace.shared.dto.ExtendedMachineDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.dto.server.DtoFactory;
 
@@ -28,9 +31,12 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import static java.util.Collections.singletonList;
+import static java.util.Collections.singletonMap;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * Handle the creation of some elements used inside a {@link Factory}
+ *
  * @author Florent Benoit
  */
 @Singleton
@@ -45,6 +51,8 @@ public class URLFactoryBuilder {
      * Default docker type (if repository has no dockerfile)
      */
     protected static final String DEFAULT_DOCKER_TYPE = "image";
+    protected static final long   MEMORY_LIMIT_BYTES  = 2000L * 1024L * 1024L;
+    protected static final String MACHINE_NAME        = "ws-machine";
 
     /**
      * Check if URL is existing or not
@@ -58,14 +66,8 @@ public class URLFactoryBuilder {
     @Inject
     private URLFetcher URLFetcher;
 
-
-    /**
-     * Build a default machine source
-     * @return machine source.
-     */
-    protected MachineSourceDto buildDefaultMachineSource() {
-        return DtoFactory.newDto(MachineSourceDto.class).withType(DEFAULT_DOCKER_TYPE).withLocation(DEFAULT_DOCKER_IMAGE);
-    }
+    @Inject
+    private ComposeFileParser composeFileParser;
 
     /**
      * Build a default factory using the provided json file or create default one
@@ -83,7 +85,7 @@ public class URLFactoryBuilder {
         }
 
         // else return a default factory
-       return DtoFactory.newDto(Factory.class).withV("4.0");
+        return newDto(Factory.class).withV("4.0");
     }
 
 
@@ -91,42 +93,38 @@ public class URLFactoryBuilder {
      * Help to generate default workspace configuration
      * @param environmentName the name of the environment to create
      * @param name the name of the workspace
-     * @param dockerFileLocation the optional location for codenvy dockerfileto use
+     * @param dockerFileLocation the optional location for codenvy dockerfile to use
      * @return a workspace configuration
      */
-    public WorkspaceConfigDto buildWorkspaceConfig(String environmentName, String name, String dockerFileLocation) {
+    public WorkspaceConfigDto buildWorkspaceConfig(String environmentName,
+                                                   String name,
+                                                   String dockerFileLocation) {
+
+        ComposeServiceImpl composeService = new ComposeServiceImpl().withMemLimit(MEMORY_LIMIT_BYTES);
 
         // if remote repository contains a codenvy docker file, use it
         // else use the default image.
-        final MachineSourceDto machineSourceDto;
         if (dockerFileLocation != null && URLChecker.exists(dockerFileLocation)) {
-            machineSourceDto = DtoFactory.newDto(MachineSourceDto.class).withType("dockerfile").withLocation(dockerFileLocation);
+            composeService.setBuild(new BuildContextImpl().withContext(dockerFileLocation));
         } else {
-            machineSourceDto = buildDefaultMachineSource();
+            composeService.setImage(DEFAULT_DOCKER_IMAGE);
         }
 
-        // set the memory limit
-        LimitsDto limitsDto = DtoFactory.newDto(LimitsDto.class).withRam(2000);
-
-        // Setup machine configuration
-        MachineConfigDto machineConfigDto = DtoFactory.newDto(MachineConfigDto.class)
-                                                      .withLimits(limitsDto)
-                                                      .withType("docker")
-                                                      .withDev(true)
-                                                      .withSource(machineSourceDto)
-                                                      .withName("ws-machine");
-
-
+        ComposeEnvironmentImpl composeEnv =
+                new ComposeEnvironmentImpl().withServices(singletonMap(MACHINE_NAME, composeService));
 
         // setup environment
-        EnvironmentDto environmentDto = DtoFactory.newDto(EnvironmentDto.class)
-                                                  .withName(environmentName)
-                                                  .withMachineConfigs(singletonList(machineConfigDto));
+        EnvironmentDto environmentDto = newDto(EnvironmentDto.class)
+                .withRecipe(newDto(EnvironmentRecipeDto.class).withContent(composeFileParser.toYaml(composeEnv))
+                                                              .withContentType("application/x-yaml")
+                                                              .withType("compose"))
+                .withMachines(singletonMap(MACHINE_NAME,
+                                           newDto(ExtendedMachineDto.class).withAgents(singletonList("ws-agent"))));
 
         // workspace configuration using the environment
-        return DtoFactory.newDto(WorkspaceConfigDto.class)
+        return newDto(WorkspaceConfigDto.class)
                          .withDefaultEnv(environmentName)
-                         .withEnvironments(singletonList(environmentDto))
+                         .withEnvironments(singletonMap(environmentName, environmentDto))
                          .withName(name);
     }
 }

@@ -21,25 +21,21 @@ import org.bson.codecs.Codec;
 import org.bson.codecs.DecoderContext;
 import org.bson.codecs.EncoderContext;
 import org.bson.codecs.configuration.CodecRegistry;
-import org.eclipse.che.api.core.model.machine.Limits;
-import org.eclipse.che.api.core.model.machine.MachineSource;
-import org.eclipse.che.api.core.model.machine.Recipe;
 import org.eclipse.che.api.core.model.project.ProjectConfig;
 import org.eclipse.che.api.core.model.project.SourceStorage;
+import org.eclipse.che.api.core.model.workspace.EnvironmentRecipe;
 import org.eclipse.che.api.machine.server.model.impl.CommandImpl;
-import org.eclipse.che.api.machine.server.model.impl.LimitsImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl;
-import org.eclipse.che.api.machine.server.model.impl.MachineConfigImpl.MachineConfigImplBuilder;
-import org.eclipse.che.api.machine.server.model.impl.MachineSourceImpl;
-import org.eclipse.che.api.machine.server.model.impl.ServerConfImpl;
-import org.eclipse.che.api.machine.server.recipe.RecipeImpl;
 import org.eclipse.che.api.workspace.server.model.impl.EnvironmentImpl;
+import org.eclipse.che.api.workspace.server.model.impl.EnvironmentRecipeImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ExtendedMachineImpl;
 import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
+import org.eclipse.che.api.workspace.server.model.impl.ServerConf2Impl;
 import org.eclipse.che.api.workspace.server.model.impl.SourceStorageImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 
 import java.util.List;
+import java.util.Map;
 
 import static com.codenvy.api.dao.mongo.MongoUtil.documentsListAsMap;
 import static com.codenvy.api.dao.mongo.MongoUtil.mapAsDocumentsList;
@@ -85,11 +81,14 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
                                                                  .map(WorkspaceImplCodec::asProjectConfig)
                                                                  .collect(toList());
 
-        @SuppressWarnings("unchecked") // 'environments' fields is aways map
-        final List<Document> envDocuments = (List<Document>)configDocument.get("environments");
-        final List<EnvironmentImpl> environments = envDocuments.stream()
-                                                               .map(WorkspaceImplCodec::asEnvironment)
-                                                               .collect(toList());
+        @SuppressWarnings("unchecked") // 'environments' fields is always map
+        final Map<String, Document> envDocuments = (Map<String, Document>)configDocument.get("environments");
+        final Map<String, EnvironmentImpl> environments = envDocuments.entrySet()
+                                                                      .stream()
+                                                                      .collect(toMap(Map.Entry::getKey,
+                                                                                     entry -> WorkspaceImplCodec
+                                                                                             .asEnvironment(
+                                                                                                     entry.getValue())));
 
         return WorkspaceImpl.builder()
                             .setId(document.getString("_id"))
@@ -129,9 +128,10 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
                                                 .collect(toList()));
 
         configDocument.append("environments", config.getEnvironments()
+                                                    .entrySet()
                                                     .stream()
-                                                    .map(WorkspaceImplCodec::asDocument)
-                                                    .collect(toList()));
+                                                    .collect(toMap(Map.Entry::getKey,
+                                                                   entry -> asDocument(entry.getValue()))));
         document.append("config", configDocument);
         codec.encode(writer, document, encoderContext);
     }
@@ -199,99 +199,101 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
     }
 
     private static EnvironmentImpl asEnvironment(Document document) {
-        @SuppressWarnings("unchecked") // 'machineConfigs' field is always list of documents
-        final List<Document> machineDocuments = (List<Document>)document.get("machineConfigs");
-        final List<MachineConfigImpl> machineConfigs = machineDocuments.stream()
-                                                                       .map(WorkspaceImplCodec::asMachineConfig)
-                                                                       .collect(toList());
-        RecipeImpl recipe = null;
-        final Document recipeDocument = document.get("recipe", Document.class);
+        EnvironmentImpl environment = new EnvironmentImpl();
+
+        Document recipeDocument = document.get("recipe", Document.class);
         if (recipeDocument != null) {
-            recipe = new RecipeImpl();
-            recipe.setType(recipeDocument.getString("type"));
-            recipe.setScript(recipeDocument.getString("script"));
+            EnvironmentRecipeImpl recipe = new EnvironmentRecipeImpl(recipeDocument.getString("type"),
+                                                                     recipeDocument.getString("contentType"),
+                                                                     recipeDocument.getString("content"),
+                                                                     recipeDocument.getString("location"));
+            environment.setRecipe(recipe);
         }
-        return new EnvironmentImpl(document.getString("name"), recipe, machineConfigs);
+
+        @SuppressWarnings("unchecked") // machines field is always map
+        Map<String, Document> machinesDocuments = (Map<String, Document>)document.get("machines");
+        if (machinesDocuments != null) {
+            Map<String, ExtendedMachineImpl> machines = machinesDocuments.entrySet()
+                                                                         .stream()
+                                                                         .collect(toMap(Map.Entry::getKey,
+                                                                                        entry -> asExtendedMachine(
+                                                                                                entry.getValue())));
+            environment.setMachines(machines);
+        }
+        return environment;
     }
 
     private static Document asDocument(EnvironmentImpl environment) {
         final Document document = new Document();
 
-        final Recipe recipe = environment.getRecipe();
+        EnvironmentRecipe recipe = environment.getRecipe();
         if (recipe != null) {
-            document.append("recipe", new Document("type", recipe.getType()).append("script", recipe.getScript()));
+            document.append("recipe", new Document().append("type", recipe.getType())
+                                                    .append("content", recipe.getContent())
+                                                    .append("location", recipe.getLocation())
+                                                    .append("contentType", recipe.getContentType()));
+        }
+        if (environment.getMachines() != null) {
+            document.append("machines", environment.getMachines()
+                                                   .entrySet()
+                                                   .stream()
+                                                   .collect(toMap(Map.Entry::getKey,
+                                                                  entry -> asDocument(entry.getValue()))));
         }
 
-        document.append("name", environment.getName())
-                .append("machineConfigs", environment.getMachineConfigs()
-                                                     .stream()
-                                                     .map(WorkspaceImplCodec::asDocument)
-                                                     .collect(toList()));
         return document;
     }
 
-    private static ServerConfImpl asServerConf(Document document) {
-        return new ServerConfImpl(document.getString("ref"),
-                                  document.getString("port"),
-                                  document.getString("protocol"),
-                                  document.getString("path"));
+    private static ExtendedMachineImpl asExtendedMachine(Document document) {
+        ExtendedMachineImpl machine = new ExtendedMachineImpl();
+        @SuppressWarnings("unchecked")
+        List<String> agents = (List<String>)document.get("agents");
+        machine.setAgents(agents);
+        @SuppressWarnings("unchecked")
+        Map<String, Document> serversDocs = (Map<String, Document>)document.get("servers");
+        if (serversDocs != null) {
+            Map<String, ServerConf2Impl> servers = serversDocs.entrySet()
+                                                              .stream()
+                                                              .collect(toMap(Map.Entry::getKey,
+                                                                             entry -> asServerConf2(entry.getValue())));
+            machine.setServers(servers);
+        }
+
+        return machine;
     }
 
-    private static MachineConfigImpl asMachineConfig(Document document) {
-        final MachineConfigImplBuilder builder = MachineConfigImpl.builder()
-                                                                  .setDev(document.getBoolean("dev"))
-                                                                  .setName(document.getString("name"))
-                                                                  .setType(document.getString("type"));
-        final Document sourceDocument = document.get("source", Document.class);
-        if (sourceDocument != null) {
-            builder.setSource(new MachineSourceImpl(sourceDocument.getString(MACHINE_SOURCE_TYPE))
-                                      .setContent(sourceDocument.getString(MACHINE_SOURCE_CONTENT))
-                                      .setLocation(sourceDocument.getString(MACHINE_SOURCE_LOCATION)));
-        }
-        final Document limitsDocument = document.get("limits", Document.class);
-        if (limitsDocument != null) {
-            builder.setLimits(new LimitsImpl(limitsDocument.getInteger("ram", 0)));
+    private static Document asDocument(ExtendedMachineImpl extendedMachine) {
+        Document document = new Document();
+        document.append("agents", extendedMachine.getAgents());
+
+        if (extendedMachine.getServers() != null) {
+            Map<String, Document> servers = extendedMachine.getServers()
+                                                           .entrySet()
+                                                           .stream()
+                                                           .collect(toMap(Map.Entry::getKey,
+                                                                          entry -> asDocument(entry.getValue())));
+            document.append("servers", servers);
         }
 
-        @SuppressWarnings("unchecked") // 'servers' field is always list
-        final List<Document> serversDocuments = (List<Document>)document.get("servers");
-        if (serversDocuments != null) {
-            builder.setServers(serversDocuments.stream()
-                                               .map(WorkspaceImplCodec::asServerConf)
-                                               .collect(toList()));
-        }
-
-        @SuppressWarnings("unchecked") // 'envVariables' field is always list
-        final List<Document> envVariables = (List<Document>)document.get("envVariables");
-        if (envVariables != null) {
-            builder.setEnvVariables(documentsListAsMap(envVariables));
-        }
-        return builder.build();
+        return document;
     }
 
-    private static Document asDocument(MachineConfigImpl config) {
-        final Document document = new Document().append("dev", config.isDev())
-                                                .append("name", config.getName())
-                                                .append("type", config.getType())
-                                                .append("envVariables", mapAsDocumentsList(config.getEnvVariables()));
-        final MachineSource source = config.getSource();
-        if (source != null) {
-            document.append("source", new Document(MACHINE_SOURCE_TYPE, source.getType())
-                    .append(MACHINE_SOURCE_LOCATION, source.getLocation())
-                    .append(MACHINE_SOURCE_CONTENT, source.getContent()));
-        }
-        final Limits limits = config.getLimits();
-        if (limits != null) {
-            document.append("limits", new Document("ram", limits.getRam()));
-        }
+    private static ServerConf2Impl asServerConf2(Document document) {
+        @SuppressWarnings("unchecked")
+        List<Document> properties = (List<Document>)document.get("properties");
+        return new ServerConf2Impl(document.getString("port"),
+                                   document.getString("protocol"),
+                                   properties == null ? null : documentsListAsMap(properties));
+    }
 
-        document.append("servers", config.getServers()
-                                         .stream()
-                                         .map(server -> new Document().append("ref", server.getRef())
-                                                                      .append("port", server.getPort())
-                                                                      .append("protocol", server.getProtocol())
-                                                                      .append("path", server.getPath()))
-                                         .collect(toList()));
+    private static Document asDocument(ServerConf2Impl serverConf2) {
+        Document document = new Document();
+
+        document.append("port", serverConf2.getPort());
+        document.append("protocol", serverConf2.getProtocol());
+        document.append("properties", serverConf2.getProperties() == null ?
+                                      null :
+                                      mapAsDocumentsList(serverConf2.getProperties()));
 
         return document;
     }
@@ -310,10 +312,11 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
                                                                  .collect(toList());
 
         @SuppressWarnings("unchecked") // 'environments' fields is aways map
-        final List<Document> envDocuments = (List<Document>)document.get("environments");
-        final List<EnvironmentImpl> environments = envDocuments.stream()
-                                                               .map(WorkspaceImplCodec::asEnvironment)
-                                                               .collect(toList());
+        final Map<String, Document> envDocuments = (Map<String, Document>)document.get("environments");
+        final Map<String, EnvironmentImpl> environments = envDocuments.entrySet()
+                                                                      .stream()
+                                                                      .collect(toMap(Map.Entry::getKey,
+                                                                                     entry -> asEnvironment(entry.getValue())));
 
         return WorkspaceConfigImpl.builder()
                                   .setName(document.getString("name"))
@@ -341,9 +344,10 @@ public class WorkspaceImplCodec implements Codec<WorkspaceImpl> {
                                              .collect(toList()));
 
         document.append("environments", workspace.getEnvironments()
+                                                 .entrySet()
                                                  .stream()
-                                                 .map(WorkspaceImplCodec::asDocument)
-                                                 .collect(toList()));
+                                                 .collect(toMap(Map.Entry::getKey,
+                                                                entry -> asDocument(entry.getValue()))));
         return document;
     }
 }
