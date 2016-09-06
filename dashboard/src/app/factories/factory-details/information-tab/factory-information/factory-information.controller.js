@@ -42,30 +42,11 @@ export class FactoryInformationCtrl {
       }
     });
 
+    this.updateData();
     $scope.$watch(() => {
       return this.factory;
-    }, (newFactory) => {
-      if (!newFactory) {
-        return;
-      }
-
-      this.copyOriginFactory = newFactory ? angular.copy(newFactory) : null;
-
-      if (this.copyOriginFactory.links) {
-        delete this.copyOriginFactory.links;
-      }
-
-      let factoryContent = this.$filter('json')(this.copyOriginFactory);
-      if (factoryContent !== this.factoryContent) {
-        if (!this.factoryContent) {
-          this.editorLoadedPromise.then((instance) => {
-            this.$timeout(() => {
-              instance.refresh();
-            }, 500);
-          })
-        }
-        this.factoryContent = factoryContent;
-      }
+    }, () => {
+      this.updateData();
     });
 
     this.factoryInformationForm;
@@ -78,6 +59,37 @@ export class FactoryInformationCtrl {
         editorLoadedDefer.resolve(instance);
       })
     };
+  }
+
+
+  /**
+   * Update factory content data for editor
+   */
+  updateData() {
+    if (!this.factory) {
+      return;
+    }
+
+    this.copyOriginFactory = angular.copy(this.factory);
+    if (this.copyOriginFactory.links) {
+      delete this.copyOriginFactory.links;
+    }
+
+    let factoryContent = this.$filter('json')(this.copyOriginFactory);
+    if (factoryContent !== this.factoryContent) {
+      if (!this.factoryContent) {
+        this.editorLoadedPromise.then((instance) => {
+          this.$timeout(() => {
+            instance.refresh();
+          }, 500);
+        })
+      }
+      this.factoryContent = factoryContent;
+    }
+  }
+
+  getObjectKeys(targetObject) {
+    return Object.keys(targetObject);
   }
 
   isFactoryChanged() {
@@ -106,7 +118,9 @@ export class FactoryInformationCtrl {
     }, 500);
   }
 
-  //Udpate factory content.
+  /**
+   * Callback to update factory
+   */
   doUpdateFactory(factory) {
     let promise = this.codenvyAPI.getFactory().setFactory(factory);
 
