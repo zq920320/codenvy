@@ -119,7 +119,7 @@ retrieveTestLogs() {
 
         # store Codenvy log
         executeSshCommand --bypass-validation "sudo cp /home/codenvy/codenvy-tomcat/logs/catalina.out /home/vagrant/codenvy-catalina.out"   # for codenvy 3.x
-        executeSshCommand --bypass-validation "sudo cp /home/codenvy/tomcat/logs/catalina.out /home/vagrant/codenvy-catalina.out"           # for codenvy 4.x
+        executeSshCommand --bypass-validation "sudo cp /home/codenvy/tomcat/logs/catalina.out /home/vagrant/codenvy-catalina.out"           # for codenvy 4.x and newer
         executeSshCommand --bypass-validation "sudo chmod 777 /home/vagrant/codenvy-catalina.out"
         scp -o StrictHostKeyChecking=no -i ~/.vagrant.d/insecure_private_key vagrant@${INSTALL_ON_NODE}:codenvy-catalina.out ${logDirName}/
 
