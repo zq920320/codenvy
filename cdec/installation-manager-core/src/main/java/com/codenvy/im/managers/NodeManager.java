@@ -112,7 +112,7 @@ public class NodeManager {
     public void updatePuppetConfig(String oldHostName, String newHostName) throws IOException {
         Version codenvyVersion = Version.valueOf(configManager.loadInstalledCodenvyConfig().getValue(Config.VERSION));
 
-        if (! codenvyVersion.is4Major()) {
+        if (! codenvyVersion.is4Compatible()) {
             return;
         }
 
@@ -165,7 +165,7 @@ public class NodeManager {
         Version codenvyVersion = Version.valueOf(configManager.loadInstalledCodenvyConfig().getValue(Config.VERSION));
         if (codenvyVersion.is3Major()) {
             return HELPERS.get(3);
-        } else if (codenvyVersion.is4Major()) {
+        } else if (codenvyVersion.is4Compatible()) {
             return HELPERS.get(4);
         } else {
             throw new UnsupportedArtifactVersionException(ArtifactFactory.createArtifact(CDECArtifact.NAME), codenvyVersion);
