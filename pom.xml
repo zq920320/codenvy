@@ -635,6 +635,17 @@
                 <version>${com.github.fakemongo.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.github.kirviq</groupId>
+                <artifactId>dumbster</artifactId>
+                <version>${com.dumbster.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>activation</artifactId>
+                        <groupId>javax.activation</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${jdbc.h2-driver.version}</version>
@@ -673,17 +684,6 @@
                     <exclusion>
                         <artifactId>commons-lang3</artifactId>
                         <groupId>org.apache.commons</groupId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>com.github.kirviq</groupId>
-                <artifactId>dumbster</artifactId>
-                <version>${com.dumbster.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>activation</artifactId>
-                        <groupId>javax.activation</groupId>
                     </exclusion>
                 </exclusions>
             </dependency>
