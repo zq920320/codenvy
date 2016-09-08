@@ -279,7 +279,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                         new ConjunctionRequestFilter(
                                 new RegexpRequestFilter("^/api/permissions$"),
                                 new RequestMethodFilter("GET")
-                        )
+                        ),
+                        new UriStartFromRequestFilter("/api/license/legality")
                 )
         );
 

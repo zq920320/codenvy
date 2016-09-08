@@ -70,7 +70,6 @@
         <org.flyway.version>3.1</org.flyway.version>
         <org.mongodb.version>3.2.1</org.mongodb.version>
         <org.osgi.version>5.0.0</org.osgi.version>
-        <org.powermock.version>1.5.5</org.powermock.version>
         <org.scala.lang.version>2.10.4</org.scala.lang.version>
         <org.thymeleaf.version>2.1.4.RELEASE</org.thymeleaf.version>
         <site.classifier>onprem-se</site.classifier>
@@ -350,6 +349,11 @@
             <dependency>
                 <groupId>com.codenvy.onpremises.wsmaster</groupId>
                 <artifactId>codenvy-hosted-api-factory</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.codenvy.onpremises.wsmaster</groupId>
+                <artifactId>codenvy-hosted-api-license</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
@@ -812,17 +816,6 @@
                 <groupId>org.postgresql</groupId>
                 <artifactId>postgresql</artifactId>
                 <version>${jdbc.postgresql-driver.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.powermock</groupId>
-                <artifactId>powermock-api-mockito</artifactId>
-                <version>${org.powermock.version}</version>
-                <exclusions>
-                    <exclusion>
-                        <artifactId>objenesis</artifactId>
-                        <groupId>org.objenesis</groupId>
-                    </exclusion>
-                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.scala-lang</groupId>

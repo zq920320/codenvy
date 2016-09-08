@@ -12,37 +12,39 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
-
-import com.codenvy.im.managers.PropertyNotFoundException;
-import com.codenvy.im.managers.StorageManager;
-import com.codenvy.im.managers.StorageNotFoundException;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
+package com.codenvy.api.license.server.license;
 
 import org.eclipse.che.commons.annotation.Nullable;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Objects;
 
-import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
+import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
  * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
+ * @author Alexander Andrienko
  */
 @Singleton
 public class CodenvyLicenseManager {
-    protected static final String CODENVY_LICENSE_KEY = "codenvy-license-key";
 
-    private final StorageManager        storageManager;
     private final CodenvyLicenseFactory licenseFactory;
+    private final Path                  licenseFile;
 
     @Inject
-    public CodenvyLicenseManager(StorageManager storageManager, CodenvyLicenseFactory licenseFactory) {
-        this.storageManager = storageManager;
+    public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile, CodenvyLicenseFactory licenseFactory) {
         this.licenseFactory = licenseFactory;
+        this.licenseFile = Paths.get(licenseFile);
     }
 
     /**
@@ -57,7 +59,7 @@ public class CodenvyLicenseManager {
         Objects.requireNonNull(codenvyLicense, "license must not be null");
 
         try {
-            storageManager.storeProperties(ImmutableMap.of(CODENVY_LICENSE_KEY, codenvyLicense.getLicenseText()));
+            Files.write(licenseFile, codenvyLicense.getLicenseText().getBytes());
         } catch (IOException e) {
             throw new LicenseException(e.getMessage(), e);
         }
@@ -77,8 +79,8 @@ public class CodenvyLicenseManager {
     public CodenvyLicense load() throws LicenseException {
         String licenseText;
         try {
-            licenseText = storageManager.loadProperty(CODENVY_LICENSE_KEY);
-        } catch (StorageNotFoundException | PropertyNotFoundException e) {
+            licenseText = new String(Files.readAllBytes(licenseFile), UTF_8);
+        } catch (NoSuchFileException e) {
             throw new LicenseNotFoundException("Codenvy license not found");
         } catch (IOException e) {
             throw new LicenseException(e.getMessage(), e);
@@ -99,9 +101,9 @@ public class CodenvyLicenseManager {
      */
     public void delete() throws LicenseException {
         try {
-            storageManager.deleteProperty(CODENVY_LICENSE_KEY);
-        } catch (PropertyNotFoundException e) {
-            // ignore
+            Files.delete(licenseFile);
+        } catch (NoSuchFileException e) {
+            throw new LicenseNotFoundException("Codenvy license not found");
         } catch (IOException e) {
             throw new LicenseException(e.getMessage(), e);
         }

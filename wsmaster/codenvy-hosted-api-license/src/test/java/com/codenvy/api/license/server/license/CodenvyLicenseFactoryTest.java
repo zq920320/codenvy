@@ -12,19 +12,18 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
+package com.codenvy.api.license.server.license;
 
-import com.codenvy.im.utils.InjectorBootstrap;
-
-import com.google.common.collect.ImmutableMap;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
-import org.testng.annotations.DataProvider;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.io.FileInputStream;
+import java.io.IOException;
 import java.util.Calendar;
 import java.util.Map;
+import java.util.Properties;
 
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
@@ -34,8 +33,7 @@ import static org.testng.Assert.assertTrue;
  * @author Anatoliy Bazko
  */
 @Listeners(value = {MockitoTestNGListener.class})
-public class CodenvyLicenseTest {
-
+public class CodenvyLicenseFactoryTest {
     // Custom Signed Features: | license-type = product key | expiration-date = 2020/12/01 | users = 10 |
     private static final String LICENCE_TEXT = "1c4594dd37a0a02e8522c0c7670431dcce1c2923688302fab98f037a5087\n" +
                                                "20971abd43902c86e1c841f557f4d65ca878fc5949619992437e5f949209\n" +
@@ -88,19 +86,16 @@ public class CodenvyLicenseTest {
                                                        "f6dcf3bfcfb881033d69eacf81327c16fcd03240a66c9f3f34fb95049701\n" +
                                                        "17c8a50af3fda6d845c796df77ae52408487e21aa4dd";
 
-    public static final int    LICENSED_USERS   = 10;
-    public static final String EXPIRED_DATE     = "1990/12/31";
-    public static final String NON_EXPIRED_DATE = "2100/12/31";
-
     private CodenvyLicenseFactory codenvyLicenseFactory;
 
-
     @BeforeMethod
-    public void setUp() {
-        codenvyLicenseFactory = new CodenvyLicenseFactory("testId".toCharArray(),
-                                                          InjectorBootstrap.getProperty("license-manager.public_key"));
+    public void setUp() throws IOException {
+        String testPropertiesPath = Thread.currentThread().getContextClassLoader().getResource("license-public-key.properties").getPath();
+        Properties properties = new Properties();
+        properties.load(new FileInputStream(testPropertiesPath));
+        String testPublicKey = (String)properties.get("license-manager.public_key");
+        codenvyLicenseFactory = new CodenvyLicenseFactory("testId".toCharArray() ,testPublicKey);
     }
-
 
     @Test
     public void testGetNumberOfUsers() throws Exception {
@@ -128,7 +123,6 @@ public class CodenvyLicenseTest {
         assertEquals(calendar.get(Calendar.DAY_OF_MONTH), 1);
     }
 
-
     @Test
     public void testCheckExpirationDateShouldReturnFalse() throws Exception {
         CodenvyLicense codenvyLicense = codenvyLicenseFactory.create(LICENCE_TEXT);
@@ -154,60 +148,4 @@ public class CodenvyLicenseTest {
             assertTrue(customFeatures.containsKey(feature));
         }
     }
-
-    @Test(dataProvider = "getDataToTestIsLicenseUsageLegal")
-    public void testIsLicenseUsageLegal(String type, String expiration, int users, long actualUsers, int actualServers, boolean isLicenseUsageLegal) {
-        Map<LicenseFeature, String> features = ImmutableMap.of(LicenseFeature.TYPE, type,
-                                                               LicenseFeature.EXPIRATION, expiration,
-                                                               LicenseFeature.USERS, String.valueOf(users));
-        CodenvyLicense license = new CodenvyLicense("", features);
-
-        boolean result = license.isLicenseUsageLegal(actualUsers, actualServers);
-        assertEquals(result, isLicenseUsageLegal);
-    }
-
-    @DataProvider
-    public Object[][] getDataToTestIsLicenseUsageLegal() {
-        return new Object[][] {
-            // expired product key
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, 0, 0, true},
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, true},
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-
-            // non-expired product key
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, 0, 0, true},
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, true},
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, true},
-            {CodenvyLicense.LicenseType.PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, LICENSED_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-
-            // expired evaluation product key
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, 0, 0, true},
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-
-            // non-expired evaluation product key
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, 0, 0, true},
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, true},
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, true},
-            {CodenvyLicense.LicenseType.EVALUATION_PRODUCT_KEY.toString(), NON_EXPIRED_DATE, LICENSED_USERS, LICENSED_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-        };
-    }
-
-    @Test(dataProvider = "getDataToTestIsFreeUsageLegal")
-    public void testIsFreeUsageLegal(long actualUsers, int actualServers, boolean isLicenseUsageLegal) {
-        boolean result = CodenvyLicense.isFreeUsageLegal(actualUsers, actualServers);
-        assertEquals(result, isLicenseUsageLegal);
-    }
-
-    @DataProvider
-    public Object[][] getDataToTestIsFreeUsageLegal() {
-        return new Object[][]{
-            {0, 0, true},
-            {CodenvyLicense.MAX_NUMBER_OF_FREE_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS, true},
-            {CodenvyLicense.MAX_NUMBER_OF_FREE_USERS, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-            {CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS, false},
-            {CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1, CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1, false},
-        };
-    }
-
 }

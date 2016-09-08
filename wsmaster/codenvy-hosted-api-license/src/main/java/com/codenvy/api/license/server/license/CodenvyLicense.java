@@ -12,7 +12,7 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
+package com.codenvy.api.license.server.license;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -21,9 +21,9 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import static com.codenvy.im.license.LicenseFeature.EXPIRATION;
-import static com.codenvy.im.license.LicenseFeature.TYPE;
-import static com.codenvy.im.license.LicenseFeature.USERS;
+import static com.codenvy.api.license.server.license.LicenseFeature.EXPIRATION;
+import static com.codenvy.api.license.server.license.LicenseFeature.TYPE;
+import static com.codenvy.api.license.server.license.LicenseFeature.USERS;
 
 /**
  * Represents valid Codenvy license.
@@ -81,6 +81,25 @@ public class CodenvyLicense {
      */
     public LicenseType getLicenseType() {
         return (LicenseType)doGetFeature(TYPE);
+    }
+
+    /**
+     * Returns true if user have order to create new node.
+     */
+    public boolean isLicenseNodesUsageLegal(int actualServers) {
+        if (actualServers == 0) {
+            return true;
+        }
+        if (isExpired()) {
+            switch (getLicenseType()) {
+                case EVALUATION_PRODUCT_KEY:
+                    return false;
+                case PRODUCT_KEY:
+                default:
+                    // do nothing
+            }
+        }
+        return true;
     }
 
     /**

@@ -12,15 +12,15 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
+package com.codenvy.api.license.server.license;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-import com.google.inject.name.Named;
 import com.license4j.License;
 import com.license4j.LicenseValidator;
 import com.license4j.ValidationStatus;
 
+import javax.inject.Inject;
+import javax.inject.Named;
+import javax.inject.Singleton;
 import java.util.AbstractMap;
 import java.util.HashMap;
 import java.util.Map;

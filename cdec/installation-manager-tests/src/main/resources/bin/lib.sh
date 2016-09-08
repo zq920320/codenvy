@@ -448,14 +448,16 @@ doSleep() {
 }
 
 addCodenvyLicenseConfiguration() {
-    local CONF_DIR='$HOME/che_conf'
-    executeSshCommand "sed -i '1iexport CHE_LOCAL_CONF_DIR=$CONF_DIR' ~/.bashrc"
-    executeSshCommand "if [ ! -d $CONF_DIR ]; then mkdir $CONF_DIR; fi"
-    executeSshCommand "echo license-manager.public_key=$CODENVY_LICENSE_PUBLIC_KEY >> $CONF_DIR/installation-manager.properties"
+    local CODENVY_MANIFEST_FILE='/etc/puppet/manifests/nodes/codenvy/codenvy.pp'
+    executeSshCommand "sudo sed -i 's/\$license_manager_public_key.*/\$license_manager_public_key = \"$CODENVY_LICENSE_PUBLIC_KEY\"/g' $CODENVY_MANIFEST_FILE"
+    executeSshCommand "sudo puppet agent --onetime --ignorecache --no-daemonize --no-usecacheonfailure --no-splay"
 }
 
 storeCodenvyLicense() {
-    storeStorageProperty "codenvy-license-key" "$CODENVY_LICENSE"
+    local LICENSE_FILE="$CODENVY_DATA_DIR/license/license"
+    executeSshCommand "if [ ! -d $LICENSE_FILE ]; then sudo touch $LICENSE_FILE; fi"
+    executeSshCommand "sudo chown -R codenvy:codenvy $LICENSE_FILE"
+    executeSshCommand "sudo bash -c 'echo $CODENVY_LICENSE >> $LICENSE_FILE'"
 }
 
 storeStorageProperty() {
