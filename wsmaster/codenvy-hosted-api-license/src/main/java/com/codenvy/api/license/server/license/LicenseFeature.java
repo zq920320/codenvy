@@ -12,14 +12,14 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
+package com.codenvy.api.license.server.license;
 
-import com.codenvy.im.license.CodenvyLicense.LicenseType;
+import com.codenvy.api.license.server.license.CodenvyLicense.LicenseType;
 
 import java.text.ParseException;
 import java.util.IllegalFormatException;
 
-import static com.codenvy.im.license.CodenvyLicense.EXPIRATION_DATE_FORMAT;
+import static com.codenvy.api.license.server.license.CodenvyLicense.EXPIRATION_DATE_FORMAT;
 import static java.lang.String.format;
 
 /**

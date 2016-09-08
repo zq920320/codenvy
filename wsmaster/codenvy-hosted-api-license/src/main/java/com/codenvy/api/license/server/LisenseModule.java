@@ -12,13 +12,20 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.license;
+package com.codenvy.api.license.server;
+
+import com.google.inject.AbstractModule;
+
+import org.eclipse.che.inject.DynaModule;
 
 /**
- * @author Anatoliy Bazko
+ * @author Alexander Andrienko
  */
-public class LicenseNotFoundException extends LicenseException {
-    public LicenseNotFoundException(String message) {
-        super(message);
+@DynaModule
+public class LisenseModule extends AbstractModule {
+    @Override
+    protected void configure() {
+        bind(LicenseService.class);
+        bind(LicenseServicePermissionsFilter.class);
     }
 }

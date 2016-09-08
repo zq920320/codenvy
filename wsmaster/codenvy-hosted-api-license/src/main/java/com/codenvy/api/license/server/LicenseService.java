@@ -12,23 +12,25 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.service;
+package com.codenvy.api.license.server;
 
-import com.codenvy.im.facade.IMCliFilteredFacade;
-import com.codenvy.im.facade.InstallationManagerFacade;
-import com.codenvy.im.license.CodenvyLicense;
-import com.codenvy.im.license.CodenvyLicenseFactory;
-import com.codenvy.im.license.InvalidLicenseException;
-import com.codenvy.im.license.LicenseException;
-import com.codenvy.im.license.LicenseFeature;
-import com.codenvy.im.license.LicenseNotFoundException;
-import com.codenvy.im.managers.Config;
-import com.google.common.collect.ImmutableMap;
-import com.google.inject.Inject;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import com.codenvy.api.license.server.license.CodenvyLicense;
+import com.codenvy.api.license.server.license.CodenvyLicenseFactory;
+import com.codenvy.api.license.server.license.CodenvyLicenseManager;
+import com.codenvy.api.license.server.license.InvalidLicenseException;
+import com.codenvy.api.license.server.license.LicenseException;
+import com.codenvy.api.license.server.license.LicenseFeature;
+import com.codenvy.api.license.server.license.LicenseNotFoundException;
+import com.codenvy.api.user.server.dao.AdminUserDao;
+import com.codenvy.swarm.client.SwarmDockerConnector;
+import com.google.common.collect.ImmutableMap;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -37,27 +39,30 @@ import org.eclipse.che.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.AbstractMap;
-import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import static javax.ws.rs.core.Response.Status.ACCEPTED;
+import static java.lang.String.valueOf;
 import static javax.ws.rs.core.Response.Status.CREATED;
 import static javax.ws.rs.core.Response.Status.OK;
 import static javax.ws.rs.core.Response.status;
 
 /**
  * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
+ * @author Alexander Andrienko
  */
 @Path("/license")
 @Api(value = "license", description = "License manager")
@@ -66,29 +71,37 @@ public class LicenseService {
     public static final  String CODENVY_LICENSE_PROPERTY_IS_EXPIRED = "isExpired";
     private static final String VALUE                               = "value";
 
-    private final InstallationManagerFacade delegate;
+    private final CodenvyLicenseManager licenseManager;
     private final CodenvyLicenseFactory licenseFactory;
+    private final AdminUserDao          adminUserDao;
+    private final SwarmDockerConnector  dockerConnector;
 
     @Inject
-    public LicenseService(IMCliFilteredFacade delegate, CodenvyLicenseFactory licenseFactory) {
-        this.delegate = delegate;
+    public LicenseService(CodenvyLicenseManager licenseManager,
+                          CodenvyLicenseFactory licenseFactory,
+                          AdminUserDao adminUserDao,
+                          SwarmDockerConnector dockerConnector) {
+        this.licenseManager = licenseManager;
         this.licenseFactory = licenseFactory;
+        this.adminUserDao = adminUserDao;
+        this.dockerConnector = dockerConnector;
     }
 
     @DELETE
     @ApiOperation(value = "Deletes Codenvy license")
-    @ApiResponses(value = {@ApiResponse(code = 202, message = "OK"),
-                           @ApiResponse(code = 500, message = "Server error")})
-    public Response deleteLicense() throws ApiException {
+    @ApiResponses(value = {@ApiResponse(code = 204, message = "The license successfully removed"),
+                           @ApiResponse(code = 500, message = "Server error"),
+                           @ApiResponse(code = 404, message = "License not found")})
+    public void deleteLicense() throws ApiException {
         try {
-            delegate.deleteCodenvyLicense();
-            return status(ACCEPTED).build();
+            licenseManager.delete();
+        } catch (LicenseNotFoundException e) {
+            throw new NotFoundException(e.getMessage());
         } catch (LicenseException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getMessage(), e);
         }
     }
-
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
@@ -99,7 +112,7 @@ public class LicenseService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getLicense() throws ApiException {
         try {
-            CodenvyLicense codenvyLicense = delegate.loadCodenvyLicense();
+            CodenvyLicense codenvyLicense = licenseManager.load();
             return status(OK).entity(codenvyLicense.getLicenseText()).build();
         } catch (InvalidLicenseException e) {
             throw new ConflictException(e.getMessage());
@@ -120,7 +133,7 @@ public class LicenseService {
     public Response storeLicense(String license) throws ApiException {
         try {
             CodenvyLicense codenvyLicense = licenseFactory.create(license);
-            delegate.storeCodenvyLicense(codenvyLicense);
+            licenseManager.store(codenvyLicense);
             return status(CREATED).build();
         } catch (InvalidLicenseException e) {
             throw new ConflictException(e.getMessage());
@@ -140,7 +153,7 @@ public class LicenseService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response getLicenseProperties() throws ApiException {
         try {
-            CodenvyLicense codenvyLicense = delegate.loadCodenvyLicense();
+            CodenvyLicense codenvyLicense = licenseManager.load();
             Map<LicenseFeature, String> features = codenvyLicense.getFeatures();
 
             Map<String, String> properties = features
@@ -150,7 +163,7 @@ public class LicenseService {
                     .collect(Collectors.toMap(Map.Entry::getKey, Map.Entry::getValue));
 
             boolean licenseExpired = codenvyLicense.isExpired();
-            properties.put(CODENVY_LICENSE_PROPERTY_IS_EXPIRED, String.valueOf(licenseExpired));
+            properties.put(CODENVY_LICENSE_PROPERTY_IS_EXPIRED, valueOf(licenseExpired));
 
             return status(OK).entity(new JsonStringMapImpl<>(properties)).build();
         } catch (LicenseNotFoundException e) {
@@ -171,23 +184,22 @@ public class LicenseService {
                            @ApiResponse(code = 500, message = "Server error")})
     public Response isCodenvyUsageLegal() throws ApiException {
         long actualUsers;
-        int actualServers = 0;
+        int actualServers;
 
         try {
-            actualUsers = delegate.getNumberOfUsers();
-
-            List<String> additionalNodes = delegate.getNodes().get(Config.SWARM_NODES);
-            if (additionalNodes != null) {
-                actualServers = additionalNodes.size();
-            }
-
+            //TODO Rework getting total items count after merge with jpa integration
+            actualUsers = adminUserDao.getAll(1, 0).getTotalItemsCount();
+            actualServers = dockerConnector.getAvailableNodes().size();
         } catch (IOException e) {
             LOG.error(e.getMessage(), e);
             throw new ServerException(e.getMessage(), e);
+        } catch (ServerException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServerException("Failed to get amount of users for license validation. ", e);
         }
 
         try {
-            CodenvyLicense codenvyLicense = delegate.loadCodenvyLicense();
+            CodenvyLicense codenvyLicense = licenseManager.load();
             boolean isLicenseUsageLegal = codenvyLicense.isLicenseUsageLegal(actualUsers, actualServers);
             Map<String, String> isCodenvyUsageLegalResponse = ImmutableMap.of(VALUE, String.valueOf(isLicenseUsageLegal));
             return status(OK).entity(new JsonStringMapImpl<>(isCodenvyUsageLegalResponse)).build();
@@ -199,4 +211,33 @@ public class LicenseService {
         }
     }
 
+    @GET
+    @Path("/legality/node")
+    @Produces(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Check if Codenvy node usage matches Codenvy License constraints, or free usage rules.",
+                  notes = "If nodeNumber parameter is absent then actual number of machine nodes will be validated")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK"),
+                           @ApiResponse(code = 500, message = "Server error")})
+    public Response isCodenvyNodesUsageLegal(@ApiParam("Node number for legality validation")
+                                             @QueryParam("nodeNumber")
+                                             Integer nodeNumber) throws ApiException {
+        try {
+            if (nodeNumber == null) {
+                nodeNumber = dockerConnector.getAvailableNodes().size();
+            }
+        } catch (IOException e) {
+            LOG.error(e.getMessage(), e);
+            throw new ServerException(e.getMessage(), e);
+        }
+
+        try {
+            CodenvyLicense codenvyLicense = licenseManager.load();
+
+            boolean isLicenseNodesUsageLegal = codenvyLicense.isLicenseNodesUsageLegal(nodeNumber);
+            return status(OK).entity(new JsonStringMapImpl<>(ImmutableMap.of(VALUE, valueOf(isLicenseNodesUsageLegal)))).build();
+        } catch (LicenseException e) {
+            boolean isFreeUsageLegal = CodenvyLicense.isFreeUsageLegal(0, nodeNumber);
+            return status(OK).entity(new JsonStringMapImpl<>(ImmutableMap.of(VALUE, valueOf(isFreeUsageLegal)))).build();
+        }
+    }
 }

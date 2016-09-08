@@ -50,6 +50,8 @@ CODENVY_LICENSE=d9a53efe56c19eaaae2d14be98de42ce76cfeaf8bc63c00c6f40651d08b9c814
 STORAGE_DIR=/usr/local/codenvy/im/storage
 STORAGE_FILE=/usr/local/codenvy/im/storage/config.properties
 
+CODENVY_DATA_DIR=/home/codenvy/codenvy-data
+
 HTTP_PROXY=http://testuser:testpassword@proxy.ua.codenvy-dev.com:3128
 HTTPS_PROXY=http://testuser:testpassword@proxy.ua.codenvy-dev.com:3128
 PROXY_SERVER=$(echo $HTTP_PROXY | sed 's|http://.*@\(.*\):.*|\1|')

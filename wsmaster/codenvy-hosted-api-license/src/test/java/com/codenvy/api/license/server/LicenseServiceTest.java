@@ -12,24 +12,30 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.im.service;
+package com.codenvy.api.license.server;
 
-import com.codenvy.im.facade.IMCliFilteredFacade;
-import com.codenvy.im.license.CodenvyLicense;
-import com.codenvy.im.license.CodenvyLicenseFactory;
-import com.codenvy.im.license.InvalidLicenseException;
-import com.codenvy.im.license.LicenseException;
-import com.codenvy.im.license.LicenseFeature;
-import com.codenvy.im.license.LicenseNotFoundException;
-import com.codenvy.im.managers.Config;
+import com.codenvy.api.license.server.license.CodenvyLicense;
+import com.codenvy.api.license.server.license.CodenvyLicenseFactory;
+import com.codenvy.api.license.server.license.CodenvyLicenseManager;
+import com.codenvy.api.license.server.license.InvalidLicenseException;
+import com.codenvy.api.license.server.license.LicenseException;
+import com.codenvy.api.license.server.license.LicenseFeature;
+import com.codenvy.api.license.server.license.LicenseNotFoundException;
+import com.codenvy.api.user.server.dao.AdminUserDao;
+import com.codenvy.swarm.client.SwarmDockerConnector;
+import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
+
+import org.eclipse.che.api.core.Page;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
+import org.eclipse.che.api.user.server.model.impl.UserImpl;
 import org.everrest.assured.EverrestJetty;
 import org.everrest.assured.JettyHttpServer;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
-import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
@@ -38,19 +44,26 @@ import java.util.List;
 import java.util.Map;
 
 import static com.jayway.restassured.RestAssured.given;
+import static javax.ws.rs.core.Response.Status.CONFLICT;
+import static javax.ws.rs.core.Response.Status.CREATED;
+import static javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR;
+import static javax.ws.rs.core.Response.Status.NOT_FOUND;
+import static javax.ws.rs.core.Response.Status.NO_CONTENT;
+import static javax.ws.rs.core.Response.Status.OK;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyLong;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 
 /**
  * @author Anatoliy Bazko
+ * @author Dmytro Nochevnov
+ * @author Alexander Andrienko
  */
 @Listeners(value = {EverrestJetty.class, MockitoTestNGListener.class})
 public class LicenseServiceTest {
@@ -58,52 +71,56 @@ public class LicenseServiceTest {
     @SuppressWarnings("unused")
     protected static ApiExceptionMapper MAPPER = new ApiExceptionMapper();
     @Mock
-    private IMCliFilteredFacade   mockFacade;
+    private CodenvyLicenseManager licenseManager;
     @Mock
     private CodenvyLicense        mockCodenvyLicense;
     @Mock
     private CodenvyLicenseFactory mockLicenseFactory;
+    @Mock
+    private SwarmDockerConnector  swarmDockerConnector;
+    @Mock
+    private AdminUserDao          adminUserDao;
+    @Mock
+    private Page<UserImpl>        page;
+    @Mock
+    private List<DockerNode>      dockerNodes;
 
+    @InjectMocks
     LicenseService licenseService;
-
-    @BeforeMethod
-    public void setUp() throws Exception {
-        licenseService = spy(new LicenseService(mockFacade, mockLicenseFactory));
-    }
 
     @Test
     public void testGetLicenseShouldReturnOk() throws Exception {
-        doReturn(mockCodenvyLicense).when(mockFacade).loadCodenvyLicense();
+        doReturn(mockCodenvyLicense).when(licenseManager).load();
         doReturn("license").when(mockCodenvyLicense).getLicenseText();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "license");
     }
 
     @Test
     public void testGetLicenseShouldReturnNotFoundWhenFacadeThrowLicenseNotFoundException() throws Exception {
-        doThrow(new LicenseNotFoundException("error")).when(mockFacade).loadCodenvyLicense();
+        doThrow(new LicenseNotFoundException("error")).when(licenseManager).load();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode());
+        assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
     }
 
     @Test
     public void testGetLicenseShouldReturnServerErrorWhenFacadeThrowLicenseException() throws Exception {
-        doThrow(new LicenseException("error")).when(mockFacade).loadCodenvyLicense();
+        doThrow(new LicenseException("error")).when(licenseManager).load();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
 
@@ -113,18 +130,29 @@ public class LicenseServiceTest {
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .delete(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.ACCEPTED.getStatusCode());
+        assertEquals(response.statusCode(), NO_CONTENT.getStatusCode());
     }
 
     @Test
-    public void testDeleteLicenseShouldReturnServerErrorWhenFacadeThrowLicenseException() throws Exception {
-        doThrow(new LicenseException("error")).when(mockFacade).deleteCodenvyLicense();
+    public void testDeleteLicensShouldNotFindLicenseToDelete() {
+        doThrow(new LicenseNotFoundException("error")).when(licenseManager).delete();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .delete(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteLicenseShouldReturnServerErrorWhenFacadeThrowLicenseException() throws Exception {
+        doThrow(new LicenseException("error")).when(licenseManager).delete();
+
+        Response response = given()
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .delete(JettyHttpServer.SECURE_PATH + "/license");
+
+        assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
     @Test
@@ -135,24 +163,24 @@ public class LicenseServiceTest {
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
                 .post(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.CREATED.getStatusCode());
-        verify(mockFacade).storeCodenvyLicense(any(CodenvyLicense.class));
+        assertEquals(response.statusCode(), CREATED.getStatusCode());
+        verify(licenseManager).store(any(CodenvyLicense.class));
     }
 
     @Test
     public void testPostLicenseShouldReturnServerErrorWhenFacadeThrowLicenseException() throws Exception {
-        doThrow(new LicenseException("error")).when(mockFacade).storeCodenvyLicense(any(CodenvyLicense.class));
+        doThrow(new LicenseException("error")).when(licenseManager).store(any(CodenvyLicense.class));
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
                 .post(JettyHttpServer.SECURE_PATH + "/license");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
     @Test
     public void testGetLicensePropertiesShouldReturnOk() throws Exception {
-        doReturn(mockCodenvyLicense).when(mockFacade).loadCodenvyLicense();
+        doReturn(mockCodenvyLicense).when(licenseManager).load();
         doReturn(ImmutableMap.of(LicenseFeature.TYPE, "type",
                                  LicenseFeature.EXPIRATION, "2015/10/10",
                                  LicenseFeature.USERS, "15")).when(mockCodenvyLicense).getFeatures();
@@ -162,7 +190,7 @@ public class LicenseServiceTest {
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
 
         @SuppressWarnings("unchecked")
         Map<String, String> m = response.as(Map.class);
@@ -176,92 +204,104 @@ public class LicenseServiceTest {
 
     @Test
     public void testGetLicensePropertiesShouldReturnNotFoundWhenLicenseNotFound() throws Exception {
-        doThrow(new LicenseNotFoundException("error")).when(mockFacade).loadCodenvyLicense();
+        doThrow(new LicenseNotFoundException("error")).when(licenseManager).load();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.NOT_FOUND.getStatusCode());
+        assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
     }
 
     @Test
     public void testGetLicensePropertiesShouldReturnConflictWhenLicenseInvalid() throws Exception {
-        doThrow(new InvalidLicenseException("error")).when(mockFacade).loadCodenvyLicense();
+        doThrow(new InvalidLicenseException("error")).when(licenseManager).load();
 
         Response response = given()
                 .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
                 .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.CONFLICT.getStatusCode());
+        assertEquals(response.statusCode(), CONFLICT.getStatusCode());
     }
 
     @Test
-    public void testIsCodenvyLicenseUsageLegal() throws IOException {
-        doReturn(true).when(mockCodenvyLicense).isLicenseUsageLegal(3, 2);
-        doReturn(mockCodenvyLicense).when(mockFacade).loadCodenvyLicense();
+    public void testIsCodenvyLicenseUsageLegal() throws IOException, ServerException {
+        doReturn(true).when(mockCodenvyLicense).isLicenseUsageLegal(3L, 2);
+        doReturn(mockCodenvyLicense).when(licenseManager).load();
 
         setSizeOfAdditionalNodes(2);
-        doReturn(3L).when(mockFacade).getNumberOfUsers();
+        setAmountOfUsers(3L);
 
         Response response = given().when().get("/license/legality");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "{\"value\":\"true\"}");
     }
 
     @Test
-    public void testIsCodenvyFreeUsageLegal() throws IOException {
-        doThrow(LicenseNotFoundException.class).when(mockFacade).loadCodenvyLicense();
+    public void testIsCodenvyFreeUsageLegal() throws IOException, ServerException {
+        doThrow(LicenseNotFoundException.class).when(licenseManager).load();
 
         setSizeOfAdditionalNodes(CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS);
-        doReturn(CodenvyLicense.MAX_NUMBER_OF_FREE_USERS).when(mockFacade).getNumberOfUsers();
+        setAmountOfUsers(CodenvyLicense.MAX_NUMBER_OF_FREE_USERS);
 
         Response response = given().when().get("/license/legality");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "{\"value\":\"true\"}");
     }
 
     @Test
-    public void testIsCodenvyLicenseUsageNotLegal() throws IOException {
+    public void testIsCodenvyLicenseUsageNotLegal() throws IOException, ServerException {
         doReturn(false).when(mockCodenvyLicense).isLicenseUsageLegal(anyLong(), anyInt());
-        doReturn(mockCodenvyLicense).when(mockFacade).loadCodenvyLicense();
+        doReturn(mockCodenvyLicense).when(licenseManager).load();
+        setAmountOfUsers(5);
+        setSizeOfAdditionalNodes(5);
 
         Response response = given().when().get("/license/legality");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "{\"value\":\"false\"}");
     }
 
     @Test
-    public void testIsCodenvyFreeUsageNotLegal() throws IOException {
-        doThrow(LicenseException.class).when(mockFacade).loadCodenvyLicense();
+    public void testIsCodenvyFreeUsageNotLegal() throws IOException, ServerException {
+        doThrow(LicenseException.class).when(licenseManager).load();
 
         setSizeOfAdditionalNodes(CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS + 1);
-        doReturn(CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1).when(mockFacade).getNumberOfUsers();
+        setAmountOfUsers(CodenvyLicense.MAX_NUMBER_OF_FREE_USERS + 1);
 
         Response response = given().when().get("/license/legality");
 
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.OK.getStatusCode());
+        assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "{\"value\":\"false\"}");
     }
 
     @Test
-    public void testIsCodenvyUsageIOException() throws IOException {
-        doThrow(IOException.class).when(mockFacade).getNumberOfUsers();
+    public void testIsCodenvyUsageIOException() throws IOException, ServerException {
+        setAmountOfUsers(3);
+        doThrow(IOException.class).when(swarmDockerConnector).getAvailableNodes();
 
         Response response = given().when().get("/license/legality");
-        assertEquals(response.statusCode(), javax.ws.rs.core.Response.Status.INTERNAL_SERVER_ERROR.getStatusCode());
+        assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenGetAmountOfUsersFailed() throws ServerException {
+        doThrow(ServerException.class).when(adminUserDao).getAll(anyInt(), anyInt());
+
+        Response response = given().when().get("/license/legality");
+        assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
 
     private void setSizeOfAdditionalNodes(int size) throws IOException {
-        Map<String, List<String>> mockNodes = mock(Map.class);
-        List<String> mockList = mock(List.class);
-        doReturn(mockList).when(mockNodes).get(Config.SWARM_NODES);
-        doReturn(size).when(mockList).size();
+        when(swarmDockerConnector.getAvailableNodes()).thenReturn(dockerNodes);
+        when(dockerNodes.size()).thenReturn(size);
+    }
 
-        doReturn(mockNodes).when(mockFacade).getNodes();
+    private void setAmountOfUsers(long amountOfUsers) throws ServerException {
+        when(adminUserDao.getAll(1, 0)).thenReturn(page);
+        when(page.getTotalItemsCount()).thenReturn(amountOfUsers);
     }
 
 }
