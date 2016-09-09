@@ -38,3 +38,13 @@ if [ ! -e $newLicensePath ]; then
       fi
   fi
 fi
+
+#### fix mongoDB
+CURRENT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
+LOG_FILE="$CODENVY_IM_BASE/migration.log"
+
+echo >> $LOG_FILE
+echo "------ fix mongoDB :: agents -----" >> $LOG_FILE
+
+mongo -u$mongo_admin_user_name -p$mongo_admin_pass --authenticationDatabase admin "${CURRENT_DIR}/update_agents.js" &>> $LOG_FILE
+
