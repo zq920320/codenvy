@@ -31,11 +31,10 @@ import com.codenvy.im.managers.InstallType;
 import com.codenvy.im.managers.NodeConfig;
 import com.codenvy.im.managers.NodeException;
 import com.codenvy.im.managers.UnknownInstallationTypeException;
+import com.codenvy.im.utils.HttpTransport;
 import com.codenvy.im.utils.Version;
 
-import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
-import org.eclipse.che.api.core.rest.HttpJsonResponse;
+import org.eclipse.che.commons.json.JsonParseException;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -53,6 +52,7 @@ import static com.codenvy.im.commands.CommandLibrary.createForcePuppetAgentComma
 import static com.codenvy.im.commands.CommandLibrary.createPropertyReplaceCommand;
 import static com.codenvy.im.commands.CommandLibrary.createWaitServiceActiveCommand;
 import static com.codenvy.im.commands.SimpleCommand.createCommand;
+import static com.codenvy.im.utils.Commons.asMap;
 import static com.google.api.client.repackaged.com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
 import static java.util.Objects.nonNull;
@@ -67,15 +67,15 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
     protected static final String LEGALITY_NODE_LICENSE_SERVICE = "/license/legality/node";
     protected static final String NODE_NUMBER_PARAM             = "nodeNumber";
 
-    private final HttpJsonRequestFactory  httpJsonRequestFactory;
+    private final HttpTransport transport;
     private final Codenvy4xLicenseManager codenvy4xLicenseManager;
 
     public NodeManagerHelperCodenvy4Impl(ConfigManager configManager,
-                                         HttpJsonRequestFactory httpJsonRequestFactory,
-                                         Codenvy4xLicenseManager codenvy4xLicenseManager) {
+                                         Codenvy4xLicenseManager codenvy4xLicenseManager,
+                                         HttpTransport transport) {
         super(configManager);
-        this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.codenvy4xLicenseManager = codenvy4xLicenseManager;
+        this.transport = transport;
     }
 
     @Override
@@ -293,15 +293,13 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
         Config config = configManager.loadInstalledCodenvyConfig();
         int nodeNumber = getNodeConfigHelper(config).getNodeNumber() + 1;
         try {
-
-            HttpJsonResponse response = httpJsonRequestFactory.fromUrl(configManager.getApiEndpoint() + LEGALITY_NODE_LICENSE_SERVICE)
-                                                              .useGetMethod()
-                                                              .addQueryParam(NODE_NUMBER_PARAM, nodeNumber)
-                                                              .request();
-            if (!Boolean.valueOf(response.asProperties().get("value"))) {
+            String legalityNodeUrl = configManager.getApiEndpoint() + LEGALITY_NODE_LICENSE_SERVICE +
+                                     "?" + NODE_NUMBER_PARAM + "=" + nodeNumber;
+            String value = (String)asMap(transport.doGet(legalityNodeUrl)).get("value");
+            if (!Boolean.valueOf(value)) {
                 throw new IllegalStateException("Your Codenvy subscription only allows a single server.");
             }
-        } catch (ApiException e) {
+        }  catch (JsonParseException | IOException e) {
             throw new IllegalStateException("Codenvy License can't be validated.", e);
         }
     }
@@ -416,5 +414,4 @@ public class NodeManagerHelperCodenvy4Impl extends NodeManagerHelper {
 
         return new MacroCommand(commands, "Commands to setup proxy settings");
     }
-
 }
