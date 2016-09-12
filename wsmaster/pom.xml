@@ -51,5 +51,7 @@
         <module>codenvy-hosted-api-factory</module>
         <module>codenvy-hosted-api-license</module>
         <module>codenvy-hosted-license-shared</module>
+        <module>codenvy-hosted-report-shared</module>
+        <module>codenvy-hosted-report</module>
     </modules>
 </project>

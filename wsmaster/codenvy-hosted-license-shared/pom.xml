@@ -24,7 +24,7 @@
     </parent>
     <artifactId>codenvy-hosted-license-shared</artifactId>
     <packaging>jar</packaging>
-    <name>Codenvy :: Hosted :: License API</name>
+    <name>Codenvy :: Hosted :: License :: Shared</name>
     <dependencies>
         <dependency>
             <groupId>com.google.guava</groupId>
