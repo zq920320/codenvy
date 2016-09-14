@@ -40,7 +40,7 @@ public class CodenvyOnpremPreferences {
     /**
      * Ensure Codenvy on-prem preferences has url = codenvyOnpremUrl.
      **/
-    public void upsertUrl(String codenvyOnpremUrl) {
+    public void setUrl(String codenvyOnpremUrl) {
         Remote remote = storage.getRemote(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME);
         if (remote != null) {
             remote.setUrl(codenvyOnpremUrl);

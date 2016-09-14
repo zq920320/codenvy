@@ -120,17 +120,17 @@ public class TestCodenvyOnpremPreferences extends AbstractTestCommand {
     }
 
     @Test
-    public void testUpsertNewUrl() {
+    public void testSetNewUrl() {
         doReturn(null).when(mockMultiRemoteCodenvy).getRemote(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME);
         CodenvyOnpremPreferences codenvyOnpremPreferences = new CodenvyOnpremPreferences(spyGlobalPreferences, mockMultiRemoteCodenvy);
 
-        codenvyOnpremPreferences.upsertUrl(CODENVY_ONPREM_URL);
+        codenvyOnpremPreferences.setUrl(CODENVY_ONPREM_URL);
 
         verify(mockMultiRemoteCodenvy).addRemote(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME, CODENVY_ONPREM_URL);
     }
 
     @Test
-    public void testUpsertExistedUrl() throws PreferenceNotFoundException {
+    public void testUpdateExistedUrl() throws PreferenceNotFoundException {
         doReturn(mockRemote).when(mockMultiRemoteCodenvy).getRemote(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME);
         doReturn(mockRemote).when(mockMultiRemoteCodenvy).getRemote(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME);
 
@@ -138,7 +138,7 @@ public class TestCodenvyOnpremPreferences extends AbstractTestCommand {
         doReturn(mockPreferences).when(spyGlobalPreferences).path("remotes");
 
         CodenvyOnpremPreferences codenvyOnpremPreferences = new CodenvyOnpremPreferences(spyGlobalPreferences, mockMultiRemoteCodenvy);
-        codenvyOnpremPreferences.upsertUrl(CODENVY_ONPREM_URL);
+        codenvyOnpremPreferences.setUrl(CODENVY_ONPREM_URL);
 
         verify(mockRemote).setUrl(CODENVY_ONPREM_URL);
         verify(mockPreferences).put(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME, mockRemote);

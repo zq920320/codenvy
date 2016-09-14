@@ -53,10 +53,10 @@ public class TestLoginCommand extends AbstractTestCommand {
 
         CommandInvoker.Result result = commandInvoker.invoke();
         String output = result.disableAnsi().getOutputStream();
-        assertEquals(output, format("Login success to '%s'.\n", CODENVY_ONPREM_URL));
+        assertEquals(output, format("Login success on '%s'.\n", CODENVY_ONPREM_URL));
 
         verify(mockConfigManager).getHostUrl();
-        verify(mockPreferences).upsertUrl(CODENVY_ONPREM_URL);
+        verify(mockPreferences).setUrl(CODENVY_ONPREM_URL);
     }
 
     @Test
@@ -70,10 +70,10 @@ public class TestLoginCommand extends AbstractTestCommand {
 
         CommandInvoker.Result result = commandInvoker.invoke();
         String output = result.disableAnsi().getOutputStream();
-        assertEquals(output, format("Login failed to '%s'.\n", CODENVY_ONPREM_URL));
+        assertEquals(output, format("Login failed on '%s'.\n", CODENVY_ONPREM_URL));
 
         verify(mockConfigManager).getHostUrl();
-        verify(mockPreferences).upsertUrl(CODENVY_ONPREM_URL);
+        verify(mockPreferences).setUrl(CODENVY_ONPREM_URL);
     }
 
     @Test
@@ -82,8 +82,7 @@ public class TestLoginCommand extends AbstractTestCommand {
                                 + "  \"message\" : \"Server Error Exception\",\n"
                                 + "  \"status\" : \"ERROR\"\n"
                                 + "}";
-        doThrow(new RuntimeException("Server Error Exception"))
-            .when(mockConfigManager).getHostUrl();
+        doThrow(new RuntimeException("Server Error Exception")).when(mockConfigManager).getHostUrl();
 
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
 
@@ -91,14 +90,14 @@ public class TestLoginCommand extends AbstractTestCommand {
         String output = result.disableAnsi().getOutputStream();
         assertEquals(output, expectedOutput + "\n");
 
-        verify(mockPreferences, never()).upsertUrl(anyString());
+        verify(mockPreferences, never()).setUrl(anyString());
         verify(mockMultiRemoteCodenvy, never()).login(anyString(), anyString(), anyString());
     }
 
     @Test
-    public void testLoginToSpecificRemote() throws Exception {
+    public void testLoginToSpecificUrl() throws Exception {
         CommandInvoker commandInvoker = new CommandInvoker(spyCommand, mockCommandSession);
-        commandInvoker.option("--remote", ANOTHER_CODENVY_ONPREM_URL);
+        commandInvoker.option("--url", ANOTHER_CODENVY_ONPREM_URL);
         commandInvoker.argument("username", CODENVY_ONPREM_USER);
         commandInvoker.argument("password", CODENVY_ONPREM_USER_PASSWORD);
 
@@ -107,10 +106,10 @@ public class TestLoginCommand extends AbstractTestCommand {
 
         CommandInvoker.Result result = commandInvoker.invoke();
         String output = result.disableAnsi().getOutputStream();
-        assertEquals(output, String.format("Login success to '%s'.\n",
+        assertEquals(output, String.format("Login success on '%s'.\n",
                                            ANOTHER_CODENVY_ONPREM_URL));
 
-        verify(mockPreferences).upsertUrl(ANOTHER_CODENVY_ONPREM_URL);
+        verify(mockPreferences).setUrl(ANOTHER_CODENVY_ONPREM_URL);
         verify(mockConfigManager, never()).getHostUrl();
     }
 

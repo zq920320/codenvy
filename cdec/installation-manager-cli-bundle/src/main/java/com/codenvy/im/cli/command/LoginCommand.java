@@ -24,7 +24,7 @@ import static java.lang.String.format;
 /**
  * Installation manager Login command.
  */
-@Command(scope = "codenvy", name = "login", description = "Login to Codenvy on-prem")
+@Command(scope = "codenvy", name = "login", description = "Login to Codenvy")
 public class LoginCommand extends AbstractIMCommand {
 
     @Argument(name = "username", description = "The username", required = false, multiValued = false, index = 0)
@@ -33,7 +33,7 @@ public class LoginCommand extends AbstractIMCommand {
     @Argument(name = "password", description = "The user's password", required = false, multiValued = false, index = 1)
     private String password;
 
-    @Option(name = "--remote", description = "Url of remote Codenvy on-prem", required = false)
+    @Option(name = "--url", description = "Codenvy on-prem URL", required = false)
     private String remoteUrl;
 
     @Override
@@ -43,7 +43,7 @@ public class LoginCommand extends AbstractIMCommand {
                 remoteUrl = getConfigManager().getHostUrl();
             }
 
-            getCodenvyOnpremPreferences().upsertUrl(remoteUrl);
+            getCodenvyOnpremPreferences().setUrl(remoteUrl);
 
             if (username == null) {
                 getConsole().print(format("Codenvy user name for '%s': ", remoteUrl));
@@ -56,12 +56,12 @@ public class LoginCommand extends AbstractIMCommand {
             }
 
             if (!getMultiRemoteCodenvy().login(CodenvyOnpremPreferences.CODENVY_ONPREM_REMOTE_NAME, username, password)) {
-                getConsole().printErrorAndExit(format("Login failed to '%s'.",
+                getConsole().printErrorAndExit(format("Login failed on '%s'.",
                                                       getCodenvyOnpremPreferences().getUrl()));
                 return;
             }
 
-            getConsole().printSuccess(format("Login success to '%s'.",
+            getConsole().printSuccess(format("Login success on '%s'.",
                                              getCodenvyOnpremPreferences().getUrl()));
         } catch (Exception e) {
             throw e;
