@@ -193,7 +193,7 @@ installCodenvy() {
 
     logStartCommand "installCodenvy $VERSION_OPTION $@"
 
-    ssh -o StrictHostKeyChecking=no -i ~/.vagrant.d/insecure_private_key vagrant@${INSTALL_ON_NODE} "export TERM='xterm' && . /etc/profile && bash <(curl -L -s ${UPDATE_SERVICE}/repository/public/download/install-codenvy) --suppress --license=accept ${MULTI_OPTION} ${VERSION_OPTION} $@" >> ${TEST_LOG}
+    ssh -o StrictHostKeyChecking=no -i ~/.vagrant.d/insecure_private_key vagrant@${INSTALL_ON_NODE} "export TERM='xterm' && . /etc/profile && bash <(curl -L -s ${UPDATE_SERVICE}/repository/public/download/install-codenvy) --suppress --license=accept --disable-monitoring-tools ${MULTI_OPTION} ${VERSION_OPTION} $@" >> ${TEST_LOG}
     EXIT_CODE=$?
 
     OUTPUT=$(cat ${TEST_LOG})
