@@ -22,6 +22,7 @@ import com.codenvy.api.license.LicenseFeature;
 import com.codenvy.api.license.LicenseNotFoundException;
 import com.google.common.collect.ImmutableMap;
 import com.jayway.restassured.response.Response;
+
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.rest.ApiExceptionMapper;
 import org.everrest.assured.EverrestJetty;
@@ -74,8 +75,8 @@ public class LicenseServiceTest {
         doReturn("license").when(mockCodenvyLicense).getLicenseText();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), OK.getStatusCode());
         assertEquals(response.asString(), "license");
@@ -86,8 +87,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseNotFoundException("error")).when(licenseManager).load();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
     }
@@ -97,8 +98,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseException("error")).when(licenseManager).load();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
@@ -107,8 +108,8 @@ public class LicenseServiceTest {
     @Test
     public void testDeleteLicenseShouldReturnOk() throws Exception {
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .delete(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .delete(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), NO_CONTENT.getStatusCode());
     }
@@ -118,8 +119,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseNotFoundException("error")).when(licenseManager).delete();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .delete(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .delete(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
     }
@@ -129,8 +130,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseException("error")).when(licenseManager).delete();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .delete(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .delete(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
@@ -140,8 +141,8 @@ public class LicenseServiceTest {
         doReturn(mockCodenvyLicense).when(mockLicenseFactory).create(anyString());
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
-            .post(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
+                .post(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), CREATED.getStatusCode());
         verify(licenseManager).store(anyString());
@@ -152,8 +153,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseException("error")).when(licenseManager).store(anyString());
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
-            .post(JettyHttpServer.SECURE_PATH + "/license");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when().body("license")
+                .post(JettyHttpServer.SECURE_PATH + "/license");
 
         assertEquals(response.statusCode(), INTERNAL_SERVER_ERROR.getStatusCode());
     }
@@ -167,8 +168,8 @@ public class LicenseServiceTest {
         doReturn(Boolean.FALSE).when(mockCodenvyLicense).isExpired();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license/properties");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
         assertEquals(response.statusCode(), OK.getStatusCode());
 
@@ -187,8 +188,8 @@ public class LicenseServiceTest {
         doThrow(new LicenseNotFoundException("error")).when(licenseManager).load();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license/properties");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
         assertEquals(response.statusCode(), NOT_FOUND.getStatusCode());
     }
@@ -198,8 +199,8 @@ public class LicenseServiceTest {
         doThrow(new InvalidLicenseException("error")).when(licenseManager).load();
 
         Response response = given()
-            .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
-            .get(JettyHttpServer.SECURE_PATH + "/license/properties");
+                .auth().basic(JettyHttpServer.ADMIN_USER_NAME, JettyHttpServer.ADMIN_USER_PASSWORD).when()
+                .get(JettyHttpServer.SECURE_PATH + "/license/properties");
 
         assertEquals(response.statusCode(), CONFLICT.getStatusCode());
     }

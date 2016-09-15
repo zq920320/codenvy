@@ -44,7 +44,15 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-api-jdbc-vendor-postgresql</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-api-license</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-api-machine</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
@@ -184,6 +192,10 @@
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-api-account</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-api-agent</artifactId>
         </dependency>
         <dependency>
@@ -273,10 +285,6 @@
         <dependency>
             <groupId>org.everrest</groupId>
             <artifactId>everrest-websockets</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.mongodb</groupId>
-            <artifactId>mongo-java-driver</artifactId>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
@@ -418,7 +426,6 @@
                         </resource>
                     </webResources>
                     <packagingExcludes>WEB-INF/lib/*gwt*.jar,WEB-INF/lib/gin-*.jar,WEB-INF/lib/*codemirror-resources*.jar</packagingExcludes>
-                    <archiveClasses>true</archiveClasses>
                 </configuration>
             </plugin>
         </plugins>

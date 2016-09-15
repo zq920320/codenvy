@@ -19,10 +19,10 @@ import com.codenvy.api.license.CodenvyLicenseFactory;
 import com.codenvy.api.license.InvalidLicenseException;
 import com.codenvy.api.license.LicenseException;
 import com.codenvy.api.license.LicenseNotFoundException;
-
-import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.swarm.client.SwarmDockerConnector;
+
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.commons.annotation.Nullable;
 
 import javax.inject.Inject;
@@ -49,17 +49,17 @@ public class CodenvyLicenseManager {
 
     private final CodenvyLicenseFactory licenseFactory;
     private final Path                  licenseFile;
-    private final AdminUserDao          adminUserDao;
+    private final UserManager           userManager;
     private final SwarmDockerConnector  dockerConnector;
 
     @Inject
     public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile,
                                  CodenvyLicenseFactory licenseFactory,
-                                 AdminUserDao adminUserDao,
+                                 UserManager userManager,
                                  SwarmDockerConnector dockerConnector) {
         this.licenseFactory = licenseFactory;
         this.licenseFile = Paths.get(licenseFile);
-        this.adminUserDao = adminUserDao;
+        this.userManager = userManager;
         this.dockerConnector = dockerConnector;
     }
 
@@ -130,7 +130,8 @@ public class CodenvyLicenseManager {
      * Return true if only Codenvy usage meets the constrains of license properties or free usage properties.
      **/
     public boolean isCodenvyUsageLegal() throws ServerException, IOException {
-        long actualUsers = adminUserDao.getAll(30, 0).getTotalItemsCount();   // TODO replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
+        long actualUsers = userManager.getAll(30, 0)
+                                      .getTotalItemsCount();   // TODO replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
         int actualServers = dockerConnector.getAvailableNodes().size();
 
         try {
@@ -144,8 +145,9 @@ public class CodenvyLicenseManager {
     /**
      * Return true if only node number meets the constrains of license properties or free usage properties.
      * If nodeNumber == null, uses actual number of machine nodes.
+     *
      * @param nodeNumber
-     *        number of machine nodes.
+     *         number of machine nodes.
      */
     public boolean isCodenvyNodesUsageLegal(Integer nodeNumber) throws IOException {
         if (nodeNumber == null) {
