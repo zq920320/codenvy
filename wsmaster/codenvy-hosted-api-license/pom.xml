@@ -28,10 +28,6 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
-            <artifactId>codenvy-hosted-api-admin</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-license-shared</artifactId>
         </dependency>
         <dependency>

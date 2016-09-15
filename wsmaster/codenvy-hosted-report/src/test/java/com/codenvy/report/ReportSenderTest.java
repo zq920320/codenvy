@@ -14,22 +14,17 @@
  */
 package com.codenvy.report;
 
-import com.codenvy.api.license.server.CodenvyLicenseManager;
 import com.codenvy.api.license.LicenseException;
-import com.codenvy.api.user.server.dao.AdminUserDao;
+import com.codenvy.api.license.server.CodenvyLicenseManager;
 import com.codenvy.mail.MailSenderClient;
 import com.codenvy.report.shared.dto.Ip;
+
 import org.eclipse.che.api.core.ApiException;
-import org.eclipse.che.api.core.BadRequestException;
-import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.ForbiddenException;
-import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.Page;
-import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.HttpJsonRequest;
 import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
 import org.eclipse.che.api.core.rest.HttpJsonResponse;
+import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.api.user.server.model.impl.UserImpl;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.dto.server.DtoFactory;
@@ -64,7 +59,8 @@ public class ReportSenderTest {
     public static final String API_ENDPOINT              = "http://" + HOSTNAME + "/api";
     public static final String UPDATE_SERVER_ENDPOINT    = "update/endpoint";
     public static final String CLIENT_IP_SERVICE         = UPDATE_SERVER_ENDPOINT + "/util/client-ip";
-    public static final String REPORT_PARAMETERS_SERVICE = UPDATE_SERVER_ENDPOINT + "/report/parameters/" + ReportType.CODENVY_ONPREM_USER_NUMBER_REPORT.name().toLowerCase();
+    public static final String REPORT_PARAMETERS_SERVICE =
+            UPDATE_SERVER_ENDPOINT + "/report/parameters/" + ReportType.CODENVY_ONPREM_USER_NUMBER_REPORT.name().toLowerCase();
 
     public static ReportParameters REPORT_PARAMETERS;
 
@@ -79,17 +75,22 @@ public class ReportSenderTest {
     @Mock
     private HttpJsonResponse       mockHttpJsonResponse;
     @Mock
-    private AdminUserDao           mockAdminUserDao;
+    private UserManager            userManager;
     @Mock
     private Page<UserImpl>         mockPage;
     @Mock
     private CodenvyLicenseManager  mockLicenseManager;
 
     @BeforeMethod
-    public void setup() throws IOException, ForbiddenException, BadRequestException, ConflictException, NotFoundException, ServerException, UnauthorizedException {
+    public void setup() throws Exception {
         MockitoAnnotations.initMocks(this);
 
-        spyReportSender = spy(new ReportSender(UPDATE_SERVER_ENDPOINT, API_ENDPOINT, mockMailClient, mockHttpJsonRequestFactory, mockLicenseManager, mockAdminUserDao));
+        spyReportSender = spy(new ReportSender(UPDATE_SERVER_ENDPOINT,
+                                               API_ENDPOINT,
+                                               mockMailClient,
+                                               mockHttpJsonRequestFactory,
+                                               mockLicenseManager,
+                                               userManager));
 
         REPORT_PARAMETERS = new ReportParameters(TEST_TITLE, TEST_SENDER, TEST_RECEIVER);
 
@@ -98,9 +99,10 @@ public class ReportSenderTest {
 
         doReturn(mockHttpJsonResponse).when(mockHttpJsonRequest).request();
         doReturn(TEST_IP).when(mockHttpJsonResponse).asDto(Ip.class);
-        doReturn(REPORT_PARAMETERS).when(mockHttpJsonResponse).as(ReportParameters.class, ReportParameters.class.getGenericSuperclass());
+        doReturn(REPORT_PARAMETERS).when(mockHttpJsonResponse).as(ReportParameters.class,
+                                                                  ReportParameters.class.getGenericSuperclass());
 
-        when(mockAdminUserDao.getAll(30, 0)).thenReturn(mockPage);            // TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
+        when(userManager.getAll(30, 0)).thenReturn(mockPage);
         when(mockPage.getTotalItemsCount()).thenReturn(USER_NUMBER);
     }
 
@@ -110,9 +112,10 @@ public class ReportSenderTest {
 
         spyReportSender.sendWeeklyReports();
 
-        verify(mockMailClient).sendMail(TEST_SENDER, TEST_RECEIVER, null, TEST_TITLE, MediaType.TEXT_PLAIN, "External IP address: " + CLIENT_IP + "\n"
-                                                                                                            + "Hostname: " + HOSTNAME + "\n"
-                                                                                                            + "Number of users: " + USER_NUMBER + "\n");
+        verify(mockMailClient)
+                .sendMail(TEST_SENDER, TEST_RECEIVER, null, TEST_TITLE, MediaType.TEXT_PLAIN, "External IP address: " + CLIENT_IP + "\n"
+                                                                                              + "Hostname: " + HOSTNAME + "\n"
+                                                                                              + "Number of users: " + USER_NUMBER + "\n");
     }
 
     @Test
@@ -121,19 +124,22 @@ public class ReportSenderTest {
 
         spyReportSender.sendWeeklyReports();
 
-        verify(mockMailClient).sendMail(TEST_SENDER, TEST_RECEIVER, null, TEST_TITLE, MediaType.TEXT_PLAIN, "External IP address: " + CLIENT_IP + "\n"
-                                                                                                            + "Hostname: " + HOSTNAME + "\n"
-                                                                                                            + "Number of users: " + USER_NUMBER + "\n");
+        verify(mockMailClient)
+                .sendMail(TEST_SENDER, TEST_RECEIVER, null, TEST_TITLE, MediaType.TEXT_PLAIN, "External IP address: " + CLIENT_IP + "\n"
+                                                                                              + "Hostname: " + HOSTNAME + "\n"
+                                                                                              + "Number of users: " + USER_NUMBER + "\n");
     }
 
     @Test
-    public void shouldNotSendWeeklyReportBecauseOfNonExpiredLicense() throws IOException, JsonParseException, MessagingException, ApiException {
+    public void shouldNotSendWeeklyReportBecauseOfNonExpiredLicense()
+            throws IOException, JsonParseException, MessagingException, ApiException {
         doReturn(true).when(mockLicenseManager).isCodenvyUsageLegal();
 
         spyReportSender.sendWeeklyReports();
 
         verify(mockMailClient, never()).sendMail(anyString(), anyString(), anyString(), anyString(), anyString(), anyString());
-        verify(mockAdminUserDao, never()).getAll(30, 0);    // TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
+        verify(userManager, never()).getAll(30,
+                                            0);    // TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
         verify(mockHttpJsonRequestFactory, never()).fromUrl(REPORT_PARAMETERS_SERVICE);
         verify(mockHttpJsonRequestFactory, never()).fromUrl(CLIENT_IP_SERVICE);
     }

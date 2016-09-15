@@ -17,12 +17,12 @@ package com.codenvy.api.license.server;
 import com.codenvy.api.license.CodenvyLicense;
 import com.codenvy.api.license.CodenvyLicenseFactory;
 import com.codenvy.api.license.LicenseNotFoundException;
-
-import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.model.DockerNode;
+
 import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.api.user.server.model.impl.UserImpl;
 import org.eclipse.che.commons.lang.IoUtil;
 import org.eclipse.che.commons.lang.NameGenerator;
@@ -36,6 +36,7 @@ import org.testng.annotations.Test;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 
@@ -49,6 +50,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
+import static org.testng.Assert.assertNotNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -74,7 +76,7 @@ public class CodenvyLicenseManagerTest {
     @Mock
     private SwarmDockerConnector  swarmDockerConnector;
     @Mock
-    private AdminUserDao          adminUserDao;
+    private UserManager           userManager;
     @Mock
     private Page<UserImpl>        page;
     @Mock
@@ -87,7 +89,9 @@ public class CodenvyLicenseManagerTest {
 
     @BeforeMethod
     public void setUp() throws IOException, ServerException {
-        File targetDir = new File(Thread.currentThread().getContextClassLoader().getResource(".").getPath()).getParentFile();
+        final URL resource = Thread.currentThread().getContextClassLoader().getResource(".");
+        assertNotNull(resource);
+        File targetDir = new File(resource.getPath()).getParentFile();
         testDirectory = new File(targetDir, NameGenerator.generate(LICENSE_STORAGE_PREFIX_DIR, 4));
         licenseFile = new File(testDirectory, LICENSE);
         Files.createDirectories(testDirectory.toPath());
@@ -96,7 +100,8 @@ public class CodenvyLicenseManagerTest {
         setAmountOfUsers(USER_NUMBER);
         setSizeOfAdditionalNodes(NODES_NUMBER);
 
-        codenvyLicenseManager = spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(), licenseFactory, adminUserDao, swarmDockerConnector));
+        codenvyLicenseManager =
+                spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(), licenseFactory, userManager, swarmDockerConnector));
     }
 
     @AfterMethod
@@ -234,7 +239,8 @@ public class CodenvyLicenseManagerTest {
     }
 
     private void setAmountOfUsers(long amountOfUsers) throws ServerException {
-        when(adminUserDao.getAll(30, 0)).thenReturn(page);   //TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
+        when(userManager.getAll(30, 0)).thenReturn(
+                page);   //TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
         when(page.getTotalItemsCount()).thenReturn(amountOfUsers);
     }
 

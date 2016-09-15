@@ -15,11 +15,11 @@
 package com.codenvy.report;
 
 import com.codenvy.api.license.server.CodenvyLicenseManager;
-import com.codenvy.api.user.server.dao.AdminUserDao;
 import com.codenvy.mail.MailSenderClient;
 import com.codenvy.report.shared.dto.Ip;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
@@ -28,6 +28,7 @@ import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.UnauthorizedException;
 import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
+import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.commons.json.JsonParseException;
 import org.eclipse.che.commons.schedule.ScheduleCron;
 import org.slf4j.Logger;
@@ -54,7 +55,7 @@ public class ReportSender {
     private final HttpJsonRequestFactory httpJsonRequestFactory;
     private final String                 updateServerEndpoint;
     private final CodenvyLicenseManager  licenseManager;
-    private final AdminUserDao           adminUserDao;
+    private final UserManager            userManager;
     private final String                 apiEndpoint;
 
     @Inject
@@ -63,12 +64,12 @@ public class ReportSender {
                         MailSenderClient mailClient,
                         HttpJsonRequestFactory httpJsonRequestFactory,
                         CodenvyLicenseManager licenseManager,
-                        AdminUserDao adminUserDao) {
+                        UserManager userManager) {
         this.mailClient = mailClient;
         this.httpJsonRequestFactory = httpJsonRequestFactory;
         this.updateServerEndpoint = updateServerEndpoint;
         this.licenseManager = licenseManager;
-        this.adminUserDao = adminUserDao;
+        this.userManager = userManager;
         this.apiEndpoint = apiEndpoint;
     }
 
@@ -99,18 +100,19 @@ public class ReportSender {
         StringBuilder msg = new StringBuilder();
         msg.append(String.format("External IP address: %s\n", externalIP.getValue()));
         msg.append(String.format("Hostname: %s\n", new URL(apiEndpoint).getHost()));
-        msg.append(String.format("Number of users: %s\n", adminUserDao.getAll(30, 0).getTotalItemsCount()));  // TODO Replace it with UserManager#getTotalCount when codenvy->jpa-integration branch will be merged to master
+        msg.append(String.format("Number of users: %s\n", userManager.getAll(30, 0).getTotalItemsCount()));
 
-        mailClient.sendMail(parameters.getSender(), parameters.getReceiver(), null, parameters.getTitle(), MediaType.TEXT_PLAIN, msg.toString());
+        mailClient.sendMail(parameters.getSender(), parameters.getReceiver(), null, parameters.getTitle(), MediaType.TEXT_PLAIN,
+                            msg.toString());
     }
 
     private Ip obtainExternalIP() throws IOException,
-                                             ForbiddenException,
-                                             BadRequestException,
-                                             ConflictException,
-                                             NotFoundException,
-                                             ServerException,
-                                             UnauthorizedException {
+                                         ForbiddenException,
+                                         BadRequestException,
+                                         ConflictException,
+                                         NotFoundException,
+                                         ServerException,
+                                         UnauthorizedException {
         String requestUrl = String.format("%s/util/client-ip", updateServerEndpoint);
 
         return httpJsonRequestFactory.fromUrl(requestUrl)
