@@ -28,7 +28,7 @@ copyLicenseToNewLocation() {
   #write license key to the new license file
   echo $license | sudo tee --append $newLicensePath &> /dev/null
 
-  echo "License was successfully migrated from $oldLicensePath to $newLicensePath" >> $LOG_FILE
+  echo "Codenvy license was successfully migrated from $oldLicensePath to $newLicensePath" >> $LOG_FILE
 }
 
 createLicenseDirectoryPath
@@ -43,10 +43,9 @@ if [ ! -e $newLicensePath ]; then
   fi
 fi
 
-#### fix manifest > $machine_ws_agent_run_command property
+#### fix codenvy property: 'machine_ws_agent_run_command'
 # replace `$machine_ws_agent_run_command = "bla bla bla && sleep 5 && mkdir -p ~/che && rm -rf ~/che/* && unzip -q /mnt/che/ws-agent.zip -d ~/che/ws-agent && ~/che/ws-agent/bin/catalina.sh run"`
 # on      `$machine_ws_agent_run_command = "bla bla bla && ~/che/ws-agent/bin/catalina.sh run"`
-
 createFileBackup() {
     if [[ -n $1 ]]; then
         local currentTimeInMillis=$(($(date +%s%N)/1000000))
@@ -57,16 +56,15 @@ createFileBackup() {
 createFileBackup "$PATH_TO_MANIFEST"
 
 if [[ '$machine_ws_agent_run_command' =~ .*sleep.5.&&.mkdir.-p.~/che.&&.rm.-rf.~/che/*.&&.unzip.-q./mnt/che/ws-agent.zip.-d.~/che/ws-agent.&&.~/che/ws-agent/bin/catalina.sh.run ]]; then
+    echo >> $LOG_FILE
+    echo "Update codenvy property: machine_ws_agent_run_command = '$machine_ws_agent_run_command'" >> $LOG_FILE
     sudo sed -i 's|sleep 5 && mkdir -p ~/che && rm -rf ~/che/[*] && unzip -q /mnt/che/ws-agent.zip -d ~/che/ws-agent && ~/che/ws-agent/bin/catalina.sh run|~/che/ws-agent/bin/catalina.sh run|g' "$PATH_TO_MANIFEST" &>> $LOG_FILE
 fi
 
 
 #### fix mongoDB
-CURRENT_DIR=$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )
-LOG_FILE="$CODENVY_IM_BASE/migration.log"
-
 echo >> $LOG_FILE
-echo "------ fix mongoDB :: agents -----" >> $LOG_FILE
+echo "------ fix mongoDB ------" >> $LOG_FILE
 
-mongo -u$mongo_admin_user_name -p$mongo_admin_pass --authenticationDatabase admin "${CURRENT_DIR}/update_agents.js" &>> $LOG_FILE
+mongo -u$mongo_admin_user_name -p$mongo_admin_pass --authenticationDatabase admin "${CURRENT_DIR}/update_mongo.js" &>> $LOG_FILE
 
