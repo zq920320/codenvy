@@ -42,16 +42,6 @@ export class FactoryInformationCtrl {
       }
     });
 
-    this.updateData();
-    $scope.$watch(() => {
-      return this.factory;
-    }, () => {
-      this.updateData();
-    });
-
-    this.factoryInformationForm;
-    this.stackRecipeMode = 'current-recipe';
-
     let editorLoadedDefer = $q.defer();
     this.editorLoadedPromise = editorLoadedDefer.promise;
     this.editorOptions = {
@@ -59,6 +49,16 @@ export class FactoryInformationCtrl {
         editorLoadedDefer.resolve(instance);
       })
     };
+
+    this.factoryInformationForm;
+    this.stackRecipeMode = 'current-recipe';
+
+    this.updateData();
+    $scope.$watch(() => {
+      return this.factory;
+    }, () => {
+      this.updateData();
+    });
   }
 
 
