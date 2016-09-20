@@ -97,7 +97,7 @@ public class GithubFactoryParametersResolver implements FactoryParametersResolve
 
         // add workspace configuration if not defined
         if (factory.getWorkspace() == null) {
-            factory.setWorkspace(urlFactoryBuilder.buildWorkspaceConfig(githubUrl.repository(),
+            factory.setWorkspace(urlFactoryBuilder.buildWorkspaceConfig("default",
                                                                         githubUrl.username(),
                                                                         githubUrl.codenvyDockerFileLocation()));
         }

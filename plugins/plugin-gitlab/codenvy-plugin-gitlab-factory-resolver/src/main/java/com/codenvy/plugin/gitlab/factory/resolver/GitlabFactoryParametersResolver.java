@@ -97,7 +97,7 @@ public class GitlabFactoryParametersResolver implements FactoryParametersResolve
 
         // add workspace configuration if not defined
         if (factory.getWorkspace() == null) {
-            factory.setWorkspace(urlFactoryBuilder.buildWorkspaceConfig(gitlabUrl.repository(),
+            factory.setWorkspace(urlFactoryBuilder.buildWorkspaceConfig("default",
                                                                         gitlabUrl.username(),
                                                                         gitlabUrl.codenvyDockerFileLocation()));
         }
