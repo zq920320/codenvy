@@ -119,6 +119,23 @@ export class FactoryInformationCtrl {
   }
 
   /**
+   * Returns the factory url based on id.
+   * @returns {link.href|*} link value
+   */
+  getFactoryIdUrl() {
+    return this.codenvyAPI.getFactory().getFactoryIdUrl(this.factory);
+  }
+
+  /**
+   * Returns the factory url based on name.
+   *
+   * @returns {link.href|*} link value
+   */
+  getFactoryNamedUrl() {
+    return this.codenvyAPI.getFactory().getFactoryNamedUrl(this.factory);
+  }
+
+  /**
    * Callback to update factory
    */
   doUpdateFactory(factory) {
