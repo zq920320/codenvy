@@ -79,7 +79,7 @@ export class FactoryFromWorkspaceCtrl {
       this.isImporting = false;
       this.factoryContent = this.$filter('json')(factoryContent, 2);
     }, (error) => {
-      let message = error.data.message ? error.data.message : 'Get factory configuration failed.'
+      let message = (error.data && error.data.message) ? error.data.message : 'Get factory configuration failed.'
       if (error.status === 400) {
         message = 'Factory can\'t be created. The selected workspace has no projects defined. Project sources must be available from an external storage.';
       }
