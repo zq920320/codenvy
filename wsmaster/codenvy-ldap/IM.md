@@ -11,7 +11,7 @@ How to install codenvy onprem from custom bundle.
 Please note that `--binaries=cdec-bundle-{version}.zip` means that you have codenvy onprem bundle file with name `cdec-bundle-{version}.zip` in current directory.
 
 
-Just in case here is instruction how to build codenvy bundle:
+OPTIONAL: If you want to compile the bundle:
 
 - clone following repos, and build them with `mvn clean install -DskipTests -Dskip-validate-sources`
 ```
