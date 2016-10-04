@@ -54,7 +54,7 @@ User authentication is implemented in the following way:
 
      Typical examples: 
      *  OpenLDAP: _cn={user}_ 
-     *  ActiveDirectory: _(&(objectCategory=Person)(sAMAccountName=*))_      
+     *  ActiveDirectory: _(&(objectCategory=Person)(sAMAccountName={user}))_      
 
     Variables:
      *  user  - user name provided for password validation.
