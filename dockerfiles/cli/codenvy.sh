@@ -236,6 +236,18 @@ check_docker() {
     return 1;
   fi
 
+  DOCKER_VERSION=($(docker version |  grep  "Version:" | sed 's/Version://'))
+
+  MAJOR_VERSION_ID=$(echo ${DOCKER_VERSION[0]:0:1})
+  MINOR_VERSION_ID=$(echo ${DOCKER_VERSION[0]:2:2})
+
+  # Docker needs to be greater than or equal to 1.11
+  if [[ ${MAJOR_VERSION_ID} -lt 1 ]] ||
+     [[ ${MINOR_VERSION_ID} -lt 11 ]]; then
+       error "Error - Docker engine 1.11+ required."
+       return 2;
+  fi
+
   # If DOCKER_HOST is not set, then it should bind mounted
   if [ -z "${DOCKER_HOST+x}" ]; then
       if ! docker ps >> "${LOGS}" 2>&1; then
