@@ -225,8 +225,6 @@ Usage: docker run -it --rm
            --network ]                   Test connectivity between codenvy sub-systems
 
 Variables:
-    CODENVY_DEVELOPMENT_MODE             If 'on', then mounts host source folders into Docker images
-    CODENVY_DEVELOPMENT_REPO             Location of host git repo that contains source code to be mounted
     CODENVY_HOST                         IP address or hostname of the server Codenvy is running on 
 ```
 
@@ -472,8 +470,6 @@ These variables can be set in your local environment shell before running and th
 | Variable | Description |
 |----------|-------------|
 | `CODENVY_HOST` | The IP address or DNS name of the Codenvy service. We use `eclipse/che-ip` to attempt discovery if not set. |
-| `CODENVY_DEVELOPMENT_MODE` | If `on`, then will mount `CODENVY_DEVELOPMENT_REPO`, overriding the files in Codenvy config and containers. |
-| `CODENVY_DEVELOPMENT_REPO` | The location of the `http://github.com/codenvy/codenvy` local clone. |
 
 Codenvy depends upon Docker images. We use Docker images in three ways:
 1. As cross-platform utilites within the CLI. For example, in scenarios where we need to perform a `curl` operation, we use a small Docker image to perform this function. We do this as a precaution as many operating systems (like Windows) do not have curl installed.
