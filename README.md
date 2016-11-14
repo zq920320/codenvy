@@ -21,7 +21,7 @@ You can install Codenvy behind your firewall or use it in our hosted public clou
 We also have a beta of Codenvy running in Docker that can be run anywhere that Docker runs and supports offline installations. You can [try Dockerized Codenvy](https://github.com/codenvy/codenvy/tree/cli-in-container/docs) and [give us your feedback](https://github.com/codenvy/codenvy/issues).
 
 ### License
-Codenvy is licensed under Codenvy Fair Source for the first three users. You can [trial Codenvy license](https://codenvy.com/contact/download/) from sales.
+Codenvy is free for 3 users and licensed under Codenvy Fair Source. For more users, you can purchase Codenvy which brings with it enterprise support and optional professional services - it's licensed under the [commercial Codenvy license](https://codenvy.com/docs/terms-of-service.pdf). Contact us to [trial Codenvy for larger teams](https://codenvy.com/contact/download/).
 
 ### Dependencies
 Codenvy requires CentOS / RHEL 7.1+ as the only initial dependency. Our installation scripts will install an installation manager based upon Java, which then coordinates the installation of Puppet. Puppet then configures the rest of the system with dependencies for Docker, Swarm, and a variety of other packages.
