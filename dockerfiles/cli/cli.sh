@@ -10,7 +10,7 @@
 #
 
 cli_init() {
-  
+
   grab_offline_images
   grab_initial_images
   check_host_volume_mount
@@ -122,13 +122,13 @@ grab_initial_images() {
     fi
   fi
 
-  if [ "$(docker images -q codenvy/che-ip:nightly 2> /dev/null)" = "" ]; then
+  if [ "$(docker images -q eclipse/che-ip:nightly 2> /dev/null)" = "" ]; then
     info "cli" "Pulling image eclipse/che-ip:nightly"
-    log "docker pull codenvy/che-ip:nightly >> \"${LOGS}\" 2>&1"
+    log "docker pull eclipse/che-ip:nightly >> \"${LOGS}\" 2>&1"
     TEST=""
-    docker pull codenvy/che-ip:nightly >> "${LOGS}" 2>&1 || TEST=$?
+    docker pull eclipse/che-ip:nightly >> "${LOGS}" 2>&1 || TEST=$?
     if [ "$TEST" = "1" ]; then
-      error "Image codenvy/che-ip:nightly unavailable. Not on dockerhub or built locally."
+      error "Image eclipse/che-ip:nightly unavailable. Not on dockerhub or built locally."
       return 1;
     fi
   fi

@@ -10,7 +10,7 @@
 #
 
 init_host_ip() {
-  GLOBAL_HOST_IP=${GLOBAL_HOST_IP:=$(docker_run --net host codenvy/che-ip:nightly)}
+  GLOBAL_HOST_IP=${GLOBAL_HOST_IP:=$(docker_run --net host eclipse/che-ip:nightly)}
 }
 
 init_logging() {
