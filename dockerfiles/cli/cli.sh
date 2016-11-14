@@ -10,6 +10,11 @@
 #
 
 cli_init() {
+  
+  grab_offline_images
+  grab_initial_images
+  check_host_volume_mount
+
   DEFAULT_CODENVY_CLI_ACTION="help"
   CODENVY_CLI_ACTION=${CODENVY_CLI_ACTION:-${DEFAULT_CODENVY_CLI_ACTION}}
 
@@ -64,6 +69,81 @@ cli_init() {
       warning "Boot2docker for Windows - CODENVY_CONFIG set to $CODENVY_HOST_CONFIG"
     fi
   fi
+}
+
+
+grab_offline_images(){
+  # If you are using codenvy in offline mode, images must be loaded here
+  # This is the point where we know that docker is working, but before we run any utilities
+  # that require docker.
+  if [ ! -z ${2+x} ]; then
+    if [ "${2}" == "--offline" ]; then
+      info "init" "Importing ${CHE_MINI_PRODUCT_NAME} Docker images from tars..."
+
+      if [ ! -d offline ]; then
+        info "init" "You requested offline loading of images, but could not find 'offline/'"
+        return 2;
+      fi
+
+      IFS=$'\n'
+      for file in "offline"/*.tar 
+      do
+        if ! $(docker load < "offline"/"${file##*/}" > /dev/null); then
+          error "Failed to restore ${CHE_MINI_PRODUCT_NAME} Docker images"
+          return 2;
+        fi
+        info "init" "Loading ${file##*/}..."
+      done
+    fi
+  fi
+}
+
+grab_initial_images() {
+  # Prep script by getting default image
+  if [ "$(docker images -q alpine:3.4 2> /dev/null)" = "" ]; then
+    info "cli" "Pulling image alpine:3.4"
+    log "docker pull alpine:3.4 >> \"${LOGS}\" 2>&1"
+    TEST=""
+    docker pull alpine:3.4 >> "${LOGS}" 2>&1 || TEST=$?
+    if [ "$TEST" = "1" ]; then
+      error "Image alpine:3.4 unavailable. Not on dockerhub or built locally."
+      return 1;
+    fi
+  fi
+
+  if [ "$(docker images -q appropriate/curl 2> /dev/null)" = "" ]; then
+    info "cli" "Pulling image appropriate/curl:latest"
+    log "docker pull appropriate/curl:latest >> \"${LOGS}\" 2>&1"
+    TEST=""
+    docker pull appropriate/curl >> "${LOGS}" 2>&1 || TEST=$?
+    if [ "$TEST" = "1" ]; then
+      error "Image appropriate/curl:latest unavailable. Not on dockerhub or built locally."
+      return 1;
+    fi
+  fi
+
+  if [ "$(docker images -q codenvy/che-ip:nightly 2> /dev/null)" = "" ]; then
+    info "cli" "Pulling image eclipse/che-ip:nightly"
+    log "docker pull codenvy/che-ip:nightly >> \"${LOGS}\" 2>&1"
+    TEST=""
+    docker pull codenvy/che-ip:nightly >> "${LOGS}" 2>&1 || TEST=$?
+    if [ "$TEST" = "1" ]; then
+      error "Image codenvy/che-ip:nightly unavailable. Not on dockerhub or built locally."
+      return 1;
+    fi
+  fi
+}
+
+check_host_volume_mount() {
+  echo 'test' > /codenvy/test
+  
+  if [[ ! -f /codenvy/test ]]; then
+    error "Docker installed, but unable to volume mount files from your host."
+    error "Have you enabled Docker to allow mounting host directories?"
+    return 1;
+  fi
+
+  rm -rf /codenvy/test 
 }
 
 cli_parse () {
@@ -668,7 +748,7 @@ cmd_init() {
   # in development mode we use init files from repo otherwise we use it from docker image
   if [ "${CODENVY_DEVELOPMENT_MODE}" = "on" ]; then
     docker_run -v "${CODENVY_HOST_CONFIG}":/copy \
-               -v "${CODENVY_DEVELOPMENT_REPO}":/files \
+               -v "${CODENVY_HOST_DEVELOPMENT_REPO}":/files \
                    $IMAGE_INIT
   else
     docker_run -v "${CODENVY_HOST_CONFIG}":/copy $IMAGE_INIT

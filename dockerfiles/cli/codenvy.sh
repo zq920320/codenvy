@@ -438,91 +438,6 @@ get_container_host_bind_folder() {
   done
 }
 
-grab_offline_images(){
-  # If you are using codenvy in offline mode, images must be loaded here
-  # This is the point where we know that docker is working, but before we run any utilities
-  # that require docker.
-  if [ ! -z ${2+x} ]; then
-    if [ "${2}" == "--offline" ]; then
-      info "init" "Importing ${CHE_MINI_PRODUCT_NAME} Docker images from tars..."
-
-      if [ ! -d offline ]; then
-        info "init" "You requested offline loading of images, but could not find 'offline/'"
-        return 2;
-      fi
-
-      IFS=$'\n'
-      for file in "offline"/*.tar 
-      do
-        if ! $(docker load < "offline"/"${file##*/}" > /dev/null); then
-          error "Failed to restore ${CHE_MINI_PRODUCT_NAME} Docker images"
-          return 2;
-        fi
-        info "init" "Loading ${file##*/}..."
-      done
-    fi
-  fi
-}
-
-grab_initial_images() {
-  # Prep script by getting default image
-  if [ "$(docker images -q alpine:3.4 2> /dev/null)" = "" ]; then
-    info "cli" "Pulling image alpine:3.4"
-    log "docker pull alpine:3.4 >> \"${LOGS}\" 2>&1"
-    TEST=""
-    docker pull alpine:3.4 >> "${LOGS}" 2>&1 || TEST=$?
-    if [ "$TEST" = "1" ]; then
-      error "Image alpine:3.4 unavailable. Not on dockerhub or built locally."
-      return 1;
-    fi
-  fi
-
-  if [ "$(docker images -q appropriate/curl 2> /dev/null)" = "" ]; then
-    info "cli" "Pulling image appropriate/curl:latest"
-    log "docker pull appropriate/curl:latest >> \"${LOGS}\" 2>&1"
-    TEST=""
-    docker pull appropriate/curl >> "${LOGS}" 2>&1 || TEST=$?
-    if [ "$TEST" = "1" ]; then
-      error "Image appropriate/curl:latest unavailable. Not on dockerhub or built locally."
-      return 1;
-    fi
-  fi
-
-  if [ "$(docker images -q codenvy/che-ip:nightly 2> /dev/null)" = "" ]; then
-    info "cli" "Pulling image eclipse/che-ip:nightly"
-    log "docker pull codenvy/che-ip:nightly >> \"${LOGS}\" 2>&1"
-    TEST=""
-    docker pull codenvy/che-ip:nightly >> "${LOGS}" 2>&1 || TEST=$?
-    if [ "$TEST" = "1" ]; then
-      error "Image codenvy/che-ip:nightly unavailable. Not on dockerhub or built locally."
-      return 1;
-    fi
-  fi
-
-#  if [ "$(docker images -q docker/compose:1.8.1 2> /dev/null)" = "" ]; then
-#    info "cli" "Pulling image docker/compose:1.8.1"
-#    log "docker pull docker/compose:1.8.1 >> \"${LOGS}\" 2>&1"
-#    TEST=""
-#    docker pull docker/compose:1.8.1 >> "${LOGS}" 2>&1 || TEST=$? 
-#    if [ "$TEST" = "1" ]; then
-#      error "Image docker/compose:1.8.1 not found on dockerhub or locally."
-#      return 1;
-#    fi
-#  fi
-}
-
-check_volume_mount() {
-  echo 'test' > /codenvy/test
-  
-  if [[ ! -f /codenvy/test ]]; then
-    error "Docker installed, but unable to volume mount files from your host."
-    error "Have you enabled Docker to allow mounting host directories?"
-    return 1;
-  fi
-
-  rm -rf /codenvy/test 
-}
-
 docker_run() {
   debug $FUNCNAME
   # Setup options for connecting to docker host
@@ -562,16 +477,6 @@ curl() {
   fi
 }
 
-get_script_source_dir() {
-  SOURCE="${BASH_SOURCE[0]}"
-  while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symlink
-    DIR="$( cd -P '$( dirname \"$SOURCE\" )' && pwd )"
-    SOURCE="$(readlink '$SOURCE')"
-    [[ $SOURCE != /* ]] && SOURCE="$DIR/$SOURCE" # if $SOURCE was a relative symlink, we need to resolve it relative to the path where the symlink file was located
-  done
-  echo "$( cd -P "$( dirname "$SOURCE" )" && pwd )"
-}
-
 init() {
   init_logging
 
@@ -581,18 +486,21 @@ init() {
 
   check_docker "$@"
   check_mounts "$@"
-  grab_offline_images
-  grab_initial_images
-  check_volume_mount
 
-  source /cli/cli.sh
+  if [[ "${CODENVY_DEVELOPMENT_MODE}" = "on" ]]; then
+     # Use the CLI that is inside the repository.  
+     source /repo/dockerfiles/cli/cli.sh
+  else
+     # Use the CLI that is inside the container.  
+    source /cli/cli.sh
+  fi
 }
 
 # See: https://sipb.mit.edu/doc/safe-shell/
 set -e
 set -u
 
-# Initialize the self-updating CLI - this is a common code between Che & Codenvy.
+# Bootstrap enough stuff to load /cli/cli.sh
 init "$@"
 
 # Begin product-specific CLI calls
