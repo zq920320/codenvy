@@ -336,7 +336,7 @@ check_mounts() {
     CODENVY_CONTAINER_DEVELOPMENT_REPO="/repo"
 
     DEFAULT_CODENVY_DEVELOPMENT_TOMCAT="assembly/onpremises-ide-packaging-tomcat-codenvy-allinone/target/onpremises-ide-packaging-tomcat-codenvy-allinone"
-    CODENVY_DEVELOPMENT_TOMCAT="${CODENVY_CONTAINER_INSTANCE}/dev"
+    CODENVY_DEVELOPMENT_TOMCAT="${CODENVY_HOST_INSTANCE}/dev"
 
     if [[ ! -d "${CODENVY_CONTAINER_DEVELOPMENT_REPO}"  ]] || [[ ! -d "${CODENVY_CONTAINER_DEVELOPMENT_REPO}/assembly" ]]; then
       info "Welcome to Codenvy!"
