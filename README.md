@@ -1,32 +1,32 @@
 # Codenvy
 
 https://www.codenvy.com/.  
-On-demand developer workspaces to improve agile workflow and automate developer bootstrapping.
+Cloud workspaces for development teams featuring one-click Docker environments, team onboarding and collaboration, plus a workspace platform for DevOps. Codenvy can be run anywhere that CentOS or RHEL run (or try our [beta of Codenvy in Docker](https://github.com/codenvy/codenvy/tree/cli-in-container/docs)...it runs anywhere Docker runs!)
 
 ![Eclipse Che](https://www.eclipse.org/che/images/hero-home.png "Eclipse Che")
 
-### Workspaces With Runtimes
-Workspaces are composed of projects and runtimes. Create portable and moavable workspaces that run anywhere, anytime in the cloud or on your desktop ... [Read More](https://www.eclipse.org/che/features/#new-workspace)
+### One-click Docker Environments
+Create workspaces with production runtimes containing your source code and dev tools. Choose any architecture - microservices, multi-tier, multi-container, or shared server. We excel at complex topologies ... [Read More](https://codenvy.com/solutions/bootstrapping)
 
-### Codenvy Developer
-Portable, shareable developer workspaces for any programming language or framework.
+### Team Onboarding and Collaboration
+Onboard teams with powerful collaboration, workspace automation, and permissions. Devs can use their local IDE or the gorgeous Eclipse Che cloud IDE ... [Read More](https://codenvy.com/product/next-generation)
 
-### Codenvy Team
-Workspaces integrated with issue managment, version control, and continuous integration.
-
-### Codenvy Enterprise
-Workspaces with user permissions, SSO, elasticity and resource management.
+### Workspace Platform for DevOps
+Manage workspaces at scale with programmable and customizable infrastructure that lets you control system performance, availability, and functionality ... [Read More](https://codenvy.com/product/technology)
 
 ### Deployment Types
-You can use Codenvy at our cloud, download it for installation, or get a private installation with our managed hosting services.
+You can install Codenvy behind your firewall or use it in our hosted public cloud. This is preferred by enterprises as it allows them complete control over the permissions, LDAP, JIRA and Jenkins integrations and connects seamlessly into their private toolchain. Individuals and small teams often prefer to use our hosted system at codenvy.io because it's simple and low-maintenance - although it gives up many administrative controls you can still connect to private repositories and image registries.
+[Get Started with production Codenvy](https://codenvy.com/getting-started/).
 
-Follow the [step by step guide](http://codenvy.readme.io/docs/installation-getting-started) to install Codenvy.
+We also have a beta of Codenvy running in Docker that can be run anywhere that Docker runs and supports offline installations. You can [try Dockerized Codenvy](https://github.com/codenvy/codenvy/tree/cli-in-container/docs) and [give us your feedback](https://github.com/codenvy/codenvy/issues).
 
 ### License
-Codenvy is licensed under Codenvy Fair Source 5 for the first five users. You can purchase a commercial Codenvy license from sales.
+Codenvy is licensed under Codenvy Fair Source for the first three users. You can [trial Codenvy license](https://codenvy.com/contact/download/) from sales.
 
 ### Dependencies
 Codenvy requires CentOS / RHEL 7.1+ as the only initial dependency. Our installation scripts will install an installation manager based upon Java, which then coordinates the installation of Puppet. Puppet then configures the rest of the system with dependencies for Docker, Swarm, and a variety of other packages.
+
+Our Docker-based Codenvy (in beta) only requires Docker on the machine which makes it runnable on Windows, Mac and Linux. [Try Dockerized Codenvy](https://github.com/codenvy/codenvy/tree/cli-in-container/docs) and [give us your feedback](https://github.com/codenvy/codenvy/issues).
 
 ### Clone
 
