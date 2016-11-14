@@ -735,7 +735,7 @@ cmd_config() {
     # if dev mode is on, pick configuration sources from repo.
     # please note that in production mode update of configuration sources must be only on update.
     docker_run -v "${CODENVY_HOST_CONFIG}":/copy \
-               -v "${CODENVY_DEVELOPMENT_REPO}":/files \
+               -v "${CODENVY_HOST_DEVELOPMENT_REPO}":/files \
                   $IMAGE_INIT
 
     # in development mode to avoid permissions issues we copy tomcat assembly to ${CODENVY_INSTANCE}
