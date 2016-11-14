@@ -4,7 +4,7 @@ Codenvy makes cloud workspaces for develoment teams. Install, run, and manage Co
 ### Quick Start
 With Docker 1.11+ on Windows, Mac, or Linux:
 ```
-$ docker run codenvy/cli:nightly start
+$ docker run codenvy/cli start
 ```
 
 ### TOC
@@ -144,9 +144,9 @@ There is nothing additional you need to install other than Docker.
 #### Verification:
 You can verify that the CLI is working:
 ```
-docker run codenvy/cli:nightly help
+docker run codenvy/cli help
 ```
-The CLI is bound inside of Docker images that are tagged with different versions. If you were to run `codenvy/cli:latest` this will run the latest shipping release of Codenvy and the CLI. This list of all versions available can be seen by running `codenvy version` or browsing the list of [tags available in Docker Hub](https://hub.docker.com/r/codenvy/cli/tags/).
+The CLI is bound inside of Docker images that are tagged with different versions. If you were to run `codenvy/cli:5.0.0-latest` this will run the latest shipping release of Codenvy and the CLI. This list of all versions available can be seen by running `codenvy version` or browsing the list of [tags available in Docker Hub](https://hub.docker.com/r/codenvy/cli/tags/).
 
 #### Proxies
 You can install and operate behind a proxy. You will be operating a clustered system that is managed by Docker, and itself is managing a cluster of workspaces each with their own runtime(s). There are three proxy configurations:
@@ -365,16 +365,17 @@ Codenvy is compatible with `InetOrgPerson.schema`. For other schemas please cont
 #### Development Mode
 For Codenvy developers that are building and customizing Codenvy from its source repository, you can run Codenvy in development mode where your local assembly is used instead of the one that is provided in the default containers downloaded from DockerHub. This allows for a rapid edit / build / run cycle. 
 
-Dev mode is activated by volume mounting the Codenvy git source repository to `:/repo` in your Docker run command.
+Dev mode is activated by volume mounting the Codenvy git repository to `:/repo` in your Docker run command.
 ```
 docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
                     -v <local-path>:/codenvy
                     -v <local-repo>:/repo
                        codenvy/cli:<version> [COMMAND]
 ``` 
-During the `codenvy config` phase, the repository's `/modules` and `/manifests` will be mounted into the puppet configurator.  During the `codenvy start` phase, a local assembly from `assembly/onpremises-ide-packaging-tomcat-codenvy-allinone/target/onpremises-ide-packaging-tomcat-codenvy-allinone` is mounted into the `codenvy/codenvy` runtime container.
-
-You must `mvn clean install` the `assembly/onpremises-ide-packaging-tomcat-codenvy-allinone/` folder prior to activated development mode.
+Dev mode will use files from your host repository in three ways:
+1. During the `codenvy config` phase, the source repository's `/modules` and `/manifests` will be used instead of the ones that are included in the `codenvy/init` container.
+2. During the CLI bootstrap phase, the source repository's `/dockerfiles/cli/cli.sh` file will be used instead of the one with in the `codenvy/cli` container. This allows CLI developers to iterate without having to rebuild `codenvy/cli` container after each change.
+3. During the `codenvy start` phase, a local assembly from `assembly/onpremises-ide-packaging-tomcat-codenvy-allinone/target/onpremises-ide-packaging-tomcat-codenvy-allinone` is mounted into the `codenvy/codenvy` runtime container. You must `mvn clean install` the `assembly/onpremises-ide-packaging-tomcat-codenvy-allinone/` folder prior to activated development mode.
 
 #### Licensing
 Codenvy starts with a Fair Source 3 license, which gives you up to three users and full functionality of the system with limited liabilities and warranties. You can request a trial license from Codenvy for more than 3 users or purchase one from our friendly sales team (your mother would approve). Once you gain the license, start Codenvy and then apply the license in the admin dashboard that is accessible with your login credentials.
