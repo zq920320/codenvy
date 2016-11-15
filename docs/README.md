@@ -28,8 +28,7 @@ $ docker run codenvy/cli start
 - [Uninstall](#uninstall)
 - [Configuration](#configuration)
     + [Saving Configuration in Version Control](#saving-configuration-in-version-control)
-    + [Logs and User Data](#logs-and-user-data)
-    + [oAuth](#oauth)
+    + [Logs and User Data](#logs-and-user-data)    + [oAuth](#oauth)
     + [LDAP](#ldap)
     + [Development Mode](#development-mode)
     + [Licensing](#licensing)
@@ -55,11 +54,11 @@ When the following are implemented, this Docker approach will be declared genera
 
 1. `codenvy upgrade` is not yet implemented. You can switch between versions, but we do not yet support automatic data migration inside of images. 
 
-2. Network overlay mode. If you are running a Codenvy cluster on different physical nodes and your users launch compose workspaces that themselves have multiple containers, there are cases where Swarm will place those different containers on different physical nodes. This is great for scalability. However, our default networking mode is `bridge`, which will prevent those workspace containers from seeing each other, and your users will scratch their heads. We are testing an `overlay` mode which configures `etcd` automatically that will let workspace containers see one another regardless of where Swarm places their operation.
+2. Migrations. We do not yet support migrating an existing Codenvy installation that uses our Puppet-based infrastructure into a Dockerized infrastructure of the same version. Currently, Dockerized Codenvy installations need to be different installations apart from the puppetized infrastructure.
 
-3. Migrations. We do not yet support migrating an existing Codenvy installation that uses our Puppet-based infrastructure into a Dockerized infrastructure of the same version. Currently, Dockerized Codenvy installations need to be different installations apart from the puppetized infrastructure.
+3. Admin dashboard. We provide an administrators' dashboard within the UI. This admin dashboard has not yet been updated for a dockerized version where there is a simpler configuration approach. We are updating this in an upcoming sprint.
 
-4. We do a single-node deployment of etcd, which is used as a distributed key-value store. If your users are creating workspaces that use Docker compose syntax, there are scenarios where separate containers for a single workspace will be scheduled onto different physical nodes. With our single node implementation of etcd, those containers will not be part of the same network and cannot communicate with one another. Your users will yell at you. The current work around is to manually configure etcd, zookeeper, or Consul on each physical node before you add it into the Codenvy cluster, and then activate "overlay" networking mode in `codenvy.env` file. Contact us for guidance on how to configure this. For GA we will provide a distributed key value store that does not have this limitation.
+4. In some limited firewall cases, workspaces will not start. This happens because certain internal Codenvy traffic is sent over an external IP address which is routed through your system's firewall. We can use socat and internal IP addresses within our Swarm cluster to avoid this issue.
 
 ## Getting Help
 If you are Codenvy customer, file a ticket through email support for a quicker response.
