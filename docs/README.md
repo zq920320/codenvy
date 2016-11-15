@@ -126,6 +126,7 @@ The Codenvy CLI (a Docker image itself) is downloaded when you perform your firs
 Each version of Codenvy is available in images with a label that matches the version, such as `codenvy/cli:<version>`. You can see the full list of versions [available by browsing DockerHub](https://hub.docker.com/r/codenvy/cli/tags/).
 
 We maintain special "redirection" labels which reference special versions of Codenvy:
+
 | Variable | Description |
 |----------|-------------|
 | `latest` | The most recent stable release of Codenvy. |
