@@ -136,6 +136,7 @@ We maintain special "redirection" labels which reference special versions of Cod
 The software referenced by these labels can change over time. Since Docker will cache images locally, the `codenvy/cli:<version>` image that you are running locally may not be current with the one cached on DockerHub.  Additionally, the `codenvy/cli:<version>` image that you are running references a manifest of Docker images that Codenvy depends upon, which can also change if you are using these special redirection tags.
 
 To avoid these issues, there are two things you should do.
+
 1. To verify that you have the most current version of the redirection image, `docker pull eclipse/cli:<version>`.
 2. When running the CLI, commands that use other Docker images have an optional `--pull` and `--force` command line option [which will instruct the CLI to check DockerHub](https://github.com/codenvy/codenvy/tree/master/docs#codenvy-init) for a newer version and pull it down. Using these flags will slow down performance, but ensures that your local cache is current.
 
@@ -250,7 +251,7 @@ In these docs, when you see `codenvy [COMMAND]`, it is assumed that you run the 
 
 #### Sample Start
 For example, to start the nightly build of Codenvy with its data saved on Windows in C:\tmp:
-`docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /c/tmp:/codenvy codenvy/cli:nightly start`
+`docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /c/tmp:/codenvy codenvy/cli:5.0.0-latest start`
 
 This installs a Codenvy configuration, downloads Codenvy's Docker images, run pre-flight port checks, boot Codenvy's services, and run post-flight checks. You do not need root access to start Codenvy, unless your environment requires it for Docker operations.
 
@@ -278,6 +279,8 @@ The administrative login is:
 user: admin
 pass: password
 ```
+#### Versions
+While we provide `nightly`, `latest`, and `5.0.0-latest` [redirection versions](https://github.com/codenvy/codenvy/tree/master/docs#nightly-and-latest) which are tags that simplify helping you retrieve a certain build, you should always run Codenvy with a specific version label to avoid [redirection caching issues](https://github.com/codenvy/codenvy/tree/master/docs#nightly-and-latest). So, running `docker run codenvy/cli` is great syntax for testing and getting started quickly, you should always run `docker run codenvy/cli:<version>` for production usage.
 
 #### Volume Mounts
 If you volume mount a single local folder to `<your-local-path>:/codenvy`, then Codenvy creates `/codenvy/config` (configuration files), `/codenvy/instance` (user data, projects, runtime logs, and database), and `/codenvy/backup` (data backup).
