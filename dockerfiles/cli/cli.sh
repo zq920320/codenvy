@@ -107,7 +107,7 @@ grab_initial_images() {
     docker pull alpine:3.4 >> "${LOGS}" 2>&1 || TEST=$?
     if [ "$TEST" = "1" ]; then
       error "Image alpine:3.4 unavailable. Not on dockerhub or built locally."
-      return 1;
+      return 2;
     fi
   fi
 
@@ -118,7 +118,7 @@ grab_initial_images() {
     docker pull appropriate/curl >> "${LOGS}" 2>&1 || TEST=$?
     if [ "$TEST" = "1" ]; then
       error "Image appropriate/curl:latest unavailable. Not on dockerhub or built locally."
-      return 1;
+      return 2;
     fi
   fi
 
@@ -129,18 +129,18 @@ grab_initial_images() {
     docker pull eclipse/che-ip:nightly >> "${LOGS}" 2>&1 || TEST=$?
     if [ "$TEST" = "1" ]; then
       error "Image eclipse/che-ip:nightly unavailable. Not on dockerhub or built locally."
-      return 1;
+      return 2;
     fi
   fi
 }
 
 check_host_volume_mount() {
-  echo 'test' > /codenvy/test
+  echo 'test' > /codenvy/test > "${LOGS}" 2>&1
   
   if [[ ! -f /codenvy/test ]]; then
     error "Docker installed, but unable to volume mount files from your host."
     error "Have you enabled Docker to allow mounting host directories?"
-    return 1;
+    return 2;
   fi
 
   rm -rf /codenvy/test 
