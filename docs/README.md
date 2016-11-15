@@ -122,6 +122,24 @@ The additional physical nodes must have Docker pre-configured similar to how you
 ## Installation
 The Codenvy CLI (a Docker image itself) is downloaded when you perform your first `docker run codenvy/cli:<version>` command. The CLI downloads other images that run Codenvy and its supporting utilities. The CLI also provides utilities for downloading an offline bundle to run Codenvy while disconnected from the network.
 
+#### Nightly and Latest
+Each version of Codenvy is available in images with a label that matches the version, such as `codenvy/cli:<version>`. You can see the full list of versions [available by browsing DockerHub](https://hub.docker.com/r/codenvy/cli/tags/).
+
+We maintain special "redirection" labels which reference special versions of Codenvy:
+| Variable | Description |
+|----------|-------------|
+| `latest` | The most recent stable release of Codenvy. |
+| `5.0.0-latest` | The most recent stable release of Codenvy on the 5.x branch. |
+| `nightly` | The nightly build of Codenvy. |
+
+The software referenced by these labels can change over time. Since Docker will cache images locally, the `codenvy/cli:<version>` image that you are running locally may not be current with the one cached on DockerHub.  Additionally, the `codenvy/cli:<version>` image that you are running references a manifest of Docker images that Codenvy depends upon, which can also change if you are using these special redirection tags.
+
+To avoid these issues, there are two things you should do.
+1. To verify that you have the most current version of the redirection image, `docker pull eclipse/cli:<version>`.
+2. When running the CLI, commands that use other Docker images have an optional `--pull` and `--force` command line option [which will instruct the CLI to check DockerHub](https://github.com/codenvy/codenvy/tree/master/docs#codenvy-init) for a newer version and pull it down. Using these flags will slow down performance, but ensures that your local cache is current.
+
+If you are running Codenvy using a tagged version that is a not a redirection label, such as `5.0.0-M7`, then these caching issues will not happen, as the software installed is tagged and specific to that particular version, never changing over time.
+
 #### Linux:
 There is nothing additional you need to install other than Docker.
 
