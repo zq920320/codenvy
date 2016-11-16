@@ -38,7 +38,7 @@ cli_init() {
 
   CODENVY_VERSION_FILE="codenvy.ver"
   CODENVY_ENVIRONMENT_FILE="codenvy.env"
-  CODENVY_COMPOSE_FILE="docker-compose.yml"
+  CODENVY_COMPOSE_FILE="docker-compose-container.yml"
   CODENVY_SERVER_CONTAINER_NAME="codenvy_codenvy_1"
   CODENVY_CONFIG_BACKUP_FILE_NAME="codenvy_config_backup.tar"
   CODENVY_INSTANCE_BACKUP_FILE_NAME="codenvy_instance_backup.tar"
@@ -138,8 +138,9 @@ check_host_volume_mount() {
   echo 'test' > /codenvy/test > "${LOGS}" 2>&1
   
   if [[ ! -f /codenvy/test ]]; then
-    error "Docker installed, but unable to volume mount files from your host."
+    error "Docker installed, but unable to write files to your host."
     error "Have you enabled Docker to allow mounting host directories?"
+    error "Did our CLI not have user rights to create files on your host?"
     return 2;
   fi
 
@@ -665,13 +666,25 @@ confirm_operation() {
 # Runs puppet image to generate codenvy configuration
 generate_configuration_with_puppet() {
   debug $FUNCNAME
-  info "config" "Generating $CHE_MINI_PRODUCT_NAME configuration..."
+
+  if is_docker_for_windows; then
+    REGISTRY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/registry/registry.env")
+    POSTGRES_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env")
+    CODENVY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env")
+  else
+    REGISTRY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/registry/registry.env"
+    POSTGRES_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env"
+    CODENVY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env"
+  fi
   # Note - bug in docker requires relative path for env, not absolute
   log "docker_run -it --env-file=\"${REFERENCE_CONTAINER_ENVIRONMENT_FILE}\" \
                   --env-file=/version/$CODENVY_VERSION/images \
                   -v \"${CODENVY_HOST_INSTANCE}\":/opt/codenvy:rw \
                   -v \"${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}\":/etc/puppet/manifests:ro \
                   -v \"${CODENVY_HOST_CONFIG_MODULES_FOLDER}\":/etc/puppet/modules:ro \
+                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
+                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
+                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
                       $IMAGE_PUPPET \
                           apply --modulepath \
                                 /etc/puppet/modules/ \
@@ -681,6 +694,9 @@ generate_configuration_with_puppet() {
                   -v "${CODENVY_HOST_INSTANCE}":/opt/codenvy:rw \
                   -v "${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}":/etc/puppet/manifests:ro \
                   -v "${CODENVY_HOST_CONFIG_MODULES_FOLDER}":/etc/puppet/modules:ro \
+                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
+                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
+                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
                       $IMAGE_PUPPET \
                           apply --modulepath \
                                 /etc/puppet/modules/ \
@@ -833,6 +849,7 @@ cmd_config() {
         "${CODENVY_CONTAINER_INSTANCE}/dev"
   fi
 
+  info "config" "Generating $CHE_MINI_PRODUCT_NAME configuration..."
   # Run the docker configurator
   if [ "${CODENVY_DEVELOPMENT_MODE}" = "on" ]; then
     # generate configs and print puppet output logs to console if dev mode is on
@@ -1039,7 +1056,6 @@ cmd_version() {
   text "$CHE_PRODUCT_NAME:\n"
   text "  Version:      %s\n" $(get_installed_version)
   text "  Installed:    %s\n" $(get_installed_installdate)
-  text "  CLI version:  $CHE_CLI_VERSION\n"
 
   if is_initialized; then
     text "\n"
@@ -1252,8 +1268,6 @@ cmd_debug() {
   info "CODENVY_BACKUP            = ${CODENVY_HOST_BACKUP}"
   info ""
   info "-----------  PLATFORM INFO  -----------"
-#  info "CLI DEFAULT PROFILE       = $(has_default_profile && echo $(get_default_profile) || echo "not set")"
-  info "CLI_VERSION               = ${CHE_CLI_VERSION}"
   info "DOCKER_INSTALL_TYPE       = $(get_docker_install_type)"
   info "IS_NATIVE                 = $(is_native && echo "YES" || echo "NO")"
   info "IS_WINDOWS                = $(has_docker_for_windows_client && echo "YES" || echo "NO")"
