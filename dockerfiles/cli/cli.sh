@@ -988,7 +988,6 @@ cmd_rmi() {
 
 cmd_upgrade() {
   debug $FUNCNAME
-  info "upgrade" "Not yet implemented"
 
   if [ $# -eq 0 ]; then
     info "upgrade" "No upgrade target provided. Run '${CHE_MINI_PRODUCT_NAME} version' for a list of upgradeable versions."
@@ -1003,7 +1002,32 @@ cmd_upgrade() {
 
   # If here, this version is validly upgradeable.  You can upgrade from
   # $(get_installed_version) to $1
-  echo "remove me -- you entered a version that you can upgrade to"
+  ## Download version images
+  info "upgrade" "Downloading $1 images..."
+  get_image_manifest ${1}
+  SAVEIFS=$IFS
+  IFS=$'\n'
+  for SINGLE_IMAGE in ${IMAGE_LIST}; do
+    VALUE_IMAGE=$(echo ${SINGLE_IMAGE} | cut -d'=' -f2)
+    update_image_if_not_found ${VALUE_IMAGE}
+  done
+  IFS=$SAVEIFS
+  info "upgrade" "Downloading done."
+
+  if get_server_container_id "${CODENVY_SERVER_CONTAINER_NAME}" >> "${LOGS}" 2>&1; then
+    info "upgrade" "Stopping currently running instance..."
+    CURRENT_CODENVY_SERVER_CONTAINER_ID=$(get_server_container_id ${CODENVY_SERVER_CONTAINER_NAME})
+    if server_is_booted ${CURRENT_CODENVY_SERVER_CONTAINER_ID}; then
+      cmd_stop
+    fi
+  fi
+  info "upgrade" "Preparing backup..."
+  cmd_backup
+  ## Try start
+  if ! cmd_start; then
+    info "upgrade" "Startup failed, restoring latest backup..."
+    cmd_restore;
+  fi
 
 }
 
