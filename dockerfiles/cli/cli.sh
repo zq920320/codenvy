@@ -17,6 +17,8 @@ cli_init() {
 
   DEFAULT_CODENVY_CLI_ACTION="help"
   CODENVY_CLI_ACTION=${CODENVY_CLI_ACTION:-${DEFAULT_CODENVY_CLI_ACTION}}
+  
+  CODENVY_LICENSE=true
 
   init_host_ip
   DEFAULT_CODENVY_HOST=$GLOBAL_HOST_IP
@@ -709,6 +711,14 @@ get_current_date() {
     date +'%Y-%m-%d-%s'
 }
 
+require_license() {
+  if [[ "${CODENVY_LICENSE}" = "true" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
 ###########################################################################
 ### END HELPER FUNCTIONS
 ###
@@ -745,6 +755,17 @@ cmd_init() {
 
   if [ -z ${IMAGE_INIT+x} ]; then
     get_image_manifest $CODENVY_VERSION
+  fi
+
+  if require_license; then
+    info ""
+    info "init" "Do you accept the ${CHE_MINI_PRODUCT_NAME} license? (https://codenvy.com/legal/fair-source/)"
+    text "\n"
+    read -p "      I accept the license: [Y/n] " -n 1 -r
+    text "\n"
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      return 2;
+    fi
   fi
 
   info "init" "Installing configuration and bootstrap variables:"
@@ -969,13 +990,11 @@ cmd_destroy() {
   docker_run -v "${CODENVY_HOST_CONFIG}":/root/codenvy-config \
              -v "${CODENVY_HOST_INSTANCE}":/root/codenvy-instance \
                 alpine:3.4 sh -c "rm -rf /root/codenvy-instance/* && rm -rf /root/codenvy-config/*"
-  log "rm -rf \"${CODENVY_CONTAINER_CONFIG}\" >> \"${LOGS}\""
-  log "rm -rf \"${CODENVY_CONTAINER_INSTANCE}\" >> \"${LOGS}\""
+  LOG_INITIALIZED=false
   rm -rf "${CODENVY_CONTAINER_CONFIG}"
   rm -rf "${CODENVY_CONTAINER_INSTANCE}"
   if has_docker_for_windows_client; then
-    log "docker volume rm codenvy-postgresql-volume >> \"${LOGS}\" 2>&1 || true"
-    docker volume rm codenvy-postgresql-volume >> "${LOGS}" 2>&1 || true
+    docker volume rm codenvy-postgresql-volume > /dev/null 2>&1  || true
   fi
 }
 
