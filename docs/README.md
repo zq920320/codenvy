@@ -68,7 +68,7 @@ If you run into an issue, please [open a GitHub issue](http://github.com/codenvy
 - output of the `docker version` command
 - output of the `docker info` command
 - the full Docker run syntax you used for the `codenvy <command>`
-- the output of `/instance/logs/cli/cli.log`
+- the output of `cli.log` - see [CLI Reference](#cli-reference)
 
 ## System Requirements
 Codenvy installs on Linux, Mac and Windows. 
@@ -483,7 +483,14 @@ We currently do not support migrating from the puppet-based configuration of Cod
 We maintain a disaster recovery [policy and best practices](http://codenvy.readme.io/v5.0/docs/disaster-recovery).
 
 ## CLI Reference
-The CLI is configured to hide most error conditions from the output screen. If you believe that Codenvy or the CLI is starting with errors, the `/instance/logs/cli/cli.logs` file contains traces and error output from your execution.
+The CLI is configured to hide most error conditions from the output screen. The CLI prints internal stack traces and error output to `cli.log`. To see the output of this log, you will need to volume mount a local path to `:/cli`. For example:
+
+```
+docker run --rm -it 
+           -v /var/run/docker.sock:/var/run/docker.sock 
+           -v /c/codenvy:/codenvy 
+           -v /c/codenvy/cli:/cli codenvy/cli:nightly [COMMAND]
+```
 
 ### `codenvy init`
 Initializes an empty directory with a Codenvy configuration and instance folder where user data and runtime configuration will be stored. If you only provide a `<path>:/codenvy` volume mount, then Codenvy creates a `instance`, `config`, and `backup` subfolder of `<path>`. If you provide three volume mounts of `<path-1>:/codenvy/config`, `<path-2>:/codenvy/instance`, `<path-3>:/codenvy/backup` then these specific folders will be used instead of the subfolders approach. The `codenvy.env` file is placed into the `/codenvy/config` folder, which is the file you use to configure how Codenvy is configured and run. Other files in this folder are used by Codenvy's configuration system to structure the runtime microservices. 
