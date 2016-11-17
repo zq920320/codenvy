@@ -3,13 +3,13 @@ The Codenvy LDAP integration has two major roles: synchronization and authentica
 
 For a user to successfully login, they must first be synchronized with Codenvy. After syncing authorization is possible:
 
-* Synchronization *
+*Synchronization*
 
 - Synchronizer gets all users based on the configured groups/filters.
 - Synchronizer creates a Codenvy User and persists the necessary fields from LDAP into the Codenvy database (passwords are not persisted).
 - Each time the synchronizer runs the groups/filters are re-evaluated: Users that no longer match the group/filters are removed; Users that match are updated or added as needed.
 
-* Authentication *
+*Authentication*
 
 - When a user enters their name and password, the system authenticates them against the remote LDAP.
 - If authentication is successful the user gains access to Codenvy.
@@ -31,7 +31,7 @@ There are several types of configuration covered in the tables below:
 - SSL configuration
 - SASL configuration
 
-* Authentication Configuration *
+*Authentication Configuration*
 TODO: Add table
 
 #### Connection Configuration
@@ -57,14 +57,14 @@ TODO: Add table
 #### LDAP SYNCHRONIZER
 This service synchronizes third party LDAP users with the Codenvy database.
 
-* Terminology *
+*Terminology*
 LDAP storage - third party directory server considered as primary users storage.
 LDAP cache - a storage in Codenvy database, which basically is a mirror of LDAP storage.
 Synchronized user - a user who is present in LDAP cache.
 Synchronization candidate - a user present in LDAP storage matching all the filters and groups, the user who is going to be synchronized.
 Codenvy User - entity in Codenvy API. A user is stored in Codenvy database (PosgreSQL).
 
-* Synchronization Strategy *
+*Synchronization Strategy*
 The data in the LDAP cache is considered to be consistent as long as the synchronizer does its job. Synchronization itself is unidirectional, requiring only a READ restricted connection to LDAP server.
 
 If the synchronizer can't retrieve users from LDAP storage, it fails.
@@ -83,19 +83,19 @@ Synchronization can also be triggered by a REST API call:
 
 This won't change the execution of a periodical synchronization, but it is guaranteed that 2 parallel synchronizations won't be executed.
 
-* Configuration *  
+*Configuration*  
 TODO: Add table
 
 * Users Selection Configuration *
 TODO: Add table
 
-* Group Configuration *
+*Group Configuration*
 TODO: Add table
 
-* Synchronized Data Configuration *
+*Synchronized Data Configuration*
 TODO: Add table
 
-* ACTIVE DIRECTORY EXAMPLE *
+*ACTIVE DIRECTORY EXAMPLE*
 Properties to be configured in `/etc/puppet/manifests/nodes/codenvy/codenvy.pp`
 
 Commented items must be changed.
