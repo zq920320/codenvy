@@ -137,7 +137,7 @@ grab_initial_images() {
 }
 
 check_host_volume_mount() {
-  echo 'test' > /codenvy/test > "${LOGS}" 2>&1
+  echo 'test' > /codenvy/test >> "${LOGS}" 2>&1
   
   if [[ ! -f /codenvy/test ]]; then
     error "Docker installed, but unable to write files to your host."
@@ -956,14 +956,18 @@ cmd_stop() {
     return
   fi
 
-  info "stop" "Stopping containers..."
-  log "docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME stop >> \"${LOGS}\" 2>&1 || true"
-  docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
-                 -p=$CHE_MINI_PRODUCT_NAME stop >> "${LOGS}" 2>&1 || true
-  info "stop" "Removing containers..."
-  log "y | docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME rm >> \"${LOGS}\" 2>&1 || true"
-  docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
-                 -p=$CHE_MINI_PRODUCT_NAME rm --force >> "${LOGS}" 2>&1 || true
+  if is_initialized; then
+    info "stop" "Stopping containers..."
+    log "docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME stop >> \"${LOGS}\" 2>&1 || true"
+    docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
+                   -p=$CHE_MINI_PRODUCT_NAME stop >> "${LOGS}" 2>&1 || true
+    info "stop" "Removing containers..."
+    log "docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME rm >> \"${LOGS}\" 2>&1 || true"
+    docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
+                   -p=$CHE_MINI_PRODUCT_NAME rm --force >> "${LOGS}" 2>&1 || true
+  else
+    info "stop" "Not initialized - nothing to stop..."
+  fi
 }
 
 cmd_restart() {
