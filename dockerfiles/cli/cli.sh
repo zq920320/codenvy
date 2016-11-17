@@ -742,7 +742,32 @@ cmd_download() {
 }
 
 cmd_init() {
-  FORCE_UPDATE=${1:-"--no-force"}
+
+  # set an initial value for the flag
+  FORCE_UPDATE="--no-force"
+  AUTO_ACCEPT_LICENSE="false"
+
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --no-force)
+        FORCE_UPDATE="--no-force"
+        shift ;;
+      --force)
+        FORCE_UPDATE="--force"
+        shift ;;
+      --pull)
+        FORCE_UPDATE="--pull"
+        shift ;;
+      --offline)
+        FORCE_UPDATE="--offline"
+        shift ;;
+      --accept-license)
+        AUTO_ACCEPT_LICENSE="true"
+        shift ;;
+      *) error "Unknown parameter: $1" ; return 2 ;;
+    esac
+  done
+
   if [ "${FORCE_UPDATE}" == "--no-force" ]; then
     # If codenvy.environment file exists, then fail
     if is_initialized; then
@@ -758,13 +783,15 @@ cmd_init() {
   fi
 
   if require_license; then
-    info ""
-    info "init" "Do you accept the ${CHE_MINI_PRODUCT_NAME} license? (https://codenvy.com/legal/fair-source/)"
-    text "\n"
-    read -p "      I accept the license: [Y/n] " -n 1 -r
-    text "\n"
-    if [[ $REPLY =~ ^[Nn]$ ]]; then
-      return 2;
+    if [[ "${AUTO_ACCEPT_LICENSE}" = "false" ]]; then
+      info ""
+      info "init" "Do you accept the ${CHE_MINI_PRODUCT_NAME} license? (https://codenvy.com/legal/fair-source/)"
+      text "\n"
+      read -p "      I accept the license: [Y/n] " -n 1 -r
+      text "\n"
+      if [[ $REPLY =~ ^[Nn]$ ]]; then
+        return 2;
+      fi
     fi
   fi
 
@@ -980,8 +1007,23 @@ cmd_restart() {
 cmd_destroy() {
   debug $FUNCNAME
 
+  QUIET=""
+  DESTROY_CLI="false"
+
+  while [ $# -gt 0 ]; do
+    case $1 in
+      --quiet)
+        QUIET="--quiet"
+        shift ;;
+      --cli)
+        DESTROY_CLI="true"
+        shift ;;
+      *) error "Unknown parameter: $1" ; return 2 ;;
+    esac
+  done
+
   WARNING="destroy !!! Stopping services and !!! deleting data !!! this is unrecoverable !!!"
-  if ! confirm_operation "${WARNING}" "$@"; then
+  if ! confirm_operation "${WARNING}" "${QUIET}"; then
     return;
   fi
 
@@ -997,6 +1039,17 @@ cmd_destroy() {
   rm -rf "${CODENVY_CONTAINER_INSTANCE}"
   if has_docker_for_windows_client; then
     docker volume rm codenvy-postgresql-volume > /dev/null 2>&1  || true
+  fi
+
+  # Sometimes users wnat the CLI after they have destroyed their instance
+  # If they pass destroy --cli then we will also destroy the CLI
+  if [[ "${DESTROY_CLI}" = "true" ]]; then
+    if [[ "${CLI_MOUNT}" = "not set" ]]; then
+      info "destroy" "Did not delete cli.log - ':/cli' not mounted"
+    else
+      info "destroy" "Deleting cli.log..."
+      docker_run -v "${CLI_MOUNT}":/root/cli alpine:3.4 sh -c "rm -rf /root/cli/cli.log"
+    fi
   fi
 }
 

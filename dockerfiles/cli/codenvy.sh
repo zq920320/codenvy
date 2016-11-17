@@ -52,11 +52,18 @@ Usage: docker run -it --rm
 
     help                                 This message
     version                              Installed version and upgrade paths
-    init [--pull|--force|--offline]      Initializes a directory with a ${CHE_MINI_PRODUCT_NAME} configuration
+    init                                 Initializes a directory with a ${CHE_MINI_PRODUCT_NAME} install
+         [--no-force|                      Default - uses cached local Docker images
+          --pull|                          Checks for newer images from DockerHub  
+          --force|                         Removes all images and re-pulls all images from DockerHub
+          --offline|                       Uses images saved to disk from the offline command
+          --accept-license]                Auto accepts the Codenvy license during installation
     start [--pull|--force|--offline]     Starts ${CHE_MINI_PRODUCT_NAME} services
     stop                                 Stops ${CHE_MINI_PRODUCT_NAME} services
     restart [--pull|--force]             Restart ${CHE_MINI_PRODUCT_NAME} services
-    destroy [--quiet]                    Stops services, and deletes ${CHE_MINI_PRODUCT_NAME} instance data
+    destroy                              Stops services, and deletes ${CHE_MINI_PRODUCT_NAME} instance data
+            [--quiet|                      Does not ask for confirmation before destroying instance data
+             --cli]                        If :/cli is mounted, will destroy the cli.log
     rmi [--quiet]                        Removes the Docker images for <version>, forcing a repull
     config                               Generates a ${CHE_MINI_PRODUCT_NAME} config from vars; run on any start / restart
     add-node                             Adds a physical node to serve workspaces intto the ${CHE_MINI_PRODUCT_NAME} cluster
@@ -405,7 +412,7 @@ get_container_repo_folder() {
 
 get_container_cli_folder() {
   THIS_CONTAINER_ID=$(get_this_container_id)
-  FOLDER=$(get_container_host_bind_folder ":/cli/cli.log" $THIS_CONTAINER_ID)
+  FOLDER=$(get_container_host_bind_folder ":/cli" $THIS_CONTAINER_ID)
   echo "${FOLDER:=not set}"
 }
 
