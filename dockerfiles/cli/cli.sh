@@ -956,8 +956,8 @@ cmd_stop() {
     return
   fi
 
+  info "stop" "Stopping containers..."
   if is_initialized; then
-    info "stop" "Stopping containers..."
     log "docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME stop >> \"${LOGS}\" 2>&1 || true"
     docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
                    -p=$CHE_MINI_PRODUCT_NAME stop >> "${LOGS}" 2>&1 || true
@@ -965,8 +965,6 @@ cmd_stop() {
     log "docker_compose --file=\"${REFERENCE_CONTAINER_COMPOSE_FILE}\" -p=$CHE_MINI_PRODUCT_NAME rm >> \"${LOGS}\" 2>&1 || true"
     docker_compose --file="${REFERENCE_CONTAINER_COMPOSE_FILE}" \
                    -p=$CHE_MINI_PRODUCT_NAME rm --force >> "${LOGS}" 2>&1 || true
-  else
-    info "stop" "Not initialized - nothing to stop..."
   fi
 }
 
@@ -994,7 +992,7 @@ cmd_destroy() {
   docker_run -v "${CODENVY_HOST_CONFIG}":/root/codenvy-config \
              -v "${CODENVY_HOST_INSTANCE}":/root/codenvy-instance \
                 alpine:3.4 sh -c "rm -rf /root/codenvy-instance/* && rm -rf /root/codenvy-config/*"
-  LOG_INITIALIZED=false
+
   rm -rf "${CODENVY_CONTAINER_CONFIG}"
   rm -rf "${CODENVY_CONTAINER_INSTANCE}"
   if has_docker_for_windows_client; then
