@@ -15,6 +15,7 @@ For a user to successfully login, they must first be synchronized with Codenvy. 
 - If authentication is successful the user gains access to Codenvy.
 
 #### LDAP AUTHENTICATION
+
 User authentication is implemented as follows:
 
 1. Search for for user DN according to the provided name. It can be performed in two ways: either by
@@ -32,6 +33,7 @@ There are several types of configuration covered in the tables below:
 - SASL configuration
 
 *Authentication Configuration*  
+
 TODO: Add table
 
 #### Connection Configuration
@@ -39,6 +41,7 @@ TODO: Add table
 TODO: Add table
 
 #### SSL Configuration
+
 SSL can be configured in two ways - using trust certificate or using secure keystore.
 
 Certificates from a trusted certificate authority (CA) do not need any additional actions like manual import. It's enough to just turn SSL on.
@@ -58,6 +61,7 @@ TODO: Add table
 This service synchronizes third party LDAP users with the Codenvy database.
 
 *Terminology*  
+
 LDAP storage - third party directory server considered as primary users storage.
 LDAP cache - a storage in Codenvy database, which basically is a mirror of LDAP storage.
 Synchronized user - a user who is present in LDAP cache.
@@ -65,6 +69,7 @@ Synchronization candidate - a user present in LDAP storage matching all the filt
 Codenvy User - entity in Codenvy API. A user is stored in Codenvy database (PosgreSQL).
 
 *Synchronization Strategy*  
+
 The data in the LDAP cache is considered to be consistent as long as the synchronizer does its job. Synchronization itself is unidirectional, requiring only a READ restricted connection to LDAP server.
 
 If the synchronizer can't retrieve users from LDAP storage, it fails.
@@ -84,15 +89,19 @@ Synchronization can also be triggered by a REST API call:
 This won't change the execution of a periodical synchronization, but it is guaranteed that 2 parallel synchronizations won't be executed.
 
 *Configuration*   
+
 TODO: Add table
 
 * Users Selection Configuration *
+
 TODO: Add table
 
 *Group Configuration*  
+
 TODO: Add table
 
 *Synchronized Data Configuration*  
+
 TODO: Add table
 
 *ACTIVE DIRECTORY EXAMPLE*  
