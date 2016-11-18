@@ -19,6 +19,7 @@ init_constants() {
   RED='\033[0;31m'
   YELLOW='\033[38;5;220m'
   NC='\033[0m'
+  LOG_INITIALIZED=false
 
   DEFAULT_CHE_PRODUCT_NAME="CODENVY"
   CHE_PRODUCT_NAME=${CHE_PRODUCT_NAME:-${DEFAULT_CHE_PRODUCT_NAME}}
@@ -82,9 +83,11 @@ Variables:
 # Usage:
 #   log <argument> [other arguments]
 log() {
-  if is_log; then
-    echo "$@" >> "${LOGS}"
-  fi 
+  if [[ "$LOG_INITIALIZED"  = "true" ]]; then
+    if is_log; then
+      echo "$@" >> "${LOGS}"
+    fi 
+  fi
 }
 
 usage () {
@@ -105,11 +108,11 @@ info() {
     PRINT_COMMAND=""
     PRINT_STATEMENT=$1
   else
-    PRINT_COMMAND="($CHE_MINI_PRODUCT_NAME $1):"
+    PRINT_COMMAND="($CHE_MINI_PRODUCT_NAME $1): "
     PRINT_STATEMENT=$2
   fi
   if is_info; then
-    printf "${GREEN}INFO:${NC} %s %s\n" \
+    printf "${GREEN}INFO:${NC} %s%s\n" \
               "${PRINT_COMMAND}" \
               "${PRINT_STATEMENT}"
   fi
@@ -222,6 +225,21 @@ check_docker() {
     return 1;
   fi
 
+  # If DOCKER_HOST is not set, then it should bind mounted
+  if [ -z "${DOCKER_HOST+x}" ]; then
+    if ! docker ps > /dev/null 2>&1; then
+      info "Welcome to Codenvy!"
+      info ""
+      info "We did not detect a valid DOCKER_HOST."
+      info ""
+      info "Rerun the CLI:"
+      info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+      info "                      -v <local-path>:/codenvy"
+      info "                           codenvy/cli [COMMAND]"
+      return 2;
+    fi
+  fi
+
   DOCKER_VERSION=($(docker version |  grep  "Version:" | sed 's/Version://'))
 
   MAJOR_VERSION_ID=$(echo ${DOCKER_VERSION[0]:0:1})
@@ -232,21 +250,6 @@ check_docker() {
      [[ ${MINOR_VERSION_ID} -lt 11 ]]; then
        error "Error - Docker engine 1.11+ required."
        return 2;
-  fi
-
-  # If DOCKER_HOST is not set, then it should bind mounted
-  if [ -z "${DOCKER_HOST+x}" ]; then
-      if ! docker ps > /dev/null 2>&1; then
-        printf "${GREEN}INFO:${NC} Welcome to Codenvy!\n"
-        printf "${GREEN}INFO:${NC} \n"
-        printf "${GREEN}INFO:${NC} We did not detect a valid DOCKER_HOST.\n"
-        printf "${GREEN}INFO:${NC} \n"
-        printf "${GREEN}INFO:${NC} Rerun the CLI:\n"
-        printf "${GREEN}INFO:${NC}   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \n"
-        printf "${GREEN}INFO:${NC}                       -v <local-path>:/codenvy \n"
-        printf "${GREEN}INFO:${NC}                            codenvy/cli $@\n"
-        return 2;
-      fi
   fi
 
   # Detect version so that we can provide better error warnings
@@ -267,6 +270,7 @@ check_mounts() {
   INSTANCE_MOUNT=$(get_container_instance_folder)
   BACKUP_MOUNT=$(get_container_backup_folder)
   REPO_MOUNT=$(get_container_repo_folder)
+  CLI_MOUNT=$(get_container_cli_folder)
    
   TRIAD=""
   if [[ "${CONFIG_MOUNT}" != "not set" ]] && \
@@ -284,22 +288,22 @@ check_mounts() {
     DEFAULT_CODENVY_INSTANCE="${INSTANCE_MOUNT}"
     DEFAULT_CODENVY_BACKUP="${BACKUP_MOUNT}"
   else
-    printf "${GREEN}INFO:${NC} Welcome to Codenvy!\n"
-    printf "${GREEN}INFO:${NC} \n"
-    printf "${GREEN}INFO:${NC} We did not detect a host mounted data directory.\n"
-    printf "${GREEN}INFO:${NC} \n"
-    printf "${GREEN}INFO:${NC} Rerun with a single path:\n"
-    printf "${GREEN}INFO:${NC}   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock\n"
-    printf "${GREEN}INFO:${NC}                       -v <local-path>:/codenvy\n"
-    printf "${GREEN}INFO:${NC}                          codenvy/cli:${CODENVY_VERSION} $@\n"
-    printf "${GREEN}INFO:${NC} \n"
-    printf "${GREEN}INFO:${NC} \n"
-    printf "${GREEN}INFO:${NC} Or rerun with paths for config, instance, and backup (all required):\n"
-    printf "${GREEN}INFO:${NC}   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock\n"
-    printf "${GREEN}INFO:${NC}                       -v <local-config-path>:/codenvy/config\n"
-    printf "${GREEN}INFO:${NC}                       -v <local-instance-path>:/codenvy/instance\n"
-    printf "${GREEN}INFO:${NC}                       -v <local-backup-path>:/codenvy/backup\n"
-    printf "${GREEN}INFO:${NC}                          codenvy/cli:${CODENVY_VERSION} $@\n"
+    info "Welcome to Codenvy!"
+    info ""
+    info "We did not detect a host mounted data directory."
+    info ""
+    info "Rerun with a single path:"
+    info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+    info "                      -v <local-path>:/codenvy"
+    info "                         codenvy/cli:${CODENVY_VERSION} [COMMAND]"
+    info ""
+    info ""
+    info "Or rerun with paths for config, instance, and backup (all required):"
+    info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+    info "                      -v <local-config-path>:/codenvy/config"
+    info "                      -v <local-instance-path>:/codenvy/instance"
+    info "                      -v <local-backup-path>:/codenvy/backup"
+    info "                         codenvy/cli:${CODENVY_VERSION} [COMMAND]"
     return 2;
   fi
 
@@ -325,31 +329,31 @@ check_mounts() {
     CODENVY_DEVELOPMENT_TOMCAT="${CODENVY_HOST_INSTANCE}/dev"
 
     if [[ ! -d "${CODENVY_CONTAINER_DEVELOPMENT_REPO}"  ]] || [[ ! -d "${CODENVY_CONTAINER_DEVELOPMENT_REPO}/assembly" ]]; then
-      printf "${GREEN}INFO:${NC} Welcome to Codenvy!\n"
-      printf "${GREEN}INFO:${NC} \n"
-      printf "${GREEN}INFO:${NC} You volume mounted :/repo, but we did not detect a valid Codenvy source repo.\n"
-      printf "${GREEN}INFO:${NC} \n"
-      printf "${GREEN}INFO:${NC} Rerun with a single path:\n"
-      printf "${GREEN}INFO:${NC}   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-path>:/codenvy\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-repo>:/repo\n"
-      printf "${GREEN}INFO:${NC}                          codenvy/cli:${CODENVY_VERSION} $@\n"
-      printf "${GREEN}INFO:${NC} \n"
-      printf "${GREEN}INFO:${NC} \n"
-      printf "${GREEN}INFO:${NC} Or rerun with paths for config, instance, and backup (all required):\n"
-      printf "${GREEN}INFO:${NC}   docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-config-path>:/codenvy/config\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-instance-path>:/codenvy/instance\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-backup-path>:/codenvy/backup\n"
-      printf "${GREEN}INFO:${NC}                       -v <local-repo>:/repo\n"
-      printf "${GREEN}INFO:${NC}                          codenvy/cli:${CODENVY_VERSION} $@\n"
+      info "Welcome to Codenvy!"
+      info ""
+      info "You volume mounted :/repo, but we did not detect a valid Codenvy source repo."
+      info ""
+      info "Rerun with a single path:"
+      info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+      info "                      -v <local-path>:/codenvy"
+      info "                      -v <local-repo>:/repo"
+      info "                         codenvy/cli:${CODENVY_VERSION} [COMMAND]"
+      info ""
+      info ""
+      info "Or rerun with paths for config, instance, and backup (all required):"
+      info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+      info "                      -v <local-config-path>${NC}:/codenvy/config"
+      info "                      -v <local-instance-path>${NC}:/codenvy/instance"
+      info "                      -v <local-backup-path>${NC}:/codenvy/backup"
+      info "                      -v <local-repo>:/repo"
+      info "                         codenvy/cli:${CODENVY_VERSION} [COMMAND]"
       return 2
     fi
     if [[ ! -d $(echo "${CODENVY_CONTAINER_DEVELOPMENT_REPO}"/"${DEFAULT_CODENVY_DEVELOPMENT_TOMCAT}"-*/) ]]; then
-      printf "${GREEN}INFO:${NC} Welcome to Codenvy!\n"
-      printf "${GREEN}INFO:${NC} \n"
-      printf "${GREEN}INFO:${NC} You volume mounted a valid Codenvy repo to :/repo, but we could not find a Tomcat assembly.\n"
-      printf "${GREEN}INFO:${NC} Have you built /assembly/onpremises-ide-packaging-tomcat-codenvy-allinone?\n"
+      info "Welcome to Codenvy!"
+      info ""
+      info "You volume mounted a valid Codenvy repo to :/repo, but we could not find a Tomcat assembly."
+      info "Have you built /assembly/onpremises-ide-packaging-tomcat-codenvy-allinone?"
       return 2
     fi
   fi
@@ -357,11 +361,12 @@ check_mounts() {
 
 init_logging() {
   # Initialize CLI folder
-  CLI_DIR="${CODENVY_CONTAINER_INSTANCE}/logs/cli"
+  CLI_DIR="/cli"
   test -d "${CLI_DIR}" || mkdir -p "${CLI_DIR}"
 
   # Ensure logs folder exists
   LOGS="${CLI_DIR}/cli.log"
+  LOG_INITIALIZED=true
 
   # Log date of CLI execution
   log "$(date)"
@@ -395,6 +400,12 @@ get_container_backup_folder() {
 get_container_repo_folder() {
   THIS_CONTAINER_ID=$(get_this_container_id)
   FOLDER=$(get_container_host_bind_folder ":/repo" $THIS_CONTAINER_ID)
+  echo "${FOLDER:=not set}"
+}
+
+get_container_cli_folder() {
+  THIS_CONTAINER_ID=$(get_this_container_id)
+  FOLDER=$(get_container_host_bind_folder ":/cli/cli.log" $THIS_CONTAINER_ID)
   echo "${FOLDER:=not set}"
 }
 
@@ -497,7 +508,7 @@ init() {
      source /repo/dockerfiles/cli/cli.sh
   else
      # Use the CLI that is inside the container.  
-    source /cli/cli.sh
+    source /scripts/cli.sh
   fi
 }
 
