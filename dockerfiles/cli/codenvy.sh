@@ -52,11 +52,18 @@ Usage: docker run -it --rm
 
     help                                 This message
     version                              Installed version and upgrade paths
-    init [--pull|--force|--offline]      Initializes a directory with a ${CHE_MINI_PRODUCT_NAME} configuration
+    init                                 Initializes a directory with a ${CHE_MINI_PRODUCT_NAME} install
+         [--no-force|                      Default - uses cached local Docker images
+          --pull|                          Checks for newer images from DockerHub  
+          --force|                         Removes all images and re-pulls all images from DockerHub
+          --offline|                       Uses images saved to disk from the offline command
+          --accept-license]                Auto accepts the Codenvy license during installation
     start [--pull|--force|--offline]     Starts ${CHE_MINI_PRODUCT_NAME} services
     stop                                 Stops ${CHE_MINI_PRODUCT_NAME} services
     restart [--pull|--force]             Restart ${CHE_MINI_PRODUCT_NAME} services
-    destroy [--quiet]                    Stops services, and deletes ${CHE_MINI_PRODUCT_NAME} instance data
+    destroy                              Stops services, and deletes ${CHE_MINI_PRODUCT_NAME} instance data
+            [--quiet|                      Does not ask for confirmation before destroying instance data
+             --cli]                        If :/cli is mounted, will destroy the cli.log
     rmi [--quiet]                        Removes the Docker images for <version>, forcing a repull
     config                               Generates a ${CHE_MINI_PRODUCT_NAME} config from vars; run on any start / restart
     add-node                             Adds a physical node to serve workspaces intto the ${CHE_MINI_PRODUCT_NAME} cluster
@@ -265,6 +272,10 @@ check_docker() {
 }
   
 check_mounts() {
+
+  # Verify that we can write to the host file system from the container
+  check_host_volume_mount
+
   DATA_MOUNT=$(get_container_bind_folder)
   CONFIG_MOUNT=$(get_container_config_folder)
   INSTANCE_MOUNT=$(get_container_instance_folder)
@@ -359,6 +370,19 @@ check_mounts() {
   fi
 }
 
+check_host_volume_mount() {
+  echo 'test' > /codenvy/test >> "${LOGS}" 2>&1
+  
+  if [[ ! -f /codenvy/test ]]; then
+    error "Docker installed, but unable to write files to your host."
+    error "Have you enabled Docker to allow mounting host directories?"
+    error "Did our CLI not have user rights to create files on your host?"
+    return 2;
+  fi
+
+  rm -rf /codenvy/test 
+}
+
 init_logging() {
   # Initialize CLI folder
   CLI_DIR="/cli"
@@ -405,7 +429,7 @@ get_container_repo_folder() {
 
 get_container_cli_folder() {
   THIS_CONTAINER_ID=$(get_this_container_id)
-  FOLDER=$(get_container_host_bind_folder ":/cli/cli.log" $THIS_CONTAINER_ID)
+  FOLDER=$(get_container_host_bind_folder ":/cli" $THIS_CONTAINER_ID)
   echo "${FOLDER:=not set}"
 }
 
@@ -423,12 +447,6 @@ get_container_host_bind_folder() {
   # Remove leading and trailing spaces
   VALUE2=$(echo "${VALUE}" | xargs)
 
-  # Remove $1 from the end
-# VALUE3=${VALUE2%$1}
-
-  # What is left is the mount path
-#  echo $VALUE3
-
   MOUNT=""
   IFS=$' '
   for SINGLE_BIND in $VALUE2; do
@@ -438,6 +456,8 @@ get_container_host_bind_folder() {
         echo "${MOUNT}" | cut -f1 -d":" | xargs
       ;;
       *)
+        # Super ugly - since we parse by space, if the next parameter is not a colon, then
+        # we know that next parameter is second part of a directory with a space in it.
         if [[ ${SINGLE_BIND} != *":"* ]]; then
           MOUNT="${MOUNT} ${SINGLE_BIND}"
         else
