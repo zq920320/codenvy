@@ -272,6 +272,10 @@ check_docker() {
 }
   
 check_mounts() {
+
+  # Verify that we can write to the host file system from the container
+  check_host_volume_mount
+
   DATA_MOUNT=$(get_container_bind_folder)
   CONFIG_MOUNT=$(get_container_config_folder)
   INSTANCE_MOUNT=$(get_container_instance_folder)
@@ -366,6 +370,19 @@ check_mounts() {
   fi
 }
 
+check_host_volume_mount() {
+  echo 'test' > /codenvy/test >> "${LOGS}" 2>&1
+  
+  if [[ ! -f /codenvy/test ]]; then
+    error "Docker installed, but unable to write files to your host."
+    error "Have you enabled Docker to allow mounting host directories?"
+    error "Did our CLI not have user rights to create files on your host?"
+    return 2;
+  fi
+
+  rm -rf /codenvy/test 
+}
+
 init_logging() {
   # Initialize CLI folder
   CLI_DIR="/cli"
@@ -430,12 +447,6 @@ get_container_host_bind_folder() {
   # Remove leading and trailing spaces
   VALUE2=$(echo "${VALUE}" | xargs)
 
-  # Remove $1 from the end
-# VALUE3=${VALUE2%$1}
-
-  # What is left is the mount path
-#  echo $VALUE3
-
   MOUNT=""
   IFS=$' '
   for SINGLE_BIND in $VALUE2; do
@@ -445,6 +456,8 @@ get_container_host_bind_folder() {
         echo "${MOUNT}" | cut -f1 -d":" | xargs
       ;;
       *)
+        # Super ugly - since we parse by space, if the next parameter is not a colon, then
+        # we know that next parameter is second part of a directory with a space in it.
         if [[ ${SINGLE_BIND} != *":"* ]]; then
           MOUNT="${MOUNT} ${SINGLE_BIND}"
         else

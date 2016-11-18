@@ -11,9 +11,19 @@
 
 cli_init() {
 
-  grab_offline_images
+  # Constants
+  CODENVY_MANIFEST_DIR="/version"
+  CODENVY_CONTAINER_OFFLINE_FOLDER="/${CHE_MINI_PRODUCT_NAME}/backup"
+  CODENVY_VERSION_FILE="${CHE_MINI_PRODUCT_NAME}.ver"
+  CODENVY_ENVIRONMENT_FILE="${CHE_MINI_PRODUCT_NAME}.env"
+  CODENVY_COMPOSE_FILE="docker-compose-container.yml"
+  CODENVY_SERVER_CONTAINER_NAME="${CHE_MINI_PRODUCT_NAME}_${CHE_MINI_PRODUCT_NAME}_1"
+  CODENVY_CONFIG_BACKUP_FILE_NAME="${CHE_MINI_PRODUCT_NAME}_config_backup.tar"
+  CODENVY_INSTANCE_BACKUP_FILE_NAME="${CHE_MINI_PRODUCT_NAME}_instance_backup.tar"
+  DOCKER_CONTAINER_NAME_PREFIX="${CHE_MINI_PRODUCT_NAME}_"
+
+  grab_offline_images "$@"
   grab_initial_images
-  check_host_volume_mount
 
   DEFAULT_CODENVY_CLI_ACTION="help"
   CODENVY_CLI_ACTION=${CODENVY_CLI_ACTION:-${DEFAULT_CODENVY_CLI_ACTION}}
@@ -25,34 +35,23 @@ cli_init() {
   CODENVY_HOST=${CODENVY_HOST:-${DEFAULT_CODENVY_HOST}}
 
   if [[ "${CODENVY_HOST}" = "" ]]; then
-      info "Welcome to Codenvy!"
-      info ""
-      info "We did not auto-detect a valid HOST or IP address."
-      info "Pass CODENVY_HOST with your hostname or IP address."
-      info ""
-      info "Rerun the CLI:"
-      info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
-      info "                      -v <local-path>:/codenvy"
-      info "                      -e CODENVY_HOST=<your-ip-or-host>"
-      info "                         codenvy/cli:${CODENVY_VERSION} $@"
-      return 2;
+    info "Welcome to Codenvy!"
+    info ""
+    info "We did not auto-detect a valid HOST or IP address."
+    info "Pass CODENVY_HOST with your hostname or IP address."
+    info ""
+    info "Rerun the CLI:"
+    info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
+    info "                      -v <local-path>:/codenvy"
+    info "                      -e CODENVY_HOST=<your-ip-or-host>"
+    info "                         codenvy/cli:${CODENVY_VERSION} $@"
+    return 2;
   fi
-
-  CODENVY_VERSION_FILE="codenvy.ver"
-  CODENVY_ENVIRONMENT_FILE="codenvy.env"
-  CODENVY_COMPOSE_FILE="docker-compose-container.yml"
-  CODENVY_SERVER_CONTAINER_NAME="codenvy_codenvy_1"
-  CODENVY_CONFIG_BACKUP_FILE_NAME="codenvy_config_backup.tar"
-  CODENVY_INSTANCE_BACKUP_FILE_NAME="codenvy_instance_backup.tar"
-  DOCKER_CONTAINER_NAME_PREFIX="codenvy_"
 
   REFERENCE_HOST_ENVIRONMENT_FILE="${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}"
   REFERENCE_HOST_COMPOSE_FILE="${CODENVY_HOST_INSTANCE}/${CODENVY_COMPOSE_FILE}"
   REFERENCE_CONTAINER_ENVIRONMENT_FILE="${CODENVY_CONTAINER_CONFIG}/${CODENVY_ENVIRONMENT_FILE}"
   REFERENCE_CONTAINER_COMPOSE_FILE="${CODENVY_CONTAINER_INSTANCE}/${CODENVY_COMPOSE_FILE}"
-
-  CODENVY_MANIFEST_DIR="/version"
-  CODENVY_OFFLINE_FOLDER="/codenvy/backup"
 
   CODENVY_HOST_CONFIG_MANIFESTS_FOLDER="$CODENVY_HOST_CONFIG/manifests"
   CODENVY_CONTAINER_CONFIG_MANIFESTS_FOLDER="$CODENVY_CONTAINER_CONFIG/manifests"
@@ -78,25 +77,23 @@ grab_offline_images(){
   # If you are using codenvy in offline mode, images must be loaded here
   # This is the point where we know that docker is working, but before we run any utilities
   # that require docker.
-  if [ ! -z ${2+x} ]; then
-    if [ "${2}" == "--offline" ]; then
-      info "init" "Importing ${CHE_MINI_PRODUCT_NAME} Docker images from tars..."
+  if [[ "$@" == *"--offline"* ]]; then
+    info "init" "Importing ${CHE_MINI_PRODUCT_NAME} Docker images from tars..."
 
-      if [ ! -d offline ]; then
-        info "init" "You requested offline loading of images, but could not find 'offline/'"
+    if [ ! -d ${CODENVY_CONTAINER_OFFLINE_FOLDER} ]; then
+      info "init" "You requested offline image loading, but '${CODENVY_CONTAINER_OFFLINE_FOLDER}' folder not found"
+      return 2;
+    fi
+
+    IFS=$'\n'
+    for file in "${CODENVY_CONTAINER_OFFLINE_FOLDER}"/*.tar 
+    do
+      if ! $(docker load < "${CODENVY_CONTAINER_OFFLINE_FOLDER}"/"${file##*/}" > /dev/null); then
+        error "Failed to restore ${CHE_MINI_PRODUCT_NAME} Docker images"
         return 2;
       fi
-
-      IFS=$'\n'
-      for file in "offline"/*.tar 
-      do
-        if ! $(docker load < "offline"/"${file##*/}" > /dev/null); then
-          error "Failed to restore ${CHE_MINI_PRODUCT_NAME} Docker images"
-          return 2;
-        fi
-        info "init" "Loading ${file##*/}..."
-      done
-    fi
+      info "init" "Loading ${file##*/}..."
+    done
   fi
 }
 
@@ -134,19 +131,6 @@ grab_initial_images() {
       return 2;
     fi
   fi
-}
-
-check_host_volume_mount() {
-  echo 'test' > /codenvy/test >> "${LOGS}" 2>&1
-  
-  if [[ ! -f /codenvy/test ]]; then
-    error "Docker installed, but unable to write files to your host."
-    error "Have you enabled Docker to allow mounting host directories?"
-    error "Did our CLI not have user rights to create files on your host?"
-    return 2;
-  fi
-
-  rm -rf /codenvy/test 
 }
 
 cli_parse () {
@@ -749,17 +733,8 @@ cmd_init() {
 
   while [ $# -gt 0 ]; do
     case $1 in
-      --no-force)
-        FORCE_UPDATE="--no-force"
-        shift ;;
-      --force)
-        FORCE_UPDATE="--force"
-        shift ;;
-      --pull)
-        FORCE_UPDATE="--pull"
-        shift ;;
-      --offline)
-        FORCE_UPDATE="--offline"
+      --no-force|--force|--pull|--offline)
+        FORCE_UPDATE=$1
         shift ;;
       --accept-license)
         AUTO_ACCEPT_LICENSE="true"
@@ -1041,7 +1016,7 @@ cmd_destroy() {
     docker volume rm codenvy-postgresql-volume > /dev/null 2>&1  || true
   fi
 
-  # Sometimes users wnat the CLI after they have destroyed their instance
+  # Sometimes users want the CLI after they have destroyed their instance
   # If they pass destroy --cli then we will also destroy the CLI
   if [[ "${DESTROY_CLI}" = "true" ]]; then
     if [[ "${CLI_MOUNT}" = "not set" ]]; then
@@ -1269,7 +1244,7 @@ cmd_restore() {
 }
 
 cmd_offline() {
-  info "offline" "Checking registry for version '$CODENVY_VERSION' images"
+  info "offline" "Grabbing image manifest for version '$CODENVY_VERSION'"
   if ! has_version_registry $CODENVY_VERSION; then
     version_error $CODENVY_VERSION
     return 1;
@@ -1278,7 +1253,7 @@ cmd_offline() {
   # Make sure the images have been pulled and are in your local Docker registry
   cmd_download
 
-  mkdir -p $CODENVY_OFFLINE_FOLDER
+  mkdir -p $CODENVY_CONTAINER_OFFLINE_FOLDER
 
   IMAGE_LIST=$(cat "$CODENVY_MANIFEST_DIR"/$CODENVY_VERSION/images)
   IFS=$'\n'
@@ -1288,8 +1263,8 @@ cmd_offline() {
     VALUE_IMAGE=$(echo $SINGLE_IMAGE | cut -d'=' -f2)
     TAR_NAME=$(echo $VALUE_IMAGE | sed "s|\/|_|")
     info "offline" "Saving $CODENVY_HOST_BACKUP/$TAR_NAME.tar..."
-    if ! $(docker save $VALUE_IMAGE > $CODENVY_OFFLINE_FOLDER/$TAR_NAME.tar); then
-      error "Docker was interrupted while saving $CODENVY_OFFLINE_FOLDER/$TAR_NAME.tar"
+    if ! $(docker save $VALUE_IMAGE > $CODENVY_CONTAINER_OFFLINE_FOLDER/$TAR_NAME.tar); then
+      error "Docker was interrupted while saving $CODENVY_CONTAINER_OFFLINE_FOLDER/$TAR_NAME.tar"
       return 1;
     fi
   done
