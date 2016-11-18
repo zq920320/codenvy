@@ -99,7 +99,7 @@ public class CodenvyLicenseManagerTest {
         setSizeOfAdditionalNodes(NODES_NUMBER);
 
         codenvyLicenseManager =
-                spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(), licenseFactory, userManager, swarmDockerConnector));
+                spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(), licenseFactory, userManager, swarmDockerConnector, licenseDao));
     }
 
     @AfterMethod

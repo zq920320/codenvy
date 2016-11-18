@@ -14,22 +14,25 @@
  */
 package com.codenvy.api.license.server;
 
-import com.codenvy.api.license.CodenvyLicense;
-import com.codenvy.api.license.InvalidLicenseException;
-import com.codenvy.api.license.LicenseException;
-import com.codenvy.api.license.LicenseFeature;
-import com.codenvy.api.license.LicenseNotFoundException;
-import com.google.common.collect.ImmutableMap;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import com.codenvy.api.license.CodenvyLicense;
+import com.codenvy.api.license.InvalidLicenseException;
+import com.codenvy.api.license.LicenseException;
+import com.codenvy.api.license.LicenseFeature;
+import com.codenvy.api.license.LicenseNotFoundException;
+import com.codenvy.api.license.dto.FairSourceLicenseAcceptanceDto;
+import com.google.common.collect.ImmutableMap;
+
 import org.eclipse.che.api.core.ApiException;
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
-import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.dto.server.JsonStringMapImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -196,4 +199,16 @@ public class LicenseService {
         }
     }
 
+    @POST
+    @Path("fair-source-license")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Acceptance of Codenvy Fair Source License")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK"),
+                           @ApiResponse(code = 400, message = "Inappropriate accept request"),
+                           @ApiResponse(code = 409, message = "Fair Source License has been already accepted"),
+                           @ApiResponse(code = 500, message = "Server error")})
+    public Response acceptFairSourceLicense(FairSourceLicenseAcceptanceDto fairSourceLicenseAcceptanceDto) throws BadRequestException {
+        licenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptanceDto);
+        return status(CREATED).build();
+    }
 }

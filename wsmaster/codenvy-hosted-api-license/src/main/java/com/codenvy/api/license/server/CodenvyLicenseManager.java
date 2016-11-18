@@ -19,8 +19,11 @@ import com.codenvy.api.license.CodenvyLicenseFactory;
 import com.codenvy.api.license.InvalidLicenseException;
 import com.codenvy.api.license.LicenseException;
 import com.codenvy.api.license.LicenseNotFoundException;
+import com.codenvy.api.license.model.FairSourceLicenseAcceptance;
+import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
 import com.codenvy.swarm.client.SwarmDockerConnector;
 
+import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.commons.annotation.Nullable;
@@ -28,15 +31,20 @@ import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 
 /**
@@ -51,16 +59,19 @@ public class CodenvyLicenseManager {
     private final Path                  licenseFile;
     private final UserManager           userManager;
     private final SwarmDockerConnector  dockerConnector;
+    private final CodenvyLicenseDao     codenvyLicenseDao;
 
     @Inject
     public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile,
                                  CodenvyLicenseFactory licenseFactory,
                                  UserManager userManager,
-                                 SwarmDockerConnector dockerConnector) {
+                                 SwarmDockerConnector dockerConnector,
+                                 CodenvyLicenseDao codenvyLicenseDao) {
         this.licenseFactory = licenseFactory;
         this.licenseFile = Paths.get(licenseFile);
         this.userManager = userManager;
         this.dockerConnector = dockerConnector;
+        this.codenvyLicenseDao = codenvyLicenseDao;
     }
 
     /**
@@ -158,6 +169,39 @@ public class CodenvyLicenseManager {
             return codenvyLicense.isLicenseNodesUsageLegal(nodeNumber);
         } catch (LicenseException e) {
             return CodenvyLicense.isFreeUsageLegal(0, nodeNumber);  // user number doesn't matter
+        }
+    }
+
+    /**
+     *
+     * @param fairSourceLicenseAcceptance
+     * @throws BadRequestException
+     */
+    public void acceptFairSourceLicense(FairSourceLicenseAcceptance fairSourceLicenseAcceptance) throws BadRequestException {
+        validateAcceptFairSourceLicenseRequest(fairSourceLicenseAcceptance);
+
+        Map<String, String> attributes = new HashMap<>(3);
+        attributes.put("firstName", fairSourceLicenseAcceptance.getFirstName());
+        attributes.put("lastName", fairSourceLicenseAcceptance.getLastName());
+        attributes.put("email", fairSourceLicenseAcceptance.getEmail());
+    }
+
+    private void validateAcceptFairSourceLicenseRequest(FairSourceLicenseAcceptance fairSourceLicenseAcceptance)
+            throws BadRequestException {
+        String email = fairSourceLicenseAcceptance.getEmail();
+
+        if (isNullOrEmpty(email)
+            || isNullOrEmpty(fairSourceLicenseAcceptance.getFirstName())
+            || isNullOrEmpty(fairSourceLicenseAcceptance.getLastName())) {
+
+            throw new BadRequestException("Codenvy Fair Source License can't be accepted until all fields are filled.");
+        }
+
+        try {
+            InternetAddress internetAddress = new InternetAddress(email);
+            internetAddress.validate();
+        } catch (AddressException e) {
+            throw new BadRequestException(format("Codenvy Fair Source License can't be accepted until. Email %s is not valid", email));
         }
     }
 }

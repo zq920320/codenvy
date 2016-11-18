@@ -12,23 +12,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.license.server;
+package com.codenvy.api.license.server.spi.tck;
 
-import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
-import com.codenvy.api.license.server.jpa.JpaCodenvyLicenseDao;
-import com.google.inject.AbstractModule;
-
-import org.eclipse.che.inject.DynaModule;
+import org.eclipse.che.commons.test.tck.TckListener;
+import org.testng.annotations.Listeners;
+import org.testng.annotations.Test;
 
 /**
- * @author Alexander Andrienko
+ * @author Anatolii Bazko
  */
-@DynaModule
-public class LicenseModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(LicenseService.class);
-        bind(LicenseServicePermissionsFilter.class);
-        bind(CodenvyLicenseDao.class).to(JpaCodenvyLicenseDao.class);
-    }
+@Listeners(TckListener.class)
+@Test(suiteName = "CodenvyLicenseDaoTck")
+public class CodenvyLicenseDaoTest {
 }

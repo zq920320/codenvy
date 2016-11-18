@@ -12,23 +12,16 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.license.server;
+package com.codenvy.api.license.server.dao;
 
-import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
-import com.codenvy.api.license.server.jpa.JpaCodenvyLicenseDao;
-import com.google.inject.AbstractModule;
-
-import org.eclipse.che.inject.DynaModule;
+import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 
 /**
- * @author Alexander Andrienko
+ * Defines data access object contract for {@link CodenvyLicenseActionImpl}.
+ *
+ * @author Anatolii Bazko
  */
-@DynaModule
-public class LicenseModule extends AbstractModule {
-    @Override
-    protected void configure() {
-        bind(LicenseService.class);
-        bind(LicenseServicePermissionsFilter.class);
-        bind(CodenvyLicenseDao.class).to(JpaCodenvyLicenseDao.class);
-    }
+public interface CodenvyLicenseDao {
+
+    void store(CodenvyLicenseActionImpl codenvyLicenseAction);
 }
