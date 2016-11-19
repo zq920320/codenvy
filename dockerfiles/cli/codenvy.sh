@@ -9,10 +9,6 @@
 #   Tyler Jewell - Initial Implementation
 #
 
-init_host_ip() {
-  GLOBAL_HOST_IP=${GLOBAL_HOST_IP:=$(docker_run --net host eclipse/che-ip:nightly)}
-}
-
 init_constants() {
   BLUE='\033[1;34m'
   GREEN='\033[0;32m'
@@ -53,29 +49,35 @@ Usage: docker run -it --rm
     help                                 This message
     version                              Installed version and upgrade paths
     init                                 Initializes a directory with a ${CHE_MINI_PRODUCT_NAME} install
-         [--no-force|                      Default - uses cached local Docker images
-          --pull|                          Checks for newer images from DockerHub  
-          --force|                         Removes all images and re-pulls all images from DockerHub
-          --offline|                       Uses images saved to disk from the offline command
-          --accept-license]                Auto accepts the Codenvy license during installation
-    start [--pull|--force|--offline]     Starts ${CHE_MINI_PRODUCT_NAME} services
+         [--no-force                         Default - uses cached local Docker images
+          --pull                             Checks for newer images from DockerHub  
+          --force                            Removes all images and re-pulls all images from DockerHub
+          --offline                          Uses images saved to disk from the offline command
+          --accept-license]                  Auto accepts the Codenvy license during installation
+    start [--pull | --force | --offline] Starts ${CHE_MINI_PRODUCT_NAME} services
     stop                                 Stops ${CHE_MINI_PRODUCT_NAME} services
-    restart [--pull|--force]             Restart ${CHE_MINI_PRODUCT_NAME} services
+    restart [--pull | --force]           Restart ${CHE_MINI_PRODUCT_NAME} services
     destroy                              Stops services, and deletes ${CHE_MINI_PRODUCT_NAME} instance data
-            [--quiet|                      Does not ask for confirmation before destroying instance data
-             --cli]                        If :/cli is mounted, will destroy the cli.log
+            [--quiet                         Does not ask for confirmation before destroying instance data
+             --cli]                          If :/cli is mounted, will destroy the cli.log
     rmi [--quiet]                        Removes the Docker images for <version>, forcing a repull
     config                               Generates a ${CHE_MINI_PRODUCT_NAME} config from vars; run on any start / restart
     add-node                             Adds a physical node to serve workspaces intto the ${CHE_MINI_PRODUCT_NAME} cluster
     remove-node <ip>                     Removes the physical node from the ${CHE_MINI_PRODUCT_NAME} cluster
     upgrade                              Upgrades Codenvy from one version to another with migrations and backups
     download [--pull|--force|--offline]  Pulls Docker images for the current Codenvy version
-    backup [--quiet|--skip-data] Backups ${CHE_MINI_PRODUCT_NAME} configuration and data to /codenvy/backup volume mount
+    backup [--quiet | --skip-data]           Backups ${CHE_MINI_PRODUCT_NAME} configuration and data to /codenvy/backup volume mount
     restore [--quiet]                    Restores ${CHE_MINI_PRODUCT_NAME} configuration and data from /codenvy/backup mount
     offline                              Saves ${CHE_MINI_PRODUCT_NAME} Docker images into TAR files for offline install
-    info [ --all                         Run all debugging tests
-           --debug                       Displays system information
-           --network ]                   Test connectivity between ${CHE_MINI_PRODUCT_NAME} sub-systems
+    info                                 Displays info about ${CHE_MINI_PRODUCT_NAME} and the CLI 
+         [ --all                             Run all debugging tests
+           --debug                           Displays system information
+           --network]                        Test connectivity between ${CHE_MINI_PRODUCT_NAME} sub-systems
+    ssh <wksp-name> [machine-name]       SSH to a workspace if SSH agent enabled
+    mount <wksp-name>                    Synchronize workspace with current working directory
+    action <action-name> [--help]        Start action on ${CHE_MINI_PRODUCT_NAME} instance
+    compile <mvn-command>                SDK - Builds Che source code or modules
+    test <test-name> [--help]            Start test on ${CHE_MINI_PRODUCT_NAME} instance
 
 Variables:
     CODENVY_HOST                         IP address or hostname where ${CHE_MINI_PRODUCT_NAME} will serve its users
@@ -282,6 +284,8 @@ check_mounts() {
   BACKUP_MOUNT=$(get_container_backup_folder)
   REPO_MOUNT=$(get_container_repo_folder)
   CLI_MOUNT=$(get_container_cli_folder)
+  SYNC_MOUNT=$(get_container_sync_folder)
+  UNISON_PROFILE_MOUNT=$(get_container_unison_folder)
    
   TRIAD=""
   if [[ "${CONFIG_MOUNT}" != "not set" ]] && \
@@ -371,7 +375,7 @@ check_mounts() {
 }
 
 check_host_volume_mount() {
-  echo 'test' > /codenvy/test >> "${LOGS}" 2>&1
+  echo 'test' > /codenvy/test
   
   if [[ ! -f /codenvy/test ]]; then
     error "Docker installed, but unable to write files to your host."
@@ -430,6 +434,18 @@ get_container_repo_folder() {
 get_container_cli_folder() {
   THIS_CONTAINER_ID=$(get_this_container_id)
   FOLDER=$(get_container_host_bind_folder ":/cli" $THIS_CONTAINER_ID)
+  echo "${FOLDER:=not set}"
+}
+
+get_container_sync_folder() {
+  THIS_CONTAINER_ID=$(get_this_container_id)
+  FOLDER=$(get_container_host_bind_folder ":/sync" $THIS_CONTAINER_ID)
+  echo "${FOLDER:=not set}"
+}
+
+get_container_unison_folder() {
+  THIS_CONTAINER_ID=$(get_this_container_id)
+  FOLDER=$(get_container_host_bind_folder ":/unison" $THIS_CONTAINER_ID)
   echo "${FOLDER:=not set}"
 }
 
@@ -523,13 +539,17 @@ init() {
   # Only initialize after mounts have been established so we can write cli.log out to a mount folder
   init_logging "$@"
 
+  SCRIPTS_CONTAINER_SOURCE_DIR=""
   if [[ "${CODENVY_DEVELOPMENT_MODE}" = "on" ]]; then
-     # Use the CLI that is inside the repository.  
-     source /repo/dockerfiles/cli/cli.sh
+     # Use the CLI that is inside the repository.
+     SCRIPTS_CONTAINER_SOURCE_DIR="/repo/dockerfiles/cli"  
   else
      # Use the CLI that is inside the container.  
-    source /scripts/cli.sh
+     SCRIPTS_CONTAINER_SOURCE_DIR="/scripts"  
   fi
+
+  # Primary source directory
+  source "${SCRIPTS_CONTAINER_SOURCE_DIR}"/cli.sh
 }
 
 # See: https://sipb.mit.edu/doc/safe-shell/
@@ -543,4 +563,3 @@ init "$@"
 info "cli" "Loading cli..."
 cli_init "$@"
 cli_parse "$@"
-cli_cli "$@"
