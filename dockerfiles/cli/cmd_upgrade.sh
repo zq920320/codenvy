@@ -13,7 +13,7 @@ cmd_upgrade() {
   debug $FUNCNAME
 
   if [ $# -eq 0 ]; then
-    info "upgrade" "No upgrade target provided. Run '${CHE_MINI_PRODUCT_NAME} version' for a list of upgradeable versions."
+    info "upgrade" "Missing version to upgrade to - rerun with 'upgrade <version>'."
     return 2;
   fi
 

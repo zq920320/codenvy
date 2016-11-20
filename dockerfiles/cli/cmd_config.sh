@@ -24,11 +24,13 @@ cmd_config() {
   # If the CODENVY_VERSION set by an environment variable does not match the value of
   # the codenvy.ver file of the installed instance, then do not proceed as there is a
   # confusion between what the user has set and what the instance expects.
-  INSTALLED_VERSION=$(get_installed_version)
-  if [[ $CODENVY_VERSION != $INSTALLED_VERSION ]]; then
-    info "config" "CODENVY_VERSION=$CODENVY_VERSION does not match ${CODENVY_ENVIRONMENT_FILE}=$INSTALLED_VERSION. Aborting."
+  compare_cli_version_to_image_version
+
+  exit
+  if [[ $CODENVY_IMAGE_VERSION != $INSTALLED_VERSION ]]; then
+    info "config" "${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION does not match installed version ($INSTALLED_VERSION)."
     info "config" "This happens if the <version> of your Docker image is different from ${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}"
-    return 1
+    return 2
   fi
 
   if [ -z ${IMAGE_PUPPET+x} ]; then

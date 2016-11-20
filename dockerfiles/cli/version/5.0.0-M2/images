@@ -1,4 +1,4 @@
-IMAGE_SOCAT=codenvy/socat
+IMAGE_SOCAT=codenvy/socat:1.7.3.1
 IMAGE_HAPROXY=codenvy/haproxy:1.5.18
 IMAGE_PUPPET=codenvy/puppet
 IMAGE_NGINX=nginx:1.10-alpine

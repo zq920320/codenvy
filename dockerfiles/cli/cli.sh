@@ -549,6 +549,33 @@ get_installed_installdate() {
   fi
 }
 
+compare_cli_version_to_image_version() {
+  INSTALLED_VERSION=$(get_installed_version)
+  IMAGE_VERSION=$CODENVY_IMAGE_VERSION
+
+  if [[ "$INSTALLED_VERSION" = "$IMAGE_VERSION" ]]; then
+    return
+  elif [[ "$INSTALLED_VERSION" = "nightly" ]] || 
+       [[ "IMAGE_VERSION" = "nightly" ]]; then
+    echo "nightly something"
+  elif less_than $INSTALLED_VERSION $IMAGE_VERSION; then
+    echo "installed less than cli version"
+  else
+    echo "cli version less than installed version"
+  fi
+}
+
+less_than() {
+  for (( i=0; i<${#1}; i++ )); do
+    if [[ ${1:$i:1} != ${2:$i:1} ]]; then
+      if [ ${1:$i:1} -lt ${2:$i:1} ]; then
+        return 0
+      fi
+    fi 
+  done
+  return 1
+}
+
 # Usage:
 #   confirm_operation <Warning message> [--force|--no-force]
 confirm_operation() {
