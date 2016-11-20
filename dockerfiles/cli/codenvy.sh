@@ -262,27 +262,19 @@ check_docker() {
   fi
 
   # Detect version so that we can provide better error warnings
-  DEFAULT_CODENVY_VERSION="latest"
+  DEFAULT_CODENVY_VERSION=$(cat "/version/latest.ver")
   CODENVY_IMAGE_NAME=$(docker inspect --format='{{.Config.Image}}' $(get_this_container_id))
   CODENVY_IMAGE_VERSION=$(echo "${CODENVY_IMAGE_NAME}" | cut -d : -f2 -s)
 
-  if [ "${CODENVY_IMAGE_VERSION}" = "" ]; then
+  if [[ "${CODENVY_IMAGE_VERSION}" = "" ]] ||
+     [[ "${CODENVY_IMAGE_VERSION}" = "latest" ]]; then
+     warning "You are using CLI image version 'latest' which is set to '$DEFAULT_CODENVY_VERSION'."
     CODENVY_IMAGE_VERSION=$DEFAULT_CODENVY_VERSION
   else
     CODENVY_IMAGE_VERSION=$CODENVY_IMAGE_VERSION
   fi
 
-  # If user uses :latest tag, then inspect the container internally to determine
-  # which tagged version this is.
-  if [ "${CODENVY_IMAGE_VERSION}" = "latest" ]; then
-    CODENVY_VERSION=$(cat "/version/latest.ver")
-  else
-    CODENVY_VERSION=$CODENVY_IMAGE_VERSION
-  fi
-
-  # CODENVY_IMAGE_VERSION == value set as tag on image
-  # CODENVY_VERSION == translated value of version (ie, latest = 5.0.0-M7)
-  # get_installed_version() -- pulls from /codenvy/config/*.ver file
+  CODENVY_VERSION=$CODENVY_IMAGE_VERSION
 }
   
 check_mounts() {
@@ -397,6 +389,54 @@ check_host_volume_mount() {
   fi
 
   rm -rf /codenvy/test 
+}
+
+get_mount_path() {
+  debug $FUNCNAME
+  FULL_PATH=$(get_full_path "${1}")
+  POSIX_PATH=$(convert_windows_to_posix "${FULL_PATH}")
+  CLEAN_PATH=$(get_clean_path "${POSIX_PATH}")
+  echo $CLEAN_PATH
+}
+
+get_full_path() {
+  debug $FUNCNAME
+  # create full directory path
+  echo "$(cd "$(dirname "${1}")"; pwd)/$(basename "$1")"
+}
+
+convert_windows_to_posix() {
+  debug $FUNCNAME
+  echo "/"$(echo "$1" | sed 's/\\/\//g' | sed 's/://')
+}
+
+convert_posix_to_windows() {
+  debug $FUNCNAME
+  # Remove leading slash
+  VALUE="${1:1}"
+
+  # Get first character (drive letter)
+  VALUE2="${VALUE:0:1}"
+
+  # Replace / with \
+  VALUE3=$(echo ${VALUE} | tr '/' '\\' | sed 's/\\/\\\\/g')
+
+  # Replace c\ with c:\ for drive letter
+  echo "$VALUE3" | sed "s/./$VALUE2:/1"
+}
+
+get_clean_path() {
+  debug $FUNCNAME
+  INPUT_PATH=$1
+  # \some\path => /some/path
+  OUTPUT_PATH=$(echo ${INPUT_PATH} | tr '\\' '/')
+  # /somepath/ => /somepath
+  OUTPUT_PATH=${OUTPUT_PATH%/}
+  # /some//path => /some/path
+  OUTPUT_PATH=$(echo ${OUTPUT_PATH} | tr -s '/')
+  # "/some/path" => /some/path
+  OUTPUT_PATH=${OUTPUT_PATH//\"}
+  echo ${OUTPUT_PATH}
 }
 
 init_logging() {

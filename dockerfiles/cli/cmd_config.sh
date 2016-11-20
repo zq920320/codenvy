@@ -42,7 +42,7 @@ cmd_config() {
         rm -rf "${CODENVY_CONTAINER_INSTANCE}/dev"
     fi
     # copy codenvy development tomcat to ${CODENVY_INSTANCE} folder
-    cp -r "$(get_mount_path $(echo $CODENVY_CONTAINER_DEVELOPMENT_REPO/$DEFAULT_CODENVY_DEVELOPMENT_TOMCAT-*/))" \
+    cp -r "$(echo $CODENVY_CONTAINER_DEVELOPMENT_REPO/$DEFAULT_CODENVY_DEVELOPMENT_TOMCAT-*/)" \
         "${CODENVY_CONTAINER_INSTANCE}/dev"
   fi
 

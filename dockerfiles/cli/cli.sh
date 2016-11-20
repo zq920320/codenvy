@@ -168,71 +168,6 @@ cli_parse () {
   eval $COMMAND "$@"
 }
 
-get_mount_path() {
-  debug $FUNCNAME
-  FULL_PATH=$(get_full_path "${1}")
-  POSIX_PATH=$(convert_windows_to_posix "${FULL_PATH}")
-  CLEAN_PATH=$(get_clean_path "${POSIX_PATH}")
-  echo $CLEAN_PATH
-}
-
-get_full_path() {
-  debug $FUNCNAME
-  # create full directory path
-  echo "$(cd "$(dirname "${1}")"; pwd)/$(basename "$1")"
-}
-
-convert_windows_to_posix() {
-  debug $FUNCNAME
-  echo "/"$(echo "$1" | sed 's/\\/\//g' | sed 's/://')
-}
-
-convert_posix_to_windows() {
-  debug $FUNCNAME
-  # Remove leading slash
-  VALUE="${1:1}"
-
-  # Get first character (drive letter)
-  VALUE2="${VALUE:0:1}"
-
-  # Replace / with \
-  VALUE3=$(echo ${VALUE} | tr '/' '\\' | sed 's/\\/\\\\/g')
-
-  # Replace c\ with c:\ for drive letter
-  echo "$VALUE3" | sed "s/./$VALUE2:/1"
-}
-
-get_clean_path() {
-  debug $FUNCNAME
-  INPUT_PATH=$1
-  # \some\path => /some/path
-  OUTPUT_PATH=$(echo ${INPUT_PATH} | tr '\\' '/')
-  # /somepath/ => /somepath
-  OUTPUT_PATH=${OUTPUT_PATH%/}
-  # /some//path => /some/path
-  OUTPUT_PATH=$(echo ${OUTPUT_PATH} | tr -s '/')
-  # "/some/path" => /some/path
-  OUTPUT_PATH=${OUTPUT_PATH//\"}
-  echo ${OUTPUT_PATH}
-}
-
-get_docker_host_ip() {
-  debug $FUNCNAME
-#  case $(get_docker_install_type) in
-#   boot2docker)
-#     NETWORK_IF="eth1"
-#   ;;
-#   native)
-#     NETWORK_IF="docker0"
-#   ;;
-#   *)
-#     NETWORK_IF="eth0"
-#   ;;
-#  esac
-
-  echo $GLOBAL_HOST_IP
-}
-
 get_docker_install_type() {
   debug $FUNCNAME
   if is_boot2docker; then
@@ -246,10 +181,9 @@ get_docker_install_type() {
   fi
 }
 
-
 has_docker_for_windows_client(){
   debug $FUNCNAME
-  if [[ $(get_docker_host_ip) = "10.0.75.2" ]]; then
+  if [[ "${GLOBAL_HOST_IP}" = "10.0.75.2" ]]; then
     return 0
   else
     return 1
@@ -344,10 +278,7 @@ update_image() {
 }
 
 port_open(){
-
-#  log "netstat -an | grep 0.0.0.0:$1 >> \"${LOGS}\" 2>&1"
-#  netstat -an | grep 0.0.0.0:$1 >> "${LOGS}" 2>&1
-#  docker run --rm --net host alpine netstat -an | grep ${CODENVY_HOST}:$1 >> "${LOGS}" 2>&1
+  debug $FUNCNAME
 
   docker run -d -p $1:$1 --name fake alpine:3.4 httpd -f -p $1 -h /etc/ > /dev/null 2>&1
   NETSTAT_EXIT=$?
@@ -659,7 +590,7 @@ verify_version_compatibility() {
         error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is newer than your configured version '$ENV_FILE_VERSION'."
         error ""
         error "Run '${CHE_MINI_PRODUCT_NAME} upgrade' to migrate your old version to '$CODENVY_IMAGE_VERSION."
-        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to have the configured version match your CLI version '$CODENVY_IMAGE_VERSION'."
+        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to match your configured version with your CLI version '$CODENVY_IMAGE_VERSION'."
         return 2
       ;;
       "cli-less-envfile")
@@ -693,7 +624,7 @@ verify_version_compatibility() {
         error "Your configured version '$ENV_FILE_VERSION' is newer than your installed version '$INSTALLED_VERSION'."
         error ""
         error "Run '${CHE_MINI_PRODUCT_NAME} upgrade' to migrate your installation to '$ENV_FILE_VERSION."
-        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to have the configured version match your installed version '$INSTALLED_VERSION'."
+        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to match your configured version with your installed version '$INSTALLED_VERSION'."
         return 2
       ;;
     esac
@@ -718,19 +649,5 @@ confirm_operation() {
     else
       return 0;
     fi
-  fi
-}
-
-# return date in format which can be used as a unique file or dir name
-# example 2016-10-31-1477931458
-get_current_date() {
-    date +'%Y-%m-%d-%s'
-}
-
-require_license() {
-  if [[ "${CODENVY_LICENSE}" = "true" ]]; then
-    return 0
-  else
-    return 1
   fi
 }

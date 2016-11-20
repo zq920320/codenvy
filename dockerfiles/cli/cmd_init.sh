@@ -105,3 +105,11 @@ cmd_init() {
 
   rm -rf "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}".bak > /dev/null 2>&1
 }
+
+require_license() {
+  if [[ "${CODENVY_LICENSE}" = "true" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}

@@ -67,3 +67,10 @@ cmd_backup() {
   info "backup" "Configuration data saved in ${CODENVY_HOST_BACKUP}/${CODENVY_CONFIG_BACKUP_FILE_NAME}"
   info "backup" "Instance data saved in ${CODENVY_HOST_BACKUP}/${CODENVY_INSTANCE_BACKUP_FILE_NAME}"
 }
+
+
+# return date in format which can be used as a unique file or dir name
+# example 2016-10-31-1477931458
+get_current_date() {
+    date +'%Y-%m-%d-%s'
+}
