@@ -12,8 +12,6 @@
 cmd_upgrade() {
   debug $FUNCNAME
 
-  verify_version_upgrade_compatibility
-  
   CODENVY_IMAGE_VERSION=$(get_image_version)
   ENV_FILE_VERSION=$(get_envfile_version)
 
@@ -45,12 +43,8 @@ cmd_upgrade() {
   info "upgrade" "Preparing backup..."
   cmd_backup
 
-  ## 1. Take the image we are upgrading to and update the /config/*.env file to update CODENVY_VERSION
-  ## 2. Then do a reconfig by starting the system.
-  ## Try start
-  if ! cmd_start; then
-    info "upgrade" "Startup failed, restoring latest backup..."
-    cmd_restore;
-  fi
+  info "upgrade" "Reinitializing the system with your configuration..."
+  cmd_reinit --accept-license --reinit
 
+  cmd_start
 }

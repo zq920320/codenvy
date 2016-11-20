@@ -6,6 +6,7 @@ With Docker 1.11+ on Windows, Mac, or Linux:
 ```
 $ docker run codenvy/cli start
 ```
+This command will give you additional instructions on how to run the Codenvy CLI while setting your hostname, configuring volume mounts, and testing your Docker setup.
 
 ### TOC
 - [Beta](#beta)
@@ -527,6 +528,8 @@ You can control the nature of how Codenvy downloads these images with command li
 | `--offline` | Loads Docker images from `backup/*.tar` folder during a pre-boot mode of the CLI. Used if you are performing an installation or start while disconnected from the Internet. |
 
 The initialization of a Codenvy installation requires the acceptance of our default Fair Source 3 license agreement, which allows for some access to the source code and [usage for up to three people](http://codenvy.com/legal). You can auto-accept the license agreement without prompting for a response for silent installation by passing the `--accept-license` command line option.
+
+You can reinstall Codenvy on a folder that is already initialized and preserve your `/codenvy/codenvy.env` values by passing the `--reinit` flag.
 
 ### `codenvy config`
 Generates a Codenvy instance configuration using the templates and environment variables stored in `/codenvy/config` and places the configuration in `/codenvy/instance`. Uses puppet to generate the configuration files for Codenvy, haproxy, swarm, socat, nginx, and postgres which are mounted when Codenvy services are started. This command is executed on every `start` or `restart`.

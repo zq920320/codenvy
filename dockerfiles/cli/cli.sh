@@ -71,21 +71,12 @@ cli_init() {
     fi
   fi
 
-  ## Two levels of checks
-  ## First, compare the CLI image version to what the admin has configured in /config/.env file
-  ##      - If they match, good
-  ##      - If they don't match and one is nightly, fail
-  ##      - If they don't match, then if CLI is older fail with message to get proper CLI
-  ##      - If they don't match, then if CLLI is newer fail with message to run upgrade first
-  ## Second, compare proposed .env version to already installed version
-  ##      - If they match, then continue
-  ##      - If they do not match, then if .env is newer, then fail with message to run upgrade first
-  ##      - If they do not match, then if .env is older, then fail with message that this is not good 
-
   # Do not perform a version compatibility check if running upgrade command.
   # The upgrade command has its own internal checks for version compatibility.
   if [ $1 != "upgrade" ]; then 
     verify_version_compatibility
+  else
+    verify_version_upgrade_compatibility
   fi
 }
 
