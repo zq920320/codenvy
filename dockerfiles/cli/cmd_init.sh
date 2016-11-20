@@ -35,6 +35,10 @@ cmd_init() {
     fi
   fi
 
+  if [[ "${CODENVY_IMAGE_VERSION}" = "nightly" ]]; then
+    warning "($CHE_MINI_PRODUCT_NAME init): 'nightly' installations cannot be upgraded to non-nightly versions"
+  fi
+
   cmd_download $FORCE_UPDATE
 
   if [ -z ${IMAGE_INIT+x} ]; then

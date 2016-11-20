@@ -626,6 +626,7 @@ verify_version_upgrade_compatibility() {
         error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' or configured version '$ENV_FILE_VERSION' is nightly."
         error ""
         error "You may not '${CHE_MINI_PRODUCT_NAME} upgrade' from 'nightly' to a non-nightly version."
+        error "You can 'docker pull ${CHE_MINI_PRODUCT_NAME}/cli:nightly' to get a newer nightly version."
         return 2
       ;;
       "envfile-less-cli")
