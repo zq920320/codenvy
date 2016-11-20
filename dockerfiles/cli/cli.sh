@@ -44,7 +44,7 @@ cli_init() {
     info "  docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock"
     info "                      -v <local-path>:/codenvy"
     info "                      -e CODENVY_HOST=<your-ip-or-host>"
-    info "                         codenvy/cli:${CODENVY_VERSION} $@"
+    info "                         codenvy/cli:${CODENVY_IMAGE_VERSION} $@"
     return 2;
   fi
 
@@ -70,6 +70,18 @@ cli_init() {
       warning "Boot2docker for Windows - CODENVY_CONFIG set to $CODENVY_HOST_CONFIG"
     fi
   fi
+
+  ## Two levels of checks
+  ## First, compare the CLI image version to what the admin has configured in /config/.env file
+  ##      - If they match, good
+  ##      - If they don't match and one is nightly, fail
+  ##      - If they don't match, then if CLI is older fail with message to get proper CLI
+  ##      - If they don't match, then if CLLI is newer fail with message to run upgrade first
+  ## Second, compare proposed .env version to already installed version
+  ##      - If they match, then continue
+  ##      - If they do not match, then if .env is newer, then fail with message to run upgrade first
+  ##      - If they do not match, then if .env is older, then fail with message that this is not good 
+  verify_version_compatibility
 }
 
 init_host_ip() {
@@ -435,13 +447,21 @@ check_if_booted() {
   fi
 }
 
-#TODO - is_initialized will return as initialized with empty directories
 is_initialized() {
   debug $FUNCNAME
   if [[ -d "${CODENVY_CONTAINER_CONFIG_MANIFESTS_FOLDER}" ]] && \
      [[ -d "${CODENVY_CONTAINER_CONFIG_MODULES_FOLDER}" ]] && \
-     [[ -f "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" ]] && \
-     [[ -f "${CODENVY_CONTAINER_CONFIG}/${CODENVY_VERSION_FILE}" ]]; then
+     [[ -f "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" ]]; then
+    return 0
+  else
+    return 1
+  fi
+}
+
+is_configed() {
+  debug $FUNCNAME
+  if [[ -d "${CODENVY_CONTAINER_INSTANCE}" ]] && \
+     [[ -f "${CODENVY_CONTAINER_INSTANCE}"/$CODENVY_VERSION_FILE ]]; then
     return 0
   else
     return 1
@@ -534,75 +554,23 @@ print_version_manifest() {
 }
 
 get_installed_version() {
+  if ! is_configed; then
+    echo "<not-configed>"
+  else
+    cat "${CODENVY_CONTAINER_INSTANCE}"/$CODENVY_VERSION_FILE
+  fi
+}
+
+get_envfile_version() {
   if ! is_initialized; then
-    echo "<not-installed>"
+    echo "<not-initialized>"
   else
-    cat "${CODENVY_CONTAINER_CONFIG}"/$CODENVY_VERSION_FILE
+    echo $(grep CODENVY_VERSION= "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" | cut -f2 -d"=")
   fi
 }
 
-get_installed_installdate() {
-  if ! is_initialized; then
-    echo "<not-installed>"
-  else
-    cat "${CODENVY_CONFIG}"/$CODENVY_VERSION_FILE
-  fi
-}
-
-verify_version_compatibility() {
-  # If the IMAGE_VERSION of the codenvy/cli:<version> does not match the installed version
-  # specified by the codenvy.ver file of the installed instance, then do not proceed as there is a
-  # confusion between what the user has set and what the instance expects.
-  COMPARE_VERSIONS=$(compare_cli_version_to_image_version)
-  INSTALLED_VERSION=$(get_installed_version)
-  case "${COMPARE_VERSIONS}" in
-    "match") 
-    ;;
-    "nightly")
-      error ""
-      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' does not match your installed version '$INSTALLED_VERSION'."
-      error ""
-      error "The 'nightly' CLI is only compatible with 'nightly' installed versions."
-      error "You may not 'codenvy upgrade' from 'nightly' to a tagged version."
-      error ""
-      error "Run 'docker pull ${CHE_MINI_PRODUCT_NAME}/cli:<version>' to install a tagged version."
-      return 2
-    ;;
-    "install-less-cli")
-      error ""
-      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is newer than your installed version '$INSTALLED_VERSION'."
-      error ""
-      error "Run 'codenvy upgrade' to migrate your old version to '${CODENVY_IMAGE_VERSION}."
-      return 2
-    ;;
-    "cli-less-install")
-      error ""
-      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is older than your installed version '$INSTALLED_VERSION'."
-      error ""
-      error "You cannot use an older CLI with a newer install."
-      error ""
-      error "Run 'docker pull ${CHE_MINI_PRODUCT_NAME}/cli:$INSTALLED_VERSION' to retrieve a CLI that matches your install."
-      return 2
-    ;;
-  esac
-}
-
-compare_cli_version_to_image_version() {
-  INSTALLED_VERSION=$(get_installed_version)
-  IMAGE_VERSION=$CODENVY_IMAGE_VERSION
-
-  if [[ "$INSTALLED_VERSION" = "$IMAGE_VERSION" ]]; then
-    echo "match"
-  elif [ "$INSTALLED_VERSION" = "nightly" ] || 
-       [ "$IMAGE_VERSION" = "nightly" ]; then
-    echo "nightly"
-  elif less_than $INSTALLED_VERSION $IMAGE_VERSION; then
-    echo "install-less-cli"
-    #echo "installed less than cli version"
-  else
-    echo "cli-less-install"
-    #echo "cli version less than installed version"
-  fi
+get_image_version() {
+  echo "$CODENVY_IMAGE_VERSION"
 }
 
 less_than() {
@@ -614,6 +582,122 @@ less_than() {
     fi 
   done
   return 1
+}
+
+compare_cli_version_to_envfile_version() {
+  IMAGE_VERSION=$(get_image_version)
+  ENV_FILE_VERSION=$(get_envfile_version)
+ 
+
+  ## First, compare the CLI image version to what the admin has configured in /config/.env file
+  ##      - If they match, good
+  ##      - If they don't match and one is nightly, fail
+  ##      - If they don't match, then if CLI is older fail with message to get proper CLI
+  ##      - If they don't match, then if CLLI is newer fail with message to run upgrade first
+  if [[ "$ENV_FILE_VERSION" = "$IMAGE_VERSION" ]]; then
+    echo "match"
+  elif [ "$ENV_FILE_VERSION" = "nightly" ] || 
+       [ "$IMAGE_VERSION" = "nightly" ]; then
+    echo "nightly"
+  elif less_than $ENV_FILE_VERSION $IMAGE_VERSION; then
+    echo "envfile-less-cli"
+  else
+    echo "cli-less-envfile"
+  fi
+}
+
+compare_installed_version_to_envfile_version() {
+  ENV_FILE_VERSION=$(get_envfile_version)
+  INSTALLED_VERSION=$(get_installed_version)
+
+  ## Second, compare proposed .env version to already installed version
+  ##      - If they match, then continue
+  ##      - If they do not match, then if .env is newer, then fail with message to run upgrade first
+  ##      - If they do not match, then if .env is older, then fail with message that this is not good 
+  if [[ "$ENV_FILE_VERSION" = "$INSTALLED_VERSION" ]]; then
+    echo "match"
+  elif less_than $ENV_FILE_VERSION $INSTALLED_VERSION; then
+    echo "envfile-less-install"
+  else
+    echo "install-less-envfile"
+  fi
+}
+
+verify_version_compatibility() {
+  ## Two levels of checks
+  ## First, compare the CLI image version to what the admin has configured in /config/.env file
+  ##      - If they match, good
+  ##      - If they don't match and one is nightly, fail
+  ##      - If they don't match, then if CLI is older fail with message to get proper CLI
+  ##      - If they don't match, then if CLLI is newer fail with message to run upgrade first
+  ## Second, compare proposed .env version to already installed version
+  ##      - If they match, then continue
+  ##      - If they do not match, then if .env is newer, then fail with message to run upgrade first
+  ##      - If they do not match, then if .env is older, then fail with message that this is not good 
+
+  CODENVY_IMAGE_VERSION=$(get_image_version)
+
+  if is_initialized; then
+    COMPARE_CLI_ENV=$(compare_cli_version_to_envfile_version)
+    ENV_FILE_VERSION=$(get_envfile_version)
+
+    case "${COMPARE_CLI_ENV}" in
+      "match") 
+      ;;
+      "nightly")
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' does not match your configured version '$ENV_FILE_VERSION'."
+        error ""
+        error "The 'nightly' CLI is only compatible with 'nightly' configured versions."
+        error "You may not '${CHE_MINI_PRODUCT_NAME} upgrade' from 'nightly' to a tagged version."
+        error ""
+        error "Run the CLI as '${CHE_MINI_PRODUCT_NAME}/cli:<version>' to install a tagged version."
+        return 2
+      ;;
+      "envfile-less-cli")
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is newer than your configured version '$ENV_FILE_VERSION'."
+        error ""
+        error "Run '${CHE_MINI_PRODUCT_NAME} upgrade' to migrate your old version to '$CODENVY_IMAGE_VERSION."
+        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to have the configured version match your CLI version '$CODENVY_IMAGE_VERSION'."
+        return 2
+      ;;
+      "cli-less-envfile")
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is older than your configured version '$ENV_FILE_VERSION'."
+        error ""
+        error "You cannot use an older CLI with a newer configuration."
+        error ""
+        error "Run the CLI with '${CHE_MINI_PRODUCT_NAME}/cli:$ENV_FILE_VERSION' to match your configuration."
+        return 2
+      ;;
+    esac
+  fi
+
+  # Scenario #2 should only be checked if the system is already configured
+  if is_configed; then
+    COMPARE_INSTALL_ENV=$(compare_installed_version_to_envfile_version)
+    INSTALLED_VERSION=$(get_installed_version)
+    case "${COMPARE_INSTALL_ENV}" in
+      "match") 
+      ;;
+      "envfile-less-install")
+        error ""
+        error "Your configured version '$ENV_FILE_VERSION' is older than your installed version '$INSTALLED_VERSION'."
+        error ""
+        error "You cannot configure $CHE_MINI_PRODUCT_NAME to an older version - downgrades not supported."
+        return 2
+      ;;
+      "install-less-envfile")
+        error ""
+        error "Your configured version '$ENV_FILE_VERSION' is newer than your installed version '$INSTALLED_VERSION'."
+        error ""
+        error "Run '${CHE_MINI_PRODUCT_NAME} upgrade' to migrate your installation to '$ENV_FILE_VERSION."
+        error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to have the configured version match your installed version '$INSTALLED_VERSION'."
+        return 2
+      ;;
+    esac
+  fi
 }
 
 # Usage:
@@ -635,46 +719,6 @@ confirm_operation() {
       return 0;
     fi
   fi
-}
-
-# Runs puppet image to generate codenvy configuration
-generate_configuration_with_puppet() {
-  debug $FUNCNAME
-
-  if is_docker_for_windows; then
-    REGISTRY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/registry/registry.env")
-    POSTGRES_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env")
-    CODENVY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env")
-  else
-    REGISTRY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/registry/registry.env"
-    POSTGRES_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env"
-    CODENVY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env"
-  fi
-  # Note - bug in docker requires relative path for env, not absolute
-  log "docker_run -it --env-file=\"${REFERENCE_CONTAINER_ENVIRONMENT_FILE}\" \
-                  --env-file=/version/$CODENVY_VERSION/images \
-                  -v \"${CODENVY_HOST_INSTANCE}\":/opt/codenvy:rw \
-                  -v \"${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}\":/etc/puppet/manifests:ro \
-                  -v \"${CODENVY_HOST_CONFIG_MODULES_FOLDER}\":/etc/puppet/modules:ro \
-                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
-                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
-                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
-                      $IMAGE_PUPPET \
-                          apply --modulepath \
-                                /etc/puppet/modules/ \
-                                /etc/puppet/manifests/codenvy.pp --show_diff \"$@\""
-  docker_run -it  --env-file="${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" \
-                  --env-file=/version/$CODENVY_VERSION/images \
-                  -v "${CODENVY_HOST_INSTANCE}":/opt/codenvy:rw \
-                  -v "${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}":/etc/puppet/manifests:ro \
-                  -v "${CODENVY_HOST_CONFIG_MODULES_FOLDER}":/etc/puppet/modules:ro \
-                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
-                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
-                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
-                      $IMAGE_PUPPET \
-                          apply --modulepath \
-                                /etc/puppet/modules/ \
-                                /etc/puppet/manifests/codenvy.pp --show_diff "$@"
 }
 
 # return date in format which can be used as a unique file or dir name

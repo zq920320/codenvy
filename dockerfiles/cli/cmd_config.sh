@@ -21,8 +21,6 @@ cmd_config() {
     cmd_download $FORCE_UPDATE
   fi
 
-  verify_version_compatibility
-  
   if [ -z ${IMAGE_PUPPET+x} ]; then
     get_image_manifest $CODENVY_VERSION
   fi
@@ -74,4 +72,48 @@ cmd_config() {
     log "docker volume create --name=codenvy-postgresql-volume >> \"${LOGS}\""
     docker volume create --name=codenvy-postgresql-volume >> "${LOGS}"
   fi
+
+  # Write the installed version to the *.ver file into the instance folder
+  echo "$CODENVY_VERSION" > "${CODENVY_CONTAINER_INSTANCE}/${CODENVY_VERSION_FILE}"
+
+}
+
+# Runs puppet image to generate codenvy configuration
+generate_configuration_with_puppet() {
+  debug $FUNCNAME
+
+  if is_docker_for_windows; then
+    REGISTRY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/registry/registry.env")
+    POSTGRES_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env")
+    CODENVY_ENV_FILE=$(convert_posix_to_windows "${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env")
+  else
+    REGISTRY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/registry/registry.env"
+    POSTGRES_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/postgres/postgres.env"
+    CODENVY_ENV_FILE="${CODENVY_HOST_INSTANCE}/config/codenvy/$CHE_MINI_PRODUCT_NAME.env"
+  fi
+  # Note - bug in docker requires relative path for env, not absolute
+  log "docker_run -it --env-file=\"${REFERENCE_CONTAINER_ENVIRONMENT_FILE}\" \
+                  --env-file=/version/$CODENVY_VERSION/images \
+                  -v \"${CODENVY_HOST_INSTANCE}\":/opt/codenvy:rw \
+                  -v \"${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}\":/etc/puppet/manifests:ro \
+                  -v \"${CODENVY_HOST_CONFIG_MODULES_FOLDER}\":/etc/puppet/modules:ro \
+                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
+                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
+                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
+                      $IMAGE_PUPPET \
+                          apply --modulepath \
+                                /etc/puppet/modules/ \
+                                /etc/puppet/manifests/codenvy.pp --show_diff \"$@\""
+  docker_run -it  --env-file="${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" \
+                  --env-file=/version/$CODENVY_VERSION/images \
+                  -v "${CODENVY_HOST_INSTANCE}":/opt/codenvy:rw \
+                  -v "${CODENVY_HOST_CONFIG_MANIFESTS_FOLDER}":/etc/puppet/manifests:ro \
+                  -v "${CODENVY_HOST_CONFIG_MODULES_FOLDER}":/etc/puppet/modules:ro \
+                  -e "REGISTRY_ENV_FILE=${REGISTRY_ENV_FILE}" \
+                  -e "POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}" \
+                  -e "CODENVY_ENV_FILE=${CODENVY_ENV_FILE}" \
+                      $IMAGE_PUPPET \
+                          apply --modulepath \
+                                /etc/puppet/modules/ \
+                                /etc/puppet/manifests/codenvy.pp --show_diff "$@"
 }

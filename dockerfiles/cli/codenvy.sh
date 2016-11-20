@@ -267,10 +267,22 @@ check_docker() {
   CODENVY_IMAGE_VERSION=$(echo "${CODENVY_IMAGE_NAME}" | cut -d : -f2 -s)
 
   if [ "${CODENVY_IMAGE_VERSION}" = "" ]; then
-    CODENVY_VERSION=$DEFAULT_CODENVY_VERSION
+    CODENVY_IMAGE_VERSION=$DEFAULT_CODENVY_VERSION
+  else
+    CODENVY_IMAGE_VERSION=$CODENVY_IMAGE_VERSION
+  fi
+
+  # If user uses :latest tag, then inspect the container internally to determine
+  # which tagged version this is.
+  if [ "${CODENVY_IMAGE_VERSION}" = "latest" ]; then
+    CODENVY_VERSION=$(cat "/version/latest.ver")
   else
     CODENVY_VERSION=$CODENVY_IMAGE_VERSION
-  fi  
+  fi
+
+  # CODENVY_IMAGE_VERSION == value set as tag on image
+  # CODENVY_VERSION == translated value of version (ie, latest = 5.0.0-M7)
+  # get_installed_version() -- pulls from /codenvy/config/*.ver file
 }
   
 check_mounts() {

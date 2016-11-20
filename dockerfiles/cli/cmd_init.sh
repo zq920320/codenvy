@@ -104,7 +104,4 @@ cmd_init() {
   fi
 
   rm -rf "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}".bak > /dev/null 2>&1
-
-  # Write the Codenvy version to codenvy.ver
-  echo "$CODENVY_VERSION" > "${CODENVY_CONTAINER_CONFIG}/${CODENVY_VERSION_FILE}"
 }
