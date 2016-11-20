@@ -549,19 +549,59 @@ get_installed_installdate() {
   fi
 }
 
+verify_version_compatibility() {
+  # If the IMAGE_VERSION of the codenvy/cli:<version> does not match the installed version
+  # specified by the codenvy.ver file of the installed instance, then do not proceed as there is a
+  # confusion between what the user has set and what the instance expects.
+  COMPARE_VERSIONS=$(compare_cli_version_to_image_version)
+  INSTALLED_VERSION=$(get_installed_version)
+  case "${COMPARE_VERSIONS}" in
+    "match") 
+    ;;
+    "nightly")
+      error ""
+      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' does not match your installed version '$INSTALLED_VERSION'."
+      error ""
+      error "The 'nightly' CLI is only compatible with 'nightly' installed versions."
+      error "You may not 'codenvy upgrade' from 'nightly' to a tagged version."
+      error ""
+      error "Run 'docker pull ${CHE_MINI_PRODUCT_NAME}/cli:<version>' to install a tagged version."
+      return 2
+    ;;
+    "install-less-cli")
+      error ""
+      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is newer than your installed version '$INSTALLED_VERSION'."
+      error ""
+      error "Run 'codenvy upgrade' to migrate your old version to '${CODENVY_IMAGE_VERSION}."
+      return 2
+    ;;
+    "cli-less-install")
+      error ""
+      error "'${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is older than your installed version '$INSTALLED_VERSION'."
+      error ""
+      error "You cannot use an older CLI with a newer install."
+      error ""
+      error "Run 'docker pull ${CHE_MINI_PRODUCT_NAME}/cli:$INSTALLED_VERSION' to retrieve a CLI that matches your install."
+      return 2
+    ;;
+  esac
+}
+
 compare_cli_version_to_image_version() {
   INSTALLED_VERSION=$(get_installed_version)
   IMAGE_VERSION=$CODENVY_IMAGE_VERSION
 
   if [[ "$INSTALLED_VERSION" = "$IMAGE_VERSION" ]]; then
-    return
-  elif [[ "$INSTALLED_VERSION" = "nightly" ]] || 
-       [[ "IMAGE_VERSION" = "nightly" ]]; then
-    echo "nightly something"
+    echo "match"
+  elif [ "$INSTALLED_VERSION" = "nightly" ] || 
+       [ "$IMAGE_VERSION" = "nightly" ]; then
+    echo "nightly"
   elif less_than $INSTALLED_VERSION $IMAGE_VERSION; then
-    echo "installed less than cli version"
+    echo "install-less-cli"
+    #echo "installed less than cli version"
   else
-    echo "cli version less than installed version"
+    echo "cli-less-install"
+    #echo "cli version less than installed version"
   fi
 }
 

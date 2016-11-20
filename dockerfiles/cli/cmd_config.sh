@@ -21,18 +21,8 @@ cmd_config() {
     cmd_download $FORCE_UPDATE
   fi
 
-  # If the CODENVY_VERSION set by an environment variable does not match the value of
-  # the codenvy.ver file of the installed instance, then do not proceed as there is a
-  # confusion between what the user has set and what the instance expects.
-  compare_cli_version_to_image_version
-
-  exit
-  if [[ $CODENVY_IMAGE_VERSION != $INSTALLED_VERSION ]]; then
-    info "config" "${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION does not match installed version ($INSTALLED_VERSION)."
-    info "config" "This happens if the <version> of your Docker image is different from ${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}"
-    return 2
-  fi
-
+  verify_version_compatibility
+  
   if [ -z ${IMAGE_PUPPET+x} ]; then
     get_image_manifest $CODENVY_VERSION
   fi
