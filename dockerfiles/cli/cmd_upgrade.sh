@@ -12,22 +12,20 @@
 cmd_upgrade() {
   debug $FUNCNAME
 
-  if [ $# -eq 0 ]; then
-    info "upgrade" "Missing version to upgrade to - rerun with 'upgrade <version>'."
-    return 2;
-  fi
+  verify_version_upgrade_compatibility
+  
+  CODENVY_IMAGE_VERSION=$(get_image_version)
+  ENV_FILE_VERSION=$(get_envfile_version)
 
-  if ! can_upgrade $(get_installed_version) ${1}; then
-    info "upgrade" "Your current version $(get_installed_version) is not upgradeable to $1."
-    info "upgrade" "Run '${CHE_MINI_PRODUCT_NAME} version' to see your upgrade options."
-    return 2;
-  fi
+  # If we got here, this means:
+  #   image version > configured & installed version
+  #   configured version = installed version
+  # 
+  # We can now upgrade using the information contained in the CLI image
 
-  # If here, this version is validly upgradeable.  You can upgrade from
-  # $(get_installed_version) to $1
   ## Download version images
-  info "upgrade" "Downloading $1 images..."
-  get_image_manifest ${1}
+  info "upgrade" "Downloading $CHE_MINI_PRODUCT_NAME images for version $CODENVY_IMAGE_VERSION..."
+  get_image_manifest $CODENVY_IMAGE_VERSION
   SAVEIFS=$IFS
   IFS=$'\n'
   for SINGLE_IMAGE in ${IMAGE_LIST}; do
@@ -46,6 +44,9 @@ cmd_upgrade() {
   fi
   info "upgrade" "Preparing backup..."
   cmd_backup
+
+  ## 1. Take the image we are upgrading to and update the /config/*.env file to update CODENVY_VERSION
+  ## 2. Then do a reconfig by starting the system.
   ## Try start
   if ! cmd_start; then
     info "upgrade" "Startup failed, restoring latest backup..."

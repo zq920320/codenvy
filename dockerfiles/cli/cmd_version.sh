@@ -12,25 +12,26 @@
 cmd_version() {
   debug $FUNCNAME
 
-  error "!!! this information is experimental - upgrade not yet available !!!"
+  # Do not perform any logging in this method as it is runnable before the system is bootstrap
   echo ""
   text "$CHE_PRODUCT_NAME:\n"
-  text "  Version:      %s\n" $(get_installed_version)
-  text "  Installed:    %s\n" $(get_installed_installdate)
-
+  text "  CLI Version:             %s\n" $(get_image_version)
   if is_initialized; then
-    text "\n"
-    text "Upgrade Options:\n"
-    text "  INSTALLED VERSION        UPRADEABLE TO\n"
-    print_upgrade_manifest $(get_installed_version)
-  fi
-
-  text "\n"
-  text "Available:\n"
-  text "  VERSION                  CHANNEL           UPGRADEABLE FROM\n"
-  if is_initialized; then
-    print_version_manifest $(get_installed_version)
+    text "  Configured Version:      %s\n" $(get_envfile_version)
   else
-    print_version_manifest $CODENVY_VERSION
+    text "  Configured Version:      <not-configured>\n"
   fi
+  if is_configed; then
+    text "  Installed Version:       %s\n" $(get_installed_version)
+  else
+    text "  Installed Version:       <not-installed>\n"
+  fi
+
+  # TODO: Implement way to generate latest version information.
+  # 1. We could do a docker pull ${CHE_MINI_PRODUCT_NAME}/cli:latest and then inspect file inside.
+  #    But this would require the product in non-offline mode and you'd have to run the container
+  #    to find the value.
+  #
+  # 2. We could query DockerHub for a list of known tags. However, this requires active authentication
+  #    to DockerHub (no anonymous mode) and this would require the product not be in offline mode.
 }

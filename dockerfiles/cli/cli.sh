@@ -81,7 +81,12 @@ cli_init() {
   ##      - If they match, then continue
   ##      - If they do not match, then if .env is newer, then fail with message to run upgrade first
   ##      - If they do not match, then if .env is older, then fail with message that this is not good 
-  verify_version_compatibility
+
+  # Do not perform a version compatibility check if running upgrade command.
+  # The upgrade command has its own internal checks for version compatibility.
+  if [ $1 != "upgrade" ]; then 
+    verify_version_compatibility
+  fi
 }
 
 init_host_ip() {
@@ -437,53 +442,6 @@ get_image_manifest() {
   done
 }
 
-can_upgrade() {
-  #  4.7.2 -> 5.0.0-M2-SNAPSHOT  <insert-syntax>
-  #  4.7.2 -> 4.7.3              <insert-syntax>
-  while IFS='' read -r line || [[ -n "$line" ]]; do
-    VER=$(echo $line | cut -d ' ' -f1)
-    UPG=$(echo $line | cut -d ' ' -f2)
-
-    # Loop through and find all matching versions
-    if [[ "${VER}" == "${1}" ]]; then
-      if [[ "${UPG}" == "${2}" ]]; then
-        return 0
-      fi
-    fi
-  done < "$CODENVY_MANIFEST_DIR"/upgrades
-
-  return 1
-}
-
-print_upgrade_manifest() {
-  #  4.7.2 -> 5.0.0-M2-SNAPSHOT  <insert-syntax>
-  #  4.7.2 -> 4.7.3              <insert-syntax>
-  while IFS='' read -r line || [[ -n "$line" ]]; do
-    VER=$(echo $line | cut -d ' ' -f1)
-    UPG=$(echo $line | cut -d ' ' -f2)
-    text "  "
-    text "%s" $VER
-    for i in `seq 1 $((25-${#VER}))`; do text " "; done
-    text "%s" $UPG
-    text "\n"
-  done < "$CODENVY_MANIFEST_DIR"/upgrades
-}
-
-print_version_manifest() {
-  while IFS='' read -r line || [[ -n "$line" ]]; do
-    VER=$(echo $line | cut -d ' ' -f1)
-    CHA=$(echo $line | cut -d ' ' -f2)
-    UPG=$(echo $line | cut -d ' ' -f3)
-    text "  "
-    text "%s" $VER
-    for i in `seq 1 $((25-${#VER}))`; do text " "; done
-    text "%s" $CHA
-    for i in `seq 1 $((18-${#CHA}))`; do text " "; done
-    text "%s" $UPG
-    text "\n"
-  done < "$CODENVY_MANIFEST_DIR"/versions
-}
-
 get_installed_version() {
   if ! is_configed; then
     echo "<not-configed>"
@@ -625,6 +583,86 @@ verify_version_compatibility() {
         error ""
         error "Run '${CHE_MINI_PRODUCT_NAME} upgrade' to migrate your installation to '$ENV_FILE_VERSION."
         error "Or, modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to match your configured version with your installed version '$INSTALLED_VERSION'."
+        return 2
+      ;;
+    esac
+  fi
+}
+
+verify_version_upgrade_compatibility() {
+  ## Two levels of checks
+  ## First, compare the CLI image version to what the admin has configured in /config/.env file
+  ##      - If they match, nothing to upgrade
+  ##      - If they don't match and one is nightly, fail upgrade is not supported for nightly
+  ##      - If they don't match, then if CLI is older fail with message that we do not support downgrade
+  ##      - If they don't match, then if CLI is newer then good
+  ## Second, compare proposed .env version to already installed version
+  ##      - If they match, then ok to upgrade, we will update the ENV file 
+  ##      - If they do not match, then if .env is newer, then fail with message that ENV file & install must match before upgrade
+  ##      - If they do not match, then if .env is older, then fail with message that ENV file & install must match before upgrade 
+
+  CODENVY_IMAGE_VERSION=$(get_image_version)
+
+  if ! is_initialized || ! is_configed; then 
+    info "upgrade" "$CHE_MINI_PRODUCT_NAME is not installed or configured. Nothing to upgrade."
+    return 2
+  fi
+
+  if is_initialized; then
+    COMPARE_CLI_ENV=$(compare_cli_version_to_envfile_version)
+    ENV_FILE_VERSION=$(get_envfile_version)
+
+    case "${COMPARE_CLI_ENV}" in
+      "match") 
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is identical to your configured version '$ENV_FILE_VERSION'."
+        error ""
+        error "Run '$CHE_MINI_PRODUCT_NAME/cli:<version> upgrade>' with a newer version to upgrade."
+        error "View all available versions: https://hub.docker.com/r/$CHE_MINI_PRODUCT_NAME/cli/tags/."
+        return 2
+      ;;
+      "nightly")
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' or configured version '$ENV_FILE_VERSION' is nightly."
+        error ""
+        error "You may not '${CHE_MINI_PRODUCT_NAME} upgrade' from 'nightly' to a non-nightly version."
+        return 2
+      ;;
+      "envfile-less-cli")
+      ;;
+      "cli-less-envfile")
+        error ""
+        error "Your CLI version '${CHE_MINI_PRODUCT_NAME}/cli:$CODENVY_IMAGE_VERSION' is older than your configured version '$ENV_FILE_VERSION'."
+        error ""
+        error "You cannot upgrade to an older version."
+        error ""
+        error "Run '$CHE_MINI_PRODUCT_NAME/cli:<version> upgrade>' with a newer version to upgrade."
+        error "View all available versions: https://hub.docker.com/r/$CHE_MINI_PRODUCT_NAME/cli/tags/."
+        return 2
+      ;;
+    esac
+  fi
+
+  # Scenario #2 should only be checked if the system is already configured
+  if is_configed; then
+    COMPARE_INSTALL_ENV=$(compare_installed_version_to_envfile_version)
+    INSTALLED_VERSION=$(get_installed_version)
+    case "${COMPARE_INSTALL_ENV}" in
+      "match") 
+      ;;
+      "envfile-less-install"|"install-less-envfile")
+        error ""
+        error "Your CLI version '$CODENVY_IMAGE_VERSION' is newer (good), but:"
+        error "   Configured version = '$ENV_FILE_VERSION'"
+        error "   Installed version  = '$INSTALLED_VERSION'"
+        error ""
+        error "The configured and installed versions must match before upgrade proceeds."
+        error ""
+        error "Modify '${CODENVY_HOST_CONFIG}/${CODENVY_ENVIRONMENT_FILE}' to match your configured version to your installed version '$INSTALLED_VERSION'."
+        error "Then run '$CHE_MINI_PRODUCT_NAME/cli:<version> upgrade>' with a newer Docker image to initiate an upgrade."
+        error ""
+        error "We could automatically make this change."
+        error "However, having configured and installed version be different is unusual and should be checked by a human."
         return 2
       ;;
     esac
