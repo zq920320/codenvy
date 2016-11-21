@@ -19,9 +19,12 @@ import com.codenvy.api.license.model.Constants;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
 
@@ -34,31 +37,37 @@ import java.util.Objects;
 @NamedQueries({})
 @Table(indexes = {})
 public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
+    @Id
+    @GeneratedValue
+    private long id;
+
     @Column(nullable = false)
-    private final Constants.TYPE licenseType;
+    private Constants.TYPE licenseType;
+
+    @Column
+    private String licenseQualifier;
+
+    @Column(nullable = false)
+    private Constants.Action actionType;
+
+    @Column(nullable = false)
+    private long actionTimestamp;
 
     @Transient
-    private final String licenseId;
+    private Map<String, String> attributes;
 
-    @Column(nullable = false)
-    private final Constants.Action actionType;
-
-    @Column(nullable = false)
-    private final long actionTimestamp;
-
-    @Transient
-    private final Map<String, String> attributes;
+    public CodenvyLicenseActionImpl() { }
 
     public CodenvyLicenseActionImpl(Constants.TYPE licenseType,
                                     Constants.Action actionType,
                                     long actionTimestamp,
-                                    String licenseId,
+                                    String licenseQualifier,
                                     Map<String, String> attributes) {
         this.licenseType = licenseType;
-        this.licenseId = licenseId;
+        this.licenseQualifier = licenseQualifier;
         this.actionType = actionType;
         this.actionTimestamp = actionTimestamp;
-        this.attributes = attributes;
+        this.attributes = attributes == null ? new HashMap<>() : new HashMap<>(attributes);
     }
 
     @Override
@@ -67,8 +76,8 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     }
 
     @Override
-    public String getLicenseId() {
-        return licenseId;
+    public String getLicenseQualifier() {
+        return licenseQualifier;
     }
 
     @Override
@@ -96,7 +105,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
         }
         final CodenvyLicenseActionImpl that = (CodenvyLicenseActionImpl)obj;
         return Objects.equals(licenseType, that.licenseType)
-               && Objects.equals(licenseId, that.licenseId)
+               && Objects.equals(licenseQualifier, that.licenseQualifier)
                && Objects.equals(actionType, that.actionType)
                && Objects.equals(actionTimestamp, that.actionTimestamp)
                && getAttributes().equals(that.getAttributes());
@@ -106,7 +115,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     public int hashCode() {
         int hash = 7;
         hash = 31 * hash + Objects.hashCode(licenseType);
-        hash = 31 * hash + Objects.hashCode(licenseId);
+        hash = 31 * hash + Objects.hashCode(licenseQualifier);
         hash = 31 * hash + Objects.hashCode(actionType);
         hash = 31 * hash + Objects.hashCode(actionTimestamp);
         hash = 31 * hash + getAttributes().hashCode();
@@ -117,7 +126,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     public String toString() {
         return "CodenvyLicenseActionImpl{" +
                "licenseType=" + licenseType +
-               ", licenseId='" + licenseId + '\'' +
+               ", licenseQualifier='" + licenseQualifier + '\'' +
                ", actionType=" + actionType +
                ", actionTimestamp=" + actionTimestamp +
                ", attributes=" + attributes +

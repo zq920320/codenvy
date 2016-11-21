@@ -14,26 +14,18 @@
  */
 package com.codenvy.api.license.server.jpa;
 
+import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
-import com.google.inject.Singleton;
 import com.google.inject.TypeLiteral;
 import com.google.inject.persist.jpa.JpaPersistModule;
 
 import org.eclipse.che.api.core.jdbc.jpa.eclipselink.EntityListenerInjectionManagerInitializer;
 import org.eclipse.che.api.core.jdbc.jpa.guice.JpaInitializer;
-import org.eclipse.che.api.user.server.jpa.JpaPreferenceDao;
-import org.eclipse.che.api.user.server.jpa.JpaProfileDao;
-import org.eclipse.che.api.user.server.jpa.JpaUserDao;
-import org.eclipse.che.api.user.server.spi.PreferenceDao;
-import org.eclipse.che.api.user.server.spi.ProfileDao;
-import org.eclipse.che.api.user.server.spi.UserDao;
 import org.eclipse.che.commons.test.tck.JpaCleaner;
 import org.eclipse.che.commons.test.tck.TckModule;
 import org.eclipse.che.commons.test.tck.TckResourcesCleaner;
 import org.eclipse.che.commons.test.tck.repository.JpaTckRepository;
 import org.eclipse.che.commons.test.tck.repository.TckRepository;
-import org.eclipse.che.security.PasswordEncryptor;
-import org.eclipse.che.security.SHA512PasswordEncryptor;
 
 /**
  * @author Anatolii Bazko
@@ -50,10 +42,6 @@ public class CodenvyLicenseTckModule extends TckModule {
         bind(new TypeLiteral<TckRepository<CodenvyLicenseActionImpl>>() {})
                 .toInstance(new JpaTckRepository<>(CodenvyLicenseActionImpl.class));
 
-        bind(UserDao.class).to(JpaUserDao.class);
-        bind(ProfileDao.class).to(JpaProfileDao.class);
-        bind(PreferenceDao.class).to(JpaPreferenceDao.class);
-        // SHA-512 ecnryptor is faster than PBKDF2 so it is better for testing
-        bind(PasswordEncryptor.class).to(SHA512PasswordEncryptor.class).in(Singleton.class);
+        bind(CodenvyLicenseDao.class).to(JpaCodenvyLicenseDao.class);
     }
 }

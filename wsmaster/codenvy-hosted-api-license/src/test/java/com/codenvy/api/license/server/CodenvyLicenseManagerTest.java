@@ -17,6 +17,7 @@ package com.codenvy.api.license.server;
 import com.codenvy.api.license.CodenvyLicense;
 import com.codenvy.api.license.CodenvyLicenseFactory;
 import com.codenvy.api.license.LicenseNotFoundException;
+import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
 import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.model.DockerNode;
 
@@ -79,6 +80,8 @@ public class CodenvyLicenseManagerTest {
     private UserManager           userManager;
     @Mock
     private List<DockerNode>      dockerNodes;
+    @Mock
+    private CodenvyLicenseDao     codenvyLicenseDao;
 
     private File testDirectory;
     private File licenseFile;
@@ -98,8 +101,11 @@ public class CodenvyLicenseManagerTest {
         when(userManager.getTotalCount()).thenReturn(USER_NUMBER);
         setSizeOfAdditionalNodes(NODES_NUMBER);
 
-        codenvyLicenseManager =
-                spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(), licenseFactory, userManager, swarmDockerConnector, licenseDao));
+        codenvyLicenseManager = spy(new CodenvyLicenseManager(licenseFile.getAbsolutePath(),
+                                                              licenseFactory,
+                                                              userManager,
+                                                              swarmDockerConnector,
+                                                              codenvyLicenseDao));
     }
 
     @AfterMethod

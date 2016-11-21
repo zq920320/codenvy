@@ -14,9 +14,22 @@
  */
 package com.codenvy.api.license.server.spi.tck;
 
+import com.codenvy.api.license.model.Constants;
+import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
+import com.google.common.collect.ImmutableMap;
+import com.google.inject.Inject;
+
+import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.commons.test.tck.TckListener;
+import org.eclipse.che.commons.test.tck.repository.TckRepository;
+import org.testng.annotations.AfterMethod;
+import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
+
+import java.util.Calendar;
+
+import static java.util.Arrays.asList;
 
 /**
  * @author Anatolii Bazko
@@ -24,4 +37,29 @@ import org.testng.annotations.Test;
 @Listeners(TckListener.class)
 @Test(suiteName = "CodenvyLicenseDaoTck")
 public class CodenvyLicenseDaoTest {
+    private CodenvyLicenseActionImpl codenvyLicenseActions[];
+
+    @Inject
+    private TckRepository<CodenvyLicenseActionImpl> codenvyLicenseRepository;
+    @Inject
+    private EventService                            eventService;
+
+    @BeforeMethod
+    public void setUp() throws Exception {
+        codenvyLicenseActions = new CodenvyLicenseActionImpl[] {new CodenvyLicenseActionImpl(Constants.TYPE.FAIR_SOURCE_LICENSE,
+                                                                                             Constants.Action.ACCEPTED,
+                                                                                             Calendar.getInstance().getTimeInMillis(),
+                                                                                             null,
+                                                                                             ImmutableMap.of())};
+        codenvyLicenseRepository.createAll(asList(codenvyLicenseActions));
+    }
+
+    @Test
+    public void testFake() throws Exception {
+    }
+
+    @AfterMethod
+    public void cleanUp() throws Exception {
+        codenvyLicenseRepository.removeAll();
+    }
 }

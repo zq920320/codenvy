@@ -43,7 +43,7 @@ public interface CodenvyLicenseAction {
      * Any license identifier.
      */
     @Nullable
-    String getLicenseId();
+    String getLicenseQualifier();
 
     /**
      * Returns any action attributes.
