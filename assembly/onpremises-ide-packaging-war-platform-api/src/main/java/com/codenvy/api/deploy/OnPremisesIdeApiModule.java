@@ -38,7 +38,6 @@ import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.ldap.LdapModule;
 import com.codenvy.ldap.auth.LdapAuthenticationHandler;
-import com.codenvy.machine.HostedDockerInstance;
 import com.codenvy.organization.api.OrganizationApiModule;
 import com.codenvy.organization.api.OrganizationJpaModule;
 import com.codenvy.plugin.github.factory.resolver.GithubFactoryParametersResolver;
@@ -376,7 +375,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bindConstant().annotatedWith(Names.named("machine.terminal_agent.run_command"))
                       .to("$HOME/che/terminal/che-websocket-terminal -addr :4411 " +
-                          "-cmd ${SHELL_INTERPRETER} -static $HOME/che/terminal/ -path '/[^/]+'");
+                          "-cmd ${SHELL_INTERPRETER} -static $HOME/che/terminal/ -path '/[^/]+' -logs-dir $HOME/che/exec-agent/logs");
 
         Multibinder<AgentLauncher> agentLaunchers = Multibinder.newSetBinder(binder(), AgentLauncher.class);
         agentLaunchers.addBinding().to(org.eclipse.che.api.workspace.server.launcher.TerminalAgentLauncherImpl.class);
