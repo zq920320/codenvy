@@ -84,8 +84,6 @@ public class CodenvyLicenseManager {
         this.userManager = userManager;
         this.dockerConnector = dockerConnector;
         this.codenvyLicenseDao = codenvyLicenseDao;
-
-        // TODO init record at start
     }
 
     /**
@@ -97,7 +95,7 @@ public class CodenvyLicenseManager {
      *         if error occurred while storing
      */
     public void store(@NotNull String licenseText) throws LicenseException, ApiException {
-        requireNonNull(licenseText, "Codenvy license must not be null");
+        requireNonNull(licenseText, "Codenvy license can't be null");
 
         CodenvyLicense codenvyLicense = licenseFactory.create(licenseText);
         try {
@@ -114,7 +112,7 @@ public class CodenvyLicenseManager {
                 codenvyLicenseDao.remove(PRODUCT_LICENSE, EXPIRED);
                 addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
             }
-        } catch (NotFoundException ignored) {
+        } catch (NotFoundException e) {
             addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
         }
     }
@@ -148,8 +146,6 @@ public class CodenvyLicenseManager {
     public void delete() throws LicenseException, ApiException {
         String licenseText = readLicenseText();
         String licenseQualifier = calculateLicenseMD5sum(licenseText);
-        codenvyLicenseDao.remove(PRODUCT_LICENSE, EXPIRED);
-        addLicenseAction(PRODUCT_LICENSE, EXPIRED, licenseQualifier);
 
         try {
             Files.delete(licenseFile);
@@ -158,6 +154,9 @@ public class CodenvyLicenseManager {
         } catch (IOException e) {
             throw new LicenseException(e.getMessage(), e);
         }
+
+        codenvyLicenseDao.remove(PRODUCT_LICENSE, EXPIRED);
+        addLicenseAction(PRODUCT_LICENSE, EXPIRED, licenseQualifier);
     }
 
     /**
@@ -207,9 +206,7 @@ public class CodenvyLicenseManager {
      * @throws BadRequestException
      *      if request is not complete
      */
-    public void acceptFairSourceLicense(FairSourceLicenseAcceptance fairSourceLicenseAcceptance) throws BadRequestException,
-                                                                                                        ServerException,
-                                                                                                        ConflictException {
+    public void acceptFairSourceLicense(FairSourceLicenseAcceptance fairSourceLicenseAcceptance) throws ApiException {
         try {
             codenvyLicenseDao.getByLicenseAndType(FAIR_SOURCE_LICENSE, ACCEPTED);
             throw new ConflictException("Codenvy Fair Source License has been already accepted");
@@ -223,13 +220,7 @@ public class CodenvyLicenseManager {
         attributes.put("firstName", fairSourceLicenseAcceptance.getFirstName());
         attributes.put("lastName", fairSourceLicenseAcceptance.getLastName());
         attributes.put("email", fairSourceLicenseAcceptance.getEmail());
-
-        CodenvyLicenseActionImpl codenvyLicenseAction = new CodenvyLicenseActionImpl(FAIR_SOURCE_LICENSE,
-                                                                                     ACCEPTED,
-                                                                                     System.currentTimeMillis(),
-                                                                                     null,
-                                                                                     attributes);
-        codenvyLicenseDao.store(codenvyLicenseAction);
+        addLicenseAction(FAIR_SOURCE_LICENSE, ACCEPTED, null, attributes);
     }
 
     /**
@@ -248,11 +239,18 @@ public class CodenvyLicenseManager {
     private void addLicenseAction(Constants.Type licenseType,
                                   Constants.Action actionType,
                                   @Nullable String licenseQualifier) throws ApiException {
+        addLicenseAction(licenseType, actionType, licenseQualifier, emptyMap());
+    }
+
+    private void addLicenseAction(Constants.Type licenseType,
+                                  Constants.Action actionType,
+                                  @Nullable String licenseQualifier,
+                                  Map<String, String> attributes) throws ApiException {
         CodenvyLicenseActionImpl codenvyLicenseAction = new CodenvyLicenseActionImpl(licenseType,
                                                                                      actionType,
                                                                                      System.currentTimeMillis(),
                                                                                      licenseQualifier,
-                                                                                     emptyMap());
+                                                                                     attributes);
         codenvyLicenseDao.store(codenvyLicenseAction);
     }
 
