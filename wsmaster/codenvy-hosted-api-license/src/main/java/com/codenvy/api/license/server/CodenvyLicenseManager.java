@@ -106,6 +106,13 @@ public class CodenvyLicenseManager {
 
         String licenseQualifier = calculateLicenseMD5sum(licenseText);
         try {
+            codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, EXPIRED);
+            codenvyLicenseDao.remove(PRODUCT_LICENSE, ACCEPTED);
+            codenvyLicenseDao.remove(PRODUCT_LICENSE, EXPIRED);
+        } catch (NotFoundException ignored) {
+        }
+
+        try {
             CodenvyLicenseActionImpl licenseAction = codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED);
             if (!licenseAction.getLicenseQualifier().equals(licenseQualifier)) {
                 codenvyLicenseDao.remove(PRODUCT_LICENSE, ACCEPTED);

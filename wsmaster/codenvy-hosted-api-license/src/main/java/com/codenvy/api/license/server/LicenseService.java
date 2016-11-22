@@ -217,7 +217,7 @@ public class LicenseService {
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Fair Source License is accepted"),
                            @ApiResponse(code = 404, message = "Fair Source License is not accepted"),
                            @ApiResponse(code = 500, message = "Server error")})
-    public Response getFairSourceLicense(FairSourceLicenseAcceptanceDto fairSourceLicenseAcceptanceDto) throws ApiException {
+    public Response getFairSourceLicense() throws ApiException {
         if (licenseManager.hasAcceptedFairSourceLicense()) {
             return status(OK).build();
         } else {

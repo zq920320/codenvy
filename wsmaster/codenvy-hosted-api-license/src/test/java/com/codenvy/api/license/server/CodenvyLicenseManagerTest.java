@@ -34,6 +34,7 @@ import org.eclipse.che.commons.lang.IoUtil;
 import org.eclipse.che.commons.lang.NameGenerator;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.AfterMethod;
 import org.testng.annotations.BeforeMethod;
@@ -104,6 +105,8 @@ public class CodenvyLicenseManagerTest {
     private List<DockerNode>      dockerNodes;
     @Mock
     private CodenvyLicenseDao     codenvyLicenseDao;
+    @Mock
+    private CodenvyLicenseActionImpl codenvyLicenseAction;
 
     private File testDirectory;
     private File licenseFile;
@@ -126,11 +129,10 @@ public class CodenvyLicenseManagerTest {
         when(newCodenvyLicense.getLicenseText()).thenReturn(NEW_LICENSE_TEXT);
         when(userManager.getTotalCount()).thenReturn(USER_NUMBER);
 
-        CodenvyLicenseActionImpl action = mock(CodenvyLicenseActionImpl.class);
-        when(action.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
+        when(codenvyLicenseAction.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
         when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
                 .thenThrow(new NotFoundException("Codenvy license action not found"))
-                .thenReturn(action);
+                .thenReturn(codenvyLicenseAction);
 
         setSizeOfAdditionalNodes(NODES_NUMBER);
 
@@ -178,11 +180,53 @@ public class CodenvyLicenseManagerTest {
     @Test
     public void shouldStoreSameLicenseTwice() throws Exception {
         codenvyLicenseManager.store(LICENSE_TEXT);
+        codenvyLicenseManager.store(LICENSE_TEXT);
+
+        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+    }
+
+    /**
+     * Use case:
+     *  - user adds license
+     *  - user deletes license
+     *  - user adds license
+     * Verify:
+     *  - license {@link com.codenvy.api.license.model.Constants.Action#EXPIRED} action is removed from the DB
+     *  - license {@link com.codenvy.api.license.model.Constants.Action#ACCEPTED} action is stored in the DB
+     */
+    @Test
+    public void shouldStoreLicenseAfterDeletion() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, EXPIRED))
+                .thenThrow(new NotFoundException("License action not found"))
+                .thenReturn(mock(CodenvyLicenseActionImpl.class));
 
         codenvyLicenseManager.store(LICENSE_TEXT);
+
         verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
-        verify(codenvyLicenseDao, never()).remove(eq(PRODUCT_LICENSE), eq(ACCEPTED));
+
+        codenvyLicenseManager.delete();
+
+        verify(codenvyLicenseDao, times(1)).remove(eq(PRODUCT_LICENSE), eq(EXPIRED));
+        ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
+        verify(codenvyLicenseDao, times(2)).store(actionCaptor.capture());
+        CodenvyLicenseActionImpl value = actionCaptor.getAllValues().get(1);
+        assertEquals(value.getLicenseType(), PRODUCT_LICENSE);
+        assertEquals(value.getActionType(), EXPIRED);
+        assertEquals(value.getLicenseQualifier(), LICENSE_QUALIFIER);
+
+        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED)).thenThrow(new NotFoundException("License action not found"));
+
+        codenvyLicenseManager.store(LICENSE_TEXT);
+        verify(codenvyLicenseDao, times(1)).remove(eq(PRODUCT_LICENSE), eq(ACCEPTED));
+        verify(codenvyLicenseDao, times(2)).remove(eq(PRODUCT_LICENSE), eq(EXPIRED));
+        actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
+        verify(codenvyLicenseDao, times(3)).store(actionCaptor.capture());
+        value = actionCaptor.getAllValues().get(2);
+        assertEquals(value.getLicenseType(), PRODUCT_LICENSE);
+        assertEquals(value.getActionType(), ACCEPTED);
+        assertEquals(value.getLicenseQualifier(), LICENSE_QUALIFIER);
     }
+
 
     /**
      * Use case:
@@ -196,15 +240,20 @@ public class CodenvyLicenseManagerTest {
     public void shouldUpdateLicense() throws Exception {
         codenvyLicenseManager.store(LICENSE_TEXT);
 
-        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+        Mockito.reset(codenvyLicenseDao);
+        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
+                .thenReturn(codenvyLicenseAction);
+        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, EXPIRED))
+                .thenThrow(new NotFoundException("License action not found"));
 
         codenvyLicenseManager.store(NEW_LICENSE_TEXT);
 
-        assertTrue(Files.exists(licenseFile.toPath()));
         assertEquals(NEW_LICENSE_TEXT, readFileToString(licenseFile, UTF_8));
+        assertTrue(Files.exists(licenseFile.toPath()));
+
         verify(codenvyLicenseDao).remove(PRODUCT_LICENSE, ACCEPTED);
         verify(codenvyLicenseDao).remove(PRODUCT_LICENSE, EXPIRED);
-        verify(codenvyLicenseDao, times(2)).store(any(CodenvyLicenseActionImpl.class));
+        verify(codenvyLicenseDao).store(any(CodenvyLicenseActionImpl.class));
     }
 
     /**
@@ -219,20 +268,18 @@ public class CodenvyLicenseManagerTest {
     @Test
     public void shouldRemoveLicense() throws Exception {
         codenvyLicenseManager.store(LICENSE_TEXT);
-        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
 
+        Mockito.reset(codenvyLicenseDao);
         codenvyLicenseManager.delete();
 
-        assertFalse(Files.exists(licenseFile.toPath()));
-
-        verify(codenvyLicenseDao, times(1)).remove(eq(PRODUCT_LICENSE), eq(EXPIRED));
-
         ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
-        verify(codenvyLicenseDao, times(2)).store(actionCaptor.capture());
-        CodenvyLicenseActionImpl expireAction = actionCaptor.getAllValues().get(1);
+        verify(codenvyLicenseDao, times(1)).store(actionCaptor.capture());
+        CodenvyLicenseActionImpl expireAction = actionCaptor.getValue();
         assertEquals(expireAction.getLicenseType(), PRODUCT_LICENSE);
         assertEquals(expireAction.getActionType(), EXPIRED);
         assertEquals(expireAction.getLicenseQualifier(), LICENSE_QUALIFIER);
+
+        assertFalse(Files.exists(licenseFile.toPath()));
     }
 
     /**
