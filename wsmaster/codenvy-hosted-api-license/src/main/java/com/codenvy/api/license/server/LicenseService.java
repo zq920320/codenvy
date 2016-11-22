@@ -210,4 +210,18 @@ public class LicenseService {
         licenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptanceDto);
         return status(CREATED).build();
     }
+
+    @GET
+    @Path("fair-source-license")
+    @ApiOperation(value = "Acceptance of Codenvy Fair Source License")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Fair Source License is accepted"),
+                           @ApiResponse(code = 404, message = "Fair Source License is not accepted"),
+                           @ApiResponse(code = 500, message = "Server error")})
+    public Response getFairSourceLicense(FairSourceLicenseAcceptanceDto fairSourceLicenseAcceptanceDto) throws ApiException {
+        if (licenseManager.hasAcceptedFairSourceLicense()) {
+            return status(OK).build();
+        } else {
+            throw new NotFoundException("Codenvy Fair Source License is not accepted");
+        }
+    }
 }

@@ -19,10 +19,14 @@ import com.codenvy.api.license.CodenvyLicenseFactory;
 import com.codenvy.api.license.LicenseNotFoundException;
 import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
+import com.codenvy.api.license.server.model.impl.FairSourceLicenseAcceptanceImpl;
 import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.model.DockerNode;
+import com.google.common.collect.ImmutableMap;
 import com.google.common.hash.Hashing;
 
+import org.eclipse.che.api.core.BadRequestException;
+import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.user.server.UserManager;
@@ -46,6 +50,7 @@ import static com.codenvy.api.license.CodenvyLicense.MAX_NUMBER_OF_FREE_SERVERS;
 import static com.codenvy.api.license.CodenvyLicense.MAX_NUMBER_OF_FREE_USERS;
 import static com.codenvy.api.license.model.Constants.Action.ACCEPTED;
 import static com.codenvy.api.license.model.Constants.Action.EXPIRED;
+import static com.codenvy.api.license.model.Constants.Type.FAIR_SOURCE_LICENSE;
 import static com.codenvy.api.license.model.Constants.Type.PRODUCT_LICENSE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.nio.charset.Charset.defaultCharset;
@@ -64,6 +69,7 @@ import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertFalse;
 import static org.testng.Assert.assertNotNull;
+import static org.testng.Assert.assertNull;
 import static org.testng.Assert.assertTrue;
 
 /**
@@ -105,7 +111,7 @@ public class CodenvyLicenseManagerTest {
     private CodenvyLicenseManager codenvyLicenseManager;
 
     @BeforeMethod
-    public void setUp() throws IOException, ServerException {
+    public void setUp() throws Exception {
         final URL resource = Thread.currentThread().getContextClassLoader().getResource(".");
         assertNotNull(resource);
 
@@ -119,6 +125,12 @@ public class CodenvyLicenseManagerTest {
         when(codenvyLicense.getLicenseText()).thenReturn(LICENSE_TEXT);
         when(newCodenvyLicense.getLicenseText()).thenReturn(NEW_LICENSE_TEXT);
         when(userManager.getTotalCount()).thenReturn(USER_NUMBER);
+
+        CodenvyLicenseActionImpl action = mock(CodenvyLicenseActionImpl.class);
+        when(action.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
+        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
+                .thenThrow(new NotFoundException("Codenvy license action not found"))
+                .thenReturn(action);
 
         setSizeOfAdditionalNodes(NODES_NUMBER);
 
@@ -143,12 +155,9 @@ public class CodenvyLicenseManagerTest {
      */
     @Test
     public void shouldStoreLicense() throws Exception {
-        ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
-        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
-                .thenThrow(new NotFoundException("Codenvy license action not found"));
-
         codenvyLicenseManager.store(LICENSE_TEXT);
 
+        ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
         verify(codenvyLicenseDao).store(actionCaptor.capture());
         CodenvyLicenseActionImpl action = actionCaptor.getValue();
         assertEquals(action.getLicenseType(), PRODUCT_LICENSE);
@@ -168,16 +177,11 @@ public class CodenvyLicenseManagerTest {
      */
     @Test
     public void shouldStoreSameLicenseTwice() throws Exception {
-        CodenvyLicenseActionImpl action = mock(CodenvyLicenseActionImpl.class);
-        when(action.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
-        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
-                .thenThrow(new NotFoundException("Codenvy license action not found"))
-                .thenReturn(action);
-
         codenvyLicenseManager.store(LICENSE_TEXT);
 
         codenvyLicenseManager.store(LICENSE_TEXT);
         verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+        verify(codenvyLicenseDao, never()).remove(eq(PRODUCT_LICENSE), eq(ACCEPTED));
     }
 
     /**
@@ -190,12 +194,6 @@ public class CodenvyLicenseManagerTest {
      */
     @Test
     public void shouldUpdateLicense() throws Exception {
-        CodenvyLicenseActionImpl action = mock(CodenvyLicenseActionImpl.class);
-        when(action.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
-        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
-                .thenThrow(new NotFoundException("Codenvy license action not found"))
-                .thenReturn(action);
-
         codenvyLicenseManager.store(LICENSE_TEXT);
 
         verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
@@ -204,7 +202,8 @@ public class CodenvyLicenseManagerTest {
 
         assertTrue(Files.exists(licenseFile.toPath()));
         assertEquals(NEW_LICENSE_TEXT, readFileToString(licenseFile, UTF_8));
-        verify(codenvyLicenseDao).remove(PRODUCT_LICENSE);
+        verify(codenvyLicenseDao).remove(PRODUCT_LICENSE, ACCEPTED);
+        verify(codenvyLicenseDao).remove(PRODUCT_LICENSE, EXPIRED);
         verify(codenvyLicenseDao, times(2)).store(any(CodenvyLicenseActionImpl.class));
     }
 
@@ -214,22 +213,19 @@ public class CodenvyLicenseManagerTest {
      *  - user removes license
      * Verify:
      *  - license file is absent
-     *  - license {@link ACCEPTED} action isn't removed in the DB
-     *  - license {@link EXPIRED} action is added in the DB
+     *  - license {@link com.codenvy.api.license.model.Constants.Action#ACCEPTED} action isn't removed in the DB
+     *  - license {@link com.codenvy.api.license.model.Constants.Action#EXPIRED} action is added in the DB
      */
     @Test
     public void shouldRemoveLicense() throws Exception {
-        CodenvyLicenseActionImpl action = mock(CodenvyLicenseActionImpl.class);
-        when(action.getLicenseQualifier()).thenReturn(LICENSE_QUALIFIER);
-        when(codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED))
-                .thenThrow(new NotFoundException("Codenvy license action not found"))
-                .thenReturn(action);
-
         codenvyLicenseManager.store(LICENSE_TEXT);
+        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+
         codenvyLicenseManager.delete();
 
         assertFalse(Files.exists(licenseFile.toPath()));
-        verify(codenvyLicenseDao, never()).remove(eq(PRODUCT_LICENSE));
+
+        verify(codenvyLicenseDao, times(1)).remove(eq(PRODUCT_LICENSE), eq(EXPIRED));
 
         ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
         verify(codenvyLicenseDao, times(2)).store(actionCaptor.capture());
@@ -239,14 +235,86 @@ public class CodenvyLicenseManagerTest {
         assertEquals(expireAction.getLicenseQualifier(), LICENSE_QUALIFIER);
     }
 
+    /**
+     * Use case:
+     *  - no license in the system
+     *  - user tries to delete it
+     * Verify:
+     *  - license file is absent
+     *  - no interaction with the DB
+     */
     @Test(expectedExceptions = LicenseNotFoundException.class)
-    public void shouldThrowLicenseNotFoundExceptionIfWeTryToDeleteLicenseFromEmptyStorage() {
+    public void shouldNotRemoveLicenseIfAbsent() throws Exception {
+        IoUtil.deleteRecursive(testDirectory);
+
         codenvyLicenseManager.delete();
+
+        verify(codenvyLicenseDao, never()).remove(eq(PRODUCT_LICENSE), eq(EXPIRED));
+        verify(codenvyLicenseDao, never()).store(any());
     }
 
     @Test
-    public void shouldLoadLicense() {
-        when(licenseFactory.create(LICENSE_TEXT)).thenReturn(codenvyLicense);
+    public void shouldAcceptFairSourceLicense() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
+                .thenThrow(new NotFoundException("Codenvy license not found"));
+
+        FairSourceLicenseAcceptanceImpl fairSourceLicenseAcceptance = new FairSourceLicenseAcceptanceImpl("fn", "ln", "em@codenvy.com");
+        codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
+
+        ArgumentCaptor<CodenvyLicenseActionImpl> actionCaptor = ArgumentCaptor.forClass(CodenvyLicenseActionImpl.class);
+        verify(codenvyLicenseDao).store(actionCaptor.capture());
+        CodenvyLicenseActionImpl value = actionCaptor.getValue();
+        assertEquals(value.getLicenseType(), FAIR_SOURCE_LICENSE);
+        assertEquals(value.getActionType(), ACCEPTED);
+        assertEquals(value.getAttributes(), ImmutableMap.of("firstName", "fn", "lastName", "ln", "email", "em@codenvy.com"));
+        assertNull(value.getLicenseQualifier());
+    }
+
+    @Test(expectedExceptions = ConflictException.class)
+    public void shouldNotAcceptFairSourceLicenseTwice() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
+                .thenThrow(new NotFoundException("Codenvy license not found"))
+                .thenReturn(any(CodenvyLicenseActionImpl.class));
+
+        FairSourceLicenseAcceptanceImpl fairSourceLicenseAcceptance = new FairSourceLicenseAcceptanceImpl("fn", "ln", "em@codenvy.com");
+        codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
+
+        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+
+        codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
+        verify(codenvyLicenseDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
+        verify(codenvyLicenseDao, never()).remove(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED));
+    }
+
+    @Test(expectedExceptions = BadRequestException.class)
+    public void shouldNotAcceptIfRequestInvalid() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
+                .thenThrow(new NotFoundException("Codenvy license not found"));
+
+        IoUtil.deleteRecursive(testDirectory);
+        FairSourceLicenseAcceptanceImpl fairSourceLicenseAcceptance = new FairSourceLicenseAcceptanceImpl("fn", "ln", null);
+
+        codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
+    }
+
+    @Test
+    public void testIfFairSourceLicenseNotAccepted() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
+                .thenThrow(new NotFoundException("Codenvy license not found"));
+
+        assertFalse(codenvyLicenseManager.hasAcceptedFairSourceLicense());
+    }
+
+    @Test
+    public void testIfFairSourceLicenseAccepted() throws Exception {
+        when(codenvyLicenseDao.getByLicenseAndType(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
+                .thenReturn(mock(CodenvyLicenseActionImpl.class));
+
+        assertTrue(codenvyLicenseManager.hasAcceptedFairSourceLicense());
+    }
+
+    @Test
+    public void shouldLoadLicense() throws Exception {
         codenvyLicenseManager.store(LICENSE_TEXT);
 
         CodenvyLicense license = codenvyLicenseManager.load();
@@ -256,7 +324,7 @@ public class CodenvyLicenseManagerTest {
     }
 
     @Test(expectedExceptions = LicenseNotFoundException.class)
-    public void shouldThrowLicenseNotFoundExceptionIfWeTryToGetLicenseFromEmptyStorage() {
+    public void shouldThrowLicenseNotFoundExceptionIfLicenseIsAbsent() {
         codenvyLicenseManager.load();
     }
 

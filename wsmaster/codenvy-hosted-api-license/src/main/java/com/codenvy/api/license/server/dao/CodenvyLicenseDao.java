@@ -50,7 +50,7 @@ public interface CodenvyLicenseDao {
      * @throws ServerException
      *      any other error occurred
      */
-    void remove(Constants.Type licenseType) throws ServerException;
+    void remove(Constants.Type licenseType, Constants.Action actionType) throws ServerException;
 
     /**
      * Finds license action.

@@ -32,10 +32,11 @@ import org.testng.annotations.Test;
 
 import java.util.List;
 
+import static com.codenvy.api.license.model.Constants.Action.ACCEPTED;
+import static com.codenvy.api.license.model.Constants.Type.PRODUCT_LICENSE;
 import static java.util.Arrays.asList;
 import static org.testng.Assert.assertEquals;
 import static org.testng.Assert.assertNotNull;
-import static org.testng.Assert.assertTrue;
 
 /**
  * @author Anatolii Bazko
@@ -55,16 +56,16 @@ public class JpaCodenvyLicenseDaoTest {
     @BeforeMethod
     public void setUp() throws Exception {
         codenvyLicenseActions = new CodenvyLicenseActionImpl[] {new CodenvyLicenseActionImpl(Constants.Type.FAIR_SOURCE_LICENSE,
-                                                                                             Constants.Action.ACCEPTED,
+                                                                                             ACCEPTED,
                                                                                              System.currentTimeMillis(),
                                                                                              null,
                                                                                              ImmutableMap.of("prop1", "value1")),
-                                                                new CodenvyLicenseActionImpl(Constants.Type.PRODUCT_LICENSE,
-                                                                                             Constants.Action.ACCEPTED,
+                                                                new CodenvyLicenseActionImpl(PRODUCT_LICENSE,
+                                                                                             ACCEPTED,
                                                                                              System.currentTimeMillis(),
                                                                                              "licenseQualifier1",
                                                                                              ImmutableMap.of()),
-                                                                new CodenvyLicenseActionImpl(Constants.Type.PRODUCT_LICENSE,
+                                                                new CodenvyLicenseActionImpl(PRODUCT_LICENSE,
                                                                                              Constants.Action.EXPIRED,
                                                                                              System.currentTimeMillis(),
                                                                                              "licenseQualifier1",
@@ -75,7 +76,7 @@ public class JpaCodenvyLicenseDaoTest {
     @Test(expectedExceptions = ConflictException.class)
     public void shouldThrowExceptionIfLicenseActionAlreadyExists() throws Exception {
         codenvyLicenseDao.store(new CodenvyLicenseActionImpl(Constants.Type.FAIR_SOURCE_LICENSE,
-                                                             Constants.Action.ACCEPTED,
+                                                             ACCEPTED,
                                                              System.currentTimeMillis(),
                                                              null,
                                                              ImmutableMap.of()));
@@ -84,7 +85,7 @@ public class JpaCodenvyLicenseDaoTest {
     @Test
     public void shouldFindRecordByTypeAndAction() throws Exception {
         CodenvyLicenseActionImpl codenvyLicenseAction =
-                codenvyLicenseDao.getByLicenseAndType(Constants.Type.FAIR_SOURCE_LICENSE, Constants.Action.ACCEPTED);
+                codenvyLicenseDao.getByLicenseAndType(Constants.Type.FAIR_SOURCE_LICENSE, ACCEPTED);
 
         assertNotNull(codenvyLicenseAction);
         assertNotNull(codenvyLicenseAction.getAttributes().isEmpty());
@@ -93,7 +94,7 @@ public class JpaCodenvyLicenseDaoTest {
 
     @Test
     public void shouldFindRecordByType() throws Exception {
-        List<CodenvyLicenseActionImpl> actions = codenvyLicenseDao.getByLicense(Constants.Type.PRODUCT_LICENSE);
+        List<CodenvyLicenseActionImpl> actions = codenvyLicenseDao.getByLicense(PRODUCT_LICENSE);
         assertEquals(actions.size(), 2);
     }
 
@@ -102,13 +103,11 @@ public class JpaCodenvyLicenseDaoTest {
         codenvyLicenseDao.getByLicenseAndType(Constants.Type.FAIR_SOURCE_LICENSE, Constants.Action.EXPIRED);
     }
 
-    @Test
+    @Test(expectedExceptions = NotFoundException.class)
     public void shouldRemoveCodenvyLicenseAction() throws Exception {
-        codenvyLicenseDao.remove(Constants.Type.PRODUCT_LICENSE);
+        codenvyLicenseDao.remove(PRODUCT_LICENSE, ACCEPTED);
 
-        List<CodenvyLicenseActionImpl> actions = codenvyLicenseDao.getByLicense(Constants.Type.PRODUCT_LICENSE);
-
-        assertTrue(actions.isEmpty());
+        codenvyLicenseDao.getByLicenseAndType(PRODUCT_LICENSE, ACCEPTED);
     }
 
     @AfterMethod

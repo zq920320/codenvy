@@ -56,12 +56,8 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
     }
 
     @Override
-    public void remove(Constants.Type licenseType) throws ServerException {
-        try {
-            doRemove(licenseType);
-        } catch (RuntimeException e) {
-            throw new ServerException(e);
-        }
+    public void remove(Constants.Type licenseType, Constants.Action actionType) throws ServerException {
+        doRemove(licenseType, actionType);
     }
 
     @Override
@@ -100,9 +96,12 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
     }
 
     @Transactional
-    protected void doRemove(Constants.Type licenseType) throws ServerException {
-        for (CodenvyLicenseActionImpl action : getByLicense(licenseType)) {
+    protected void doRemove(Constants.Type licenseType, Constants.Action licenseAction) throws ServerException {
+        try {
+            CodenvyLicenseActionImpl action = getByLicenseAndType(licenseType, licenseAction);
             managerProvider.get().remove(action);
+        } catch (NotFoundException e) {
+            return;
         }
     }
 }
