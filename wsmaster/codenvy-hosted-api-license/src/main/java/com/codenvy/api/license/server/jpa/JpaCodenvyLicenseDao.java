@@ -14,16 +14,24 @@
  */
 package com.codenvy.api.license.server.jpa;
 
+import com.codenvy.api.license.model.Constants;
 import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
 
+import org.eclipse.che.api.core.ConflictException;
+import org.eclipse.che.api.core.NotFoundException;
+import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.api.core.jdbc.jpa.DuplicateKeyException;
 
 import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import java.util.List;
+
+import static java.util.Objects.requireNonNull;
 
 /**
  * @author Anatolii Bazko
@@ -35,14 +43,66 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
     protected Provider<EntityManager> managerProvider;
 
     @Override
-    @Transactional
-    public void store(CodenvyLicenseActionImpl codenvyLicenseAction) {
+    public void store(CodenvyLicenseActionImpl codenvyLicenseAction) throws ServerException, ConflictException {
+        requireNonNull(codenvyLicenseAction, "Required non-null codenvy license action");
+
         try {
-            managerProvider.get().persist(codenvyLicenseAction);
+            doStore(codenvyLicenseAction);
         } catch (DuplicateKeyException e) {
-
+            throw new ConflictException("Codenvy license action already exists");
         } catch (RuntimeException e) {
+            throw new ServerException(e);
+        }
+    }
 
+    @Override
+    public void remove(Constants.Type licenseType) throws ServerException {
+        try {
+            doRemove(licenseType);
+        } catch (RuntimeException e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public CodenvyLicenseActionImpl getByLicenseAndType(Constants.Type licenseType, Constants.Action actionType) throws ServerException,
+                                                                                                                        NotFoundException {
+        try {
+            return managerProvider.get()
+                                  .createNamedQuery("License.getByTypeAndAction", CodenvyLicenseActionImpl.class)
+                                  .setParameter("type", licenseType)
+                                  .setParameter("action", actionType)
+                                  .getSingleResult();
+        } catch (NoResultException e) {
+            throw new NotFoundException("Codenvy license action not found");
+        } catch (RuntimeException e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public List<CodenvyLicenseActionImpl> getByLicense(Constants.Type licenseType) throws ServerException {
+        try {
+            return managerProvider.get()
+                                  .createNamedQuery("License.getByType", CodenvyLicenseActionImpl.class)
+                                  .setParameter("type", licenseType)
+                                  .getResultList();
+        } catch (RuntimeException e) {
+            throw new ServerException(e);
+        }
+    }
+
+    @Transactional
+    protected void doStore(CodenvyLicenseActionImpl codenvyLicenseAction) {
+        managerProvider.get().persist(codenvyLicenseAction);
+    }
+
+    @Transactional
+    protected void doRemove(Constants.Type licenseType) throws ServerException {
+        for (CodenvyLicenseActionImpl action : getByLicense(licenseType)) {
+            managerProvider.get().remove(action);
         }
     }
 }

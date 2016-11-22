@@ -19,7 +19,7 @@ import org.eclipse.che.commons.annotation.Nullable;
 import java.util.Map;
 
 /**
- * Identifiers any action with licensed happened in the system.
+ * Identifiers any license action happened in the system.
  *
  * @author Anatolii Bazko
  */
@@ -27,7 +27,7 @@ public interface CodenvyLicenseAction {
     /**
      * Returns Codenvy license type.
      */
-    Constants.TYPE getLicenseType();
+    Constants.Type getLicenseType();
 
     /**
      * Returns Codenvy action type. It explains what happened with a license.
@@ -40,7 +40,7 @@ public interface CodenvyLicenseAction {
     long getActionTimestamp();
 
     /**
-     * Any license identifier.
+     * Any license qualifier.
      */
     @Nullable
     String getLicenseQualifier();

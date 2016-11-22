@@ -17,13 +17,21 @@ package com.codenvy.api.license.server.model.impl;
 import com.codenvy.api.license.model.CodenvyLicenseAction;
 import com.codenvy.api.license.model.Constants;
 
+import javax.persistence.CollectionTable;
 import javax.persistence.Column;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Index;
+import javax.persistence.JoinColumn;
+import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.UniqueConstraint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -33,32 +41,48 @@ import java.util.Objects;
  *
  * @author Anatolii Bazko
  */
-@Entity(name = "lic")
-@NamedQueries({})
-@Table(indexes = {})
+@Entity(name = "License")
+@NamedQueries(
+        {
+                @NamedQuery(name = "License.getByTypeAndAction",
+                            query = "SELECT l " +
+                                    "FROM License l " +
+                                    "WHERE :type = l.licenseType AND :action = l.actionType"),
+                @NamedQuery(name = "License.getByType",
+                            query = "SELECT l " +
+                                    "FROM License l " +
+                                    "WHERE :type = l.licenseType")
+        }
+)
+@Table(indexes = {@Index(columnList = "licenseType,actionType", unique = true)})
 public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     @Id
     @GeneratedValue
     private long id;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Constants.TYPE licenseType;
+    private Constants.Type licenseType;
 
     @Column
     private String licenseQualifier;
 
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Constants.Action actionType;
 
     @Column(nullable = false)
     private long actionTimestamp;
 
-    @Transient
+    @ElementCollection
+    @MapKeyColumn(name = "name")
+    @Column(name = "value", nullable = false)
+    @CollectionTable(joinColumns = @JoinColumn(name = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {"id", "name"}))
     private Map<String, String> attributes;
 
     public CodenvyLicenseActionImpl() { }
 
-    public CodenvyLicenseActionImpl(Constants.TYPE licenseType,
+    public CodenvyLicenseActionImpl(Constants.Type licenseType,
                                     Constants.Action actionType,
                                     long actionTimestamp,
                                     String licenseQualifier,
@@ -71,7 +95,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     }
 
     @Override
-    public Constants.TYPE getLicenseType() {
+    public Constants.Type getLicenseType() {
         return licenseType;
     }
 

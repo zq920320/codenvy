@@ -29,7 +29,7 @@ public class Constants {
     /**
      * Codenvy license types.
      */
-    public enum TYPE {
+    public enum Type {
         FAIR_SOURCE_LICENSE,
         PRODUCT_LICENSE
     }
