@@ -16,7 +16,6 @@ package com.codenvy.auth.sso.server;
 
 import com.codenvy.api.license.server.CodenvyLicenseManager;
 import org.eclipse.che.api.core.ConflictException;
-import org.eclipse.che.api.core.ForbiddenException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.model.user.User;
 import org.eclipse.che.api.user.server.PreferenceManager;
@@ -32,7 +31,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE;
+import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static java.util.Collections.singletonMap;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
@@ -47,7 +46,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.assertFalse;
-import static org.testng.AssertJUnit.assertTrue;
+import static org.testng.Assert.assertTrue;
 
 
 /**
@@ -116,7 +115,7 @@ public class OrgServiceUserCreatorTest {
     }
 
     @Test(expectedExceptions = IOException.class,
-          expectedExceptionsMessageRegExp = LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE)
+          expectedExceptionsMessageRegExp = UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE)
     public void shouldNotCreateUserBeyoundLicense() throws Exception {
         doThrow(NotFoundException.class).when(manager).getByEmail(anyObject());
         doReturn(false).when(licenseManager).canUserBeAdded();

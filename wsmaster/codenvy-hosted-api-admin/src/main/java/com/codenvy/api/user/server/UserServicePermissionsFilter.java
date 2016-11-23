@@ -29,7 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.Path;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE;
+import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static java.lang.String.format;
 import static org.eclipse.che.api.user.server.UserService.USER_SELF_CREATION_ALLOWED;
 
@@ -71,7 +71,7 @@ public class UserServicePermissionsFilter extends CheMethodInvokerFilter {
                         throw new ForbiddenException(format("The user cannot be added. You have %s users in Codenvy which is the maximum allowed by your current license.",
                                                             licenseManager.getAllowedUserNumber()));
                     } else {
-                        throw new ForbiddenException(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE);
+                        throw new ForbiddenException(UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE);
                     }
                 }
 

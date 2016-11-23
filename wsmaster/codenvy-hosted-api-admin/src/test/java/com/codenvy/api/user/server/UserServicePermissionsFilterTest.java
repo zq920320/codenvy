@@ -42,7 +42,7 @@ import org.testng.annotations.Test;
 import java.lang.reflect.Method;
 import java.util.stream.Stream;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE;
+import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static com.codenvy.api.user.server.UserServicePermissionsFilter.MANAGE_USERS_ACTION;
 import static com.jayway.restassured.RestAssured.given;
 import static java.lang.String.format;
@@ -124,7 +124,7 @@ public class UserServicePermissionsFilterTest {
 
         assertEquals(response.getStatusCode(), 403);
         assertEquals(response.getBody().prettyPrint(), "{\n"
-                                                       + "    \"message\": \"" + LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE + "\"\n"
+                                                       + "    \"message\": \"" + UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE + "\"\n"
                                                        + "}");
         verify(service, never()).create(any(), any(), any());
         verify(subject, never()).checkPermission(any(), any(), any());

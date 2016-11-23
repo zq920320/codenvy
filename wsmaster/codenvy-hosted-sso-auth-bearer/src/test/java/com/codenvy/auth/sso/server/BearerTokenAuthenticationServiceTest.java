@@ -105,7 +105,7 @@ public class BearerTokenAuthenticationServiceTest {
 
         assertEquals(response.getStatusCode(), 403);
         assertEquals(DtoFactory.getInstance().createDtoFromJson(response.asString(), ServiceError.class),
-                     newDto(ServiceError.class).withMessage(CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE));
+                     newDto(ServiceError.class).withMessage(CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE));
         verifyZeroInteractions(mailSenderClient);
     }
 }

@@ -56,8 +56,8 @@ public class CodenvyLicenseManager {
     private final UserManager           userManager;
     private final SwarmDockerConnector  dockerConnector;
 
-    public static final String LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE =
-        "Unable to add your account. The Codenvy license has reached its user limit.";
+    public static final String UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE   = "Unable to add your account. The Codenvy license has reached its user limit.";
+    public static final String LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE = "Your user license has reached its limit. You cannot add more users.";
 
     @Inject
     public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile,
@@ -203,7 +203,7 @@ public class CodenvyLicenseManager {
 
         if (!canUserBeAdded()) {
             final IssueDto userLicenseHasReachedItsLimitIssue = newDto(IssueDto.class).withStatus(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT)
-                                                     .withMessage(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE);
+                                                                                      .withMessage(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE);
             issues.add(userLicenseHasReachedItsLimitIssue);
         }
 

@@ -56,7 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE;
+import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
@@ -193,7 +193,7 @@ public class BearerTokenAuthenticationService {
         creationValidator.ensureUserCreationAllowed(email, validationData.getUsername());
 
         if (!licenseManager.canUserBeAdded()) {
-            throw new ForbiddenException(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE);
+            throw new ForbiddenException(UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE);
         }
 
         Map<String, String> props = new HashMap<>();
