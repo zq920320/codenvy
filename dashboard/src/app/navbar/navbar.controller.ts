@@ -42,7 +42,12 @@ export class CodenvyNavBarController {
     {
       name: 'Profile & Account',
       url: '#/account'
-    }, {
+    },
+    {
+      name: 'Billing',
+      url: '#/billing'
+    },
+    {
       name: 'Administration',
       url: '#/administration'
     }, {
