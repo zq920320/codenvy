@@ -62,7 +62,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    private Constants.Type licenseType;
+    private Constants.License licenseType;
 
     @Column
     private String licenseQualifier;
@@ -82,7 +82,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
 
     public CodenvyLicenseActionImpl() { }
 
-    public CodenvyLicenseActionImpl(Constants.Type licenseType,
+    public CodenvyLicenseActionImpl(Constants.License licenseType,
                                     Constants.Action actionType,
                                     long actionTimestamp,
                                     String licenseQualifier,
@@ -95,7 +95,7 @@ public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     }
 
     @Override
-    public Constants.Type getLicenseType() {
+    public Constants.License getLicenseType() {
         return licenseType;
     }
 

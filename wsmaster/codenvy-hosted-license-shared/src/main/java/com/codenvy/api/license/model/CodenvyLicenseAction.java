@@ -27,7 +27,7 @@ public interface CodenvyLicenseAction {
     /**
      * Returns Codenvy license type.
      */
-    Constants.Type getLicenseType();
+    Constants.License getLicenseType();
 
     /**
      * Returns Codenvy action type. It explains what happened with a license.

@@ -15,7 +15,7 @@
 package com.codenvy.api.license.server.jpa;
 
 import com.codenvy.api.license.model.Constants;
-import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
+import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 import com.google.inject.Singleton;
 import com.google.inject.persist.Transactional;
@@ -37,7 +37,7 @@ import static java.util.Objects.requireNonNull;
  * @author Anatolii Bazko
  */
 @Singleton
-public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
+public class JpaCodenvyLicenseActionDao implements CodenvyLicenseActionDao {
 
     @Inject
     protected Provider<EntityManager> managerProvider;
@@ -56,14 +56,14 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
     }
 
     @Override
-    public void remove(Constants.Type licenseType, Constants.Action actionType) throws ServerException {
+    public void remove(Constants.License licenseType, Constants.Action actionType) throws ServerException {
         doRemove(licenseType, actionType);
     }
 
     @Override
     @Transactional
-    public CodenvyLicenseActionImpl getByLicenseAndType(Constants.Type licenseType, Constants.Action actionType) throws ServerException,
-                                                                                                                        NotFoundException {
+    public CodenvyLicenseActionImpl getByLicenseAndAction(Constants.License licenseType, Constants.Action actionType) throws ServerException,
+                                                                                                                             NotFoundException {
         try {
             return managerProvider.get()
                                   .createNamedQuery("License.getByTypeAndAction", CodenvyLicenseActionImpl.class)
@@ -79,7 +79,7 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
 
     @Override
     @Transactional
-    public List<CodenvyLicenseActionImpl> getByLicense(Constants.Type licenseType) throws ServerException {
+    public List<CodenvyLicenseActionImpl> getByLicense(Constants.License licenseType) throws ServerException {
         try {
             return managerProvider.get()
                                   .createNamedQuery("License.getByType", CodenvyLicenseActionImpl.class)
@@ -96,9 +96,9 @@ public class JpaCodenvyLicenseDao implements CodenvyLicenseDao {
     }
 
     @Transactional
-    protected void doRemove(Constants.Type licenseType, Constants.Action licenseAction) throws ServerException {
+    protected void doRemove(Constants.License licenseType, Constants.Action licenseAction) throws ServerException {
         try {
-            CodenvyLicenseActionImpl action = getByLicenseAndType(licenseType, licenseAction);
+            CodenvyLicenseActionImpl action = getByLicenseAndAction(licenseType, licenseAction);
             managerProvider.get().remove(action);
         } catch (NotFoundException e) {
             return;

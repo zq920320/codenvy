@@ -14,7 +14,7 @@
  */
 package com.codenvy.api.license.server.jpa;
 
-import com.codenvy.api.license.server.dao.CodenvyLicenseDao;
+import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 import com.google.inject.TypeLiteral;
 import com.google.inject.persist.jpa.JpaPersistModule;
@@ -42,6 +42,6 @@ public class CodenvyLicenseTckModule extends TckModule {
         bind(new TypeLiteral<TckRepository<CodenvyLicenseActionImpl>>() {})
                 .toInstance(new JpaTckRepository<>(CodenvyLicenseActionImpl.class));
 
-        bind(CodenvyLicenseDao.class).to(JpaCodenvyLicenseDao.class);
+        bind(CodenvyLicenseActionDao.class).to(JpaCodenvyLicenseActionDao.class);
     }
 }

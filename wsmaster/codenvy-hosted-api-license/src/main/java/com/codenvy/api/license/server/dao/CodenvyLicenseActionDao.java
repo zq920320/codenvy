@@ -28,7 +28,7 @@ import java.util.List;
  *
  * @author Anatolii Bazko
  */
-public interface CodenvyLicenseDao {
+public interface CodenvyLicenseActionDao {
 
     /**
      * Stores license action.
@@ -46,37 +46,39 @@ public interface CodenvyLicenseDao {
      * Removes codenvy license actions.
      *
      * @param licenseType
-     *          {@link Constants.Type}
+     *          the type of the license
+     * @param actionType
+     *          the action happened with license
      * @throws ServerException
      *      any other error occurred
      */
-    void remove(Constants.Type licenseType, Constants.Action actionType) throws ServerException;
+    void remove(Constants.License licenseType, Constants.Action actionType) throws ServerException;
 
     /**
      * Finds license action.
      *
      * @param licenseType
-     *          {@link Constants.Type}
+     *          the type of the license
      * @param actionType
-     *          {@link Constants.Action}
+     *          the action happened with license
      * @return {@link CodenvyLicenseActionImpl}
      * @throws NotFoundException
      *      no license action found
      * @throws ServerException
      *      any other error occurred
      */
-    CodenvyLicenseActionImpl getByLicenseAndType(Constants.Type licenseType, Constants.Action actionType) throws ServerException,
-                                                                                                                 NotFoundException;
+    CodenvyLicenseActionImpl getByLicenseAndAction(Constants.License licenseType, Constants.Action actionType) throws ServerException,
+                                                                                                                      NotFoundException;
 
     /**
      * Finds license action.
      *
      * @param licenseType
-     *          {@link Constants.Type}
+     *          the type of the license
      * @return {@link CodenvyLicenseActionImpl}
      * @throws ServerException
      *      any other error occurred
      */
-    List<CodenvyLicenseActionImpl> getByLicense(Constants.Type licenseType) throws ServerException;
+    List<CodenvyLicenseActionImpl> getByLicense(Constants.License licenseType) throws ServerException;
 
 }
