@@ -14,6 +14,8 @@
  */
 package com.codenvy.api.license;
 
+import com.codenvy.api.license.exception.IllegalLicenseFormatException;
+import com.codenvy.api.license.exception.InvalidLicenseException;
 import com.license4j.License;
 import com.license4j.LicenseValidator;
 import com.license4j.ValidationStatus;

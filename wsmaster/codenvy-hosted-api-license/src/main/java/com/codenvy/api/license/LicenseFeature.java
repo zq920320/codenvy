@@ -15,6 +15,7 @@
 package com.codenvy.api.license;
 
 import com.codenvy.api.license.CodenvyLicense.LicenseType;
+import com.codenvy.api.license.exception.IllegalLicenseFormatException;
 
 import java.text.ParseException;
 import java.util.IllegalFormatException;

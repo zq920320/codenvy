@@ -12,17 +12,26 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-package com.codenvy.api.license;
+package com.codenvy.api.license.shared.model;
+
+import com.codenvy.api.license.shared.dto.IssueDto;
+
+import java.util.List;
 
 /**
- * @author Anatoliy Bazko
+ * Describes legality of usage of Codenvy according to actual license.
+ *
+ * @author Dmytro Nochevnov
  */
-public class IllegalLicenseFormatException extends InvalidLicenseException {
-    public IllegalLicenseFormatException(String message) {
-        super(message);
-    }
+public interface Legality {
 
-    public IllegalLicenseFormatException(String message, Throwable cause) {
-        super(message, cause);
-    }
+    /**
+     * Check if Codenvy usage is legal.
+     */
+    boolean getIsLegal();
+
+    /**
+     * Get list of issues related to actual license.
+     */
+    List<IssueDto> getIssues();
 }

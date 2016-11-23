@@ -21,10 +21,6 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
 
-import static com.codenvy.api.license.LicenseFeature.EXPIRATION;
-import static com.codenvy.api.license.LicenseFeature.TYPE;
-import static com.codenvy.api.license.LicenseFeature.USERS;
-
 /**
  * Represents valid Codenvy license.
  *
@@ -66,21 +62,21 @@ public class CodenvyLicense {
      * @return {@link LicenseFeature#EXPIRATION} feature value
      */
     public Date getExpirationDate() {
-        return (Date)doGetFeature(EXPIRATION);
+        return (Date)doGetFeature(LicenseFeature.EXPIRATION);
     }
 
     /**
      * @return {@link LicenseFeature#USERS} feature value
      */
     public int getNumberOfUsers() {
-        return (int)doGetFeature(USERS);
+        return (int)doGetFeature(LicenseFeature.USERS);
     }
 
     /**
      * @return {@link LicenseFeature#TYPE} feature value
      */
     public LicenseType getLicenseType() {
-        return (LicenseType)doGetFeature(TYPE);
+        return (LicenseType)doGetFeature(LicenseFeature.TYPE);
     }
 
     /**
