@@ -109,6 +109,10 @@ public class CodenvyLicenseManager {
         String licenseQualifier = extractLicenseId(licenseText);
 
         removeActionsOfExpiredLicense();
+        removeActionsOfDifferentLicenseAndStoreNew(licenseQualifier);
+    }
+
+    private void removeActionsOfDifferentLicenseAndStoreNew(String licenseQualifier) throws ApiException {
         try {
             CodenvyLicenseActionImpl licenseAction = codenvyLicenseActionDao.getByLicenseAndAction(PRODUCT_LICENSE, ACCEPTED);
             if (!licenseAction.getLicenseQualifier().equals(licenseQualifier)) {
@@ -116,10 +120,9 @@ public class CodenvyLicenseManager {
                 codenvyLicenseActionDao.remove(PRODUCT_LICENSE, EXPIRED);
                 addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
             }
-        } catch (NotFoundException ignored) {
+        } catch (NotFoundException e) {
             addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
         }
-
     }
 
     private void removeActionsOfExpiredLicense() throws ServerException {
@@ -260,11 +263,14 @@ public class CodenvyLicenseManager {
                                   Constants.Action actionType,
                                   @Nullable String licenseQualifier,
                                   Map<String, String> attributes) throws ApiException {
-        CodenvyLicenseActionImpl codenvyLicenseAction = new CodenvyLicenseActionImpl(licenseType,
-                                                                                     actionType,
-                                                                                     System.currentTimeMillis(),
-                                                                                     licenseQualifier,
-                                                                                     attributes);
+
+        CodenvyLicenseActionImpl codenvyLicenseAction
+                = new CodenvyLicenseActionImpl(licenseType,
+                                               actionType,
+                                               System.currentTimeMillis(),
+                                               licenseQualifier,
+                                               attributes);
+
         codenvyLicenseActionDao.store(codenvyLicenseAction);
     }
 
