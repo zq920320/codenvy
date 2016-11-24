@@ -1,6 +1,6 @@
 --
 --  [2012] - [2016] Codenvy, S.A.
---  All Rights Rese rved.
+--  All Rights Reserved.
 --
 -- NOTICE:  All information contained herein is, and remains
 -- the property of Codenvy S.A. and its suppliers,

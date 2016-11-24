@@ -24,7 +24,6 @@ import com.codenvy.api.license.model.FairSourceLicenseAcceptance;
 import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 import com.codenvy.swarm.client.SwarmDockerConnector;
-import com.google.common.hash.Hashing;
 
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
@@ -47,6 +46,8 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.codenvy.api.license.model.Constants.Action.ACCEPTED;
 import static com.codenvy.api.license.model.Constants.Action.EXPIRED;
@@ -54,7 +55,6 @@ import static com.codenvy.api.license.model.Constants.License.FAIR_SOURCE_LICENS
 import static com.codenvy.api.license.model.Constants.License.PRODUCT_LICENSE;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.lang.String.format;
-import static java.nio.charset.Charset.defaultCharset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
@@ -66,6 +66,8 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 public class CodenvyLicenseManager {
+
+    private static final Pattern LICENSE_ID = Pattern.compile(".*\\(id: ([0-9]+)\\)");
 
     private final CodenvyLicenseFactory   licenseFactory;
     private final Path                    licenseFile;
@@ -104,7 +106,7 @@ public class CodenvyLicenseManager {
             throw new LicenseException(e.getMessage(), e);
         }
 
-        String licenseQualifier = calculateLicenseMD5sum(licenseText);
+        String licenseQualifier = extractLicenseId(licenseText);
 
         removeActionsOfExpiredLicense();
         try {
@@ -157,7 +159,7 @@ public class CodenvyLicenseManager {
      */
     public void delete() throws LicenseException, ApiException {
         String licenseText = readLicenseText();
-        String licenseQualifier = calculateLicenseMD5sum(licenseText);
+        String licenseQualifier = extractLicenseId(licenseText);
 
         try {
             Files.delete(licenseFile);
@@ -285,8 +287,13 @@ public class CodenvyLicenseManager {
         }
     }
 
-    private String calculateLicenseMD5sum(@NotNull String licenseText) {
-        return Hashing.md5().hashString(licenseText, defaultCharset()).toString();
+    private String extractLicenseId(@NotNull String licenseText) throws BadRequestException {
+        Matcher matcher = LICENSE_ID.matcher(licenseText);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+
+        throw new BadRequestException("License Id is absent");
     }
 
     private String readLicenseText() throws LicenseException {

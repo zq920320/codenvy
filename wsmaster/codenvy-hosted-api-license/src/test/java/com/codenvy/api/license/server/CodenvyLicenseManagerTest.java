@@ -23,7 +23,6 @@ import com.codenvy.api.license.server.model.impl.FairSourceLicenseAcceptanceImpl
 import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.collect.ImmutableMap;
-import com.google.common.hash.Hashing;
 
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
@@ -54,7 +53,6 @@ import static com.codenvy.api.license.model.Constants.Action.EXPIRED;
 import static com.codenvy.api.license.model.Constants.License.FAIR_SOURCE_LICENSE;
 import static com.codenvy.api.license.model.Constants.License.PRODUCT_LICENSE;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.nio.charset.Charset.defaultCharset;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.apache.commons.io.FileUtils.readFileToString;
 import static org.mockito.Matchers.any;
@@ -81,11 +79,11 @@ import static org.testng.Assert.assertTrue;
 @Listeners(value = {MockitoTestNGListener.class})
 public class CodenvyLicenseManagerTest {
 
-    private static final String LICENSE_TEXT               = "license text";
-    private static final String NEW_LICENSE_TEXT           = "new license text";
+    private static final String LICENSE_TEXT               = "# (id: 1)\nlicense text";
+    private static final String NEW_LICENSE_TEXT           = "# (id: 2)\nnew license text";
     private static final String LICENSE_STORAGE_PREFIX_DIR = "licenseStorage-";
     private static final String LICENSE                    = "license";
-    private static final String LICENSE_QUALIFIER          = Hashing.md5().hashString(LICENSE_TEXT, defaultCharset()).toString();
+    private static final String LICENSE_QUALIFIER          = "1";
     private static final long   USER_NUMBER                = 3;
     private static final int    NODES_NUMBER               = 2;
 
