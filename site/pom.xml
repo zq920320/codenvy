@@ -44,17 +44,6 @@
                                 <exec dir="${basedir}" executable="npm" failonerror="true">
                                     <arg value="install" />
                                 </exec>
-                                <!--
-                                <exec dir="${basedir}" executable="gulp" failonerror="true">
-                                    <arg value="prod" />
-                                </exec>
-                                <exec dir="${basedir}" executable="gulp" failonerror="true">
-                                    <arg value="stage" />
-                                </exec>
-                                <exec dir="${basedir}" executable="gulp" failonerror="true">
-                                    <arg value="enterprise" />
-                                </exec>
-                                -->
                                 <exec dir="${basedir}" executable="gulp" failonerror="true">
                                     <arg value="onprem_se" />
                                 </exec>
