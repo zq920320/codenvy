@@ -106,7 +106,7 @@ public class CodenvyLicenseManager {
 
         String licenseQualifier = calculateLicenseMD5sum(licenseText);
 
-        removeExpiredLicenseActions();
+        removeActionsOfExpiredLicense();
         try {
             CodenvyLicenseActionImpl licenseAction = codenvyLicenseActionDao.getByLicenseAndAction(PRODUCT_LICENSE, ACCEPTED);
             if (!licenseAction.getLicenseQualifier().equals(licenseQualifier)) {
@@ -120,7 +120,7 @@ public class CodenvyLicenseManager {
 
     }
 
-    private void removeExpiredLicenseActions() throws ServerException {
+    private void removeActionsOfExpiredLicense() throws ServerException {
         try {
             codenvyLicenseActionDao.getByLicenseAndAction(PRODUCT_LICENSE, EXPIRED);
             codenvyLicenseActionDao.remove(PRODUCT_LICENSE, ACCEPTED);

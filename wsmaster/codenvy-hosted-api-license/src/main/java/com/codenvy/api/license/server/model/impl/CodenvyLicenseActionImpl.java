@@ -25,13 +25,11 @@ import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.Index;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -54,30 +52,31 @@ import java.util.Objects;
                                     "WHERE :type = l.licenseType")
         }
 )
-@Table(indexes = {@Index(columnList = "licenseType,actionType", unique = true)})
+@Table(name = "license")
 public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     @Id
     @GeneratedValue
+    @Column(name = "id")
     private long id;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "license_type")
     private Constants.License licenseType;
 
-    @Column
+    @Column(name = "license_qualifier")
     private String licenseQualifier;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "action_type")
     private Constants.Action actionType;
 
-    @Column(nullable = false)
+    @Column(name = "action_timestamp")
     private long actionTimestamp;
 
     @ElementCollection
     @MapKeyColumn(name = "name")
-    @Column(name = "value", nullable = false)
-    @CollectionTable(joinColumns = @JoinColumn(name = "id"), uniqueConstraints = @UniqueConstraint(columnNames = {"id", "name"}))
+    @Column(name = "value")
+    @CollectionTable(name = "license_attributes", joinColumns = @JoinColumn(name = "id"))
     private Map<String, String> attributes;
 
     public CodenvyLicenseActionImpl() { }
