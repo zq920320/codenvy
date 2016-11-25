@@ -14,17 +14,20 @@
  */
 package com.codenvy.api.license.server;
 
-import com.codenvy.api.license.shared.dto.LegalityDto;
-import com.codenvy.api.license.CodenvyLicense;
-import com.codenvy.api.license.exception.InvalidLicenseException;
-import com.codenvy.api.license.exception.LicenseException;
-import com.codenvy.api.license.LicenseFeature;
-import com.codenvy.api.license.exception.LicenseNotFoundException;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+
+import com.codenvy.api.license.CodenvyLicense;
+import com.codenvy.api.license.LicenseFeature;
+import com.codenvy.api.license.exception.InvalidLicenseException;
+import com.codenvy.api.license.exception.LicenseException;
+import com.codenvy.api.license.exception.LicenseNotFoundException;
+import com.codenvy.api.license.shared.dto.FairSourceLicenseAcceptanceDto;
+import com.codenvy.api.license.shared.dto.LegalityDto;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -64,11 +67,14 @@ public class LicenseService {
     private static final Logger LOG                                 = LoggerFactory.getLogger(LicenseService.class);
     public static final  String CODENVY_LICENSE_PROPERTY_IS_EXPIRED = "isExpired";
 
-    private final CodenvyLicenseManager licenseManager;
+    private final CodenvyLicenseManager                licenseManager;
+    private final FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator;
 
     @Inject
-    public LicenseService(CodenvyLicenseManager licenseManager) {
+    public LicenseService(CodenvyLicenseManager licenseManager,
+                          FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator) {
         this.licenseManager = licenseManager;
+        this.licenseAcceptanceValidator = licenseAcceptanceValidator;
     }
 
     @DELETE
@@ -192,4 +198,17 @@ public class LicenseService {
         }
     }
 
+    @POST
+    @Path("fair-source-license")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @ApiOperation(value = "Acceptance of Codenvy Fair Source License")
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "OK"),
+                           @ApiResponse(code = 400, message = "Inappropriate accept request"),
+                           @ApiResponse(code = 409, message = "Fair Source License has been already accepted"),
+                           @ApiResponse(code = 500, message = "Server error")})
+    public Response acceptFairSourceLicense(FairSourceLicenseAcceptanceDto fairSourceLicenseAcceptanceDto) throws ApiException {
+        licenseAcceptanceValidator.validate(fairSourceLicenseAcceptanceDto);
+        licenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptanceDto);
+        return status(CREATED).build();
+    }
 }

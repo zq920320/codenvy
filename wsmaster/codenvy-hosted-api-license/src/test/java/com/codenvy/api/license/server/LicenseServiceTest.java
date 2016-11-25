@@ -73,6 +73,8 @@ public class LicenseServiceTest {
     private CodenvyLicense        mockCodenvyLicense;
     @Mock
     private CodenvyLicenseFactory mockLicenseFactory;
+    @Mock
+    private FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator;
 
     @InjectMocks
     LicenseService licenseService;
@@ -123,7 +125,7 @@ public class LicenseServiceTest {
     }
 
     @Test
-    public void testDeleteLicensShouldNotFindLicenseToDelete() {
+    public void testDeleteLicensShouldNotFindLicenseToDelete() throws Exception {
         doThrow(new LicenseNotFoundException("error")).when(licenseManager).delete();
 
         Response response = given()

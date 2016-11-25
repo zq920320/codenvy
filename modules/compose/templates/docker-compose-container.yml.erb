@@ -120,6 +120,10 @@ services:
     volumes:
       - '<%= scope.lookupvar('compose::codenvy_folder') -%>/data/postgres:/var/lib/postgresql/data'
       - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/postgres/postgresql.conf:/usr/share/postgresql/postgresql.conf.sample'
+<% if scope.lookupvar('codenvy::env') != 'production' -%>
+    ports:
+      - '5432:5432'
+<% end -%>
     ulimits:
       nproc: 163840
       nofile:
@@ -142,6 +146,7 @@ services:
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/logs/codenvy/:/opt/codenvy-data/logs/'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/logs/codenvy/che-machines-logs/:/opt/codenvy-data/che-machines-logs/'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/data/codenvy/fs/:/opt/codenvy-data/fs/'
+       - '<%= scope.lookupvar('compose::codenvy_folder') -%>/data/codenvy/license/:/opt/codenvy-data/license/'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/data/codenvy/che-machines/:/opt/codenvy-data/che-machines/'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/codenvy/conf:/opt/codenvy-data/conf'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/codenvy/conf/server.xml:/opt/codenvy-tomcat/conf/server.xml'
