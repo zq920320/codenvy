@@ -24,7 +24,6 @@ import com.codenvy.swarm.client.SwarmDockerConnector;
 import com.codenvy.swarm.client.model.DockerNode;
 import com.google.common.collect.ImmutableMap;
 
-import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
@@ -330,17 +329,6 @@ public class CodenvyLicenseManagerTest {
         codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
         verify(codenvyLicenseActionDao, times(1)).store(any(CodenvyLicenseActionImpl.class));
         verify(codenvyLicenseActionDao, never()).remove(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED));
-    }
-
-    @Test(expectedExceptions = BadRequestException.class)
-    public void shouldNotAcceptIfRequestInvalid() throws Exception {
-        when(codenvyLicenseActionDao.getByLicenseAndAction(eq(FAIR_SOURCE_LICENSE), eq(ACCEPTED)))
-                .thenThrow(new NotFoundException("Codenvy license not found"));
-
-        IoUtil.deleteRecursive(testDirectory);
-        FairSourceLicenseAcceptanceImpl fairSourceLicenseAcceptance = new FairSourceLicenseAcceptanceImpl("fn", "ln", null);
-
-        codenvyLicenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptance);
     }
 
     @Test

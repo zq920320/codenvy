@@ -28,7 +28,7 @@ CREATE TABLE license_action_attributes (
     license_type                 VARCHAR(255)    NOT NULL,
     action_type                  VARCHAR(255)    NOT NULL,
     value                        VARCHAR(255)    NOT NULL,
-    name                         VARCHAR(255)    NOT NULL,
+    name                         VARCHAR(255)    NOT NULL
 );
 
 -- constraints

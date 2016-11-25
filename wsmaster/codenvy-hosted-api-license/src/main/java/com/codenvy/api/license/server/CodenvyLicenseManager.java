@@ -36,8 +36,6 @@ import org.eclipse.che.commons.annotation.Nullable;
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -54,7 +52,6 @@ import static com.codenvy.api.license.model.Constants.Action.EXPIRED;
 import static com.codenvy.api.license.model.Constants.License.FAIR_SOURCE_LICENSE;
 import static com.codenvy.api.license.model.Constants.License.PRODUCT_LICENSE;
 import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
@@ -231,8 +228,6 @@ public class CodenvyLicenseManager {
             // No Codenvy Fair Source License Accepted
         }
 
-        validateAcceptFairSourceLicenseRequest(fairSourceLicenseAcceptance);
-
         Map<String, String> attributes = new HashMap<>(3);
         attributes.put("firstName", fairSourceLicenseAcceptance.getFirstName());
         attributes.put("lastName", fairSourceLicenseAcceptance.getLastName());
@@ -272,25 +267,6 @@ public class CodenvyLicenseManager {
                                                attributes);
 
         codenvyLicenseActionDao.store(codenvyLicenseAction);
-    }
-
-    private void validateAcceptFairSourceLicenseRequest(FairSourceLicenseAcceptance fairSourceLicenseAcceptance)
-            throws BadRequestException {
-        String email = fairSourceLicenseAcceptance.getEmail();
-
-        if (isNullOrEmpty(email)
-            || isNullOrEmpty(fairSourceLicenseAcceptance.getFirstName())
-            || isNullOrEmpty(fairSourceLicenseAcceptance.getLastName())) {
-
-            throw new BadRequestException("Codenvy Fair Source License can't be accepted until all fields are filled.");
-        }
-
-        try {
-            InternetAddress internetAddress = new InternetAddress(email);
-            internetAddress.validate();
-        } catch (AddressException e) {
-            throw new BadRequestException(format("Codenvy Fair Source License can't be accepted. Email %s is not valid", email));
-        }
     }
 
     private String extractLicenseId(@NotNull String licenseText) throws BadRequestException {

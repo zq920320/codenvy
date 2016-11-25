@@ -40,7 +40,7 @@ import static org.testng.Assert.assertNotNull;
  * @author Anatolii Bazko
  */
 @Listeners(TckListener.class)
-@Test(suiteName = "CodenvyLicenseDaoTck")
+@Test(suiteName = "CodenvyLicenseActionDaoTck")
 public class JpaCodenvyLicenseActionDaoTest {
     private CodenvyLicenseActionImpl codenvyLicenseActions[];
 

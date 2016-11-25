@@ -65,6 +65,8 @@ public class LicenseServiceTest {
     private CodenvyLicense        mockCodenvyLicense;
     @Mock
     private CodenvyLicenseFactory mockLicenseFactory;
+    @Mock
+    private FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator;
 
     @InjectMocks
     LicenseService licenseService;

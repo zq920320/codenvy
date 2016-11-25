@@ -67,11 +67,14 @@ public class LicenseService {
     public static final  String CODENVY_LICENSE_PROPERTY_IS_EXPIRED = "isExpired";
     private static final String VALUE                               = "value";
 
-    private final CodenvyLicenseManager licenseManager;
+    private final CodenvyLicenseManager                licenseManager;
+    private final FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator;
 
     @Inject
-    public LicenseService(CodenvyLicenseManager licenseManager) {
+    public LicenseService(CodenvyLicenseManager licenseManager,
+                          FairSourceLicenseAcceptanceValidator licenseAcceptanceValidator) {
         this.licenseManager = licenseManager;
+        this.licenseAcceptanceValidator = licenseAcceptanceValidator;
     }
 
     @DELETE
@@ -207,6 +210,7 @@ public class LicenseService {
                            @ApiResponse(code = 409, message = "Fair Source License has been already accepted"),
                            @ApiResponse(code = 500, message = "Server error")})
     public Response acceptFairSourceLicense(FairSourceLicenseAcceptanceDto fairSourceLicenseAcceptanceDto) throws ApiException {
+        licenseAcceptanceValidator.validate(fairSourceLicenseAcceptanceDto);
         licenseManager.acceptFairSourceLicense(fairSourceLicenseAcceptanceDto);
         return status(CREATED).build();
     }
