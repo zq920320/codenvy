@@ -23,7 +23,6 @@ import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.MapKeyColumn;
@@ -39,44 +38,41 @@ import java.util.Objects;
  *
  * @author Anatolii Bazko
  */
-@Entity(name = "License")
+@Entity(name = "LicenseAction")
 @NamedQueries(
         {
-                @NamedQuery(name = "License.getByTypeAndAction",
+                @NamedQuery(name = "LicenseAction.getByLicenseAndAction",
                             query = "SELECT l " +
-                                    "FROM License l " +
-                                    "WHERE :type = l.licenseType AND :action = l.actionType"),
-                @NamedQuery(name = "License.getByType",
-                            query = "SELECT l " +
-                                    "FROM License l " +
-                                    "WHERE :type = l.licenseType")
+                                    "FROM LicenseAction l " +
+                                    "WHERE :license_type = l.licenseType AND :action_type = l.actionType")
         }
 )
-@Table(name = "license")
+@Table(name = "license_action")
 public class CodenvyLicenseActionImpl implements CodenvyLicenseAction {
     @Id
-    @GeneratedValue
-    @Column(name = "id")
-    private long id;
-
     @Enumerated(EnumType.STRING)
-    @Column(name = "license_type")
+    @Column(name = "license_type", nullable = false)
     private Constants.License licenseType;
 
     @Column(name = "license_qualifier")
     private String licenseQualifier;
 
+    @Id
     @Enumerated(EnumType.STRING)
-    @Column(name = "action_type")
+    @Column(name = "action_type", nullable = false)
     private Constants.Action actionType;
 
-    @Column(name = "action_timestamp")
+    @Column(name = "action_timestamp", nullable = false)
     private long actionTimestamp;
 
     @ElementCollection
     @MapKeyColumn(name = "name")
-    @Column(name = "value")
-    @CollectionTable(name = "license_attributes", joinColumns = @JoinColumn(name = "id"))
+    @Column(name = "value", nullable = false)
+    @CollectionTable(name = "license_action_attributes",
+                     joinColumns = {
+                             @JoinColumn(name = "license_type", referencedColumnName = "license_type"),
+                             @JoinColumn(name = "action_type", referencedColumnName = "action_type")
+                     })
     private Map<String, String> attributes;
 
     public CodenvyLicenseActionImpl() { }

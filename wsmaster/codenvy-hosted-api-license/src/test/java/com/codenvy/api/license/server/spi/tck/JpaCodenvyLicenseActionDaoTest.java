@@ -30,8 +30,6 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
-import java.util.List;
-
 import static com.codenvy.api.license.model.Constants.Action.ACCEPTED;
 import static com.codenvy.api.license.model.Constants.License.PRODUCT_LICENSE;
 import static java.util.Arrays.asList;
@@ -90,12 +88,6 @@ public class JpaCodenvyLicenseActionDaoTest {
         assertNotNull(codenvyLicenseAction);
         assertNotNull(codenvyLicenseAction.getAttributes().isEmpty());
         assertEquals(codenvyLicenseAction.getAttributes().get("prop1"), "value1");
-    }
-
-    @Test
-    public void shouldFindRecordByType() throws Exception {
-        List<CodenvyLicenseActionImpl> actions = codenvyLicenseDao.getByLicense(PRODUCT_LICENSE);
-        assertEquals(actions.size(), 2);
     }
 
     @Test(expectedExceptions = NotFoundException.class)

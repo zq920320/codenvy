@@ -29,7 +29,6 @@ import javax.inject.Inject;
 import javax.inject.Provider;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
-import java.util.List;
 
 import static java.util.Objects.requireNonNull;
 
@@ -57,7 +56,11 @@ public class JpaCodenvyLicenseActionDao implements CodenvyLicenseActionDao {
 
     @Override
     public void remove(Constants.License licenseType, Constants.Action actionType) throws ServerException {
-        doRemove(licenseType, actionType);
+        try {
+            doRemove(licenseType, actionType);
+        } catch (RuntimeException e) {
+            throw new ServerException(e);
+        }
     }
 
     @Override
@@ -66,25 +69,12 @@ public class JpaCodenvyLicenseActionDao implements CodenvyLicenseActionDao {
                                                                                                                              NotFoundException {
         try {
             return managerProvider.get()
-                                  .createNamedQuery("License.getByTypeAndAction", CodenvyLicenseActionImpl.class)
-                                  .setParameter("type", licenseType)
-                                  .setParameter("action", actionType)
+                                  .createNamedQuery("LicenseAction.getByLicenseAndAction", CodenvyLicenseActionImpl.class)
+                                  .setParameter("license_type", licenseType)
+                                  .setParameter("action_type", actionType)
                                   .getSingleResult();
         } catch (NoResultException e) {
             throw new NotFoundException("Codenvy license action not found");
-        } catch (RuntimeException e) {
-            throw new ServerException(e);
-        }
-    }
-
-    @Override
-    @Transactional
-    public List<CodenvyLicenseActionImpl> getByLicense(Constants.License licenseType) throws ServerException {
-        try {
-            return managerProvider.get()
-                                  .createNamedQuery("License.getByType", CodenvyLicenseActionImpl.class)
-                                  .setParameter("type", licenseType)
-                                  .getResultList();
         } catch (RuntimeException e) {
             throw new ServerException(e);
         }

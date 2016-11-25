@@ -21,8 +21,6 @@ import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.ServerException;
 
-import java.util.List;
-
 /**
  * Defines data access object contract for {@link CodenvyLicenseActionImpl}.
  *
@@ -69,16 +67,5 @@ public interface CodenvyLicenseActionDao {
      */
     CodenvyLicenseActionImpl getByLicenseAndAction(Constants.License licenseType, Constants.Action actionType) throws ServerException,
                                                                                                                       NotFoundException;
-
-    /**
-     * Finds license action.
-     *
-     * @param licenseType
-     *          the type of the license
-     * @return {@link CodenvyLicenseActionImpl}
-     * @throws ServerException
-     *      any other error occurred
-     */
-    List<CodenvyLicenseActionImpl> getByLicense(Constants.License licenseType) throws ServerException;
 
 }

@@ -14,8 +14,6 @@
  */
 package com.codenvy.api.license.model;
 
-import org.eclipse.che.commons.annotation.Nullable;
-
 import java.util.Map;
 
 /**
@@ -40,9 +38,8 @@ public interface CodenvyLicenseAction {
     long getActionTimestamp();
 
     /**
-     * Any license qualifier.
+     * License qualifier.
      */
-    @Nullable
     String getLicenseQualifier();
 
     /**
