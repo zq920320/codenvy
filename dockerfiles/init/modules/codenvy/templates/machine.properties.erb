@@ -59,7 +59,7 @@ local.recipe.path=
 # extra hosts which will be used in machines
 che.workspace.hosts=<%= scope.lookupvar('codenvy::machine_extra_hosts') %>
 che.docker.tcp_connection_timeout_ms=600000
-docker.connection.tcp.read_timeout_ms=600000
+che.docker.tcp_connection_read_timeout_ms=600000
 che.docker.always_pull_image=true
 che.docker.api=1.20
 
