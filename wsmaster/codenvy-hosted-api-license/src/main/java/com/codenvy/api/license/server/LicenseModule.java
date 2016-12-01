@@ -16,14 +16,17 @@ package com.codenvy.api.license.server;
 
 import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
 import com.codenvy.api.license.server.jpa.JpaCodenvyLicenseActionDao;
+import com.codenvy.api.permission.server.PermissionChecker;
+import com.codenvy.auth.sso.client.TokenHandler;
 import com.google.inject.AbstractModule;
 
+import com.google.inject.name.Names;
 import org.eclipse.che.inject.DynaModule;
 
 /**
  * @author Alexander Andrienko
+ * @author Dmytro Nochevnov
  */
-@DynaModule
 public class LicenseModule extends AbstractModule {
     @Override
     protected void configure() {

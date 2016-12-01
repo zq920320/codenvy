@@ -17,6 +17,8 @@ package com.codenvy.api.license.shared.dto;
 import com.codenvy.api.license.shared.model.Issue;
 import org.eclipse.che.dto.shared.DTO;
 
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
+
 /**
  * @author Dmytro Nochevnov
  */
@@ -35,4 +37,9 @@ public interface IssueDto extends Issue {
     void setMessage(String message);
 
     IssueDto withMessage(String message);
+
+    static IssueDto create(Status status, String message) {
+        return newDto(IssueDto.class).withStatus(status)
+                                     .withMessage(message);
+    }
 }

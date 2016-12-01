@@ -22,7 +22,8 @@ package com.codenvy.api.license.shared.model;
 public interface Issue {
 
     enum Status {
-        USER_LICENSE_HAS_REACHED_ITS_LIMIT
+        USER_LICENSE_HAS_REACHED_ITS_LIMIT,
+        FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED
     }
 
     /**

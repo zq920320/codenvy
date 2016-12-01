@@ -26,7 +26,6 @@ import com.codenvy.api.license.shared.model.Constants;
 import com.codenvy.api.license.shared.model.FairSourceLicenseAcceptance;
 import com.codenvy.api.license.shared.model.Issue;
 import com.codenvy.swarm.client.SwarmDockerConnector;
-
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
@@ -59,7 +58,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
-import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * @author Anatoliy Bazko
@@ -79,6 +77,7 @@ public class CodenvyLicenseManager {
 
     public static final String UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE   = "Unable to add your account. The Codenvy license has reached its user limit.";
     public static final String LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE = "Your user license has reached its limit. You cannot add more users.";
+    public static final String FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE = "Access cannot be granted until the Fair Source license agreement is accepted by an admin.";
 
     @Inject
     public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile,
@@ -250,9 +249,13 @@ public class CodenvyLicenseManager {
         List<IssueDto> issues = new ArrayList<>();
 
         if (!canUserBeAdded()) {
-            final IssueDto userLicenseHasReachedItsLimitIssue = newDto(IssueDto.class).withStatus(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT)
-                                                                                      .withMessage(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE);
-            issues.add(userLicenseHasReachedItsLimitIssue);
+            issues.add(IssueDto.create(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT,
+                                       LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE));
+        }
+
+        if (!hasAcceptedFairSourceLicense()) {
+            issues.add(IssueDto.create(Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED,
+                                       FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE));
         }
 
         return issues;

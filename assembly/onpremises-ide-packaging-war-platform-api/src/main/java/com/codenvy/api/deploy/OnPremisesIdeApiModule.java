@@ -17,6 +17,7 @@ package com.codenvy.api.deploy;
 import com.codenvy.api.AdminApiModule;
 import com.codenvy.api.audit.server.AuditService;
 import com.codenvy.api.audit.server.AuditServicePermissionsFilter;
+import com.codenvy.api.license.server.LicenseModule;
 import com.codenvy.api.machine.server.jpa.OnPremisesJpaMachineModule;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.permission.server.jpa.SystemPermissionsJpaModule;
@@ -324,6 +325,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.environment.server.MachineService.class);
 
         install(new ScheduleModule());
+        install(new LicenseModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
         bind(org.eclipse.che.plugin.docker.client.DockerRegistryDynamicAuthResolver.class)

@@ -14,6 +14,7 @@
  */
 package com.codenvy.api.deploy;
 
+import com.codenvy.api.license.UserInteractiveLicenseFilter;
 import com.google.inject.servlet.ServletModule;
 
 import org.apache.catalina.filters.CorsFilter;
@@ -105,6 +106,78 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
                "/system/ram/*",
                "/resource/*")
                 .through(com.codenvy.auth.sso.client.LoginFilter.class);
+
+        // filter("/profile").through(LicenseFilter.class);
+        filter("/factory/*",
+            "/activity/*",
+            "/workspace/*",
+            "/java-name-environment/*",
+            "/user/*",
+            "/admin/user",
+            "/admin/user/*",
+            "/analytics/*",
+            "/invite/*",
+            "/factory",
+            "/workspace",
+            "/audit",
+            "/user",
+            "/git/*",
+            "/svn/*",
+            "/github/*",
+            "/bitbucket/*",
+            "/ssh-keys/*",
+            "/async/*",
+            "/internal/convert/*",
+            "/profile",
+            "/profile/*",
+            "/analytics",
+            "/oauth/token",
+            "/oauth/authenticate",
+            "/password/change",
+            "/runner/*",
+            "/builder/*",
+            "/admin/runner/*",
+            "/admin/builder/*",
+            "/admin/plan",
+            "/project/*",
+            "/maven/*",
+            "/ws/*",
+            "/appengine/*",
+            "/gae-validator/*",
+            "/gae-parameters/*",
+            "/billing/*",
+            "/creditcard/*",
+            "/invoice/*",
+            "/billing/*",
+            "/machine/*",
+            "/machine",
+            "/recipe",
+            "/recipe/*",
+            "/stack",
+            "/stack/*",
+            "/command",
+            "/command/*",
+            "/subscription/*",
+            "/subscription",
+            "/saas/*",
+            "/promotion/*",
+            "/resources/*",
+            "/ext/*",
+            "/ssh/*",
+            "/ssh",
+            "/nodes",
+            "/permissions",
+//            "/permissions/*",
+            "/preferences",
+            "/preferences/*",
+            "/license",
+//            "/license/*",
+            "/ldap/sync",
+            "/ldap/sync/*",
+            "/organization",
+            "/organization/*",
+            "/system/ram/*",
+            "/resource/*").through(UserInteractiveLicenseFilter.class);
 
         final Map<String, String> corsFilterParams = new HashMap<>();
         corsFilterParams.put("cors.allowed.origins", DEFAULT_ALLOWED_ORIGINS);
