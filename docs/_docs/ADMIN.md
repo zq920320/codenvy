@@ -6,20 +6,16 @@ overview: true
 permalink: /docs/admin/
 ---
 # Codenvy Installation and Operation
-<<<<<<< HEAD
- makes cloud workspaces for develoment teams. Install, run, and manage Codenvy with Docker.
-=======
 Codenvy makes cloud workspaces for develoment teams. Install, run, and manage Codenvy with Docker.
->>>>>>> 297536086526341499cd15ca87febe6e0658fe5a
 
-### Quick Start
+## Quick Start
 With Docker 1.11+ on Windows, Mac, or Linux:
 ```
 $ docker run codenvy/cli start
 ```
 This command will give you additional instructions on how to run the Codenvy CLI while setting your hostname, configuring volume mounts, and testing your Docker setup.
 
-## Beta
+# Beta
 This Dockerized packaging is new. We continue to support our [puppet-based installation for production usage](http://codenvy.readme.io/docs/installation). 
 
 When the following are implemented, this Docker approach will be declared generally available:
@@ -30,7 +26,7 @@ When the following are implemented, this Docker approach will be declared genera
 
 3. In some limited firewall cases, workspaces will not start. This happens because certain internal Codenvy traffic is sent over an external IP address which is routed through your system's firewall. We can use socat and internal IP addresses within our Swarm cluster to avoid this issue.
 
-## Getting Help
+# Getting Help
 If you are Codenvy customer, file a ticket through email support for a quicker response.
 
 If you run into an issue, please [open a GitHub issue](http://github.com/codenvy/codenvy/issues) providing:
@@ -40,10 +36,10 @@ If you run into an issue, please [open a GitHub issue](http://github.com/codenvy
 - the full Docker run syntax you used for the `codenvy <command>`
 - the output of `cli.log` - see [CLI Reference](#cli-reference)
 
-## System Requirements
+# System Requirements
 Codenvy installs on Linux, Mac and Windows. 
 
-#### Hardware
+## Hardware
 * 2 cores
 * 3GB RAM
 * 3GB disk space
@@ -52,7 +48,7 @@ Codenvy requires 2 GB storage and 4 GB RAM for internal services. The RAM, CPU a
 
 Boot2Docker, docker-machine, Docker for Windows, and Docker for Mac are all Docker variations that launch VMs with Docker running in the VM with access to Docker from your host. We recommend increasing your default VM size to at least 4GB. Each of these technologies have different ways to allow host folder mounting into the VM. Please enable this for your OS so that Codenvy data is persisted on your host disk.
 
-#### Software
+## Software
 * Docker 11.1+
 
 The Codenvy CLI - a Docker image - manages the other Docker images and supporting utilities that Codenvy uses during its configuration or operations phases. The CLI also provides utilities for downloading an offline bundle to run Codenvy while disconnected from the network.
@@ -66,7 +62,7 @@ wget -qO- https://get.docker.com/ | sh
 
 Sometimes Fedora and RHEL/CentOS users will encounter issues with SElinux. Try disabling selinux with `setenforce 0` and check if resolves the issue. If using the latest docker version and/or disabling selinux does not fix the issue then please file a issue request on the [issues](https://github.com/codenvy/codenvy/issues) page. If you are a licensed customer of Codenvy, you can get prioritized support with support@codenvy.com.
 
-#### Workspaces
+## Workspaces
 Codenvy's workspaces launch an rsync agent that allows the centralized Codenvy server to backup project source code from within each workspace to the central servers. When workspaces are shut off or restarted, the project files are automatically rsync'd back into the workspace. rsync runs at workspace start, stop, and on a scheduler. This allows us to preserve the integrity of your source code if the workspace's runtime containers were to have a failure during operation.
 
 We install rsync into each user's workspace to run as a background service. In this version of Codenvy, your user workspaces require SSH and rsync in their base image. If you are connected to the Internet, we install rsync and SSH automatically. However, if you are doing an offline installation, then your workspace base images need to have this software included.
@@ -75,7 +71,7 @@ Some base images, like ubuntu, support this, but others like alpine, do not. If 
 
 In the non-container installation version of Codenvy, this requirement does not exist since we install these dependencies onto each host node that is added into the Codenvy cluster. We will be working to package up the rsync agent as a container that is deployed outside of your workspace's runtime. The container will have the dependencies and then this requirement will be removed.
 
-#### Sizing
+## Sizing
 Codenvy's core services will run on a single node as a set of microservices. Workspaces will run on the core node and additional workspace nodes that you add into a Codenvy cluster run by Swarm. The number and size of these physical nodes is determined by a few factors.
 
 You need to have enough RAM to support the number of concurrent *running* workspaces. A single user may have multiple running workspaces, but generally the common scenario is a user running a single workspace at a time. Workspace sizes are set by users when they create new workspaces, but you can define workspace limits in the configuration file that prevent RAM sprawl.
@@ -90,10 +86,10 @@ We have experitmented with adding 1000 physical nodes into a single physical clu
 
 The additional physical nodes must have Docker pre-configured similar to how you have Docker configured on the master node, including any configurations that you add for proxies or an alternative key-value store like Consul. Codenvy generates an automated script that can be run on each new node which prepares the node by installing some dependencies, adding the Codenvy SSH key, and registering itself within the Codenvy cluster.
 
-## Installation
+# Installation
 The Codenvy CLI (a Docker image) is downloaded when you first execute `docker run codenvy/cli:<version>` command. The CLI downloads other images that run Codenvy and its supporting utilities. The CLI also provides utilities for downloading an offline bundle to run Codenvy while disconnected from the network.
 
-#### Nightly and Latest
+## Nightly and Latest
 Each version of Codenvy is available as a Docker image tagged with a label that matches the version, such as `codenvy/cli:5.0.0-M7`. You can see all versions available by running `docker run codenvy/cli version` or by [browsing DockerHub](https://hub.docker.com/r/codenvy/cli/tags/).
 
 We maintain "redirection" labels which reference special versions of Codenvy:
@@ -114,23 +110,23 @@ To avoid issues that can appear from using 'nightly' or 'latest' redirectoins, y
 
 If you are running Codenvy using a tagged version that is a not a redirection label, such as `5.0.0-M7`, then these caching issues will not happen, as the software installed is tagged and specific to that particular version, never changing over time.
 
-#### Linux:
+## Linux:
 There is nothing additional you need to install other than Docker.
 
-#### Mac:
+## Mac:
 There is nothing additional you need to install other than Docker.
 
-#### Windows:
+## Windows:
 There is nothing additional you need to install other than Docker.
 
-#### Verification:
+## Verification:
 You can verify that the CLI is working:
 ```
 docker run codenvy/cli
 ```
 The CLI is bound inside of Docker images that are tagged with different versions. If you were to run `codenvy/cli:5.0.0-latest` this will run the latest shipping release of Codenvy and the CLI. This list of all versions available can be seen by running `codenvy version` or browsing the list of [tags available in Docker Hub](https://hub.docker.com/r/codenvy/cli/tags/).
 
-#### Proxies
+## Proxies
 You can install and operate behind a proxy. You will be operating a clustered system that is managed by Docker, and itself is managing a cluster of workspaces each with their own runtime(s). There are three proxy configurations:
 1. Configuring Docker proxy access so that Codenvy can download images from DockerHub.
 2. Configuring Codenvy's system containers so that internal services can proxy to the Internet.
@@ -154,37 +150,37 @@ If you would like your users to have proxified access to the Internet from withi
 
 A `NO_PROXY` variable is required if you use a fake local DNS. Java and other internal utilities will avoid accessing a proxy for internal communications when this value is set.
 
-#### Offline Installation
+## Offline Installation
 We support the ability to install and run Codenvy while disconnected from the Internet. This is helpful for certain restricted environments, regulated datacenters, or offshore installations. 
 
-##### Save Docker Images
+### Save Docker Images
 While connected to the Internet, download Codenvy's Docker images:
 ```
 docker run codenvy/cli offline
 ``` 
 The CLI will download images and save them to `/codenvy/backup/*.tar` with each image saved as its own file. The `/backup` folder will be created as a subdirectory of the folder you volume mounted to `:/codenvy`. You can optionally save these files to a differnet location by volume mounting that folder to `:/backup`. The version tag of the CLI Docker image will be used to determine which versions of dependent images to download. There is about 1GB of data that will be saved.
 
-##### Save Codenvy CLI
+### Save Codenvy CLI
 ```
 docker save codenvy/cli:<version>
 ```
 
-##### Save Codenvy Stacks
+### Save Codenvy Stacks
 Out of the box, Codenvy has configured a few dozen stacks for popular programming languages and frameworks. These stacks use "recipes" which contain links to Docker images that are needed to create workspaces from these stacks. These workspace runtime images are not saved as part of `codenvy offline`. There are many of these images and they consume a lot of disk space. Most users do not require all of these stacks and most replace default stacks with custom stacks using their own Docker images. If you'd like to get the images that are associated with Codenvy's stacks:
 ```
 docker save <codenvy-stack-image-name> > backup/<base-image-name>.tar
 ```
 The list of images that Codenvy manages is sourced from Eclipse Che's [Dockerfiles repository](https://github.com/eclipse/che-dockerfiles/tree/master/recipes). Each folder is named the same way that our images are stored.  The `alpine_jdk8` folder represents the `codenvy/alpine_jdk8` Docker image, which you would save with `docker save codenvy/alpine_jdk8 > backup/alpine_jdk8.tar`.
 
-##### Start Offline
+### Start Offline
 Extract your files to an offline computer with Docker already configured. Install the CLI files to a directory on your path and ensure that they have execution permissions. Execute the CLI in the directory that has the `offline` sub-folder which contains your tar files. Then start Codenvy in `--offline` mode:
 ```
 docker run codenvy/cli:<version> start --offline
 ```
 When invoked with the `--offline` parameter, the Codenvy CLI performs a preboot sequence, which loads all saved `backup/*.tar` images including any Codenvy stack images you saved. The preboot sequence takes place before any CLI configuration, which itself depends upon Docker. The `codenvy start`, `codenvy download`, and `codenvy init` commands support `--offline` mode which triggers this preboot seequence.
 
-## Usage
-#### Syntax
+# Usage
+## Syntax
 ```
 Usage: docker run -it --rm 
                   -v /var/run/docker.sock:/var/run/docker.sock
@@ -235,7 +231,7 @@ Variables:
 
 In these docs, when you see `codenvy [COMMAND]`, it is assumed that you run the CLI with the full `docker run ...` syntax. We short hand the docs for readability.
 
-#### Sample Start
+## Sample Start
 For example, to start the nightly build of Codenvy with its data saved on Windows in C:\tmp:
 `docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock -v /c/tmp:/codenvy codenvy/cli:5.0.0-latest start`
 
@@ -265,10 +261,10 @@ The administrative login is:
 user: admin
 pass: password
 ```
-#### Versions
+## Versions
 While we provide `nightly`, `latest`, and `5.0.0-latest` [redirection versions](https://github.com/codenvy/codenvy/tree/master/docs#nightly-and-latest) which are tags that simplify helping you retrieve a certain build, you should always run Codenvy with a specific version label to avoid [redirection caching issues](https://github.com/codenvy/codenvy/tree/master/docs#nightly-and-latest). So, running `docker run codenvy/cli` is great syntax for testing and getting started quickly, you should always run `docker run codenvy/cli:<version>` for production usage.
 
-#### Volume Mounts
+## Volume Mounts
 If you volume mount a single local folder to `<your-local-path>:/codenvy`, then Codenvy creates `/codenvy/codenvy.env` (configuration), `/codenvy/instance` (user data, projects, runtime logs, and database), and `/codenvy/backup` (data backup).
 
 However, if you do not want your `/instance`, and `/backup` folder to all be children of the same parent folder, you can set them individually with separate overrides.
@@ -282,7 +278,7 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
 
 ```
 
-#### Hosting
+## Hosting
 If you are hosting Codenvy at a cloud service like DigitalOcean, set `CODENVY_HOST` to the server's IP address or its DNS. We use an internal utility, `eclipse/che-ip`, to determine the default value for `CODENVY_HOST`, which is your server's IP address. This works well on desktops, but usually fails on hosted servers requiring you to explicitly set this value.
 
 ```
@@ -292,7 +288,7 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock
                        codenvy/cli:<version> [COMMAND]
 ``` 
 
-## Uninstall
+# Uninstall
 ```
 # Remove your Codevy configuration and destroy user projects and database
 docker run codenvy/cli destroy
@@ -301,7 +297,7 @@ docker run codenvy/cli destroy
 docker run codenvy/cli rmi
 ```
 
-## Configuration
+# Configuration
 Configuration is done with environment variables in `codenvy.env` placed into the root of the folder you volume mounted to `:/codenvy`. Environment variables are stored in `codenvy.env`, a file that is generated during the `codenvy init` phase. If you rerun `codenvy init` in an already initialized folder, the process will abort unless you pass `--force`, `--pull`, or `--reinit`. 
 
 Each variable is documented with an explanation and usually commented out. If you need to set a variable, uncomment it and configure it with your value. You can then run `codenvy config` to apply this configuration to your system. `codenvy start` also reapplies the latest configuration.
@@ -310,7 +306,7 @@ You can run `codenvy init` to install a new configuration into an empty director
 
 If you run `codenvy config`, Codenvy runs puppet to transform your puppet templates into a Codenvy instance configuration, placing the results into `/codenvy/instance` if you volume mounted that, or into a `instance` subdirectory of the path you mounted to `/codenvy`.  Each time you start Codenvy, `codenvy config` is run to ensure instance configuration files are properly generated and consistent with the configuration you have specified in `codenvy.env`.
 
-#### Saving Configuration in Version Control
+## Saving Configuration in Version Control
 Administration teams that want to version control your Codenvy configuration should save `codenvy.env`. This is the only file that should be saved with version control. It is not necessary, and even discouraged, to save the other files. If you were to perform a `codenvy upgrade` we may replace these files with templates that are specific to the version that is being upgraded. The `codenvy.env` file maintains fidelity between versions and we can generate instance configurations from that.
 
 The version control sequence would be:
@@ -320,7 +316,7 @@ The version control sequence would be:
 4. When pulling from version control, copy `codenvy.env` into the root of the folder you volume mount to `:/codenvy`.
 5. You can then run `codenvy config` or `codenvy start` and the instance configuration will be generated from this file.
     
-#### Logs and User Data
+## Logs and User Data
 When Codenvy initializes itself, it stores logs, user data, database data, and instance-specific configuration in the folder mounted to `/codenvy/instance` or an `instance` subfolder of what you mounted to `/codenvy`.  
 
 Codenvy's containers save their logs in the same location:
@@ -346,7 +342,7 @@ Instance configuration is generated by Codenvy and is updated by our internal co
 /config                            # Configuration files which are input mounted into the containers
 ```
 
-#### oAuth
+## oAuth
 You can configure Google, GitHub, Microsoft, BitBucket, or WSO2 oAuth for use when users login or create an account.
 
 Codenvy is shipped with a preconfigured GitHub oAuth application for the `codenvy.onprem` hostname. To enable GitHub oAuth, add `CODENVY_HOST=codenvy.onprem` to `codenvy.env` and restart. If you have a custom DNS, you need to register a GitHub oAuth application with GitHub's oAuth registration service. You will be asked for the callback URL, which is `http://<your_hostname>/api/oauth/callback`. You will receive from GitHub a client ID and secret, which must be added to `codenvy.env`:
@@ -361,7 +357,7 @@ CODENVY_GOOGLE_CLIENT_ID=yourID
 CODENVY_GOOGLE_SECRET=yourSecret
 ```
 
-#### LDAP
+## LDAP
 
 The Codenvy LDAP integration has two major roles: synchronization and authentication.
 
@@ -378,7 +374,7 @@ Authentication
 * When a user enters their name and password, the system authenticates them against the remote LDAP.
 * If authentication is successful the user gains access to Codenvy.
 
-##### LDAP Authentication
+### LDAP Authentication
 User authentication is implemented as follows:
 
 1. Search for for user DN according to the provided name. It can be performed in two ways: either by 
@@ -387,40 +383,40 @@ User authentication is implemented as follows:
 3. If username and password match, the LDAP entry is taken and transformed to obtain UserID (this is where synchronization configuration mechanism is applied).
 4. Checks if the user with a given ID already exists in the Codenvy database. If it doesn't user is authenticated.
 
-| Authentication Type   
-| --- 
-| DN Resolution   
+| Authentication Type |  
+| --- | 
+| DN Resolution  |
 
-##### Configuration
+### Configuration
 There are several types of configuration covered in the tables below:
 - Authentication configuration
 - Connection configuration
 - SSL configuration
 - SASL configuration
 
-###### Authentication Configuration
+#### Authentication Configuration
 
 | Configuration Item   | Description   
 | --- | --- 
 |    | ldap.auth.authentication_type   
-| Type of authentication to use:\n\n__AD__ - Active Directory. Users authenticate with `sAMAccountName`. Requires the `ldap.auth.dn_format` property to be correctly configured. \n\n__AUTHENTICATED__ - Authenticated Search.  Manager bind/search followed by user simple bind. Properties:\n- `ldap.base_dn`\n- `ldap.auth.subtree_search`\n- `dap.auth.allow_multiple_dns`\n- `ldap.auth.user.filter`\n- `ldap.auth.user_password_attribute`\n\n__ANONYMOUS__ -  Anonymous search followed by user simple bind. Properties:\n- `ldap.base_dn`\n- `ldap.auth.subtree_search`\n- `dap.auth.allow_multiple_dns`\n- `ldap.auth.user.filter`\n- `ldap.auth.user_password_attribute` \n\n__DIRECT__ -  Direct Bind. Compute user DN from format string and perform simple bind. Requires `ldap.base_dn` property to be correctly configured.\n\n__SASL__ - SASL bind search. Properties: \n- `ldap.base_dn`\n- `ldap.auth.subtree_search`\n- `ldap.auth.allow_multiple_dns`\n- `ldap.auth.user.filter`   | ldap.auth.dn_format   
-| Resolves an entry DN by using String#format. This resolver is typically used when an entry DN can be formatted directly from the user identifier. For instance, entry DNs of the form  uid=dfisher,ou=people,dc=ldaptive,dc=org could be formatted from uid=%s,ou=people,dc=ldaptive,dc=org. \n\nExample:  \n* `CN=%1$s,CN=Users,DC=ad,DC=codenvy-dev,DC=com`\n\nParameters:\n* First parameter - user name provided for password validation.   | ldap.auth.subtree_search   
+| Type of authentication to use:<br/><br/> AD - Active Directory. Users authenticate with `sAMAccountName`. Requires the `ldap.auth.dn_format` property to be correctly configured. <br/><br/> AUTHENTICATED - Authenticated Search.  Manager bind/search followed by user simple bind. Properties:<br/>- `ldap.base_dn`<br/>- `ldap.auth.subtree_search`<br/>- `dap.auth.allow_multiple_dns`<br/>- `ldap.auth.user.filter`<br/>- `ldap.auth.user_password_attribute`<br/><br/> ANONYMOUS -  Anonymous search followed by user simple bind. Properties:<br/>- `ldap.base_dn`<br/>- `ldap.auth.subtree_search`<br/>- `dap.auth.allow_multiple_dns`<br/>- `ldap.auth.user.filter`<br/>- `ldap.auth.user_password_attribute` <br/><br/> DIRECT -  Direct Bind. Compute user DN from format string and perform simple bind. Requires `ldap.base_dn` property to be correctly configured.<br/><br/>SASL - SASL bind search. Properties: <br/>- `ldap.base_dn`<br/>- `ldap.auth.subtree_search`<br/>- `ldap.auth.allow_multiple_dns`<br/>- `ldap.auth.user.filter`   | ldap.auth.dn_format   
+| Resolves an entry DN by using String#format. This resolver is typically used when an entry DN can be formatted directly from the user identifier. For instance, entry DNs of the form  uid=dfisher,ou=people,dc=ldaptive,dc=org could be formatted from uid=%s,ou=people,dc=ldaptive,dc=org. <br/><br/>Example:  <br/>* `CN=%1$s,CN=Users,DC=ad,DC=codenvy-dev,DC=com`<br/><br/>Parameters:<br/>* First parameter - user name provided for password validation.   | ldap.auth.subtree_search   
 | Indicates whether subtree search will be used (boolean). When set to true, allows to search authenticating DN out of the `base_dn` tree.   | ldap.auth.allow_multiple_dns   
 | Indicates whether DN resolution should fail if multiple DNs are found (boolean). When false, exception will be thrown if multiple DNs is found during search. When true, the first entry will be used for authentication attempt.   | ldap.auth.user.filter   
 | ldap.auth.user_password_attribute   | Defines the LDAP attribute name, which value will be interpreted as the password during authentication (string).   
 
-###### Connection Configuration
+#### Connection Configuration
 
 | Configuration Item   | Description   
 | --- | --- 
 | Example   | ldap.url   
-| URL of the directory server (URL).\n\nExample: `ldap://codenvy.com:389`   |    
-| ldap.connection.connect_timeout_ms   | Time to wait for a connection to be established (milliseconds).\n\nExample: `30000`   
+| URL of the directory server (URL).<br/><br/>Example: `ldap://codenvy.com:389`   |    
+| ldap.connection.connect_timeout_ms   | Time to wait for a connection to be established (milliseconds).<br/><br/>Example: `30000`   
 |    | ldap.connection.response_timeout_ms   
-| Restricts all the connection to wait for a response not more than specified value (milliseconds).\n\nExample: `60000`   |    
+| Restricts all the connection to wait for a response not more than specified value (milliseconds).<br/><br/>Example: `60000`   |    
 | ldap.connection.pool.min_size   | Size of minimum available connections in the pool (integer).   
 | 3   | ldap.connection.pool.max_size   
-| Size of maximum available connections in\nthe pool (integer).\n\nExample: `10`   | 10   
+| Size of maximum available connections in<br/>the pool (integer).<br/><br/>Example: `10`   | 10   
 | ldap.connection.pool.validate.on_checkout   | Indicates whether connections will be validated before being picked from the pool (boolean). Connections that fail validation are evicted from the pool.   
 | ldap.connection.pool.validate.on_checkin   | Indicates whether connections will be validated before being returned to the pool (boolean). Connections that fail validation are evicted from the pool.   
 | ldap.connection.pool.validate.periodically   | Indicates whether connections should be validated periodically when the pool is idle (boolean). Connections that fail validation are evicted from the pool.   
@@ -430,7 +426,7 @@ There are several types of configuration covered in the tables below:
 | Period between connection pool prunes - when idle connections are removed (milliseconds).   | ldap.connection.pool.fail_fast   
 
    
-###### SSL Configuration
+#### SSL Configuration
 SSL can be configured in two ways - using trust certificate or using secure keystore. 
 
 Certificates from a trusted certificate authority (CA) do not need any additional actions like manual import. It's enough to just turn SSL on.
@@ -446,31 +442,31 @@ Self-signed certificates must be imported into the Java keystore or used separat
 | ldap.connection.ssl.keystore.password   | Defines keystore password (string).   
 | ldap.connection.ssl.keystore.type   | Defines keystore type (string).   
 
-###### SASL Configuration
+#### SASL Configuration
 The Simple Authentication and Security Layer (SASL) is a method for adding authentication support to connection-based protocols. To use this specification, a protocol includes a command for identifying and authenticating a user to a server and for optionally negotiating a security layer for subsequent protocol interactions. 
 
 As an example, if the client and server both uses TLS, and have trusted certificates, they may use  SASL / EXTERNAL, and for client requests the server can derive its identity from credentials provided at a lower (TLS) level.
 
 | Configuration Item   | Description   
 | --- | --- 
-| ldap.connection.sasl.mechanism   | Defines SASL mechanism. Supported values are `DIGEST_MD5`, `CRAM_MD5`, `GSSAPI` and `EXTERNAL`.\n\nSee [AD explanation](https://msdn.microsoft.com/en-us/library/cc223371.aspx)\nSee [OpenLDAP explanation](http://www.openldap.org/doc/admin24/sasl.html)   
-| ldap.connection.sasl.realm   | SASL realm value (string). \n\nExample: `example.com`   
+| ldap.connection.sasl.mechanism   | Defines SASL mechanism. Supported values are `DIGEST_MD5`, `CRAM_MD5`, `GSSAPI` and `EXTERNAL`.<br/><br/>See [AD explanation](https://msdn.microsoft.com/en-us/library/cc223371.aspx)<br/>See [OpenLDAP explanation](http://www.openldap.org/doc/admin24/sasl.html)   
+| ldap.connection.sasl.realm   | SASL realm value (string). <br/><br/>Example: `example.com`   
 | ldap.connection.sasl.authorization_id   | Defines the SASL authorization ID.   
-| ldap.connection.sasl.security_strength   | Specifies the client's preferred privacy protection strength (ciphers and key lengths used for encryption). \n\nThe value of this property is a comma-separated list of strength values, the order of which specifies the preference order. The three possible strength values are \low\ \medium\ and \high\. Defaults is `high,medium,low`.   
+| ldap.connection.sasl.security_strength   | Specifies the client's preferred privacy protection strength (ciphers and key lengths used for encryption). <br/><br/>The value of this property is a comma-separated list of strength values, the order of which specifies the preference order. The three possible strength values are \low\ \medium\ and \high\. Defaults is `high,medium,low`.   
 | ldap.connection.sasl.mutual_auth   | SASL mutual authentication on supported mechanisms (boolean). For some applications, it is equally important that the LDAP server's identity be verified. The process by which both parties participating in the exchange authenticate each other is referred to as mutual authentication. Defaults to `false`.   
-| ldap.connection.sasl.quality_of_protection   | Defines integrity and privacy protection of the communication channel. It is negotiated during the authentication phase of the SASL exchange.\n\nPossible values are `auth` (default),`auth-inf` and `auth-conf`.   
+| ldap.connection.sasl.quality_of_protection   | Defines integrity and privacy protection of the communication channel. It is negotiated during the authentication phase of the SASL exchange.<br/><br/>Possible values are `auth` (default),`auth-inf` and `auth-conf`.   
 
-##### LDAP Synchronizer
+### LDAP Synchronizer
 This service synchronizes third party LDAP users with the Codenvy database.
 
-###### Terminology
+#### Terminology
 - LDAP storage - third party directory server considered as primary users storage.
 - LDAP cache - a storage in Codenvy database, which basically is a mirror of LDAP storage.
 - Synchronized user - a user who is present in LDAP cache.
 - Synchronization candidate - a user present in LDAP storage matching all the filters and groups, the user who is going to be synchronized.
 - Codenvy User - entity in Codenvy API. A user is stored in Codenvy database (PosgreSQL).
 
-###### Synchronization Strategy
+#### Synchronization Strategy
 The data in the LDAP cache is considered to be consistent as long as the synchronizer does its job. Synchronization itself is unidirectional, requiring only a READ restricted connection to LDAP server.
 
 - If the synchronizer can't retrieve users from LDAP storage, it fails.
@@ -490,41 +486,41 @@ Synchronization can also be triggered by a REST API call:
 
 This won't change the execution of a periodical synchronization, but it is guaranteed that 2 parallel synchronizations won't be executed.
 
-###### Configuration
+#### Configuration
 
 | Configuration Item   | Description   
 | --- | --- 
-| ldap.sync.period_ms (optional)   | How often to synchronize users and profiles (milliseconds).\n\nThe period property must be specified in milliseconds e.g. `86400000` is daily.\n\nIf the synchronization should be done only when the server starts set property to `-1`.   
-| ldap.sync.initial_delay_ms   | When to synchronize the first time (milliseconds). The delay\nproperty must be specified in milliseconds.\n\nUnlike period, delay must be a non-negative\ninteger value, if it is set to `0` then synchronization will be performed immediately\non sever startup.   
+| ldap.sync.period_ms (optional)   | How often to synchronize users and profiles (milliseconds).<br/><br/>The period property must be specified in milliseconds e.g. `86400000` is daily.<br/><br/>If the synchronization should be done only when the server starts set property to `-1`.   
+| ldap.sync.initial_delay_ms   | When to synchronize the first time (milliseconds). The delay<br/>property must be specified in milliseconds.<br/><br/>Unlike period, delay must be a non-negative<br/>integer value, if it is set to `0` then synchronization will be performed immediately<br/>on sever startup.   
 
-###### Users Selection Configuration
-
-| Configuration Item   | Description   
-| --- | --- 
-| ldap.base_dn   | The root distinguished name to search LDAP entries, serves as a base point for searching users (string).\n\nExample: `dc=codenvy,dc=com`   
-| ldap.sync.user.additional_dn (optional)   | If set will be used in addition to `ldap.base_dn` for searching users (string).\n\nExample: `ou=CodenvyUsers`   
-| ldap.sync.user.filter   | The filter used to search users, only those users\nwho match the filter will be synchronized (string).\n\nExample: `(objectClass=inetOrgPerson)`   
-| ldap.sync.page.size (optional)   | Number of LDAP entries per-page,\nif set to <= 0 then `1000` is used by default (integer).   
-| ldap.sync.page.read_timeout_ms (optional)   | Time to wait for a page (milliseconds)\n\nDefault: `30000`   
-
-###### Group Configuration
+#### Users Selection Configuration
 
 | Configuration Item   | Description   
 | --- | --- 
-| ldap.sync.group.additional_dn (optional)   | If set will be used in addition to `ldap.base_dn` for searching groups (string).\n\nExample: `ou=groups`   
-| ldap.sync.group.filter (optional)   | Filter used to search groups (string). The synchronizer will use this filter to find all the groups and then\n`ldap.sync.group.attr.members` attribute for retrieving DNs of those users who should be synchronized, please note that if this parameter is set then `ldap.sync.group.attr.members` must be also set.\n\nAll the users who are members of found groups will be filtered by `ldap.sync.user.filter`.\n\nExample: \n`(&(objectClass=groupOfNames)(cn=CodenvyMembers))`   
-| ldap.sync.group.attr.members (optional)   | The name of the attribute which identifies group members distinguished names (string). The  synchronizer considers this a multi-value attribute and values are user DNs.\n\nThis attribute is ignored if `ldap.sync.group.filter` is not set.\n\nExample: `member`   
+| ldap.base_dn   | The root distinguished name to search LDAP entries, serves as a base point for searching users (string).<br/><br/>Example: `dc=codenvy,dc=com`   
+| ldap.sync.user.additional_dn (optional)   | If set will be used in addition to `ldap.base_dn` for searching users (string).<br/><br/>Example: `ou=CodenvyUsers`   
+| ldap.sync.user.filter   | The filter used to search users, only those users<br/>who match the filter will be synchronized (string).<br/><br/>Example: `(objectClass=inetOrgPerson)`   
+| ldap.sync.page.size (optional)   | Number of LDAP entries per-page,<br/>if set to <= 0 then `1000` is used by default (integer).   
+| ldap.sync.page.read_timeout_ms (optional)   | Time to wait for a page (milliseconds)<br/><br/>Default: `30000`   
 
-###### Synchronized Data Configuration
+#### Group Configuration
+
+| Configuration Item   | Description   
+| --- | --- 
+| ldap.sync.group.additional_dn (optional)   | If set will be used in addition to `ldap.base_dn` for searching groups (string).<br/><br/>Example: `ou=groups`   
+| ldap.sync.group.filter (optional)   | Filter used to search groups (string). The synchronizer will use this filter to find all the groups and then<br/>`ldap.sync.group.attr.members` attribute for retrieving DNs of those users who should be synchronized, please note that if this parameter is set then `ldap.sync.group.attr.members` must be also set.<br/><br/>All the users who are members of found groups will be filtered by `ldap.sync.user.filter`.<br/><br/>Example: <br/>`(&(objectClass=groupOfNames)(cn=CodenvyMembers))`   
+| ldap.sync.group.attr.members (optional)   | The name of the attribute which identifies group members distinguished names (string). The  synchronizer considers this a multi-value attribute and values are user DNs.<br/><br/>This attribute is ignored if `ldap.sync.group.filter` is not set.<br/><br/>Example: `member`   
+
+#### Synchronized Data Configuration
 
 | Configuration Item   | Description   
 | --- | --- 
 | ldap.sync.user.attr.id   | ldap.sync.user.attr.name   
-| LDAP attribute name which defines unique\nuser name, this attribute will be used as Condevy User name (string).\n\nCommon values for this property: `cn`.   | ldap.sync.profile.attrs (optional)   
-| Comma-separated application-to-LDAP\nattribute mapping pairs. Available application attributes:\n- firstName\n- phone\n- lastName\n- employer\n- country\n- jobtitle\n\nCommon values for the attributes above in the described format:\n`firstName=givenName,phone=telephoneNumber,lastName=sn,employer=o,country=st,jobtitle=title`.   | ldap.sync.user.attr.email   
-| LDAP attribute name which defines unique user email, the value of this attribute will be used as Codenvy User email. If there is no such analogue you can simply use the same attribute used for name (string).\n\nCommon values for this property: `mail`.   | Number of LDAP entries per-page,\nif set to <= 0 then `1000` is used by default (integer).   
+| LDAP attribute name which defines unique<br/>user name, this attribute will be used as Condevy User name (string).<br/><br/>Common values for this property: `cn`.   | ldap.sync.profile.attrs (optional)   
+| Comma-separated application-to-LDAP<br/>attribute mapping pairs. Available application attributes:<br/>- firstName<br/>- phone<br/>- lastName<br/>- employer<br/>- country<br/>- jobtitle<br/><br/>Common values for the attributes above in the described format:<br/>`firstName=givenName,phone=telephoneNumber,lastName=sn,employer=o,country=st,jobtitle=title`.   | ldap.sync.user.attr.email   
+| LDAP attribute name which defines unique user email, the value of this attribute will be used as Codenvy User email. If there is no such analogue you can simply use the same attribute used for name (string).<br/><br/>Common values for this property: `mail`.   | Number of LDAP entries per-page,<br/>if set to <= 0 then `1000` is used by default (integer).   
 
-###### Active Directory Example
+#### Active Directory Example
 
 Properties to be configured in `/etc/puppet/manifests/nodes/codenvy/codenvy.pp`
 
@@ -587,7 +583,7 @@ ldap.sync.group.filter=NULL
 ldap.sync.group.attr.members=NULL\
 ```
 
-#### Development Mode
+## Development Mode
 For Codenvy developers that are building and customizing Codenvy from its source repository, you can run Codenvy in development mode where your local assembly is used instead of the one that is provided in the default containers downloaded from DockerHub. This allows for a rapid edit / build / run cycle. 
 
 Dev mode is activated by volume mounting the Codenvy git repository to `:/repo` in your Docker run command.
@@ -597,7 +593,7 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \
                     -v <local-repo>:/repo \
                        codenvy/cli:<version> [COMMAND]
 ``` 
-Dev mode will use files from your host repository in three ways:
+Dev mode will use files from your host repository in three ways: 
 
 1. During the `codenvy config` phase, the source repository's `/dockerfiles/init/modules` and `/dockerfiles/init/manifests` will be used instead of the ones that are included in the `codenvy/init` container.
 2. During the CLI bootstrap phase, the source repository's `/dockerfiles/cli/cli.sh` file will be used instead of the one with in the `codenvy/cli` container. This allows CLI developers to iterate without having to rebuild `codenvy/cli` container after each change.
@@ -612,17 +608,17 @@ To change codenvy debug port, in the `codenvy.env`:
 CODENVY_DEBUG_PORT=8000
 ```
 
-#### Licensing
+## Licensing
 Codenvy starts with a Fair Source 3 license, which gives you up to three users and full functionality of the system with limited liabilities and warranties. You can request a trial license from Codenvy for more than 3 users or purchase one from our friendly sales team (your mother would approve). Once you gain the license, start Codenvy and then apply the license in the admin dashboard that is accessible with your login credentials.
 
-#### Hostname
+## Hostname
 The IP address or DNS name of where the Codenvy endpoint will service your users. If you are running this on a local system, we auto-detect this value as the IP address of your Docker daemon. On many systems, especially those from cloud hosters like DigitalOcean, you may have to explicitly set this to the external IP address or DNS entry provided by the provider. You can edit this in `codenvy.env`, or you can pass it during initialization to the docker command:
 
 ```
 docker run <other-syntax-here> -e CODENVY_HOST=<ip address or dns entry> codenvy/cli:<version> start
 ```
 
-#### HTTP/S
+## HTTP/S
 By default Codenvy runs over HTTP as this is simplest to install. There are two requirements for configuring HTTP/S:  
 1. You must bind Codenvy to a valid DNS name. The HTTP mode of Codenvy allows us to operate over IP addresses. HTTP/S requires certificates that are bound to a DNS entries that you purchase from a DNS provider.  
 2. A valid SSL certificate.  
@@ -633,7 +629,7 @@ CODENVY_HOST_PROTOCOL=https
 CODENVY_PATH_TO_HAPROXY_SSL_CERTIFICATE=<path-to-certificate>
 ```
 
-#### SMTP
+## SMTP
 By default, Codenvy is configured to use a dummy mail server which makes registration with user email not possible, although admin can still create users or configure oAuth. To configure Codenvy to use SMTP server of choice, provide values for the following environment variables in `codenvy.env` (below is an example for GMAIL):
 
 ```
@@ -648,10 +644,10 @@ CODENVY_MAIL_SMTP_SOCKETFACTORY_CLASS=javax.net.ssl.SSLSocketFactory
 CODENVY_MAIL_SMTP_SOCKETFACTORY_FALLBACK=false
 ```
 
-#### Workspace Limits
+## Workspace Limits
 You can place limits on how users interact with the system to control overall system resource usage. You can define how many workspaces created, RAM consumed, idle timeout, and a variety of other parameters. See "Workspace Limits" in `codenvy.env`.
 
-#### Private Docker Registries
+## Private Docker Registries
 Some enterprises use a trusted Docker registry to store their Docker images. If you want your workspace stacks and machines to be powered by these images, then you need to configure each registry and the credentialed access. Once these registries are configured, then you can have users or team leaders create stacks that use recipes with Dockerfiles or images using the `FROM <your-registry>/<your-repo>` syntax.
 
 There are different configurations for AWS EC2 and the Docker regsitry. You can define as many different registries as you'd like, using the numerical indicator in the environment variable. In case of adding several registries just copy set of properties and append `REGISTRY[n]` for each variable.
@@ -668,16 +664,16 @@ CODENVY_DOCKER_REGISTRY_AWS_REGISTRY1_ACCESS__KEY__ID=key_id1
 CODENVY_DOCKER_REGISTRY_AWS_REGISTRY1_SECRET__ACCESS__KEY=secret1
 ```
 
-## Managing
+# Managing
 
-#### Scaling
+## Scaling
 Codenvy workspaces can run on different physical nodes that are part of a Codenvy cluster managed by Docker Swarm. This is an essential part of managing large development teams, as workspaces are both RAM and CPU intensive operations, and developers do not like to share their computing power when they have a compilation that they want done. So you will want to allocate enough physical nodes to smartly handle the right number of concurrently *running* workspaces, each of which will have a RAM block.
 
 Each Codenvy instance generates a configuration on how to add nodes into the cluster. Run `codenvy add-node` for instructions of what to run on each physical node that should be added into the cluster. The physical node runs a script which installs some software from the Codenvy master node, configures its Docker daemon, and then registers itself as a member of the Codenvy cluster.
 
 You can remove nodes with `codenvy remove-node <ip>`.
 
-#### Upgrading
+## Upgrading
 Upgrading Codenvy is done by downloading a `codenvy/cli:<version>` that is newer than the version you currently have installed. For example, if you have 5.0.0-M2 installed and want to upgrade to 5.0.0-M7, then:
 ```
 # Get the new version of Codenvy
@@ -694,21 +690,21 @@ The upgrade process: a) performs a version compatibility check, b) downloads new
 
 You can run `codenvy version` to see the list of available versions that you can upgrade to.
 
-#### Backup (Backup)
+## Backup (Backup)
 You can run `codenvy backup` to create a copy of the relevant configuration information, user data, projects, and workspaces. We do not save workspace snapshots as part of a routine backup exercise. You can run `codenvy restore` to recover Codenvy from a particular backup snapshot. The backup is saved as a TAR file that you can keep in your records.
 
-##### Microsoft Windows and NTFS
+### Microsoft Windows and NTFS
 Due to differences in file system types between NTFS and what is commonly used in the Linux world, there is no convenient way to directly host mount Postgres database data from within the container onto your host. We store your database data in a Docker named volume inside your boot2docker or Docker for Windows VM. Your data is persisted permanently. If the underlying VM is destroyed, then the data will be lost.
 
 However, when you do a `codenvy backup`, we do copy the Postgres data from the container's volume to your host drive, and make it available as part of a `codenvy restore` function. The difference is that if you are browsing your `/codenvy/instance` folder, you will not see the database data on Windows.
 
-#### Migration
+## Migration
 We currently do not support migrating from the puppet-based configuration of Codenvy to the Dockerized version. We do have a manual process which can be followed to move data between the puppet and Dockerized versions. The versions must be identical. Contact us to let our support team perform this migration for you.
 
-#### Disaster Recovery
+## Disaster Recovery
 We maintain a disaster recovery [policy and best practices](http://codenvy.readme.io/v5.0/docs/disaster-recovery).
 
-## CLI Reference
+# CLI Reference
 The CLI is configured to hide most error conditions from the output screen. The CLI prints internal stack traces and error output to `cli.log`. To see the output of this log, you will need to volume mount a local path to `:/cli`. For example:
 
 ```
@@ -718,7 +714,7 @@ docker run --rm -it
            -v /c/codenvy/cli:/cli codenvy/cli:nightly [COMMAND]
 ```
 
-### `codenvy init`
+## `codenvy init`
 Initializes an empty directory with a Codenvy configuration and instance folder where user data and runtime configuration will be stored. You must provide a `<path>:/codenvy` volume mount, then Codenvy creates a `instance` and `backup` subfolder of `<path>`. You can optionally override the location of `instance` by volume mounting an additional local folder to `:/codenvy/instance`. You can optionally override the location of where backups are stored by volume mounting an additional local folder to `:/codenvy/backup`.  After initialization, a `codenvy.env` file is placed into the root of the path that you mounted to `:/codenvy`. 
 
 These variables can be set in your local environment shell before running and they will be respected during initialization:
@@ -746,42 +742,42 @@ The initialization of a Codenvy installation requires the acceptance of our defa
 
 You can reinstall Codenvy on a folder that is already initialized and preserve your `/codenvy/codenvy.env` values by passing the `--reinit` flag.
 
-### `codenvy config`
+## `codenvy config`
 Generates a Codenvy instance configuration thta is placed in `/codenvy/instance`. This command uses puppet to generate configuration files for Codenvy, haproxy, swarm, socat, nginx, and postgres which are mounted when Codenvy services are started. This command is executed on every `start` or `restart`.
 
 If you are using a `codenvy/cli:<version>` image and it does not match the version that is in `/instance/codenvy.ver`, then the configuration will abort to prevent you from running a configuration for a different version than what is currently installed.
 
 This command respects `--no-force`, `--pull`, `--force`, and `--offline`.
 
-### `codenvy start`
+## `codenvy start`
 Starts Codenvy and its services using `docker-compose`. If the system cannot find a valid configuration it will perform a `codenvy init`. Every `start` and `restart` will run a `codenvy config` to generate a new configuration set using the latest configuration. The starting sequence will perform pre-flight testing to see if any ports required by Codenvy are currently used by other services and post-flight checks to verify access to key APIs.  
 
-### `codenvy stop`
+## `codenvy stop`
 Stops all of the Codenvy service containers and removes them.
 
-### `codenvy restart`
+## `codenvy restart`
 Performs a `codenvy stop` followed by a `codenvy start`, respecting `--pull`, `--force`, and `--offline`.
 
-### `codenvy destroy`
+## `codenvy destroy`
 Deletes `/docs`, `codenvy.env` and `/codenvy/instance`, including destroying all user workspaces, projects, data, and user database. If you pass `--quiet` then the confirmation warning will be skipped. 
 
 If you have mounted the `:/cli` path, then we write the `cli.log` to your host directory. By default, this log is not destroyed in a `codenvy destroy` command so that you can maintain a record of all CLI executions. You can also have this file removed from your host by mounting `:/cli` and passing the `--cli` parameter to this command.
 
-### `codenvy offline`
+## `codenvy offline`
 Saves all of the Docker images that Codenvy requires into `/backup/*.tar` files. Each image is saved as its own file. If the `backup` folder is available on a machine that is disconnected from the Internet and you start Codenvy with `--offline`, the CLI pre-boot sequence will load all of the Docker images in the `/backup/` folder.
 
-### `codenvy rmi`
+## `codenvy rmi`
 Deletes the Docker images from the local registry that Codenvy has downloaded for this version.
 
-### `codenvy download`
+## `codenvy download`
 Used to download Docker images that will be stored in your Docker images repository. This command downloads images that are used by the CLI as utilities, for Codenvy to do initialization and configuration, and for the runtime images that Codenvy needs when it starts.  This command respects `--offline`, `--pull`, `--force`, and `--no-force` (default).  This command is invoked by `codenvy init`, `codenvy config`, and `codenvy start`.
 
 This command is invoked by `codenvy init` before initialization to download the images for the version specified by `codenvy/cli:<version>`.
 
-### `codenvy version`
+## `codenvy version`
 Provides information on the current version and the available versions that are hosted in Codenvy's repositories. `codenvy upgrade` enforces upgrade sequences and will prevent you from upgrading one version to another version where data migrations cannot be guaranteed.
 
-### `codenvy upgrade`
+## `codenvy upgrade`
 Manages the sequence of upgrading Codenvy from one version to another. Run `codenvy version` to get a list of available versions that you can upgrade to.
 
 Upgrading Codenvy is done by using a `codenvy/cli:<version>` that is newer than the version you currently have installed. For example, if you have 5.0.0-M2 installed and want to upgrade to 5.0.0-M7, then:
@@ -800,26 +796,26 @@ The upgrade process: a) performs a version compatibility check, b) downloads new
 
 You can run `codenvy version` to see the list of available versions that you can upgrade to.
 
-### `codenvy info`
+## `codenvy info`
 Displays system state and debugging information. `--network` runs a test to take your `CODENVY_HOST` value to test for networking connectivity simulating browser > Codenvy and Codenvy > workspace connectivity.
 
-### `codenvy backup`
+## `codenvy backup`
 Tars your `/instance` into files and places them into `/backup`. These files are restoration-ready.
 
-### `codenvy restore`
+## `codenvy restore`
 Restores `/instance` to its previous state. You do not need to worry about having the right Docker images. The normal start / stop / restart cycle ensures that the proper Docker images are available or downloaded, if not found.
 
 This command will destroy your existing `/instance` folder, so use with caution, or set these values to different folders when performing a restore.
 
-### `codenvy add-node`
+## `codenvy add-node`
 Adds a new physical node into the Codenvy cluster. That node must have Docker pre-configured similar to how you have Docker configured on the master node, including any configurations that you add for proxies or an alternative key-value store like Consul. Codenvy generates an automated script that can be run on each new node which prepares the node by installing some dependencies, adding the Codenvy SSH key, and registering itself within the Codenvy cluster.
 
-### `codenvy remove-node`
+## `codenvy remove-node`
 Takes a single parameter, `ip`, which is the external IP address of the remote physical node to be removed from the Codenvy cluster. This utility does not remove any software from the remote node, but it does ensure that workspace runtimes are not executing on that node. 
 
-## Architecture
+# Architecture
 ![Architecture](https://cloud.githubusercontent.com/assets/5337267/19623944/f2366c74-989d-11e6-970b-db0ff41f618a.png)
 
-## Team
+# Team
 See [Contributors](../../graphs/contributors) for the complete list of developers that have contributed to this project.
 the protocol, port and whether they allow a trailing slash/.

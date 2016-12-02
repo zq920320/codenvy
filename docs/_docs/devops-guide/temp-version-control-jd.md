@@ -19,14 +19,14 @@ Execute `puppet agent -t`.
 You need to generate SSH key to be able to clone private repositories. 
 
 For GitHub SSH keys are generated and uploaded automatically at Profile > Preferences > SSH > VCS. 
-![github-button.png](images/github-button.png)
+![github-button.png](/images/github-button.png)
 For other Git hosting providers SSH key should be generated and manually saved to profile settings of git hosting settings. Find more details on how to do that at https://eclipse-che.readme.io/docs/git#section-other-git-hosting-providers
 
 # Git and Subversion Clients
 After importing repository, you can perform the most common Git and SVN operations using interactive menus or as console commands.
-![git-menu.png](images/git-menu.png)
+![git-menu.png](/images/git-menu.png)
 
-![svn-menu.png](images/svn-menu.png)
+![svn-menu.png](/images/svn-menu.png)
 # In-IDE Pull Requests for GitHub, BitBucket and Microsoft VSTS (git)
  
 # Customizing How Factories Import Source Code

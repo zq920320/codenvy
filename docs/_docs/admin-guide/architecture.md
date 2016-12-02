@@ -57,7 +57,7 @@ The following ports do not need internet accessibility.
 
 # Single Node + Machine Nodes  
 This is a scalable version of single node.  You can add additional machine nodes that run workspaces. These machine nodes use the main single node instance as its central coordinator. Adding machine nodes creates requirements for additional ports to open.
-![aio.png](images/aio.png)
+![aio.png](/images/aio.png)
 ## Data Storage
 
 | Data Type   | Located On...   | Located At...   
