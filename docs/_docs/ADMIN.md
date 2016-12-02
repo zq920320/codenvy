@@ -6,7 +6,7 @@ overview: true
 permalink: /docs/admin/
 ---
 # Codenvy Installation and Operation
-denvy makes cloud workspaces for develoment teams. Install, run, and manage Codenvy with Docker.
+ makes cloud workspaces for develoment teams. Install, run, and manage Codenvy with Docker.
 
 ### Quick Start
 With Docker 1.11+ on Windows, Mac, or Linux:

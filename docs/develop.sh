@@ -7,4 +7,4 @@
 MSYS_NO_PATHCONV=1 docker run --rm -it -p 9080:4000 --name jekyll \
        -v /C/codenvy/codenvy/docs:/srv/jekyll \
        -v /C/codenvy/codenvy/docs/_site:/srv/jekyll/_site \
-           jekyll/jekyll jekyll build --watch
+           jekyll/jekyll jekyll serve
