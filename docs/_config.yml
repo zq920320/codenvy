@@ -38,3 +38,4 @@ gems:
 exclude:
   - README.md
   - .gitignore
+  - docs.sh

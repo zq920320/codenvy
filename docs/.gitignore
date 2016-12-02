@@ -2,3 +2,5 @@ _site/
 *.swp
 pkg/
 test/
+.jekyll-metadata
+.sass-cache/
