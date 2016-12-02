@@ -11,12 +11,11 @@
  }
 
 body {
-  font: 300 21px Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #ddd;
-  background-color: #333;
-  border-top: 5px solid #fc0;
+  font: 300 14px Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #4A4A4A;
+  background-color: #F7F7F7;
   @include box-shadow(inset 0 3px 30px rgba(0,0,0,.3));
-  text-shadow: 0 1px 3px rgba(0,0,0,.5);
+  //text-shadow: 0 1px 3px rgba(0,0,0,.5);
   -webkit-font-feature-settings: "kern" 1;
   -moz-font-feature-settings: "kern" 1;
   -o-font-feature-settings: "kern" 1;
@@ -91,9 +90,11 @@ nav {
     &.current {
 
       a {
-        background-color: #fc0;
+        background-color: #fff;
         color: #222;
-        @include box-shadow(inset 0 1px 0 rgba(255,255,255,.5), 0 1px 5px rgba(0,0,0,.5));
+        @include box-shadow(inset 0 1px 0 rgba(255,255,255,.5), 0 2px 4px rgba(0,0,0,.07));
+        border-color: #fff;
+        border-width: 1px;
         text-shadow: 0 1px 0 rgba(255,255,255,.3);
       }
     }
@@ -396,7 +397,7 @@ footer {
 
 
 article {
-  background-color: #444;
+  background-color: #FFF;
   @include border-radius(10px);
   padding: 20px;
   margin: 0 10px;
@@ -415,7 +416,7 @@ article {
 @media (min-width: 768px) {
   article {
     padding: 40px 40px 30px;
-    font-size: 21px;
+    font-size: 14px;
   }
 }
 
@@ -427,11 +428,12 @@ aside {
   h4 {
     text-transform: uppercase;
     font-size: 14px;
+    color: #4A4A4A;
     font-weight: 700;
     padding: 0 0 10px 30px;
     margin-left: -30px;
     display: inline-block;
-    border-bottom: 1px solid #c00;
+    border-bottom: 1px solid #C8C8C8;
   }
 
   ul {
@@ -444,13 +446,13 @@ aside {
     list-style-type: none;
 
     a {
-      font-size: 16px;
+      font-size: 12px;
       position: relative
     }
 
     &.current a:before {
       content: "";
-      border-color: transparent transparent transparent #444;
+      border-color: transparent transparent transparent #4A90E2;
       border-style: solid;
       border-width: 10px;
       width: 0;
@@ -535,7 +537,7 @@ aside {
 
 .improve {
   padding-top: 25px;
-  font-size: 16px;
+  font-size: 12px;
   a {
     color: #999;
   }
@@ -632,7 +634,6 @@ article h2:first-child { margin-top: 0; }
 
 pre,
 code {
-  white-space: pre;
   display: inline-block;
   margin: 0;
   font: 14px/1.8em Menlo, Consolas, "Courier New", Courier, "Liberation Mono", monospace;
@@ -640,7 +641,7 @@ code {
 }
 
 @media (min-width: 768px) {
-  pre, code { font-size: 16px; }
+  pre, code { font-size: 12px; }
 }
 
 .highlight,
@@ -651,15 +652,12 @@ li > code,
 li> pre,
 h5 > code,
 .note > code {
-  background-color: #2b2b2b;
-  color: #fff;
+  background-color: #f7f7f7;
+  color: #000;
   max-width: 100%;
   overflow-x: auto;
   vertical-align: middle;
-  @include border-radius(5px);
-  @include box-shadow(inset 0 1px 10px rgba(0,0,0,.3),
-    0 1px 0 rgba(255,255,255,.1),
-    0 -1px 0 rgba(0,0,0,.5));
+  @include border-radius(3px);
 }
 
 .note code {
@@ -693,11 +691,11 @@ h5 > code,
 h1, h2, h3, h4, h5, h6 { margin: 0; }
 
 a {
-  color: #fc0;
+  color: #4A90E2;
   text-decoration: none;
   @include transition(all .25s);
 
-  &:hover { color: #f90; }
+  &:hover { color: #3B7AC4; }
 }
 
 strong { font-weight: 700; }
@@ -716,7 +714,7 @@ article {
 
   h2, h3, h4, h5, h6 { margin: 1em 0; }
 
-  h4 { color: #fff; }
+  h4 { color: #949AA2; }
 
   ul li {
 
@@ -751,35 +749,23 @@ blockquote {
 
 table {
   width: 100%;
-  background-color: #555;
+  background-color: #fff;
   margin: .5em 0;
-  @include border-radius(5px);
-  @include box-shadow(0 1px 3px rgba(0,0,0,.3));
+  border-collapse: collapse;
+  border-spacing: 0;
 }
 
 thead {
-  @include border-top-left-radius(5px);
-  @include border-top-right-radius(5px);
   color: #fff;
-  background-color: #3a3a3a;
-  background-image: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iIzNhM2EzYSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiMxZTFlMWUiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(#3a3a3a), to(#1e1e1e));
-  background-image: -webkit-linear-gradient(top, #3a3a3a 0%, #1e1e1e 100%);
-  background-image: -moz-linear-gradient(top, #3a3a3a 0%, #1e1e1e 100%);
-  background-image: -o-linear-gradient(top, #3a3a3a 0%, #1e1e1e 100%);
-  background-image: linear-gradient(to bottom, #3a3a3a 0%,#1e1e1e 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3a3a3a', endColorstr='#1e1e1e',GradientType=0 );
+  background-color: #eee;
 
   th {
     position: relative;
-    @include box-shadow(inset 0 1px 0 rgba(255,255,255,.1));
 
     &:first-child {
-      @include border-top-left-radius(5px);
     }
 
     &:last-child {
-      @include border-top-right-radius(5px);
     }
   }
 }
@@ -789,24 +775,15 @@ td { padding: .5em .75em; }
 td p { margin: 0; }
 
 th {
-  text-transform: uppercase;
-  font-size: 16px;
+  text-transform: capitalize;
+  font-size: 14px;
   padding: .5em .75em;
-  text-shadow: 0 -1px 0 rgba(0,0,0,.9);
   color: #888;
 }
 
 tbody td {
-  border-top: 1px solid #747474;
   border-top: 1px solid rgba(0,0,0,.1);
-  @include box-shadow(inset 0 1px 0 rgba(255,255,255,.1));
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwLjEiLz4KICAgIDxzdG9wIG9mZnNldD0iMTAwJSIgc3RvcC1jb2xvcj0iI2ZmZmZmZiIgc3RvcC1vcGFjaXR5PSIwIi8+CiAgPC9saW5lYXJHcmFkaWVudD4KICA8cmVjdCB4PSIwIiB5PSIwIiB3aWR0aD0iMSIgaGVpZ2h0PSIxIiBmaWxsPSJ1cmwoI2dyYWQtdWNnZy1nZW5lcmF0ZWQpIiAvPgo8L3N2Zz4=);
-  background-image: -webkit-gradient(linear, left top, left bottom, from(rgba(255,255,255,0.1)), to(rgba(255,255,255,0)));
-  background-image: -webkit-linear-gradient(top, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-  background-image: -moz-linear-gradient(top, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-  background-image: -o-linear-gradient(top, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 100%);
-  background-image: linear-gradient(to bottom, rgba(255,255,255,0.1) 0%,rgba(255,255,255,0) 100%);
-  filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#1affffff', endColorstr='#00ffffff',GradientType=0 );
+  //@include box-shadow(inset 0 1px 0 rgba(255,255,255,.1));
 
   p {
     font-size: 16px;
