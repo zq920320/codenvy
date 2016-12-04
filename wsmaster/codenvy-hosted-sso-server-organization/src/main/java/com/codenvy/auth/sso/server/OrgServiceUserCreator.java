@@ -40,6 +40,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
 import static java.lang.String.format;
 
 /**
@@ -74,6 +75,10 @@ public class OrgServiceUserCreator implements UserCreator {
             return userManager.getByEmail(email);
         } catch (NotFoundException e) {
             try {
+                if (!licenseManager.hasAcceptedFairSourceLicense()) {
+                    throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
+                }
+
                 if (!licenseManager.canUserBeAdded()) {
                     throw new ForbiddenException("Unable to add your account. The Codenvy license has reached its user limit.");
                 }

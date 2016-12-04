@@ -82,6 +82,7 @@ public class BearerTokenAuthenticationServiceTest {
         bearerTokenAuthenticationService.mailSender = "noreply@host";
         ArgumentCaptor<EmailBeanDto> argumentCaptor = ArgumentCaptor.forClass(EmailBeanDto.class);
         ValidationData validationData = new ValidationData("Email", "UserName");
+        when(licenseManager.hasAcceptedFairSourceLicense()).thenReturn(true);
         when(licenseManager.canUserBeAdded()).thenReturn(true);
 
         given().contentType(ContentType.JSON).content(validationData).post("/internal/token/validate");
@@ -99,6 +100,7 @@ public class BearerTokenAuthenticationServiceTest {
     public void shouldThrowAnExceptionWhenUserBeyondTheLicense() throws Exception {
         bearerTokenAuthenticationService.mailSender = "noreply@host";
         ValidationData validationData = new ValidationData("Email", "UserName");
+        when(licenseManager.hasAcceptedFairSourceLicense()).thenReturn(true);
         when(licenseManager.canUserBeAdded()).thenReturn(false);
 
         Response response = given().contentType(ContentType.JSON).content(validationData).post("/internal/token/validate");
@@ -106,6 +108,20 @@ public class BearerTokenAuthenticationServiceTest {
         assertEquals(response.getStatusCode(), 403);
         assertEquals(DtoFactory.getInstance().createDtoFromJson(response.asString(), ServiceError.class),
                      newDto(ServiceError.class).withMessage(CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE));
+        verifyZeroInteractions(mailSenderClient);
+    }
+
+    @Test
+    public void shouldThrowAnExceptionWhenFairSourceLicenseIsNotAccepted() throws Exception {
+        bearerTokenAuthenticationService.mailSender = "noreply@host";
+        ValidationData validationData = new ValidationData("Email", "UserName");
+        when(licenseManager.hasAcceptedFairSourceLicense()).thenReturn(false);
+
+        Response response = given().contentType(ContentType.JSON).content(validationData).post("/internal/token/validate");
+
+        assertEquals(response.getStatusCode(), 403);
+        assertEquals(DtoFactory.getInstance().createDtoFromJson(response.asString(), ServiceError.class),
+                     newDto(ServiceError.class).withMessage(CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE));
         verifyZeroInteractions(mailSenderClient);
     }
 }

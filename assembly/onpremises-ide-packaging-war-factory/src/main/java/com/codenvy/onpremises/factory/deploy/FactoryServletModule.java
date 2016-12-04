@@ -14,7 +14,7 @@
  */
 package com.codenvy.onpremises.factory.deploy;
 
-import com.codenvy.api.license.UserInteractiveLicenseFilter;
+import com.codenvy.api.license.UserInteractionLicenseFilter;
 import com.codenvy.onpremises.factory.filter.RemoveIllegalCharactersFactoryURLFilter;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
@@ -37,7 +37,7 @@ public class FactoryServletModule extends ServletModule {
         filterRegex(PASS_RESOURCES_REGEXP).through(RemoveIllegalCharactersFactoryURLFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryParamsFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filterRegex(PASS_RESOURCES_REGEXP).through(UserInteractiveLicenseFilter.class);
+        filterRegex(PASS_RESOURCES_REGEXP).through(UserInteractionLicenseFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryRetrieverFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.ReferrerCheckerFilter.class);
 

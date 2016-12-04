@@ -31,6 +31,7 @@ import org.testng.annotations.Test;
 
 import java.io.IOException;
 
+import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
 import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static java.util.Collections.singletonMap;
 import static org.mockito.Matchers.any;
@@ -79,12 +80,14 @@ public class OrgServiceUserCreatorTest {
         doNothing().when(profileManager).update(any());
         when(createdUser.getId()).thenReturn(userId);
         doReturn(createdUser).when(manager).getByName(anyString());
+
+        doReturn(true).when(licenseManager).hasAcceptedFairSourceLicense();
+        doReturn(true).when(licenseManager).canUserBeAdded();
     }
 
     @Test
     public void shouldCreateUser() throws Exception {
         doThrow(NotFoundException.class).when(manager).getByEmail(anyObject());
-        doReturn(true).when(licenseManager).canUserBeAdded();
 
         creator.createUser("user@codenvy.com", "test", "John", "Doe");
 
@@ -96,7 +99,6 @@ public class OrgServiceUserCreatorTest {
     @Test
     public void shouldCreateUserWithGeneratedNameOnConflict() throws Exception {
         doThrow(NotFoundException.class).when(manager).getByEmail(anyObject());
-        doReturn(true).when(licenseManager).canUserBeAdded();
         doAnswer(invocation -> {
             for (Object arg : invocation.getArguments()) {
                 if (arg instanceof User && ((User)arg).getName().equals("reserved")) {
@@ -119,6 +121,15 @@ public class OrgServiceUserCreatorTest {
     public void shouldNotCreateUserBeyoundLicense() throws Exception {
         doThrow(NotFoundException.class).when(manager).getByEmail(anyObject());
         doReturn(false).when(licenseManager).canUserBeAdded();
+
+        creator.createUser("user@codenvy.com", "test", "John", "Doe");
+    }
+
+    @Test(expectedExceptions = IOException.class,
+        expectedExceptionsMessageRegExp = FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE)
+    public void shouldNotCreateUserIfFairSourceLicenseIsNotAccepted() throws Exception {
+        doThrow(NotFoundException.class).when(manager).getByEmail(anyObject());
+        doReturn(false).when(licenseManager).hasAcceptedFairSourceLicense();
 
         creator.createUser("user@codenvy.com", "test", "John", "Doe");
     }

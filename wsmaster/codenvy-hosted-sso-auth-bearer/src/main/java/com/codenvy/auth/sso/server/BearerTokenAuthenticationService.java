@@ -56,6 +56,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
 import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
@@ -191,6 +192,10 @@ public class BearerTokenAuthenticationService {
 
         inputDataValidator.validateUserMail(email);
         creationValidator.ensureUserCreationAllowed(email, validationData.getUsername());
+
+        if (!licenseManager.hasAcceptedFairSourceLicense()) {
+            throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
+        }
 
         if (!licenseManager.canUserBeAdded()) {
             throw new ForbiddenException(UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE);

@@ -14,7 +14,7 @@
  */
 package com.codenvy.onpremises.deploy;
 
-import com.codenvy.api.license.UserInteractiveLicenseFilter;
+import com.codenvy.api.license.UserInteractionLicenseFilter;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.onpremises.maintenance.MaintenanceStatusServlet;
@@ -40,7 +40,7 @@ public class DashboardServletModule extends ServletModule {
 
         filterRegex("/(?!_sso/).*$").through(com.codenvy.auth.sso.client.LoginFilter.class);
 
-        filterRegex("/(?!_sso/).*$").through(UserInteractiveLicenseFilter.class);
+        filterRegex("/(?!_sso/).*$").through(UserInteractionLicenseFilter.class);
 
         serve("/scheduled").with(MaintenanceStatusServlet.class);
 

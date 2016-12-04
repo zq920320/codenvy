@@ -45,16 +45,12 @@ import java.io.IOException;
 import static com.codenvy.api.license.shared.model.Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED;
 
 /**
- * Provide login redirection to SSO server on client side.
- * Filter also wraps original request and delegate Principal request to the Principal what comes from SSO server.
+ * TODO
  *
- * @author Alexander Garagatyi
- * @author Sergey Kabashniuk
- * @author Andrey Parfonov
+ * @author Dmytro Nochevnov
  */
 @Singleton
-public class NoUserInteratctionLicenseFilter implements Filter {
-    private static final Logger LOG = LoggerFactory.getLogger(NoUserInteratctionLicenseFilter.class);
+public class NoUserInteractionLicenseFilter implements Filter {
     @Inject
     protected RequestFilter          requestFilter;
     @Inject

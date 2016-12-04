@@ -92,9 +92,10 @@ public class UserServicePermissionsFilterTest {
     UserService service;
 
     @BeforeMethod
-    public void setUp() {
+    public void setUp() throws ServerException {
         permissionsFilter = new UserServicePermissionsFilter(true, licenseManager);
         when(subject.getUserId()).thenReturn(USER_ID);
+        when(licenseManager.hasAcceptedFairSourceLicense()).thenReturn(true);
     }
 
     @Test
@@ -153,8 +154,40 @@ public class UserServicePermissionsFilterTest {
 
 
     @Test
-    public void shouldThrowAnExceptionWhenCheckLicenseError() throws Exception {
+    public void shouldThrowAnExceptionWhenCheckUserLicenseError() throws Exception {
         doThrow(new ServerException("read users error")).when(licenseManager).canUserBeAdded();
+
+        final Response response = given().auth()
+                                         .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                         .contentType("application/json")
+                                         .when()
+                                         .post(SECURE_PATH + "/user?token=" + TOKEN);
+
+        assertEquals(response.getStatusCode(), 500);
+    }
+
+    @Test
+    public void shouldThrowExceptionWhenFairSourceLicenseLicenseIsNotAccepted() throws Exception {
+        when(licenseManager.hasAcceptedFairSourceLicense()).thenReturn(false);
+
+        final Response response = given().auth()
+                                         .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)
+                                         .contentType("application/json")
+                                         .when()
+                                         .post(SECURE_PATH + "/user?token=" + TOKEN);
+
+        assertEquals(response.getStatusCode(), 403);
+        assertEquals(response.getBody().prettyPrint(), format("{\n"
+                                                       + "    \"message\": \"%s\"\n"
+                                                       + "}", CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE));
+        verify(service, never()).create(any(), any(), any());
+        verify(subject, never()).checkPermission(any(), any(), any());
+    }
+
+
+    @Test
+    public void shouldThrowAnExceptionWhenCheckFairSourceLicenseError() throws Exception {
+        doThrow(new ServerException("read license action error")).when(licenseManager).hasAcceptedFairSourceLicense();
 
         final Response response = given().auth()
                                          .basic(ADMIN_USER_NAME, ADMIN_USER_PASSWORD)

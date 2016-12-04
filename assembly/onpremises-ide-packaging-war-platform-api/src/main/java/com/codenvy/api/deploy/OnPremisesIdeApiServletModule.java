@@ -14,7 +14,7 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.license.UserInteractiveLicenseFilter;
+import com.codenvy.api.license.UserInteractionLicenseFilter;
 import com.google.inject.servlet.ServletModule;
 
 import org.apache.catalina.filters.CorsFilter;
@@ -177,7 +177,7 @@ public class OnPremisesIdeApiServletModule extends ServletModule {
             "/organization",
             "/organization/*",
             "/system/ram/*",
-            "/resource/*").through(UserInteractiveLicenseFilter.class);
+            "/resource/*").through(UserInteractionLicenseFilter.class);
 
         final Map<String, String> corsFilterParams = new HashMap<>();
         corsFilterParams.put("cors.allowed.origins", DEFAULT_ALLOWED_ORIGINS);

@@ -30,6 +30,10 @@
     </properties>
     <dependencies>
         <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-sso-client</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-machine-hosted</artifactId>
         </dependency>
@@ -42,6 +46,10 @@
             <artifactId>guava</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.google.gwt</groupId>
+            <artifactId>gwt-user</artifactId>
+        </dependency>
+        <dependency>
             <groupId>com.google.inject</groupId>
             <artifactId>guice</artifactId>
         </dependency>
@@ -49,6 +57,8 @@
             <groupId>com.license4j</groupId>
             <artifactId>license4j-runtime-library</artifactId>
         </dependency>
+
+
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -88,10 +98,6 @@
         <dependency>
             <groupId>org.eclipse.che.core</groupId>
             <artifactId>che-core-commons-annotations</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.che.core</groupId>
-            <artifactId>che-core-commons-inject</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.che.core</groupId>

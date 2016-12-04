@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Named;
 import javax.ws.rs.Path;
 
+import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
 import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static java.lang.String.format;
 import static org.eclipse.che.api.user.server.UserService.USER_SELF_CREATION_ALLOWED;
@@ -66,6 +67,10 @@ public class UserServicePermissionsFilter extends CheMethodInvokerFilter {
                 //public methods
                 return;
             case "create":
+                if (!licenseManager.hasAcceptedFairSourceLicense()) {
+                    throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
+                }
+
                 if (!licenseManager.canUserBeAdded()) {
                     if (subject.hasPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION)) {
                         throw new ForbiddenException(format("The user cannot be added. You have %s users in Codenvy which is the maximum allowed by your current license.",
