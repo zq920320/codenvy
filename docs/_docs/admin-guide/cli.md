@@ -1,6 +1,9 @@
 ---
-title: "CLI"
+title: CLI
 excerpt: "Manage your Codenvy installation on the command line."
+layout: docs
+overview: true
+permalink: /docs/cli/
 ---
 The CLI is located at `~/codenvy/codenvy-cli/bin`. It is added to your `PATH` when Codenvy is installed.  You may need to start a new terminal session after the installation of Codenvy for the CLI PATH to be picked up.
 # codenvy add-node  

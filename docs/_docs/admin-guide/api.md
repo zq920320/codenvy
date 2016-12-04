@@ -1,5 +1,5 @@
 ---
-title: "API"
+title: API
 excerpt: "RESTful API for managing Codenvy installations."
 layout: docs
 overview: true

@@ -1,6 +1,9 @@
 ---
-title: "Custom Guided Tours"
+title: Custom Guided Tours
 excerpt: "Launch walk-me style guided tours in workspaces created by Factories"
+layout: docs
+overview: true
+permalink: /docs/tour/
 ---
 You can create a custom step by step walk through with popup windows that overlay the IDE in workspaces generated from your Factory.  You can define the style, structure, and placement of the steps and associate each step with an IDE action.  You can also structure the steps so that each is mandatory or whether users can early-terminate the tour.
 # Create  

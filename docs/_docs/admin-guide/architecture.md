@@ -1,19 +1,22 @@
 ---
-title: "Architecture"
+title: Architecture
 excerpt: "Codenvy runs anywhere connected to your systems and tool chain. Install Codenvy in a public IaaS cloud, in your own datacenter, or at codenvy.com."
+layout: docs
+overview: true
+permalink: /docs/architecture/
 ---
 Codenvy is a scalable system designed to host high performance workspaces for millions of concurrent developers. A workspace is composed of projects (mapped to a file system) and environments (mapped to a set of machines running as processes). Codenvy scales each component separately to offer high density operations without excessive allocation of resources.
 # Scalability Model  
 
-![Slide1.PNG](images/Slide1.PNG)
+![Slide1.PNG](/images/Slide1.PNG)
 
 # Deployment Model  
 
-![Slide2.PNG](images/Slide2.PNG)
+![Slide2.PNG](/images/Slide2.PNG)
 
 # Service Architecture  
 
-![Slide3.PNG](images/Slide3.PNG)
+![Slide3.PNG](/images/Slide3.PNG)
 
 # Single Node Installation  
 A single node installation installs all Codenvy services on a single physical node.

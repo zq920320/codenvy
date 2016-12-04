@@ -1,6 +1,9 @@
 ---
-title: "Installation"
+title: Installation
 excerpt: "Install Codenvy in a public cloud or on your own servers."
+layout: docs
+overview: true
+permalink: /docs/installation/
 ---
 # Installation Types  
 There are four ways to install Codenvy:

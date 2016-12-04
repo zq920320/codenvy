@@ -1,6 +1,9 @@
 ---
-title: "Configuration"
+title: Configuration
 excerpt: "Techniques for configuring Codenvy"
+layout: docs
+overview: true
+permalink: /docs/configuration/
 ---
 Codenvy is governed by Puppet. We install agents that will take a Puppet configuration and apply to the system. Codenvy's system configuration is stored within Puppet files. Updating these files means that you can alter the behavior of Codenvy itself.
 # Before Installation  

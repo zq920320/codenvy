@@ -1,6 +1,9 @@
 ---
-title: "Permissions"
+title: Permissions
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/permissions/
 ---
 Every user in the system is granted a set of permissions that allow or prohibit access to REST API methods. Users and system admins can share permissions or transfer ownership.
 

@@ -1,6 +1,9 @@
 ---
-title: "Networking"
+title: Networking
 excerpt: "Details related to how Codenvy advertises its services for users and internal nodes"
+layout: docs
+overview: true
+permalink: /docs/networking/
 ---
 Internal to Codenvy are dozens of services that communicate with each other. These services use hostname entries for communication.  Due to the nature of various internal services, IP addresses are not used, only hostnames.
 

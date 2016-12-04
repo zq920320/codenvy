@@ -1,6 +1,9 @@
 ---
-title: "Factories"
+title: Factories
 excerpt: "Automation for generating workspaces using URLs"
+layout: docs
+overview: true
+permalink: /docs/factories/
 ---
 A Factory is a template used to generate new or open existing workspaces with a consumer-friendly URL. Factories can be used to clone existing workspaces or with recipes to repeatedly generate consistent workspaces.
 # Try  

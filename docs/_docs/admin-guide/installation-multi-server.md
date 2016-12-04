@@ -1,6 +1,9 @@
 ---
-title: "Installation - Multi Server"
+title: Installation - Multi Server
 excerpt: "Install Codenvy across many nodes for scalability"
+layout: docs
+overview: true
+permalink: /docs/installation-multi-server/
 ---
 The multi-node installation of Codenvy lets you distribute the internal services that Codenvy depends upon onto separate physical nodes. ***You do not need this configuration*** if you want to scale Codenvy. You can perform a simple single server installation and then add up to 1000 machine nodes using the embedded Swarm cluster manager - see [Scaling](doc:scaling).
 

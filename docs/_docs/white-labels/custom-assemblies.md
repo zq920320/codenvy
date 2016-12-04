@@ -1,6 +1,9 @@
 ---
-title: "Custom Assemblies"
+title: Custom Assemblies
 excerpt: "Build your own Codenvy binaries"
+layout: docs
+overview: true
+permalink: /docs/custom-assemblies/
 ---
 You can create new assemblies for Codenvy. An assembly can contain Eclipse Che extensions, custom stacks, and templates that appear in the dashbuard and IDE.  You create the binary from Codenvy source code and then use the embedded Puppet system to update Codenvy with your new binary.
 

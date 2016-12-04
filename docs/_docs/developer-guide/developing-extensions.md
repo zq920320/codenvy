@@ -1,6 +1,9 @@
 ---
-title: "Developing Extensions"
+title: Developing Extensions
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/developing-extensions/
 ---
 Extensions modify the behavior of the IDE, Codenvy server, or workspace. IDE extensions are client-side. Workspace and Codenvy extensions are server side. Extensions are authored in Java and packaged as JARs. Client-side extensions use GWT to generate cross-browser JavaScript UI.
 

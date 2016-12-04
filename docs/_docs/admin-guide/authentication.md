@@ -1,6 +1,9 @@
 ---
-title: "Authentication"
+title: Authentication
 excerpt: "Add your oAuth keys and integrate your corporate LDAP."
+layout: docs
+overview: true
+permalink: /docs/authentication/
 ---
 # Essential Files  
 

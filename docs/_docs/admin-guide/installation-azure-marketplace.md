@@ -1,6 +1,9 @@
 ---
-title: "Installation - Azure Marketplace"
+title: Installation - Azure Marketplace
 excerpt: "Install Codenvy from the Azure marketplace entry"
+layout: docs
+overview: true
+permalink: /docs/installation-azure-marketplace/
 ---
 You can installation Codenvy Enterprise from VMs that are hosted on the [Microsoft Azure Portal](https://azure.microsoft.com/en-us/marketplace/partners/codenvy/codenvy-on-prem/).
 # Get a Codenvy VM  

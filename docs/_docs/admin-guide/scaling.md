@@ -1,6 +1,9 @@
 ---
-title: "Scaling"
+title: Scaling
 excerpt: "Add and remove machine nodes to increase workspace capacity."
+layout: docs
+overview: true
+permalink: /docs/scaling/
 ---
 You can add up to 1000 physical nodes to Codenvy to provide workspace elasticity (you will need a [Codenvy Enterprise license](http://codenvy.readme.io/docs/licensing) to unlock clustering). Workspaces are the individual unit of work that houses projects.  Workspaces are bound to environments that are powered by machines. Every workspace has at least one environment and users can configure additional ones.  Machines provide the unit of resource that a project requires to perform editing, building or running.
 

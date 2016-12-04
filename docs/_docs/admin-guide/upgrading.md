@@ -1,6 +1,9 @@
 ---
-title: "Upgrading"
+title: Upgrading
 excerpt: "Upgrade Codenvy to a newer version."
+layout: docs
+overview: true
+permalink: /docs/upgrading/
 ---
 Codenvy runs an internal service, the Codenvy Installation Manager, which creates a bridge between Codenvy.com (where new versions may be hosted) and your local installation. If the installation manager is shut down or disconnected from the Internet, your Codenvy installation will continue to operate.
 

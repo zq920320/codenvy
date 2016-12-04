@@ -1,6 +1,9 @@
 ---
-title: "Configuration: Docker"
+title: Configuration: Docker
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/configuration-docker/
 ---
 Codenvy workspaces are based upon a Docker image. You can either pull that image from a public registry, like Docker Hub, or a private registry which is managed by yourself.  Images in a registry can be publicly visible or private, which require user credentials to access. You can also set up a private registry to act as a mirror to Docker Hub.  And, if you are running Codenvy behind a proxy, you can configure the Docker daemon registry to operate behind a proxy.
 

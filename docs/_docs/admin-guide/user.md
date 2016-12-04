@@ -1,6 +1,9 @@
 ---
-title: "User Management"
+title: User Management
 excerpt: "Managing users and accounts."
+layout: docs
+overview: true
+permalink: /docs/user/
 ---
 Users can create accounts with the self-service portal that is at the root URL.  Admins can also create and destroy accounts. You must use the Codenvy API with an admin token to execute these tasks.
 # Login As Admin  

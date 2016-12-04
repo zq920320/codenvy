@@ -1,6 +1,9 @@
 ---
-title: "Disaster Recovery"
+title: Disaster Recovery
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/disaster-recovery/
 ---
 Codenvy is not designed to be a "5-9s" system, however there are steps that can be taken by an operations team responsible for Codenvy to ensure a quick recovery from any crashes.
 

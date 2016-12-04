@@ -1,6 +1,9 @@
 ---
-title: "Getting Started"
+title: Getting Started
 excerpt: "From zero to Codenvy delight in just a few steps."
+layout: docs
+overview: true
+permalink: /docs/installation-getting-started/
 ---
 Codenvy on-demand workspaces improve workflow and automate developer bootstrapping to supercharge the agile ethos. Codenvy uses Docker and Eclipse Che to make tooling, workspaces and environments consistent across teams.
 

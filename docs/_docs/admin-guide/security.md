@@ -1,6 +1,9 @@
 ---
-title: "Security"
+title: Security
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/security/
 ---
 # Switching to HTTPS  
 By default Codenvy runs over HTTP as this is simplest to install. You can switch to HTTPS at any time.

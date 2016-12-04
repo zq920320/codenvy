@@ -1,6 +1,9 @@
 ---
-title: "Email"
+title: Email
 excerpt: "Configure external SMTP server to use for sending emails initiated by Codenvy."
+layout: docs
+overview: true
+permalink: /docs/smtp/
 ---
 #### Failed Codenvy Emails
 If you perform a fresh installation of Codenvy and you do not receive notification emails from Codenvy, such as the verification email for a new user, then the likely cause is that your ISP is blocking outbound SMTP email on the default port.  Consider sending email through a relay host.  

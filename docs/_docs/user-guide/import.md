@@ -1,6 +1,9 @@
 ---
-title: "Import"
+title: Import
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/import/
 ---
 There are several ways to import a project:
 * `IDE > Import Project`

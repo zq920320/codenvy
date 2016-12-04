@@ -1,6 +1,9 @@
 ---
-title: "Issue Management"
+title: Issue Management
 excerpt: ""
+layout: docs
+overview: true
+permalink: /docs/issue-management/
 ---
 [Codenvy Factories](http://codenvy.readme.io/docs/factories) can be integrated with nearly any issue mangement system. However, we have developed two plug-ins that allow completely automated Factory creation and update based on changes to JIRA or Microsoft VSTS issue management.
 
@@ -19,7 +22,7 @@ The Codenvy agile workflow with Atlassian JIRA requires:
 - Atlassian JIRA issue management system.
 - Codenvy Plug-in for Atlassian JIRA
 - GitHub or other git-based repo with webhooks for push and pull requests.
-![ProductInteractionFlowswithContinousDevelopment(1).svg](images/ProductInteractionFlowswithContinousDevelopment(1).svg)
+![ProductInteractionFlowswithContinousDevelopment(1).svg](/images/ProductInteractionFlowswithContinousDevelopment(1).svg)
 The VCS Factory Plug-In updates Codenvy Factories in response to GitHub webhooks for push events and pull request events.
 
 Read more about [the agile workflow we recommend](https://codenvy.com/solutions/workflow/) on our website.
@@ -78,7 +81,7 @@ At this point Codenvy will automatically generate custom develop and review work
 Log into JIRA and choose one of the project types that you have Factory-enabled.  Create a new issue. There will be two new labels "Develop" and "Review" each with a link that will load a Codenvy workspace.
 # Using the Plug-In for JIRA  
 When a developer is ready to start work on an issue they click the Develop link.  They are brought into a developer workspace that is isolated to them and includes project sources and the build / run / debug environments needed for the project.  The definition of the [project's parent Factory](http://codenvy.readme.io/docs/factories) defines pre- and post-load behaviors. 
-![JIRAplugin-DevelopandReviewinIDE(1).svg](images/JIRAplugin-DevelopandReviewinIDE(1).svg)
+![JIRAplugin-DevelopandReviewinIDE(1).svg](/images/JIRAplugin-DevelopandReviewinIDE(1).svg)
 The git webhooks ensure that as the repository changes the JIRA issue Factory is kept up to date. For example, if a branch associated with the Factory is merged then the Factory will be updated to point to the commitID on the branch that was merged-to.
 # Plug-In for JIRA User Data Usage and Privacy  
 The plug-in requires the URL of Codenvy as well as a Codenvy user's username and password. The plug-in acts exclusively on the "Issue" object in JIRA. No data from that object is stored.

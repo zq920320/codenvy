@@ -1,6 +1,9 @@
 ---
-title: "Installation - Troubleshooting"
+title: Installation - Troubleshooting
 excerpt: "Helpful tips and tactics to use if things don't go as planned."
+layout: docs
+overview: true
+permalink: /docs/installation-troubleshooting/
 ---
 The Codenvy installation is designed to be simple and fail-safe. Things can go wrong, though, and diagnostics are needed.
 # Where We Install Stuff  
