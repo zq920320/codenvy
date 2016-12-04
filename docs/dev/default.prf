@@ -11,10 +11,10 @@ owner = false
 dontchmod = true
 
 # Some regexps specifying names and paths to ignore
-ignore = Path _site/*
-ignore = Path _site
+ignore = Path target/_site/*
+ignore = Path target/_site
 ignore = Path dev/*
-ignore = Path _site/*
+ignore = Path dev
 #ignore = Name temp.*
 
 # Use this command for displaying diffs
