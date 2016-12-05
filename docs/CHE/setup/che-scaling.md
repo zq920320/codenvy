@@ -1,5 +1,5 @@
 ---
-title: Config: Scaling
+title: Config&#58 Scaling
 excerpt: "Sizing guide and approaches for scaling Che to millions of concurrent developers"
 layout: docs
 overview: true
@@ -12,20 +12,20 @@ There are three aspects to scaling Che:
 2. Scaling Che using a [Che farm](https://eclipse-che.readme.io/docs/scaling#scaling-che-using-a-che-farm)
 3. [Upgrade to Codenvy](https://eclipse-che.readme.io/docs/scaling#scaling-che-with-codenvy)
 # Workspace Sizing  
-The Che server requires 256MB RAM and can handle 1000s of concurrent workspaces. 
+The Che server requires 256MB RAM and can handle 1000s of concurrent workspaces.
 
 For each workspace, assume that the Che RAM overhead is 200MB-1.5GB, but it varies widely by the type of intellisense you add into the workspace. Your users will get the remaining RAM for use by their commands. So if you create a workspace with 2GB of RAM, some of that will be used by Che for its internal management of the workspace itself.
 
-The RAM variation and amount is relatively high and a function of which plug-ins are deployed into the workspace agent. For example, the Java plug-in which uses JDT core to do intellisense can require up to 1GB of RAM.  If a developer is doing intensive compilation or dependency analysis, the workspace will bear the burden of providing the resources needed for these actions. 
+The RAM variation and amount is relatively high and a function of which plug-ins are deployed into the workspace agent. For example, the Java plug-in which uses JDT core to do intellisense can require up to 1GB of RAM.  If a developer is doing intensive compilation or dependency analysis, the workspace will bear the burden of providing the resources needed for these actions.
 
-Your workspace RAM can go higher if your users are creating multiple machines. Each workspace is given at least one machine. If you permit developers to launch other machines in a single workspace, those machines by default do not have a workspace agent and all of the RAM allocated to that machine will be granted to the user. 
+Your workspace RAM can go higher if your users are creating multiple machines. Each workspace is given at least one machine. If you permit developers to launch other machines in a single workspace, those machines by default do not have a workspace agent and all of the RAM allocated to that machine will be granted to the user.
 
 Storage is consumed by:
 1. Images downloaded and cached by Che for creating new workspaces.
 2. Project files.
 3. Workspace snapshots, which create new images saved in a registry.
 
-Generally, workspace images start at 180MB. If you permit workspace snapshots, those files can grow quite significantly, especially if your developers have large dependency sets such as maven repositories that they want captured in the snapshot. 
+Generally, workspace images start at 180MB. If you permit workspace snapshots, those files can grow quite significantly, especially if your developers have large dependency sets such as maven repositories that they want captured in the snapshot.
 # Multi-Client Collaboration  
 Workspaces are both portable and shared. Multiple browser clients (and humans!) can connect to a single Che server running multiple workspaces, or if you prefer, to a single workspace. Users within a single workspace can make use of the runtime and project files. Che implements a last-write-wins policy when multiple users modify the same file.
 # Scaling Che Using a Che Farm  
@@ -45,4 +45,3 @@ Your Eclipse Che workspaces and plug-ins will work within [Codenvy](http://coden
 * Self-service user registration
 ![ScaleCodenvy.PNG](images/ScaleCodenvy.PNG)
 Codenvy uses Puppet to install, configure, and update various internal services. This creates a simple management interface for administrators with flexibility on how many physical nodes to allocate along with the resource policy management that is applied to users and accounts.
-

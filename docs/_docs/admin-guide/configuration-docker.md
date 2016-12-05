@@ -1,5 +1,5 @@
 ---
-title: Configuration: Docker
+title: Configuration&#58 Docker
 excerpt: ""
 layout: docs
 overview: true
@@ -20,9 +20,9 @@ When you run the initial bootstrap script, you can pass in proxy information.
 
 # Or
 
-# These options will be passed into Codenvy configuration to tell Codenvy 
-# how its Docker daemon should be configured with a proxy. If --http-proxy and 
-# --https-proxy are only set, then these values will inherit from them. 
+# These options will be passed into Codenvy configuration to tell Codenvy
+# how its Docker daemon should be configured with a proxy. If --http-proxy and
+# --https-proxy are only set, then these values will inherit from them.
 # Use these specific parameters as overrides.
 --http-proxy-for-docker-daemon=<url-to-proxy>
 --https-proxy-for-docker-daemon=<url-to-proxy>\
@@ -50,9 +50,9 @@ You can configure Codenvy to have a system-wide authenticated access to a Docker
 # registry2.url=my-private-registry2.com:5000
 # registry2.username=corp_user2
 # registry2.password=corp_pass2"
-# 
+#
 # Please take a note that this is multiline variable separated by new line.
-# You can add as many custom registries as you want. By default it is empty. 
+# You can add as many custom registries as you want. By default it is empty.
 # Group registries using the registry prefix.
 
 # Example
@@ -110,7 +110,7 @@ codenvy config machine_docker_privilege_mode true\
 ```
 
 # Mirroring Docker Hub  
-If you are running a private registry internally to your company, you can [optionally mirror Docker Hub](https://docs.docker.com/registry/mirror/). Your private registry will download and cache any images that your users reference from the public Docker Hub. Codenvy needs to be told that you have a mirror so that we can configure the Docker daemon to send image pulls to the mirror instead of Docker Hub. 
+If you are running a private registry internally to your company, you can [optionally mirror Docker Hub](https://docs.docker.com/registry/mirror/). Your private registry will download and cache any images that your users reference from the public Docker Hub. Codenvy needs to be told that you have a mirror so that we can configure the Docker daemon to send image pulls to the mirror instead of Docker Hub.
 
 ## During Installation
 When you run the initial bootstrap script, you can pass in the mirror location.

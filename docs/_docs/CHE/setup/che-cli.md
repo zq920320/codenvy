@@ -1,5 +1,5 @@
 ---
-title: Usage: CLI
+title: Usage&#58 CLI
 excerpt: "Installing and using the Eclipse Che CLI"
 layout: docs
 overview: true
@@ -76,9 +76,9 @@ Usage: che [COMMAND]
 # Profiles  
 Most Che configuration parameters are done through system environment variables. If you have these set, the CLI will detect these values and pass them along to the `che-launcher`, `che-server`, `che-mount`, `che-dev`, and `che-dir` utilities. You can save sets of environment configurations as a profile.
 
-When creating a profile, the CLI will take the values of currently set Che environment variables and place them into a profile. If you "set" a profile, then those environment variables will be loaded before any of the Che utilities are called. 
+When creating a profile, the CLI will take the values of currently set Che environment variables and place them into a profile. If you "set" a profile, then those environment variables will be loaded before any of the Che utilities are called.
 
-You can use profiles to set up different configurations of Che servers so that you can switch between different servers, launch them, and avoid having conflicts with container names, ports, and output. 
+You can use profiles to set up different configurations of Che servers so that you can switch between different servers, launch them, and avoid having conflicts with container names, ports, and output.
 ```shell  
 # Configure some non-standard environment variables
 export CHE_PORT=9000
@@ -86,16 +86,16 @@ export CHE_SERVER_CONTAINER_NAME=my-home-che-server
 
 # Add a profile named food-network
 che profile add food-network
-INFO: 
+INFO:
 INFO: Added new che CLI profile ~/.che/profiles/food-network.
-INFO: 
+INFO:
 
 # Display its contents
 che profile info food-network
 DEBUG: ---------------------------------------
 DEBUG: ---------   CLI PROFILE INFO   --------
 DEBUG: ---------------------------------------
-DEBUG: 
+DEBUG:
 DEBUG: Profile ~/.che/profiles/food-network contains:
 DEBUG: CHE_DIR_IMAGE_NAME=eclipse/che-dir
 DEBUG: CHE_LAUNCHER_IMAGE_NAME=eclipse/che-launcher
@@ -107,7 +107,7 @@ DEBUG: CHE_TEST_IMAGE_NAME=eclipse/che-test
 
 # Set the food-network profile to be used by other utilities
 che profile set food-network
-INFO: 
+INFO:
 INFO: Set active che CLI profile to ~/.che/profiles/food-network.
 INFO:
 
@@ -163,7 +163,7 @@ INFO: ECLIPSE CHE: BOOTED AND REACHABLE
 
 Open browser to http://10.0.75.2:8080/che/local
 ```
-This example creates a new workspace named local in a Che server running in the background. When the command started, Che was not started, and the Che launcher was silently called to start Che with its default configuration. 
+This example creates a new workspace named local in a Che server running in the background. When the command started, Che was not started, and the Che launcher was silently called to start Che with its default configuration.
 
 ## File Structure
 ```text  
@@ -188,7 +188,7 @@ che.server.version = latest
 # reuse = create new if not exist, otherwise reopen existing workspace
 workspace.create = [new | reuse]
 workspace.recipe = [default | file | inline | url]
-workspace.recipe.location = {} 
+workspace.recipe.location = {}
 workspace.name = “happy”
 workspace.ram = 2048
 
@@ -220,7 +220,7 @@ The full syntax for how to build and run each Docker image is provided in the Do
 
 
 | Image>>>>>>>>>>>>>>   | Description   | `eclipse/che-dev`   
-| --- | --- | --- 
+| --- | --- | ---
 | `eclipse/che-dir`   | `eclipse/che-ip`   | `eclipse/che-launcher`\n`eclipse/che`   
 | `eclipse/che-mount`   | `eclipse/che-server`   | `eclipse/che-test`   
 | An image that contains all of the libraries and utilties necessary to compile Che extensions and custom assemblies.   | An image that enables the conversion of local directories into Che workspaces. Think of it as Vagrant, but for Che servers and workspaces.   | An image that returns the IP address of your Docker daemon. Used by our various containers to discover their environment.   
@@ -228,4 +228,3 @@ The full syntax for how to build and run each Docker image is provided in the Do
 | An image that performs smoke tests against Che servers by creating workspaces and projects to verify that the system's networking and other properties have been properly established.   | Dockerfile   | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-dev/Dockerfile)   
 | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-dir/Dockerfile)   | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-ip/Dockerfile)   | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-launcher/Dockerfile)   
 | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-mount/Dockerfile)   | [Dockerfile](https://github.com/eclipse/che/blob/master/dockerfiles/che-server/Dockerfile)   | [Dockerfile](https://github.com/eclipse/che-dockerfiles/blob/master/che-test/Dockerfile)   
-

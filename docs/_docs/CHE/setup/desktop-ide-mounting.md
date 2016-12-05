@@ -1,5 +1,5 @@
 ---
-title: Usage: Local IDE Sync
+title: Usage&#58 Local IDE Sync
 excerpt: "Using your desktop IDE with an Eclipse Che workspace."
 layout: docs
 overview: true
@@ -43,7 +43,7 @@ che mount <ws-name> (or che mount <ws-id>)
 --password <password> # Codenvy password\
 ```
 
-This will make a secure connection to the workspace and unison-sync the contents to the local host directory. You will be asked for the password that you retrieved from the SSH configuration. The synchronization will run continuously and the command will not return until you press CTRL-C, at which point the synchronization will be terminated. 
+This will make a secure connection to the workspace and unison-sync the contents to the local host directory. You will be asked for the password that you retrieved from the SSH configuration. The synchronization will run continuously and the command will not return until you press CTRL-C, at which point the synchronization will be terminated.
 ![fef09b90-a696-11e6-9a37-70f827677830.gif](images/fef09b90-a696-11e6-9a37-70f827677830.gif)
 ## Optimize
 The utility is designed to synchronize everything in your `/projects` folder that is within the workspace. Synchronization is impacted by the size and nature of files that are contained within the directory. If you have libraries such as with an NPM or maven repository, it may be unnecessary and taxing to synchronization all of those files.
@@ -67,23 +67,23 @@ sshfs -p <ws-ssh-port> user@<che-ws-ip-address>:/projects /mnt/che\
 ```
 
 # Docker Variant  
-The CLI in turn calls a Docker container, which you can use as well. 
+The CLI in turn calls a Docker container, which you can use as well.
 ```shell  
 # On linux:
 docker run --rm -it --cap-add SYS_ADMIN --device /dev/fuse
             --name che-mount
             -v ${HOME}/.ssh:${HOME}/.ssh
-            -v /etc/group:/etc/group:ro 
-            -v /etc/passwd:/etc/passwd:ro 
+            -v /etc/group:/etc/group:ro
+            -v /etc/passwd:/etc/passwd:ro
             -v <path-to-sync-profile>:/profile
             -u $(id -u ${USER})
-            -v <host-dir>:/mnthost codenvy/che-mount <ws-id|ws-name> 
-            
+            -v <host-dir>:/mnthost codenvy/che-mount <ws-id|ws-name>
+
 # On Mac or Windows:
 docker run --rm -it --cap-add SYS_ADMIN --device /dev/fuse
-           --name che-mount 
+           --name che-mount
            -v <path-to-sync-profile>:/profile
-           -v <host-dir>:/mnthost codenvy/che-mount <ip> <ws-id|ws-name> 
+           -v <host-dir>:/mnthost codenvy/che-mount <ip> <ws-id|ws-name>
 
 # where <ip> is the IP address of your Docker daemon discoverable by:
 docker run --rm --net host \
@@ -92,7 +92,7 @@ docker run --rm --net host \
 
 # where <network-if> is ‘eth0’, or if using boot2docker, then ‘eth1’.
 
-# Verify directories are in the mount container: 
+# Verify directories are in the mount container:
 docker exec -ti che-mount sh
   >ls /mnthost
   >ls /mntssh

@@ -1,5 +1,5 @@
 ---
-title: Usage: Docker Launcher
+title: Usage&#58 Docker Launcher
 excerpt: "Run Che inside a Docker container with workspaces saved on your host."
 layout: docs
 overview: true
@@ -46,7 +46,7 @@ You can monitor the progress of how the server is booting or check for errors in
 # Workspace Storage  
 Che saves your workspaces, projects and Che internal configuration in `/home/user/che`. This location must be changed if you are on Microsoft Windows by setting the `CHE_DATA_FOLDER` environment variable.
 ```shell  
-docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock 
+docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock
                    -e CHE_DATA=<path-to-location>
                    eclipse/che:5.0.0-latest start\
 ```
@@ -56,7 +56,7 @@ docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock
 
 
 # Diagnose Boot Problems  
-Generally, if Che fails to boot smoothly, then it is most commonly a configuration issue related to how Docker is setup on your operating system. While we try to address all possible configurations within our system, sometimes networking, firewalls, and other items can interfere. 
+Generally, if Che fails to boot smoothly, then it is most commonly a configuration issue related to how Docker is setup on your operating system. While we try to address all possible configurations within our system, sometimes networking, firewalls, and other items can interfere.
 
 There are [configuration items that you can set to alter how Che](doc:networking) communicates with its workspaces, the browser, and the Docker daemon. There are some simple tests that you can run to diagnose if one of the connections is failing you.
 
@@ -141,7 +141,7 @@ DEBUG: Che Server          => Workspace Agent (Internal IP): Connection succeede
 We provide a range of environment variables that you can set that alters how Che launches from the local host. You can provide as many of these variables as you need to the launcher using the `-e VAR=<value>` syntax.
 
 | Variable   | Description   | Default Values>>>>>>>>>>>   
-| --- | --- | --- 
+| --- | --- | ---
 | `CHE_DATA`   | Folder where user workspaces and Che preferences are saved.   | `/home/user/che`   
 | `CHE_PORT`   | `CHE_VERSION`   | `CHE_RESTART_POLICY`   
 | `CHE_USER`   | `CHE_CONF_FOLDER`   | `CHE_LOG_LEVEL`   
@@ -170,7 +170,7 @@ docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock \
 
 # Local Eclipse Che Binaries  
 
-You can have the launcher use Eclipse Che binaries that you have on your local host instead of those within the Che image that you select. This is useful for extension developers that are building local assemblies and would like to use the launcher to execute their custom Che build. 
+You can have the launcher use Eclipse Che binaries that you have on your local host instead of those within the Che image that you select. This is useful for extension developers that are building local assemblies and would like to use the launcher to execute their custom Che build.
 
 Inform Che of the local directory where your binaries are stored and the Che image will use those.
 ```text  
@@ -181,7 +181,7 @@ docker run --rm -v /var/run/docker.sock:/var/run/docker.sock \
 ```
 
 # Add Custom Eclipse Che Properties  
-There are many customizations you can make to the Che server by altering the `che.properties` file. 
+There are many customizations you can make to the Che server by altering the `che.properties` file.
 ```shell  
 # Save your custom che.properties in any local folder
 /etc/che/che.properties
@@ -193,7 +193,7 @@ docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock \
 ```
 You can get a template of the latest version of the `che.properties` [file from here](https://github.com/eclipse/che/blob/master/assembly/assembly-wsmaster-war/src/main/webapp/WEB-INF/classes/codenvy/che.properties). You can get the default `che.properties` file for older versions by changing the tag selector in GitHub.
 
-In the `che-server` container launched by the `che-launcher`, the Eclipse Che server loads default properties from `/tomcat/webapps/wsmaster/WEB-INF/classes/codenvy/che.properties`. The Che server overrides those values with `.properties` files that you provide. 
+In the `che-server` container launched by the `che-launcher`, the Eclipse Che server loads default properties from `/tomcat/webapps/wsmaster/WEB-INF/classes/codenvy/che.properties`. The Che server overrides those values with `.properties` files that you provide.
 
 System properties and environment variables may be used in `.properties` files in the form `${name}`. For example:
 ```json  
@@ -205,7 +205,7 @@ data.dir=${che.home}/conf
 ```
 
 # Under The Hood  
-The Eclipse Che launcher is a Docker container which launches the Che server container. When you run the launcher container, the container executes a script that gathers information about your environment and then uses that information to launch the Che server container. 
+The Eclipse Che launcher is a Docker container which launches the Che server container. When you run the launcher container, the container executes a script that gathers information about your environment and then uses that information to launch the Che server container.
 
 You can bypass the Che launcher and run the Che server container directly. Note that to run this container directly you must replace the environment variables with your own values. For additional information on running Che server container directly refer to [Usage: Docker Server](https://eclipse-che.readme.io/docs/usage-docker-server).
 ```shell  
@@ -248,4 +248,3 @@ docker run --rm -t -v /var/run/docker.sock:/var/run/docker.sock \
 
 # Websockets  
 Eclipse Che heavily relies on WebSocket communications. When a browser client connects to a workspace, it connects to it through WebSockets. Inside the workspace, the workspace agent also uses WebSockets to connect back to the Che server.
-

@@ -1,5 +1,5 @@
 ---
-title: Getting Started: Local
+title: Getting Started&#58 Local
 excerpt: ""
 layout: docs
 overview: true
@@ -14,7 +14,7 @@ To run Eclipse Che, you need:
 1. Docker 1.8+ for [Linux](https://docs.docker.com/engine/installation/), [Windows](https://docs.docker.com/engine/installation/windows/) or [Mac](https://docs.docker.com/engine/installation/mac/).
 2. Bash.
 
-If you are using boot2docker for Windows or Mac, environment variables must be set in each terminal session. 
+If you are using boot2docker for Windows or Mac, environment variables must be set in each terminal session.
 
 Once Docker and bash are installed:
 ```shell  

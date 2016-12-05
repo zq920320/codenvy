@@ -1,5 +1,5 @@
 ---
-title: Usage: SSH
+title: Usage&#58 SSH
 excerpt: "Connect to your workspace runtimes"
 layout: docs
 overview: true

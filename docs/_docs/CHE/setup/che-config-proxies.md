@@ -1,5 +1,5 @@
 ---
-title: Config: Proxies
+title: Config&#58 Proxies
 excerpt: "Configure Che workspaces to operate over a proxy."
 layout: docs
 overview: true
@@ -7,7 +7,7 @@ permalink: /docs/che-config-proxies/
 ---
 Your users may need their workspaces to operate over a proxy to the Internet. Che has three dependencies to the Internet:
 1. Docker, in order to download Docker images from DockerHub.
-2. Importers, in order to clone sample projects or source code at an external repository to mount into a workspace. 
+2. Importers, in order to clone sample projects or source code at an external repository to mount into a workspace.
 2. Workspaces created by users, which have their own internal operating system. Users that want to reach the Internet from within their workspace, such as for maven or npm, also need a proxy configuration.
 # Installation Proxies  
 The Vagrant installer downloads software from the Internet. The steps to configure Vagrant to work over a proxy are provided in the [Usage: Vagrant](doc:usage) docs. If you plan to run Che as a Docker container, then your local system must have Docker configured to work over a proxy. The steps to configure that are on this page.

@@ -1,5 +1,5 @@
 ---
-title: Usage: Native Server
+title: Usage&#58 Native Server
 excerpt: "Running Che server natively provides the best performance"
 layout: docs
 overview: true
@@ -86,7 +86,7 @@ If you are running on Digital Ocean or other providers, there are additional sec
 ###Java
 Java is used to run Che's server and the SDK tools which are used to create and package plug-ins. Install [Java 1.8](http://www.oracle.com/technetwork/java/javase/downloads/jdk8-downloads-2133151.html).  Java JRE is enough to run Che. You need the Java JDK if you want to build Che from source.
 
-The `JAVA_HOME` environment variable should be exported in the system and point to a valid Java installation. 
+The `JAVA_HOME` environment variable should be exported in the system and point to a valid Java installation.
 
 Windows users can either set these variables for a current terminal session or export them system wide. See: [Setting JAVA_HOME on Windows](https://confluence.atlassian.com/doc/setting-the-java_home-variable-in-windows-8895.html).
 
@@ -116,7 +116,7 @@ docker-machine env --shell cmd default\
 On Windows, `bash` is required to launch the Che server. This is typically installed with Git Windows, which is installed by Docker Toolbox for Windows, a requirement for using Che.
 # Pre-reqs: Mac / Linux  
 ###Java
-Set `$JAVA_HOME` variable in the `~/.bash_profile` or `~/.profile` files. 
+Set `$JAVA_HOME` variable in the `~/.bash_profile` or `~/.profile` files.
 ```text  
 export JAVA_HOME=/path/to/Java
 export PATH=$JAVA_HOME/bin:$PATH\
@@ -142,7 +142,7 @@ If `DOCKER_HOST` or `CHE_DOCKER_MACHINE_HOST` are exported and point to an exter
 ## Local Clients (Browser) => Workspace Agent
 After the Che server has successfully pinged a workspace agent, the client will use the same endpoint to establish its connection with a workspace agent as well over `http` and `ws`.
 
-If you have customized `docker.client.daemon_url` or `machine.docker.local_node_host`, or you have exported `DOCKER_HOST` or `CHE_DOCKER_MACHINE_HOST`, the browser will use those provided values to connect to a workspace agent. 
+If you have customized `docker.client.daemon_url` or `machine.docker.local_node_host`, or you have exported `DOCKER_HOST` or `CHE_DOCKER_MACHINE_HOST`, the browser will use those provided values to connect to a workspace agent.
 
 ## Workspace Agent => Che Server
 When a workspace is coming online, it must verify that it can connect back to the Che server. The `che.properties` file has the property `machine.docker.che_api.endpoint` that identifies the location of the Che server APIs. The default value for this property uses a `che-host` alias. When a workspace container starts, Che writes an entry into the container's `/etc/hosts` file to map `che-host` to the IP address of the Che server.  For example:

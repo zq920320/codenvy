@@ -1,13 +1,13 @@
 ---
-title: Config: Networking
+title: Config&#58 Networking
 excerpt: ""
 layout: docs
 overview: true
 permalink: /docs/che-networking/
 ---
-Eclipse Che makes connections between three entities: the browser, the Che server running in a Docker container, and a workspace running in a Docker container. 
+Eclipse Che makes connections between three entities: the browser, the Che server running in a Docker container, and a workspace running in a Docker container.
 
-If you distribute these components onto different nodes, hosts or IP addresses, then you may need to add additional configuration parameters to bridge different networks. 
+If you distribute these components onto different nodes, hosts or IP addresses, then you may need to add additional configuration parameters to bridge different networks.
 
 Also, since the Che server and your Che workspaces are within containers governed by a Docker daemon, you also need to ensure that these components have good bridges to communicate with the daemon.
 
@@ -26,7 +26,7 @@ When a user creates a workspace, the Che server connects to the Docker daemon at
 Che goes through a progression algorithm to establish the protocol, IP address and port to establish communications when it is booting or starting a workspace. You can override certain parameters in Che's configuration to overcome issues with the Docker daemon, workspaces, or browsers being on different networks.
 
 | Linux   | Windows/Mac   
-| --- | --- 
+| --- | ---
 | >>>>>>>>>>>Connection>>>>>>   | `Che Server => Docker Daemon`   
 | 1. Use the value of `che.properties` property named `docker.client.daemon_url`.\n\n2. Else, use the value of `DOCKER_HOST` system environment  variable. \n\n3. Else, use Unix socket over  `unix:///var/run/docker.sock`.   | 1) Use the value of `docker.client.daemon_url`.\n\n2) Else use the `DOCKER_HOST` environment  variable. If `DOCKER_HOST` value is malformed, catch `URISyntaxException` and use the default `https://192.168.99.100:2376`..\n\n3) Else uses default value: `https://192.168.99.100:2376`   
 | `Che Server => Workspace`\n`Browser => Workspace`   | 1. Use the value of `che.properties` property named `machine.docker.local_node_host`.\n\n2. Else, use the value of `CHE_DOCKER_MACHINE_HOST` system environment variable.\n\n3. Else, if server connects to Docker via Unix socket then use `localhost`.\n\n4. Else, get the value that the Che server used when it connected to the Docker daemon `DOCKER_HOST`.   

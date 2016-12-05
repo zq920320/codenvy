@@ -1,5 +1,5 @@
 ---
-title: Config: Security
+title: Config&#58 Security
 excerpt: ""
 layout: docs
 overview: true
@@ -10,7 +10,7 @@ Eclipse Che is designed as a single identity system to be used by an individual 
 # Securing Che Ports  
 Firewall rules can be added to prevent access to ports that shouldn't be externally accessible. Refer to [network topology docs](https://eclipse-che.readme.io/docs/networking#topology) for additional information on ports.
 
-When a user requires access to Che server remotely, outside of the local network/localhost, firewall rules can be setup to allow only certain ip-addresses access to Che server ports mention earlier. 
+When a user requires access to Che server remotely, outside of the local network/localhost, firewall rules can be setup to allow only certain ip-addresses access to Che server ports mention earlier.
 # Limiting Che Ports  
 Eclipse Che uses Docker to power its workspaces. Docker uses the [ephemeral port range](https://en.wikipedia.org/wiki/Ephemeral_port) when exposing ports for services running in the container. So when a Tomcat server is started on port 8080 inside a Che workspace Docker automatically selects an available port from the ephemeral range at runtime to map to that Tomcat instance.
 
@@ -35,7 +35,7 @@ docker run --rm -t --env CHE_PORT=8080 \
                    --env CHE_CONF_FOLDER=/home/user1/che/conf \
                    --env=CHE_DATA_FOLDER=/home/user1/che/ \
                    -v /var/run/docker.sock:/var/run/docker.sock eclipse/che start
-                   
+
 docker run --rm -t --env CHE_PORT=8081 \
                    --env CHE_SERVER_CONTAINER_NAME=che-server-user2 \
                    --env CHE_CONF_FOLDER=/home/user2/che/conf \
@@ -53,4 +53,3 @@ Bitnami requires an existing account with cloud providers such as Google, Amazon
 Codenvy also provides an implementation of Eclipse Che that has multi-user and multi-tenant capabilities.
 # HTTPS  
 HTTPS is not provided by Eclipse Che. It would require a more complex architecture with multi-service deployments, making Che more challenging for developers and small teams to use.
-

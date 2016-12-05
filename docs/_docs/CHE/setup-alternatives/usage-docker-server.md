@@ -1,5 +1,5 @@
 ---
-title: Usage: Docker Server
+title: Usage&#58 Docker Server
 excerpt: "Run the Che server inside a Docker image with workspaces mounted on your host."
 layout: docs
 overview: true
@@ -12,7 +12,7 @@ Eclipse Che has an [image available within Docker Hub](https://hub.docker.com/r/
 
 !!!NOTE:  This is a new syntax that is not available on Docker Hub yet. To get this new approach, you need to build a codenvy/che-server:nightly directly.  Please see this [pull request](https://github.com/eclipse/che/pull/2786) for details on how to run it.
 
-The preferred technique for running Eclipse Che is with our [Usage: Docker](doc:usage-docker) launcher which simplifies the syntax and provides a consistent client that works on any operating system. There are quirks to running the Che server container on Windows and Mac, so the `che-launcher` is encouraged. 
+The preferred technique for running Eclipse Che is with our [Usage: Docker](doc:usage-docker) launcher which simplifies the syntax and provides a consistent client that works on any operating system. There are quirks to running the Che server container on Windows and Mac, so the `che-launcher` is encouraged.
 
 As of 5.0.0-M7, this syntax has changed. The che-server container provides an error message if you try to use it with the old syntax.
 # Run the Image  
@@ -57,7 +57,7 @@ docker run -p 8080:8080 \
            eclipse/che-server:5.0.0-latest\
 ```
 ## Ports
-Tomcat inside the container will bind itself to port 8080 by default. You must map this port to be exposed in your container using `-p 8080:8080`.  If you want to change the port at which your browsers connect, then change the first value, such as `p 9000:8080`.  This will route requests from port 9000 to the internal Tomcat bound to port 8080.  If you want to change the internal port that Tomcat is bound, you must update the port binding and set `CHE_PORT` to the new value. 
+Tomcat inside the container will bind itself to port 8080 by default. You must map this port to be exposed in your container using `-p 8080:8080`.  If you want to change the port at which your browsers connect, then change the first value, such as `p 9000:8080`.  This will route requests from port 9000 to the internal Tomcat bound to port 8080.  If you want to change the internal port that Tomcat is bound, you must update the port binding and set `CHE_PORT` to the new value.
 ```text  
 docker run -p 9000:9500 \
            --name che \
@@ -79,7 +79,7 @@ docker run -p:9000:9000 \
 There are many variables that can be set.
 
 | Variable   | Description   | Defaults>>>>>>>>>>>   
-| --- | --- | --- 
+| --- | --- | ---
 | `CHE_SERVER_ACTION`   | The command to send to Tomcat. it can be [run | start | stop].   | `run`   
 | `CHE_LOCAL_CONF_DIR`   | Folder where a custom `che.properties` located. If not provided, then the container will copy the system `che.properties` into `/data/conf/che.properties`. You can reuse this or replace it  with configuration on a different folder using this variable. If you use this variable, you must also mount the same directory.   | `/data/conf`   
 | `CHE_ASSEMBLY`   | The path to a Che assembly that is on your host to be used instead of the assembly packaged within the `che-server` image. If you set this variable, you must also volume mount the same directory to `/home/user/che`   | `/home/user/che`   
@@ -92,7 +92,7 @@ There are many variables that can be set.
 | `CHE_PORT`   | The port the Che server will bind itself to within the Che container.   | '8080`   
 
 ## Run Che on Public IP Address
-If you want to have remote browser clients connect to the Che server (as opposed to local browser clients) and override the defaults that we detect, set `CHE_IP` to the Docker host IP address that will have requests forwarded to the `che-server` container. 
+If you want to have remote browser clients connect to the Che server (as opposed to local browser clients) and override the defaults that we detect, set `CHE_IP` to the Docker host IP address that will have requests forwarded to the `che-server` container.
 
 We run an auto-detection algorithm within the che-server container to determine this IP.  If Docker is running on `boot2docker` this is usually the `eth1` interface. If you are running Docker for Windows or Docker for Mac this is usually the `eth0` interface. If you are running Docker natively on Linux, this is the `docker0` interface. If your host that is running Docker has its IP at 10.0.75.4 and you wanted to allow remote clients access to this container then:
 ```shell  
@@ -108,7 +108,7 @@ Pass the `--restart always` parameter to the docker syntax to have the Docker da
 ```shell  
 docker run -p:8080:8080 \
            --name che \
-           --restart always \ 
+           --restart always \
            -e CHE_IP=10.0.75.4 \
            -v /var/run/docker.sock:/var/run/docker.sock \
            -v /C/tmp:/data \
@@ -128,7 +128,7 @@ sudo docker exec -it che vi /data/conf/che.properties
 # After you finish making changes, restart the contain
 docker restart che\
 ```
-You can save your Che configuration to reside outside of the container to be reusable between different container instances. Create a local `che.properties` file, volume mount it into the container, and also tell Che in the container where to locate this file. 
+You can save your Che configuration to reside outside of the container to be reusable between different container instances. Create a local `che.properties` file, volume mount it into the container, and also tell Che in the container where to locate this file.
 ```shell  
 # Mount host directory with che.properties into container and inform Che where it is.
 # Place the folder with che.properties as a mount to /conf
@@ -138,9 +138,9 @@ docker run -p:8080:8080 \
            -e CHE_IP=10.0.75.4 \
            -v /var/run/docker.sock:/var/run/docker.sock \
            -v /C/tmp:/data \
-           
+
            -v /C/conf:/conf \
-           
+
            eclipse/che-server:5.0.0-latest\
 ```
 ## Use Local Che Assembly
@@ -153,9 +153,9 @@ docker run -p:8080:8080 \
            -v /var/run/docker.sock:/var/run/docker.sock \
            -v /C/tmp:/data \
            -v /C/conf:/conf \
-           
+
 					 -v /home/my_assembly:/assembly \
-           
+
            eclipse/che-server:5.0.0-latest\
 ```
 ## Port Exposure
@@ -172,9 +172,9 @@ docker run -p:8080:8080 \
            -v /C/tmp:/data \
            -v /C/conf:/conf \           
 					 -v /home/my_assembly:/assembly \
-           
+
            -e DOCKER_MACHINE_HOST=172.17.0.1 \
-           
+
            eclipse/che-server:5.0.0-latest\
 ```
 
@@ -194,7 +194,7 @@ che:
 		 - /home/my_assembly:/assembly
    container_name: che\
 ```
-Save this into a file named `Composefile`. Replace the `${IP}` with the IP address of the server where you are hosting Eclipse Che.  You can then run this with Docker Compose with `docker-compose -f Composefile -d`. 
+Save this into a file named `Composefile`. Replace the `${IP}` with the IP address of the server where you are hosting Eclipse Che.  You can then run this with Docker Compose with `docker-compose -f Composefile -d`.
 # Docker Unix Socket Mounting vs TCP Mode  
 The `-v /var/run/docker.sock:/var/run/docker.sock` syntax is for mounting a Unix socket so that when a process inside the container speaks to a Docker daemon, the process is redirected to the same socket on the host system.
 
@@ -218,9 +218,9 @@ docker run -p:8080:8080 \
            -v /C/conf:/conf \           
 					 -v /home/my_assembly:/assembly \
            -e DOCKER_MACHINE_HOST=172.17.0.1 \
-           
+
            -e DOCKER_HOST=tcp://1.1.1.1:2375 \
-           
+
            eclipse/che-server:5.0.0-latest\
 ```
 
@@ -228,7 +228,7 @@ docker run -p:8080:8080 \
 The Che container uses host mounted volumes to store persistent data:
 
 | Local Location   | Container Location   | Usage   
-| --- | --- | --- 
+| --- | --- | ---
 | `/var/run/docker.sock`   | `/var/run/docker.sock`   | This is how Che gets access to Docker daemon. This instructs the container to use your local Docker daemon when Che wants to create its own containers.   
 | `/<your-path>/lib`   | `/data/lib`   | Inside the container, we make a copy of important libraries that your workspaces will need and place them into `/lib`. When Che creates a workspace container, that container will be using your local Docker daemon and the Che workspace will look for these libraries in your local `/lib`. This is a tactic we use to get files from inside the container out onto your local host.   
 | `/<your-path>/workspaces`   | `/data/workspaces`   | The location of your workspace and project files.   

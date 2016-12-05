@@ -1,5 +1,5 @@
 ---
-title: Setup: ARTIK USB
+title: Setup&#58 ARTIK USB
 excerpt: ""
 layout: docs
 overview: true
@@ -16,7 +16,7 @@ The ADB daemon must be running on the device. Usually it is already running but 
 service adbd start
 
 # On the device: Have the daemon start upon device boot
-systemctl enable adbd.service 
+systemctl enable adbd.service
 
 # In Che workspace: Verify that discovery is working
 adb devices    # Returns a discovered device\

@@ -1,5 +1,5 @@
 ---
-title: Getting Started: Private Cloud
+title: Getting Started&#58 Private Cloud
 excerpt: "Using Che with your cloud hosting account."
 layout: docs
 overview: true
