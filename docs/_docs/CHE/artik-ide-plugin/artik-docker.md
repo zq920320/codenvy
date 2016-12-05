@@ -1,5 +1,5 @@
 ---
-title: Setup: Docker
+title: Setup&#58 Docker
 excerpt: "Configuring Docker for the ARTIK IDE."
 layout: docs
 overview: true

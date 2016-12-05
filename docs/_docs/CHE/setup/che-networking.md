@@ -1,5 +1,5 @@
 ---
-title: Config: Networking
+title: Config&#58 Networking
 excerpt: ""
 layout: docs
 overview: true

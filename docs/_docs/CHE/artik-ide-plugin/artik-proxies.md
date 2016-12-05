@@ -1,5 +1,5 @@
 ---
-title: Setup: Proxies
+title: Setup&#58 Proxies
 excerpt: "Setting up the ARTIK IDE behind a proxy."
 layout: docs
 overview: true

@@ -1,5 +1,5 @@
 ---
-title: Config: Proxies
+title: Config&#58 Proxies
 excerpt: "Configure Che workspaces to operate over a proxy."
 layout: docs
 overview: true

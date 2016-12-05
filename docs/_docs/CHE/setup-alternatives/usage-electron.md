@@ -1,5 +1,5 @@
 ---
-title: Usage: Electron Clients
+title: Usage&#58 Electron Clients
 excerpt: "Install Electron, a fast OS-specific desktop client for Eclipse Che"
 layout: docs
 overview: true

@@ -38,6 +38,7 @@ gems:
 #  - jemoji
 
 exclude:
+  - /dev/
   - README.md
   - .gitignore
   - docs.sh

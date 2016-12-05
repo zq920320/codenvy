@@ -1,5 +1,5 @@
 ---
-title: Getting Started: Local
+title: Getting Started&#58 Local
 excerpt: ""
 layout: docs
 overview: true

@@ -1,5 +1,5 @@
 ---
-title: "API Docs"
+title: API Docs
 excerpt: ""
 layout: docs
 overview: true

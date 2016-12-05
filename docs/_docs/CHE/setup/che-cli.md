@@ -1,5 +1,5 @@
 ---
-title: Usage: CLI
+title: Usage&#58 CLI
 excerpt: "Installing and using the Eclipse Che CLI"
 layout: docs
 overview: true

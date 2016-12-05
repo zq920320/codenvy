@@ -1,5 +1,5 @@
 ---
-title: Setup: ARTIK USB
+title: Setup&#58 ARTIK USB
 excerpt: ""
 layout: docs
 overview: true

@@ -1,4 +1,0 @@
----
-title: "Setup: Wireless"
-excerpt: ""
----

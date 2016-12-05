@@ -1,5 +1,5 @@
 ---
-title: Usage: Docker Launcher
+title: Usage&#58 Docker Launcher
 excerpt: "Run Che inside a Docker container with workspaces saved on your host."
 layout: docs
 overview: true

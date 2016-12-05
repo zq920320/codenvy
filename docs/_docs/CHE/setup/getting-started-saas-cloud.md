@@ -1,5 +1,5 @@
 ---
-title: Getting Started: SaaS Cloud
+title: Getting Started&#58 SaaS Cloud
 excerpt: ""
 layout: docs
 overview: true

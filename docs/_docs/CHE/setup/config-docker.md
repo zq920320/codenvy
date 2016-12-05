@@ -1,5 +1,5 @@
 ---
-title: Config: Docker
+title: Config&#58 Docker
 excerpt: ""
 layout: docs
 overview: true

@@ -1,5 +1,5 @@
 ---
-title: Usage: Docker Server
+title: Usage&#58 Docker Server
 excerpt: "Run the Che server inside a Docker image with workspaces mounted on your host."
 layout: docs
 overview: true

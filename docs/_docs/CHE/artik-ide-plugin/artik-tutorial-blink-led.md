@@ -1,5 +1,5 @@
 ---
-title: Tutorial: Blink LED
+title: Tutorial&#58 Blink LED
 excerpt: ""
 layout: docs
 overview: true

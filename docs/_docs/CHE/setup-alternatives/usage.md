@@ -1,5 +1,5 @@
 ---
-title: Usage: Native Server
+title: Usage&#58 Native Server
 excerpt: "Running Che server natively provides the best performance"
 layout: docs
 overview: true

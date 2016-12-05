@@ -1,5 +1,5 @@
 ---
-title: Config: Scaling
+title: Config&#58 Scaling
 excerpt: "Sizing guide and approaches for scaling Che to millions of concurrent developers"
 layout: docs
 overview: true

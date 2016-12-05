@@ -1,5 +1,5 @@
 ---
-title: Usage: Local IDE Sync
+title: Usage&#58 Local IDE Sync
 excerpt: "Using your desktop IDE with an Eclipse Che workspace."
 layout: docs
 overview: true

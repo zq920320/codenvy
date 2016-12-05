@@ -11,8 +11,8 @@ owner = false
 dontchmod = true
 
 # Some regexps specifying names and paths to ignore
-ignore = Path target/_site/*
-ignore = Path target/_site
+ignore = Path target/*
+ignore = Path target
 ignore = Path dev/*
 ignore = Path dev
 #ignore = Name temp.*

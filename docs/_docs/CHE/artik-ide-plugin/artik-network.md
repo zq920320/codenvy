@@ -1,5 +1,5 @@
 ---
-title: Setup: Networking
+title: Setup&#58 Networking
 excerpt: "Setting up networking for the ARTIK IDE."
 layout: docs
 overview: true

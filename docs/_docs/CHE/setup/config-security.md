@@ -1,5 +1,5 @@
 ---
-title: Config: Security
+title: Config&#58 Security
 excerpt: ""
 layout: docs
 overview: true
