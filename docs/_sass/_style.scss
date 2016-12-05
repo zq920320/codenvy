@@ -66,6 +66,17 @@ nav {
   li { display: inline-block; }
 }
 
+.doc-title {
+    color: #3c4146;
+    font-weight: 400;
+    line-height: 1em;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #eee;
+}
+
+
+
 .main-nav {
   margin-top: 52px;
 
@@ -268,7 +279,7 @@ footer {
   .code {
     display: block;
     padding: 0;
-    font-family: Menlo, Consolas, "Courier New", Courier, "Liberation Mono", monospace;
+    font-family: Consolas, "Courier New", Courier, "Liberation Mono", monospace;
     line-height: 1.3em;
 
     .title {
@@ -469,10 +480,10 @@ aside {
 
 .section-nav {
   text-align: center;
-  padding-top: 40px;
+  padding-top: 30px;
   position: relative;
   background: url(../img/article-footer.png) top center no-repeat;
-  margin: 40px -20px 10px;
+  margin: 30px -20px 10px;
 
   > div { width: 49.5%; }
 
@@ -630,7 +641,7 @@ pre,
 code {
   display: inline-block;
   margin: 0;
-  font: 14px/1.8em Menlo, Consolas, "Courier New", Courier, "Liberation Mono", monospace;
+  font: 14px/1.8em Consolas, Menlo, "Courier New", Courier, "Liberation Mono", monospace;
   padding: 0 0.5em;
   border: 1px solid #cacaca;
 }
@@ -683,7 +694,18 @@ h5 > code,
 
 /* HTML Elements */
 
-h1, h2, h3, h4, h5, h6 { margin: 0; }
+h1, h2, h3, h4, h5, h6 {
+    margin: 0;
+    padding-top: 15px;
+    line-height: 1.5em;
+}
+
+h1, h2 {
+  color: #3c4146;
+  border-bottom-width: 1px;
+  border-bottom-style: solid;
+  border-bottom-color: #eee;
+}
 
 a {
   color: #4A90E2;
@@ -695,7 +717,10 @@ a {
 
 strong { font-weight: 700; }
 
-p { line-height: 1.5em; }
+p {
+  line-height: 1.5em;
+  padding-bottom: 10px;
+}
 
 .left { float: left; }
 .right { float: right; }
