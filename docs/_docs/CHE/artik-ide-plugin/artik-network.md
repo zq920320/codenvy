@@ -12,4 +12,3 @@ If you distribute these components onto different nodes, hosts or IP addresses, 
 Also, since the ARTIK server and your ARTIK workspaces are within containers governed by a Docker daemon, you also need to ensure that these components have good bridges to communicate with the daemon.
 
 Generally, if your browser, ARTIK server and ARTIK workspaces are all on the same node, then localhost configuration will always work.
-
