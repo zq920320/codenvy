@@ -22,7 +22,6 @@ import com.codenvy.api.license.exception.LicenseNotFoundException;
 import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
 import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
 import com.codenvy.api.license.shared.dto.IssueDto;
-import com.codenvy.api.license.shared.model.Constants;
 import com.codenvy.api.license.shared.model.FairSourceLicenseAcceptance;
 import com.codenvy.api.license.shared.model.Issue;
 import com.codenvy.swarm.client.SwarmDockerConnector;
@@ -36,28 +35,15 @@ import org.eclipse.che.api.user.server.UserManager;
 import org.eclipse.che.commons.annotation.Nullable;
 
 import javax.inject.Inject;
-import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.validation.constraints.NotNull;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.Map;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.codenvy.api.license.shared.model.Constants.Action.ACCEPTED;
-import static com.codenvy.api.license.shared.model.Constants.Action.EXPIRED;
 import static com.codenvy.api.license.shared.model.Constants.License.FAIR_SOURCE_LICENSE;
-import static com.codenvy.api.license.shared.model.Constants.License.PRODUCT_LICENSE;
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.nio.charset.StandardCharsets.UTF_8;
-import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
@@ -67,30 +53,33 @@ import static org.eclipse.che.dto.server.DtoFactory.newDto;
  * @author Alexander Andrienko
  */
 @Singleton
-public class CodenvyLicenseManager {
+public class CodenvyLicenseManager implements CodenvyLicenseManagerObservable {
 
-    private static final Pattern LICENSE_ID = Pattern.compile(".*\\(id: ([0-9]+)\\)");
-
-    private final CodenvyLicenseFactory   licenseFactory;
-    private final Path                    licenseFile;
-    private final UserManager             userManager;
-    private final SwarmDockerConnector    dockerConnector;
-    private final CodenvyLicenseActionDao codenvyLicenseActionDao;
+    private final CodenvyLicenseFactory               licenseFactory;
+    private final UserManager                         userManager;
+    private final SwarmDockerConnector                dockerConnector;
+    private final CodenvyLicenseActionDao             codenvyLicenseActionDao;
+    private final CodenvyLicenseStorage               codenvyLicenseStorage;
+    private final CodenvyLicenseActivator             codenvyLicenseActivator;
+    private final List<CodenvyLicenseManagerObserver> observers;
 
     public static final String UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE   = "Unable to add your account. The Codenvy license has reached its user limit.";
     public static final String LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE = "Your user license has reached its limit. You cannot add more users.";
 
     @Inject
-    public CodenvyLicenseManager(@Named("license-manager.license-file") String licenseFile,
-                                 CodenvyLicenseFactory licenseFactory,
+    public CodenvyLicenseManager(CodenvyLicenseFactory licenseFactory,
                                  UserManager userManager,
                                  SwarmDockerConnector dockerConnector,
-                                 CodenvyLicenseActionDao codenvyLicenseActionDao) {
+                                 CodenvyLicenseActionDao codenvyLicenseActionDao,
+                                 CodenvyLicenseStorage codenvyLicenseStorage,
+                                 CodenvyLicenseActivator codenvyLicenseActivator) {
         this.licenseFactory = licenseFactory;
-        this.licenseFile = Paths.get(licenseFile);
         this.userManager = userManager;
         this.dockerConnector = dockerConnector;
         this.codenvyLicenseActionDao = codenvyLicenseActionDao;
+        this.codenvyLicenseStorage = codenvyLicenseStorage;
+        this.codenvyLicenseActivator = codenvyLicenseActivator;
+        this.observers = new LinkedList<>();
     }
 
     /**
@@ -105,37 +94,14 @@ public class CodenvyLicenseManager {
         requireNonNull(licenseText, "Codenvy license can't be null");
 
         CodenvyLicense codenvyLicense = licenseFactory.create(licenseText);
-        try {
-            Files.write(licenseFile, codenvyLicense.getLicenseText().getBytes());
-        } catch (IOException e) {
-            throw new LicenseException(e.getMessage(), e);
+        String activatedLicenseText = codenvyLicenseActivator.activateIfRequired(codenvyLicense);
+        if (activatedLicenseText != null) {
+            codenvyLicenseStorage.persistActivatedLicense(activatedLicenseText);
         }
+        codenvyLicenseStorage.persistLicense(codenvyLicense.getLicenseText());
 
-        String licenseQualifier = extractLicenseId(licenseText);
-
-        removeActionsOfExpiredLicense();
-        removeActionsOfDifferentLicenseAndStoreNew(licenseQualifier);
-    }
-
-    private void removeActionsOfDifferentLicenseAndStoreNew(String licenseQualifier) throws ApiException {
-        try {
-            CodenvyLicenseActionImpl licenseAction = codenvyLicenseActionDao.getByLicenseAndAction(PRODUCT_LICENSE, ACCEPTED);
-            if (!licenseAction.getLicenseQualifier().equals(licenseQualifier)) {
-                codenvyLicenseActionDao.remove(PRODUCT_LICENSE, ACCEPTED);
-                codenvyLicenseActionDao.remove(PRODUCT_LICENSE, EXPIRED);
-                addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
-            }
-        } catch (NotFoundException e) {
-            addLicenseAction(PRODUCT_LICENSE, ACCEPTED, licenseQualifier);
-        }
-    }
-
-    private void removeActionsOfExpiredLicense() throws ServerException {
-        try {
-            codenvyLicenseActionDao.getByLicenseAndAction(PRODUCT_LICENSE, EXPIRED);
-            codenvyLicenseActionDao.remove(PRODUCT_LICENSE, ACCEPTED);
-            codenvyLicenseActionDao.remove(PRODUCT_LICENSE, EXPIRED);
-        } catch (NotFoundException ignored) {
+        for (CodenvyLicenseManagerObserver observer : observers) {
+            observer.onProductLicenseStored(codenvyLicense);
         }
     }
 
@@ -151,34 +117,33 @@ public class CodenvyLicenseManager {
      */
     @Nullable
     public CodenvyLicense load() throws LicenseException {
-        String licenseText = readLicenseText();
-        if (isNullOrEmpty(licenseText)) {
-            throw new LicenseNotFoundException("Codenvy license not found");
-        }
-
-        return licenseFactory.create(licenseText);
+        String licenseText = codenvyLicenseStorage.loadLicense();
+        CodenvyLicense codenvyLicense = licenseFactory.create(licenseText);
+        codenvyLicenseActivator.validateActivation(codenvyLicense);
+        return codenvyLicense;
     }
 
     /**
      * Deletes Codenvy license from the storage.
      *
+     * @throws LicenseNotFoundException
+     *      if Codenvy license not found
      * @throws LicenseException
-     *         if error occurred while deleting license
+     *       if error occurred while deleting license
      */
     public void delete() throws LicenseException, ApiException {
-        String licenseText = readLicenseText();
-        String licenseQualifier = extractLicenseId(licenseText);
+        String licenseText = codenvyLicenseStorage.loadLicense();
 
         try {
-            Files.delete(licenseFile);
-        } catch (NoSuchFileException e) {
-            throw new LicenseNotFoundException("Codenvy license not found");
-        } catch (IOException e) {
-            throw new LicenseException(e.getMessage(), e);
-        }
+            CodenvyLicense codenvyLicense = licenseFactory.create(licenseText);
+            codenvyLicenseStorage.clean();
 
-        codenvyLicenseActionDao.remove(PRODUCT_LICENSE, EXPIRED);
-        addLicenseAction(PRODUCT_LICENSE, EXPIRED, licenseQualifier);
+            for (CodenvyLicenseManagerObserver observer : observers) {
+                observer.onProductLicenseDeleted(codenvyLicense);
+            }
+        } catch (InvalidLicenseException e) {
+            codenvyLicenseStorage.clean();
+        }
     }
 
     /**
@@ -261,7 +226,7 @@ public class CodenvyLicenseManager {
     /**
      * Accepts Codenvy Fair Source License
      *
-     * @see CodenvyLicenseActionDao#store(CodenvyLicenseActionImpl)
+     * @see CodenvyLicenseActionDao#insert(CodenvyLicenseActionImpl)
      *
      * @param fairSourceLicenseAcceptance
      *      acceptance request
@@ -271,18 +236,9 @@ public class CodenvyLicenseManager {
      *      if request is not complete
      */
     public void acceptFairSourceLicense(FairSourceLicenseAcceptance fairSourceLicenseAcceptance) throws ApiException {
-        try {
-            codenvyLicenseActionDao.getByLicenseAndAction(FAIR_SOURCE_LICENSE, ACCEPTED);
-            throw new ConflictException("Codenvy Fair Source License has been already accepted");
-        } catch (NotFoundException e) {
-            // No Codenvy Fair Source License Accepted
+        for (CodenvyLicenseManagerObserver observer : observers) {
+            observer.onCodenvyFairSourceLicenseAccepted(fairSourceLicenseAcceptance);
         }
-
-        Map<String, String> attributes = new HashMap<>(3);
-        attributes.put("firstName", fairSourceLicenseAcceptance.getFirstName());
-        attributes.put("lastName", fairSourceLicenseAcceptance.getLastName());
-        attributes.put("email", fairSourceLicenseAcceptance.getEmail());
-        addLicenseAction(FAIR_SOURCE_LICENSE, ACCEPTED, null, attributes);
     }
 
     /**
@@ -298,43 +254,13 @@ public class CodenvyLicenseManager {
         return true;
     }
 
-    private void addLicenseAction(Constants.License licenseType,
-                                  Constants.Action actionType,
-                                  @Nullable String licenseQualifier) throws ApiException {
-        addLicenseAction(licenseType, actionType, licenseQualifier, emptyMap());
+    @Override
+    public void addObserver(CodenvyLicenseManagerObserver observer) {
+        observers.add(observer);
     }
 
-    private void addLicenseAction(Constants.License licenseType,
-                                  Constants.Action actionType,
-                                  @Nullable String licenseQualifier,
-                                  Map<String, String> attributes) throws ApiException {
-
-        CodenvyLicenseActionImpl codenvyLicenseAction
-                = new CodenvyLicenseActionImpl(licenseType,
-                                               actionType,
-                                               System.currentTimeMillis(),
-                                               licenseQualifier,
-                                               attributes);
-
-        codenvyLicenseActionDao.store(codenvyLicenseAction);
-    }
-
-    private String extractLicenseId(@NotNull String licenseText) throws BadRequestException {
-        Matcher matcher = LICENSE_ID.matcher(licenseText);
-        if (matcher.find()) {
-            return matcher.group(1);
-        }
-
-        throw new BadRequestException("License Id is absent");
-    }
-
-    private String readLicenseText() throws LicenseException {
-        try {
-            return new String(Files.readAllBytes(licenseFile), UTF_8);
-        } catch (NoSuchFileException e) {
-            throw new LicenseNotFoundException("Codenvy license not found");
-        } catch (IOException e) {
-            throw new LicenseException(e.getMessage(), e);
-        }
+    @Override
+    public void removeObserver(CodenvyLicenseManagerObserver observer) {
+        observers.remove(observer);
     }
 }
