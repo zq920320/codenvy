@@ -11,9 +11,10 @@
  }
 
 body {
-  font: 300 14px Lato, 'Helvetica Neue', Helvetica, Arial, sans-serif;
-  color: #4A4A4A;
-  background-color: #F7F7F7;
+  font: 300 16px 'HelveticaNeueLT-Light', Open Sans, 'Helvetica Neue', Helvetica, Arial, sans-serif;
+  color: #393939;
+  line-height: 1.5em;
+  background-color: #1d2e55;
   @include box-shadow(inset 0 3px 30px rgba(0,0,0,.3));
   //text-shadow: 0 1px 3px rgba(0,0,0,.5);
   -webkit-font-feature-settings: "kern" 1;
@@ -72,17 +73,14 @@ nav {
     margin-right: 10px;
 
     a {
-      @include border-radius(5px);
-      font-weight: 900;
-      font-size: 14px;
-      padding: 0.5em 1em;
-      text-shadow: none;
-      text-transform: uppercase;
+      font-size: 16px;
+      padding: 0.3em 1em;
       @include transition(all .25s);
 
       &:hover {
         background-color: #252525;
-        @include box-shadow(inset 0 1px 3px rgba(0,0,0,.5), 0 1px 0 rgba(255,255,255,.1));
+        border-color: #4A90E2;
+        border-width: 1px;
         text-shadow: 0 1px 3px rgba(0,0,0,.5);
       }
     }
@@ -90,12 +88,7 @@ nav {
     &.current {
 
       a {
-        background-color: #fff;
-        color: #222;
-        @include box-shadow(inset 0 1px 0 rgba(255,255,255,.5), 0 2px 4px rgba(0,0,0,.07));
-        border-color: #fff;
-        border-width: 1px;
-        text-shadow: 0 1px 0 rgba(255,255,255,.3);
+        color: #fff;
       }
     }
   }
@@ -403,6 +396,7 @@ article {
   margin: 0 10px;
   @include box-shadow(0 3px 10px rgba(0,0,0,.1));
   font-size: 16px;
+  line-height: 1.5em;
 }
 
 @media (max-width: 480px) {
@@ -428,12 +422,12 @@ aside {
   h4 {
     text-transform: uppercase;
     font-size: 14px;
-    color: #4A4A4A;
+    color: #fbb84d;
     font-weight: 700;
     padding: 0 0 10px 30px;
     margin-left: -30px;
     display: inline-block;
-    border-bottom: 1px solid #C8C8C8;
+    border-bottom: 1px solid #fbb84d;
   }
 
   ul {
@@ -638,6 +632,7 @@ code {
   margin: 0;
   font: 14px/1.8em Menlo, Consolas, "Courier New", Courier, "Liberation Mono", monospace;
   padding: 0 0.5em;
+  border: 1px solid #cacaca;
 }
 
 @media (min-width: 768px) {
