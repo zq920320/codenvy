@@ -21,7 +21,7 @@ The ARTIK workspace once started will look like the following and bring up the `
 Close the `Manage Artik Devices` window once the connection has been made.
 
 Click the drop down `CMD` menu located to the left of the blue play button. Select `artik-blink-led: build` from the drop down menu. Click the drop down menu `Targets` just to the left and select the `default` target. Hit the blue play button to run the `artik-blink-led: build` command. A tab will appear in the `Processes` area at the bottom. There will be no output from this command but don't worry it did create the assembly/binary file that can be used on the ARTIK device.
-![artik-blink-led-5.jpg](images/artik-blink-led-5.jpg)
+![artik-blink-led-5.jpg](/images/artik-blink-led-5.jpg)
 
 ![artik-blink-led-6.jpg](/images/artik-blink-led-6.jpg)
 The build creates a file called `a.out` in the projects root directory. In order to see the new file click the `artik-blink-led` root directory in the `Project Explorer` on the left then click the `refresh` button at the top right. Once this is done you will be able to see the `a.out` file. Right click on the `a.out` file and select from the drop down menu `Push To Device > artik_device_1`. A green popup should come up indicated the success of the push and the location of the `a.out` on the ARTIK device which by default is `/root`.
