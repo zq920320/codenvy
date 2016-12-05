@@ -1,8 +1,87 @@
 - title: Getting Started
   docs:
-  - admin
+  - introduction
+  - getting-started
+  - architecture
 - title: User Guide
   docs:
-  - build
-  - commands
+  - workspace-admin-intro
+  - projects
+  - import-a-project
+  - git
   - editor-settings
+  - intellisense
+  - commands
+  - priviews
+  - build
+  - run
+  - debug
+  - sharing
+  - using-desktop-ides
+- title: Workspace Guide
+  docs:
+  - workspace-admin-intro
+  - stacks
+  - recipes
+  - samples
+  - machines
+  - volume-mounts
+  - environments
+  - workspace-agents
+- title: Tutorials
+  docs:
+  - android
+  - che-in-che
+  - cuba
+  - ftpsftp
+  - gae
+  - gradle
+  - java
+  - laravel
+  - maven
+  - meteor
+  - multi-machine
+  - nodejs
+  - php
+  - platformio
+  - rails
+  - sourcegraph
+  - spring-boot
+  - subversion
+  - swing
+  - tomee
+  - vaadin
+  - wordpress
+- title: Admin Guide
+  docs:
+  - api
+  - architecture
+  - authentication
+  - backup
+  - cli
+  - configuration-docker
+  - configuration
+  - disaster-recovery
+  - installation-azure-marketplace
+  - installation-getting-started
+  - installation
+  - installation-multi-server
+  - installation-troubleshooting
+  - ldap-integration
+  - licensing
+  - monitoring
+  - networking
+  - permissions
+  - runbook
+  - scaling
+  - security
+  - smtp
+  - upgrading
+  - user
+- title: Admin Guide
+  docs:
+  - workspace-automation
+  - issue-management
+  - version-control
+  - continuous-integration
+  

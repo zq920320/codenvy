@@ -6,7 +6,7 @@ overview: true
 permalink: /docs/tour/
 ---
 You can create a custom step by step walk through with popup windows that overlay the IDE in workspaces generated from your Factory.  You can define the style, structure, and placement of the steps and associate each step with an IDE action.  You can also structure the steps so that each is mandatory or whether users can early-terminate the tour.
-# Create  
+## Create  
 1. Add the `tour` mixin to your Factory.
 2. Add `tourConfig` to `factory.workspace.projects.attributes`.
 3. Set the value of the `tourConfig` variable to contain a URL that loads the tour JSON configuration.
@@ -21,7 +21,7 @@ This is a Factory snippet that sets up the configuration for a custom tour.
 }
 ```
 
-# Configure  
+## Configure  
 The tour configuration JSON is an array of objects.
 ```json  
 {
@@ -58,7 +58,7 @@ A step creates a box with a series of choices for the user to perform. The locat
 
 The string values for labels and content accept some limited HTML.  You can use `b`, `em`, `i`, `h1`, `h2`, `h3`, `h4`, `h5`, `h6`, `hr`, `ul`, `ol`, `li`. You can also insert images using `![alt name](URL of image)`.
 
-### Actions
+#### Actions
 You can trigger IDE actions as part of a step.  The `actions` parameter is an array of key:value pairs where each key is `action`.
 
 | Syntax   | Example   
@@ -68,7 +68,7 @@ You can trigger IDE actions as part of a step.  The `actions` parameter is an ar
 | Opens a workspace file in the editor.\n`openfile <file>`   | Opens one of the panels to be displayed. This first property is the location of the panel and the second is the panel title.\n`openpanel LEFT.<panel>`\n`openpanel BOTTOM.<panel>`\n`openpanel RIGHT.<panel>`\n`openpanel EDIT.<panel>`   
 | Opens a URL in another browser tab.\n`openurl <url>`   | <code style=\white-space:nowrap;\>openfile projects/hello.txt</code>   
 
-### Overlays
+#### Overlays
 An overlay is UI that you can add into the IDE that appears while your step is active.
 ```json  
 tour.steps.overlays : [{
@@ -93,7 +93,7 @@ tour.steps.overlays.height : {
 }
 ```
 
-# Simple Example  
+## Simple Example  
 This example has a single step. The step has a message from Pivotal and displays the Spring logo inside of the step box. The step box is attached to the IDE's `gwt-debug-MainToolbar/runApp-true` DOM element.  When the user presses the button in the tour, the tour will automatically trigger the `runApp` IDE action, which is the action for executing the run button.
 ```json  
 {  
