@@ -29,7 +29,8 @@ RUN apk del ocaml curl build-base && \
     rm -rf /tmp /var/cache/apk/* /var/lib/apt/lists/* && \
     ssh-keygen -A && \
     syslogd && passwd -d jekyll && \
-    mv /usr/local/bin/unison /bin/unison
+    mv /usr/local/bin/unison /bin/unison && \
+    gem install kramdown rouge
     
 USER jekyll
     

@@ -24,7 +24,9 @@ When users create a workspace in Eclipse Che, they must select a Docker image to
 You can configure Che to access private images in a public or private registry. Modify the `che.properties` to configure your private registry:
 
 **FIX THIS** 
-```text  
+
+```ruby  
+
 # Docker registry configuration. 
 # Note that you can configure many registries with different names.
 #docker.registry.auth.your_registry_name.url=https://index.docker.io/v1/
@@ -35,7 +37,21 @@ You can configure Che to access private images in a public or private registry. 
 docker.registry.auth.registry1.url
 docker.registry.auth.registry2.url
 \
+```  
+asdf
+
+```ruby  
+
+def show
+  @widget = Widget(params[:id])
+  respond_to do |format|
+    format.html # show.html.erb
+    format.json { render json: @widget }
+  end
+end
+
 ```
+
 **FIX THIS** Registries added in User Dashboard override registries added to `che.properties`.
 
 ## Private Docker Registries

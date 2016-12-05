@@ -5,6 +5,10 @@
 # which accompanies this distribution, and is available at
 # http://www.eclipse.org/legal/epl-v10.html
 #
+
+# See: https://sipb.mit.edu/doc/safe-shell/
+set -u
+
 init_logging() {
   BLUE='\033[1;34m'
   GREEN='\033[0;32m'
@@ -25,17 +29,19 @@ jekyll.sh [<port>]
     export CONTAINER_NAME="codenvy_docs_x"
     export IMAGE_NAME="codenvy/docs:dev"
     
-    DOCKER_CLEAN_OLD_COMMAND="docker rm -f \$(docker ps -aq --filter \"name=${CONTAINER_NAME}\")  > /dev/null 2>&1"
+    DOCKER_CLEAN_OLD_COMMAND="docker rm -f \$(docker ps -aq --filter \"name=${CONTAINER_NAME}\")  > /dev/null 2>&1  &&
+        docker volume rm $(docker volume ls -qf dangling=true) > /dev/null 2>&1 "
     
     COPY_SSHKEY_COMMAND="docker cp ${CONTAINER_NAME}:/home/jekyll/.ssh/id_rsa ${HOME}/.ssh/jekyll_id_rsa && \
       chown -R root:root ${HOME}/.ssh/jekyll_id_rsa && chmod -R 600 ${HOME}/.ssh/jekyll_id_rsa"
     
     export UNISON_SYNC_PATH="$(cd ../ && pwd )"
     UNISON_REPEAT=""
-    UNISON_AGENT_COMMAND="LD_LIBRARY_PATH="${PWD}" UNISON=${PWD} ${PWD}/unison ${UNISON_SYNC_PATH} ssh://\${UNISON_SSH_USER}@\${SSH_IP}:\${UNISON_SSH_PORT}//srv/jekyll 
+    UNISON_AGENT_COMMAND="mkdir -p /tmp && mkdir -p /tmp/.unison && cp -f ${PWD}/default.prf /tmp/.unison/ &&
+       UNISON=/tmp/.unison/ ${PWD}/unison ${UNISON_SYNC_PATH} ssh://\${UNISON_SSH_USER}@\${SSH_IP}:\${UNISON_SSH_PORT}//srv/jekyll 
        \${UNISON_REPEAT} -sshargs '-i ${HOME}/.ssh/jekyll_id_rsa/id_rsa -o UserKnownHostsFile=/dev/null -o StrictHostKeyChecking=no'  > /dev/null 2>&1" 
       
-    JEKYLL_COMMAND="docker exec -d ${CONTAINER_NAME} jekyll serve > /dev/null 2>&1"
+    JEKYLL_COMMAND="docker exec -d ${CONTAINER_NAME} jekyll serve "
   }
   
 check_status() {
@@ -97,9 +103,6 @@ stop_sync() {
   info "Received interrupt signal. Exiting."
   exit 1
 }
-
-# See: https://sipb.mit.edu/doc/safe-shell/
-set -u
 
 # on callback, kill the last background process, which is `tail -f /dev/null` and execute the specified handler
 trap 'stop_sync' 1 15 2

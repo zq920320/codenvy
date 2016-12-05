@@ -1,4 +1,8 @@
 - title: Getting Started
   docs:
-  - home
   - admin
+- title: User Guide
+  docs:
+  - build
+  - commands
+  - editor-settings
