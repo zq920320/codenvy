@@ -14,7 +14,8 @@
  */
 package com.codenvy.onpremises.deploy;
 
-import com.codenvy.api.license.UserInteractionLicenseFilter;
+import com.codenvy.api.license.LicenseFilter;
+import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import org.eclipse.che.inject.DynaModule;
 
@@ -28,8 +29,10 @@ public class IdeServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         filter("/*").through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filter("/*").through(UserInteractionLicenseFilter.class);
+        filter("/*").through(LicenseFilter.class);
         filter("/*").through(com.codenvy.onpremises.DashboardRedirectionFilter.class);
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
+
+        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
     }
 }

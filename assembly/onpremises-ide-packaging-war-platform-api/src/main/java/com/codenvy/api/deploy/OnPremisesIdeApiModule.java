@@ -39,7 +39,6 @@ import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
 import com.codenvy.ldap.LdapModule;
 import com.codenvy.ldap.auth.LdapAuthenticationHandler;
-import com.codenvy.machine.HostedDockerInstance;
 import com.codenvy.organization.api.OrganizationApiModule;
 import com.codenvy.organization.api.OrganizationJpaModule;
 import com.codenvy.plugin.github.factory.resolver.GithubFactoryParametersResolver;
@@ -58,7 +57,6 @@ import com.google.inject.multibindings.Multibinder;
 import com.google.inject.name.Names;
 import com.google.inject.persist.jpa.JpaPersistModule;
 import com.palominolabs.metrics.guice.InstrumentationModule;
-
 import org.eclipse.che.account.spi.AccountDao;
 import org.eclipse.che.account.spi.jpa.JpaAccountDao;
 import org.eclipse.che.api.agent.server.launcher.AgentLauncher;
@@ -325,6 +323,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(org.eclipse.che.api.environment.server.MachineService.class);
 
         install(new ScheduleModule());
+
+        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(true);
         install(new LicenseModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);

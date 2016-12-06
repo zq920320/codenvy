@@ -14,7 +14,7 @@
  */
 package com.codenvy.onpremises.factory.deploy;
 
-import com.codenvy.api.license.UserInteractionLicenseFilter;
+import com.codenvy.api.license.LicenseFilter;
 import com.codenvy.onpremises.factory.filter.RemoveIllegalCharactersFactoryURLFilter;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
@@ -37,10 +37,9 @@ public class FactoryServletModule extends ServletModule {
         filterRegex(PASS_RESOURCES_REGEXP).through(RemoveIllegalCharactersFactoryURLFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryParamsFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filterRegex(PASS_RESOURCES_REGEXP).through(UserInteractionLicenseFilter.class);
+        filterRegex(PASS_RESOURCES_REGEXP).through(LicenseFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryRetrieverFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.ReferrerCheckerFilter.class);
-
 
         bind(com.codahale.metrics.servlets.ThreadDumpServlet.class).in(Singleton.class);
         bind(com.codahale.metrics.servlets.PingServlet.class).in(Singleton.class);
@@ -54,5 +53,7 @@ public class FactoryServletModule extends ServletModule {
         bindConstant().annotatedWith(Names.named("page.too.many.factories")).to("/resources/too-many-factories.html");
 
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
+
+        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
     }
 }

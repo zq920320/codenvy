@@ -14,7 +14,7 @@
  */
 package com.codenvy.onpremises.deploy;
 
-import com.codenvy.api.license.UserInteractionLicenseFilter;
+import com.codenvy.api.license.LicenseFilter;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.onpremises.maintenance.MaintenanceStatusServlet;
@@ -36,11 +36,13 @@ public class DashboardServletModule extends ServletModule {
         bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
                       .to("/site/error/error-cookies-disabled");
 
+        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
+
         filterRegex("/(?!_sso/).*$").through(com.codenvy.servlet.CacheDisablingFilter.class);
 
         filterRegex("/(?!_sso/).*$").through(com.codenvy.auth.sso.client.LoginFilter.class);
 
-        filterRegex("/(?!_sso/).*$").through(UserInteractionLicenseFilter.class);
+        filterRegex("/(?!_sso/).*$").through(LicenseFilter.class);
 
         serve("/scheduled").with(MaintenanceStatusServlet.class);
 

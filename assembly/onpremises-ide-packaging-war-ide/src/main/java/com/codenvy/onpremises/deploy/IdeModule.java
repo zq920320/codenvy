@@ -47,5 +47,6 @@ public class IdeModule extends AbstractModule {
 
         bind(ServerClient.class).to(com.codenvy.auth.sso.client.HttpSsoServerClient.class);
         bind(RequestFilter.class).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
+//        bind(RequestFilter.class).annotatedWith(Names.named("license.filter")).to(com.codenvy.auth.sso.client.filter.RegexpRequestFilter.class);
     }
 }
