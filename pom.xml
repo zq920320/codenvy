@@ -888,7 +888,7 @@
             <dependency>
                 <groupId>org.eclipse.che.plugin</groupId>
                 <artifactId>che-plugin-docker-compose</artifactId>
-                <version>${project.version}</version>
+                <version>${che.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.everrest</groupId>
