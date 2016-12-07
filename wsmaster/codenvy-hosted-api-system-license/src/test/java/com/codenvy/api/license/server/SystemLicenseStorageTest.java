@@ -163,4 +163,11 @@ public class SystemLicenseStorageTest {
     public void shouldThrowLicenseNotFoundExceptionIfActivatedLicenseAbsent() throws Exception {
         licenseStorage.loadActivatedLicense();
     }
+
+    @Test
+    public void shouldNotThrowExceptionOnCleanIfStorageEmpty() throws Exception {
+        licenseStorage.clean();
+        
+        licenseStorage.clean();
+    }
 }

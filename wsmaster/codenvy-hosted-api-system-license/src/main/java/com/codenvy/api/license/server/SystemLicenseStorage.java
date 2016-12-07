@@ -85,8 +85,8 @@ public class SystemLicenseStorage {
      */
     public void clean() throws SystemLicenseException {
         try {
-            Files.delete(licenseFile);
-            Files.delete(activatedLicenseFile);
+            Files.deleteIfExists(licenseFile);
+            Files.deleteIfExists(activatedLicenseFile);
         } catch (IOException e) {
             throw new SystemLicenseException("Unexpected error. System license can't be removed.", e);
         }
