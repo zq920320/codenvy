@@ -92,7 +92,7 @@ cmd_init_reinit_pre_action() {
   # For testing purposes only
   #HTTP_PROXY=8.8.8.8
   #HTTPS_PROXY=http://4.4.4.4:9090
-  #NO_PROXY="locahost, *.local, swarm-mode"
+  #NO_PROXY="locahost,127.0.0.1"
 
   if [[ ! ${HTTP_PROXY} = "" ]]; then
     sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_HTTP_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_HTTP_PROXY_FOR_${CHE_PRODUCT_NAME}=${HTTP_PROXY}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
@@ -106,8 +106,8 @@ cmd_init_reinit_pre_action() {
     #
     # NOTE --- Notice that if no proxy is set, we must append 'codenvy-swarm' to this for docker networking
     #
-    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=${NO_PROXY},codenvy-swarm|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
-    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=${NO_PROXY}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
+    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=${NO_PROXY},codenvy-swarm,${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
+    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=${NO_PROXY},${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
   fi
 }
 
