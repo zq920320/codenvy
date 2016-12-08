@@ -102,12 +102,13 @@ cmd_init_reinit_pre_action() {
     sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_HTTPS_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_HTTPS_PROXY_FOR_${CHE_PRODUCT_NAME}=${HTTPS_PROXY}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
     sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_HTTPS_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=.*|${CHE_PRODUCT_NAME}_HTTPS_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=${HTTPS_PROXY}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
   fi
-  if [[ ! ${NO_PROXY} = "" ]]; then
+  if [[ ! ${HTTP_PROXY} = "" ]] ||
+     [[ ! ${HTTPS_PROXY} = "" ]]; then
     #
     # NOTE --- Notice that if no proxy is set, we must append 'codenvy-swarm' to this for docker networking
     #
-    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=${NO_PROXY},codenvy-swarm,${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
-    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=${NO_PROXY},${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
+    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}=127.0.0.1,localhost,${NO_PROXY},codenvy-swarm,${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
+    sed -i'.bak' "s|#${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=.*|${CHE_PRODUCT_NAME}_NO_PROXY_FOR_${CHE_PRODUCT_NAME}_WORKSPACES=127.0.0.1,localhost,${NO_PROXY},${CODENVY_HOST}|" "${REFERENCE_CONTAINER_ENVIRONMENT_FILE}"
   fi
 }
 
@@ -186,6 +187,7 @@ generate_configuration_with_puppet() {
                   -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/manifests\":/etc/puppet/manifests:ro \
                   -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/modules\":/etc/puppet/modules:ro \
                   -e \"POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}\" \
+                  -e \"CHE_CONTAINER_ROOT=${CHE_CONTAINER_ROOT}\" \
                   -e \"CODENVY_ENV_FILE=${CODENVY_ENV_FILE}\" \
                   -e \"CHE_ENVIRONMENT=development\" \
                   -e \"CHE_CONFIG=${CHE_HOST_INSTANCE}\" \
@@ -203,6 +205,7 @@ generate_configuration_with_puppet() {
                   --env-file=/version/$CHE_VERSION/images \
                   -v \"${CHE_HOST_INSTANCE}\":/opt/${CHE_MINI_PRODUCT_NAME}:rw \
                   -e \"POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}\" \
+                  -e \"CHE_CONTAINER_ROOT=${CHE_CONTAINER_ROOT}\" \
                   -e \"CODENVY_ENV_FILE=${CODENVY_ENV_FILE}\" \
                   -e \"CHE_ENVIRONMENT=production\" \
                   -e \"CHE_CONFIG=${CHE_HOST_INSTANCE}\" \
