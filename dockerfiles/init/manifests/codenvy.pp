@@ -4,17 +4,7 @@ node default {
 #
 # Fundamental parameters that affect the initial system operation.
 #
-# CODENVY_VERSION  
-#     Sets the version of Codenvy to download and use. We respect this variable
-#     during 'codenvy init' and 'codenvy download'. Once a Codenvy instance has been
-#     generated, CODENVY_VERSION is set to the value in codenvy.env, in the instance
-#     folder and it locks the version for which Codenvy is running. If you set 
-#     CODENVY_VERSION to a value that is diferent from what is set in codenvy.ver
-#     Codenvy will not start until this conflict is realized. You can upgrade 
-#     a Codenvy install from one version to another with 'codenvy upgrade'.
-  $codenvy_version = getValue("CODENVY_VERSION","nightly")
-
-# CODENVY_HOST  
+# CODENVY_HOST
 #    The IP address or DNS name of where the Codenvy endpoint will service your users.
 #    If you are running this on a local system, we auto-detect this value as the IP
 #    address of your Docker daemon. On many systems, especially those from cloud hosters
@@ -34,7 +24,7 @@ node default {
 ###############################
 #
 # Environment definition, please set this to "production" for production use
-  $env = getValue("CODENVY_ENVIRONMENT","production")
+  $env = getValue("CHE_ENVIRONMENT","production")
 
 ##############################
 # default admin credentials
@@ -207,6 +197,10 @@ node default {
   $limits_user_workspaces_ram = getValue("CODENVY_LIMITS_USER_WORKSPACES_RAM","100gb")
   $limits_organization_workspaces_ram = getValue("CODENVY_LIMITS_ORGANIZATION_WORKSPACES_RAM","100gb")
   $limits_workspace_env_ram = getValue("CODENVY_LIMITS_WORKSPACE_ENV_RAM","16gb")
+# workspace snapshots
+  $docker_registry_for_workspace_snapshots = getValue("CODENVY_DOCKER_REGISTRY_FOR_WORKSPACE_SNAPSHOTS","$host_url:5000")
+  $workspace_auto_snapshot = getValue("CODENVY_WORKSPACE_AUTO_SNAPSHOT","false")
+  $workspace_auto_restore = getValue("CODENVY_WORKSPACE_AUTO_RESTORE","false")
 
 ###############################
 # Codenvy machine configurations
@@ -227,6 +221,26 @@ node default {
   $machine_server_extra_volume = getValue("CODENVY_MACHINE_SERVER_EXTRA_VOLUME","")
 # Docker network driver for machines.
   $che_machine_docker_network_driver = getValue("CODENVY_MACHINE_DOCKER_NETWORK_DRIVER","bridge")
+# Next 2 values set limits on CPU consumption by containers of started workspaces.
+# Period sets amount of units per CPU core.
+# Quota sets amount of units available for container per whole CPU.
+# Max value of quota could be period * number of CPU cores in a system.
+# Example:
+# period = 5000
+# quota = 10000
+  $machine_docker_cpu_period = getValue("CODENVY_DOCKER_CPU_PERIOD","0")
+  $machine_docker_cpu_quota = getValue("CODENVY_DOCKER_CPU_QUOTA","0")
+# Sets set of CPUs that can be used by each container of started workspace.
+# Example:
+# 0-3
+# 1,4
+$machine_docker_cpuset_cpus = getValue("CODENVY_DOCKER_CPUSET_CPUS","NULL")
+# Sets parent cgroup for cgroups of containers created by workspaces.
+# This allows an admin to set custom cgroup limitations to all containers of workspaces by configuring cgroups.
+# Example:
+# /my_group
+# my_another_group
+$machine_docker_parent_cgroup = getValue("CODENVY_DOCKER_PARENT_CGROUP","NULL")
 
 ###############################
 # Http proxy configuration
@@ -264,14 +278,14 @@ node default {
 ###############################
 #
 # Codenvy folders on host machine
-  $codenvy_folder = getValue("CODENVY_INSTANCE","/tmp/codenvy")
+  $codenvy_folder = getValue("CHE_INSTANCE","/tmp/codenvy")
 
 ###############################
 # Codenvy developmet mode
 # path to codenvy puppet sources for development mode
-  $puppet_src_folder = getValue("CODENVY_CONFIG","/path/to/codenvy/codenvy/puppet/sources")
+  $puppet_src_folder = getValue("CHE_CONFIG","/path/to/codenvy/codenvy/puppet/sources")
 # path to codenvy tomcat for development mode
-  $codenvy_development_tomcat = getValue("CODENVY_DEVELOPMENT_TOMCAT","/path/to/codenvy_tomcat")
+  $codenvy_development_tomcat = getValue("CHE_ASSEMBLY","/path/to/codenvy_tomcat")
 # codenvy debug port
   $codenvy_debug_port = getValue("CODENVY_DEBUG_PORT","8000")
 # codenvy debug suspend

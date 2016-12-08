@@ -163,6 +163,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(EverrestDownloadFileResponseFilter.class);
         bind(WSocketEventBusServer.class);
 
+        bind(WsMasterAnalyticsAddresser.class);
+
         install(new org.eclipse.che.api.core.rest.CoreRestModule());
         install(new org.eclipse.che.api.core.util.FileCleaner.FileCleanerModule());
 
@@ -224,6 +226,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(WorkspaceValidator.class).to(org.eclipse.che.api.workspace.server.DefaultWorkspaceValidator.class);
         bind(WorkspaceManager.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceManager.class);
+        bind(org.eclipse.che.api.workspace.server.TemporaryWorkspaceRemover.class);
         bind(WorkspaceMessenger.class).asEagerSingleton();
 
 
