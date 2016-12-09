@@ -46,4 +46,12 @@ public interface HelpLocalizationConstant extends Messages {
     @Key("action.createSupportTicket.description")
     String actionCreateSupportTicketDescription();
 
+    @Key("action.openDocs.title")
+    String actionOpenDocsTitle();
+
+    @Key("action.openDocs.description")
+    String actionOpenDocsDescription();
+
+    @Key("action.openDocs.url")
+    String actionOpenDocsUrl();
 }

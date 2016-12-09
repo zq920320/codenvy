@@ -15,6 +15,7 @@
 package com.codenvy.ide.support.help.client;
 
 import com.codenvy.ide.support.help.client.action.CreateSupportTicketAction;
+import com.codenvy.ide.support.help.client.action.OpenDocsAction;
 import com.codenvy.ide.support.help.client.action.RedirectToEngineerChatChannelAction;
 import com.google.gwt.core.client.Callback;
 import com.google.gwt.core.client.ScriptInjector;
@@ -24,6 +25,8 @@ import com.google.inject.Singleton;
 import org.eclipse.che.ide.api.action.ActionManager;
 import org.eclipse.che.ide.api.action.DefaultActionGroup;
 import org.eclipse.che.ide.api.action.IdeActions;
+import org.eclipse.che.ide.api.constraints.Anchor;
+import org.eclipse.che.ide.api.constraints.Constraints;
 import org.eclipse.che.ide.api.extension.Extension;
 import org.eclipse.che.ide.rest.DtoUnmarshallerFactory;
 import org.eclipse.che.ide.util.loging.Log;
@@ -50,6 +53,7 @@ public class HelpExtension {
     public HelpExtension(ActionManager actionManager,
                          RedirectToEngineerChatChannelAction redirectToEngineerChatChannelAction,
                          CreateSupportTicketAction createSupportTicketAction,
+                         OpenDocsAction openDocsAction,
                          HelpLocalizationConstant localizationConstant,
                          DtoUnmarshallerFactory dtoUnmarshallerFactory,
                          HelpResources resources) {
@@ -60,6 +64,11 @@ public class HelpExtension {
         this.dtoUnmarshallerFactory = dtoUnmarshallerFactory;
         this.localizationConstant = localizationConstant;
         helpGroup = (DefaultActionGroup)actionManager.getAction(IdeActions.GROUP_HELP);
+
+
+        actionManager.registerAction(localizationConstant.actionOpenDocsTitle(), openDocsAction);
+        Constraints constraint = new Constraints(Anchor.BEFORE, "showAbout");
+        helpGroup.add(openDocsAction, constraint);
 
         init();
     }
