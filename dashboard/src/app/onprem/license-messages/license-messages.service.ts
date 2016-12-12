@@ -17,7 +17,6 @@ import {CodenvyLicense} from '../../../components/api/codenvy-license.factory';
 import {CodenvyPermissions} from '../../../components/api/codenvy-permissions.factory';
 
 
-
 const NAG_MESSAGE_ID: string = 'license-legality-message';
 const USER_LICENSE_HAS_REACHED_ITS_LIMIT: string = 'USER_LICENSE_HAS_REACHED_ITS_LIMIT';
 /**
@@ -27,6 +26,7 @@ const USER_LICENSE_HAS_REACHED_ITS_LIMIT: string = 'USER_LICENSE_HAS_REACHED_ITS
 export class LicenseMessagesService {
   codenvyLicense: CodenvyLicense;
   codenvyPermissions: CodenvyPermissions;
+  $q: ng.IQService;
   $compile: ng.ICompileService;
   $document: ng.IDocumentService;
   $cookies: ng.cookies.ICookiesService;
@@ -39,13 +39,14 @@ export class LicenseMessagesService {
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
    */
-  constructor(codenvyLicense: CodenvyLicense, codenvyPermissions: CodenvyPermissions, $document: ng.IDocumentService, $cookies: ng.cookies.ICookiesService, $compile: ng.ICompileService, $mdDialog: ng.material.IDialogService) {
+  constructor(codenvyLicense: CodenvyLicense, codenvyPermissions: CodenvyPermissions, $document: ng.IDocumentService, $cookies: ng.cookies.ICookiesService, $compile: ng.ICompileService, $mdDialog: ng.material.IDialogService, $q: ng.IQService) {
     this.codenvyPermissions = codenvyPermissions;
     this.codenvyLicense = codenvyLicense;
     this.$mdDialog = $mdDialog;
     this.$document = $document;
     this.$cookies = $cookies;
     this.$compile = $compile;
+    this.$q = $q;
 
     this.userServices = codenvyPermissions.getUserServices();
     this.legality = this.codenvyLicense.getLicenseLegality();
@@ -102,6 +103,36 @@ export class LicenseMessagesService {
     } else {
       this.hideLicenseMessage();
     }
+  }
+
+  /**
+   * Show popup about license agreement
+   * @returns {ng.IPromise<any>}
+   */
+  showLicenseAgreementPopup(): ng.IPromise<any> {
+    let defer = this.$q.defer();
+
+    this.$mdDialog.show({
+      controller: 'LicenseAgreementController',
+      controllerAs: 'licenseAgreementController',
+      bindToController: true,
+      clickOutsideToClose: true,
+      templateUrl: 'app/onprem/license-messages/license-agreement-dialog/license-agreement-dialog.html'
+    }).then(() => {
+      defer.resolve();
+    }, () => {
+      this.$mdDialog.show({
+        controller: 'CancelAgreementController',
+        controllerAs: 'cancelAgreementController',
+        bindToController: true,
+        clickOutsideToClose: true,
+        templateUrl: 'app/onprem/license-messages/license-agreement-dialog/cancel-agreement-dialog.html'
+      }).finally(() => {
+        defer.reject();
+      });
+    });
+
+    return defer.promise;
   }
 
   /**

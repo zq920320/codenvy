@@ -123,7 +123,7 @@ export class CodenvyLicense {
 
   /**
    * Delete current license.
-   * @returns {*} the promise
+   * @returns {ng.IPromise<any>} the promise
    */
   deleteLicense(): ng.IPromise<any> {
     let promise: ng.IPromise<any> = this.remoteLicenseAPI.delete().$promise;
@@ -140,7 +140,7 @@ export class CodenvyLicense {
 
   /**
    * Ask for loading the users license (key and properties)
-   * @returns {*} the promise
+   * @returns {ng.IPromise<any>} the promise
    */
   fetchLicense(): ng.IPromise<any> {
     let deferred = this.$q.defer();
@@ -161,7 +161,7 @@ export class CodenvyLicense {
   /**
    * Ask for loading the users license key in asynchronous way
    * If there are no changes, it's not updated
-   * @returns {*} the promise
+   * @returns {ng.IPromise<any>} the promise
    */
   fetchLicenseKey(): ng.IPromise<any> {
     let deferred = this.$q.defer();
@@ -186,7 +186,7 @@ export class CodenvyLicense {
   /**
    * Ask for loading the users license properties in asynchronous way
    * If there are no changes, it's not updated
-   * @returns {*} the promise
+   * @returns {ng.IPromise<any>} the promise
    */
   fetchLicenseProperties(): ng.IPromise<any> {
     let deferred = this.$q.defer();
@@ -210,8 +210,8 @@ export class CodenvyLicense {
 
   /**
    * Add license.
-   * @param licenseKey
-   * @returns {*} the promise
+   * @param licenseKey {string}
+   * @returns {ng.IPromise<any>} the promise
    */
   addLicense(licenseKey: string): ng.IPromise<any> {
     let promise = this.remoteLicenseAPI.setLicense(licenseKey).$promise;
@@ -228,7 +228,7 @@ export class CodenvyLicense {
 
   /**
    * Ask for the users license legality in asynchronous way
-   * @returns {*} the promise
+   * @returns {ng.IPromise<any>} the promise
    */
   fetchLicenseLegality(): ng.IPromise<any> {
     let deferred: ng.IDeferred<any> = this.$q.defer();
