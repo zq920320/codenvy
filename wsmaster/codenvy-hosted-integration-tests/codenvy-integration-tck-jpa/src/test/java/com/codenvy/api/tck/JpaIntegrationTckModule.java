@@ -14,9 +14,9 @@
  */
 package com.codenvy.api.tck;
 
-import com.codenvy.api.license.server.dao.CodenvyLicenseActionDao;
-import com.codenvy.api.license.server.jpa.JpaCodenvyLicenseActionDao;
-import com.codenvy.api.license.server.model.impl.CodenvyLicenseActionImpl;
+import com.codenvy.api.license.server.dao.SystemLicenseActionDao;
+import com.codenvy.api.license.server.jpa.JpaSystemLicenseActionDao;
+import com.codenvy.api.license.server.model.impl.SystemLicenseActionImpl;
 import com.codenvy.api.machine.server.jpa.JpaRecipePermissionsDao;
 import com.codenvy.api.machine.server.recipe.RecipePermissionsImpl;
 import com.codenvy.api.machine.server.spi.tck.RecipePermissionsDaoTest;
@@ -77,6 +77,7 @@ import org.eclipse.che.api.user.server.spi.ProfileDao;
 import org.eclipse.che.api.user.server.spi.UserDao;
 import org.eclipse.che.api.workspace.server.jpa.JpaStackDao;
 import org.eclipse.che.api.workspace.server.jpa.JpaWorkspaceDao;
+import org.eclipse.che.api.workspace.server.model.impl.ProjectConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceConfigImpl;
 import org.eclipse.che.api.workspace.server.model.impl.WorkspaceImpl;
 import org.eclipse.che.api.workspace.server.model.impl.stack.StackImpl;
@@ -197,8 +198,8 @@ public class JpaIntegrationTckModule extends TckModule {
         bind(new TypeLiteral<TckRepository<FreeResourcesLimitImpl>>() {}).toInstance(new JpaTckRepository<>(FreeResourcesLimitImpl.class));
 
         //api-license
-        bind(new TypeLiteral<TckRepository<CodenvyLicenseActionImpl>>() {})
-                .toInstance(new JpaTckRepository<>(CodenvyLicenseActionImpl.class));
+        bind(new TypeLiteral<TckRepository<SystemLicenseActionImpl>>() {})
+                .toInstance(new JpaTckRepository<>(SystemLicenseActionImpl.class));
 
         //dao
         //api-account
@@ -224,7 +225,7 @@ public class JpaIntegrationTckModule extends TckModule {
         bind(new TypeLiteral<PermissionsDao<MemberImpl>>() {}).to(JpaMemberDao.class);
         bind(new TypeLiteral<AbstractPermissionsDomain<MemberImpl>>() {}).to(OrganizationDomain.class);
         //api-license
-        bind(CodenvyLicenseActionDao.class).to(JpaCodenvyLicenseActionDao.class);
+        bind(SystemLicenseActionDao.class).to(JpaSystemLicenseActionDao.class);
         //api-resource
         bind(FreeResourcesLimitDao.class).to(JpaFreeResourcesLimitDao.class);
 
@@ -355,24 +356,16 @@ public class JpaIntegrationTckModule extends TckModule {
     }
 
 
-    @Transactional
-    public static class FactoryJpaTckRepository implements TckRepository<FactoryImpl> {
+    public static class FactoryJpaTckRepository extends JpaTckRepository<FactoryImpl> {
 
-        @Inject
-        private Provider<EntityManager> managerProvider;
+        public FactoryJpaTckRepository() { super(FactoryImpl.class); }
 
         @Override
         public void createAll(Collection<? extends FactoryImpl> factories) throws TckRepositoryException {
-            final EntityManager manager = managerProvider.get();
-            factories.forEach(manager::persist);
-        }
-
-        @Override
-        public void removeAll() throws TckRepositoryException {
-            final EntityManager manager = managerProvider.get();
-            manager.createQuery("SELECT factory FROM Factory factory", FactoryImpl.class)
-                   .getResultList()
-                   .forEach(manager::remove);
+            for (FactoryImpl factory : factories) {
+                factory.getWorkspace().getProjects().forEach(ProjectConfigImpl::prePersistAttributes);
+            }
+            super.createAll(factories);
         }
     }
 }

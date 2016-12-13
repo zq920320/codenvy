@@ -15,8 +15,9 @@
 package com.codenvy.auth.sso.server;
 
 
-import com.codenvy.api.license.server.CodenvyLicenseManager;
+import com.codenvy.api.license.server.SystemLicenseManager;
 import com.codenvy.auth.sso.server.organization.UserCreator;
+
 import org.eclipse.che.api.core.ApiException;
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.ForbiddenException;
@@ -40,8 +41,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
-import static java.lang.String.format;
+import static com.codenvy.api.license.server.SystemLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
 
 /**
  * @author Sergii Kabashniuk
@@ -49,17 +49,17 @@ import static java.lang.String.format;
 public class OrgServiceUserCreator implements UserCreator {
     private static final Logger LOG = LoggerFactory.getLogger(OrgServiceUserCreator.class);
 
-    private final UserManager           userManager;
-    private final ProfileManager        profileManager;
-    private final PreferenceManager     preferenceManager;
-    private final CodenvyLicenseManager licenseManager;
-    private final boolean               userSelfCreationAllowed;
+    private final UserManager          userManager;
+    private final ProfileManager       profileManager;
+    private final PreferenceManager    preferenceManager;
+    private final SystemLicenseManager licenseManager;
+    private final boolean              userSelfCreationAllowed;
 
     @Inject
     public OrgServiceUserCreator(UserManager userManager,
                                  ProfileManager profileManager,
                                  PreferenceManager preferenceManager,
-                                 CodenvyLicenseManager licenseManager,
+                                 SystemLicenseManager licenseManager,
                                  @Named("che.auth.user_self_creation") boolean userSelfCreationAllowed) {
         this.userManager = userManager;
         this.profileManager = profileManager;
@@ -75,7 +75,7 @@ public class OrgServiceUserCreator implements UserCreator {
             return userManager.getByEmail(email);
         } catch (NotFoundException e) {
             try {
-                if (!licenseManager.hasAcceptedFairSourceLicense()) {
+                if (!licenseManager.isFairSourceLicenseAccepted()) {
                     throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
                 }
 

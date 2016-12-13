@@ -18,7 +18,7 @@ import com.codenvy.api.dao.authentication.AccessTicket;
 import com.codenvy.api.dao.authentication.CookieBuilder;
 import com.codenvy.api.dao.authentication.TicketManager;
 import com.codenvy.api.dao.authentication.TokenGenerator;
-import com.codenvy.api.license.server.CodenvyLicenseManager;
+import com.codenvy.api.license.server.SystemLicenseManager;
 import com.codenvy.auth.sso.server.handler.BearerTokenAuthenticationHandler;
 import com.codenvy.auth.sso.server.organization.UserCreationValidator;
 import com.codenvy.auth.sso.server.organization.UserCreator;
@@ -56,8 +56,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.codenvy.api.license.server.CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
-import static com.codenvy.api.license.server.CodenvyLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
+import static com.codenvy.api.license.server.SystemLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE;
+import static com.codenvy.api.license.server.SystemLicenseManager.UNABLE_TO_ADD_ACCOUNT_BECAUSE_OF_LICENSE;
 import static javax.ws.rs.core.MediaType.TEXT_HTML;
 import static org.eclipse.che.commons.lang.IoUtil.getResource;
 import static org.eclipse.che.commons.lang.IoUtil.readAndCloseQuietly;
@@ -85,22 +85,22 @@ public class BearerTokenAuthenticationService {
     @Inject
     private   BearerTokenAuthenticationHandler handler;
     @Inject
-    protected MailSenderClient                 mailSenderClient;
+    protected MailSenderClient      mailSenderClient;
     @Inject
-    protected     InputDataValidator    inputDataValidator;
+    protected InputDataValidator    inputDataValidator;
     @Inject
-    protected     CookieBuilder         cookieBuilder;
+    protected CookieBuilder         cookieBuilder;
     @Inject
-    protected     UserCreationValidator creationValidator;
+    protected UserCreationValidator creationValidator;
     @Inject
-    protected     UserCreator           userCreator;
+    protected UserCreator           userCreator;
     @Inject
-    protected     UserValidator         userNameValidator;
+    protected UserValidator         userNameValidator;
     @Inject
     @Named("mailsender.application.from.email.address")
-    protected     String                mailSender;
+    protected String                mailSender;
     @Inject
-    protected     CodenvyLicenseManager licenseManager;
+    protected SystemLicenseManager  licenseManager;
 
     /**
      * Authenticates user by provided token, than creates the ldap user
@@ -193,7 +193,7 @@ public class BearerTokenAuthenticationService {
         inputDataValidator.validateUserMail(email);
         creationValidator.ensureUserCreationAllowed(email, validationData.getUsername());
 
-        if (!licenseManager.hasAcceptedFairSourceLicense()) {
+        if (!licenseManager.isFairSourceLicenseAccepted()) {
             throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
         }
 

@@ -14,16 +14,20 @@
  */
 'use strict';
 
-import {NagMessageCtrl} from './license-nag-message-management/nag-message.controller';
-import {NagMessageService} from './license-nag-message-management/nag-message.service';
-import {NagMessage} from './license-nag-message-management/nag-message.directive';
+import {NagMessage} from './license-messages/nag-message/nag-message.directive';
+import {LicenseLimitController} from './license-messages/license-limit-dialog/license-limit-dialog.controller';
+import {LicenseAgreementController} from './license-messages/license-agreement-dialog/license-agreement-dialog.controller';
+import {CancelAgreementController} from './license-messages/license-agreement-dialog/cancel-agreement-dialog.controller';
+import {LicenseMessagesService} from './license-messages/license-messages.service';
+
 
 export class CodenvyOnpremConfig {
 
-  constructor(register) {
-    register.controller('NagMessageCtrl', NagMessageCtrl);
-    register.service('nagMessageService', NagMessageService);
+  constructor(register: che.IRegisterService) {
     register.directive('cdvyNagMessage', NagMessage);
-
+    register.controller('LicenseLimitController', LicenseLimitController);
+    register.controller('LicenseAgreementController', LicenseAgreementController);
+    register.controller('CancelAgreementController', CancelAgreementController);
+    register.service('licenseMessagesService', LicenseMessagesService);
   }
 }

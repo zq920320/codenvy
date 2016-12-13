@@ -17,7 +17,7 @@ package com.codenvy.api.deploy;
 import com.codenvy.api.AdminApiModule;
 import com.codenvy.api.audit.server.AuditService;
 import com.codenvy.api.audit.server.AuditServicePermissionsFilter;
-import com.codenvy.api.license.server.LicenseModule;
+import com.codenvy.api.license.server.SystemLicenseModule;
 import com.codenvy.api.machine.server.jpa.OnPremisesJpaMachineModule;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.api.permission.server.jpa.SystemPermissionsJpaModule;
@@ -164,6 +164,8 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bind(EverrestDownloadFileResponseFilter.class);
         bind(WSocketEventBusServer.class);
 
+        bind(WsMasterAnalyticsAddresser.class);
+
         install(new org.eclipse.che.api.core.rest.CoreRestModule());
         install(new org.eclipse.che.api.core.util.FileCleaner.FileCleanerModule());
 
@@ -225,6 +227,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(WorkspaceValidator.class).to(org.eclipse.che.api.workspace.server.DefaultWorkspaceValidator.class);
         bind(WorkspaceManager.class).to(com.codenvy.api.workspace.LimitsCheckingWorkspaceManager.class);
+        bind(org.eclipse.che.api.workspace.server.TemporaryWorkspaceRemover.class);
         bind(WorkspaceMessenger.class).asEagerSingleton();
 
 
@@ -307,7 +310,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
                                 new RegexpRequestFilter("^/api/permissions$"),
                                 new RequestMethodFilter("GET")
                         ),
-                        new UriStartFromRequestFilter("/api/license/legality")
+                        new UriStartFromRequestFilter("/api/license/system/legality")
                 ));
 
 
@@ -328,7 +331,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(true);
         bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
                       .to("/site/auth/accept-fair-source-license");
-        install(new LicenseModule());
+        install(new SystemLicenseModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
         bind(org.eclipse.che.plugin.docker.client.DockerRegistryDynamicAuthResolver.class)
@@ -386,6 +389,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         bind(org.eclipse.che.api.agent.server.AgentRegistry.class)
                 .to(org.eclipse.che.api.agent.server.impl.LocalAgentRegistryImpl.class);
+
+        bindConstant().annotatedWith(Names.named("machine.terminal_agent.run_command"))
+                      .to("$HOME/che/terminal/che-websocket-terminal -addr :4411 " +
+                          "-cmd ${SHELL_INTERPRETER} -static $HOME/che/terminal/ -path '/[^/]+' -enable-auth -enable-activity-tracking");
 
         Multibinder<AgentLauncher> agentLaunchers = Multibinder.newSetBinder(binder(), AgentLauncher.class);
         agentLaunchers.addBinding().to(org.eclipse.che.api.workspace.server.launcher.TerminalAgentLauncherImpl.class);

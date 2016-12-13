@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-master-parent</artifactId>
         <groupId>com.codenvy.onpremises.wsmaster</groupId>
-        <version>5.0.0-M8-SNAPSHOT</version>
+        <version>5.0.0-M9-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-hosted-report</artifactId>
     <packaging>jar</packaging>
@@ -31,7 +31,7 @@
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
-            <artifactId>codenvy-hosted-api-license</artifactId>
+            <artifactId>codenvy-hosted-api-system-license</artifactId>
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>

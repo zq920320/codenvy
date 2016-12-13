@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-hosted-integration-tests</artifactId>
         <groupId>com.codenvy.integration.tests</groupId>
-        <version>5.0.0-M8-SNAPSHOT</version>
+        <version>5.0.0-M9-SNAPSHOT</version>
     </parent>
     <artifactId>codenvy-integration-tck-jpa</artifactId>
     <packaging>jar</packaging>
@@ -33,15 +33,6 @@
         <jdbc.user>codenvy</jdbc.user>
     </properties>
     <dependencies>
-        <dependency>
-            <groupId>com.codenvy.onpremises.wsmaster</groupId>
-            <artifactId>codenvy-hosted-api-license</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises.wsmaster</groupId>
-            <artifactId>codenvy-hosted-api-license</artifactId>
-            <classifier>tests</classifier>
-        </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-api-machine</artifactId>
@@ -72,6 +63,15 @@
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-api-resource</artifactId>
+            <classifier>tests</classifier>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-api-system-license</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-api-system-license</artifactId>
             <classifier>tests</classifier>
         </dependency>
         <dependency>
@@ -232,17 +232,11 @@
                                         codenvy-hosted-api-organization,
                                         codenvy-hosted-api-resource,
                                         codenvy-hosted-api-permission,
-                                        codenvy-hosted-api-license,
+                                        codenvy-hosted-api-system-license,
                                         che-core-api-factory</includeArtifactIds>
                                     <includeScope>test</includeScope>
                                 </configuration>
                             </execution>
-                        </executions>
-                    </plugin>
-                    <plugin>
-                        <groupId>org.apache.maven.plugins</groupId>
-                        <artifactId>maven-dependency-plugin</artifactId>
-                        <executions>
                             <execution>
                                 <id>resource-dependencies</id>
                                 <phase>process-test-resources</phase>
