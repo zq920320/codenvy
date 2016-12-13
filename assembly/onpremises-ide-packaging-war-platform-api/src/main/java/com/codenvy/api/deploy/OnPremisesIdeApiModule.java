@@ -126,6 +126,7 @@ import org.flywaydb.core.internal.util.PlaceholderReplacer;
 
 import javax.sql.DataSource;
 
+import static com.codenvy.api.license.SystemLicenseFilter.NO_USER_INTERACTION;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static com.google.inject.matcher.Matchers.subclassesOf;
 import static org.eclipse.che.inject.Matchers.names;
@@ -324,7 +325,9 @@ public class OnPremisesIdeApiModule extends AbstractModule {
 
         install(new ScheduleModule());
 
-        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(true);
+        bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(true);
+        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
+                      .to("/site/auth/accept-fair-source-license");
         install(new LicenseModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);

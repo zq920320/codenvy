@@ -14,7 +14,7 @@
  */
 package com.codenvy.onpremises.deploy;
 
-import com.codenvy.api.license.LicenseFilter;
+import com.codenvy.api.license.SystemLicenseFilter;
 import com.codenvy.api.permission.server.PermissionChecker;
 import com.codenvy.auth.sso.client.TokenHandler;
 import com.codenvy.onpremises.maintenance.MaintenanceStatusServlet;
@@ -22,9 +22,12 @@ import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import org.eclipse.che.inject.DynaModule;
 
+import static com.codenvy.api.license.SystemLicenseFilter.NO_USER_INTERACTION;
+
 /** Servlet module composer for user dashboard war. */
 @DynaModule
 public class DashboardServletModule extends ServletModule {
+
     @Override
     protected void configureServlets() {
         bind(PermissionChecker.class).to(com.codenvy.api.permission.server.HttpPermissionCheckerImpl.class);
@@ -36,13 +39,15 @@ public class DashboardServletModule extends ServletModule {
         bindConstant().annotatedWith(Names.named("auth.sso.cookies_disabled_error_page_url"))
                       .to("/site/error/error-cookies-disabled");
 
-        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
+        bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(false);
+        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
+                      .to("/site/auth/accept-fair-source-license");
 
         filterRegex("/(?!_sso/).*$").through(com.codenvy.servlet.CacheDisablingFilter.class);
 
         filterRegex("/(?!_sso/).*$").through(com.codenvy.auth.sso.client.LoginFilter.class);
 
-        filterRegex("/(?!_sso/).*$").through(LicenseFilter.class);
+        filterRegex("/(?!_sso/).*$").through(SystemLicenseFilter.class);
 
         serve("/scheduled").with(MaintenanceStatusServlet.class);
 

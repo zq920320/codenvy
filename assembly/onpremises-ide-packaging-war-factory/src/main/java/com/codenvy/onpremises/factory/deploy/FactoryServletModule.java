@@ -14,13 +14,15 @@
  */
 package com.codenvy.onpremises.factory.deploy;
 
-import com.codenvy.api.license.LicenseFilter;
+import com.codenvy.api.license.SystemLicenseFilter;
 import com.codenvy.onpremises.factory.filter.RemoveIllegalCharactersFactoryURLFilter;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import org.eclipse.che.inject.DynaModule;
 
 import javax.inject.Singleton;
+
+import static com.codenvy.api.license.SystemLicenseFilter.NO_USER_INTERACTION;
 
 /**
  *  Servlet module composer for factory war.
@@ -37,7 +39,7 @@ public class FactoryServletModule extends ServletModule {
         filterRegex(PASS_RESOURCES_REGEXP).through(RemoveIllegalCharactersFactoryURLFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryParamsFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filterRegex(PASS_RESOURCES_REGEXP).through(LicenseFilter.class);
+        filterRegex(PASS_RESOURCES_REGEXP).through(SystemLicenseFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.FactoryRetrieverFilter.class);
         filterRegex(PASS_RESOURCES_REGEXP).through(com.codenvy.onpremises.factory.filter.ReferrerCheckerFilter.class);
 
@@ -54,6 +56,8 @@ public class FactoryServletModule extends ServletModule {
 
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
 
-        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
+        bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(false);
+        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
+                      .to("/site/auth/accept-fair-source-license");
     }
 }

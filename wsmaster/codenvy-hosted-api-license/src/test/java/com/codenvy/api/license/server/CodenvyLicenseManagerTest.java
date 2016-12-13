@@ -494,14 +494,18 @@ public class CodenvyLicenseManagerTest {
     @Test
     public void shouldReturnListOfIssues() throws ServerException {
         doReturn(false).when(codenvyLicenseManager).canUserBeAdded();
+        doReturn(false).when(codenvyLicenseManager).hasAcceptedFairSourceLicense();
         assertEquals(codenvyLicenseManager.getLicenseIssues(),
                      ImmutableList.of(newDto(IssueDto.class).withStatus(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT)
-                                                            .withMessage(CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE)));
+                                                            .withMessage(CodenvyLicenseManager.LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE),
+                                      newDto(IssueDto.class).withStatus(Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED)
+                                                            .withMessage(CodenvyLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE)));
     }
 
     @Test
     public void shouldReturnEmptyListOfIssues() throws ServerException {
         doReturn(true).when(codenvyLicenseManager).canUserBeAdded();
+        doReturn(true).when(codenvyLicenseManager).hasAcceptedFairSourceLicense();
         assertEquals(codenvyLicenseManager.getLicenseIssues(), ImmutableList.of());
     }
 

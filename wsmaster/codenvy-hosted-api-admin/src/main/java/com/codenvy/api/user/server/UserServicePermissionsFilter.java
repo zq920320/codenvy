@@ -67,10 +67,6 @@ public class UserServicePermissionsFilter extends CheMethodInvokerFilter {
                 //public methods
                 return;
             case "create":
-                if (!licenseManager.hasAcceptedFairSourceLicense()) {
-                    throw new ForbiddenException(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE);
-                }
-
                 if (!licenseManager.canUserBeAdded()) {
                     if (subject.hasPermission(SystemDomain.DOMAIN_ID, null, MANAGE_USERS_ACTION)) {
                         throw new ForbiddenException(format("The user cannot be added. You have %s users in Codenvy which is the maximum allowed by your current license.",

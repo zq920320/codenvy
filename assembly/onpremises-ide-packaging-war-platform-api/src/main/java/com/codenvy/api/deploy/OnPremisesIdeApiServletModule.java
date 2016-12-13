@@ -14,7 +14,7 @@
  */
 package com.codenvy.api.deploy;
 
-import com.codenvy.api.license.LicenseFilter;
+import com.codenvy.api.license.SystemLicenseFilter;
 import com.google.inject.servlet.ServletModule;
 import org.apache.catalina.filters.CorsFilter;
 import org.eclipse.che.inject.DynaModule;
@@ -23,8 +23,10 @@ import org.everrest.websockets.WSConnectionTracker;
 
 import javax.inject.Singleton;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import static java.util.Arrays.asList;
 import static org.apache.catalina.filters.CorsFilter.DEFAULT_ALLOWED_ORIGINS;
 
 /**
@@ -32,81 +34,81 @@ import static org.apache.catalina.filters.CorsFilter.DEFAULT_ALLOWED_ORIGINS;
  */
 @DynaModule
 public class OnPremisesIdeApiServletModule extends ServletModule {
-    public static final java.util.List<String> pathForLoginFilter = java.util.Arrays.asList("/factory/*",
-                                                                           "/activity/*",
-                                                                           "/workspace/*",
-                                                                           "/java-name-environment/*",
-                                                                           "/user/*",
-                                                                           "/admin/user",
-                                                                           "/admin/user/*",
-                                                                           "/analytics/*",
-                                                                           "/invite/*",
-                                                                           "/factory",
-                                                                           "/workspace",
-                                                                           "/audit",
-                                                                           "/user",
-                                                                           "/git/*",
-                                                                           "/svn/*",
-                                                                           "/github/*",
-                                                                           "/bitbucket/*",
-                                                                           "/ssh-keys/*",
-                                                                           "/async/*",
-                                                                           "/internal/convert/*",
-                                                                           "/profile",
-                                                                           "/profile/*",
-                                                                           "/analytics",
-                                                                           "/oauth/token",
-                                                                           "/oauth/authenticate",
-                                                                           "/password/change",
-                                                                           "/runner/*",
-                                                                           "/builder/*",
-                                                                           "/admin/runner/*",
-                                                                           "/admin/builder/*",
-                                                                           "/admin/plan",
-                                                                           "/project/*",
-                                                                           "/maven/*",
-                                                                           "/ws/*",
-                                                                           "/appengine/*",
-                                                                           "/gae-validator/*",
-                                                                           "/gae-parameters/*",
-                                                                           "/billing/*",
-                                                                           "/creditcard/*",
-                                                                           "/invoice/*",
-                                                                           "/billing/*",
-                                                                           "/machine/*",
-                                                                           "/machine",
-                                                                           "/recipe",
-                                                                           "/recipe/*",
-                                                                           "/stack",
-                                                                           "/stack/*",
-                                                                           "/command",
-                                                                           "/command/*",
-                                                                           "/subscription/*",
-                                                                           "/subscription",
-                                                                           "/saas/*",
-                                                                           "/promotion/*",
-                                                                           "/resources/*",
-                                                                           "/ext/*",
-                                                                           "/ssh/*",
-                                                                           "/ssh",
-                                                                           "/nodes",
-                                                                           "/permissions",
-                                                                           "/permissions/*",
-                                                                           "/preferences",
-                                                                           "/preferences/*",
-                                                                           "/license",
-                                                                           "/license/*",
-                                                                           "/ldap/sync",
-                                                                           "/ldap/sync/*",
-                                                                           "/organization",
-                                                                           "/organization/*",
-                                                                           "/system/ram/*",
-                                                                           "/resource/*");
+    public static final List<String> pathForLoginFilter = asList("/factory/*",
+                                                                 "/activity/*",
+                                                                 "/workspace/*",
+                                                                 "/java-name-environment/*",
+                                                                 "/user/*",
+                                                                 "/admin/user",
+                                                                 "/admin/user/*",
+                                                                 "/analytics/*",
+                                                                 "/invite/*",
+                                                                 "/factory",
+                                                                 "/workspace",
+                                                                 "/audit",
+                                                                 "/user",
+                                                                 "/git/*",
+                                                                 "/svn/*",
+                                                                 "/github/*",
+                                                                 "/bitbucket/*",
+                                                                 "/ssh-keys/*",
+                                                                 "/async/*",
+                                                                 "/internal/convert/*",
+                                                                 "/profile",
+                                                                 "/profile/*",
+                                                                 "/analytics",
+                                                                 "/oauth/token",
+                                                                 "/oauth/authenticate",
+                                                                 "/password/change",
+                                                                 "/runner/*",
+                                                                 "/builder/*",
+                                                                 "/admin/runner/*",
+                                                                 "/admin/builder/*",
+                                                                 "/admin/plan",
+                                                                 "/project/*",
+                                                                 "/maven/*",
+                                                                 "/ws/*",
+                                                                 "/appengine/*",
+                                                                 "/gae-validator/*",
+                                                                 "/gae-parameters/*",
+                                                                 "/billing/*",
+                                                                 "/creditcard/*",
+                                                                 "/invoice/*",
+                                                                 "/billing/*",
+                                                                 "/machine/*",
+                                                                 "/machine",
+                                                                 "/recipe",
+                                                                 "/recipe/*",
+                                                                 "/stack",
+                                                                 "/stack/*",
+                                                                 "/command",
+                                                                 "/command/*",
+                                                                 "/subscription/*",
+                                                                 "/subscription",
+                                                                 "/saas/*",
+                                                                 "/promotion/*",
+                                                                 "/resources/*",
+                                                                 "/ext/*",
+                                                                 "/ssh/*",
+                                                                 "/ssh",
+                                                                 "/nodes",
+                                                                 "/permissions",
+                                                                 "/permissions/*",
+                                                                 "/preferences",
+                                                                 "/preferences/*",
+                                                                 "/license",
+                                                                 "/license/*",
+                                                                 "/ldap/sync",
+                                                                 "/ldap/sync/*",
+                                                                 "/organization",
+                                                                 "/organization/*",
+                                                                 "/system/ram/*",
+                                                                 "/resource/*");
 
     @Override
     protected void configureServlets() {
         filter(pathForLoginFilter).through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filter(pathForLoginFilter).through(LicenseFilter.class);
+        filter(pathForLoginFilter).through(SystemLicenseFilter.class);
 
         final Map<String, String> corsFilterParams = new HashMap<>();
         corsFilterParams.put("cors.allowed.origins", DEFAULT_ALLOWED_ORIGINS);

@@ -14,10 +14,12 @@
  */
 package com.codenvy.onpremises.deploy;
 
-import com.codenvy.api.license.LicenseFilter;
+import com.codenvy.api.license.SystemLicenseFilter;
 import com.google.inject.name.Names;
 import com.google.inject.servlet.ServletModule;
 import org.eclipse.che.inject.DynaModule;
+
+import static com.codenvy.api.license.SystemLicenseFilter.NO_USER_INTERACTION;
 
 /**
  * Servlet module composer for ide war.
@@ -29,10 +31,12 @@ public class IdeServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
         filter("/*").through(com.codenvy.auth.sso.client.LoginFilter.class);
-        filter("/*").through(LicenseFilter.class);
+        filter("/*").through(SystemLicenseFilter.class);
         filter("/*").through(com.codenvy.onpremises.DashboardRedirectionFilter.class);
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
 
-        bindConstant().annotatedWith(Names.named("no.user.interaction")).to(false);
+        bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(false);
+        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
+                      .to("/site/auth/accept-fair-source-license");
     }
 }

@@ -51,10 +51,15 @@ import static com.codenvy.api.license.shared.model.Issue.Status.FAIR_SOURCE_LICE
 
 /**
  * Checks system license conditions.
+ * If ("no.user.interaction" property == true) and (user has permission to perform MANAGE_CODENVY_ACTION), then send redirection to accept-fair-source-license page in response.
+ * If ("no.user.interaction" property == false), then don't send redirection despite of whoever user is.
  * @author Dmytro Nochevov
  */
 @Singleton
-public class LicenseFilter implements Filter {
+public class SystemLicenseFilter implements Filter {
+    public static final String NO_USER_INTERACTION                 = "no.user.interaction";
+    public static final String ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL = "license.system.accept_fair_source_license_page_url";
+
     @Inject
     protected RequestFilter          requestFilter;
     @Inject
@@ -63,8 +68,11 @@ public class LicenseFilter implements Filter {
     @Named("che.api")
     protected String                 apiEndpoint;
     @Inject
-    @Named("no.user.interaction")
+    @Named(NO_USER_INTERACTION)
     protected boolean                noUserInteraction;
+    @Inject
+    @Named(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL)
+    protected String                 acceptFairSourceLicensePageUrl;
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -116,7 +124,7 @@ public class LicenseFilter implements Filter {
 
     private void sendUserToAcceptFairSourceLicensePage(HttpServletResponse response)
         throws IOException {
-        UriBuilder redirectUrl = UriBuilder.fromPath("/site/auth/accept-fair-source-license");
+        UriBuilder redirectUrl = UriBuilder.fromPath(acceptFairSourceLicensePageUrl);
         response.sendRedirect(redirectUrl.build().toString());
     }
 

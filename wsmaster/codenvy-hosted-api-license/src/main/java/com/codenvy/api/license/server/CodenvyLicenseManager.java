@@ -58,6 +58,7 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Collections.emptyMap;
 import static java.util.Objects.requireNonNull;
+import static org.eclipse.che.dto.server.DtoFactory.newDto;
 
 /**
  * @author Anatoliy Bazko
@@ -249,13 +250,13 @@ public class CodenvyLicenseManager {
         List<IssueDto> issues = new ArrayList<>();
 
         if (!canUserBeAdded()) {
-            issues.add(IssueDto.create(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT,
-                                       LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE));
+            issues.add(newDto(IssueDto.class).withStatus(Issue.Status.USER_LICENSE_HAS_REACHED_ITS_LIMIT)
+                                             .withMessage(LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE));
         }
 
         if (!hasAcceptedFairSourceLicense()) {
-            issues.add(IssueDto.create(Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED,
-                                       FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE));
+            issues.add(newDto(IssueDto.class).withStatus(Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED)
+                                             .withMessage(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE));
         }
 
         return issues;
