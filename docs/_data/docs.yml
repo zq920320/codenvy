@@ -39,9 +39,8 @@
   - issue-management
   - version-control
   - continuous-integration
-- title: Developer Guide
+- title: White Label Guide
   docs:
-  - rest-api
-  - developing-extensions
-  - dev-java-class-reference
+  - custom-assemblies
+  - introduction-white-labels
   
