@@ -329,8 +329,6 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new ScheduleModule());
 
         bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(true);
-        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
-                      .to("/site/auth/accept-fair-source-license");
         install(new SystemLicenseModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);

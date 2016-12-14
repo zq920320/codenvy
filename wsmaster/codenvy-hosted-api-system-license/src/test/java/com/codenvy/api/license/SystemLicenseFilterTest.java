@@ -26,7 +26,6 @@ import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
 import org.eclipse.che.api.core.rest.HttpJsonResponse;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.subject.Subject;
-import org.everrest.core.impl.RuntimeDelegateImpl;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -43,7 +42,6 @@ import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.ext.RuntimeDelegate;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.lang.reflect.Field;
@@ -58,14 +56,15 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 import static org.testng.Assert.fail;
 
-/** Test related to @LoginFilter class. */
+/** Test related to @SystemLicenseFilter class. */
 @Listeners(value = MockitoTestNGListener.class)
 public class SystemLicenseFilterTest {
 
     public static final Logger LOG          = LoggerFactory.getLogger(SystemLicenseFilterTest.class);
     public static final String API_ENDPOINT = "http://localhost:8080/api";
 
-    public static final String ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL = "/site/auth/accept-fair-source-license";
+    public static final String ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL                = "/site/auth/accept-fair-source-license";
+    public static final String FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL = "/site/error/fair-source-license-is-not-accepted";
 
     @Mock
     private HttpServletRequest servletRequest;
@@ -96,19 +95,23 @@ public class SystemLicenseFilterTest {
     @BeforeMethod
     public void setup() throws IOException {
         EnvironmentContext.reset();
+        EnvironmentContext.getCurrent().setSubject(subject);
+
+        when(filterConfig.getServletContext()).thenReturn(servletContext);
+        setFieldValue(filter, "apiEndpoint", API_ENDPOINT);
+        setFieldValue(filter, "acceptFairSourceLicensePageUrl", ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL);
+        setFieldValue(filter, "fairSourceLicenseIsNotAcceptedErrorPageUrl", FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL);
+
         when(servletResponse.getWriter()).thenReturn(servletResponseWriter);
         when(requestFilter.shouldSkip(eq(servletRequest))).thenReturn(false);
     }
 
     @Test(dataProvider = "testData")
-    public void testOnFilteringAddresses(boolean isAdmin,
-                                         boolean isNoInteraction,
-                                         boolean hasFairSourceLicenseAccepted,
-                                         Runnable verification) throws Exception {
+    public void testOnFilteringAddresses(boolean isAdmin, boolean isNoInteraction, boolean isFairSourceLicenseAccepted, Runnable verification) throws Exception {
         //given
         when(servletRequest.getRequestURI()).thenReturn("/api/user");
 
-        setHasFairSourceLicenseAccepted(hasFairSourceLicenseAccepted);
+        setHasFairSourceLicenseAccepted(isFairSourceLicenseAccepted);
         setIsAdminAndNotInteractive(isAdmin, isNoInteraction);
 
         //when
@@ -121,13 +124,16 @@ public class SystemLicenseFilterTest {
     @DataProvider
     public Object[][] testData() {
         return new Object[][] {
-            // should redirect to accept license page if user is admin and with interaction
-            { true, false, false, verifySendRedirectionToAcceptFairSourcePage() },
+            // should redirect to 'accept fair source license' page if user is admin and with interaction
+            { true, false, false, verifySendRedirection(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL) },
 
             // should return Forbidden error if user is admin and without interaction
             { true, true, false, verifyForbiddenError() },
 
-            // should return Forbidden error if user isn't admin and with interaction
+            // should redirect to 'fair source license is not accepted error' page if user isn't admin and with interaction
+            { false, false, false, verifySendRedirection(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL) },
+
+            // should return Forbidden error if user isn't admin and without interaction
             { false, true, false, verifyForbiddenError() },
 
             // shouldn't return redirection or error if fair source license has accepted
@@ -157,10 +163,10 @@ public class SystemLicenseFilterTest {
         verifyNoRedirectionAndError().run();
     }
 
-    private Runnable verifySendRedirectionToAcceptFairSourcePage() {
+    private Runnable verifySendRedirection(String url) {
         return () -> {
             try {
-                verify(servletResponse).sendRedirect(eq(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL));
+                verify(servletResponse).sendRedirect(eq(url));
                 verify(chain, never()).doFilter(servletRequest, servletResponse);
             } catch (Exception e) {
                 fail(e.getMessage(), e);
@@ -186,12 +192,7 @@ public class SystemLicenseFilterTest {
         return () -> {
             try {
                 verify(chain).doFilter(servletRequest, servletResponse);
-
-                verify(servletResponse, never()).sendRedirect(eq(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL));
-
-                verify(servletResponse, never()).setStatus(eq(HttpServletResponse.SC_FORBIDDEN));
-                verify(servletResponseWriter, never()).write(eq(String.format("{\"message\":\"%s\"}",
-                                                                     SystemLicenseManager.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_MESSAGE)));
+                verifyNoMoreInteractions(servletResponse);
             } catch (Exception e) {
                 fail(e.getMessage(), e);
             }
@@ -216,13 +217,7 @@ public class SystemLicenseFilterTest {
     }
 
     private void setIsAdminAndNotInteractive(boolean isAdmin, boolean noUserInteraction) {
-        RuntimeDelegate.setInstance(new RuntimeDelegateImpl());
-        when(filterConfig.getServletContext()).thenReturn(servletContext);
-        setFieldValue(filter, "apiEndpoint", API_ENDPOINT);
-        setFieldValue(filter, "acceptFairSourceLicensePageUrl", ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL);
         setFieldValue(filter, "noUserInteraction", noUserInteraction);
-
-        EnvironmentContext.getCurrent().setSubject(subject);
         when(subject.hasPermission(SystemDomain.DOMAIN_ID, null, MANAGE_SYSTEM_ACTION)).thenReturn(isAdmin);
     }
 

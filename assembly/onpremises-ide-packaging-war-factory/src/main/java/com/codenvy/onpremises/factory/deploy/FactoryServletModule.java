@@ -59,5 +59,7 @@ public class FactoryServletModule extends ServletModule {
         bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(false);
         bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
                       .to("/site/auth/accept-fair-source-license");
+        bindConstant().annotatedWith(Names.named("license.system.fair_source_license_is_not_accepted_error_page_url"))
+                      .to("/site/error/fair-source-license-is-not-accepted-error");
     }
 }

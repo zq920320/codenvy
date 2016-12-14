@@ -21,6 +21,7 @@ import com.codenvy.api.permission.server.SystemDomain;
 import com.codenvy.auth.sso.client.filter.RequestFilter;
 import com.codenvy.auth.sso.client.filter.UriStartFromRequestFilter;
 import com.google.common.collect.ImmutableList;
+import com.google.inject.Inject;
 import com.google.inject.name.Named;
 import org.eclipse.che.api.core.BadRequestException;
 import org.eclipse.che.api.core.ConflictException;
@@ -32,7 +33,6 @@ import org.eclipse.che.api.core.rest.HttpJsonRequestFactory;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -50,15 +50,24 @@ import java.io.PrintWriter;
 import static com.codenvy.api.license.shared.model.Issue.Status.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED;
 
 /**
- * Checks system license conditions.
- * If ("no.user.interaction" property == false) and (user has permission to perform MANAGE_SYSTEM_ACTION), then send redirection to accept-fair-source-license page in response.
- * If ("no.user.interaction" property == true), then don't send redirection despite of whoever user is.
- * @author Dmytro Nochevov
+ * Checks system license conditions. If fair source license isn't accepted, then:
+ * 1) if ("no.user.interaction" property == false),
+ *     then if (user has permission to perform MANAGE_SYSTEM_ACTION): send redirection to accept-fair-source-license page in response;
+ *          otherwise: send redirection to fair-source-license-is-not-accepted-error page in response;
+ * 2) if ("no.user.interaction" property == true),
+ *     then return error 403 FORBIDDEN.
+ * @author Dmytro Nochevnov
  */
 @Singleton
 public class SystemLicenseFilter implements Filter {
-    public static final String NO_USER_INTERACTION                 = "no.user.interaction";
-    public static final String ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL = "license.system.accept_fair_source_license_page_url";
+    public static final String NO_USER_INTERACTION                                = "no.user.interaction";
+    public static final String ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL                = "license.system.accept_fair_source_license_page_url";
+    public static final String FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL = "license.system.fair_source_license_is_not_accepted_error_page_url";
+
+    public static final ImmutableList<String> URIS_TO_SKIP = ImmutableList.of("/api/permissions",
+                                                                              "/api/user/settings",
+                                                                              "/api/license/system/legality",
+                                                                              "/api/license/system/fair-source-license");
 
     @Inject
     protected RequestFilter          requestFilter;
@@ -67,12 +76,16 @@ public class SystemLicenseFilter implements Filter {
     @Inject
     @Named("che.api")
     protected String                 apiEndpoint;
-    @Inject
+    @Inject()
     @Named(NO_USER_INTERACTION)
     protected boolean                noUserInteraction;
-    @Inject
+    @Inject(optional = true)
     @Named(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL)
     protected String                 acceptFairSourceLicensePageUrl;
+    @Inject(optional = true)
+    @Named(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL)
+    protected String                 fairSourceLicenseIsNotAcceptedErrorPageUrl;
+
 
     @Override
     public void init(FilterConfig config) throws ServletException {
@@ -89,10 +102,15 @@ public class SystemLicenseFilter implements Filter {
 
         try {
             if (isFairSourceLicenseNotAccepted()) {
-                if (!noUserInteraction && isAdmin()) {
-                    sendUserToAcceptFairSourceLicensePage(httpResponse);
-                } else {
+                if (noUserInteraction) {
                     createForbiddenAccessResponse(httpResponse);
+                    return;
+                }
+
+                if (isAdmin()) {
+                    sendRedirection(httpResponse, acceptFairSourceLicensePageUrl);
+                } else {
+                    sendRedirection(httpResponse, fairSourceLicenseIsNotAcceptedErrorPageUrl);
                 }
             } else {
                 chain.doFilter(request, response);
@@ -103,10 +121,7 @@ public class SystemLicenseFilter implements Filter {
     }
 
     private boolean shouldSkip(HttpServletRequest request) {
-        return requestFilter.shouldSkip(request) || new UriStartFromRequestFilter(ImmutableList.of("/api/permissions",
-                                                                                                   "/api/user/settings",
-                                                                                                   "/api/license/system/legality",
-                                                                                                   "/api/license/system/fair-source-license")).shouldSkip(request);
+        return requestFilter.shouldSkip(request) || new UriStartFromRequestFilter(URIS_TO_SKIP).shouldSkip(request);
     }
 
     private void createForbiddenAccessResponse(HttpServletResponse response) throws IOException {
@@ -125,6 +140,11 @@ public class SystemLicenseFilter implements Filter {
     private void sendUserToAcceptFairSourceLicensePage(HttpServletResponse response)
         throws IOException {
         UriBuilder redirectUrl = UriBuilder.fromPath(acceptFairSourceLicensePageUrl);
+        response.sendRedirect(redirectUrl.build().toString());
+    }
+
+    private void sendRedirection(HttpServletResponse response, String url) throws IOException {
+        UriBuilder redirectUrl = UriBuilder.fromPath(url);
         response.sendRedirect(redirectUrl.build().toString());
     }
 

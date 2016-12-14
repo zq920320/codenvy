@@ -17,8 +17,6 @@ package com.codenvy.api.license.shared.dto;
 import com.codenvy.api.license.shared.model.Issue;
 import org.eclipse.che.dto.shared.DTO;
 
-import static org.eclipse.che.dto.server.DtoFactory.newDto;
-
 /**
  * @author Dmytro Nochevnov
  */

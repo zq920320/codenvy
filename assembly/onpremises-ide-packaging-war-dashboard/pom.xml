@@ -32,6 +32,10 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises.wsmaster</groupId>
+            <artifactId>codenvy-hosted-authorization</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.onpremises.wsmaster</groupId>
             <artifactId>codenvy-hosted-commons-j2ee</artifactId>
         </dependency>
         <dependency>
@@ -92,10 +96,6 @@
             <groupId>org.testng</groupId>
             <artifactId>testng</artifactId>
             <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises.wsmaster</groupId>
-            <artifactId>codenvy-hosted-authorization</artifactId>
         </dependency>
     </dependencies>
     <build>
