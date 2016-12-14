@@ -4,8 +4,7 @@ excerpt: "Welcome to Codenvy!"
 layout: docs
 permalink: /docs/introduction/
 ---
-Codenvy makes Cloud workspaces for development teams featuring one-click Docker environments, team onboarding and a workspace platform
-for DevOps. Codenvy SaaS is available for self-service at codenvy.io. You can also install Codenvy on your own infrastructure with Codenvy On-Prem.
+Codenvy makes Cloud workspaces for development teams featuring one-click Docker environments, team onboarding and a workspace platform for DevOps. Codenvy SaaS is available for self-service at codenvy.io. You can also install Codenvy on your own infrastructure with Codenvy On-Prem.
 
 # Codenvy and Eclipse Che  
 Codenvy is a commercial offering powered by the [Eclipse Che](https://eclipse.org/che/) open source project, so Eclipse Che workspaces and plug-ins will work within Codenvy.
