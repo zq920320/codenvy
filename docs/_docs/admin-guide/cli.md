@@ -2,7 +2,7 @@
 title: CLI Reference
 excerpt: "Manage your Codenvy installation on the command line."
 layout: docs
-permalink: /docs/cli/
+permalink: /docs/admin-guide/cli/
 ---
 The CLI will hide most error conditions from standard out. Internal stack traces and error output is redirected to `cli.log`, which is saved in the host folder where `:/data` is mounted.
 
@@ -55,6 +55,8 @@ Deletes `/docs`, `codenvy.env` and `/instance`, including destroying all user wo
 
 ## codenvy offline
 Saves all of the Docker images that Codenvy requires into `/backup/*.tar` files. Each image is saved as its own file. If the `backup` folder is available on a machine that is disconnected from the Internet and you start Codenvy with `--offline`, the CLI pre-boot sequence will load all of the Docker images in the `/backup/` folder.
+
+`--list` option will list all of the core images and optional stack images that can be downloaded. The core system images and the CLI will always be saved, if an existing TAR file is not found. `--image:<image-name>` will download a single stack image and can be used multiple times on the command line. You can use `--all-stacks` or `--no-stacks` to download all or none of the optional stack images.
 
 ## codenvy rmi
 Deletes the Docker images from the local registry that Codenvy has downloaded for this version.
