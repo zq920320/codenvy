@@ -34,7 +34,7 @@ Factories can be invoked in mutliple ways. You can replace the `codenvy.com` dom
 | --- | ---
 |  Invoke Factory using its unique hashcode <br>`/f?id={hashcode}` <br>`/factory?id={hascode}`| [https://codenvy.com/f?id=s38eam174ji42vty](https://codenvy.com/f?id=s38eam174ji42vty)
 |  Invoke a named Factory <br> `/f?user={username}&name={factoryname}` <br>`/factory?user={username}&name={factoryname}`<br>`/factory/username/factoryname`  | [https://codenvy.com/f?user=tylerjewell&name=starwars](https://codenvy.com/f?user=tylerjewell&name=starwars)<br>[https://codenvy.com/factory?user=tylerjewell&name=starwars](https://codenvy.com/factory?user=tylerjewell&name=starwars)<br>[https://codenvy.com/factory/tylerjewell/starwars](https://codenvy.com/factory/tylerjewell/starwars)
-|  Invoke Factory for a specific git repo <br>`/f?url={git URL}`  | [http://beta.codenvy.com/f?url=https://github.com/eclipse/che](http://beta.codenvy.com/f?url=https://github.com/eclipse/che)<br>[http://beta.codenvy.com/f?url=https://github.com/eclipse/che/commits/language-server](http://beta.codenvy.com/f?url=https://github.com/eclipse/che/commits/language-server)<br>[http://beta.codenvy.com/f?url=https://gitlab.com/benoitf/simple-project](http://beta.codenvy.com/f?url=https://gitlab.com/benoitf/simple-project)  
+|  Invoke Factory for a specific git repo <br>`/f?url={git URL}`  | [http://codenvy.io/f?url=https://github.com/eclipse/che](http://codenvy.io/f?url=https://github.com/eclipse/che)<br>[http://codenvy.io/f?url=https://github.com/eclipse/che/commits/language-server](http://codenvy.io/f?url=https://github.com/eclipse/che/commits/language-server)<br>[http://codenvy.io/f?url=https://gitlab.com/benoitf/simple-project](http://codenvy.io/f?url=https://gitlab.com/benoitf/simple-project)  
 |  Use an embedded Factory to clone a workspace  <br>`/ws/{workspace}/{username}/clone`  | [https://codenvy.com/ws/eclipseche/tylerjewell/factory](https://codenvy.com/ws/eclipseche/tylerjewell/factory)   
 
 Once the Factory is executed, it either loads an existing workspace or generates a new one, depending upon the Factory configuration.  The name of the workspace is determined within the Factory configuration and its name becomes part of the URL access.
@@ -53,7 +53,7 @@ You can create Factories that are saved with a unique hash code in the dashboard
 | --- | ---
 | Create a new Factory with pretty name <br>`/ws/{workspace}/{user}/factory/{pretty}?save`   | [https://codenvy.com/ws/eclipseche/tylerjewell/factory/starwars?save](https://codenvy.com/ws/eclipseche/tylerjewell/factory/starwars?save)
 | Create a new Factory from the dashboard <br>`Dashboard > Factories > Create` | [https://codenvy.com/f?id=s38eam174ji42vty](https://codenvy.com/f?id=s38eam174ji42vty)   
-| Create on-demand URL Factory by specifying the remote URL In that case the configuration may be stored inside the repository. |[http://codenvy.com/f?url=https://github.com/eclipse/che](http://beta.codenvy.com/f?url=https://github.com/eclipse/che)  [http://beta.codenvy.com/f?url=https://github.com/eclipse/che](http://beta.codenvy.com/f?url=https://github.com/eclipse/che)<br>[http://beta.codenvy.com/f?url=https://github.com/eclipse/che/commits/language-server](http://beta.codenvy.com/f?url=https://github.com/eclipse/che/commits/language-server)<br>[http://beta.codenvy.com/f?url=https://gitlab.com/benoitf/simple-project](http://beta.codenvy.com/f?url=https://gitlab.com/benoitf/simple-project)
+| Create on-demand URL Factory by specifying the remote URL In that case the configuration may be stored inside the repository. |[http://codenvy.com/f?url=https://github.com/eclipse/che](http://codenvy.io/f?url=https://github.com/eclipse/che)  [http://codenvy.io/f?url=https://github.com/eclipse/che](http://codenvy.io/f?url=https://github.com/eclipse/che)<br>[http://codenvy.io/f?url=https://github.com/eclipse/che/commits/language-server](http://codenvy.io/f?url=https://github.com/eclipse/che/commits/language-server)<br>[http://codenvy.io/f?url=https://gitlab.com/benoitf/simple-project](http://codenvy.io/f?url=https://gitlab.com/benoitf/simple-project)
 
 You can also author a Factory from scratch using a `factory.json` file and then generating a Factory URL using our CLI or API.
 # URL Factories  
@@ -110,7 +110,7 @@ A mixin adds additional behaviors to a project as a set of new project type attr
 <br>
 The `pullrequest` mixin requires additional configuration from the `attributes` object of the project.  If present, Codenvy will use the project attributes as defined in the Factory. If not provided, Codenvy will set defaults for the attributes.
 <br>
-Learn more about other mixins, on [`project : {}` object for Eclipse Che](https://eclipse-che.readme.io/v4.4/docs/workspace#section-projects-object)
+Learn more about other mixins, on [`project : {}` object for Eclipse Che](https://eclipse-che.readme.io/docs/workspace#section-projects-object)
 
 ### Pullrequest Attributes
 Project attributes alter the behavior of the IDE or workspace.
