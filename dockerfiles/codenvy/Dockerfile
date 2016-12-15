@@ -86,7 +86,7 @@ RUN apk upgrade --update && \
     mkdir -p /opt/codenvy-data/ /opt/codenvy-data/logs /opt/codenvy-data/fs \
             /opt/codenvy-data/che-machines /opt/codenvy-data/che-machines-logs \
             /opt/codenvy-data/conf /opt/codenvy-data/conf/logback \
-            /opt/codenvy-data/license \
+            /opt/codenvy-data/license && \
      postfix -c /etc/postfix start
 
 RUN set -x \
