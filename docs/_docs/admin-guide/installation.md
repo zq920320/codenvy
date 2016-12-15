@@ -192,23 +192,18 @@ CODENVY_NO_PROXY_FOR_CODENVY_WORKSPACES=localhost,127.0.0.1,<YOUR_CODENVY_HOST>
 The last three entries are injected into workspaces created by your users. This gives your users access to the Internet from within their workspaces. You can comment out these entries to disable access. However, if that access is turned off, then the default templates with source code will fail to be created in workspaces as those projects are cloned from GitHub.com. Your workspaces are still functional, we just prevent the template cloning.
 
 ## Offline Installation
-We support the ability to install and run Codenvy while disconnected from the Internet. This is helpful for certain restricted environments, regulated datacenters, or offshore installations. The offline installation has you download a custom set of images while connected in a network DMZ that has access to DockerHub and then starting Codenvy with those images.
+We support offline (disconnected from the Internet) installation and operation. This is helpful for  restricted environments, regulated datacenters, or offshore installations. The offline installation downloads the CLI, core system images, and any stack images while you are within a network DMZ with DockerHub access. You can then move those files to a secure environment and start Codenvy.
 
 #### 1. Save Codenvy Images
 While connected to the Internet, download Codenvy's Docker images:
 ```
 codenvy offline
 ```
-The CLI will download images and save them to `/instance/backup/*.tar` with each image saved as its own file. You can optionally save these files to a differnet location by volume mounting a local folder to `:/data/backup`. The version tag of the CLI Docker image will be used to determine which versions of dependent images to download. There is about 1GB of data that will be saved.
+The CLI will download images and save them to `/backup/*.tar` with each image saved as its own file. You can save these files to a differnet location by volume mounting a local folder to `:/data/backup`. The version tag of the CLI Docker image will be used to determine which versions of dependent images to download. There is about 1GB of data that will be saved.
 
-!! Note - this command will download all Codenvy images including all images for all stacks. There are a few dozen stacks for different programming languages and some of them are over 1GB in size. It is unlikely that your users will need all of the stacks, so you do not need to download all of them. You can download a specific stack by running `codenvy offline --image:<image-name>` and you can see the full list of stack images available with `codenvy offline --list`.
+The default execution will download none of the optional stack images, which are needed to launch workspaces of a particular type. There are a few dozen stacks for different programming languages and some of them are over 1GB in size. It is unlikely that your users will need all of the stacks, so you do not need to download all of them. You can get a list of available stack images by running `codenvy offline --list`. You can download a specific stack by running `codenvy offline --image:<image-name>` and the `--image` flag can be repeatedly used on a single command line.
 
-#### 2. Save Codenvy CLI
-```
-docker save codenvy/cli:<version>
-```
-
-#### 3. Start Codenvy In Offline Mode
+#### 2. Start Codenvy In Offline Mode
 Place the TAR files into a folder in the offline computer. If the files are in placed in a folder named `/tmp/offline`, you can run Codenvy in offline mode with: 
 
 ```
