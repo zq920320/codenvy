@@ -22,6 +22,9 @@ import org.eclipse.che.inject.DynaModule;
 
 import javax.inject.Singleton;
 
+
+import static com.codenvy.api.license.SystemLicenseFilter.ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL;
+import static com.codenvy.api.license.SystemLicenseFilter.FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL
 import static com.codenvy.api.license.SystemLicenseFilter.NO_USER_INTERACTION;
 
 /**
@@ -57,9 +60,9 @@ public class FactoryServletModule extends ServletModule {
         install(new com.codenvy.auth.sso.client.deploy.SsoClientServletModule());
 
         bindConstant().annotatedWith(Names.named(NO_USER_INTERACTION)).to(false);
-        bindConstant().annotatedWith(Names.named("license.system.accept_fair_source_license_page_url"))
+        bindConstant().annotatedWith(Names.named(ACCEPT_FAIR_SOURCE_LICENSE_PAGE_URL))
                       .to("/site/auth/accept-fair-source-license");
-        bindConstant().annotatedWith(Names.named("license.system.fair_source_license_is_not_accepted_error_page_url"))
+        bindConstant().annotatedWith(Names.named(FAIR_SOURCE_LICENSE_IS_NOT_ACCEPTED_ERROR_PAGE_URL))
                       .to("/site/error/fair-source-license-is-not-accepted-error");
     }
 }
