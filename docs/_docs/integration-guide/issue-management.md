@@ -2,7 +2,7 @@
 title: Issue Management
 excerpt: ""
 layout: docs
-permalink: /docs/issue-management/
+permalink: /docs/integration-guide/issue-management/
 ---
 [Codenvy Factories](../../docs/workspace-automation) can be integrated with nearly any issue mangement system. However, we have developed two plug-ins that allow completely automated Factory creation and update based on changes to JIRA or Microsoft VSTS issue management.
 
