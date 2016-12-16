@@ -260,7 +260,7 @@ export class LoadFactoryCtrl {
 
     // for now, display log of status channel in case of errors
     bus.subscribe(statusChannel, (message) => {
-      if (message.eventType === 'DESTROYED' && message.workspaceId === data.id) {
+      if (message.status === 'DESTROYED' && message.workspaceId === data.id) {
         this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
 
         // need to show the error
@@ -272,7 +272,7 @@ export class LoadFactoryCtrl {
             .ok('OK')
         );
       }
-      if (message.eventType === 'ERROR' && message.workspaceId === data.id) {
+      if (message.status === 'STOPPED' && message.error && message.workspaceId === data.id) {
         this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
         // need to show the error
         this.$mdDialog.show(
@@ -289,7 +289,7 @@ export class LoadFactoryCtrl {
     // subscribe to workspace events
     bus.subscribe('workspace:' + workspaceId, (message) => {
 
-      if (message.eventType === 'ERROR' && message.workspaceId === workspaceId) {
+      if (message.status === 'STOPPED' && message.error && message.workspaceId === workspaceId) {
         // need to show the error
         this.$mdDialog.show(
           this.$mdDialog.alert()
@@ -301,7 +301,7 @@ export class LoadFactoryCtrl {
         this.getLoadingSteps()[this.getCurrentProgressStep()].hasError = true;
       }
 
-      if (message.eventType === 'RUNNING' && message.workspaceId === workspaceId) {
+      if (message.status === 'RUNNING' && message.workspaceId === workspaceId) {
         this.finish();
       }
     });
