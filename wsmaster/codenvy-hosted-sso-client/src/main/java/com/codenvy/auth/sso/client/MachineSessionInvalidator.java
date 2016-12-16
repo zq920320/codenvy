@@ -17,6 +17,7 @@ package com.codenvy.auth.sso.client;
 import com.codenvy.machine.authentication.server.MachineTokenRegistry;
 import com.google.common.annotations.VisibleForTesting;
 
+import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.workspace.shared.dto.event.WorkspaceStatusEvent;
@@ -50,7 +51,7 @@ public class MachineSessionInvalidator implements EventSubscriber<WorkspaceStatu
 
     @Override
     public void onEvent(WorkspaceStatusEvent event) {
-        if (WorkspaceStatusEvent.EventType.STOPPED.equals(event.getEventType())) {
+        if (event.getStatus() == WorkspaceStatus.STOPPED) {
             for (String token : tokenRegistry.removeTokens(event.getWorkspaceId()).values()) {
                 final HttpSession session = sessionStore.removeSessionByToken(token);
                 if (session != null) {

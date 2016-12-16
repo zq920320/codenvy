@@ -67,7 +67,7 @@ public class WorkspaceActivityManager {
         this.workspaceEventsSubscriber = new EventSubscriber<WorkspaceStatusEvent>() {
             @Override
             public void onEvent(WorkspaceStatusEvent event) {
-                switch (event.getEventType()) {
+                switch (event.getStatus()) {
                     case RUNNING:
                         try {
                             Workspace workspace = workspaceManager.getWorkspace(event.getWorkspaceId());

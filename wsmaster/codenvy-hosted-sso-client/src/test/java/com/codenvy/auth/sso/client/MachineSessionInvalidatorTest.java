@@ -16,6 +16,7 @@ package com.codenvy.auth.sso.client;
 
 import com.codenvy.machine.authentication.server.MachineTokenRegistry;
 
+import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.workspace.shared.dto.event.WorkspaceStatusEvent;
 import org.eclipse.che.commons.lang.NameGenerator;
@@ -23,7 +24,6 @@ import org.junit.Test;
 
 import javax.servlet.http.HttpSession;
 
-import static org.eclipse.che.api.workspace.shared.dto.event.WorkspaceStatusEvent.EventType.STOPPED;
 import static org.eclipse.che.dto.server.DtoFactory.newDto;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
@@ -54,7 +54,7 @@ public class MachineSessionInvalidatorTest {
 
         // publishing the event to trigger the subscriber
         eventService.publish(newDto(WorkspaceStatusEvent.class).withWorkspaceId("workspace123")
-                                                               .withEventType(STOPPED));
+                                                               .withStatus(WorkspaceStatus.STOPPED));
 
         // verifying whether all the sessions were expired
         assertNull(sessionStore.getSession(token1));

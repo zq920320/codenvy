@@ -14,6 +14,7 @@
  */
 package com.codenvy.activity.server;
 
+import org.eclipse.che.api.core.model.workspace.WorkspaceStatus;
 import org.eclipse.che.api.core.notification.EventService;
 import org.eclipse.che.api.core.notification.EventSubscriber;
 import org.eclipse.che.api.workspace.server.WorkspaceManager;
@@ -94,7 +95,7 @@ public class WorkspaceActivityManagerTest {
         final EventSubscriber<WorkspaceStatusEvent> subscriber = captor.getValue();
 
         subscriber.onEvent(DtoFactory.newDto(WorkspaceStatusEvent.class)
-                                     .withEventType(WorkspaceStatusEvent.EventType.RUNNING)
+                                     .withStatus(WorkspaceStatus.RUNNING)
                                      .withWorkspaceId(wsId));
         final Map<String, Long> activeWorkspaces = getActiveWorkspaces(activityManager);
 
@@ -113,7 +114,7 @@ public class WorkspaceActivityManagerTest {
         final Map<String, Long> activeWorkspaces = getActiveWorkspaces(activityManager);
         final boolean contains = activeWorkspaces.containsKey(wsId);
         subscriber.onEvent(DtoFactory.newDto(WorkspaceStatusEvent.class)
-                                     .withEventType(WorkspaceStatusEvent.EventType.STOPPED)
+                                     .withStatus(WorkspaceStatus.STOPPED)
                                      .withWorkspaceId(wsId));
 
         assertTrue(contains);
