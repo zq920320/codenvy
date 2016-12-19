@@ -10,4 +10,5 @@ The following table can be used to lookup documentation for a specific version o
 
 | Codenvy Version | URL |  
 | --- | --- |
-| 5.0.0-M8 | [Link](/5_0_0-M8/docs/) |
+| Stable | [Link](/stable/docs/) |
+| 5.0.0-M8 | [Link](/releases/5_0_0-M8/docs/) |
