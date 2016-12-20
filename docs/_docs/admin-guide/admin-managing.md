@@ -24,19 +24,23 @@ docker run --net=host eclipse/che-ip:nightly
 # Get the network interface for your ws node, typically 'eth1' or 'eth0':
 ifconfig
 ```
+
 2. On the Codenvy master node, start ZooKeeper, a key-value storage. `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
+
 3. On each workspace node, add these options to the Docker daemon and restart it. Configuring the Docker daemon is a one-time exercise and [varies by OS](https://docs.docker.com/engine/admin/):
   `--cluster-store=consul://<CODENVY-IP>:8500`
   `--cluster-advertise=<WS-IF>:2376`
   `--engine-insecure-registry=<CODENVY-IP>:5000`
 
-4. Docker will not successfully start if these parameters are not properly configured. You can test Docker by running TODO: add notes here.
+4. Verify that Docker is running properly. Docker will not start if it is not able to connect to the key-value storage. TODO: ADD TEST INSTRUCTION. Each workspace node that successfully runs this command is part of the overlay network.
 
 5. On the Codenvy master node, modify `codenvy.env` to uncomment or add:
 ```
 # Comma-separated list of IP addresses for each workspace node
 CODENVY_SWARM_NODES=<WS-IP>:2376,<WS2-IP>:2376,<WSn-IP>:2376
 ```
+
+6. Restart Codenvy with `codenvy/cli restart`.
 
 #### Simulated Scaling
 You can simulate what it is like to scale Codenvy with different nodes by launching Codenvy and its various cluster nodes within VMs using `docker-machine`, a utility that ships with Docker. Docker machine is a way to launch VMs that have Docker pre-installed in the VM using boot2docker. Docker machine uses different "drivers", such as HyperV or VirtualBox as the underlying hypervisor engine to launch the VMs. By lauching a set of VMs with different IP addresses, you can then simulate using Codenvy's Docker commands to start a main system and then having the other nodes add themselves to the cluster.
