@@ -16,7 +16,7 @@ The default network in Docker is a "bridge" network. If you know that your users
 
 #### Scaling With Overlay Network (Linux Only)
 
-1: Collect the IP address of Codenvy 'CODENVY-IP' and the network interface that your new workspace node will use 'WS-IF':
+1. Collect the IP address of Codenvy `CODENVY-IP` and the network interface that your new workspace node will use `WS-IF`:
 ```
 # Codenvy IP is either set by you to CODENVY_HOST or auto-discovered with:
 docker run --net=host eclipse/che-ip:nightly
@@ -24,17 +24,15 @@ docker run --net=host eclipse/che-ip:nightly
 # Get the network interface for your ws node, typically 'eth1' or 'eth0':
 ifconfig
 ```
-
-2: On the Codenvy master node, start ZooKeeper, a key-value storage. `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
-
-3: On each workspace node, add these options to the Docker daemon and restart it. Configuring the Docker daemon is a one-time exercise and [varies by OS](https://docs.docker.com/engine/admin/):
+2. On the Codenvy master node, start ZooKeeper, a key-value storage. `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
+3. On each workspace node, add these options to the Docker daemon and restart it. Configuring the Docker daemon is a one-time exercise and [varies by OS](https://docs.docker.com/engine/admin/):
   `--cluster-store=consul://<CODENVY-IP>:8500`
   `--cluster-advertise=<WS-IF>:2376`
   `--engine-insecure-registry=<CODENVY-IP>:5000`
 
-4: Docker will not successfully start if these parameters are not properly configured. You can test Docker by running TODO: add notes here.
+4. Docker will not successfully start if these parameters are not properly configured. You can test Docker by running TODO: add notes here.
 
-5: On the Codenvy master node, modify `codenvy.env` to uncomment or add:
+5. On the Codenvy master node, modify `codenvy.env` to uncomment or add:
 ```
 # Comma-separated list of IP addresses for each workspace node
 CODENVY_SWARM_NODES=<WS-IP>:2376,<WS2-IP>:2376,<WSn-IP>:2376
