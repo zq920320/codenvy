@@ -6,11 +6,28 @@ layout: docs
 permalink: /:categories/managing/
 ---
 ## Scaling
-Codenvy workspaces can run on different physical nodes that are part of a Codenvy cluster managed by Docker Swarm. This is an essential part of managing large development teams, as workspaces are both RAM and CPU intensive operations, and developers do not like to share their computing power. You will want to allocate enough nodes and resources to handle the number of concurrently *running* workspaces, each of which will have its own RAM and CPU requirements.
+Codenvy workspaces can run on different physical nodes managed by Docker Swarm. This is an essential part of managing large development teams, as workspaces are both RAM and CPU intensive operations, and developers do not like to share their computing power. You will want to allocate enough nodes and resources to handle the number of concurrently *running* workspaces, each of which will have its own RAM and CPU requirements.
 
-Each Codenvy instance generates a configuration for the nodes in its cluster. Run `codenvy add-node` for instructions on what to run on each physical node that should be added to the cluster. A script on the new node will install some software from the Codenvy master node, configure its Docker daemon, and then register itself as a member of the Codenvy cluster.
+Codenvy requires a Docker overlay network to exist for our workspace nodes. An overlay network is a network that spans across the various nodes that allows Docker containers to simplify how they communicate with one another. This is mandatory for Codenvy since your workspaces can themselves be composed of multiple containers (such as defined by Docker Compose). If a single workspace has multiple runtimes, we can deploy those runtimes on different physical nodes. An overlay network allows those containers to have a common nework so that they can communicate with each other using container names, without each container having to understand the location of the other.
 
-You can remove nodes with `codenvy remove-node <ip>`.
+Overlay networks require a distributed key-value store to be running on a node. We embed ZooKeeper, a key-value storage implementation as part of the Codenvy master node. We currently only support adding Linux nodes into an overlay network.
+
+The default network in Docker is a "bridge" network. If you know that your users will only ever have single container workspaces (this would be unusual and rare), then you can continue using the bridge network for scaling. Bridge networks can be scaled with Linux, Windows, or Mac.
+
+#### Scaling With Overlay Network (Linux Only)
+
+1. Collect the IP address of Codenvy (CODENVY-IP) and the network interface that Codenvy is bound to (CODENVY-IF).  TODO: command for this
+2. On the Codenvy master node, start ZooKeeper, a key-value storage. `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
+3. On each workspace node, add these options to the Docker daemon and restart it. Configuring the Docker daemon is a one-time exercise and [varies by OS](https://docs.docker.com/engine/admin/):
+  `--cluster-store=consul://<CODENVY-IP>:8500`
+  `--cluster-advertise=<CODENVY-IF>:2376`
+  `--engine-insecure-registry=<CODENVY-IP>:5000`
+4. Docker will not successfully start if these parameters are not properly configured. You can test Docker by running TODO: add notes here.
+5. On the Codenvy master node, modify `codenvy.env` to uncomment or add:
+```
+# Comma-separated list of IP addresses for each workspace node
+CODENVY_SWARM_NODES=<WS-IP>:2376,<WS2-IP>:2376,<WSn-IP>:2376
+```
 
 #### Simulated Scaling
 You can simulate what it is like to scale Codenvy up and down with different nodes by launching Codenvy and its various cluster nodes within VMs using `docker-machine`, a utility that ships with Docker. Docker machine is a way to launch VMs that have Docker pre-installed in the VM using boot2docker. Docker machine uses different "drivers", such as HyperV or VirtualBox as the underlying hypervisor engine to launch the VMs. By lauching a set of VMs with different IP addresses, you can then simulate using Codenvy's Docker commands to start a main system and then having the other nodes add themselves to the cluster.
@@ -23,7 +40,7 @@ Start a VM with key-value storage and start Consul
 ```
 # Key-Value Storage for overlay network
 # Grab the IP address of this VM and use it in other commands where we have <KV-IP> 
-docker-machine  create  -d virtualbox  --engine-env DOCKER_TLS=no kv
+docker-machine create -d virtualbox --engine-env DOCKER_TLS=no kv
 docker -H <KV-IP:2376> run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap
 ```
 
