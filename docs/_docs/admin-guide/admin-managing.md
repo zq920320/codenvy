@@ -28,10 +28,7 @@ ifconfig
 
 2: On the Codenvy master node, start Consul: `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
 
-3: On each workspace node, [configure and restart the Docker daemon](https://docs.docker.com/engine/admin/) with new options:
-  `--cluster-store=consul://<CODENVY-IP>:8500`
-  `--cluster-advertise=<WS-IF>:2376`
-  `--engine-insecure-registry=<CODENVY-IP>:5000`
+3: On each workspace node, [configure and restart Docker](https://docs.docker.com/engine/admin/) with new options, `--cluster-store=consul://<CODENVY-IP>:8500`, `--cluster-advertise=<WS-IF>:2376`, and `--engine-insecure-registry=<CODENVY-IP>:5000`. 
 
 4: Verify that Docker is running properly. Docker will not start if it is not able to connect to the key-value storage. TODO: ADD TEST INSTRUCTION. Each workspace node that successfully runs this command is part of the overlay network.
 
