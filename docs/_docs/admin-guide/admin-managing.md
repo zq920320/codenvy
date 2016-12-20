@@ -134,7 +134,7 @@ Due to differences in file system types between NTFS and what is commonly used i
 However, when you do a `codenvy backup`, we do copy the Postgres data from the container's volume to your host drive, and make it available as part of a `codenvy restore` function. The difference is that if you are browsing your `/instance` folder, you will not see the database data on Windows.
 
 ## Migration
-We currently do not support migrating from the puppet-based configuration of Codenvy to the Dockerized version. We do have a manual process which can be followed to move data between the puppet and Dockerized versions. The versions must be identical. Contact us to let our support team perform this migration for you.
+It is possible to migrate your configuration and user data from a puppet-based installation of Codenvy (5.0.0-M8 and earlier) to the Dockerized version of Codenvy. Please contact our support team for instructions.
 
 ## Disaster Recovery
 Codenvy is not designed to be a "5-9s" system, however there are steps that can be taken by an operations team responsible for Codenvy to ensure a quick recovery from any crashes.
