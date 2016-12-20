@@ -16,7 +16,7 @@ The default network in Docker is a "bridge" network. If you know that your users
 
 #### Scaling With Overlay Network (Linux Only)
 
-1: Collect the IP address of Codenvy <CODENVY-IP> and the network interface that your new workspace node will use <WS-IF>:
+1: Collect the IP address of Codenvy 'CODENVY-IP' and the network interface that your new workspace node will use 'WS-IF':
 ```
 # Codenvy IP is either set by you to CODENVY_HOST or auto-discovered with:
 docker run --net=host eclipse/che-ip:nightly
