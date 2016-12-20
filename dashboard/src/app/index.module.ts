@@ -25,11 +25,8 @@ import {AdminConfig} from './admin/admin-config';
 import {AccountConfig} from './account/details/account-config';
 import {CodenvyOnpremConfig} from './onprem/onprem-config';
 import {WorkspaceConfig} from './workspace/workspace-config';
-<<<<<<< HEAD
 import {DocsConfig} from './documentation/docs-config';
-=======
 import {TeamsConfig} from './teams/teams-config';
->>>>>>> CODENVY-803: ability to create new team and edit it's details
 
 let initModule = angular.module('codenvyDashboard', ['ngAnimate', 'ngCookies', 'ngTouch', 'ngSanitize', 'braintree-angular', 'gavruk.card',
   'ngResource', 'ngRoute', 'ngPasswordStrength', 'ui.codemirror', 'ui.gravatar', 'userDashboard', 'ngMessages']);
