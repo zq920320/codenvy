@@ -10,13 +10,13 @@ Codenvy workspaces can run on different physical nodes managed by Docker Swarm. 
 
 Codenvy requires a Docker overlay network to exist for our workspace nodes. An overlay network is a network that spans across the various nodes that allows Docker containers to simplify how they communicate with one another. This is mandatory for Codenvy since your workspaces can themselves be composed of multiple containers (such as defined by Docker Compose). If a single workspace has multiple runtimes, we can deploy those runtimes on different physical nodes. An overlay network allows those containers to have a common nework so that they can communicate with each other using container names, without each container having to understand the location of the other.
 
-Overlay networks require a distributed key-value store to be running on a node. We embed ZooKeeper, a key-value storage implementation as part of the Codenvy master node. We currently only support adding Linux nodes into an overlay network.
+Overlay networks require a distributed key-value store to be running on a node. We embed Consul, a key-value storage implementation as part of the Codenvy master node. We currently only support adding Linux nodes into an overlay network.
 
 The default network in Docker is a "bridge" network. If you know that your users will only ever have single container workspaces (this would be unusual and rare), then you can continue using the bridge network for scaling. Bridge networks can be scaled with Linux, Windows, or Mac.
 
 #### Scaling With Overlay Network (Linux Only)
 
-1: Collect the IP address of Codenvy `CODENVY-IP` and the network interface that your new workspace node will use `WS-IF`:
+1: Collect the IP address of Codenvy `CODENVY-IP` and the network interface of the new workspace node `WS-IF`:
 
 ```shell
 # Codenvy IP is either set by you to CODENVY_HOST or auto-discovered with:
@@ -26,9 +26,9 @@ docker run --net=host eclipse/che-ip:nightly
 ifconfig
 ```
 
-2: On the Codenvy master node, start ZooKeeper, a key-value storage. `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
+2: On the Codenvy master node, start Consul: `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
 
-3: On each workspace node, add these options to the Docker daemon and restart it. Configuring the Docker daemon is a one-time exercise and [varies by OS](https://docs.docker.com/engine/admin/):
+3: On each workspace node, [configure and restart the Docker daemon](https://docs.docker.com/engine/admin/) with new options:
   `--cluster-store=consul://<CODENVY-IP>:8500`
   `--cluster-advertise=<WS-IF>:2376`
   `--engine-insecure-registry=<CODENVY-IP>:5000`
