@@ -10,9 +10,9 @@ Codenvy workspaces can run on different physical nodes managed by Docker Swarm. 
 
 Codenvy requires a Docker overlay network to exist for our workspace nodes. An overlay network is a network that spans across the various nodes that allows Docker containers to simplify how they communicate with one another. This is mandatory for Codenvy since your workspaces can themselves be composed of multiple containers (such as defined by Docker Compose). If a single workspace has multiple runtimes, we can deploy those runtimes on different physical nodes. An overlay network allows those containers to have a common nework so that they can communicate with each other using container names, without each container having to understand the location of the other.
 
-Overlay networks require a distributed key-value store to be running on a node. We embed Consul, a key-value storage implementation as part of the Codenvy master node. We currently only support adding Linux nodes into an overlay network.
+Overlay networks require a distributed key-value store. We embed Consul, a key-value storage implementation as part of the Codenvy master node. We currently only support adding Linux nodes into an overlay network.
 
-The default network in Docker is a "bridge" network. If you know that your users will only ever have single container workspaces (this would be unusual and rare), then you can continue using the bridge network for scaling. Bridge networks can be scaled with Linux, Windows, or Mac.
+The default network in Docker is a "bridge" network. If you know that your users will only ever have single container workspaces (this would be unusual and rare) and you can scale your system by using a larger single node, then bridge network can be used for production systems.
 
 #### Scaling With Overlay Network (Linux Only)
 
@@ -28,13 +28,14 @@ ifconfig
 
 2: On the Codenvy master node, start Consul: `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
 
-3: On each workspace node, [configure and restart Docker](https://docs.docker.com/engine/admin/) with new options: `--cluster-store=consul://<CODENVY-IP>:8500`, `--cluster-advertise=<WS-IF>:2376`, and `--engine-insecure-registry=<CODENVY-IP>:5000`. 
+3: On each workspace node, [configure and restart Docker](https://docs.docker.com/engine/admin/) with four new options: `--cluster-store=consul://<CODENVY-IP>:8500`, `--cluster-advertise=<WS-IF>:2376`, '--host=tcp://0.0.0.0:2375`, and `--engine-insecure-registry=<CODENVY-IP>:5000`. The first parameter tells Docker where the key-value store is located. The second parameter tells Docker how to link its workspace node to the key-value storage broadcast. The third parameter opens Docker to communicate on Codenvy's swarm cluster. And the fourth parameter allows the Docker daemon to push snapshots to Codenvy's internal registry. If you are running Codenvy behind a proxy, each workspace node Docker daemon should get the same proxy configuration that you placed on the master node. 
 
-4: Verify that Docker is running properly. Docker will not start if it is not able to connect to the key-value storage. TODO: ADD TEST INSTRUCTION. Each workspace node that successfully runs this command is part of the overlay network.
+4: Verify that Docker is running properly. Docker will not start if it is not able to connect to the key-value storage. Run a simple `docker run hello-world` to verify Docker is happy. Each workspace node that successfully runs this command is part of the overlay network.
 
 5: On the Codenvy master node, modify `codenvy.env` to uncomment or add:
 ```json
 # Comma-separated list of IP addresses for each workspace node
+# The ports must match the `--cluster-advertise` port added to Docker daemons
 CODENVY_SWARM_NODES=<WS-IP>:2376,<WS2-IP>:2376,<WSn-IP>:2376
 ```
 
@@ -65,6 +66,7 @@ docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memo
                       --engine-opt="cluster-advertise=eth1:2376" codenvy
 
 # Workspace Node 1
+# 3GB RAM - enough to run a couple workspaces at the same time
 docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "3000" \
                       --engine-opt host=tcp://0.0.0.0:2375 \
                       --engine-opt="cluster-store=consul://<KV-IP>:8500" \
@@ -89,12 +91,14 @@ docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \
            -v /home/docker/.codenvy:/data codenvy/cli:nightly init
 
 # Setup Codenvy's configuration file to have the IP addresses of each workspace node
-sed -i "s/^#CODENVY_WORKSPACE_AUTO_SNAPSHOT=true.*/CODENVY_WORKSPACE_AUTO_SNAPSHOT=true/g" ~/.codenvy/codenvy.env
-sed -i "s/^CODENVY_SWARM_NODES=.*/CODENVY_SWARM_NODES=<WS1-IP>:2376,<WS2-IP>:2376/g" ~/.codenvy/codenvy.env
+sudo sed -i "s/^#CODENVY_WORKSPACE_AUTO_SNAPSHOT=true.*/CODENVY_WORKSPACE_AUTO_SNAPSHOT=true/g" \
+            ~/.codenvy/codenvy.env
+sudo sed -i "s/^CODENVY_SWARM_NODES=.*/CODENVY_SWARM_NODES=<WS1-IP>:2376,<WS2-IP>:2376/g" \
+            ~/.codenvy/codenvy.env
 
 # Start Codenvy with this configuration
 docker run -it --rm -v /var/run/docker.sock:/var/run/docker.sock \
-           -v /home/docker/.codenvy:/data codenvy/cli:nightly init
+           -v /home/docker/.codenvy:/data codenvy/cli:nightly start
 
 # You can then access Codenvy at http://<CODENVY-IP>
 ```
