@@ -23,17 +23,14 @@ Codenvy services require 2 GB storage and 4 GB RAM. The RAM, CPU and storage res
 
 Boot2Docker, docker-machine, Docker for Windows, and Docker for Mac are all Docker variations that launch VMs with Docker running in the VM with access to Docker from your host. We recommend increasing your default VM size to at least 4GB. Each of these technologies have different ways to allow host folder mounting into the VM. Please enable this for your OS so that Codenvy data is persisted on your host disk.
 
-## Software
-* Docker 1.10+
+#### Software
+* Docker 1.11+
 
 The Codenvy CLI - a Docker image - manages the other Docker images and supporting utilities that Codenvy uses during its configuration or operations phases. The CLI also provides utilities for downloading an offline bundle to run Codenvy while disconnected from the network.
 
 Given the nature of the development and release cycle it is important that you have the latest version of docker installed because any issue that you encounter might have already been fixed with a newer Docker release.
 
-Install the most recent version of the Docker Engine for your platform using the [official Docker releases](http://docs.docker.com/engine/installation/), including support for Mac and Windows!  If you are on Linux, you can also install using:
-```bash
-wget -qO- https://get.docker.com/ | sh
-```
+Install the most recent version of the Docker Engine for your platform using the [official Docker releases](http://docs.docker.com/engine/installation/), including support for Mac and Windows!  If you are on Linux, you can also install with `wget -qO- https://get.docker.com/ | sh`.
 
 ### SElinux
 Sometimes Fedora and RHEL/CentOS users will encounter issues with SElinux. Try disabling selinux with `setenforce 0` and check if resolves the issue. If using the latest docker version and/or disabling selinux does not fix the issue then please file a issue request on the [issues](https://github.com/codenvy/codenvy/issues) page. If you are a licensed customer of Codenvy, you can get prioritized support with support@codenvy.com.
@@ -66,14 +63,12 @@ OPTIONAL DOCKER PARAMETERS:
   -e CODENVY_HOST=<YOUR_HOST>          IP address or hostname where Codenvy will serve its users
   -v <LOCAL_PATH>:/data/instance       Where instance, user, log data will be saved
   -v <LOCAL_PATH>:/data/backup         Where backup files will be saved
-  -v <LOCAL_PATH>:/cli                 Where the CLI trace log is saved
   -v <LOCAL_PATH>:/repo                Codenvy git repo to activate dev mode
   -v <LOCAL_PATH>:/sync                Where remote ws files will be copied with sync command
   -v <LOCAL_PATH>:/unison              Where unison profile for optimzing sync command resides
 
 COMMANDS:
   action <action-name>                 Start action on Codenvy instance
-  add-node                             Adds a physical node to serve workspaces intto the Codenvy cluster
   backup                               Backups Codenvy configuration and data to /data/backup volume mount
   config                               Generates a Codenvy config from vars; run on any start / restart
   destroy                              Stops services, and deletes Codenvy instance data
@@ -81,9 +76,7 @@ COMMANDS:
   help                                 This message
   info                                 Displays info about Codenvy and the CLI
   init                                 Initializes a directory with a Codenvy install
-  list-nodes                           Lists all physical nodes that are part of the Codenvy cluster
   offline                              Saves Codenvy Docker images into TAR files for offline install
-  remove-node <ip>                     Removes the physical node from the Codenvy cluster
   restart                              Restart Codenvy services
   restore                              Restores Codenvy configuration and data from /data/backup mount
   rmi                                  Removes the Docker images for <version>, forcing a repull
@@ -91,7 +84,6 @@ COMMANDS:
   start                                Starts Codenvy services
   stop                                 Stops Codenvy services
   sync <wksp-name>                     Synchronize workspace with current working directory
-  test <test-name>                     Start test on Codenvy instance
   upgrade                              Upgrades Codenvy from one version to another with migrations and backups
   version                              Installed version and upgrade paths
 ```
@@ -147,7 +139,7 @@ To avoid issues that can appear from using 'nightly' or 'latest' redirectoins, y
 1. Verify that you have the most recent version with `docker pull eclipse/cli:<version>`.
 2. When running the CLI, commands that use other Docker images have an optional `--pull` and `--force` command line option [which will instruct the CLI to check DockerHub](({{base}}/docs/admin-guide/cli/index.html)) for a newer version and pull it down. Using these flags will slow down performance, but ensures that your local cache is current.
 
-If you are running Codenvy using a tagged version that is a not a redirection label, such as `5.0.0-M7`, then these caching issues will not happen, as the software installed is tagged and specific to that particular version, never changing over time.
+If you are running Codenvy using a tagged version that is a not a redirection label, such as `5.0.0-M7`, then these caching issues will not happen.
 
 ## Volume Mounts
 We use volume mounts to configure certain parts of Codenvy. The presence or absence of certain volume mounts will trigger certain behaviors in the system. For example, you can volume mount a Codenvy source git repository with `:/repo` to active development mode where we start Codenvy's containers using source code from the repository instead of the software inside of the default containers.
@@ -187,6 +179,46 @@ CODENVY_NO_PROXY_FOR_CODENVY_WORKSPACES=localhost,127.0.0.1,<YOUR_CODENVY_HOST>
 ```
 
 The last three entries are injected into workspaces created by your users. This gives your users access to the Internet from within their workspaces. You can comment out these entries to disable access. However, if that access is turned off, then the default templates with source code will fail to be created in workspaces as those projects are cloned from GitHub.com. Your workspaces are still functional, we just prevent the template cloning.
+
+## Firewall Tests
+Firewalls will typically cause traffic problems to appear when you are starting a new workspace or adding a new physical node for scaling. There are certain network configurations where we direct networking traffice between workspaces and Codenvy through external IP addresses, which can flow through routers or firewalls. If ports or protocols are blocked, then certain Codenvy functions will be unavailable.
+
+#### Running Codenvy Behind a Firewall (Linux/Mac)
+```shell
+# Check to see if firewall is running:
+systemctl status firewalld
+
+# Check for list of open ports
+# Verify that ports 80tcp, 443tcp, 2376tcp, 4789udp, 7946tcp/udp, 23750tcp, 32768-65535tcp are open
+firewall-cmd --list-ports
+
+# Optionally open ports on your local firewall:
+firewall-cmd --permanent --add-port=80/tcp
+... and so on
+
+# You can also verify that ports are open:
+nmap -Pn -p <port> localhost
+
+# If the port is closed, then you need to open it by editing /etc/pf.conf.
+# For example, open port 1234 for TCP for all interfaces:
+pass in proto tcp from any to any port 1234
+
+# And then restart your firewall
+```
+
+If you are going to be scaling Codenvy with additional workspace nodes, then each workspace node also needs to have ports `2375 tcp`, `2376 tcp`, `4789 udp`, `7946 tcp/udp`, and `32768-65535 tcp` are open on each node.
+
+If you are going to use the embedded Zabbix monitor that is deployed with Codenvy, then you must also have port `10050 tcp` open on the master node and the workspace nodes.
+
+#### Running Codenvy Behind a Firewall (Windows)
+
+There are many third party firewall services. Different versions of Windows OS also have different firewall configurations. The built-in Windows firewall can be configured in the control panel under "System and Security":
+1. In the left pane, right-click `Inbound Rules`, and then click `New Rule` in the action pane.
+2. In the `Rule Type` dialog box, select `Port`, and then click `Next`.
+3. In the `Protocol and Ports` dialog box, select `TCP`. 
+4. Select speicfic local ports, enter the port number to be opened and click `Next`.
+5. In the `Action` dialog box, select `Allow the Connection`, and then click `Next`.
+6. In the `Name` dialog box, type a name and description for this rule, and then click `Finish`.
 
 ## Offline Installation
 We support offline (disconnected from the Internet) installation and operation. This is helpful for  restricted environments, regulated datacenters, or offshore installations. The offline installation downloads the CLI, core system images, and any stack images while you are within a network DMZ with DockerHub access. You can then move those files to a secure environment and start Codenvy.
