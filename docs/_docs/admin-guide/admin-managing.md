@@ -28,7 +28,7 @@ ifconfig
 
 2: On the Codenvy master node, start Consul: `docker -H <CODENVY-IP>:2376 run -d -p 8500:8500 -h consul progrium/consul -server -bootstrap`
 
-3: On each workspace node, [configure and restart Docker](https://docs.docker.com/engine/admin/) with four new options: `--cluster-store=consul://<CODENVY-IP>:8500`, `--cluster-advertise=<WS-IF>:2376`, '--host=tcp://0.0.0.0:2375`, and `--engine-insecure-registry=<CODENVY-IP>:5000`. The first parameter tells Docker where the key-value store is located. The second parameter tells Docker how to link its workspace node to the key-value storage broadcast. The third parameter opens Docker to communicate on Codenvy's swarm cluster. And the fourth parameter allows the Docker daemon to push snapshots to Codenvy's internal registry. If you are running Codenvy behind a proxy, each workspace node Docker daemon should get the same proxy configuration that you placed on the master node. 
+3: On each workspace node, [configure and restart Docker](https://docs.docker.com/engine/admin/) with four new options: `--cluster-store=consul://<CODENVY-IP>:8500`, `--cluster-advertise=<WS-IF>:2376`, '--host=tcp://0.0.0.0:2375`, and `--engine-insecure-registry=<CODENVY-IP>:5000`. The first parameter tells Docker where the key-value store is located. The second parameter tells Docker how to link its workspace node to the key-value storage broadcast. The third parameter opens Docker to communicate on Codenvy's swarm cluster. And the fourth parameter allows the Docker daemon to push snapshots to Codenvy's internal registry. If you are running Codenvy behind a proxy, each workspace node Docker daemon should get the same proxy configuration that you placed on the master node. If you would like your Codenvy master node to also host workspaces, you can add these parameters to your master Docker daemon as well.
 
 4: Verify that Docker is running properly. Docker will not start if it is not able to connect to the key-value storage. Run a simple `docker run hello-world` to verify Docker is happy. Each workspace node that successfully runs this command is part of the overlay network.
 
@@ -61,9 +61,7 @@ Start 3 VMs named 'codenvy', 'ws1', 'ws2'):
 # Codenvy 
 # Grab the IP address of this VM and use it in other commands where we have <CODENVY-IP>
 docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "2048" \
-                      --engine-opt host=tcp://0.0.0.0:2375 \
-                      --engine-opt="cluster-store=consul://<KV-IP>:8500" \
-                      --engine-opt="cluster-advertise=eth1:2376" codenvy
+                      --engine-opt host=tcp://0.0.0.0:2375 codenvy
 
 # Workspace Node 1
 # 3GB RAM - enough to run a couple workspaces at the same time
