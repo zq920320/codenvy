@@ -134,12 +134,15 @@ You can place limits on how users interact with the system to control overall sy
 
 You can also set limits on Docker's allocation of CPU to workspaces, which may be necessary if you have a very dense workspace population where users are competing for limited physical resources.
 
-## Private Docker Registries
-Some enterprises use a trusted Docker registry to store their Docker images. If you want your workspace stacks and machines to be powered by these images, then you need to configure each registry and the credentialed access. Once these registries are configured, then you can have users or team leaders create stacks that use recipes with Dockerfiles or images using the `FROM <your-registry>/<your-repo>` syntax.
+## Docker
+Workspace runtimes are powered by one or more Docker containers. When a user creates a workpace, they do so from a [stack]() which includes a Dockerfile or reference to a Docker image which will be used to create the containers for the workspace runtimes. Stacks can pull that image from a public registry, like DockerHub, or a private registry. Images in a registry can be publicly visible or private, which require user credentials to access. You can also set up a private registry to act as a mirror to Docker Hub.  And, if you are running Codenvy behind a proxy, you can configure the Docker daemon registry to operate behind a proxy.
 
-There are different configurations for AWS EC2 and the Docker regsitry. You can define as many different registries as you'd like, using the numerical indicator in the environment variable. In case of adding several registries just copy set of properties and append `REGISTRY[n]` for each variable.
+### Private Images  
+When users create a workspace, they must select a Docker image (stack) to power the workspace. We provide ready-to-go stacks which reference images hosted at the public Docker Hub, which do not require any authenticated access to pull. You can provide your own images that are stored in a local private registry or at Docker Hub. The images may be publicly or privately visible, even if they are part of a private registry.
 
-In `codenvy.env` file:
+If your stack images that Codenvy wants to pull require authenticated access to any registry, or if you want Codenvy to push snapshot images into a registry (also requiring authenticated access), then you must configure registry authentication. 
+
+In `codenvy.env`:
 ```
 CODENVY_DOCKER_REGISTRY_AUTH_REGISTRY1_URL=url1
 CODENVY_DOCKER_REGISTRY_AUTH_REGISTRY1_USERNAME=username1
@@ -150,3 +153,57 @@ CODENVY_DOCKER_REGISTRY_AWS_REGISTRY1_REGION=region1
 CODENVY_DOCKER_REGISTRY_AWS_REGISTRY1_ACCESS__KEY__ID=key_id1
 CODENVY_DOCKER_REGISTRY_AWS_REGISTRY1_SECRET__ACCESS__KEY=secret1
 ```
+
+There are different configurations for AWS EC2 and the Docker regsitry. You can define as many different registries as you'd like, using the numerical indicator in the environment variable. In case of adding several registries just copy set of properties and append `REGISTRY[n]` for each variable.
+
+
+#### Pulling Private Images in Stacks
+Once you have configured private registry access, any stack that has a `FROM <registry>/<repository>` that requires authenticated access will use the provided credentials within `codenvy.env` to access the registry.
+
+```text  
+# Syntax
+FROM <repository>/<image>:<tag>
+
+# Example:
+FROM my.registry.url:9000/image:latest
+```
+
+### Using Snapshots with Private Registries
+You can configure Codenvy to save your workspace snapshots to a private registry that you have installed, such as JFrog's Artifactory or Docker's Enterprise Registry. The default configuration of workspace snapshots is to have them saved within a private Docker registry that we start when you start Codenvy.
+
+#### Save Workspace Snapshots to a Custom Private Registry
+In `codenvy.env`:
+
+```
+CODENVY_DOCKER_REGISTRY_FOR_WORKSPACE_SHAPSHOTS=<registry-url>
+```
+
+### Custom Dockerfiles and Composefiles for Workspaces
+Your workspaces are powered by a set of runtime environments. The default runtime is Docker. Typically, admins have pre-built images in DockerHub or another registry which are pulled when the workspace is created. You can optionally provide custom Dockerfiles (or let your users provide their own Dockerfiles), which will dynamically create a workspace image when a user creates a new workspace. 
+
+To use your custom Dockerfiles, you can:
+
+1. Create a [custom stack](), which includes a [recipe]() with your Dockerfile. 
+2. Or, users can create a custom recipe when creating a workspace that references your registry.
+
+### Privileged Mode
+Docker's privileged mode allows a container to have root-level access to the host from within the container. This enables containers to do more than they normally would, but opens up security risks. You can enable your workspaces to have privileged mode, giving your users root-level access to the host where Che is running (in addition to root access of their workspace). Privileged mode is necessary if you want to enable certain features such as Docker in Docker.
+
+By default, workspaces are not configured with Docker privileged mode.  There are many security risks to activating this feature - please review the various issues with blogs posted online. In `codenvy.env`:
+
+```shell
+CODENVY_MACHINE_DOCKER_PRIVILEGE_MODE=true
+```
+
+### Mirroring Docker Hub  
+If you are running a private registry internally to your company, you can [optionally mirror Docker Hub](https://docs.docker.com/registry/mirror/). Your private registry will download and cache any images that your users reference from the public Docker Hub. You need to [configure your Docker daemon to make use of mirroring](https://docs.docker.com/registry/mirror/).
+
+### Using Docker In Workspaces
+If you'd like your users to work with projects which have their own Docker images and Docker build capabilities inside of their workspace, then you need to configure the workspace to work with Docker. You have two options:
+
+1. Activate Docker's prvileged mode, where your user workspaces have access to the host.
+2. Configure Codenvy workspaces to volume mount their host Daemon when starting
+
+These two tactics will allow user workspaces to perform `docker` commands from within their workspace to create and work with Docker containers that will be outside the workspace. In other words, this makes your user's workspace feel like their laptop where they would normally be performing `docker build` and `docker run` commands.
+
+You will need to make sure that your user's workspaces are powered from a stack that has a Docker client installed inside of it. Our defalt stacks do not have a Docker client installed, but we have sample stacks from Che-in-Che that have examples for how to handle this.
