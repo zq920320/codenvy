@@ -47,8 +47,6 @@ This simulated scaling can be used for production, but it is generally discourag
 
 As an example, the following sequence launches a 3-node cluster of Codenvy using Docker machine with a VirtualBox hypervisor. In this example, we launch 4 VMs: a Codenvy node, 2 additional workspace nodes, and a node to handle key-value storage. The key-value storage node is typically not part of the scaling configuration. However, Codenvy requires an "overlay" network, which is powered by a key-value storage provider such as Consule, etcd, or zookeeper. When running Codenvy on the host, we are able to setup an etcd key-value storage system automatically and associate the nodes with it. However, in a VM scale-out scenario, a dedicated key-value storage provider is needed. This particular example uses Consul key-value storage to setup the overlay network. 
 
-One difference between running Codenvy using `docker-machine` is that each VM, including the Codenvy master, must have an additional option '--host=tcp://0.0.0.0:2375` added into the Docker daemon. This option is not part of the normal scaling configuration.
-
 Start a VM with key-value storage and start Consul:
 ```shell
 # Key-Value storage for overlay network
@@ -61,20 +59,17 @@ Start 3 VMs named 'codenvy', 'ws1', 'ws2'):
 ```shell
 # Codenvy 
 # Grab the IP address of this VM and use it in other commands where we have <CODENVY-IP>
-docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "2048" \
-                      --engine-opt="host=tcp://0.0.0.0:2375" codenvy
+docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "2048" codenvy
 
 # Workspace Node 1
 # 3GB RAM - enough to run a couple workspaces at the same time
 docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "3000" \
-                      --engine-opt="host=tcp://0.0.0.0:2375" \
                       --engine-opt="cluster-store=consul://<KV-IP>:8500" \
                       --engine-opt="cluster-advertise=eth1:2376" \
                       --engine-insecure-registry="<CODENVY-IP>:5000" ws1
 
 # Workspace Node 2
 docker-machine create -d virtualbox --engine-env DOCKER_TLS=no --virtualbox-memory "3000" \
-                      --engine-opt="host=tcp://0.0.0.0:2375" \
                       --engine-opt="cluster-store=consul://<KV-IP>:8500" \
                       --engine-opt="cluster-advertise=eth1:2376" \
                       --engine-insecure-registry="<CODENVY-IP>:5000" ws2
