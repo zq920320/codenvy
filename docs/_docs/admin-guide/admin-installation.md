@@ -83,15 +83,13 @@ All ports are TCP unless otherwise noted.
 The Docker daemon will need to be remotely accessed by Codenvy, so it has to be [setup to use a TCP socket](https://docs.docker.com/engine/reference/commandline/dockerd/#/daemon-socket-option). This port only needs to be accessible to the Codenvy master node.
 
 #### Workspace Node: Internal
-The following ports need to be allowed for outbound connections only. All ports are TCP unless otherwise noted.
+The following ports need to be allowed in the internal network.
 
-|Port|Service|
-| --- |--- |
-|2181|ZooKeeper
-|2375|Swarm
-|4789|Docker Overlay (UDP)
-|5000|Docker Registry
-|7946|Docker Overlay (TCP + UDP)
+|Port|Service|Notes|
+| --- |--- |--- |
+|2375|Docker Daemon|Swarm should be able to reach Docker daemon from the master node. If Master node is in a different network, this port should be extrenally accessible.
+|4789|Docker Overlay (UDP)|Workspace nodes use this port to create overlay networks. If Workspace nodes are is different networks, this port should be externally accessible.
+|7946|Docker Overlay (TCP + UDP)|Workspace nodes use this port to create overlay networks. If Workspace nodes are is different networks, this port should be externally accessible.
 
 # Installation
 ## Syntax
