@@ -121,7 +121,7 @@ public class WorkspaceActivityManager {
                 } catch (NotFoundException e) {
                     LOG.info("Workspace already stopped");
                 } catch (Exception ex) {
-                    LOG.error("Failed to stop the workspace", ex);
+                    LOG.debug("Failed to stop the workspace", ex);
                 } finally {
                     activeWorkspaces.remove(workspaceExpireEntry.getKey());
                 }
