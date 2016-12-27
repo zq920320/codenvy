@@ -17,27 +17,15 @@ package org.eclipse.che.ide.ext.bitbucket.shared;
 import org.eclipse.che.dto.shared.DTO;
 
 /**
- * Represents a Bitbucket repository fork.
+ * Represents author of Bitbucket Server pull request.
  *
- * @author Kevin Pollet
+ * @author Igor Vinokur
  */
 @DTO
-public interface BitbucketRepositoryFork {
-    String getName();
+public interface BitbucketServerAuthor {
+    BitbucketServerUser getUser();
 
-    void setName(String name);
+    void setUser(BitbucketServerUser user);
 
-    BitbucketRepositoryFork withName(String name);
-
-    boolean isIsPrivate();
-
-    void setIsPrivate(boolean isIsPrivate);
-
-    BitbucketRepositoryFork withIsPrivate(boolean isIsPrivate);
-
-    String getOwner();
-
-    void setOwner(String owner);
-
-    BitbucketRepositoryFork withOwner(String owner);
+    BitbucketServerAuthor withUser(BitbucketServerUser user);
 }

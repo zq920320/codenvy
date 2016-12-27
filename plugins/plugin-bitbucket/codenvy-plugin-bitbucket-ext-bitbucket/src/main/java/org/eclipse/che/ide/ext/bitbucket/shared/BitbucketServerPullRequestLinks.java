@@ -16,28 +16,16 @@ package org.eclipse.che.ide.ext.bitbucket.shared;
 
 import org.eclipse.che.dto.shared.DTO;
 
+import java.util.List;
+
 /**
- * Represents a Bitbucket repository fork.
- *
- * @author Kevin Pollet
+ * Represents links from Bitbucket Server pull request.
  */
 @DTO
-public interface BitbucketRepositoryFork {
-    String getName();
+public interface BitbucketServerPullRequestLinks {
+    List<BitbucketLink> getSelf();
 
-    void setName(String name);
+    void setSelf(List<BitbucketLink> self);
 
-    BitbucketRepositoryFork withName(String name);
-
-    boolean isIsPrivate();
-
-    void setIsPrivate(boolean isIsPrivate);
-
-    BitbucketRepositoryFork withIsPrivate(boolean isIsPrivate);
-
-    String getOwner();
-
-    void setOwner(String owner);
-
-    BitbucketRepositoryFork withOwner(String owner);
+    BitbucketServerPullRequestLinks withSelf(List<BitbucketLink> self);
 }
