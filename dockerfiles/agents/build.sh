@@ -9,7 +9,7 @@ IMAGE_NAME="codenvy/agents"
 DIR=$(cd "$(dirname "$0")"; pwd)
 . ${DIR}/../build.include
 
-mvn clean install -f ${DIR}/pom.xml
+mvn clean install -f ${DIR}/pom.xml -U
 
 # build
 init "$@"
