@@ -160,6 +160,10 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.plugin</groupId>
+            <artifactId>codenvy-plugin-bitbucketserver-webhooks</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.codenvy.plugin</groupId>
             <artifactId>codenvy-plugin-github-factory-resolver</artifactId>
         </dependency>
         <dependency>

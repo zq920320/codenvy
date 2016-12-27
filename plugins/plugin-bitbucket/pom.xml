@@ -32,5 +32,6 @@
         <module>codenvy-plugin-bitbucket-ext-bitbucket</module>
         <module>codenvy-plugin-bitbucket-configuration</module>
         <module>codenvy-plugin-bitbucket-pullrequest</module>
+        <module>codenvy-plugin-bitbucketserver-webhooks</module>
     </modules>
 </project>
