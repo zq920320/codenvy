@@ -174,6 +174,26 @@ cmd_config_post_action() {
     log "docker volume create --name=codenvy-postgresql-volume >> \"${LOGS}\""
     docker volume create --name=codenvy-postgresql-volume >> "${LOGS}"
   fi
+
+  if [ "${CHE_DEVELOPMENT_MODE}" = "on" ]; then
+    # copy workspace agent assembly to instance folder
+    if [[ ! -f $(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${WS_AGENT_IN_REPO}) ]]; then
+      warning "You volume mounted a valid $CHE_FORMAL_PRODUCT_NAME repo to ':/repo', but we could not find a ${CHE_FORMAL_PRODUCT_NAME} workspace agent assembly."
+      warning "Have you built ${WS_AGENT_IN_REPO_MODULE_NAME} with 'mvn clean install'?"
+      return 2
+    fi
+    cp "$(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${WS_AGENT_IN_REPO})" \
+        "${CHE_CONTAINER_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}"
+
+    # copy terminal agent assembly to instance folder
+    if [[ ! -f $(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${TERMINAL_AGENT_IN_REPO}) ]]; then
+      warning "You volume mounted a valid $CHE_FORMAL_PRODUCT_NAME repo to ':/repo', but we could not find a ${CHE_FORMAL_PRODUCT_NAME} terminal agent assembly."
+      warning "Have you built ${TERMINAL_AGENT_IN_REPO_MODULE_NAME} with 'mvn clean install'?"
+      return 2
+    fi
+    cp "$(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${TERMINAL_AGENT_IN_REPO})" \
+        "${CHE_CONTAINER_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}"
+  fi
 }
 
 # Runs puppet image to generate ${CHE_FORMAL_PRODUCT_NAME} configuration
@@ -203,7 +223,9 @@ generate_configuration_with_puppet() {
                   -e \"CHE_CONFIG=${CHE_HOST_INSTANCE}\" \
                   -e \"CHE_INSTANCE=${CHE_HOST_INSTANCE}\" \
                   -e \"CHE_DEVELOPMENT_REPO=${CHE_HOST_DEVELOPMENT_REPO}\" \
-                  -e \"CHE_ASSEMBLY=${CHE_ASSEMBLY}\" \
+                  -e \"PATH_TO_CHE_ASSEMBLY=${CHE_ASSEMBLY}\" \
+                  -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}\" \
+                  -e \"PATH_TO_TERMINAL_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}\" \
                   --entrypoint=/usr/bin/puppet \
                       $IMAGE_INIT \
                           apply --modulepath \
