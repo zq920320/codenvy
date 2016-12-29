@@ -210,7 +210,7 @@ public class SystemLicenseManager implements SystemLicenseManagerObservable {
     public long getAllowedUserNumber() {
         try {
             SystemLicense systemLicense = load();
-            if (!systemLicense.isExpiredCompletely()) {
+            if (!systemLicense.isTimeForRenewExpired()) {
                 return systemLicense.getNumberOfUsers();
             } else {
                 return SystemLicense.MAX_NUMBER_OF_FREE_USERS;
@@ -240,7 +240,7 @@ public class SystemLicenseManager implements SystemLicenseManagerObservable {
             if (isPaidLicenseExpiring()) {
                 issues.add(newDto(IssueDto.class).withStatus(Issue.Status.LICENSE_EXPIRING)
                                                  .withMessage(getMessageForLicenseExpiring()));
-            } else if (isPaidLicenseCompletelyExpired() && ! isSystemUsageLegal()) {
+            } else if (isTimeForPaidLicenseRenewExpired() && ! isSystemUsageLegal()) {
                 issues.add(newDto(IssueDto.class).withStatus(Issue.Status.LICENSE_EXPIRED)
                                                  .withMessage(getMessageForLicenseCompletelyExpired()));
             }
@@ -294,12 +294,12 @@ public class SystemLicenseManager implements SystemLicenseManagerObservable {
     public String getMessageForLicenseExpiring() {
         return format(LICENSE_EXPIRING_MESSAGE_TEMPLATE,
                       SystemLicense.MAX_NUMBER_OF_FREE_USERS,
-                      load().daysBeforeCompleteExpiration());
+                      load().daysBeforeTimeForRenewExpires());
     }
 
     /**
      * Returns error message when license completely expired (including additional time for renew license) with different content
-     * depending on if current user is admin, and if there is existed license in the system.
+     * depending on if current user is admin.
      * @throws ServerException
      */
     public String getMessageForLicenseCompletelyExpired() throws ServerException {
@@ -308,12 +308,33 @@ public class SystemLicenseManager implements SystemLicenseManagerObservable {
                           userManager.getTotalCount(),
                           SystemLicense.MAX_NUMBER_OF_FREE_USERS);
         } else {
-            try {
-                load();
                 return LICENSE_COMPLETELY_EXPIRED_MESSAGE_FOR_NON_ADMIN;
-            } catch (SystemLicenseException e) {
-                return LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE_FOR_WORKSPACE;
+        }
+    }
+
+    /**
+     * Returns error message when license completely expired (including additional time for renew license) with different content
+     * depending on if current user is admin, and if there is existed license in the system.
+     * @throws ServerException
+     */
+    public String getMessageWhenUserCannotStartWorkspace() throws ServerException {
+        try {
+            // when license exists
+            SystemLicense license = load();   // check if license exists
+            if (license.isTimeForRenewExpired()) {
+                return getMessageForLicenseCompletelyExpired();
             }
+        } catch (SystemLicenseException e) {
+            // do nothing
+        }
+
+        // when license absent, invalid or non-completely-expired
+        if (isAdmin()) {
+            return format(LICENSE_COMPLETELY_EXPIRED_MESSAGE_FOR_ADMIN_TEMPLATE,
+                          userManager.getTotalCount(),
+                          SystemLicense.MAX_NUMBER_OF_FREE_USERS);
+        } else {
+            return LICENSE_HAS_REACHED_ITS_USER_LIMIT_MESSAGE_FOR_WORKSPACE;
         }
     }
 
@@ -341,9 +362,9 @@ public class SystemLicenseManager implements SystemLicenseManagerObservable {
     }
 
     @VisibleForTesting
-    boolean isPaidLicenseCompletelyExpired() throws ServerException, ConflictException {
+    boolean isTimeForPaidLicenseRenewExpired() throws ServerException, ConflictException {
         SystemLicense license = load();
-        if (license.isExpiredCompletely()) {
+        if (license.isTimeForRenewExpired()) {
             revertToFairSourceLicense(license);
             return true;
         } else {

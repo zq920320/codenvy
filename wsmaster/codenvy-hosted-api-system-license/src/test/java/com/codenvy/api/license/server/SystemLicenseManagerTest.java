@@ -309,7 +309,7 @@ public class SystemLicenseManagerTest {
     @Test
     public void shouldReturnAllowedUserNumberDueToLicense() {
         doReturn((int)USER_NUMBER).when(license).getNumberOfUsers();
-        doReturn(false).when(license).isExpiredCompletely();
+        doReturn(false).when(license).isTimeForRenewExpired();
 
         assertEquals(licenseManager.getAllowedUserNumber(), USER_NUMBER);
     }
@@ -322,7 +322,7 @@ public class SystemLicenseManagerTest {
 
     @Test
     public void shouldReturnAllowedUserNumberDueToFreeUsageTermsWhenLicenseCompletelyExpired() {
-        doReturn(true).when(license).isExpiredCompletely();
+        doReturn(true).when(license).isTimeForRenewExpired();
         assertEquals(licenseManager.getAllowedUserNumber(), MAX_NUMBER_OF_FREE_USERS);
     }
 
@@ -346,7 +346,7 @@ public class SystemLicenseManagerTest {
         doReturn(false).when(licenseManager).canUserBeAdded();
         doReturn(false).when(licenseManager).isFairSourceLicenseAccepted();
         doReturn(false).when(licenseManager).isPaidLicenseExpiring();
-        doReturn(true).when(licenseManager).isPaidLicenseCompletelyExpired();
+        doReturn(true).when(licenseManager).isTimeForPaidLicenseRenewExpired();
         doReturn(false).when(licenseManager).isSystemUsageLegal();
         doReturn("License expired").when(licenseManager).getMessageForLicenseCompletelyExpired();
         assertEquals(licenseManager.getLicenseIssues(),
@@ -363,7 +363,7 @@ public class SystemLicenseManagerTest {
         doReturn(true).when(licenseManager).canUserBeAdded();
         doReturn(true).when(licenseManager).isFairSourceLicenseAccepted();
         doReturn(false).when(licenseManager).isPaidLicenseExpiring();
-        doReturn(false).when(licenseManager).isPaidLicenseCompletelyExpired();
+        doReturn(false).when(licenseManager).isTimeForPaidLicenseRenewExpired();
         assertEquals(licenseManager.getLicenseIssues(), ImmutableList.of());
     }
 
@@ -418,7 +418,7 @@ public class SystemLicenseManagerTest {
     @Test
     public void shouldReturnMessageForLicenseExpiring() {
         // given
-        doReturn(5).when(license).daysBeforeCompleteExpiration();
+        doReturn(5).when(license).daysBeforeTimeForRenewExpires();
 
         // when
         String result = licenseManager.getMessageForLicenseExpiring();
@@ -430,10 +430,10 @@ public class SystemLicenseManagerTest {
     @Test
     public void shouldReturnExpiredStatus() throws ServerException, ConflictException {
         // given
-        doReturn(true).when(license).isExpiredCompletely();
+        doReturn(true).when(license).isTimeForRenewExpired();
 
         // when
-        Boolean result = licenseManager.isPaidLicenseCompletelyExpired();
+        Boolean result = licenseManager.isTimeForPaidLicenseRenewExpired();
 
         // then
         assertTrue(result);
@@ -443,10 +443,10 @@ public class SystemLicenseManagerTest {
     @Test
     public void shouldReturnNonExpiredStatus() throws ServerException, ConflictException {
         // given
-        doReturn(false).when(license).isExpiredCompletely();
+        doReturn(false).when(license).isTimeForRenewExpired();
 
         // when
-        Boolean result = licenseManager.isPaidLicenseCompletelyExpired();
+        Boolean result = licenseManager.isTimeForPaidLicenseRenewExpired();
 
         // then
         assertFalse(result);
@@ -454,38 +454,52 @@ public class SystemLicenseManagerTest {
     }
 
     @Test
-    public void testGetMessageForLicenseExpiredForAdmin() throws ServerException {
+    public void testGetMessageWhenAdminCannotStartWorkspaceWhenLicenseExpired() throws ServerException {
         // given
         doReturn(true).when(subject).hasPermission(SystemDomain.DOMAIN_ID, null, SystemDomain.MANAGE_SYSTEM_ACTION);
+        doReturn(true).when(license).isTimeForRenewExpired();
 
         // when
-        String result = licenseManager.getMessageForLicenseCompletelyExpired();
+        String result = licenseManager.getMessageWhenUserCannotStartWorkspace();
 
         // then
         assertEquals(result, "There are currently 4 users registered in Codenvy but your license only allows 3. Users cannot start workspaces.");
-        verify(licenseManager, never()).load();
     }
 
     @Test
-    public void testGetMessageForLicenseExpiredForNonAdmin() throws ServerException {
+    public void testGetMessageWhenNonAdminCannotStartWorkspaceWhenLicenseExpired() throws ServerException {
         // given
-        EnvironmentContext.getCurrent().setSubject(null);
+        doReturn(false).when(subject).hasPermission(SystemDomain.DOMAIN_ID, null, SystemDomain.MANAGE_SYSTEM_ACTION);
+        doReturn(true).when(license).isTimeForRenewExpired();
 
         // when
-        String result = licenseManager.getMessageForLicenseCompletelyExpired();
+        String result = licenseManager.getMessageWhenUserCannotStartWorkspace();
 
         // then
         assertEquals(result, "The Codenvy license is expired - you can access the user dashboard but not the IDE.");
     }
 
     @Test
-    public void testGetMessageForLicenseExpiredWhenLicenseAbsentForNonAdmin() throws ServerException {
+    public void testGetMessageWhenAdminCannotStartWorkspaceWhenThereIsNoLicense() throws ServerException {
         // given
-        doReturn(false).when(subject).hasPermission(SystemDomain.DOMAIN_ID, null, SystemDomain.MANAGE_SYSTEM_ACTION);
+        doReturn(true).when(subject).hasPermission(SystemDomain.DOMAIN_ID, null, SystemDomain.MANAGE_SYSTEM_ACTION);
         doThrow(SystemLicenseException.class).when(licenseManager).load();
 
         // when
-        String result = licenseManager.getMessageForLicenseCompletelyExpired();
+        String result = licenseManager.getMessageWhenUserCannotStartWorkspace();
+
+        // then
+        assertEquals(result, "There are currently 4 users registered in Codenvy but your license only allows 3. Users cannot start workspaces.");
+    }
+
+    @Test
+    public void testGetMessageWhenNonAdminCannotStartWorkspaceWhenThereIsNoLicense() throws ServerException {
+        // given
+        EnvironmentContext.getCurrent().setSubject(null);
+        doThrow(SystemLicenseException.class).when(licenseManager).load();
+
+        // when
+        String result = licenseManager.getMessageWhenUserCannotStartWorkspace();
 
         // then
         assertEquals(result, "The Codenvy license has reached its user limit - you can access the user dashboard but not the IDE.");
