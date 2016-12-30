@@ -16,11 +16,8 @@
 
 **Codenvy version:** [Enter Codenvy version here]
 **OS and version:** [Enter OS name and version here]
+**Browser version:** [Enter browser name and version here]
 
-**Additional information:**
-
-Problem only started happening recently, didn't happen in an older version of Codenvy: [Yes / No]
+**Other questions:**
+Problem happens at codenvy.io or with the installed Codenvy Enterprise?: 
 Problem can be reliably reproduced: [Yes / No - it's random]
-
-**Diagnostic bundle**
-Execute the script on [this page](https://github.com/codenvy/codenvy/wiki/Support-Diagnostics) and post public link to the bundle here.
