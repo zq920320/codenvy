@@ -120,9 +120,11 @@ cmd_start_check_ports() {
     if [[ "$USER_DEBUG_PORT" = "" ]]; then
       # If the user has not set a debug port, then use the default
       CODENVY_DEBUG_PORT=8000
+      CHE_DEBUG_PORT=8000
     else 
       # Otherwise, this is the value set by the user
       CODENVY_DEBUG_PORT=$USER_DEBUG_PORT
+      CHE_DEBUG_PORT=$USER_DEBUG_PORT
     fi
   fi
 
@@ -267,6 +269,4 @@ generate_configuration_with_puppet() {
   log ${GENERATE_CONFIG_COMMAND}
   eval ${GENERATE_CONFIG_COMMAND}
 }
-
-
 
