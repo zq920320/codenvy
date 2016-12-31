@@ -167,9 +167,11 @@ services:
     image: <%= ENV["IMAGE_AGENTS"] %>
     volumes:
       - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/lighttpd/lighttpd.conf:/etc/lighttpd/lighttpd.conf'
-<% if scope.lookupvar('compose::env') != 'production' -%>
+<% if scope.lookupvar('compose::codenvy_repo') == 'on' -%>
       - '<%= scope.lookupvar('compose::codenvy_development_ws_agent') -%>:/data/ws-agent.tar.gz'
       - '<%= scope.lookupvar('compose::codenvy_development_terminal_agent') -%>:/data/linux_amd64/terminal/websocket-terminal-linux_amd64.tar.gz'
+<% end -%>
+<% if scope.lookupvar('compose::env') != 'production' -%>
     ports:
       - '9000:9000'
 <% end -%>
@@ -204,7 +206,7 @@ services:
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/data/codenvy/che-machines/:/opt/codenvy-data/che-machines/'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/codenvy/conf:/opt/codenvy-data/conf'
        - '<%= scope.lookupvar('compose::codenvy_folder') -%>/config/codenvy/conf/server.xml:/opt/codenvy-tomcat/conf/server.xml'
-<% if scope.lookupvar('codenvy::env') != 'production' -%>
+<% if scope.lookupvar('codenvy::codenvy_repo') == 'on' -%>
        - '<%= scope.lookupvar('compose::codenvy_development_tomcat') -%>:/opt/codenvy-tomcat'
 <% end -%>
     links:
