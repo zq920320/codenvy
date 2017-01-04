@@ -223,6 +223,7 @@ generate_configuration_with_puppet() {
 
   else
     CHE_REPO="off"
+    WRITE_PARAMETERS=""
   fi
 
   GENERATE_CONFIG_COMMAND="docker_run \
