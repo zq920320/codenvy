@@ -128,27 +128,22 @@ cmd_start_check_ports() {
     fi
   fi
 
-  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  PORT_BREAK="no" 
+  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
   if debug_server; then
-    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
   fi
 
-  if ! $(port_open 80) || ! $(port_open 443) || ! $(port_open 5000) || ! $(port_open 2181); then
+  if [[ "${PORT_BREAK}" = "yes" ]]; then
     echo ""
     error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
     return 2;
-  fi
-
-  if debug_server; then
-    if ! $(port_open ${CODENVY_DEBUG_PORT}) || ! $(port_open 9000); then
-      echo ""
-      error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
-      return 12
-    fi
   fi
 }
 
@@ -211,51 +206,34 @@ generate_configuration_with_puppet() {
   fi
 
   if debug_server; then
-    DEV_MODE="development"
+    CHE_ENVIRONMENT="development"
     WRITE_LOGS=""
   else
-    DEV_MODE="production"
+    CHE_ENVIRONMENT="production"
     WRITE_LOGS=">> \"${LOGS}\""
   fi
 
   if local_repo; then
     CHE_REPO="on"
+    WRITE_PARAMETERS="-v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/manifests\":/etc/puppet/manifests:ro \
+                      -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/modules\":/etc/puppet/modules:ro \
+                      -e \"PATH_TO_CHE_ASSEMBLY=${CHE_ASSEMBLY}\" \
+                      -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}\" \
+                      -e \"PATH_TO_TERMINAL_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}\""
+
   else
     CHE_REPO="off"
   fi
 
-  if local_repo; then
-  # Note - bug in docker requires relative path for env, not absolute
   GENERATE_CONFIG_COMMAND="docker_run \
                   --env-file=\"${REFERENCE_CONTAINER_ENVIRONMENT_FILE}\" \
                   --env-file=/version/$CHE_VERSION/images \
                   -v \"${CHE_HOST_INSTANCE}\":/opt/${CHE_MINI_PRODUCT_NAME}:rw \
-                  -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/manifests\":/etc/puppet/manifests:ro \
-                  -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/modules\":/etc/puppet/modules:ro \
+                  ${WRITE_PARAMETERS} \
                   -e \"POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}\" \
                   -e \"CODENVY_ENV_FILE=${CODENVY_ENV_FILE}\" \
                   -e \"CHE_CONTAINER_ROOT=${CHE_CONTAINER_ROOT}\" \
-                  -e \"CHE_ENVIRONMENT=${DEV_MODE}\" \
-                  -e \"CHE_CONFIG=${CHE_HOST_INSTANCE}\" \
-                  -e \"CHE_INSTANCE=${CHE_HOST_INSTANCE}\" \
-                  -e \"CHE_REPO=${CHE_REPO}\" \
-                  -e \"PATH_TO_CHE_ASSEMBLY=${CHE_ASSEMBLY}\" \
-                  -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}\" \
-                  -e \"PATH_TO_TERMINAL_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}\" \
-                  --entrypoint=/usr/bin/puppet \
-                      $IMAGE_INIT \
-                          apply --modulepath \
-                                /etc/puppet/modules/ \
-                                /etc/puppet/manifests/${CHE_MINI_PRODUCT_NAME}.pp --show_diff ${WRITE_LOGS}"
-  else
-  GENERATE_CONFIG_COMMAND="docker_run \
-                  --env-file=\"${REFERENCE_CONTAINER_ENVIRONMENT_FILE}\" \
-                  --env-file=/version/$CHE_VERSION/images \
-                  -v \"${CHE_HOST_INSTANCE}\":/opt/${CHE_MINI_PRODUCT_NAME}:rw \
-                  -e \"POSTGRES_ENV_FILE=${POSTGRES_ENV_FILE}\" \
-                  -e \"CODENVY_ENV_FILE=${CODENVY_ENV_FILE}\" \
-                  -e \"CHE_CONTAINER_ROOT=${CHE_CONTAINER_ROOT}\" \
-                  -e \"CHE_ENVIRONMENT=${DEV_MODE}\" \
+                  -e \"CHE_ENVIRONMENT=${CHE_ENVIRONMENT}\" \
                   -e \"CHE_CONFIG=${CHE_HOST_INSTANCE}\" \
                   -e \"CHE_INSTANCE=${CHE_HOST_INSTANCE}\" \
                   -e \"CHE_REPO=${CHE_REPO}\" \
@@ -264,7 +242,6 @@ generate_configuration_with_puppet() {
                           apply --modulepath \
                                 /etc/puppet/modules/ \
                                 /etc/puppet/manifests/${CHE_MINI_PRODUCT_NAME}.pp --show_diff ${WRITE_LOGS}"
-  fi
 
   log ${GENERATE_CONFIG_COMMAND}
   eval ${GENERATE_CONFIG_COMMAND}
