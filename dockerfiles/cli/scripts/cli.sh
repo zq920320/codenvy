@@ -129,22 +129,34 @@ cmd_start_check_ports() {
   fi
 
   PORT_BREAK="no" 
-  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-  text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-  text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
   if debug_server; then
-    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
-    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || $(echo "${RED}[ALREADY IN USE]${NC}"; PORT_BREAK="yes")) \n"
+    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
   fi
 
-  if [[ "${PORT_BREAK}" = "yes" ]]; then
-    echo ""
-    error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
-    return 2;
+  if ! $(port_open 80) || \
+     ! $(port_open 443) || \
+     ! $(port_open 2181) || \
+     ! $(port_open 5000) || \
+     ! $(port_open 23750) || \
+     ! $(port_open 23751); then
+     echo ""
+     error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
+     return 2;
   fi
+  if debug_server; then
+    if ! $(port_open ${CODENVY_DEBUG_PORT}) || ! $(port_open 9000); then
+      echo ""
+      error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
+      return 1;
+    fi
+  fi  
 }
 
 cmd_config_post_action() {
