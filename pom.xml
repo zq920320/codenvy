@@ -50,6 +50,7 @@
         <che.lib.version>5.0.0</che.lib.version>
         <che.version>5.0.0</che.version>
         <codenvy.analytics.version>3.13.4</codenvy.analytics.version>
+        <codenvy.docs.version>5.0.0-SNAPSHOT</codenvy.docs.version>
         <com.braintreepayments.gateway.version>2.39.2</com.braintreepayments.gateway.version>
         <com.codahale.metrics.version>3.0.2</com.codahale.metrics.version>
         <com.dumbster.version>1.7.1</com.dumbster.version>
@@ -152,7 +153,7 @@
             <dependency>
                 <groupId>com.codenvy.docs</groupId>
                 <artifactId>codenvy-docs</artifactId>
-                <version>${project.version}</version>
+                <version>${codenvy.docs.version}</version>
                 <type>war</type>
             </dependency>
             <dependency>
