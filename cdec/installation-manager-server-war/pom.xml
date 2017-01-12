@@ -20,7 +20,7 @@
     <parent>
         <artifactId>codenvy-im</artifactId>
         <groupId>com.codenvy.im</groupId>
-        <version>5.0.1-SNAPSHOT</version>
+        <version>5.0.1</version>
     </parent>
     <artifactId>installation-manager-server-war</artifactId>
     <packaging>war</packaging>
