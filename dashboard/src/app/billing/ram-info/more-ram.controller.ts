@@ -121,7 +121,7 @@ export class MoreRamController {
     let ram = this.lodash.find(freeResources.resources, (resource: any) => {
       return resource.type === CodenvyResourceLimits.RAM;
     });
-    this.freeRAM = ram ? (ram.amount / 1024) : 0;
+    this.freeRAM = ram ? (ram.amount / 1000) : 0;
   }
 
   /**
@@ -163,9 +163,9 @@ export class MoreRamController {
     }
 
     this.price = ramResource.monthlyPrice;
-    this.amount = ramResource.amount + ' ' + ramResource.unit;
-    this.minValue = ramResource.minAmount / 1000; //TODO
-    this.maxValue = ramResource.maxAmount / 1000; //TODO
+    this.amount = ramResource.amount / 1000 + 'GB';
+    this.minValue = ramResource.minAmount / 1000;
+    this.maxValue = ramResource.maxAmount / 1000;
     this.value = angular.copy(this.minValue);
   }
 
@@ -194,7 +194,7 @@ export class MoreRamController {
    * @param subscription
    */
   processSubscription(subscription: any): void {
-    let ramValue = this.value * 1024; //TODO
+    let ramValue = this.value * 1000;
 
     let promise;
     // check subscription exists:
@@ -224,7 +224,7 @@ export class MoreRamController {
     } else { // process no active subscription:
       let packages = [];
       let resources = [this.prepareRAMResource(ramValue)];
-      packages.push({resources: resources});
+      packages.push({resources: resources, templateId: this.ramPackage.id});
       promise = this.codenvySubscription.createSubscription(this.accountId, packages);
     }
 

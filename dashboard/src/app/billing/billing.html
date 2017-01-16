@@ -50,13 +50,13 @@
       </md-tab>
 
       <!-- Invoices tab -->
-      <md-tab>
+      <md-tab md-on-select="invoicesSelected = true" md-on-deselect="invoicesSelected = false">
         <md-tab-label>
           <md-icon md-font-icon="fa-file-text-o" class="fa che-tab-label-icon"></md-icon>
           <span class="che-tab-label-title">Invoices</span>
         </md-tab-label>
         <md-tab-body>
-          <list-invoices account-id="billingController.accountId" ng-if="billingController.accountId"></list-invoices>
+          <list-invoices account-id="billingController.accountId" ng-if="billingController.accountId && invoicesSelected"></list-invoices>
         </md-tab-body>
       </md-tab>
 
