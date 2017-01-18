@@ -22,7 +22,9 @@ import com.google.gson.JsonParser;
 import org.eclipse.che.commons.annotation.Nullable;
 import org.eclipse.che.dto.server.JsonSerializable;
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.io.Writer;
 import java.net.URLEncoder;
 import java.util.Collection;
 import java.util.Collections;
@@ -62,6 +64,15 @@ public class Event implements JsonSerializable {
         try {
             return Commons.toJson(this);
         } catch (JsonProcessingException e) {
+            throw new RuntimeException(e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public void toJson(Writer w) {
+        try {
+            w.write(Commons.toJson(this));
+        } catch (IOException e) {
             throw new RuntimeException(e.getMessage(), e);
         }
     }
