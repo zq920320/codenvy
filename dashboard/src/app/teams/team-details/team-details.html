@@ -122,13 +122,13 @@
     </md-tab>
 
     <!-- Developers Tab -->
-    <md-tab>
+    <md-tab md-on-select="developersPageSelected=true" md-on-deselect="developersPageSelected=false">
       <md-tab-label>
         <md-icon md-font-icon="fa-group" class="fa che-tab-label-icon"></md-icon>
         <span class="che-tab-label-title">Developers</span>
       </md-tab-label>
       <md-tab-body>
-        <list-team-members team="teamDetailsController.team" ng-if="teamDetailsController.team"></list-team-members>
+        <list-team-members team="teamDetailsController.team" ng-if="teamDetailsController.team && developersPageSelected"></list-team-members>
       </md-tab-body>
     </md-tab>
 

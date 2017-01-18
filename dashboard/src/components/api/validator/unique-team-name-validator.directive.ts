@@ -13,6 +13,8 @@
  * from Codenvy S.A..
  */
 'use strict';
+import {CodenvyTeam} from '../codenvy-team.factory';
+
 
 /**
  * Defines a directive for checking whether team name already exists.
@@ -22,25 +24,36 @@
 export class UniqueTeamNameValidator {
 
   /**
+   * Team interection API.
+   */
+  private codenvyTeam: CodenvyTeam;
+  /**
+   * Promises service.
+   */
+  private $q: ng.IQService;
+  private restrict: string;
+  private require: string;
+
+  /**
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor (codenvyTeam, $q) {
+  constructor (codenvyTeam: CodenvyTeam, $q: ng.IQService) {
     this.codenvyTeam = codenvyTeam;
     this.$q = $q;
-    this.restrict='A';
+    this.restrict = 'A';
     this.require = 'ngModel';
   }
 
   /**
    * Check that the name of team is unique
    */
-  link($scope, element, attributes, ngModel) {
+  link($scope: ng.IScope, element: ng.IAugmentedJQuery, attributes: ng.IAttributes, ngModel: any) {
 
     // validate only input element
     if ('input' === element[0].localName) {
 
-      ngModel.$asyncValidators.uniqueTeamName = (modelValue) => {
+      ngModel.$asyncValidators.uniqueTeamName = (modelValue: any) => {
 
         // parent scope ?
         var scopingTest = $scope.$parent;
@@ -50,19 +63,32 @@ export class UniqueTeamNameValidator {
 
         let currentTeamName = scopingTest.$eval(attributes.uniqueTeamName),
           teams = this.codenvyTeam.getTeams();
+        if (!currentTeamName) {
+          return this.$q.resolve(true);
+        }
+
         if (teams.length) {
           for (let i = 0; i < teams.length; i++) {
-            if (teams[i].name === currentTeamName) {
-              continue;
+            if (teams[i].name === currentTeamName && teams[i].name === modelValue) {
+              return this.$q.resolve(true);
             }
             if (teams[i].name === modelValue) {
               return this.$q.reject(false);
             }
           }
-          return this.$q.resolve(true);
-        } else {
-          return this.$q.resolve(true);
         }
+
+        let defer = this.$q.defer();
+        this.codenvyTeam.fetchTeamByName(modelValue).then(() => {
+          defer.reject(false);
+        }, (error: any) => {
+          if (error.status === 304) {
+            defer.reject(false);
+          }
+          defer.resolve(true);
+        });
+
+        return defer.promise;
       };
     }
   }
