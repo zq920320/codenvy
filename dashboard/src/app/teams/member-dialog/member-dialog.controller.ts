@@ -41,6 +41,10 @@ export class MemberDialogController {
    */
   private $q: ng.IQService;
   /**
+   * Lodash library.
+   */
+  private lodash: any;
+  /**
    * Processing state of adding member.
    */
   private isProcessing: boolean;
@@ -91,11 +95,12 @@ export class MemberDialogController {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($mdDialog: angular.material.IDialogService, codenvyTeam: CodenvyTeam, codenvyUser: CodenvyUser, $q: ng.IQService) {
+  constructor($mdDialog: angular.material.IDialogService, codenvyTeam: CodenvyTeam, codenvyUser: CodenvyUser, $q: ng.IQService, lodash: any) {
     this.$mdDialog = $mdDialog;
     this.codenvyTeam = codenvyTeam;
     this.codenvyUser = codenvyUser;
     this.$q = $q;
+    this.lodash = lodash;
 
     this.isProcessing = false;
 
@@ -104,14 +109,13 @@ export class MemberDialogController {
       this.emails.push(member.email);
     });
 
-    //Role is set, need to add only user with this role:
+    // role is set, need to add only user with this role:
     if (this.role) {
       this.email = '';
-      this.title = 'Add new ' + this.role.title;
+      this.title = 'Add new ' + this.role.title.toLowerCase();
       this.buttonTitle = 'Add';
       return;
     }
-
 
     this.roles = [];
     if (this.member) {
@@ -228,7 +232,19 @@ export class MemberDialogController {
    */
   editMember(): void {
     let userRoles = this.getRoles();
-    this.member.permissions.actions = this.codenvyTeam.getActionsFromRoles(userRoles);
+    let processedActions = [];
+    this.roles.forEach((data: any) => {
+      processedActions = processedActions.concat(data.role.actions);
+    });
+
+
+    let actions = this.member.permissions.actions;
+    let otherActions = this.lodash.difference(actions, processedActions);
+    if (this.codenvyTeam.getRolesFromActions(this.member.permissions.actions).indexOf(CodenvyTeamRoles.TEAM_OWNER) >= 0) {
+      otherActions = otherActions.concat(CodenvyTeamRoles.TEAM_OWNER.actions);
+    }
+
+    this.member.permissions.actions = this.codenvyTeam.getActionsFromRoles(userRoles).concat(otherActions);
     this.callbackController.updateMember(this.member);
     this.hide();
   }

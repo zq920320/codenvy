@@ -83,7 +83,7 @@ export class CreateTeamController {
     this.$q = $q;
     this.lodash = lodash;
 
-    this.teamName = this.generateTeamName('Team');
+    this.teamName = '';
     this.isLoading = true;
     this.members = [];
 
@@ -103,32 +103,6 @@ export class CreateTeamController {
         }
       });
     }
-  }
-
-  /**
-   * Generate team's name based on existing ones.
-   *
-   * @param name team's to be based on
-   * @returns {string} generated name
-   */
-  generateTeamName(name: string): string {
-    let teams = this.codenvyTeam.getTeams();
-
-    if (teams && teams.length === 0) {
-      return name;
-    }
-    let existingNames = this.lodash.pluck(teams, 'name');
-
-    if (existingNames.indexOf(name) < 0) {
-      return name;
-    }
-
-    let generatedName = name;
-    let counter = 1;
-    while (existingNames.indexOf(generatedName) >= 0) {
-      generatedName = name + counter++;
-    }
-    return generatedName;
   }
 
   /**

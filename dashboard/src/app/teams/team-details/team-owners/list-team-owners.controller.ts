@@ -268,17 +268,12 @@ export class ListTeamOwnersController {
   addMembers(members: Array<any>, roles: Array<any>): void {
     let promises = [];
     let unregistered = [];
-
+    let existingPermissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
 
     members.forEach((member: any) => {
       if (member.id) {
         let actions = this.codenvyTeam.getActionsFromRoles(roles);
-        let permissions = {
-          instanceId: this.team.id,
-          userId: member.id,
-          domainId: 'organization',
-          actions: actions
-        };
+        let permissions = this.getPermissionsForOwner(member.id, actions, existingPermissions);
         let promise = this.codenvyPermissions.storePermissions(permissions);
         promises.push(promise);
       } else {
@@ -295,6 +290,31 @@ export class ListTeamOwnersController {
         this.cheNotification.showError('User' + (unregistered.length > 1 ? 's ' : ' ') + unregistered.join(', ') + (unregistered.length > 1 ? ' are' : ' is') + ' not registered in the system.');
       }
     });
+  }
+
+  /**
+   * Form the permissions by adding owner role actions.
+   *
+   * @param memberId member id to be added as owner
+   * @param actions owner actions
+   * @param existingPermissions existing permissions of current team
+   * @returns {{instanceId: any, userId: string, domainId: string, actions: Array<string>}}
+   */
+  getPermissionsForOwner(memberId: string, actions: Array<string>, existingPermissions: Array<any>): any {
+    let permissions = this.lodash.find(existingPermissions, (permissions: any) => {
+      return permissions.userId === memberId;
+    });
+
+    if (permissions) {
+      actions = actions.concat(permissions.actions);
+    }
+
+    return {
+      instanceId: this.team.id,
+      userId: memberId,
+      domainId: 'organization',
+      actions: actions
+    };
   }
 
   /**
@@ -371,7 +391,13 @@ export class ListTeamOwnersController {
     });
   }
 
-  removeOwnerPermissions(id): any {
+  /**
+   * Remove the owner permissions only.
+   *
+   * @param id user's id to remove permissions
+   * @returns {any} permissions free from owner ones
+   */
+  removeOwnerPermissions(id: string): any {
     let member = this.lodash.find(this.members, (member: any) => {
       return member.userId === id;
     });
@@ -381,7 +407,6 @@ export class ListTeamOwnersController {
     }
 
     let roles = this.codenvyTeam.getRolesFromActions(member.permissions.actions);
-    let i = roles.indexOf(CodenvyTeamRoles.TEAM_OWNER);
     roles.splice(roles.indexOf(CodenvyTeamRoles.TEAM_OWNER), 1);
     let permissions = angular.copy(member.permissions);
     permissions.actions = this.codenvyTeam.getActionsFromRoles(roles);
