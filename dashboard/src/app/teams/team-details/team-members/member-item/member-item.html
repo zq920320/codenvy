@@ -24,7 +24,7 @@
        class="che-list-item-row member-list-row">
     <div layout="row"
          layout-align="start center"
-         class="che-checkbox-area">
+         class="che-checkbox-area" ng-if="memberItemController.editable">
       <che-list-item-checked ng-model="memberItemController.callback.membersSelectedStatus[memberItemController.member.userId]"
                              ng-click="memberItemController.callback.updateSelectedStatus()"
                              che-aria-label-checkbox="member {{memberItemController.member.userId}}"></che-list-item-checked>
@@ -58,10 +58,10 @@
         <span class="che-xs-header noselect" hide-gt-xs>Actions</span>
         <span class="che-list-actions">
 
-          <a tooltip="Edit developer permissions" ng-click="memberItemController.editMember()">
+          <a tooltip="Edit developer permissions" ng-click="memberItemController.editMember()" ng-disabled="!memberItemController.editable">
             <span class="fa fa-pencil"></span>
           </a>
-          <a tooltip="Remove developer" ng-click="memberItemController.removeMember($event)">
+          <a tooltip="Remove developer" ng-click="memberItemController.removeMember($event)" ng-disabled="!memberItemController.editable">
             <span class="fa fa-trash-o"></span>
           </a>
         </span>

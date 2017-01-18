@@ -17,7 +17,7 @@
            layout="row"
            layout-align="start stretch"
            class="che-list-item-row">
-        <div layout="column" layout-gt-xs="row"
+        <div layout="column" layout-gt-xs="row" ng-if="listTeamOwnersController.editable"
              layout-align="start center"
              class="che-checkbox-area">
           <div layout="row" layout-align="center center" class="che-list-item-checkbox-main">
@@ -50,11 +50,12 @@
         che-on-checkbox-click="listTeamOwnersController.updateSelectedStatus()"
         callback="listTeamOwnersController"
         member="member"
+        editable="listTeamOwnersController.editable"
         hide-details="true"></member-item>
     </che-list>
   </div>
   <!-- Buttons -->
-  <div layout="row" flex>
+  <div layout="row" flex ng-if="listTeamOwnersController.editable">
     <div flex>
       <che-button-default class="che-list-add-button"
                           che-button-title="Add" name="addButton"

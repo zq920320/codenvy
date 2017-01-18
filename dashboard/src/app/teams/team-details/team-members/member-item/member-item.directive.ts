@@ -33,7 +33,8 @@ export class MemberItem implements ng.IDirective {
   scope: any = {
     member: '=member',
     callback: '=callback',
-    hideDetails: '=hideDetails'
+    hideDetails: '=hideDetails',
+    editable: '=editable'
   };
 
   constructor() {

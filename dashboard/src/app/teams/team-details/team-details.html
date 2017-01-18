@@ -44,6 +44,7 @@
                                  aria-label="Name of the team"
                                  che-place-holder="Name of the team"
                                  ng-model="teamDetailsController.newName"
+                                 che-readonly="!teamDetailsController.isUserAllowedTo('update')"
                                  unique-team-name="teamDetailsController.team.name"
                                  ng-change="teamDetailsController.updateTeamName(teamForm.$invalid)"
                                  ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 1000, 'blur': 0 } }"
@@ -61,7 +62,8 @@
           </che-label-container>
           <!-- Owner -->
           <che-label-container che-label-name="Owners" che-label-description="Owners can set permissions and share resources.">
-            <list-team-owners team="teamDetailsController.team" ng-if="teamDetailsController.team"></list-team-owners>
+            <list-team-owners team="teamDetailsController.team" ng-if="teamDetailsController.team"
+                              editable="teamDetailsController.isUserAllowedTo('setPermissions')"></list-team-owners>
           </che-label-container>
 
           <!-- Workspace cap -->
@@ -111,6 +113,7 @@
             </che-input-box>
           </che-label-container>
           <che-label-container class="team-details-delete-label"
+                               ng-if="teamDetailsController.isUserAllowedTo('delete')"
                                che-label-name="Delete Team"
                                che-label-description="This is irreversible. Deleting your team will also destroy team workspaces and stacks.">
             <che-button-danger che-button-title="Delete"
@@ -128,7 +131,9 @@
         <span class="che-tab-label-title">Developers</span>
       </md-tab-label>
       <md-tab-body>
-        <list-team-members team="teamDetailsController.team" ng-if="teamDetailsController.team && developersPageSelected"></list-team-members>
+        <list-team-members team="teamDetailsController.team"
+                           editable="teamDetailsController.isUserAllowedTo('setPermissions')"
+                           ng-if="teamDetailsController.team && developersPageSelected"></list-team-members>
       </md-tab-body>
     </md-tab>
 
