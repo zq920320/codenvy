@@ -19,6 +19,7 @@
                    che-hide-search="listTeamMembersController.members.length === 0"
                    che-add-button-title="Add Developer"
                    che-on-add="listTeamMembersController.showMemberDialog(null)"
+                   che-hide-add="!listTeamMembersController.editable"
                    che-delete-button-title="Delete"
                    che-on-delete="listTeamMembersController.removeSelectedMembers()"
                    che-hide-delete="listTeamMembersController.isNoSelected"
@@ -27,7 +28,7 @@
          layout="row"
          layout-align="start stretch"
          class="che-list-item-row">
-      <div layout="column" layout-gt-xs="row"
+      <div layout="column" layout-gt-xs="row" ng-if="listTeamMembersController.editable"
            layout-align="start center"
            class="che-checkbox-area">
         <div layout="row" layout-align="center center" class="che-list-item-checkbox-main">
@@ -67,6 +68,7 @@
       che-display-labels="false"
       che-on-checkbox-click="listTeamMembersController.updateSelectedStatus()"
       callback="listTeamMembersController"
+      editable="listTeamMembersController.editable"
       member="member"></member-item>
   </che-list>
   <div class="che-list-empty">

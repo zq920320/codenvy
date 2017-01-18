@@ -16,6 +16,8 @@
 import {CodenvyTeam} from '../../../components/api/codenvy-team.factory';
 import {CodenvyResourcesDistribution} from '../../../components/api/codenvy-resources-distribution.factory';
 import {CodenvyResourceLimits} from '../../../components/api/codenvy-resource-limits';
+import {CodenvyPermissions} from '../../../components/api/codenvy-permissions.factory';
+import {CodenvyUser} from '../../../components/api/codenvy-user.factory';
 
 /**
  * Controller for a managing team details.
@@ -32,6 +34,14 @@ export class TeamDetailsController {
    */
   private codenvyResourcesDistribution: CodenvyResourcesDistribution;
   /**
+   * Permissions API interaction.
+   */
+  private codenvyPermissions: CodenvyPermissions;
+  /**
+   * User API interaction.
+   */
+  private codenvyUser: CodenvyUser;
+  /**
    * Notifications service.
    */
   private cheNotification: any;
@@ -44,6 +54,10 @@ export class TeamDetailsController {
    */
   private $mdDialog: angular.material.IDialogService;
   /**
+   * Lodash library.
+   */
+  private lodash: any;
+  /**
    * Current team's name. Comes from route path params.
    */
   private teamName: string;
@@ -51,6 +65,10 @@ export class TeamDetailsController {
    * Current team's data.
    */
   private team: any;
+  /**
+   * The list of allowed user actions.
+   */
+  private allowedUserActions: Array<string>;
   /**
    * New team's name (for renaming widget).
    */
@@ -80,14 +98,20 @@ export class TeamDetailsController {
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
    */
-  constructor(codenvyTeam: CodenvyTeam, codenvyResourcesDistribution: CodenvyResourcesDistribution, $route: ng.route.IRouteService, $location: ng.ILocationService,
-              $mdDialog: angular.material.IDialogService, cheNotification: any) {
+  constructor(codenvyTeam: CodenvyTeam, codenvyResourcesDistribution: CodenvyResourcesDistribution, codenvyPermissions: CodenvyPermissions,
+              codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService,
+              $mdDialog: angular.material.IDialogService, cheNotification: any, lodash: any) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
+    this.codenvyPermissions = codenvyPermissions;
+    this.codenvyUser = codenvyUser;
     this.teamName = $route.current.params.teamName;
     this.$location = $location;
     this.$mdDialog = $mdDialog;
     this.cheNotification = cheNotification;
+    this.lodash = lodash;
+
+    this.allowedUserActions = [];
 
     let page = $route.current.params.page;
     if (!page) {
@@ -120,15 +144,53 @@ export class TeamDetailsController {
     this.team  = this.codenvyTeam.getTeamByName(this.teamName);
     this.newName = angular.copy(this.teamName);
     if (!this.team) {
-      this.codenvyTeam.fetchTeamByName(this.teamName).then((team) => {
+      this.codenvyTeam.fetchTeamByName(this.teamName).then((team: any) => {
         this.team = team;
         this.fetchLimits();
+        this.fetchUserPermissions();
       }, (error: any) => {
         this.invalidTeam = true;
       });
     } else {
       this.fetchLimits();
+      this.fetchUserPermissions();
     }
+  }
+
+  fetchUserPermissions(): void {
+    this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
+      this.allowedUserActions = this.processUserPermissions();
+    }, (error: any) => {
+      this.isLoading = false;
+      if (error.status === 304) {
+        this.allowedUserActions = this.processUserPermissions();
+      }
+    });
+  }
+
+  /**
+   * Process permissions to retrieve current user actions.
+   *
+   * @returns {Array} current user allowed actions
+   */
+  processUserPermissions(): Array<string> {
+    let userId = this.codenvyUser.getUser().id;
+    let permissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
+    let userPermissions = this.lodash.find(permissions, (permission: any) => {
+      return permission.userId === userId;
+    });
+
+    return userPermissions ? userPermissions.actions : [];
+  }
+
+  /**
+   * Checks whether user is allowed to perform pointed action.
+   *
+   * @param value action
+   * @returns {boolean} <code>true</code> if allowed
+   */
+  isUserAllowedTo(value: string): boolean {
+    return this.allowedUserActions ? this.allowedUserActions.indexOf(value) >= 0 : false;
   }
 
   fetchLimits(): void {
