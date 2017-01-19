@@ -33,9 +33,6 @@
         <module>plugins</module>
         <module>dashboard</module>
         <module>site</module>
-        <module>platform-api-client-java</module>
-        <module>cli</module>
-        <module>cdec</module>
         <module>assembly</module>
         <module>dockerfiles/agents</module>
     </modules>
@@ -156,40 +153,6 @@
                 <type>war</type>
             </dependency>
             <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>installation-manager-cli-bundle</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>installation-manager-cli-features</artifactId>
-                <version>${project.version}</version>
-                <type>xml</type>
-                <classifier>features</classifier>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>installation-manager-core</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>installation-manager-server-api-docs</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>installation-manager-server-war</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.im</groupId>
-                <artifactId>update-server-packaging-war</artifactId>
-                <version>${project.version}</version>
-                <type>war</type>
-            </dependency>
-            <dependency>
                 <groupId>com.codenvy.onpremises</groupId>
                 <artifactId>onpremises-ide-compiling-war-ide</artifactId>
                 <version>${project.version}</version>
@@ -222,12 +185,6 @@
             <dependency>
                 <groupId>com.codenvy.onpremises</groupId>
                 <artifactId>onpremises-ide-packaging-tomcat-ext-server</artifactId>
-                <version>${project.version}</version>
-                <type>zip</type>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.onpremises</groupId>
-                <artifactId>onpremises-ide-packaging-tomcat-im</artifactId>
                 <version>${project.version}</version>
                 <type>zip</type>
             </dependency>
@@ -815,17 +772,6 @@
                         <groupId>org.apache.directory.shared</groupId>
                     </exclusion>
                 </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf</groupId>
-                <artifactId>apache-karaf</artifactId>
-                <version>${org.apache.karaf.version}</version>
-                <type>tar.gz</type>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.karaf.shell</groupId>
-                <artifactId>org.apache.karaf.shell.console</artifactId>
-                <version>${org.apache.karaf.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.apache.sshd</groupId>
