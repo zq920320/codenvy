@@ -33,11 +33,6 @@
         </dependency>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>onpremises-ide-packaging-tomcat-site</artifactId>
-            <type>zip</type>
-        </dependency>
-        <dependency>
-            <groupId>com.codenvy.onpremises</groupId>
             <artifactId>onpremises-ide-packaging-war-factory</artifactId>
             <type>war</type>
         </dependency>
