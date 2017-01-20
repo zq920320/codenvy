@@ -15,6 +15,13 @@
 'use strict';
 import {CodenvySubscription} from '../../../components/api/codenvy-subscription.factory';
 import {CodenvyResourceLimits} from '../../../components/api/codenvy-resource-limits';
+import {ICreditCard} from '../../../components/api/codenvy-payment.factory';
+import {BillingService} from '../billing.service';
+
+enum Step {
+  ONE = 1,
+  TWO
+}
 
 export class MoreRamController {
   /**
@@ -22,9 +29,17 @@ export class MoreRamController {
    */
   private $mdDialog: angular.material.IDialogService;
   /**
+   * Angular promise service.
+   */
+  private $q: ng.IQService;
+  /**
    * Subscription API service.
    */
   private codenvySubscription: CodenvySubscription;
+  /**
+   *  Billing service.
+   */
+  private billingService: BillingService;
   /**
    * Lodash library.
    */
@@ -74,19 +89,36 @@ export class MoreRamController {
    * Loading state of the dialog.
    */
   isLoading: boolean;
+  /**
+   * Steps to use them in dialog template.
+   */
+  step: Object;
+  /**
+   * Current step of wizard.
+   */
+  currentStep: number;
+  /**
+   * Credit card data.
+   */
+  creditCard: ICreditCard;
 
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($mdDialog: angular.material.IDialogService, codenvySubscription: CodenvySubscription, lodash: any, cheNotification: any) {
+  constructor ($mdDialog: angular.material.IDialogService, $q: ng.IQService, codenvySubscription: CodenvySubscription, lodash: any, cheNotification: any, billingService: BillingService) {
+    this.$q = $q;
     this.$mdDialog = $mdDialog;
     this.codenvySubscription = codenvySubscription;
     this.lodash = lodash;
     this.cheNotification = cheNotification;
+    this.billingService = billingService;
     this.isLoading = true;
+    this.step = Step;
+    this.currentStep = Step.ONE;
 
     this.getLicense();
     this.getPackages();
+    this.fetchCreditCard();
   }
 
   /**
@@ -137,6 +169,12 @@ export class MoreRamController {
       if (error.status === 304) {
         this.processPackages(this.codenvySubscription.getPackages());
       }
+    }).finally(() => {
+      // debug
+      this.ramPackage = {id: 1234, type: 'GB'};
+      this.value = 5;
+      this.minValue = 1;
+      this.maxValue = 10;
     });
   }
 
@@ -180,11 +218,30 @@ export class MoreRamController {
    * Requests more RAM based on subscription state.
    */
   getMoreRAM(): void {
+    if (!this.creditCard && this.currentStep === Step.ONE) {
+      this.currentStep = Step.TWO;
+      return;
+    }
+
     this.isLoading = true;
-    this.codenvySubscription.fetchActiveSubscription(this.accountId).then(() => {
-      this.processSubscription(this.codenvySubscription.getActiveSubscription(this.accountId));
-    }, (error:  any) => {
-      this.processSubscription(this.codenvySubscription.getActiveSubscription(this.accountId));
+
+    let savePromise;
+    if (!this.creditCard.token) {
+      savePromise = this.saveCard();
+    } else {
+      let defer = this.$q.defer();
+      savePromise = defer.promise;
+      defer.resolve();
+    }
+
+    savePromise.then(() => {
+      return this.codenvySubscription.fetchActiveSubscription(this.accountId).then(() => {
+        this.processSubscription(this.codenvySubscription.getActiveSubscription(this.accountId));
+      }, (error: any) => {
+        this.processSubscription(this.codenvySubscription.getActiveSubscription(this.accountId));
+      });
+    }).finally(() => {
+      this.isLoading = false;
     });
   }
 
@@ -246,5 +303,31 @@ export class MoreRamController {
    */
   prepareRAMResource(value: number): any {
     return {amount: value, unit: 'mb', type: CodenvyResourceLimits.RAM};
+  }
+
+  /**
+   * Gets credit card.
+   *
+   * @return {ng.IPromise<any>}
+   */
+  fetchCreditCard(): ng.IPromise<any> {
+    return this.billingService.fetchCreditCard(this.accountId).then((creditCard: ICreditCard) => {
+      this.creditCard = creditCard;
+    });
+  }
+
+  /**
+   * Adds new credit card or updates an existing one.
+   */
+  saveCard(): ng.IPromise<any> {
+    this.isLoading = true;
+
+    return this.billingService.addCreditCard(this.accountId, this.creditCard).then(() => {
+      return this.fetchCreditCard();
+    }, (error: any) => {
+      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to save the credit card.');
+    }).finally(() => {
+      this.isLoading = false;
+    })
   }
 }
