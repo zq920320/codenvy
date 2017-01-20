@@ -18,6 +18,8 @@ import com.google.inject.servlet.ServletModule;
 
 import org.eclipse.che.inject.DynaModule;
 
+import javax.inject.Singleton;
+
 /**
  * @author Sergii Kabashniuk
  */
@@ -25,7 +27,9 @@ import org.eclipse.che.inject.DynaModule;
 public class ResourcesServletModule extends ServletModule {
     @Override
     protected void configureServlets() {
-        filterRegex("^.*\\.nocache\\..*$", "^.*/_app/.*$").through(com.codenvy.servlet.CacheDisablingFilter.class);
-        filterRegex("^.*\\.cache\\..*$").through(com.codenvy.servlet.CacheForcingFilter.class);
+        bind(com.xemantic.tadedon.servlet.CacheDisablingFilter.class).in(Singleton.class);
+        bind(com.xemantic.tadedon.servlet.CacheForcingFilter.class).in(Singleton.class);
+        filterRegex("^.*\\.nocache\\..*$", "^.*/_app/.*$").through(com.xemantic.tadedon.servlet.CacheDisablingFilter.class);
+        filterRegex("^.*\\.cache\\..*$").through(com.xemantic.tadedon.servlet.CacheForcingFilter.class);
     }
 }
