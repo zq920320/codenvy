@@ -39,8 +39,8 @@ export class CardInfo {
   constructor () {
     this.scope = {
       creditCard: '=',
-      creditCardOnChange: '&',
-      creditCardOnDelete: '&'
+      creditCardOnChange: '&?',
+      creditCardOnDelete: '&?'
     };
   }
 }

@@ -12,11 +12,9 @@
  * is strictly forbidden unless prior written permission is obtained
  * from Codenvy S.A..
  */
-/**
- * Created by user on 14.11.16.
- */
 'use strict';
 import {CodenvyPayment, ICreditCard} from '../../components/api/codenvy-payment.factory';
+import {BillingService} from './billing.service';
 
 enum Tab {Summary, Card, Invoices}
 
@@ -26,25 +24,27 @@ export class BillingController {
   cheAPI: any;
   codenvyPayment: CodenvyPayment;
   cheNotification: any;
+  billingService: BillingService;
 
   creditCard: ICreditCard;
   origCreditCard: ICreditCard;
   cardInfoForm: ng.IFormController;
   selectedTabIndex: number;
   accountId: string;
-  loading: boolean = true;
+  loading: boolean;
 
   tab: Object = Tab;
 
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($log: ng.ILogService, $q: ng.IQService, cheAPI: any, codenvyPayment: CodenvyPayment, cheNotification: any) {
+  constructor ($log: ng.ILogService, $q: ng.IQService, cheAPI: any, codenvyPayment: CodenvyPayment, cheNotification: any, billingService: BillingService) {
     this.$log = $log;
     this.$q = $q;
     this.cheAPI = cheAPI;
     this.codenvyPayment = codenvyPayment;
     this.cheNotification = cheNotification;
+    this.billingService = billingService;
 
     this.accountId = '';
 
@@ -54,52 +54,39 @@ export class BillingController {
   }
 
   /**
-   * Gets account ID
+   * Fetches account ID.
    *
-   * @returns {IPromise<any>}
+   * @return {IPromise<any>}
    */
-  fetchProfile(): ng.IPromise<any> {
-    let defer             = this.$q.defer(),
-        getProfilePromise = this.cheAPI.getProfile().getProfile();
-
-    // get account ID (user ID)
-    if (getProfilePromise.attributes) {
-      this.accountId = getProfilePromise.userId;
-      defer.resolve();
-    } else {
-      getProfilePromise.$promise.then((data: any) => {
-        this.accountId = data.userId;
-        defer.resolve();
-      }, (error: any) => {
-        defer.reject();
-        this.$log.error(error);
-      });
-    }
-
-    return defer.promise;
+  fetchAccountId(): ng.IPromise<any> {
+    return this.billingService.fetchAccountId().then((accountId: string) => {
+      this.accountId = accountId;
+    });
   }
 
   /**
-   * Gets credit card.
+   * Fetches and stores a credit card.
    *
-   * @returns {IPromise<any>}
    */
   fetchCreditCard(): ng.IPromise<any> {
-    return this.fetchProfile().then(() => {
-      return this.codenvyPayment.fetchAllCreditCards(this.accountId);
-    }).then(() => {
-      let creditCards = this.codenvyPayment.getCreditCards(this.accountId);
+    this.loading = true;
 
-      if (creditCards && creditCards.length) {
-        this.creditCard = creditCards[0];
-      }
-
+    return this.fetchAccountId().then(() => {
+      return this.billingService.fetchCreditCard(this.accountId);
+    }).then((creditCard: ICreditCard) => {
+      this.creditCard = creditCard;
       this.origCreditCard = angular.copy(this.creditCard);
-    }, (error: any) => {
-      this.$log.error(error);
     }).finally(() => {
       this.loading = false;
     });
+  }
+
+  /**
+   * Gets credit card and creates a copy
+   */
+  getCreditCard(): void {
+    this.creditCard = this.billingService.getCreditCard(this.accountId);
+    this.origCreditCard = angular.copy(this.creditCard);
   }
 
   /**
@@ -116,12 +103,13 @@ export class BillingController {
    */
   creditCardDeleted(): void {
     this.loading = true;
-    this.codenvyPayment.removeCreditCard(this.creditCard.accountId, this.creditCard.token).then(() => {}, (error: any) => {
-      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete the credit card.');
-      this.$log.error(error);
-    }).finally(() => {
-      this.creditCard = null;
+
+    this.billingService.removeCreditCard(this.creditCard.accountId, this.creditCard.token).then(() => {
       return this.fetchCreditCard();
+    },(error: any) => {
+      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete the credit card.');
+    }).finally(() => {
+      this.loading = false;
     });
   }
 
@@ -134,17 +122,18 @@ export class BillingController {
     let savePromise;
     if (this.creditCard.token) {
       // update exiting card
-      savePromise = this.codenvyPayment.updateCreditCard(this.accountId, this.creditCard);
+      savePromise = this.billingService.updateCreditCard(this.accountId, this.creditCard);
     } else {
       // add new card
-      savePromise = this.codenvyPayment.addCreditCard(this.accountId, this.creditCard);
+      savePromise = this.billingService.addCreditCard(this.accountId, this.creditCard);
     }
 
-    savePromise.then(() => {}, (error: any) => {
-      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete the credit card.');
-      this.$log.error(error);
-    }).finally(() => {
+    savePromise.then(() => {
       return this.fetchCreditCard();
+    }, (error: any) => {
+      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to save the credit card.');
+    }).finally(() => {
+      this.loading = false;
     });
   }
 
@@ -156,12 +145,14 @@ export class BillingController {
   }
 
   /**
-   * Register card info form
+   * Registers card info form
+   * Gets a credit card
    *
    * @param form {ng.IFormController}
    */
-  setInfoForm(form: ng.IFormController): void {
+  onCreditCardSelect(form: ng.IFormController): void {
     this.cardInfoForm = form;
+    this.getCreditCard();
   }
 
   /**
