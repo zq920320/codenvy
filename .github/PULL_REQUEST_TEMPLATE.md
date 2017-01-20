@@ -1,17 +1,28 @@
+<!-- Please review the following before submitting a PR:
+Pull Request Policy: https://github.com/codenvy/planning/wiki/Development-Workflow#pull-requests
+-->
+
 ### What does this PR do?
+
 
 ### What issues does this PR fix or reference?
 
-### Previous Behavior
-Remove this section if not relevant
 
-### New Behavior
-This content may also be included in the release notes.
+### Previous behavior
+<!-- Remove this section if not relevant -->
+
+### New behavior
+
 
 ### Tests written?
 Yes/No
 
-### Docs requirements?
-Include the content for all the docs changes required. 
-1.  API changes  
-2.  User docs changes  
+### Changelog and Release Note Information
+**Changelog Snippet**:
+
+**Release Note Summary**:
+
+
+### Docs updated?
+<!-- Please add a matching PR to [the docs repo](http://github.com/codenvy/codenvy-docs) and link that PR to this issue.
+Both will be merged at the same time. -->
