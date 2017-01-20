@@ -229,9 +229,12 @@ generate_configuration_with_puppet() {
     WRITE_LOGS=">> \"${LOGS}\""
   fi
 
-  if local_repo; then
+  if local_repo || local_assembly; then
     CHE_REPO="on"
     WRITE_PARAMETERS=" -e \"PATH_TO_CHE_ASSEMBLY=${CHE_ASSEMBLY}\""
+  fi
+
+  if local_repo; then
     WRITE_PARAMETERS+=" -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}\""
     WRITE_PARAMETERS+=" -e \"PATH_TO_TERMINAL_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}\""
 
@@ -247,9 +250,6 @@ generate_configuration_with_puppet() {
     if [[ -d "/repo/dockerfiles/init/addon/" ]]; then
       WRITE_PARAMETERS+=" -v \"${CHE_HOST_DEVELOPMENT_REPO}/dockerfiles/init/addon/addon.pp\":/etc/puppet/manifests/addon.pp:ro"
     fi
-  else
-    CHE_REPO="off"
-    WRITE_PARAMETERS=""
   fi
 
   GENERATE_CONFIG_COMMAND="docker_run \
