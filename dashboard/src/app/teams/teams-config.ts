@@ -19,6 +19,7 @@ import {NavbarTeams} from './navbar-teams/navbar-teams.directive';
 
 import {CreateTeamController} from './create-team/create-team.controller';
 import {MemberDialogController} from './member-dialog/member-dialog.controller';
+import {MoreDevsDialogController} from './more-devs-dialog/more-devs-dialog.controller';
 import {ListMembersController} from './invite-members/list-members.controller';
 import {ListMembers} from './invite-members/list-members.directive';
 
@@ -52,6 +53,7 @@ export class TeamsConfig {
     register.directive('teamItem', TeamItem);
 
     register.controller('MemberDialogController', MemberDialogController);
+    register.controller('MoreDevsDialogController', MoreDevsDialogController);
     register.controller('ListMembersController', ListMembersController);
     register.directive('listMembers', ListMembers);
 

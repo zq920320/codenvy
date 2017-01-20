@@ -14,6 +14,10 @@
  */
 'use strict';
 
+interface ICreditCardElement extends ng.IAugmentedJQuery {
+  card: Function;
+}
+
 /**
  * Defines a directive for creating a credit card component.
  * @author Oleksii Kurinnyi
@@ -42,40 +46,19 @@ export class AddCreditCard {
     };
   }
 
-  link(): void {
-    let card = new Card({
-      // a selector or DOM element for the form where users will
-      // be entering their information
-      form: '#addCreditCardForm', // *required*
-      // a selector or DOM element for the container
+  link($scope: ng.IScope, $element: ICreditCardElement): void {
+    ($element.find('.addCreditCardForm') as ICreditCardElement).card({
+      // a selector or jQuery object for the container
       // where you want the card to appear
       container: '.card-wrapper', // *required*
-
-      // bind inputs which are visible on desktop
-      formSelectors: {
-        numberInput: 'input[name="deskcardNumber"]', // optional — default input[name="number"]
-        expiryInput: 'input[name="deskexpires"]', // optional — default input[name="expiry"]
-        cvcInput: 'input[name="deskcvv"]', // optional — default input[name="cvc"]
-        nameInput: 'input[name="deskcardholder"]' // optional - defaults input[name="name"]
-      },
+      numberInput: 'input[name="deskcardNumber"]', // optional — default input[name="number"]
+      expiryInput: 'input[name="deskexpires"]', // optional — default input[name="expiry"]
+      cvcInput: 'input[name="deskcvv"]', // optional — default input[name="cvc"]
+      nameInput: 'input[name="deskcardholder"]', // optional - defaults input[name="name"]
 
       // width: 200, // optional — default 350px
-      formatting: true, // optional - default true
-
-      // strings for translation - optional
-      messages: {
-        validDate: 'valid\ndate', // optional - default 'valid\nthru'
-        monthYear: 'mm/yyyy' // optional - default 'month/year'
-      },
-
-      // default placeholders for rendered fields - optional
-      placeholders: {
-        number: '•••• •••• •••• ••••',
-        name: 'Full Name',
-        expiry: '••/••',
-        cvc: '•••'
-      }
+      formatting: true // optional - default true
     });
-
   }
+
 }
