@@ -111,11 +111,52 @@ cmd_init_reinit_pre_action() {
   fi
 }
 
+check_all_ports(){
+  docker run -d -p 80:80 \
+                -p 443:443 \
+                -p 2181:2181 \
+                -p 5000:5000 \
+                -p 23750:23750 \
+                -p 23751:23751 \
+                -p 32001:32001 \
+                -p 32101:32101 \
+                --name fake ${UTILITY_IMAGE_ALPINE} \
+                                 httpd -f -p 80 \
+                                          -p 443 \
+                                          -p 2181 \
+                                          -p 5000 \
+                                          -p 23750 \
+                                          -p 23751 \
+                                          -p 32001 \
+                                          -p 32101 -h /etc/ > /dev/null 2>&1
+
+  NETSTAT_EXIT=$?
+  docker rm -f fake > /dev/null 2>&1
+
+  NETSTAT_EXIT_DEBUG=""
+  if debug_server; then
+    docker run -d -p $CODENVY_DEBUG_PORT:$CODENVY_DEBUG_PORT \
+                  -p 9000:9000 \
+                  --name fake ${UTILITY_IMAGE_ALPINE} \
+                                   httpd -f -p $CODENVY_DEBUG_PORT \
+                                            -p 9000 -h /etc/ > /dev/null 2>&1
+    NETSTAT_EXIT_DEBUG=$?
+    docker rm -f fake > /dev/null 2>&1
+  fi
+
+  if [[ $NETSTAT_EXIT = 125 ]] || \
+     [[ $NETSTAT_EXIT_DEBUG = 125 ]]; then
+    return 1
+  else
+    return 0
+  fi
+}
+
 cmd_start_check_ports() {
 
   # If dev mode is on, then we also need to check the debug port set by the user for availability
   if debug_server; then
-    USER_DEBUG_PORT=$(docker_run --env-file="${REFERENCE_CONTAINER_ENVIRONMENT_FILE}" alpine sh -c 'echo $CODENVY_DEBUG_PORT')
+    USER_DEBUG_PORT=$(get_value_of_var_from_env_file CODENVY_DEBUG_PORT)
 
     if [[ "$USER_DEBUG_PORT" = "" ]]; then
       # If the user has not set a debug port, then use the default
@@ -128,39 +169,36 @@ cmd_start_check_ports() {
     fi
   fi
 
-  PORT_BREAK="no" 
-  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 32001 (jmx):      $(port_open 32001 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 32101 (jmx):      $(port_open 32101 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  if debug_server; then
-    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  fi
-
-  if ! $(port_open 80) || \
-     ! $(port_open 443) || \
-     ! $(port_open 2181) || \
-     ! $(port_open 5000) || \
-     ! $(port_open 23750) || \
-     ! $(port_open 23751) || \
-     ! $(port_open 32001) || \
-     ! $(port_open 32101); then
-     echo ""
-     error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
-     return 2;
-  fi
-  if debug_server; then
-    if ! $(port_open ${CODENVY_DEBUG_PORT}) || ! $(port_open 9000); then
-      echo ""
-      error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
-      return 1;
+  if check_all_ports; then
+    text   "         port 80 (http):        ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 443 (https):      ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 2181 (zookeeper): ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 5000 (registry):  ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 23750 (socat):    ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 23751 (swarm):    ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 32001 (jmx):      ${GREEN}[AVAILABLE]${NC}\n"
+    text   "         port 32101 (jmx):      ${GREEN}[AVAILABLE]${NC}\n"
+    if debug_server; then
+      text   "         port $CODENVY_DEBUG_PORT (debug):     ${GREEN}[AVAILABLE]${NC}\n"
+      text   "         port 9000 (lighttpd):  ${GREEN}[AVAILABLE]${NC}\n"
     fi
-  fi  
+  else
+    text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 32001 (jmx):      $(port_open 32001 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 32101 (jmx):      $(port_open 32101 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    if debug_server; then
+      text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+      text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    fi
+    echo ""
+    error "Ports required to run $CHE_MINI_PRODUCT_NAME are used by another program."
+    return 2;
+  fi
 }
 
 cmd_config_post_action() {
@@ -228,6 +266,9 @@ generate_configuration_with_puppet() {
     CHE_ENVIRONMENT="production"
     WRITE_LOGS=">> \"${LOGS}\""
   fi
+
+  CHE_REPO="off"
+  WRITE_PARAMETERS=""
 
   if local_repo || local_assembly; then
     CHE_REPO="on"
