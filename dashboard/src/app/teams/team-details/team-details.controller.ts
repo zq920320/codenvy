@@ -90,6 +90,10 @@ export class TeamDetailsController {
    */
   private limitsCopy: any;
   /**
+   * Parent available resource limits, that can be redistributed to team.
+   */
+  private maxLimits: any;
+  /**
    * Page loading state.
    */
   private isLoading: boolean;
@@ -157,6 +161,9 @@ export class TeamDetailsController {
     }
   }
 
+  /**
+   * Fecthes permission of user in current team.
+   */
   fetchUserPermissions(): void {
     this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
       this.allowedUserActions = this.processUserPermissions();
@@ -179,7 +186,6 @@ export class TeamDetailsController {
     let userPermissions = this.lodash.find(permissions, (permission: any) => {
       return permission.userId === userId;
     });
-
     return userPermissions ? userPermissions.actions : [];
   }
 
@@ -193,6 +199,18 @@ export class TeamDetailsController {
     return this.allowedUserActions ? this.allowedUserActions.indexOf(value) >= 0 : false;
   }
 
+  /**
+   * Returns whether current user can change team resource limits.
+   *
+   * @returns {boolean} <code>true</code> if can change resource limits
+   */
+  canChangeResourceLimits(): boolean {
+    return (this.codenvyTeam.getPersonalAccount() && this.team) ? this.codenvyTeam.getPersonalAccount().id === this.team.parent : false;
+  }
+
+  /**
+   * Fecthes defined team's limits (workspace, runtime, RAM caps, etc).
+   */
   fetchLimits(): void {
     this.isLoading = true;
     this.codenvyResourcesDistribution.fetchTeamResources(this.team.id).then(() => {
@@ -204,8 +222,21 @@ export class TeamDetailsController {
         this.processResources(this.codenvyResourcesDistribution.getTeamResources(this.team.id));
       }
     });
+
+    this.codenvyResourcesDistribution.fetchTeamResources(this.team.parent).then(() => {
+      this.processMaxValues(this.codenvyResourcesDistribution.getTeamResources(this.team.parent));
+    }, (error: any) => {
+      if (error.status === 304) {
+        this.processMaxValues(this.codenvyResourcesDistribution.getTeamResources(this.team.parent));
+      }
+    });
   }
 
+  /**
+   * Process resources limits.
+   *
+   * @param resources resources to process
+   */
   processResources(resources): void {
     let ramLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.RAM);
     let workspaceLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.WORKSPACE);
@@ -214,8 +245,46 @@ export class TeamDetailsController {
     this.limits = {};
     this.limits.workspaceCap = workspaceLimit ? workspaceLimit.amount : undefined;
     this.limits.runtimeCap = runtimeLimit ? runtimeLimit.amount : undefined;
-    this.limits.ramCap = ramLimit ? ramLimit.amount : undefined;
+    this.limits.ramCap = ramLimit ? ramLimit.amount / 1000 : undefined;
     this.limitsCopy = angular.copy(this.limits);
+  }
+
+  /**
+   * Process max available values (parent available resources).
+   *
+   * @param resources
+   */
+  processMaxValues(resources): void {
+    let ramLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.RAM);
+    let workspaceLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.WORKSPACE);
+    let runtimeLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.RUNTIME);
+
+    this.maxLimits = {};
+    this.maxLimits.workspaceCap = workspaceLimit ? workspaceLimit.amount : undefined;
+    this.maxLimits.runtimeCap = runtimeLimit ? runtimeLimit.amount : undefined;
+    this.maxLimits.ramCap = ramLimit ? ramLimit.amount / 1000 : undefined;
+  }
+
+  /**
+   * Checks value whether provided value of provided type is valid.
+   *
+   * @param value value to be checked
+   * @param type type of the resources
+   * @returns {boolean} <code>true</code> if value is valid
+   */
+  isValidLimit(value: any, type: CodenvyResourceLimits): boolean {
+    if (!this.maxLimits || !this.limitsCopy) {
+      return true;
+    }
+
+    switch (type) {
+      case CodenvyResourceLimits.RAM:
+        return value <= (this.limitsCopy.ramCap + this.maxLimits.ramCap);
+      case CodenvyResourceLimits.WORKSPACE:
+        return value <= (this.limitsCopy.workspaceCap + this.maxLimits.workspaceCap);
+      case CodenvyResourceLimits.RUNTIME:
+        return value <= (this.limitsCopy.runtimeCap + this.maxLimits.runtimeCap);
+    }
   }
 
   /**
@@ -262,7 +331,13 @@ export class TeamDetailsController {
     }
   }
 
-  updateLimits(invalid: boolean): void {
+  /**
+   * Update resource limits.
+   *
+   * @param invalid is form invalid
+   * @param type type of the changed resource
+   */
+  updateLimits(invalid: boolean, type: CodenvyResourceLimits): void {
     if (invalid || !this.team || !this.limits || angular.equals(this.limits, this.limitsCopy)) {
       return;
     }
@@ -273,16 +348,71 @@ export class TeamDetailsController {
 
     let resources = this.codenvyResourcesDistribution.getTeamResources(this.team.id);
     resources = angular.copy(resources);
-    resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RAM, this.limits.ramCap);
-    resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.WORKSPACE, this.limits.workspaceCap);
-    resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RUNTIME, this.limits.runtimeCap);
+
+    if (this.limits.ramCap) {
+      resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RAM, (this.limits.ramCap * 1000));
+    }
+
+    if (this.limits.workspaceCap) {
+      resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.WORKSPACE, this.limits.workspaceCap);
+    }
+
+    if (this.limits.runtimeCap) {
+      resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RUNTIME, this.limits.runtimeCap);
+    }
 
     this.isLoading = true;
     this.codenvyResourcesDistribution.distributeResources(this.team.id, resources).then(() => {
       this.fetchLimits();
     }, (error: any) => {
+      let resource = '';
+      let value;
+      switch (type) {
+        case CodenvyResourceLimits.RAM:
+          resource = 'workspace RAM cap';
+          value = this.limits.ramCap;
+          break;
+        case CodenvyResourceLimits.WORKSPACE:
+          resource = 'workspace cap';
+          value = this.limits.workspaceCap;
+          break;
+        case CodenvyResourceLimits.RUNTIME:
+          resource = 'running workspaces cap';
+          value = this.limits.runtimeCap;
+          break;
+      }
+
+      let errorMessage = 'Failed to set ' + resource + ' to ' + value + '.';
+      this.cheNotification.showError((error.data && error.data.message !== null) ? errorMessage + '</br>Reason: ' + error.data.message : errorMessage);
+
       this.fetchLimits();
-      this.cheNotification.showError((error.data && error.data.message !== null) ? error.data.message : 'Failed to update team resource limits.');
     });
+  }
+
+  /**
+   * Returns the RAM resource type.
+   *
+   * @returns {CodenvyResourceLimits} the RAM resource type
+   */
+  getRAMResourceType(): CodenvyResourceLimits {
+    return CodenvyResourceLimits.RAM;
+  }
+
+  /**
+   * Returns the workspace resource type.
+   *
+   * @returns {CodenvyResourceLimits} the workspace resource type
+   */
+  getWorkspaceResourceType(): CodenvyResourceLimits {
+    return CodenvyResourceLimits.WORKSPACE;
+  }
+
+  /**
+   * Returns the workspace runtime resource type.
+   *
+   * @returns {CodenvyResourceLimits} the workspace runtime resource type
+   */
+  getRuntimeResourceType(): CodenvyResourceLimits {
+    return CodenvyResourceLimits.RUNTIME;
   }
 }
