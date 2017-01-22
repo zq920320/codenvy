@@ -72,14 +72,15 @@
                            aria-label="workspace cap"
                            che-place-holder="Workspace cap is not set"
                            ng-model="teamDetailsController.limits.workspaceCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid)"
+                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getWorkspaceResourceType())"
+                           che-readonly="!teamDetailsController.canChangeResourceLimits()"
                            ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
                            min="0"
-                           max="100">
+                           custom-validator="teamDetailsController.isValidLimit($value, teamDetailsController.getWorkspaceResourceType())">
               <div ng-message="required">A workspace cap is required.</div>
               <div ng-message="min">A workspace cap should be greater than 0.</div>
-              <div ng-message="max">A workspace cap should be less than 100.</div>
+              <div ng-message="customValidator">A workspace cap should be less than {{teamDetailsController.maxLimits.workspaceCap + teamDetailsController.limitsCopy.workspaceCap}}.</div>
             </che-input-box>
           </che-label-container>
 
@@ -89,27 +90,33 @@
                            aria-label="runtime cap"
                            che-place-holder="Running workspace cap is not set"
                            ng-model="teamDetailsController.limits.runtimeCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid)"
+                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRuntimeResourceType())"
+                           che-readonly="!teamDetailsController.canChangeResourceLimits()"
                            ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
                            min="0"
-                           max="100">
+                           custom-validator="teamDetailsController.isValidLimit($value, teamDetailsController.getRuntimeResourceType())">
               <div ng-message="required">A running workspace cap is required.</div>
               <div ng-message="min">A running workspace cap should be greater than 0.</div>
-              <div ng-message="max">A running workspace cap should be less than 100.</div>
+              <div ng-message="customValidator">
+                A running workspace cap should be less than {{teamDetailsController.maxLimits.runtimeCap + teamDetailsController.limitsCopy.runtimeCap}}.
+              </div>
             </che-input-box>
           </che-label-container>
-
           <!-- Workspace RAM cap -->
           <che-label-container che-label-name="Workspace RAM Cap" che-label-description="Maximum RAM a singe workspace can use.">
             <che-input-box che-name="workspaceRamCap" che-form="teamForm"
                            aria-label="runtime cap"
                            che-place-holder="Workspace RAM cap is not set"
                            ng-model="teamDetailsController.limits.ramCap"
-                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid)"
+                           ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRAMResourceType())"
+                           che-readonly="!teamDetailsController.canChangeResourceLimits()"
                            ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
-                           type="number">
-              <div ng-message="required">A workspace RAM cap is required.</div>
+                           type="number"
+                           custom-validator="teamDetailsController.isValidLimit($value, teamDetailsController.getRAMResourceType())">
+              <div ng-message="customValidator">
+                A workspace RAM cap should be less than {{teamDetailsController.maxLimits.ramCap + teamDetailsController.limitsCopy.ramCap}} GB.
+              </div>
             </che-input-box>
           </che-label-container>
           <che-label-container class="team-details-delete-label"

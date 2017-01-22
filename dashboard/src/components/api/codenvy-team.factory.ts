@@ -15,6 +15,7 @@
 'use strict';
 
 import {CodenvyTeamRoles} from './codenvy-team-roles';
+import {CodenvyUser} from './codenvy-user.factory';
 
 /**
  * This class is handling the interactions with Team management API.
@@ -40,6 +41,14 @@ export class CodenvyTeam {
    */
   private cheNamespaceRegistry : any;
   /**
+   * The Codenvy user API.
+   */
+  private codenvyUser : CodenvyUser;
+  /**
+   * User's personal account.
+   */
+  private personalAccount: any;
+  /**
    * Client for requesting Team API.
    */
   private remoteTeamAPI: ng.resource.IResourceClass<ng.resource.IResource<any>>;
@@ -48,10 +57,11 @@ export class CodenvyTeam {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource: ng.resource.IResourceService, lodash: any, cheNamespaceRegistry: any) {
+  constructor($resource: ng.resource.IResourceService, lodash: any, cheNamespaceRegistry: any, codenvyUser: CodenvyUser) {
     this.$resource = $resource;
     this.lodash = lodash;
     this.cheNamespaceRegistry = cheNamespaceRegistry;
+    this.codenvyUser = codenvyUser;
 
     this.remoteTeamAPI = $resource('/api/organization', {}, {
       getTeams: {method: 'GET', url: '/api/organization', isArray: true},
@@ -76,14 +86,52 @@ export class CodenvyTeam {
       this.teams = [];
       this.cheNamespaceRegistry.getNamespaces().length = 0;
 
-      teams.forEach((team : any) => {
-        this.teamsMap.set(team.id, team);
-        this.teams.push(team);
-        this.cheNamespaceRegistry.getNamespaces().push(team.name);
+      this.codenvyUser.fetchUser().then(() => {
+        this.processTeams(teams, this.codenvyUser.getUser());
+      }, (error) => {
+        if (error.status === 304) {
+          this.processTeams(teams, this.codenvyUser.getUser());
+        }
       });
     });
 
     return resultPromise;
+  }
+
+  /**
+   * Process teams to retrieve personal account (name of the organization === current user's name) and
+   * teams (organization with parent).
+   *
+   * @param teams
+   * @param user
+   */
+  processTeams(teams: Array<any>, user: any): void {
+    let name = user.name;
+    // detection personal account (organization which name equals to current user's name):
+    this.personalAccount = this.lodash.find(teams, (team: any) => {
+      return team.name === name;
+    });
+
+    // display personal account as "personal" on UI, namespace(id) stays the same for API interactions:
+    this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal'});
+
+    teams.forEach((team : any) => {
+      this.teamsMap.set(team.id, team);
+      // team has to have parent (root organizations are skipped):
+      if (team.parent) {
+        this.teams.push(team);
+        this.cheNamespaceRegistry.getNamespaces().push({id: team.name, label: team.name});
+      }
+    });
+  }
+
+  /**
+   * Return current user's personal account.
+   *
+   * @returns {any} personal account
+   */
+  getPersonalAccount(): any {
+    return this.personalAccount;
   }
 
   /**
@@ -129,7 +177,7 @@ export class CodenvyTeam {
    * @returns {ng.IPromise<any>} result promise
    */
   createTeam(name: string): ng.IPromise<any> {
-    let data = {'name' : name};
+    let data = {name : name, parent: this.personalAccount.id};
     let promise = this.remoteTeamAPI.createTeam(data).$promise;
     return promise;
   }
