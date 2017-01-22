@@ -7,7 +7,7 @@
 #
 
 cli_pre_init() {
-  GLOBAL_HOST_IP=${GLOBAL_HOST_IP:=$(docker_run --net host eclipse/che-ip:nightly)}
+  GLOBAL_HOST_IP=${GLOBAL_HOST_IP:=$(docker_run --net host ${UTILITY_IMAGE_CHEIP})}
   DEFAULT_CODENVY_HOST=$GLOBAL_HOST_IP
   CODENVY_HOST=${CODENVY_HOST:-${DEFAULT_CODENVY_HOST}}
   CODENVY_PORT=80
