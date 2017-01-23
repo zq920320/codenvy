@@ -46,7 +46,7 @@
       </div>
       <div flex-gt-xs="25" ng-click="teamItemController.redirectToTeamDetails()" class="cap-value">
         <span class="che-xs-header noselect" hide-gt-xs>RAM Cap</span>
-        <span>{{teamItemController.ramCap}}GB</span>
+        <span>{{teamItemController.ramCap ? teamItemController.ramCap + 'GB' : 'not set'}}</span>
       </div>
       <div flex-gt-xs="20">
         <span class="che-xs-header noselect" hide-gt-xs>Actions</span>

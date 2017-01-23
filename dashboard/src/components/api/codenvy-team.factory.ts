@@ -27,6 +27,7 @@ export class CodenvyTeam {
    * Angular Resource service.
    */
   private $resource: ng.resource.IResourceService;
+  private $q: ng.IQService;
   private lodash: any;
   /**
    * Teams map by team's id.
@@ -57,8 +58,9 @@ export class CodenvyTeam {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor($resource: ng.resource.IResourceService, lodash: any, cheNamespaceRegistry: any, codenvyUser: CodenvyUser) {
+  constructor($resource: ng.resource.IResourceService, $q: ng.IQService, lodash: any, cheNamespaceRegistry: any, codenvyUser: CodenvyUser) {
     this.$resource = $resource;
+    this.$q = $q;
     this.lodash = lodash;
     this.cheNamespaceRegistry = cheNamespaceRegistry;
     this.codenvyUser = codenvyUser;
@@ -78,24 +80,28 @@ export class CodenvyTeam {
    * @returns {PromiseLike<TResult>|Promise<TResult>}
    */
   fetchTeams(): ng.IPromise<any> {
+    let defer = this.$q.defer();
+
     let promise = this.remoteTeamAPI.getTeams().$promise;
 
     // process the result into map and array:
-    let resultPromise = promise.then((teams: any) => {
-      this.teamsMap = new Map();
-      this.teams = [];
-      this.cheNamespaceRegistry.getNamespaces().length = 0;
-
+    promise.then((teams: any) => {
       this.codenvyUser.fetchUser().then(() => {
         this.processTeams(teams, this.codenvyUser.getUser());
+        defer.resolve();
       }, (error) => {
         if (error.status === 304) {
           this.processTeams(teams, this.codenvyUser.getUser());
+          defer.resolve();
+        } else {
+          defer.reject();
         }
       });
+    }, (error: any) => {
+      defer.reject(error);
     });
 
-    return resultPromise;
+    return defer.promise;
   }
 
   /**
@@ -106,6 +112,10 @@ export class CodenvyTeam {
    * @param user
    */
   processTeams(teams: Array<any>, user: any): void {
+    this.teamsMap = new Map();
+    this.teams = [];
+    this.cheNamespaceRegistry.getNamespaces().length = 0;
+
     let name = user.name;
     // detection personal account (organization which name equals to current user's name):
     this.personalAccount = this.lodash.find(teams, (team: any) => {

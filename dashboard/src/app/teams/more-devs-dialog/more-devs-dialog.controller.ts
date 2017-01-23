@@ -96,9 +96,9 @@ export class MoreDevsDialogController {
    * @return {IPromise<any>}
    */
   fetchAccountId(): ng.IPromise<any> {
-    return this.billingService.fetchAccountId().then((accountId: string) => {
+   /* return this.billingService.fetchAccountId().then((accountId: string) => {
       this.accountId = accountId;
-    });
+    });*/ //TODO
   }
 
   /**
