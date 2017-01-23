@@ -169,12 +169,6 @@ export class MoreRamController {
       if (error.status === 304) {
         this.processPackages(this.codenvySubscription.getPackages());
       }
-    }).finally(() => {
-      // debug
-      this.ramPackage = {id: 1234, type: 'GB'};
-      this.value = 5;
-      this.minValue = 1;
-      this.maxValue = 10;
     });
   }
 
@@ -200,7 +194,7 @@ export class MoreRamController {
       return;
     }
 
-    this.price = ramResource.monthlyPrice;
+    this.price = ramResource.fullPrice;
     this.amount = ramResource.amount / 1000 + 'GB';
     this.minValue = ramResource.minAmount / 1000;
     this.maxValue = ramResource.maxAmount / 1000;

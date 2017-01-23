@@ -15,6 +15,7 @@
 'use strict';
 import {CodenvyPayment, ICreditCard} from '../../components/api/codenvy-payment.factory';
 import {BillingService} from './billing.service';
+import {CodenvyTeam} from '../../components/api/codenvy-team.factory';
 
 enum Tab {Summary, Card, Invoices}
 
@@ -23,6 +24,7 @@ export class BillingController {
   $q: ng.IQService;
   cheAPI: any;
   codenvyPayment: CodenvyPayment;
+  codenvyTeam: CodenvyTeam;
   cheNotification: any;
   billingService: BillingService;
 
@@ -38,11 +40,13 @@ export class BillingController {
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($log: ng.ILogService, $q: ng.IQService, cheAPI: any, codenvyPayment: CodenvyPayment, cheNotification: any, billingService: BillingService) {
+  constructor ($log: ng.ILogService, $q: ng.IQService, cheAPI: any, codenvyPayment: CodenvyPayment,
+               codenvyTeam: CodenvyTeam,cheNotification: any, billingService: BillingService) {
     this.$log = $log;
     this.$q = $q;
     this.cheAPI = cheAPI;
     this.codenvyPayment = codenvyPayment;
+    this.codenvyTeam = codenvyTeam;
     this.cheNotification = cheNotification;
     this.billingService = billingService;
 
@@ -59,8 +63,12 @@ export class BillingController {
    * @return {IPromise<any>}
    */
   fetchAccountId(): ng.IPromise<any> {
-    return this.billingService.fetchAccountId().then((accountId: string) => {
-      this.accountId = accountId;
+    return this.codenvyTeam.fetchTeams().then(() => {
+      this.accountId = this.codenvyTeam.getPersonalAccount().id;
+    }, (error: any) => {
+      if (error.status === 304) {
+        this.accountId = this.codenvyTeam.getPersonalAccount().id;
+      }
     });
   }
 

@@ -117,6 +117,7 @@ export class ListTeamsController {
   fetchTeams(): void {
     this.isLoading = true;
     this.codenvyTeam.fetchTeams().then(() => {
+      this.isLoading = false;
       this.processTeams();
     }, (error: any) => {
       this.isLoading = false;
@@ -193,7 +194,8 @@ export class ListTeamsController {
    */
   getRamCap(teamId: string): any {
     if (this.teamResources && this.teamResources.size > 0) {
-      return this.teamResources.get(teamId) / 1024;
+      let ram = this.teamResources.get(teamId);
+      return ram ? (ram / 1000) : null;
     }
     return null;
   }

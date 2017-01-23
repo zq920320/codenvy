@@ -33,32 +33,6 @@ export class BillingService {
   }
 
   /**
-   * Fetches account ID
-   *
-   * @returns {IPromise<any>}
-   */
-  fetchAccountId(): ng.IPromise<any> {
-    let defer             = this.$q.defer(),
-        getProfilePromise = this.cheAPI.getProfile().getProfile();
-
-    // get account ID (user ID)
-    if (getProfilePromise.attributes) {
-      let accountId = getProfilePromise.userId;
-      defer.resolve(accountId);
-    } else {
-      getProfilePromise.$promise.then((data: any) => {
-        let accountId = data.userId;
-        defer.resolve(accountId);
-      }, (error: any) => {
-        defer.reject();
-        this.$log.error(error);
-      });
-    }
-
-    return defer.promise;
-  }
-
-  /**
    * Fetches credit card.
    *
    * @param {string} accountId

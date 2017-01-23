@@ -72,7 +72,7 @@ export class RamInfoController {
     let ram = this.lodash.find(resources, (resource: any) => {
       return resource.type === CodenvyResourceLimits.RAM;
     });
-    return ram ? (ram.amount / 1024) : 0;
+    return ram ? (ram.amount / 1000) : 0;
   }
 
   /**
