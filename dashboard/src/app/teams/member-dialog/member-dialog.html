@@ -1,7 +1,8 @@
 <che-popup title="{{memberDialogController.title}}" on-close="memberDialogController.hide()">
   <div class="member-dialog-content">
     <ng-form flex layout="column" name="memberForm">
-      <che-label-container che-label-name="Email" ng-show="!memberDialogController.member">
+      <che-label-container che-label-name="Email" ng-show="!memberDialogController.member"
+                           che-label-description="User email address.">
         <che-input-box che-form="memberForm"
                          che-name="email"
                          che-place-holder="Enter email"
@@ -13,11 +14,11 @@
                          aria-label="New member"
                          ng-keypress="memberForm.$valid && $event.which === 13 && memberDialogController.addMembers()"
                          required focusable>
-            <div ng-message="required">A user email is required.</div>
+            <div ng-message="required" ng-if="memberForm.$dirty">A user email is required.</div>
             <div ng-message="customValidator">{{memberDialogController.emailError}}</div>
           </che-input-box>
       </che-label-container>
-      <che-label-container che-label-name="Permissions" che-label-description="Allowed actions of team member" ng-if="!memberDialogController.role">
+      <che-label-container che-label-name="Permissions" che-label-description="Allowed actions of team member." ng-if="!memberDialogController.role">
         <div layout="column">
             <md-switch ng-repeat="roleInfo in memberDialogController.roles" ng-model="roleInfo.allowed"
                        ng-disabled="memberDialogController.isProcessing">
