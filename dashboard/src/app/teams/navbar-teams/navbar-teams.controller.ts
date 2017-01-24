@@ -52,4 +52,12 @@ export class NavbarTeamsController {
     return this.codenvyTeam.getTeams();
   }
 
+  /**
+   * Returns personal account of current user.
+   *
+   * @returns {any} personal account
+   */
+  getPersonalAccount(): any {
+    return this.codenvyTeam.getPersonalAccount();
+  }
 }

@@ -73,6 +73,15 @@ export class CodenvyPayment {
   }
 
   /**
+   * Returns payment API service path.
+   *
+   * @returns {string} API path
+   */
+  getPaymentServicePath(): string {
+    return 'creditcard';
+  }
+
+  /**
    * Gets credit cards list
    *
    * @param accountId {string}

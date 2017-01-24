@@ -38,6 +38,7 @@ import {ListTeams} from './list/list-teams.directive';
 import {ListTeamsController} from './list/list-teams.controller';
 import {TeamItem} from './list/team-item/team-item.directive';
 import {TeamItemController} from './list/team-item/team-item.controller';
+import {CodenvyTeam} from '../../components/api/codenvy-team.factory';
 
 export class TeamsConfig {
 
@@ -71,13 +72,36 @@ export class TeamsConfig {
 
     register.controller('TeamDetailsController', TeamDetailsController);
 
+    let checkPersonalTeam = ($q: ng.IQService, codenvyTeam: CodenvyTeam) => {
+      var defer = $q.defer();
+      codenvyTeam.fetchTeams().then(() => {
+        if (codenvyTeam.getPersonalAccount()) {
+          defer.resolve();
+        } else {
+          defer.reject();
+        }
+      }, (error: any) => {
+        if (error.status === 304) {
+          if (codenvyTeam.getPersonalAccount()) {
+            defer.resolve();
+          } else {
+            defer.reject();
+          }
+        }
+      });
+      return defer.promise;
+    }
+
     let locationProvider = {
       title: (params: any) => {
         return params.teamName;
       },
       templateUrl: 'app/teams/team-details/team-details.html',
       controller: 'TeamDetailsController',
-      controllerAs: 'teamDetailsController'
+      controllerAs: 'teamDetailsController',
+      resolve: {
+        check: ['$q', 'codenvyTeam', checkPersonalTeam]
+      }
     };
 
     // config routes
@@ -86,7 +110,10 @@ export class TeamsConfig {
         title: 'New Team',
         templateUrl: 'app/teams/create-team/create-team.html',
         controller: 'CreateTeamController',
-        controllerAs: 'createTeamController'
+        controllerAs: 'createTeamController',
+        resolve: {
+          check: ['$q', 'codenvyTeam', checkPersonalTeam]
+        }
       })
       .accessWhen('/team/:teamName', locationProvider)
       .accessWhen('/team/:teamName/:page', locationProvider);
