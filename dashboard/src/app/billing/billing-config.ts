@@ -54,7 +54,20 @@ export class BillingConfig {
         title: 'Billing',
         templateUrl: 'app/billing/billing.html',
         controller: 'BillingController',
-        controllerAs: 'billingController'
+        controllerAs: 'billingController',
+        resolve: {
+          check: ['$q', 'cheService', function ($q, cheService) {
+            var defer = $q.defer();
+            cheService.fetchServices().then(() => {
+              if (cheService.isServiceAvailable('creditcard')) {
+                defer.resolve();
+              } else {
+                defer.reject();
+              }
+            });
+            return defer.promise;
+          }]
+        }
       });
     });
   }

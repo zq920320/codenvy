@@ -122,8 +122,10 @@ export class CodenvyTeam {
       return team.name === name;
     });
 
-    // display personal account as "personal" on UI, namespace(id) stays the same for API interactions:
-    this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal'});
+    if (this.personalAccount) {
+      // display personal account as "personal" on UI, namespace(id) stays the same for API interactions:
+      this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal'});
+    }
 
     teams.forEach((team : any) => {
       this.teamsMap.set(team.id, team);
