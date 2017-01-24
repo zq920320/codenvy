@@ -40,7 +40,7 @@ export class BillingController {
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($log: ng.ILogService, $q: ng.IQService, cheAPI: any, codenvyPayment: CodenvyPayment,
+  constructor ($log: ng.ILogService, $q: ng.IQService, $rootScope: che.IRootScopeService, cheAPI: any, codenvyPayment: CodenvyPayment,
                codenvyTeam: CodenvyTeam,cheNotification: any, billingService: BillingService) {
     this.$log = $log;
     this.$q = $q;
@@ -49,6 +49,8 @@ export class BillingController {
     this.codenvyTeam = codenvyTeam;
     this.cheNotification = cheNotification;
     this.billingService = billingService;
+
+    $rootScope.showIDE = false;
 
     this.accountId = '';
 

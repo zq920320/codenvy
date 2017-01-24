@@ -103,7 +103,7 @@ export class TeamDetailsController {
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyResourcesDistribution: CodenvyResourcesDistribution, codenvyPermissions: CodenvyPermissions,
-              codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService,
+              codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService, $rootScope: che.IRootScopeService,
               $mdDialog: angular.material.IDialogService, cheNotification: any, lodash: any) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
@@ -114,6 +114,8 @@ export class TeamDetailsController {
     this.$mdDialog = $mdDialog;
     this.cheNotification = cheNotification;
     this.lodash = lodash;
+
+    $rootScope.showIDE = false;
 
     this.allowedUserActions = [];
 
