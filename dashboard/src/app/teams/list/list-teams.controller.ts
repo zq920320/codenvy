@@ -123,8 +123,10 @@ export class ListTeamsController {
       this.isLoading = false;
       if (error.status === 304) {
         this.processTeams();
+      } else {
+        let message = error.data && error.data.message ? error.data.message : 'Failed to retrieve teams.';
+        this.cheNotification.showError(message);
       }
-      //TODO
     });
   }
 
@@ -316,7 +318,7 @@ export class ListTeamsController {
         let promise = this.codenvyTeam.deleteTeam(teamId).then(() => {
           //
         }, (error: any) => {
-          this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete team ' + teamId);
+          this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete team ' + teamId + '.');
         });
 
         promises.push(promise);

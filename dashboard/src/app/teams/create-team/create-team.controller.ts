@@ -45,6 +45,10 @@ export class CreateTeamController {
    */
   private $location: ng.ILocationService;
   /**
+   * Log service.
+   */
+  private $log: ng.ILogService;
+  /**
    * Lodash library.
    */
   private lodash: any;
@@ -74,7 +78,7 @@ export class CreateTeamController {
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyUser: CodenvyUser, codenvyPermissions: CodenvyPermissions, cheNotification: any,
-              $location: ng.ILocationService, $q: ng.IQService, lodash: any) {
+              $location: ng.ILocationService, $q: ng.IQService, lodash: any, $log: ng.ILogService) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyUser = codenvyUser;
     this.codenvyPermissions = codenvyPermissions;
@@ -82,6 +86,7 @@ export class CreateTeamController {
     this.$location = $location;
     this.$q = $q;
     this.lodash = lodash;
+    this.$log = $log;
 
     this.teamName = '';
     this.isLoading = true;
@@ -99,7 +104,7 @@ export class CreateTeamController {
           this.owner = codenvyUser.getUser().email;
           this.isLoading = false;
         } else {
-          /* TODO process error */
+          this.$log.error('Failed to retrieve current user:', error);
         }
       });
     }
@@ -115,7 +120,7 @@ export class CreateTeamController {
       this.codenvyTeam.fetchTeams();
     }, (error: any) => {
       this.isLoading = false;
-      let message = error.data && error.data.message ? error.data.message : 'Failed to create team ' + this.teamName;
+      let message = error.data && error.data.message ? error.data.message : 'Failed to create team ' + this.teamName + '.';
       this.cheNotification.showError(message);
     });
   }
@@ -148,7 +153,8 @@ export class CreateTeamController {
        this.$location.path('/team/' + team.name);
      }, (error: any) => {
        this.isLoading = false;
-       /* TODO process error */
+       let message = error.data && error.data.message ? error.data.message : 'Failed to create team ' + this.teamName + '.';
+       this.cheNotification.showError(message);
      });
   }
 }
