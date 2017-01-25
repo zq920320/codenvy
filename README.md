@@ -12,6 +12,8 @@ The [docs are awesome](https://github.com/codenvy/codenvy/tree/master/docs/_docs
 docker run codenvy/cli:nightly start
 ```
 
+Then open `http://localhost` and log in as `admin` / `password`.
+
 The `codenvy` repository is where we do development. Your license grants you access to the source code for customization, but you are not able to redistribute the source code or use it in commercial endeavors.
 
 - [Submit bugs and feature requests](http://github.com/codenvy/codenvy/issues) and help us verify them
