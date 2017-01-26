@@ -29,6 +29,7 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.factory.shared.dto.FactoryDto;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,14 +43,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static com.google.common.base.Strings.isNullOrEmpty;
-import static java.util.Collections.emptySet;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/bitbucketserver-webhook")
@@ -57,14 +56,15 @@ public class BitbucketServerWebhookService extends BaseWebhookService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BitbucketServerWebhookService.class);
 
-    private static final String WEBHOOKS_PROPERTIES_FILENAME = "bitbucketserver-webhooks.properties";
-
     private final String bitbucketEndpoint;
+
+    @Inject
+    ConfigurationProperties configurationProperties;
 
     @Inject
     public BitbucketServerWebhookService(final AuthConnection authConnection,
                                          final FactoryConnection factoryConnection,
-                                         @Named ("bitbucket.endpoint") String bitbucketEndpoint ) {
+                                         @Named("bitbucket.endpoint") String bitbucketEndpoint) {
         super(authConnection, factoryConnection);
         this.bitbucketEndpoint = bitbucketEndpoint.endsWith("/") ? bitbucketEndpoint.substring(0, bitbucketEndpoint.length() - 1)
                                                                  : bitbucketEndpoint;
@@ -157,34 +157,16 @@ public class BitbucketServerWebhookService extends BaseWebhookService {
     }
 
     private Set<String> getFactoriesIDs(final String repositoryUrl) throws ServerException {
-        Optional<BitbucketServerWebhook> optional = getConfiguredWebhooks().stream()
-                                                                           .filter(webhook -> webhook.getRepositoryCloneUrl()
-                                                                                                     .equals(repositoryUrl))
-                                                                           .findFirst();
-        if (optional.isPresent()) {
-            return optional.get().getFactoriesIds();
-        } else {
-            return emptySet();
-        }
-    }
+        Map<String, String> properties = configurationProperties.getProperties(".*CODENVY_GITHUB_WEBHOOK.*");
 
-    private static List<BitbucketServerWebhook> getConfiguredWebhooks() throws ServerException {
-        Properties webhooksProperties = getProperties(WEBHOOKS_PROPERTIES_FILENAME);
-        return webhooksProperties.stringPropertyNames()
-                                 .stream()
-                                 .filter(key -> {
-                                     String value = webhooksProperties.getProperty(key);
-                                     if (!isNullOrEmpty(value)) {
-                                         String[] valueSplit = value.split(",");
-                                         return valueSplit.length == 3 && valueSplit[0].equals("bitbucketserver");
-                                     }
-                                     return false;
-                                 })
-                                 .map(key -> {
-                                     String[] valueSplit = webhooksProperties.getProperty(key).split(",");
-                                     String[] factoriesIDs = valueSplit[2].split(";");
-                                     return new BitbucketServerWebhook(valueSplit[1], factoriesIDs);
-                                 })
-                                 .collect(Collectors.toList());
+        String collect = properties.entrySet()
+                                   .stream()
+                                   .filter(entry -> entry.getValue().equals(repositoryUrl))
+                                   .map(Entry::getKey)
+                                   .collect(Collectors.joining());
+
+        String pattern = ".*" + collect.substring(4, collect.indexOf("_REPOSITORY_UR")) + "_FACTORY.+_ID";
+
+        return properties.keySet().stream().filter(key -> key.matches(pattern)).map(properties::get).collect(Collectors.toSet());
     }
 }

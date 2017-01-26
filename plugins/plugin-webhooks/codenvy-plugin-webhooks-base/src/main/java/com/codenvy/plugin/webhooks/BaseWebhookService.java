@@ -24,11 +24,13 @@ import org.eclipse.che.api.core.rest.Service;
 import org.eclipse.che.api.factory.shared.dto.FactoryDto;
 import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
-import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.subject.Subject;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.inject.Inject;
+import javax.inject.Named;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,13 +52,22 @@ import static java.util.stream.Collectors.toList;
 public abstract class BaseWebhookService extends Service {
 
     private static final Logger LOG                             = LoggerFactory.getLogger(BaseWebhookService.class);
-    private static final String CONNECTORS_PROPERTIES_FILENAME  = "connectors.properties";
-    private static final String CREDENTIALS_PROPERTIES_FILENAME = "credentials.properties";
 
     protected static final String FACTORY_URL_REL = "accept-named";
 
     private final AuthConnection authConnection;
     private final FactoryConnection factoryConnection;
+
+    @Inject
+    @Named("integrations.username")
+    String username;
+
+    @Inject
+    @Named("integrations.password")
+    String password;
+
+    @Inject
+    private static ConfigurationProperties configurationProperties;
 
     public BaseWebhookService(final AuthConnection authConnection, final FactoryConnection factoryConnection) {
         this.authConnection = authConnection;
@@ -170,6 +181,12 @@ public abstract class BaseWebhookService extends Service {
      * @return the list of all connectors contained in CONNECTORS_PROPERTIES_FILENAME properties file
      */
     protected static List<Connector> getConnectors(String factoryId) throws ServerException {
+
+        Map<String, String> properties = configurationProperties.getProperties(".*CODENVY_JENKINS_CONNECTOR.*");
+
+        properties.entrySet().stream().filter(entry -> entry.getKey()).
+
+
         List<Connector> connectors = new ArrayList<>();
         Properties connectorsProperties = getProperties(CONNECTORS_PROPERTIES_FILENAME);
         Set<String> keySet = connectorsProperties.stringPropertyNames();
@@ -190,32 +207,6 @@ public abstract class BaseWebhookService extends Service {
                   }
               });
         return connectors;
-    }
-
-    /**
-     * Get credentials
-     *
-     * @return the credentials contained in CREDENTIALS_PROPERTIES_FILENAME properties file
-     * @throws ServerException
-     */
-    protected static Pair<String, String> getCredentials() throws ServerException {
-        String[] credentials = new String[2];
-        Properties credentialsProperties = getProperties(CREDENTIALS_PROPERTIES_FILENAME);
-        Set<String> keySet = credentialsProperties.stringPropertyNames();
-        keySet.forEach(key -> {
-            String value = credentialsProperties.getProperty(key);
-            switch (key) {
-                case "username":
-                    credentials[0] = value;
-                    break;
-                case "password":
-                    credentials[1] = value;
-                    break;
-                default:
-                    break;
-            }
-        });
-        return Pair.of(credentials[0], credentials[1]);
     }
 
     /**
@@ -311,8 +302,8 @@ public abstract class BaseWebhookService extends Service {
         private final Token token;
 
         public TokenSubject() throws ServerException {
-            final Pair<String, String> credentials = getCredentials();
-            token = authConnection.authenticateUser(credentials.first, credentials.second);
+            //final Pair<String, String> credentials = getCredentials();
+            token = authConnection.authenticateUser(username, password);
         }
 
         @Override

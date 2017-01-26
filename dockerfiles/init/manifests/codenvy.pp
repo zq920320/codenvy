@@ -191,6 +191,9 @@ node default {
   $microsoft_client_id = getValue("CODENVY_MICROSOFT_CLIENT_ID","NULL")
   $microsoft_secret = getValue("CODENVY_MICROSOFT_SECRET","NULL")
 
+  $integrations_username = "admin"
+  $integrations_password = "password"
+
 ###############################
 # Codenvy Workspace configurations
 #
