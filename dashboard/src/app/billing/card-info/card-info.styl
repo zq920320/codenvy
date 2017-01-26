@@ -20,10 +20,16 @@
   .che-input .che-input-desktop-label
     white-space nowrap
     min-width 120px
-    max-width 120px
+    max-width 120p
     width 120px
     font-size 12px
     padding-top 2px
+
+  .che-input.desktop-pristine .che-input-desktop input.ng-untouched + .che-input-icon + [ng-messages]
+    display none
+
+  .che-select.desktop-untouched .che-select-container md-select + [ng-messages]
+    display none
 
   .che-select
     margin-top -2px

@@ -51,14 +51,16 @@
                    credit-card-on-change="moreRamController.creditCardChanged(creditCard)"></card-info>
       </div>
 
-      <div layout="row" layout-align="end center" class="buttons-layout">
-        <che-button-primary che-button-title="Continue"
-                            ng-disabled="ramForm.$invalid || moreRamController.isLoading || !moreRamController.ramPackage"
-                            ng-click="moreRamController.getMoreRAM()"></che-button-primary>
-        <che-button-cancel-flat che-button-title="Cancel"
-                                ng-click="moreRamController.hide()"
-                                ng-disabled="moreRamController.isLoading"
-                                tabindex="0"></che-button-cancel-flat>
+      <div flex layout="column" layout-align="end end">
+        <div layout="row" layout-align="end center" class="buttons-layout">
+          <che-button-primary che-button-title="Continue"
+                              ng-disabled="ramForm.$invalid || moreRamController.isLoading || !moreRamController.ramPackage"
+                              ng-click="moreRamController.getMoreRAM()"></che-button-primary>
+          <che-button-cancel-flat che-button-title="Cancel"
+                                  ng-click="moreRamController.hide()"
+                                  ng-disabled="moreRamController.isLoading"
+                                  tabindex="0"></che-button-cancel-flat>
+        </div>
       </div>
     </div>
   </ng-form>
