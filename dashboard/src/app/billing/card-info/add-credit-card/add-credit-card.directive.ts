@@ -23,6 +23,8 @@ interface ICreditCardElement extends ng.IAugmentedJQuery {
  * @author Oleksii Kurinnyi
  */
 export class AddCreditCard {
+  $timeout: ng.ITimeoutService;
+
   restrict: string = 'E';
   replace: boolean = false;
   templateUrl: string = '/app/billing/card-info/add-credit-card/add-credit-card.html';
@@ -40,7 +42,9 @@ export class AddCreditCard {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor () {
+  constructor ($timeout: ng.ITimeoutService) {
+    this.$timeout = $timeout;
+
     this.scope = {
       creditCard: '='
     };
@@ -58,6 +62,15 @@ export class AddCreditCard {
 
       // width: 200, // optional — default 350px
       formatting: true // optional - default true
+    });
+
+    let deregistrationFn = $scope.$watch(() => { return $element.find('input[name="deskcardNumber"]').is(':visible'); }, (visible) => {
+      if (visible) {
+        deregistrationFn();
+        this.$timeout(() => {
+          $element.find('input[name="deskcardNumber"]').focus();
+        }, 100);
+      }
     });
   }
 
