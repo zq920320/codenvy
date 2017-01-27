@@ -83,7 +83,7 @@ public class TestVSTSWebhookService {
 
         // Prepare VSTSWebhookService
         fakeVSTSWebhookService =
-                new VSTSWebhookService(mockAuthConnection, mockFactoryConnection, mockUserConnection, mockVSTSConnection);
+                new VSTSWebhookService(mockAuthConnection, mockFactoryConnection, mockUserConnection, mockVSTSConnection, null, "", "");
     }
 
     @Test

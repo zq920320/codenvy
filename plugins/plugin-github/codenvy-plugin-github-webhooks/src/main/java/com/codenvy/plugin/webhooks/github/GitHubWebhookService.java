@@ -32,10 +32,12 @@ import org.eclipse.che.api.core.rest.shared.dto.Link;
 import org.eclipse.che.api.factory.shared.dto.FactoryDto;
 import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -67,8 +69,12 @@ public class GitHubWebhookService extends BaseWebhookService {
     private static final String GITHUB_REQUEST_HEADER               = "X-GitHub-Event";
 
     @Inject
-    public GitHubWebhookService(final AuthConnection authConnection, final FactoryConnection factoryConnection) {
-        super(authConnection, factoryConnection);
+    public GitHubWebhookService(final AuthConnection authConnection,
+                                final FactoryConnection factoryConnection,
+                                ConfigurationProperties configurationProperties,
+                                @Named("integration.factory.owner.username") String username,
+                                @Named("integration.factory.owner.password") String password) {
+        super(authConnection, factoryConnection, configurationProperties, username, password);
     }
 
     @ApiOperation(value = "Handle GitHub webhook events",

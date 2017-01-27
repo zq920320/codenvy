@@ -78,7 +78,7 @@ public class TestGitHubWebhookService {
         when(mockFactoryConnection.updateFactory(gitHubfakeFactory)).thenReturn(gitHubfakeFactory);
 
         // Prepare GitHubWebhookService
-        fakeGitHubWebhookService = new GitHubWebhookService(mockAuthConnection, mockFactoryConnection);
+        fakeGitHubWebhookService = new GitHubWebhookService(mockAuthConnection, mockFactoryConnection, null, "", "");
     }
 
     @Test

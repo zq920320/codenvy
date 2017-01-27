@@ -39,10 +39,12 @@ import org.eclipse.che.commons.lang.IoUtil;
 import org.eclipse.che.commons.lang.Pair;
 import org.eclipse.che.commons.subject.Subject;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.inject.Inject;
+import javax.inject.Named;
 import javax.servlet.ServletInputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -83,8 +85,11 @@ public class VSTSWebhookService extends BaseWebhookService {
 
     @Inject
     public VSTSWebhookService(final AuthConnection authConnection, final FactoryConnection factoryConnection,
-                              final UserConnection userConnection, final VSTSConnection vstsConnection) {
-        super(authConnection, factoryConnection);
+                              final UserConnection userConnection, final VSTSConnection vstsConnection,
+                              ConfigurationProperties configurationProperties,
+                              @Named("integration.factory.owner.username") String username,
+                              @Named("integration.factory.owner.password") String password) {
+        super(authConnection, factoryConnection, configurationProperties, username, password);
 
         this.factoryConnection = factoryConnection;
         this.userConnection = userConnection;

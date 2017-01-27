@@ -29,8 +29,6 @@ import org.eclipse.che.inject.ConfigurationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.inject.Inject;
-import javax.inject.Named;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -40,7 +38,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toList;
 
@@ -51,27 +51,32 @@ import static java.util.stream.Collectors.toList;
  */
 public abstract class BaseWebhookService extends Service {
 
-    private static final Logger LOG                             = LoggerFactory.getLogger(BaseWebhookService.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BaseWebhookService.class);
+
+    private static final String JENKINS_CONNECTOR_PREFIX_PATTERN        = "env.CODENVY_JENKINS_CONNECTOR.+";
+    private static final String JENKINS_CONNECTOR_PREFIX                = "env.CODENVY_JENKINS_";
+    private static final String JENKINS_CONNECTOR_FACTORY_ID_SUFFIX     = "_FACTORY_ID";
+    private static final String JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX = "_REPOSITORY_URL";
+    private static final String JENKINS_CONNECTOR_JOB_NAME_SUFFIX       = "_JOB_NAME";
 
     protected static final String FACTORY_URL_REL = "accept-named";
 
-    private final AuthConnection authConnection;
-    private final FactoryConnection factoryConnection;
+    private final AuthConnection          authConnection;
+    private final FactoryConnection       factoryConnection;
+    private final ConfigurationProperties configurationProperties;
+    private final String                  username;
+    private final String                  password;
 
-    @Inject
-    @Named("integrations.username")
-    String username;
-
-    @Inject
-    @Named("integrations.password")
-    String password;
-
-    @Inject
-    private static ConfigurationProperties configurationProperties;
-
-    public BaseWebhookService(final AuthConnection authConnection, final FactoryConnection factoryConnection) {
+    public BaseWebhookService(final AuthConnection authConnection,
+                              final FactoryConnection factoryConnection,
+                              ConfigurationProperties configurationProperties,
+                              String username,
+                              String password) {
         this.authConnection = authConnection;
         this.factoryConnection = factoryConnection;
+        this.configurationProperties = configurationProperties;
+        this.username = username;
+        this.password = password;
     }
 
     /**
@@ -86,7 +91,7 @@ public abstract class BaseWebhookService extends Service {
      * @return list of factories that contain a project for given repository and branch
      */
     protected List<FactoryDto> getFactoriesForRepositoryAndBranch(final Set<String> factoryIDs, final String headRepositoryUrl,
-                                                               final String headBranch) throws ServerException {
+                                                                  final String headBranch) throws ServerException {
         List<FactoryDto> factories = new ArrayList<>();
         for (String factoryID : factoryIDs) {
             factories.add(factoryConnection.getFactory(factoryID));
@@ -95,8 +100,8 @@ public abstract class BaseWebhookService extends Service {
         return factories.stream()
                         .filter(f -> (f != null)
                                      && (f.getWorkspace().getProjects()
-                                           .stream()
-                                           .anyMatch(p -> isProjectMatching(p, headRepositoryUrl, headBranch))))
+                                          .stream()
+                                          .anyMatch(p -> isProjectMatching(p, headRepositoryUrl, headBranch))))
                         .collect(toList());
     }
 
@@ -117,10 +122,10 @@ public abstract class BaseWebhookService extends Service {
      * @throws ServerException
      */
     protected FactoryDto updateProjectInFactory(final FactoryDto factory,
-                                             final String headRepositoryUrl,
-                                             final String headBranch,
-                                             final String baseRepositoryUrl,
-                                             final String headCommitId) throws ServerException {
+                                                final String headRepositoryUrl,
+                                                final String headBranch,
+                                                final String baseRepositoryUrl,
+                                                final String headCommitId) throws ServerException {
         // Get projects in factory
         final List<ProjectConfigDto> factoryProjects = factory.getWorkspace().getProjects();
 
@@ -157,7 +162,7 @@ public abstract class BaseWebhookService extends Service {
      * @throws ServerException
      */
     protected FactoryDto updateProjectInFactory(final FactoryDto factory, final String repositoryUrl, final String headBranch,
-                                             final String headCommitId) throws ServerException {
+                                                final String headCommitId) throws ServerException {
         return updateProjectInFactory(factory, repositoryUrl, headBranch, repositoryUrl, headCommitId);
     }
 
@@ -174,39 +179,41 @@ public abstract class BaseWebhookService extends Service {
 
     /**
      * Get all configured connectors
-     *
+     * <p>
      * Jenkins connector: [connector-name]=[connector-type],[factory-id],[jenkins-url],[jenkins-job-name]
      *
      * @param factoryId
      * @return the list of all connectors contained in CONNECTORS_PROPERTIES_FILENAME properties file
      */
-    protected static List<Connector> getConnectors(String factoryId) throws ServerException {
+    protected List<Connector> getConnectors(String factoryId) throws ServerException {
 
-        Map<String, String> properties = configurationProperties.getProperties(".*CODENVY_JENKINS_CONNECTOR.*");
+        Map<String, String> properties = configurationProperties.getProperties(JENKINS_CONNECTOR_PREFIX_PATTERN);
 
-        properties.entrySet().stream().filter(entry -> entry.getKey()).
+        Set<String> connectors = properties.entrySet()
+                                           .stream()
+                                           .map(entry -> entry.getKey().split("_")[2])
+                                           .collect(Collectors.toSet());
 
+        if (connectors.isEmpty()) {
+            LOG.error("No connectors was registered for factory {}", factoryId);
+        }
 
-        List<Connector> connectors = new ArrayList<>();
-        Properties connectorsProperties = getProperties(CONNECTORS_PROPERTIES_FILENAME);
-        Set<String> keySet = connectorsProperties.stringPropertyNames();
-        keySet.stream()
-              .filter(key -> factoryId.equals(connectorsProperties.getProperty(key).split(",")[1]))
-              .forEach(key -> {
-                  String value = connectorsProperties.getProperty(key);
-                  String[] valueSplit = value.split(",");
-                  switch (valueSplit[0]) {
-                      case "jenkins":
-                          JenkinsConnector jenkinsConnector = new JenkinsConnector(valueSplit[2], valueSplit[3]);
-                          connectors.add(jenkinsConnector);
-                          LOG.debug("new JenkinsConnector({}, {})", valueSplit[2], valueSplit[3]);
-                          break;
-                      default:
-                          LOG.error("Unknown connector type {}", valueSplit[0]);
-                          break;
-                  }
-              });
-        return connectors;
+        return connectors.stream()
+                         .filter(connector -> factoryId.equals(properties.get(JENKINS_CONNECTOR_PREFIX + connector +
+                                                                              JENKINS_CONNECTOR_FACTORY_ID_SUFFIX)))
+                         .map(connector -> createJenkinsConnector(properties, connector))
+                         .collect(Collectors.toList());
+    }
+
+    private JenkinsConnector createJenkinsConnector(Map<String, String> properties, String connector) {
+        String repositoryUrl = properties.get(JENKINS_CONNECTOR_PREFIX + connector + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX);
+        String jobName = properties.get(JENKINS_CONNECTOR_PREFIX + connector + JENKINS_CONNECTOR_JOB_NAME_SUFFIX);
+
+        checkArgument(!isNullOrEmpty(repositoryUrl) && !isNullOrEmpty(jobName),
+                      "Repository url or job name was not registered for " + connector);
+
+        return new JenkinsConnector(properties.get(JENKINS_CONNECTOR_PREFIX + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX),
+                                    properties.get(JENKINS_CONNECTOR_PREFIX + JENKINS_CONNECTOR_JOB_NAME_SUFFIX));
     }
 
     /**
@@ -240,7 +247,8 @@ public abstract class BaseWebhookService extends Service {
      *         the name of the properties file
      * @throws ServerException
      */
-    protected static void storeProperty(final String propertyKey, final String propertyValue, final String fileName) throws ServerException {
+    protected static void storeProperty(final String propertyKey, final String propertyValue, final String fileName)
+            throws ServerException {
         String filePath = Paths.get(fileName).toAbsolutePath().toString();
         Properties properties = new Properties();
         try (FileInputStream in = new FileInputStream(filePath)) {
@@ -302,7 +310,6 @@ public abstract class BaseWebhookService extends Service {
         private final Token token;
 
         public TokenSubject() throws ServerException {
-            //final Pair<String, String> credentials = getCredentials();
             token = authConnection.authenticateUser(username, password);
         }
 

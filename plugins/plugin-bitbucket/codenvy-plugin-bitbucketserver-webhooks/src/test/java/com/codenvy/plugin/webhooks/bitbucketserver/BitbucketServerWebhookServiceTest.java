@@ -81,7 +81,7 @@ public class BitbucketServerWebhookServiceTest {
         parameters.put("branch", "testBranch");
         when(source.getParameters()).thenReturn(parameters);
 
-        service = spy(new BitbucketServerWebhookService(mock(AuthConnection.class), factoryConnection, "http://bitbucketserver.host/"));
+        service = spy(new BitbucketServerWebhookService(mock(AuthConnection.class), factoryConnection, null, "", "", "http://bitbucketserver.host/"));
     }
 
     @Test
