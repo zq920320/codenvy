@@ -29,6 +29,7 @@ import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.concurrent.LoggingUncaughtExceptionHandler;
 import org.eclipse.che.commons.lang.os.WindowsPathEscaper;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
+import org.eclipse.che.plugin.docker.client.DockerConnectorProvider;
 import org.eclipse.che.plugin.docker.client.ProgressMonitor;
 import org.eclipse.che.plugin.docker.client.UserSpecificDockerRegistryCredentialsProvider;
 import org.eclipse.che.plugin.docker.client.exception.ImageNotFoundException;
@@ -45,7 +46,6 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -81,7 +81,7 @@ public class HostedMachineProviderImpl extends MachineProviderImpl {
     private final ScheduledExecutorService snapshotImagesCleanerService;
 
     @Inject
-    public HostedMachineProviderImpl(DockerConnector docker,
+    public HostedMachineProviderImpl(DockerConnectorProvider dockerConnectorProvider,
                                      UserSpecificDockerRegistryCredentialsProvider dockerCredentials,
                                      DockerMachineFactory dockerMachineFactory,
                                      DockerInstanceStopDetector dockerInstanceStopDetector,
@@ -106,7 +106,7 @@ public class HostedMachineProviderImpl extends MachineProviderImpl {
                                      @Named("che.docker.cpu_quota") long cpuQuota,
                                      @Named("che.docker.extra_hosts") Set<Set<String>> additionalHosts)
             throws IOException {
-        super(docker,
+        super(dockerConnectorProvider,
               dockerCredentials,
               dockerMachineFactory,
               dockerInstanceStopDetector,
@@ -130,7 +130,7 @@ public class HostedMachineProviderImpl extends MachineProviderImpl {
               windowsPathEscaper,
               additionalHosts);
 
-        this.docker = docker;
+        this.docker = dockerConnectorProvider.get();
         this.dockerCredentials = dockerCredentials;
         this.tokenRegistry = tokenRegistry;
         this.cpusetCpus = cpusetCpus;
