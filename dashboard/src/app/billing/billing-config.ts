@@ -14,7 +14,6 @@
  */
 'use strict';
 
-import {Billing} from './billing.directive';
 import {BillingController} from './billing.controller';
 import {BillingService} from './billing.service';
 import {CardInfo} from './card-info/card-info.directive';
@@ -31,7 +30,6 @@ export class BillingConfig {
 
   constructor(register: any) {
     register.controller('BillingController', BillingController);
-    register.directive('billing', Billing);
     register.service('billingService', BillingService);
 
     register.controller('CardInfoController', CardInfoController);
