@@ -22,7 +22,7 @@
 export class RamInfo {
   restrict: string = 'E';
   replace: boolean = false;
-  templateUrl: string = '/app/billing/ram-info/ram-info.html';
+  templateUrl: string = 'app/billing/ram-info/ram-info.html';
 
   bindToController: boolean = true;
 

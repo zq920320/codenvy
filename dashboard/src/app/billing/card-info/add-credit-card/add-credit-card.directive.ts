@@ -27,7 +27,7 @@ export class AddCreditCard {
 
   restrict: string = 'E';
   replace: boolean = false;
-  templateUrl: string = '/app/billing/card-info/add-credit-card/add-credit-card.html';
+  templateUrl: string = 'app/billing/card-info/add-credit-card/add-credit-card.html';
 
   bindToController: boolean = true;
 

@@ -21,7 +21,7 @@
 export class CardInfo {
   restrict: string = 'E';
   replace: boolean = false;
-  templateUrl: string = '/app/billing/card-info/card-info.html';
+  templateUrl: string = 'app/billing/card-info/card-info.html';
 
   bindToController: boolean = true;
 

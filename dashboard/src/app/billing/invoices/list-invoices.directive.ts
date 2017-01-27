@@ -22,7 +22,7 @@
 export class ListInvoices {
   restrict: string = 'E';
   replace: boolean = false;
-  templateUrl: string = '/app/billing/invoices/list-invoices.html';
+  templateUrl: string = 'app/billing/invoices/list-invoices.html';
 
   bindToController: boolean = true;
 
