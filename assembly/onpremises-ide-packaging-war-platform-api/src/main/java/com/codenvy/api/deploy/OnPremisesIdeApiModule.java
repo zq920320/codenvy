@@ -336,6 +336,10 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new ScheduleModule());
 
         bind(org.eclipse.che.plugin.docker.client.DockerConnector.class).to(com.codenvy.swarm.client.SwarmDockerConnector.class);
+        MapBinder<String, org.eclipse.che.plugin.docker.client.DockerConnector> dockerConnectors =
+                MapBinder.newMapBinder(binder(), String.class, org.eclipse.che.plugin.docker.client.DockerConnector.class);
+        dockerConnectors.addBinding("swarm").to(com.codenvy.swarm.client.SwarmDockerConnector.class);
+        bindConstant().annotatedWith(Names.named("che.docker.connector")).to("swarm");
         bind(org.eclipse.che.plugin.docker.client.DockerRegistryDynamicAuthResolver.class)
                 .to(AwsEcrAuthResolver.class);
 

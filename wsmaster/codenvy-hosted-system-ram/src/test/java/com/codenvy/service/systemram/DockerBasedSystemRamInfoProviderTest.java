@@ -16,6 +16,7 @@ package com.codenvy.service.systemram;
 
 import org.eclipse.che.api.core.ServerException;
 import org.eclipse.che.plugin.docker.client.DockerConnector;
+import org.eclipse.che.plugin.docker.client.DockerConnectorProvider;
 import org.eclipse.che.plugin.docker.client.json.SystemInfo;
 import org.mockito.Mock;
 import org.mockito.testng.MockitoTestNGListener;
@@ -37,17 +38,20 @@ import static org.testng.Assert.assertTrue;
 public class DockerBasedSystemRamInfoProviderTest {
 
     @Mock
-    private SystemInfo systemInfo;
+    private SystemInfo              systemInfo;
     @Mock
-    private DockerConnector dockerConnector;
+    private DockerConnectorProvider dockerConnectorProvider;
+    @Mock
+    private DockerConnector         dockerConnector;
 
     private SystemRamInfoProvider systemRamInfoProvider;
 
     @BeforeMethod
     private void setup() throws Exception{
+        when(dockerConnectorProvider.get()).thenReturn(dockerConnector);
         when(dockerConnector.getSystemInfo()).thenReturn(systemInfo);
 
-        systemRamInfoProvider = new DockerBasedSystemRamInfoProvider(dockerConnector);
+        systemRamInfoProvider = new DockerBasedSystemRamInfoProvider(dockerConnectorProvider);
     }
 
     @Test
