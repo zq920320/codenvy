@@ -22,6 +22,7 @@ import org.eclipse.che.api.auth.shared.dto.Token;
 import org.eclipse.che.api.factory.shared.dto.FactoryDto;
 import org.eclipse.che.api.user.shared.dto.UserDto;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -37,8 +38,11 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.mockito.Matchers.anyObject;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static javax.ws.rs.core.Response.Status.OK;
@@ -57,6 +61,26 @@ public class TestVSTSWebhookService {
 
     @Before
     public void setUp() throws Exception {
+        // Prepare webhook
+        ConfigurationProperties configurationProperties = mock(ConfigurationProperties.class);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_TYPE", "work-item-created");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_HOST", "visualstudio");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_ACCOUNT", "stournie");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_COLLECTION", "DefaultCollection");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_API_VERSION", "2.2-preview.1");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_USERNAME", "vststest");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK1_PASSWORD", "Vsts2015");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_TYPE", "pull-request-updated");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_HOST", "visualstudio");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_ACCOUNT", "fabrikam-fiber-inc");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_COLLECTION", "DefaultCollection");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_API_VERSION", "2.2-preview.1");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_USERNAME", "username");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_PASSWORD", "password");
+        properties.put("env.CODENVY_VSTS_WEBHOOK_WEBHOOK2_FACTORY1_ID", "fakeFactoryId");
+        when(configurationProperties.getProperties(eq("env.CODENVY_VSTS_WEBHOOK_.+"))).thenReturn(properties);
+
         // Prepare authConnection
         Token fakeToken = DtoFactory.newDto(Token.class).withValue("fakeToken");
         AuthConnection mockAuthConnection = mock(AuthConnection.class);
@@ -83,7 +107,13 @@ public class TestVSTSWebhookService {
 
         // Prepare VSTSWebhookService
         fakeVSTSWebhookService =
-                new VSTSWebhookService(mockAuthConnection, mockFactoryConnection, mockUserConnection, mockVSTSConnection, null, "", "");
+                new VSTSWebhookService(mockAuthConnection,
+                                       mockFactoryConnection,
+                                       mockUserConnection,
+                                       mockVSTSConnection,
+                                       configurationProperties,
+                                       "username",
+                                       "password");
     }
 
     @Test

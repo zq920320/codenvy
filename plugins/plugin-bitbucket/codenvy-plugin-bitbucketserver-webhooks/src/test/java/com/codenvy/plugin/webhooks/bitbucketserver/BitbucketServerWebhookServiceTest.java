@@ -31,6 +31,7 @@ import org.eclipse.che.api.workspace.shared.dto.ProjectConfigDto;
 import org.eclipse.che.api.workspace.shared.dto.SourceStorageDto;
 import org.eclipse.che.api.workspace.shared.dto.WorkspaceConfigDto;
 import org.eclipse.che.dto.server.DtoFactory;
+import org.eclipse.che.inject.ConfigurationProperties;
 import org.mockito.testng.MockitoTestNGListener;
 import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
@@ -41,12 +42,14 @@ import javax.servlet.http.HttpServletRequest;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.anyObject;
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
@@ -68,7 +71,11 @@ public class BitbucketServerWebhookServiceTest {
         WorkspaceConfigDto workspace = mock(WorkspaceConfigDto.class);
         ProjectConfigDto project = mock(ProjectConfigDto.class);
         SourceStorageDto source = mock(SourceStorageDto.class);
-
+        ConfigurationProperties configurationProperties = mock(ConfigurationProperties.class);
+        Map<String, String> properties = new HashMap<>();
+        properties.put("env.CODENVY_BITBUCKET_SERVER_WEBHOOK_WEBHOOK1_REPOSITORY_URL", "http://owner@bitbucketserver.host/scm/projectkey/repository.git");
+        properties.put("env.CODENVY_BITBUCKET_SERVER_WEBHOOK_WEBHOOK1_FACTORY1_ID", "factoryId");
+        when(configurationProperties.getProperties(eq("env.CODENVY_BITBUCKET_SERVER_WEBHOOK_.+"))).thenReturn(properties);
         when(factory.getWorkspace()).thenReturn(workspace);
         when(factory.getLink(anyString())).thenReturn(mock(Link.class));
         when(factory.getId()).thenReturn("factoryId");
@@ -81,7 +88,12 @@ public class BitbucketServerWebhookServiceTest {
         parameters.put("branch", "testBranch");
         when(source.getParameters()).thenReturn(parameters);
 
-        service = spy(new BitbucketServerWebhookService(mock(AuthConnection.class), factoryConnection, null, "", "", "http://bitbucketserver.host/"));
+        service = spy(new BitbucketServerWebhookService(mock(AuthConnection.class),
+                                                        factoryConnection,
+                                                        configurationProperties,
+                                                        "username",
+                                                        "password",
+                                                        "http://bitbucketserver.host/"));
     }
 
     @Test

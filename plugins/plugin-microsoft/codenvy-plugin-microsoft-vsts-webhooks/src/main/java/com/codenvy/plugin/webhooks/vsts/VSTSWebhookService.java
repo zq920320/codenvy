@@ -55,14 +55,19 @@ import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toSet;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 import static com.codenvy.plugin.webhooks.FactoryType.DEVELOP;
 import static com.codenvy.plugin.webhooks.FactoryType.REVIEW;
@@ -78,15 +83,27 @@ public class VSTSWebhookService extends BaseWebhookService {
 
     private static final Logger LOG                               = LoggerFactory.getLogger(VSTSWebhookService.class);
     private static final String VSTS_WEBHOOKS_PROPERTIES_FILENAME = "vsts-webhooks.properties";
+    private static final String WEBHOOK_PROPERTY_PATTERN          = "env.CODENVY_VSTS_WEBHOOK_.+";
+    private static final String WEBHOOK_TYPE_SUFFIX               = "_TYPE";
+    private static final String WEBHOOK_HOST_SUFFIX               = "_HOST";
+    private static final String WEBHOOK_ACCOUNT_SUFFIX            = "_ACCOUNT";
+    private static final String WEBHOOK_COLLECTION_SUFFIX         = "_COLLECTION";
+    private static final String WEBHOOK_API_VERSION_SUFFIX        = "_API_VERSION";
+    private static final String WEBHOOK_USERNAME_SUFFIX           = "_USERNAME";
+    private static final String WEBHOOK_PASSWORD_SUFFIX           = "_PASSWORD";
+    private static final String WEBHOOK_FACTORY_ID_SUFFIX_PATTERN = "_FACTORY.+_ID";
 
-    private final FactoryConnection factoryConnection;
-    private final UserConnection    userConnection;
-    private final VSTSConnection    vstsConnection;
+    private final FactoryConnection       factoryConnection;
+    private final UserConnection          userConnection;
+    private final VSTSConnection          vstsConnection;
+    private final ConfigurationProperties configurationProperties;
 
     @Inject
-    public VSTSWebhookService(final AuthConnection authConnection, final FactoryConnection factoryConnection,
-                              final UserConnection userConnection, final VSTSConnection vstsConnection,
-                              ConfigurationProperties configurationProperties,
+    public VSTSWebhookService(final AuthConnection authConnection,
+                              final FactoryConnection factoryConnection,
+                              final UserConnection userConnection,
+                              final VSTSConnection vstsConnection,
+                              final ConfigurationProperties configurationProperties,
                               @Named("integration.factory.owner.username") String username,
                               @Named("integration.factory.owner.password") String password) {
         super(authConnection, factoryConnection, configurationProperties, username, password);
@@ -94,6 +111,7 @@ public class VSTSWebhookService extends BaseWebhookService {
         this.factoryConnection = factoryConnection;
         this.userConnection = userConnection;
         this.vstsConnection = vstsConnection;
+        this.configurationProperties = configurationProperties;
     }
 
     @ApiOperation(value = "Handle VSTS webhook events",
@@ -200,7 +218,7 @@ public class VSTSWebhookService extends BaseWebhookService {
         final String host = hostSplit[1];
 
         // Get configured 'work item created' webhook for given VSTS account, host and collection
-        Optional<WorkItemCreatedWebhook> webhook  = getWorkItemCreatedWebhook(host, account, collection);
+        Optional<WorkItemCreatedWebhook> webhook = getWorkItemCreatedWebhook(host, account, collection);
 
         WorkItemCreatedWebhook w = webhook.orElseThrow(
                 () -> new ServerException("No 'work item created' webhook configured for collection URL " + collectionUrl));
@@ -225,11 +243,11 @@ public class VSTSWebhookService extends BaseWebhookService {
             final PullRequestUpdatedWebhook pruW = pruWebhook.get();
             pruW.addFactoryId(storedDevelopFactory.getId());
             pruW.addFactoryId(storedReviewFactory.getId());
-            storePullRequestUpdatedWebhook(pruW);
+//            storePullRequestUpdatedWebhook(pruW);
         } else {
-            storePullRequestUpdatedWebhook(
-                    new PullRequestUpdatedWebhook(host, account, collection, apiVersion, credentials, storedDevelopFactory.getId(),
-                                                  storedReviewFactory.getId()));
+//            storePullRequestUpdatedWebhook(
+//                    new PullRequestUpdatedWebhook(host, account, collection, apiVersion, credentials, storedDevelopFactory.getId(),
+//                                                  storedReviewFactory.getId()));
         }
     }
 
@@ -277,7 +295,7 @@ public class VSTSWebhookService extends BaseWebhookService {
             final String host = hostSplit[1];
 
             // Get VSTS 'pull request merged' webhook configured for given host, account and collection
-            final Optional<PullRequestUpdatedWebhook> webhook  = getPullRequestUpdatedWebhook(host, account, collection);
+            final Optional<PullRequestUpdatedWebhook> webhook = getPullRequestUpdatedWebhook(host, account, collection);
 
             final PullRequestUpdatedWebhook w = webhook.orElseThrow(() -> new ServerException(
                     "No 'pull request updated' webhook configured for host " + host + ", account " + account + " and collection " +
@@ -311,7 +329,7 @@ public class VSTSWebhookService extends BaseWebhookService {
             }
 
             // Update 'pull request merged' webhook configured in properties file
-            storePullRequestUpdatedWebhook(w);
+//            storePullRequestUpdatedWebhook(w);
         }
     }
 
@@ -324,8 +342,7 @@ public class VSTSWebhookService extends BaseWebhookService {
      *         'DEVELOP' or 'REVIEW'
      * @param workItemId
      *         the id of the VSTS work item
-     * @return
-     *  the new created factory
+     * @return the new created factory
      * @throws ServerException
      */
     private FactoryDto createFactoryForWorkItem(final FactoryDto parentFactory, final FactoryType factoryType, final String workItemId)
@@ -408,7 +425,8 @@ public class VSTSWebhookService extends BaseWebhookService {
      * @return the webhook configured for given account, host and collection or null if no webhook is configured
      * @throws ServerException
      */
-    private Optional<PullRequestUpdatedWebhook> getPullRequestUpdatedWebhook(final String host, final String account, final String collection)
+    private Optional<PullRequestUpdatedWebhook> getPullRequestUpdatedWebhook(final String host, final String account,
+                                                                             final String collection)
             throws ServerException {
         final List webhooks = getVSTSWebhooks(PULL_REQUEST_UPDATED_WEBHOOK);
         PullRequestUpdatedWebhook webhook = null;
@@ -432,51 +450,56 @@ public class VSTSWebhookService extends BaseWebhookService {
      *         WORK_ITEM_CREATED_WEBHOOK or PULL_REQUEST_UPDATED_WEBHOOK
      * @return the list of webhooks of given type contained in VSTS_WEBHOOKS_PROPERTIES_FILENAME properties file
      */
-    private static List getVSTSWebhooks(final VSTSWebhookType webhookType) throws ServerException {
-        Properties webhooksProperties = getProperties(VSTS_WEBHOOKS_PROPERTIES_FILENAME);
-        Set<String> keySet = webhooksProperties.stringPropertyNames();
+    private List getVSTSWebhooks(final VSTSWebhookType webhookType) throws ServerException {
+        Map<String, String> properties = configurationProperties.getProperties(WEBHOOK_PROPERTY_PATTERN);
+
+        Set<String> webhooks = properties.entrySet()
+                                         .stream()
+                                         .filter(entry -> webhookType.toString().equals(entry.getValue()))
+                                         .map(entry -> entry.getKey()
+                                                            .substring(0, entry.getKey().lastIndexOf(WEBHOOK_TYPE_SUFFIX)))
+                                         .collect(toSet());
+
+        if (webhooks.isEmpty()) {
+            LOG.error("No VSTS webhooks with '{}' type were registered", webhookType);
+        }
 
         if (webhookType == WORK_ITEM_CREATED_WEBHOOK) {
             List<WorkItemCreatedWebhook> wicWebhooks = new ArrayList<>();
-            keySet.stream().forEach(key -> {
-                String value = webhooksProperties.getProperty(key);
-                if (!isNullOrEmpty(value)) {
-                    String[] valueSplit = value.split(",");
-                    if (valueSplit.length == 7 &&
-                        valueSplit[0].equals(webhookType.toString())) {
-
-                        WorkItemCreatedWebhook webhook =
-                                new WorkItemCreatedWebhook(valueSplit[1], valueSplit[2], valueSplit[3], valueSplit[4],
-                                                           Pair.of(valueSplit[5], valueSplit[6]));
-                        wicWebhooks.add(webhook);
-                        LOG.debug("new WorkItemCreatedWebhook({})", value);
-                    }
-                }
-            });
+            for (String webhook : webhooks) {
+                WorkItemCreatedWebhook wicWebhook = new WorkItemCreatedWebhook(properties.get(webhook + WEBHOOK_HOST_SUFFIX),
+                                                                               properties.get(webhook + WEBHOOK_ACCOUNT_SUFFIX),
+                                                                               properties.get(webhook + WEBHOOK_COLLECTION_SUFFIX),
+                                                                               properties.get(webhook + WEBHOOK_API_VERSION_SUFFIX),
+                                                                               Pair.of(properties.get(webhook + WEBHOOK_USERNAME_SUFFIX),
+                                                                                       properties.get(webhook + WEBHOOK_PASSWORD_SUFFIX)));
+                wicWebhooks.add(wicWebhook);
+                LOG.debug("new WorkItemCreatedWebhook({})", wicWebhook);
+            }
             return wicWebhooks;
-        }
-
-        if (webhookType == PULL_REQUEST_UPDATED_WEBHOOK) {
+        } else if (webhookType == PULL_REQUEST_UPDATED_WEBHOOK) {
             List<PullRequestUpdatedWebhook> pruWebhooks = new ArrayList<>();
-            keySet.stream().forEach(key -> {
-                String value = webhooksProperties.getProperty(key);
-                if (!isNullOrEmpty(value)) {
-                    String[] valueSplit = value.split(",");
-                    if (valueSplit.length >= 7
-                        && valueSplit[0].equals(webhookType.toString())) {
-
-                        final String[] factoriesIDs = (valueSplit.length == 8 ? valueSplit[7].split(";") : new String[0]);
-                        PullRequestUpdatedWebhook webhook =
-                                new PullRequestUpdatedWebhook(valueSplit[1], valueSplit[2], valueSplit[3], valueSplit[4],
-                                                              Pair.of(valueSplit[5], valueSplit[6]), factoriesIDs);
-                        pruWebhooks.add(webhook);
-                        LOG.debug("new PullRequestUpdatedWebhook({})", value);
-                    }
-                }
-            });
+            for (String webhook : webhooks) {
+                String[] factoriesIDs = properties.entrySet()
+                                                  .stream()
+                                                  .filter(entry -> webhooks.stream().anyMatch(
+                                                          w -> entry.getKey().matches(w + WEBHOOK_FACTORY_ID_SUFFIX_PATTERN)))
+                                                  .map(Entry::getValue)
+                                                  .toArray(String[]::new);
+                PullRequestUpdatedWebhook wicWebhook = new PullRequestUpdatedWebhook(properties.get(webhook + WEBHOOK_HOST_SUFFIX),
+                                                                                     properties.get(webhook + WEBHOOK_ACCOUNT_SUFFIX),
+                                                                                     properties.get(webhook + WEBHOOK_COLLECTION_SUFFIX),
+                                                                                     properties.get(webhook + WEBHOOK_API_VERSION_SUFFIX),
+                                                                                     Pair.of(properties.get(webhook +
+                                                                                                            WEBHOOK_USERNAME_SUFFIX),
+                                                                                             properties.get(webhook +
+                                                                                                            WEBHOOK_PASSWORD_SUFFIX)),
+                                                                                     factoriesIDs);
+                pruWebhooks.add(wicWebhook);
+                LOG.debug("new WorkItemCreatedWebhook({})", wicWebhook);
+            }
             return pruWebhooks;
         }
-
         return new ArrayList();
     }
 
@@ -485,19 +508,19 @@ public class VSTSWebhookService extends BaseWebhookService {
      * If a webhook with same id already exist it will be replaced.
      *
      * @param pruWebhook
-     *          the webhook to store in webhooks property file
+     *         the webhook to store in webhooks property file
      * @throws ServerException
      */
     private void storePullRequestUpdatedWebhook(final PullRequestUpdatedWebhook pruWebhook) throws ServerException {
         final Set<String> factoriesIDs = pruWebhook.getFactoriesIds();
         String propertyValue = String.format("%s,%s,%s,%s,%s,%s,%s",
-                                                   PULL_REQUEST_UPDATED_WEBHOOK.toString(),
-                                                   pruWebhook.getHost(),
-                                                   pruWebhook.getAccount(),
-                                                   pruWebhook.getCollection(),
-                                                   pruWebhook.getApiVersion(),
-                                                   pruWebhook.getCredentials().first,
-                                                   pruWebhook.getCredentials().second);
+                                             PULL_REQUEST_UPDATED_WEBHOOK.toString(),
+                                             pruWebhook.getHost(),
+                                             pruWebhook.getAccount(),
+                                             pruWebhook.getCollection(),
+                                             pruWebhook.getApiVersion(),
+                                             pruWebhook.getCredentials().first,
+                                             pruWebhook.getCredentials().second);
 
         if (factoriesIDs.size() > 0) {
             final String concatedFactoriesIDs = String.join(";", factoriesIDs);

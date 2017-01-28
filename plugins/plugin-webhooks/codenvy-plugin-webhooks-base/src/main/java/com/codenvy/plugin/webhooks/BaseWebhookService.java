@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Strings.isNullOrEmpty;
+import static java.lang.String.format;
 import static java.util.stream.Collectors.toList;
 
 /**
@@ -53,8 +54,7 @@ public abstract class BaseWebhookService extends Service {
 
     private static final Logger LOG = LoggerFactory.getLogger(BaseWebhookService.class);
 
-    private static final String JENKINS_CONNECTOR_PREFIX_PATTERN        = "env.CODENVY_JENKINS_CONNECTOR.+";
-    private static final String JENKINS_CONNECTOR_PREFIX                = "env.CODENVY_JENKINS_";
+    private static final String JENKINS_CONNECTOR_PREFIX_PATTERN        = "env.CODENVY_JENKINS_CONNECTOR_.+";
     private static final String JENKINS_CONNECTOR_FACTORY_ID_SUFFIX     = "_FACTORY_ID";
     private static final String JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX = "_REPOSITORY_URL";
     private static final String JENKINS_CONNECTOR_JOB_NAME_SUFFIX       = "_JOB_NAME";
@@ -171,7 +171,7 @@ public abstract class BaseWebhookService extends Service {
 
         if (persistedFactory == null) {
             throw new ServerException(
-                    String.format("Error during update of factory with id %s and name %s", factory.getId(), factory.getName()));
+                    format("Error during update of factory with id %s and name %s", factory.getId(), factory.getName()));
         }
 
         LOG.debug("Factory with id {} and name {} successfully updated", persistedFactory.getId(), persistedFactory.getName());
@@ -191,7 +191,10 @@ public abstract class BaseWebhookService extends Service {
 
         Set<String> connectors = properties.entrySet()
                                            .stream()
-                                           .map(entry -> entry.getKey().split("_")[2])
+                                           .filter(entry -> entry.getValue().equals(factoryId))
+                                           .map(entry -> entry.getKey()
+                                                              .substring(0,
+                                                                         entry.getKey().lastIndexOf(JENKINS_CONNECTOR_FACTORY_ID_SUFFIX)))
                                            .collect(Collectors.toSet());
 
         if (connectors.isEmpty()) {
@@ -199,21 +202,19 @@ public abstract class BaseWebhookService extends Service {
         }
 
         return connectors.stream()
-                         .filter(connector -> factoryId.equals(properties.get(JENKINS_CONNECTOR_PREFIX + connector +
-                                                                              JENKINS_CONNECTOR_FACTORY_ID_SUFFIX)))
                          .map(connector -> createJenkinsConnector(properties, connector))
-                         .collect(Collectors.toList());
+                         .collect(toList());
     }
 
     private JenkinsConnector createJenkinsConnector(Map<String, String> properties, String connector) {
-        String repositoryUrl = properties.get(JENKINS_CONNECTOR_PREFIX + connector + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX);
-        String jobName = properties.get(JENKINS_CONNECTOR_PREFIX + connector + JENKINS_CONNECTOR_JOB_NAME_SUFFIX);
+        String repositoryUrl = properties.get(connector + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX);
+        String jobName = properties.get(connector + JENKINS_CONNECTOR_JOB_NAME_SUFFIX);
 
         checkArgument(!isNullOrEmpty(repositoryUrl) && !isNullOrEmpty(jobName),
-                      "Repository url or job name was not registered for " + connector);
+                      format("No repository url or job name was not registered for jenkins connector '%s'", connector));
 
-        return new JenkinsConnector(properties.get(JENKINS_CONNECTOR_PREFIX + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX),
-                                    properties.get(JENKINS_CONNECTOR_PREFIX + JENKINS_CONNECTOR_JOB_NAME_SUFFIX));
+        return new JenkinsConnector(properties.get(connector + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX),
+                                    properties.get(connector + JENKINS_CONNECTOR_JOB_NAME_SUFFIX));
     }
 
     /**

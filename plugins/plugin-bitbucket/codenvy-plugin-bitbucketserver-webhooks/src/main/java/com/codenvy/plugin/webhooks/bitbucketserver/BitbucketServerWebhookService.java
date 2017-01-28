@@ -22,8 +22,6 @@ import com.codenvy.plugin.webhooks.bitbucketserver.shared.Project;
 import com.codenvy.plugin.webhooks.bitbucketserver.shared.PushEvent;
 import com.codenvy.plugin.webhooks.bitbucketserver.shared.RefChange;
 import com.codenvy.plugin.webhooks.bitbucketserver.shared.Repository;
-import com.codenvy.plugin.webhooks.connectors.Connector;
-import com.codenvy.plugin.webhooks.connectors.JenkinsConnector;
 import com.google.common.annotations.VisibleForTesting;
 
 import org.eclipse.che.api.core.ServerException;
@@ -45,15 +43,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Collectors;
 
+import static java.util.stream.Collectors.toSet;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Path("/bitbucketserver-webhook")
@@ -61,8 +56,9 @@ public class BitbucketServerWebhookService extends BaseWebhookService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BitbucketServerWebhookService.class);
 
-    private static final String CONFIG_PREFIX_PATTERN     = "env.CODENVY_GITHUB_WEBHOOK.+";
-    private static final String FACTORY_ID_SUFFIX_PATTERN = "_FACTORY.+_ID";
+    private static final String WEBHOOK_PROPERTY_PATTERN          = "env.CODENVY_BITBUCKET_SERVER_WEBHOOK_.+";
+    private static final String WEBHOOK_REPOSITORY_URL_SUFFIX     = "_REPOSITORY_URL";
+    private static final String WEBHOOK_FACTORY_ID_SUFFIX_PATTERN = "_FACTORY.+_ID";
 
     private final ConfigurationProperties configurationProperties;
     private final String                  bitbucketEndpoint;
@@ -167,23 +163,24 @@ public class BitbucketServerWebhookService extends BaseWebhookService {
     }
 
     private Set<String> getFactoriesIDs(final String repositoryUrl) throws ServerException {
-        Map<String, String> properties = configurationProperties.getProperties(CONFIG_PREFIX_PATTERN);
+        Map<String, String> properties = configurationProperties.getProperties(WEBHOOK_PROPERTY_PATTERN);
 
         Set<String> webhooks = properties.entrySet()
-                                     .stream()
-                                     .filter(entry -> properties.get(entry.getKey()).equals(repositoryUrl))
-                                     .map(entry -> CONFIG_PREFIX_PATTERN.substring(0, CONFIG_PREFIX_PATTERN.lastIndexOf("_") + 1) +
-                                                   entry.getKey().split("_")[2])
-                                     .collect(Collectors.toSet());
+                                         .stream()
+                                         .filter(entry -> repositoryUrl.equals(entry.getValue()))
+                                         .map(entry -> entry.getKey()
+                                                            .substring(0, entry.getKey().lastIndexOf(WEBHOOK_REPOSITORY_URL_SUFFIX)))
+                                         .collect(toSet());
 
         if (webhooks.isEmpty()) {
-            LOG.error("No BitBucket Server webhoooks was registered for repository {}", repositoryUrl);
+            LOG.error("No BitBucket Server webhooks were registered for repository {}", repositoryUrl);
         }
 
         return properties.entrySet()
                          .stream()
-                         .filter(entry -> webhooks.stream().anyMatch(key -> entry.getKey().matches(key + FACTORY_ID_SUFFIX_PATTERN)))
+                         .filter(entry -> webhooks.stream()
+                                                  .anyMatch(webhook -> entry.getKey().matches(webhook + WEBHOOK_FACTORY_ID_SUFFIX_PATTERN)))
                          .map(Entry::getValue)
-                         .collect(Collectors.toSet());
+                         .collect(toSet());
     }
 }
