@@ -49,8 +49,8 @@
             <div flex-gt-xs="20">
               <span class="che-xs-header noselect" hide-gt-xs>Actions</span>
               <span class="che-list-actions">
-                    <a href=="" tooltip="Download invoice">
-                      <span class="fa fa-download"></span>
+                    <a ng-if="invoice.preview" href="{{invoice.preview.href}}" target="_blank" type="text/html" tooltip="Preview invoice">
+                      <span class="fa fa-chevron-circle-right invoice-action"></span>
                     </a>
                   </span>
             </div>
