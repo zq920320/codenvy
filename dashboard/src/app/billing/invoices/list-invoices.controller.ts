@@ -19,6 +19,7 @@ export class ListInvoicesController {
   codenvyInvoices: CodenvyInvoices;
   cheNotification: any
   $filter: any;
+  lodash: _.LoDashStatic
 
   invoices: Array<IInvoice>;
   accountId: string;
@@ -28,22 +29,23 @@ export class ListInvoicesController {
   /**
    * @ngInject for Dependency injection
    */
-  constructor (codenvyInvoices: CodenvyInvoices, cheNotification: any, $filter: any) {
+  constructor (codenvyInvoices: CodenvyInvoices, cheNotification: any, $filter: any, lodash: _.LoDashStatic) {
     this.codenvyInvoices = codenvyInvoices;
     this.cheNotification = cheNotification;
     this.filter = {creationDate: ''};
     this.$filter = $filter;
+    this.lodash = lodash;
 
     this.isLoading = true;
     this.codenvyInvoices.fetchInvoices(this.accountId).then(() => {
       this.invoices = this.codenvyInvoices.getInvoices(this.accountId);
-      this.formatInvoicesDate();
+      this.formatInvoices();
       this.isLoading = false;
     }, (error: any) => {
       this.isLoading = false;
       if (error.status === 304) {
         this.invoices = this.codenvyInvoices.getInvoices(this.accountId);
-        this.formatInvoicesDate();
+        this.formatInvoices();
       } else {
         this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to load invoices.');
       }
@@ -53,9 +55,12 @@ export class ListInvoicesController {
   /**
    * Formats the invoices creation date.
    */
-  formatInvoicesDate(): void {
+  formatInvoices(): void {
     this.invoices.forEach((invoice: any) => {
       invoice.creationDate = this.$filter('date')(new Date(invoice.creationDate), 'dd-MMM-yyyy');
+      invoice.preview = this.lodash.find(invoice.links, (link: any) => {
+        return link.produces === 'text/html' && link.rel === 'get invoice';
+      });
     });
   }
 }
