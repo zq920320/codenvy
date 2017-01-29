@@ -13,6 +13,8 @@ cli_post_init() {
   CODENVY_PORT=80
   CHE_PORT=80
   CHE_SERVER_CONTAINER_NAME="${CHE_MINI_PRODUCT_NAME}_${CHE_MINI_PRODUCT_NAME}_1"
+  CHE_MIN_RAM=1.5
+  CHE_MIN_DISK=100
 }
 
 cli_parse () {
@@ -119,17 +121,17 @@ cmd_start_check_ports() {
   fi
 
   PORT_BREAK="no" 
-  text   "         port 80 (http):        $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 443 (https):      $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 2181 (zookeeper): $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 5000 (registry):  $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 23750 (socat):    $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 23751 (swarm):    $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 32001 (jmx):      $(port_open 32001 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-  text   "         port 32101 (jmx):      $(port_open 32101 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 80 (http):          $(port_open 80 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 443 (https):        $(port_open 443 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 2181 (zookeeper):   $(port_open 2181 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 5000 (registry):    $(port_open 5000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 23750 (socat):      $(port_open 23750 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 23751 (swarm):      $(port_open 23751 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 32001 (jmx):        $(port_open 32001 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+  text   "         port 32101 (jmx):        $(port_open 32101 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
   if debug_server; then
-    text   "         port ${CODENVY_DEBUG_PORT} (debug):     $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
-    text   "         port 9000 (lighttpd):  $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port ${CODENVY_DEBUG_PORT} (debug):       $(port_open ${CODENVY_DEBUG_PORT} && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
+    text   "         port 9000 (lighttpd):    $(port_open 9000 && echo "${GREEN}[AVAILABLE]${NC}" || echo "${RED}[ALREADY IN USE]${NC}") \n"
   fi
 
   if ! $(port_open 80) || \
