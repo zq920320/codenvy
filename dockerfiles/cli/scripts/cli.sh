@@ -11,6 +11,7 @@ cli_post_init() {
   DEFAULT_CODENVY_HOST=$GLOBAL_HOST_IP
   CODENVY_HOST=${CODENVY_HOST:-${DEFAULT_CODENVY_HOST}}
   CODENVY_PORT=80
+  CHE_PORT=80
   CHE_SERVER_CONTAINER_NAME="${CHE_MINI_PRODUCT_NAME}_${CHE_MINI_PRODUCT_NAME}_1"
 }
 
@@ -31,14 +32,6 @@ cli_parse () {
 
 get_boot_url() {
   echo "$CODENVY_HOST/api/"
-}
-
-get_display_url() {
-  if ! is_docker_for_mac; then
-    echo "http://${CODENVY_HOST}"
-  else
-    echo "http://localhost"
-  fi
 }
 
 cmd_backup_extra_args() {
