@@ -243,11 +243,11 @@ public class VSTSWebhookService extends BaseWebhookService {
             final PullRequestUpdatedWebhook pruW = pruWebhook.get();
             pruW.addFactoryId(storedDevelopFactory.getId());
             pruW.addFactoryId(storedReviewFactory.getId());
-//            storePullRequestUpdatedWebhook(pruW);
+            storePullRequestUpdatedWebhook(pruW);
         } else {
-//            storePullRequestUpdatedWebhook(
-//                    new PullRequestUpdatedWebhook(host, account, collection, apiVersion, credentials, storedDevelopFactory.getId(),
-//                                                  storedReviewFactory.getId()));
+            storePullRequestUpdatedWebhook(
+                    new PullRequestUpdatedWebhook(host, account, collection, apiVersion, credentials, storedDevelopFactory.getId(),
+                                                  storedReviewFactory.getId()));
         }
     }
 
@@ -329,7 +329,7 @@ public class VSTSWebhookService extends BaseWebhookService {
             }
 
             // Update 'pull request merged' webhook configured in properties file
-//            storePullRequestUpdatedWebhook(w);
+            storePullRequestUpdatedWebhook(w);
         }
     }
 
