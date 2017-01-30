@@ -47,13 +47,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.GenericEntity;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
-import java.util.Properties;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 import static java.util.stream.Collectors.toSet;
@@ -248,7 +244,7 @@ public class GitHubWebhookService extends BaseWebhookService {
                                          .collect(toSet());
 
         if (webhooks.isEmpty()) {
-            LOG.error("No BitBucket Server webhooks were registered for repository {}", baseRepositoryHtmlUrl);
+            LOG.error("No GitHub webhooks were registered for repository {}", baseRepositoryHtmlUrl);
         }
 
         return properties.entrySet()

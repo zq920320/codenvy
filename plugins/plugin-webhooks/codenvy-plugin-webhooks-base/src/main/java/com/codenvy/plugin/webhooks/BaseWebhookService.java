@@ -179,7 +179,7 @@ public abstract class BaseWebhookService extends Service {
 
     /**
      * Get all configured connectors
-     * <p>
+     *
      * Jenkins connector: [connector-name]=[connector-type],[factory-id],[jenkins-url],[jenkins-job-name]
      *
      * @param factoryId
@@ -215,26 +215,6 @@ public abstract class BaseWebhookService extends Service {
 
         return new JenkinsConnector(properties.get(connector + JENKINS_CONNECTOR_REPOSITORY_URL_SUFFIX),
                                     properties.get(connector + JENKINS_CONNECTOR_JOB_NAME_SUFFIX));
-    }
-
-    /**
-     * Get all properties contained in a given file
-     *
-     * @param fileName
-     *         the name of the properties file
-     * @return the {@link Properties} contained in the given file or null if the file contains no properties
-     * @throws ServerException
-     */
-    protected static Properties getProperties(final String fileName) throws ServerException {
-        String filePath = Paths.get(fileName).toAbsolutePath().toString();
-        Properties properties = new Properties();
-        try (FileInputStream in = new FileInputStream(filePath)) {
-            properties.load(in);
-        } catch (IOException e) {
-            LOG.error(e.getLocalizedMessage());
-            throw new ServerException(e.getLocalizedMessage());
-        }
-        return properties;
     }
 
     /**
