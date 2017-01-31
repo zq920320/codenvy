@@ -17,6 +17,14 @@
 import {CodenvyTeamRoles} from './codenvy-team-roles';
 import {CodenvyUser} from './codenvy-user.factory';
 
+interface ITeamsResource<T> extends ng.resource.IResourceClass<T> {
+  getTeams(): ng.resource.IResource<T>,
+  createTeam(data: {name: string, parent: string}): ng.resource.IResource<T>,
+  deleteTeam(data: {id: string}): ng.resource.IResource<T>,
+  updateTeam(data: {id: string}, team: any): ng.resource.IResource<T>,
+  findTeam(data: {teamName: string}): ng.resource.IResource<T>,
+}
+
 /**
  * This class is handling the interactions with Team management API.
  *
@@ -52,7 +60,11 @@ export class CodenvyTeam {
   /**
    * Client for requesting Team API.
    */
-  private remoteTeamAPI: ng.resource.IResourceClass<ng.resource.IResource<any>>;
+  private remoteTeamAPI: ITeamsResource<any>;
+  /**
+   * Deferred object which will be resolved when teams are fetched
+   */
+  private fetchTeamsDefer: ng.IDeferred<any>;
 
   /**
    * Default constructor that is using resource
@@ -65,13 +77,17 @@ export class CodenvyTeam {
     this.cheNamespaceRegistry = cheNamespaceRegistry;
     this.codenvyUser = codenvyUser;
 
-    this.remoteTeamAPI = $resource('/api/organization', {}, {
+    this.remoteTeamAPI = <ITeamsResource<any>>$resource('/api/organization', {}, {
       getTeams: {method: 'GET', url: '/api/organization', isArray: true},
       createTeam: {method: 'POST', url: '/api/organization'},
       deleteTeam: {method: 'DELETE', url: '/api/organization/:id'},
       updateTeam: {method: 'POST', url: '/api/organization/:id'},
       findTeam: {method: 'GET', url: '/api/organization/find?name=:teamName'}
     });
+
+    this.fetchTeamsDefer = this.$q.defer();
+    const fetchTeamsPromise = this.fetchTeamsDefer.promise;
+    this.cheNamespaceRegistry.setFetchPromise(fetchTeamsPromise);
   }
 
   /**
@@ -101,7 +117,9 @@ export class CodenvyTeam {
       defer.reject(error);
     });
 
-    return defer.promise;
+    return defer.promise.then(() => {
+      this.fetchTeamsDefer.resolve();
+    });
   }
 
   /**
@@ -124,7 +142,7 @@ export class CodenvyTeam {
 
     if (this.personalAccount) {
       // display personal account as "personal" on UI, namespace(id) stays the same for API interactions:
-      this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal'});
+      this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal', location: '/billing'});
     }
 
     teams.forEach((team : any) => {
@@ -132,7 +150,7 @@ export class CodenvyTeam {
       // team has to have parent (root organizations are skipped):
       if (team.parent) {
         this.teams.push(team);
-        this.cheNamespaceRegistry.getNamespaces().push({id: team.name, label: team.name});
+        this.cheNamespaceRegistry.getNamespaces().push({id: team.name, label: team.name, location: '/team/' + team.name});
       }
     });
   }
