@@ -70,7 +70,7 @@
           <che-label-container che-label-name="Workspace Cap" che-label-description="Maximum number of workspaces for the team.">
             <che-input-box che-name="workspaceCap" che-form="teamForm"
                            aria-label="workspace cap"
-                           che-place-holder="Workspace cap is not set"
+                           che-place-holder="Total number of workspaces has not been limited."
                            ng-model="teamDetailsController.limits.workspaceCap"
                            ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getWorkspaceResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
@@ -88,7 +88,7 @@
           <che-label-container che-label-name="Running Workspace Cap" che-label-description="Maximum number of running workspaces for each team.">
             <che-input-box che-name="runtimeCap" che-form="teamForm"
                            aria-label="runtime cap"
-                           che-place-holder="Running workspace cap is not set"
+                           che-place-holder="Number of running workspaces has not been limited."
                            ng-model="teamDetailsController.limits.runtimeCap"
                            ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRuntimeResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
@@ -107,13 +107,15 @@
           <che-label-container che-label-name="Workspace RAM Cap" che-label-description="Maximum RAM a singe workspace can use.">
             <che-input-box che-name="workspaceRamCap" che-form="teamForm"
                            aria-label="runtime cap"
-                           che-place-holder="Workspace RAM cap is not set"
+                           che-place-holder="Workspace RAM has not been limited."
                            ng-model="teamDetailsController.limits.ramCap"
                            ng-change="teamDetailsController.updateLimits(teamForm.$invalid, teamDetailsController.getRAMResourceType())"
                            che-readonly="!teamDetailsController.canChangeResourceLimits()"
                            ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 2000, 'blur': 0 } }"
                            type="number"
+                           min="0"
                            custom-validator="teamDetailsController.isValidLimit($value, teamDetailsController.getRAMResourceType())">
+              <div ng-message="min">A workspace RAM cap should be greater than 0.</div>
               <div ng-message="customValidator">
                 A workspace RAM cap should be less than {{teamDetailsController.maxLimits.ramCap + teamDetailsController.limitsCopy.ramCap}} GB.
               </div>
