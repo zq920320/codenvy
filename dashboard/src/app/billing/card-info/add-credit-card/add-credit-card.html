@@ -13,9 +13,8 @@
                  aria-label="Card Number"
                  ng-model="addCreditCardController.creditCard.number"
                  required
-                 ng-pattern="/^\d{4}(\s?)\d{4}\1\d{4}\1\d{3}/">
+                 maxlength="19">
         <div ng-message="required">A credit card number is required.</div>
-        <div ng-message="pattern">A valid credit card number is required.</div>
       </che-input>
       <!-- cardholder -->
       <che-input che-form="addCreditCardForm"
