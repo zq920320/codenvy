@@ -74,6 +74,10 @@ export class MoreRamController {
    */
   amount: string;
   /**
+   * Team workspaces idle timeout. Is retrieved from package details.
+   */
+  timeout: string;
+  /**
    * Minimum amount of resources, that can be bought. Is retrieved from package details.
    */
   minValue: number;
@@ -188,7 +192,11 @@ export class MoreRamController {
 
     let ramResource = this.lodash.find(this.ramPackage.resources, (resource: any) => {
       return resource.type === CodenvyResourceLimits.RAM;
-    })
+    });
+
+    let timeoutResource = this.lodash.find(this.ramPackage.resources, (resource: any) => {
+      return resource.type === CodenvyResourceLimits.TIMEOUT;
+    });
 
     if (!ramResource) {
       return;
@@ -199,6 +207,7 @@ export class MoreRamController {
     this.minValue = ramResource.minAmount / 1000;
     this.maxValue = ramResource.maxAmount / 1000;
     this.value = angular.copy(this.minValue);
+    this.timeout = timeoutResource ? timeoutResource.amount : 4;
   }
 
   /**

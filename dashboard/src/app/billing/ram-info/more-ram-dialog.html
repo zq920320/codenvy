@@ -5,7 +5,9 @@
            ng-if="moreRamController.currentStep === moreRamController.step.ONE">
         <div>
           In a team, the first {{moreRamController.freeRAM}} GB RAM is free.
-          <span ng-show="moreRamController.ramPackage">Additional RAM costs ${{moreRamController.price}} / month / {{moreRamController.amount}}.</span>
+          <span ng-show="moreRamController.ramPackage">Additional RAM costs ${{moreRamController.price}} / month / {{moreRamController.amount}}.<br/>
+            All workspaces of your account will be granted an idle timeout of {{moreRamController.timeout}} hours.
+          </span>
         </div>
         <div class="title">
           Your account settings
