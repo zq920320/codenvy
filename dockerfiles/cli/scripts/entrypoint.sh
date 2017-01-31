@@ -27,7 +27,7 @@ CHE_LICENSE_URL="https://codenvy.com/legal/fair-source/"
 CHE_SERVER_CONTAINER_NAME="${CHE_MINI_PRODUCT_NAME}_${CHE_MINI_PRODUCT_NAME}_1"
 CHE_IMAGE_FULLNAME="codenvy/cli:<version>"
 
-cli_pre_init() {
+pre_init() {
   ADDITIONAL_MANDATORY_PARAMETERS=""
   ADDITIONAL_OPTIONAL_DOCKER_PARAMETERS="
   -e CODENVY_HOST=<YOUR_HOST>          IP address or hostname where codenvy will serve its users"
