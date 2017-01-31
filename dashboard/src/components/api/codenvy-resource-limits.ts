@@ -22,5 +22,6 @@
 export enum CodenvyResourceLimits {
   RAM = <any>'RAM',
   WORKSPACE = <any>'workspace',
-  RUNTIME = <any>'runtime'
+  RUNTIME = <any>'runtime',
+  TIMEOUT = <any>'timeout'
 }
