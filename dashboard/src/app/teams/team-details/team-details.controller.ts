@@ -278,16 +278,20 @@ export class TeamDetailsController {
     if (!this.maxLimits || !this.limitsCopy) {
       return true;
     }
-    debugger;
 
+    let valid;
     switch (type) {
       case CodenvyResourceLimits.RAM:
-        return value <= (this.limitsCopy.ramCap || 0 + this.maxLimits.ramCap || 0);
+        valid = value <= ((this.limitsCopy.ramCap || 0) + (this.maxLimits.ramCap || 0));
+        break;
       case CodenvyResourceLimits.WORKSPACE:
-        return value <= (this.limitsCopy.workspaceCap || 0 + this.maxLimits.workspaceCap || 0);
+        valid = value <= ((this.limitsCopy.workspaceCap || 0) + (this.maxLimits.workspaceCap || 0));
+        break;
       case CodenvyResourceLimits.RUNTIME:
-        return value <= (this.limitsCopy.runtimeCap || 0 + this.maxLimits.runtimeCap || 0);
+        valid = value <= ((this.limitsCopy.runtimeCap || 0) + (this.maxLimits.runtimeCap || 0));
+        break;
     }
+    return valid;
   }
 
   /**
