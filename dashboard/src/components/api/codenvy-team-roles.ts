@@ -23,8 +23,10 @@ export enum CodenvyTeamRoles {
   TEAM_MEMBER = <any> {'title': 'Team Member', 'description': 'Can create and use workspaces.', 'actions' : ['createWorkspaces']},
   TEAM_ADMIN = <any> {'title': 'Team Admin', 'description': 'Can edit the team’s settings, manage workspaces, resources and members.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces', 'manageSuborganizations']},
   TEAM_OWNER = <any> {'title': 'Team Owner', 'description': 'Owner of the team, has all permissions.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces', 'delete']},
+}
 
-  getValues() {
-    return [TEAM_MEMBER, TEAM_ADMIN, TEAM_OWNER];
+export namespace CodenvyTeamRoles {
+  export function getValues(): any[] {
+    return [CodenvyTeamRoles.TEAM_MEMBER, CodenvyTeamRoles.TEAM_ADMIN, CodenvyTeamRoles.TEAM_OWNER];
   }
 }
