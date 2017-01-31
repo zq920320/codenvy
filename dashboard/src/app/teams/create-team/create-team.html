@@ -21,8 +21,10 @@
 <che-description>
   Create a team to share workspaces securely with others.
 </che-description>
-<md-progress-linear md-mode="indeterminate" class="create-team-progress"
-                    ng-show="createTeamController.isLoading"></md-progress-linear>
+<div class="create-team-progress">
+  <md-progress-linear md-mode="indeterminate"
+                      ng-show="createTeamController.isLoading"></md-progress-linear>
+</div>
 <md-content md-scroll-y flex md-theme="default" class="create-team">
   <ng-form name="createTeamForm">
     <!-- Name -->

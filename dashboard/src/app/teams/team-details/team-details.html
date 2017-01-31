@@ -177,6 +177,11 @@
 
   </md-tabs>
 </md-content>
-<md-content ng-if="teamDetailsController.invalidTeam" flex>
-  Here need to display not found page of team: {{teamDetailsController.teamName}}
+<md-content ng-if="teamDetailsController.invalidTeam" flex class="team-error-content" layout="column" layout-align="center center">
+  <div class="error-title">Team <b>{{teamDetailsController.teamName}}</b> not found.</div>
+  <span class="fa fa-group error-image"></span>
+  <div class="error-description">
+    The team could be deleted by its owner or you do not have permissions to access the team.
+  </div>
+
 </md-content>
