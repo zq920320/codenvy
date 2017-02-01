@@ -383,11 +383,6 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.onpremises.wsmaster</groupId>
-                <artifactId>codenvy-hosted-commons-j2ee</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.onpremises.wsmaster</groupId>
                 <artifactId>codenvy-hosted-events</artifactId>
                 <version>${project.version}</version>
             </dependency>
