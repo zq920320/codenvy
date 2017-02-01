@@ -62,13 +62,21 @@ export class MoreRamController {
    */
   callbackController: any;
   /**
-   * Provided free RAM. Is retrieved from license details.
+   * Provided free RAM. (set from outside).
    */
   freeRAM: number;
+  /**
+   * Provided total RAM. (set from outside).
+   */
+  totalRAM: number;
   /**
    * Price of the resources. Is retrieved from package details.
    */
   price: number;
+  /**
+   * Price for the resources by portion of time. Is retrieved from package details.
+   */
+  partialPrice: number;
   /**
    * Amount of resources, that are paid for. Is retrieved from package details.
    */
@@ -77,6 +85,14 @@ export class MoreRamController {
    * Team workspaces idle timeout. Is retrieved from package details.
    */
   timeout: string;
+  /**
+   * The next month charge date.
+   */
+  nextMonthChargeDate: Date;
+  /**
+   * The number of days left till the end of current month.
+   */
+  leftDaysInMonth: number;
   /**
    * Minimum amount of resources, that can be bought. Is retrieved from package details.
    */
@@ -109,7 +125,8 @@ export class MoreRamController {
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($mdDialog: angular.material.IDialogService, $q: ng.IQService, codenvySubscription: CodenvySubscription, lodash: any, cheNotification: any, billingService: BillingService) {
+  constructor ($mdDialog: angular.material.IDialogService, $q: ng.IQService, codenvySubscription: CodenvySubscription,
+               lodash: any, cheNotification: any, billingService: BillingService) {
     this.$q = $q;
     this.$mdDialog = $mdDialog;
     this.codenvySubscription = codenvySubscription;
@@ -120,45 +137,24 @@ export class MoreRamController {
     this.step = Step;
     this.currentStep = Step.ONE;
 
-    this.getLicense();
+    this.calcDateBasedValues();
+
     this.getPackages();
     this.fetchCreditCard();
   }
 
   /**
-   * Fetches the license details.
+   * Calculate the needed values based on current date: next month charge date
+   * and the number of days left in current month.
    */
-  getLicense(): void {
-    this.codenvySubscription.fetchLicense(this.accountId).then(() => {
-      this.processLicense(this.codenvySubscription.getLicense(this.accountId));
-    }, (error: any) => {
-      if (error.status === 304) {
-        this.processLicense(this.codenvySubscription.getLicense(this.accountId));
-      }
-    });
+  calcDateBasedValues(): void {
+    let now = new Date();
+    let month = now.getMonth();
+    this.nextMonthChargeDate = (now.getMonth() == 11) ? new Date(now.getFullYear() + 1, 0, 1) : new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    this.leftDaysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate() + 1;
   }
 
-  /**
-   * Processes license, retrieves free resources info.
-   *
-   * @param license
-   */
-  processLicense(license: any): void {
-    let details = license.resourcesDetails;
-    let freeResources = this.lodash.find(details, (resource: any) => {
-      return resource.providerId === 'free';
-    });
 
-    if (!freeResources) {
-      this.freeRAM = 0;
-      return;
-    }
-
-    let ram = this.lodash.find(freeResources.resources, (resource: any) => {
-      return resource.type === CodenvyResourceLimits.RAM;
-    });
-    this.freeRAM = ram ? (ram.amount / 1000) : 0;
-  }
 
   /**
    * Fetches the list of packages.
@@ -203,11 +199,39 @@ export class MoreRamController {
     }
 
     this.price = ramResource.fullPrice;
+    this.partialPrice = ramResource.partialPrice;
     this.amount = ramResource.amount / 1000 + 'GB';
     this.minValue = ramResource.minAmount / 1000;
     this.maxValue = ramResource.maxAmount / 1000;
     this.value = angular.copy(this.minValue);
     this.timeout = timeoutResource ? timeoutResource.amount : 4;
+  }
+
+  /**
+   * Calculate the cost of the request per month.
+   *
+   * @returns {number} the request's cost per month
+   */
+  calcRequestMonthlyCost(): number {
+    return this.price * this.value;
+  }
+
+  /**
+   * Calculate the price that will be charged based on left days in month and chosen amount of resources.
+   *
+   * @returns {number} charged amount
+   */
+  calcChargedAmount(): number {
+    return this.partialPrice * this.value * this.leftDaysInMonth;
+  }
+
+  /**
+   * Calculate the price that will be charged based chosen amount of resources next month.
+   *
+   * @returns {number} charged amount
+   */
+  calcNextMonthChargeAmount(): number {
+    return this.price * (this.value + this.totalRAM - this.freeRAM);
   }
 
   /**

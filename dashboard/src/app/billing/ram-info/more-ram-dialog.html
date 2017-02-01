@@ -44,6 +44,14 @@
           <i class="fa-exclamation-triangle fa fa-2x"></i>
           The RAM tariffs package is not defined. Please, contact system admin.
         </div>
+        <div flex />
+        <div ng-if="moreRamController.ramPackage && ramForm.$valid && moreRamController.value">
+          Your request will cost ${{moreRamController.calcRequestMonthlyCost()}} / month / {{moreRamController.value}} GB<br/>
+          You will be charged ${{moreRamController.calcChargedAmount()}} now for the remainder of the current month.<br/>
+          You will be charged ${{moreRamController.calcNextMonthChargeAmount()}}
+          on {{moreRamController.nextMonthChargeDate | date:'dd-MMM-yyyy'}}
+          for {{moreRamController.totalRAM + moreRamController.value}} GB RAM for the next month.
+        </div>
       </div>
 
       <div layout="column"

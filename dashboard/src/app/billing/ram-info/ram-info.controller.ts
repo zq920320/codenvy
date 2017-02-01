@@ -13,10 +13,15 @@
  * from Codenvy S.A..
  */
 'use strict';
+import {CodenvySubscription} from '../../../components/api/codenvy-subscription.factory';
 import {CodenvyResourcesDistribution} from './../../../components/api/codenvy-resources-distribution.factory';
 import {CodenvyResourceLimits} from './../../../components/api/codenvy-resource-limits';
 
 export class RamInfoController {
+  /**
+   * Subscription API service.
+   */
+  codenvySubscription: CodenvySubscription;
   $mdDialog: ng.material.IDialogService;
   codenvyResourcesDistribution: CodenvyResourcesDistribution;
   lodash: any;
@@ -26,28 +31,50 @@ export class RamInfoController {
   accountId: string;
   totalRAM: number;
   usedRAM: number;
+  freeRAM: number;
 
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($mdDialog: ng.material.IDialogService, codenvyResourcesDistribution: CodenvyResourcesDistribution, lodash: any) {
+  constructor ($mdDialog: ng.material.IDialogService, codenvyResourcesDistribution: CodenvyResourcesDistribution,
+               codenvySubscription: CodenvySubscription, lodash: any) {
     this.$mdDialog = $mdDialog;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
+    this.codenvySubscription = codenvySubscription;
     this.lodash = lodash;
 
     this.getRamInfo();
   }
 
   getRamInfo() {
-    this.codenvyResourcesDistribution.fetchTeamResources(this.accountId).then(() => {
-      let resources = this.codenvyResourcesDistribution.getTeamResources(this.accountId);
-      this.totalRAM = this.getRamValue(resources);
+    this.codenvySubscription.fetchLicense(this.accountId).then(() => {
+      this.processLicense(this.codenvySubscription.getLicense(this.accountId));
     }, (error: any) => {
       if (error.status === 304) {
-        let resources = this.codenvyResourcesDistribution.getTeamResources(this.accountId);
-        this.totalRAM = this.getRamValue(resources);
+        this.processLicense(this.codenvySubscription.getLicense(this.accountId));
       }
     });
+  }
+
+
+  /**
+   * Processes license, retrieves free resources info.
+   *
+   * @param license
+   */
+  processLicense(license: any): void {
+    let details = license.resourcesDetails;
+    let freeResources = this.lodash.find(details, (resource: any) => {
+      return resource.providerId === 'free';
+    });
+
+    if (!freeResources) {
+      this.freeRAM = 0;
+    } else {
+      this.freeRAM = this.getRamValue(freeResources.resources);
+    }
+
+    this.totalRAM = this.getRamValue(license.totalResources);
 
     this.codenvyResourcesDistribution.fetchUsedTeamResources(this.accountId).then(() => {
       let resources = this.codenvyResourcesDistribution.getUsedTeamResources(this.accountId);
@@ -88,6 +115,7 @@ export class RamInfoController {
         accountId: this.accountId,
         totalRAM: this.totalRAM,
         usedRAM: this.usedRAM,
+        freeRAM: this.freeRAM,
         callbackController: this
       },
       templateUrl: 'app/billing/ram-info/more-ram-dialog.html'
