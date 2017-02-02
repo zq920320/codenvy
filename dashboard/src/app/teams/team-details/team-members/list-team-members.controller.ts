@@ -303,7 +303,11 @@ export class ListTeamMembersController {
    * @param member member to update permissions
    */
   updateMember(member: any): void {
-    this.storePermissions(member.permissions);
+    if (member.permissions.actions.length > 0) {
+      this.storePermissions(member.permissions);
+    } else {
+      this.removePermissions(member);
+    }
   }
 
   /**
@@ -375,7 +379,7 @@ export class ListTeamMembersController {
    */
   removePermissions(user: any) {
     this.isLoading = true;
-    this.codenvyPermissions.removeTeamPermissions(user.permissions.instanceId, user.id).then(() => {
+    this.codenvyPermissions.removeTeamPermissions(user.permissions.instanceId, user.userId).then(() => {
       this.fetchMembers();
     }, (error: any) => {
       this.isLoading = false;

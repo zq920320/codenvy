@@ -25,13 +25,20 @@
               <span>{{roleInfo.role.title}}</span>
               <span class="member-role-description">{{roleInfo.role.description}}</span>
             </md-switch>
+            <div class="member-role-warning-label">
+              <span ng-show="memberDialogController.member && memberDialogController.getCurrentActions().length === 0">
+                In this case member will be removed from team. Press Save to continue.
+              </span>
+          </div>
           </div>
       </che-label-container>
     </ng-form>
+
     <div layout="row" layout-align="end center">
       <che-button-primary che-button-title="{{memberDialogController.buttonTitle}}"
                           ng-if="!memberDialogController.member"
-                          ng-disabled="memberForm.$invalid || memberDialogController.isProcessing"
+                          ng-disabled="memberForm.$invalid || memberDialogController.isProcessing ||
+                          (!memberDialogController.role && memberDialogController.getCurrentActions().length === 0)"
                           ng-click="memberDialogController.addMembers()"></che-button-primary>
       <che-button-primary che-button-title="{{memberDialogController.buttonTitle}}"
                           ng-disabled="memberDialogController.isProcessing"

@@ -231,6 +231,15 @@ export class MemberDialogController {
    * Handle edit member user's action.
    */
   editMember(): void {
+    this.member.permissions.actions = this.getCurrentActions();
+    this.callbackController.updateMember(this.member);
+    this.hide();
+  }
+
+  /**
+   * Returns the actions of current chosen roles.
+   */
+  getCurrentActions(): Array<string> {
     let userRoles = this.getRoles();
     let processedActions = [];
     this.roles.forEach((data: any) => {
@@ -238,15 +247,13 @@ export class MemberDialogController {
     });
 
 
-    let actions = this.member.permissions.actions;
+    let actions = this.member ? this.member.permissions.actions : [];
     let otherActions = this.lodash.difference(actions, processedActions);
-    if (this.codenvyTeam.getRolesFromActions(this.member.permissions.actions).indexOf(CodenvyTeamRoles.TEAM_OWNER) >= 0) {
+    if (this.member && this.codenvyTeam.getRolesFromActions(this.member.permissions.actions).indexOf(CodenvyTeamRoles.TEAM_OWNER) >= 0) {
       otherActions = otherActions.concat(CodenvyTeamRoles.TEAM_OWNER.actions);
     }
 
-    this.member.permissions.actions = this.codenvyTeam.getActionsFromRoles(userRoles).concat(otherActions);
-    this.callbackController.updateMember(this.member);
-    this.hide();
+    return this.lodash.uniq(this.codenvyTeam.getActionsFromRoles(userRoles).concat(otherActions));
   }
 
   /**
