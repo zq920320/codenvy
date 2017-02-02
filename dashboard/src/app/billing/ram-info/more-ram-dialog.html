@@ -5,8 +5,7 @@
            ng-if="moreRamController.currentStep === moreRamController.step.ONE">
         <div>
           In a team, the first {{moreRamController.freeRAM}} GB RAM is free.
-          <span ng-show="moreRamController.ramPackage">Additional RAM costs ${{moreRamController.price}} / month / {{moreRamController.amount}}.<br/>
-            All workspaces of your account will be granted an idle timeout of {{moreRamController.timeout}} hours.
+          <span ng-show="moreRamController.ramPackage">Additional RAM costs ${{moreRamController.price}} / month / {{moreRamController.amount}}.
           </span>
         </div>
         <div class="title">
@@ -40,13 +39,17 @@
             </div>
           </div>
         </div>
+
         <div ng-show="!moreRamController.ramPackage" class="warning-label">
           <i class="fa-exclamation-triangle fa fa-2x"></i>
           The RAM tariffs package is not defined. Please, contact system admin.
         </div>
-        <div flex />
         <div ng-if="moreRamController.ramPackage && ramForm.$valid && moreRamController.value">
-          Your request will cost ${{moreRamController.calcRequestMonthlyCost()}} / month / {{moreRamController.value}} GB<br/>
+          <div ng-show="moreRamController.ramPackage" class="info-label">
+            Your workspaces will have a {{moreRamController.timeout}} hour idle timeout.
+          </div>
+
+          Your request will cost ${{moreRamController.calcRequestMonthlyCost()}} / month / {{moreRamController.value}} GB.<br/>
           You will be charged ${{moreRamController.calcChargedAmount()}} now for the remainder of the current month.<br/>
           You will be charged ${{moreRamController.calcNextMonthChargeAmount()}}
           on {{moreRamController.nextMonthChargeDate | date:'dd-MMM-yyyy'}}

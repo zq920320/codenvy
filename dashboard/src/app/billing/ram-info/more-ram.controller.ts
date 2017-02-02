@@ -204,7 +204,7 @@ export class MoreRamController {
     this.minValue = ramResource.minAmount / 1000;
     this.maxValue = ramResource.maxAmount / 1000;
     this.value = angular.copy(this.minValue);
-    this.timeout = timeoutResource ? timeoutResource.amount : 4;
+    this.timeout = timeoutResource ? timeoutResource.amount / 60 : 4;
   }
 
   /**
