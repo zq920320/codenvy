@@ -1,16 +1,21 @@
-<div class="admin-navbar-menu navbar-teams" ng-if="navbarTeamsController.getPersonalAccount()">
-  <section class="left-sidebar-menu" layout="column" layout-align="start stretch">
+<div flex
+     layout="column"
+     class="admin-navbar-menu navbar-teams"
+     ng-if="navbarTeamsController.getPersonalAccount()">
+  <section class="left-sidebar-menu"
+           flex
+           layout="column" layout-align="start stretch">
 
     <div class="navbar-section navbar-section-title"
-         flex layout="row">
+         layout="row">
       <div flex>
         <span>Teams</span>
       </div>
     </div>
 
-    <md-list layout="column">
-      <md-list-item flex class="navbar-subsection-item">
-        <md-button flex che-reload-href
+    <md-list flex layout="column">
+      <md-list-item class="navbar-subsection-item">
+        <md-button che-reload-href
                    ng-href="#/team/create"
                    layout-align="left">
           <div class="navbar-item" layout="row" layout-align="start center">
@@ -19,8 +24,10 @@
           </div>
         </md-button>
       </md-list-item>
-      <md-list-item flex class="navbar-subsection-item"
-                    ng-repeat="team in navbarTeamsController.getTeams()">
+      <div flex layout="column"
+           class="navbar-teams-list">
+        <md-list-item class="navbar-subsection-item"
+                      ng-repeat="team in navbarTeamsController.getTeams()">
           <md-button nav-bar-selected flex che-reload-href
                      ng-href="#/team/{{team.name}}" layout-align="left"
                      target="_self">
@@ -29,7 +36,8 @@
               <span title="{{team.name}}">{{team.name}}</span>
             </div>
           </md-button>
-      </md-list-item>
+        </md-list-item>
+      </div>
     </md-list>
   </section>
 </div>
