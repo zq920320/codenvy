@@ -277,4 +277,3 @@ generate_configuration_with_puppet() {
   log ${GENERATE_CONFIG_COMMAND}
   eval ${GENERATE_CONFIG_COMMAND}
 }
-
