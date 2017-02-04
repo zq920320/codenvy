@@ -9,23 +9,5 @@
 #   Tyler Jewell - Initial Implementation
 #
 
-CHE_PRODUCT_NAME="CODENVY"
-CHE_MINI_PRODUCT_NAME="codenvy"
-CHE_FORMAL_PRODUCT_NAME="Codenvy"
-CHE_CONTAINER_ROOT="/data"
-CHE_ASSEMBLY_IN_REPO_MODULE_NAME="assembly/onpremises-ide-packaging-tomcat-codenvy-allinone"
-CHE_ASSEMBLY_IN_REPO="${CHE_ASSEMBLY_IN_REPO_MODULE_NAME}/target/onpremises-ide-packaging-tomcat-codenvy-allinone-*/"
-WS_AGENT_IN_REPO_MODULE_NAME="assembly/onpremises-ide-packaging-tomcat-ext-server"
-WS_AGENT_IN_REPO="${WS_AGENT_IN_REPO_MODULE_NAME}/target/onpremises-ide-packaging-tomcat-ext-server-*.tar.gz"
-WS_AGENT_ASSEMBLY="ws-agent.tar.gz"
-TERMINAL_AGENT_IN_REPO_MODULE_NAME="assembly/onpremises-ide-packaging-zip-terminal"
-TERMINAL_AGENT_IN_REPO="${TERMINAL_AGENT_IN_REPO_MODULE_NAME}/target/onpremises-ide-packaging-zip-terminal-*.tar.gz"
-TERMINAL_AGENT_ASSEMBLY="websocket-terminal-linux_amd64.tar.gz"
-CHE_SCRIPTS_CONTAINER_SOURCE_DIR="/repo/dockerfiles/cli/scripts"
-CHE_LICENSE=true
-CHE_LICENSE_URL="https://codenvy.com/legal/fair-source/"
-CHE_SERVER_CONTAINER_NAME="${CHE_MINI_PRODUCT_NAME}_${CHE_MINI_PRODUCT_NAME}_1"
-CHE_IMAGE_FULLNAME="codenvy/cli:<version>"
-
 source /scripts/base/startup.sh
 start "$@"
