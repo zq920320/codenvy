@@ -51,7 +51,6 @@ cmd_start_check_postflight() {
   info "start" "Postflight checks"
   SWARM_NODE_CONFIG=$(get_value_of_var_from_env_file CODENVY_SWARM_NODES)
 
-echo 
   POSTFLIGHT=""
   IFS=$','
   for SINGLE_SWARM_NODE in ${SWARM_NODE_CONFIG}; do
