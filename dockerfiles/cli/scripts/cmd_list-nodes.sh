@@ -9,6 +9,17 @@
 #   Tyler Jewell - Initial Implementation
 #
 
+pre_cmd_list-nodes() {
+  if get_command_help; then
+    text "\n"
+    text "USAGE: ${CHE_IMAGE_FULLNAME} list-nodes\n"
+    text "\n"
+    text "Lists the workspace nodes that are managed by ${CHE_MINI_PRODUCT_NAME}"
+    text "\n"
+    return 2
+  fi
+}
+
 # Shows list of the docker nodes in the swarm cluster
 cmd_list-nodes() {
   ## TODO use

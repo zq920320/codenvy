@@ -9,6 +9,19 @@
 #   Tyler Jewell - Initial Implementation
 #
 
+pre_cmd_remove-node() {
+  if get_command_help; then
+    text "\n"
+    text "USAGE: ${CHE_IMAGE_FULLNAME} remove-node NODE\n"
+    text "\n"
+    text "NODE:                 IP address of node to be removed\n"
+    text "\n"
+    text "Removes a workspace node from ${CHE_MINI_PRODUCT_NAME} cluster (restarts system)"
+    text "\n"
+    return 2
+  fi
+}
+
 # Removes node from swarm cluster configuration and restarts swarm container
 cmd_remove-node() {
   if [ $# -eq 0 ]; then
@@ -33,5 +46,5 @@ cmd_remove-node() {
   sed -i'.bak' -e "s|^CODENVY_SWARM_NODES=.*|${REMOVE_NODE}|" "${CHE_CONFIG}/${CHE_MINI_PRODUCT_NAME}.env"
 
   # TODO: Restart should not be needed.  Find way to deregister nodes.
-  cmd_restart
+  cmd_lifecycle restart
 }
