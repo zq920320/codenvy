@@ -45,5 +45,4 @@ pre_init() {
   list-nodes                           Lists all physical nodes that are part of the ${CHE_FORMAL_PRODUCT_NAME} cluster
   remove-node <ip>                     Removes the physical node from the ${CHE_FORMAL_PRODUCT_NAME} cluster"
   ADDITIONAL_GLOBAL_OPTIONS=""
-
 }

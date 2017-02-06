@@ -9,15 +9,16 @@
 #   Tyler Jewell - Initial Implementation
 #
 
+help_cmd_add-node() {
+  text "\n"
+  text "USAGE: ${CHE_IMAGE_FULLNAME} add-node\n"
+  text "\n"
+  text "Displays the process for adding a new workspace node to the ${CHE_MINI_PRODUCT_NAME} cluster"
+  text "\n"
+}
+
 pre_cmd_add-node() {
-  if get_command_help; then
-    text "\n"
-    text "USAGE: ${CHE_IMAGE_FULLNAME} add-node\n"
-    text "\n"
-    text "Displays the process for adding a new workspace node to the ${CHE_MINI_PRODUCT_NAME} cluster"
-    text "\n"
-    return 2
-  fi
+  true
 }
 
 # Prints command that should be executed on a node to add it to swarm cluster

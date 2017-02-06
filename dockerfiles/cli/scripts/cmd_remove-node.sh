@@ -9,17 +9,18 @@
 #   Tyler Jewell - Initial Implementation
 #
 
+help_cmd_remove-node() {
+  text "\n"
+  text "USAGE: ${CHE_IMAGE_FULLNAME} remove-node NODE\n"
+  text "\n"
+  text "NODE:                 IP address of node to be removed\n"
+  text "\n"
+  text "Removes a workspace node from ${CHE_MINI_PRODUCT_NAME} cluster (restarts system)"
+  text "\n"
+}
+
 pre_cmd_remove-node() {
-  if get_command_help; then
-    text "\n"
-    text "USAGE: ${CHE_IMAGE_FULLNAME} remove-node NODE\n"
-    text "\n"
-    text "NODE:                 IP address of node to be removed\n"
-    text "\n"
-    text "Removes a workspace node from ${CHE_MINI_PRODUCT_NAME} cluster (restarts system)"
-    text "\n"
-    return 2
-  fi
+  true
 }
 
 # Removes node from swarm cluster configuration and restarts swarm container
