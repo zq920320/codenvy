@@ -112,7 +112,8 @@ initModule.run(['$rootScope', '$routeParams', 'licenseMessagesService', 'cheUIEl
       }
     });
 
-    workspaceDetailsService.addSection('Share', '<share-workspace></share-workspace>', 'icon-ic_folder_shared_24px');
+    workspaceDetailsService.addPage('Share', '<share-workspace></share-workspace>', 'icon-ic_folder_shared_24px');
+    workspaceDetailsService.addSection('Idle timeout', 'The time period during which the workspace may be not used, before being stopped.', '<div style="color: red">test</div>');
     $rootScope.$on('$viewContentLoaded', () => {
       licenseMessagesService.fetchMessages();
       cheUIElementsInjectorService.addElementForInjection('dashboardPageContent', 'recentFactories', '<cdvy-last-factories></cdvy-last-factories>');
