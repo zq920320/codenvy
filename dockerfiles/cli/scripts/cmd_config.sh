@@ -41,15 +41,6 @@ cmd_config_post_action() {
     fi
     cp "$(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${WS_AGENT_IN_REPO})" \
         "${CHE_CONTAINER_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}"
-
-    # copy terminal agent assembly to instance folder
-    if [[ ! -f $(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${TERMINAL_AGENT_IN_REPO}) ]]; then
-      warning "You volume mounted a valid $CHE_FORMAL_PRODUCT_NAME repo to ':/repo', but we could not find a ${CHE_FORMAL_PRODUCT_NAME} terminal agent assembly."
-      warning "Have you built ${TERMINAL_AGENT_IN_REPO_MODULE_NAME} with 'mvn clean install'?"
-      return 2
-    fi
-    cp "$(echo ${CHE_CONTAINER_DEVELOPMENT_REPO}/${TERMINAL_AGENT_IN_REPO})" \
-        "${CHE_CONTAINER_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}"
   fi
 }
 
@@ -83,7 +74,6 @@ generate_configuration_with_puppet() {
 
   if local_repo; then
     WRITE_PARAMETERS+=" -e \"PATH_TO_WS_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${WS_AGENT_ASSEMBLY}\""
-    WRITE_PARAMETERS+=" -e \"PATH_TO_TERMINAL_AGENT_ASSEMBLY=${CHE_HOST_INSTANCE}/dev/${TERMINAL_AGENT_ASSEMBLY}\""
 
     # add local mounts only if they are present
     if [[ -d "/repo/dockerfiles/init/manifests" ]]; then

@@ -15,36 +15,50 @@
     from Codenvy S.A..
 
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <artifactId>onpremises-assembly-parent</artifactId>
+        <artifactId>onpremises-ide-parent</artifactId>
         <groupId>com.codenvy.onpremises</groupId>
         <version>5.3.0-SNAPSHOT</version>
-        <relativePath>../../pom.xml</relativePath>
     </parent>
-    <groupId>com.codenvy.dockerfiles</groupId>
-    <artifactId>dockerfiles-agents</artifactId>
-    <version>5.3.0-SNAPSHOT</version>
+    <artifactId>assembly-wsagent-server</artifactId>
     <packaging>pom</packaging>
-    <name>Dockerfiles :: Agents</name>
+    <name>Onpremises IDE :: Tomcat :: WS agent</name>
     <dependencies>
         <dependency>
             <groupId>com.codenvy.onpremises</groupId>
-            <artifactId>assembly-wsagent-server</artifactId>
-            <type>tar.gz</type>
+            <artifactId>assembly-wsagent-war</artifactId>
+            <type>war</type>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che</groupId>
-            <artifactId>exec-agent</artifactId>
-            <type>tar.gz</type>
-            <classifier>linux_arm7</classifier>
+            <groupId>log4j</groupId>
+            <artifactId>log4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>org.eclipse.che</groupId>
-            <artifactId>exec-agent</artifactId>
-            <type>tar.gz</type>
-            <classifier>linux_amd64</classifier>
+            <groupId>org.apache.maven.shared</groupId>
+            <artifactId>maven-dependency-tree</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.core</groupId>
+            <artifactId>che-core-commons-lang</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.lib</groupId>
+            <artifactId>che-tomcat8-slf4j-logback</artifactId>
+            <type>zip</type>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>maven-server-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.che.plugin</groupId>
+            <artifactId>maven-server-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jdom</groupId>
+            <artifactId>jdom</artifactId>
         </dependency>
     </dependencies>
     <build>
