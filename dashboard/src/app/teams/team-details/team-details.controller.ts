@@ -164,7 +164,7 @@ export class TeamDetailsController {
   }
 
   /**
-   * Fecthes permission of user in current team.
+   * Fetches permission of user in current team.
    */
   fetchUserPermissions(): void {
     this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
@@ -211,7 +211,7 @@ export class TeamDetailsController {
   }
 
   /**
-   * Fecthes defined team's limits (workspace, runtime, RAM caps, etc).
+   * Fetches defined team's limits (workspace, runtime, RAM caps, etc).
    */
   fetchLimits(): void {
     this.isLoading = true;
@@ -367,6 +367,13 @@ export class TeamDetailsController {
     if (this.limits.runtimeCap) {
       resources = this.codenvyResourcesDistribution.setTeamResourceLimitByType(resources, CodenvyResourceLimits.RUNTIME, this.limits.runtimeCap);
     }
+
+    // if the timeout resource will be send in this case - it will set the timeout for the current team, and the updating timeout of
+    // parent team will not affect the current team, so to avoid this - remove timeout resource if present:
+    this.lodash.remove(resources, (resource: any) => {
+      return resource.type === CodenvyResourceLimits.TIMEOUT;
+    });
+
 
     this.isLoading = true;
     this.codenvyResourcesDistribution.distributeResources(this.team.id, resources).then(() => {

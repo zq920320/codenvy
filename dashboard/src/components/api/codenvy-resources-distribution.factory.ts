@@ -20,6 +20,7 @@ interface ICodenvyResourcesResource<T> extends ng.resource.IResourceClass<T> {
   distribute: any;
   getResources: any;
   getUsedResources: any;
+  getAvailableResources: any;
 }
 
 const RAM_RESOURCE_TYPE: string = 'RAM';
@@ -54,6 +55,10 @@ export class CodenvyResourcesDistribution {
    * Team used resources with team's id as a key.
    */
   private teamUsedResources: Map<string, any>;
+  /**
+   * Team available resources with team's id as a key.
+   */
+  private teamAvailableResources: Map<string, any>;
 
   /**
    * Default constructor that is using resource
@@ -66,11 +71,13 @@ export class CodenvyResourcesDistribution {
 
     this.teamResources = new Map();
     this.teamUsedResources = new Map();
+    this.teamAvailableResources = new Map();
 
     this.remoteResourcesAPI = <ICodenvyResourcesResource<any>>this.$resource('/api/organization/resource', {}, {
       distribute: {method: 'POST', url: '/api/organization/resource/:teamId'},
       getResources: {method: 'GET', url: '/api/resource/:teamId', isArray: true},
-      getUsedResources: {method: 'GET', url: '/api/resource/:teamId/used', isArray: true}
+      getUsedResources: {method: 'GET', url: '/api/resource/:teamId/used', isArray: true},
+      getAvailableResources: {method: 'GET', url: '/api/resource/:teamId/available', isArray: true}
     });
   }
 
@@ -134,6 +141,32 @@ export class CodenvyResourcesDistribution {
   getUsedTeamResources(teamId: string): any {
     return this.teamUsedResources.get(teamId);
   }
+
+  /**
+   * Fetch available resources by team's id.
+   *
+   * @param teamId team id
+   * @returns {ng.IPromise<any>}
+   */
+  fetchAvailableTeamResources(teamId: string): ng.IPromise<any> {
+    let promise = this.remoteResourcesAPI.getAvailableResources({'teamId': teamId}).$promise;
+    let resultPromise = promise.then((resources: Array<any>) => {
+      this.teamAvailableResources.set(teamId, resources);
+    });
+
+    return resultPromise;
+  }
+
+  /**
+   * Returns the list of team's available resources by team's id
+   *
+   * @param teamId team id
+   * @returns {*} list of team used resources
+   */
+  getAvailableTeamResources(teamId: string): any {
+    return this.teamAvailableResources.get(teamId);
+  }
+
 
   /**
    * Returns team's resource limits by resource type.
