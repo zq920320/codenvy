@@ -15,6 +15,7 @@
 'use strict';
 import {CodenvyTeam} from '../../../../components/api/codenvy-team.factory';
 import {CodenvyPermissions} from '../../../../components/api/codenvy-permissions.factory';
+import {CodenvyUser} from '../../../../components/api/codenvy-user.factory';
 
 /**
  * @ngdoc controller
@@ -28,6 +29,10 @@ export class ListTeamMembersController {
    * Team API interaction.
    */
   private codenvyTeam: CodenvyTeam;
+  /**
+   * User API interaction.
+   */
+  private codenvyUser: CodenvyUser;
   /**
    * User profile API interaction.
    */
@@ -45,9 +50,17 @@ export class ListTeamMembersController {
    */
   private cheNotification: any;
   /**
+   * Confirm dialog service.
+   */
+  private confirmDialogService: any;
+  /**
    * Promises service.
    */
   private $q: ng.IQService;
+  /**
+   * Location service.
+   */
+  $location: ng.ILocationService;
   /**
    * Lodash library.
    */
@@ -93,15 +106,18 @@ export class ListTeamMembersController {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, cheProfile: any,
-              $mdDialog: angular.material.IDialogService, $q: ng.IQService, cheNotification: any, lodash: _.LoDashStatic) {
+  constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, codenvyUser: CodenvyUser, cheProfile: any, confirmDialogService: any,
+              $mdDialog: angular.material.IDialogService, $q: ng.IQService, cheNotification: any, lodash: _.LoDashStatic, $location: ng.ILocationService) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyPermissions = codenvyPermissions;
     this.cheProfile = cheProfile;
+    this.codenvyUser = codenvyUser;
     this.$mdDialog = $mdDialog;
     this.$q = $q;
+    this.$location = $location;
     this.lodash = lodash;
     this.cheNotification = cheNotification;
+    this.confirmDialogService = confirmDialogService;
 
     this.members = [];
     this.isLoading = true;
@@ -377,24 +393,47 @@ export class ListTeamMembersController {
     confirmationPromise.then(() => {
       let removalError;
       let removeMembersPromises = [];
-
-      checkedKeys.forEach((id : string) => {
+      let currentUserPromise;
+      for (let i = 0; i < checkedKeys.length; i++) {
+        let id = checkedKeys[i];
         this.membersSelectedStatus[id] = false;
+        if (id === this.codenvyUser.getUser().id) {
+          currentUserPromise = this.codenvyPermissions.removeTeamPermissions(this.team.id, id);
+          continue;
+        }
+        debugger;
         let promise = this.codenvyPermissions.removeTeamPermissions(this.team.id, id).then(() => {},
           (error: any) => {
             removalError = error;
         });
         removeMembersPromises.push(promise);
-      });
+      };
+
+      if (currentUserPromise) {
+        removeMembersPromises.push(currentUserPromise);
+      }
 
       this.$q.all(removeMembersPromises).finally(() => {
-        this.fetchMembers();
+        if (currentUserPromise) {
+          this.processCurrentUserRemoval();
+        } else {
+          this.fetchMembers();
+        }
+
         this.updateSelectedStatus();
         if (removalError) {
           this.cheNotification.showError(removalError.data && removalError.data.message ? removalError.data.message : 'User removal failed.');
         }
       });
     });
+  }
+
+  /**
+   * Process the removal of current user from team.
+   */
+  processCurrentUserRemoval(): void {
+    this.$location.path('/workspaces');
+    this.codenvyTeam.fetchTeams();
   }
 
   /**
@@ -405,7 +444,11 @@ export class ListTeamMembersController {
   removePermissions(user: any) {
     this.isLoading = true;
     this.codenvyPermissions.removeTeamPermissions(user.permissions.instanceId, user.userId).then(() => {
-      this.fetchMembers();
+      if (user.userId === this.codenvyUser.getUser().id) {
+        this.processCurrentUserRemoval();
+      } else {
+        this.fetchMembers();
+      }
     }, (error: any) => {
       this.isLoading = false;
       this.cheNotification.showError(error.data && error.data.message ? error.data.message : 'Failed to remove user ' + user.email + ' permissions.');
@@ -417,20 +460,14 @@ export class ListTeamMembersController {
    * @param numberToDelete
    * @returns {*}
    */
-  showDeleteMembersConfirmation(numberToDelete: number) {
+  showDeleteMembersConfirmation(numberToDelete: number): any {
     let confirmTitle = 'Would you like to remove ';
     if (numberToDelete > 1) {
-      confirmTitle += 'these ' + numberToDelete + ' developers?';
+      confirmTitle += 'these ' + numberToDelete + ' members?';
     } else {
-      confirmTitle += 'the selected developer?';
+      confirmTitle += 'the selected member?';
     }
-    let confirm = this.$mdDialog.confirm()
-      .title(confirmTitle)
-      .ariaLabel('Remove members')
-      .ok('Delete!')
-      .cancel('Cancel')
-      .clickOutsideToClose(true);
 
-    return this.$mdDialog.show(confirm);
+    return this.confirmDialogService.showConfirmDialog('Remove members', confirmTitle, 'Delete');
   }
 }

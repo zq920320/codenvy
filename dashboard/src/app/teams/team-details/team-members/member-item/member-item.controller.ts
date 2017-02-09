@@ -50,15 +50,20 @@ export class MemberItemController {
    * Actions that are not part of any role.
    */
   private otherActions: Array<string>;
+  /**
+   * Confirm dialog service.
+   */
+  private confirmDialogService: any;
 
   /**
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
    */
-  constructor($mdDialog: angular.material.IDialogService, codenvyTeam: CodenvyTeam, lodash: any) {
+  constructor($mdDialog: angular.material.IDialogService, codenvyTeam: CodenvyTeam, lodash: any, confirmDialogService: any) {
     this.$mdDialog = $mdDialog;
     this.codenvyTeam = codenvyTeam;
     this.lodash = lodash;
+    this.confirmDialogService = confirmDialogService;
 
     this.otherActions = [];
   }
@@ -68,15 +73,9 @@ export class MemberItemController {
    * @param  event - the $event
    */
   removeMember(event: MouseEvent): void {
-    let confirm = this.$mdDialog.confirm()
-      .title('Would you like to remove member  ' + this.member.email + ' ?')
-      .content('Please confirm for the member removal.')
-      .ariaLabel('Remove member')
-      .ok('Remove')
-      .cancel('Cancel')
-      .clickOutsideToClose(true)
-      .targetEvent(event);
-    this.$mdDialog.show(confirm).then(() => {
+    let promise = this.confirmDialogService.showConfirmDialog('Remove member', 'Would you like to remove member  ' + this.member.email + ' ?', 'Delete');
+
+    promise.then(() => {
       this.callback.removePermissions(this.member);
     });
   }
