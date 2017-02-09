@@ -148,6 +148,7 @@ node default {
   $pgsql_checkpoint_completion_target = getValue("CODENVY_PGSQL_CHECKPOINT_COMPLETION_TARGET","0.9")
   $pgsql_effective_cache_size = getValue("CODENVY_PGSQL_EFFECTIVE_CACHE_SIZE","768MB")
   $pgsql_default_statistics_target = getValue("CODENVY_PGSQL_DEFAULT_STATISTICS_TARGET","100")
+  $pgsql_log_min_duration_statement = getValue("CODENVY_PGSQL_LOG_MIN_DURATION_STATEMENT","2000")
 
 ###############################
 # JMX credentials
