@@ -66,6 +66,10 @@ export class TeamDetailsController {
    */
   private team: any;
   /**
+   * Current team's owner.
+   */
+  private owner: any;
+  /**
    * The list of allowed user actions.
    */
   private allowedUserActions: Array<string>;
@@ -141,6 +145,7 @@ export class TeamDetailsController {
     }
 
     this.fetchTeamDetails();
+    this.fetchAccount();
   }
 
   /**
@@ -161,6 +166,40 @@ export class TeamDetailsController {
       this.fetchLimits();
       this.fetchUserPermissions();
     }
+  }
+
+  /**
+   * Fetch parent account of the team.
+   */
+  fetchAccount(): void {
+    this.codenvyTeam.fetchTeamById(this.team.parent).then(() => {
+        this.fetchUser();
+      }, (error: any) => {
+        if (error.status === 304) {
+          this.fetchUser();
+        }
+        this.isLoading = false;
+        //TODO
+      }
+    );
+  }
+
+  /**
+   * Fetch user by name (the name is the same as accounts).
+   */
+  fetchUser(): void {
+    let account = this.codenvyTeam.getTeamById(this.team.parent);
+    if (!account) {
+      return;
+    }
+
+    this.codenvyUser.fetchUserByName(account.name).then(() => {
+      this.owner = this.codenvyUser.getUserByName(account.name);
+    }, (error: any) => {
+      if (error.status === 304) {
+        this.owner = this.codenvyUser.getUserByName(account.name);
+      }
+    });
   }
 
   /**

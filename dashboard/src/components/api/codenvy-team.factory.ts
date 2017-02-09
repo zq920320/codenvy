@@ -20,9 +20,10 @@ import {CodenvyUser} from './codenvy-user.factory';
 interface ITeamsResource<T> extends ng.resource.IResourceClass<T> {
   getTeams(): ng.resource.IResource<T>,
   createTeam(data: {name: string, parent: string}): ng.resource.IResource<T>,
+  fetchTeam(data: {id: string}): ng.resource.IResource<T>,
   deleteTeam(data: {id: string}): ng.resource.IResource<T>,
   updateTeam(data: {id: string}, team: any): ng.resource.IResource<T>,
-  findTeam(data: {teamName: string}): ng.resource.IResource<T>,
+  findTeam(data: {teamName: string}): ng.resource.IResource<T>
 }
 
 /**
@@ -79,6 +80,7 @@ export class CodenvyTeam {
 
     this.remoteTeamAPI = <ITeamsResource<any>>$resource('/api/organization', {}, {
       getTeams: {method: 'GET', url: '/api/organization', isArray: true},
+      fetchTeam: {method: 'GET', url: '/api/organization/:id'},
       createTeam: {method: 'POST', url: '/api/organization'},
       deleteTeam: {method: 'DELETE', url: '/api/organization/:id'},
       updateTeam: {method: 'POST', url: '/api/organization/:id'},
@@ -174,6 +176,20 @@ export class CodenvyTeam {
   }
 
   /**
+   * Requests team by it's id.
+   *
+   * @param name the team's name
+   * @returns {ng.IPromise<any>} result promise
+   */
+  fetchTeamById(id: string): ng.IPromise<any> {
+    let promise = this.remoteTeamAPI.fetchTeam({'id' : id}).$promise;
+    let resultPromise = promise.then((data) => {
+      this.teamsMap.set(id, data);
+    });
+    return resultPromise;
+  }
+
+  /**
    * Requests team by it's name.
    *
    * @param name the team's name
@@ -198,6 +214,16 @@ export class CodenvyTeam {
     };
 
     return null;
+  }
+
+  /**
+   * Returns team by it's id.
+   *
+   * @param team's id
+   * @returns {any} team or <code>null</code> if not found
+   */
+  getTeamById(id: string): any {
+    return this.teamsMap.get(id);
   }
 
   /**

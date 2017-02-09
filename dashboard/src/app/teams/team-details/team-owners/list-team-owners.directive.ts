@@ -38,8 +38,7 @@ export class ListTeamOwners implements ng.IDirective {
   bindToController: boolean = true;
 
   scope: any = {
-    team: '=',
-    editable: '='
+    owner: '='
   };
 
   constructor () {

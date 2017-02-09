@@ -21,12 +21,14 @@
   <div flex="100"
        layout="row"
        layout-align="start stretch"
+       ng-class="{'member-bold': memberItemController.isOwner}"
        class="che-list-item-row member-list-row">
     <div layout="row"
          layout-align="start center"
          class="che-checkbox-area" ng-if="memberItemController.editable">
       <che-list-item-checked ng-model="memberItemController.callback.membersSelectedStatus[memberItemController.member.userId]"
                              ng-click="memberItemController.callback.updateSelectedStatus()"
+                             ng-show="!memberItemController.isOwner"
                              che-aria-label-checkbox="member {{memberItemController.member.userId}}"></che-list-item-checked>
     </div>
     <div flex
@@ -37,7 +39,7 @@
       <div flex-gt-xs="{{memberItemController.hideDetails ? 60 : 25}}"
            class="che-list-item-name">
         <span class="che-xs-header noselect" hide-gt-xs>Name</span>
-        <span class="member-email che-hover ">{{memberItemController.member.name}}</span>
+        <span class="member-email che-hover">{{memberItemController.member.name}}</span>
       </div>
       <div flex-gt-xs="{{memberItemController.hideDetails ? 40 : 25}}"
            class="che-list-item-secondary">
@@ -45,9 +47,9 @@
         <span class="member-email che-hover ">{{memberItemController.member.email}}</span>
       </div>
       <div flex-gt-xs="35" class="che-list-item-secondary" ng-if="!memberItemController.hideDetails">
-        <span class="che-xs-header noselect" hide-gt-xs>Permissions</span>
+        <span class="che-xs-header noselect" hide-gt-xs>Roles</span>
         <span class="member-list-permissions">{{memberItemController.getMemberRoles()}} </span>
-        <span tooltip="{{memberItemController.otherActions.toString()}}" ng-if="memberItemController.otherActions.length > 0">, Other...</span>
+        <span tooltip="{{memberItemController.otherActions.toString()}}" ng-if="memberItemController.otherActions.length > 0"> Other...</span>
       </div>
      <!-- <div flex-gt-xs="10"
            class="che-list-item-secondary">
@@ -58,10 +60,16 @@
         <span class="che-xs-header noselect" hide-gt-xs>Actions</span>
         <span class="che-list-actions">
 
-          <a tooltip="Edit developer permissions" ng-click="memberItemController.editMember()" ng-disabled="!memberItemController.editable">
+          <a tooltip="Edit developer permissions"
+             ng-click="memberItemController.editMember()"
+             ng-if="!memberItemController.isOwner"
+             ng-disabled="!memberItemController.editable">
             <span class="fa fa-pencil"></span>
           </a>
-          <a tooltip="Remove developer" ng-click="memberItemController.removeMember($event)" ng-disabled="!memberItemController.editable">
+          <a tooltip="Remove developer"
+             ng-click="memberItemController.removeMember($event)"
+             ng-if="!memberItemController.isOwner"
+             ng-disabled="!memberItemController.editable">
             <span class="fa fa-trash-o"></span>
           </a>
         </span>

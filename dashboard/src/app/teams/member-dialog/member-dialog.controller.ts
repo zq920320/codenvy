@@ -127,7 +127,7 @@ export class MemberDialogController {
       this.roles.push({'role' : CodenvyTeamRoles.TEAM_ADMIN, 'allowed' : roles.indexOf(CodenvyTeamRoles.TEAM_ADMIN) >= 0});
     } else {
       this.email = '';
-      this.title = 'Invite developer to collaborate';
+      this.title = 'Invite member to collaborate';
       this.buttonTitle = 'Add';
       this.roles.push({'role' : CodenvyTeamRoles.TEAM_MEMBER, 'allowed' : true});
       this.roles.push({'role' : CodenvyTeamRoles.TEAM_ADMIN, 'allowed' : false});
@@ -249,9 +249,6 @@ export class MemberDialogController {
 
     let actions = this.member ? this.member.permissions.actions : [];
     let otherActions = this.lodash.difference(actions, processedActions);
-    if (this.member && this.codenvyTeam.getRolesFromActions(this.member.permissions.actions).indexOf(CodenvyTeamRoles.TEAM_OWNER) >= 0) {
-      otherActions = otherActions.concat(CodenvyTeamRoles.TEAM_OWNER.actions);
-    }
 
     return this.lodash.uniq(this.codenvyTeam.getActionsFromRoles(userRoles).concat(otherActions));
   }

@@ -17,7 +17,7 @@
   <che-list-header che-input-placeholder="Search"
                    che-search-model="listTeamMembersController.memberFilter.name"
                    che-hide-search="listTeamMembersController.members.length === 0"
-                   che-add-button-title="Add Developer"
+                   che-add-button-title="Add Member"
                    che-on-add="listTeamMembersController.showMemberDialog(null)"
                    che-hide-add="!listTeamMembersController.editable"
                    che-delete-button-title="Delete"
@@ -69,12 +69,13 @@
       che-on-checkbox-click="listTeamMembersController.updateSelectedStatus()"
       callback="listTeamMembersController"
       editable="listTeamMembersController.editable"
+      is-owner="(member.userId === listTeamMembersController.owner.id)"
       member="member"></member-item>
   </che-list>
   <div class="che-list-empty">
     <span ng-show="listTeamMembersController.members.length > 0 && (listTeamMembersController.members | filter:listTeamMembersController.memberFilter).length === 0">
-          No developers found.
+          No members found.
     </span>
-    <span ng-show="listTeamMembersController.members.length === 0">There are no developers.</span>
+    <span ng-show="listTeamMembersController.members.length === 0">There are no members.</span>
   </div>
 </md-content>

@@ -62,8 +62,7 @@
           </che-label-container>
           <!-- Owner -->
           <che-label-container che-label-name="Owners" che-label-description="Owners can set permissions and share resources.">
-            <list-team-owners team="teamDetailsController.team" ng-if="teamDetailsController.team"
-                              editable="teamDetailsController.isUserAllowedTo('setPermissions')"></list-team-owners>
+            <list-team-owners ng-if="teamDetailsController.owner" owner="teamDetailsController.owner"></list-team-owners>
           </che-label-container>
 
           <!-- Workspace cap -->
@@ -104,7 +103,7 @@
             </che-input-box>
           </che-label-container>
           <!-- Workspace RAM cap -->
-          <che-label-container che-label-name="Workspace RAM Cap (GB)" class="team-ram-cap"
+          <che-label-container che-label-name="Workspace RAM Cap" class="team-ram-cap"
                                che-label-description="Maximum RAM a singe workspace can use.">
             <che-input-box che-name="workspaceRamCap" che-form="teamForm"
                            aria-label="runtime cap"
@@ -119,7 +118,7 @@
               <div ng-message="min">A workspace RAM cap should be greater than 0.</div>
               <div ng-message="customValidator">
                 A workspace RAM cap should be less than {{teamDetailsController.maxLimits.ramCap + teamDetailsController.limitsCopy.ramCap}} GB.
-              </div>
+              </div>git 
             </che-input-box>
           </che-label-container>
           <che-label-container class="team-details-delete-label"
@@ -138,12 +137,13 @@
     <md-tab md-on-select="developersPageSelected=true" md-on-deselect="developersPageSelected=false">
       <md-tab-label>
         <md-icon md-font-icon="fa-group" class="fa che-tab-label-icon"></md-icon>
-        <span class="che-tab-label-title">Developers</span>
+        <span class="che-tab-label-title">Members</span>
       </md-tab-label>
       <md-tab-body>
-        <list-team-members team="teamDetailsController.team"
-                           editable="teamDetailsController.isUserAllowedTo('setPermissions')"
-                           ng-if="teamDetailsController.team && developersPageSelected"></list-team-members>
+        <list-team-members ng-if="teamDetailsController.team && teamDetailsController.owner && developersPageSelected"
+                           team="teamDetailsController.team"
+                           owner="teamDetailsController.owner"
+                           editable="teamDetailsController.isUserAllowedTo('setPermissions')"></list-team-members>
       </md-tab-body>
     </md-tab>
 

@@ -49,6 +49,10 @@ export class ListTeamMembersController {
    */
   private $q: ng.IQService;
   /**
+   * Lodash library.
+   */
+  private lodash: _.LoDashStatic;
+  /**
    * Team's members list.
    */
   private members: Array<any>;
@@ -76,23 +80,27 @@ export class ListTeamMembersController {
    * All selected members state.
    */
   private isAllSelected: boolean;
-
   /**
    * Current team (comes from directive's scope).
    */
   private team: any;
+  /**
+   * Current team's owner (comes from directive's scope).
+   */
+  private owner: any;
 
   /**
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, cheProfile: any,
-              $mdDialog: angular.material.IDialogService, $q: ng.IQService, cheNotification: any) {
+              $mdDialog: angular.material.IDialogService, $q: ng.IQService, cheNotification: any, lodash: _.LoDashStatic) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyPermissions = codenvyPermissions;
     this.cheProfile = cheProfile;
     this.$mdDialog = $mdDialog;
     this.$q = $q;
+    this.lodash = lodash;
     this.cheNotification = cheNotification;
 
     this.members = [];
@@ -103,6 +111,7 @@ export class ListTeamMembersController {
     this.membersSelectedStatus = {};
     this.isBulkChecked = false;
     this.isNoSelected = true;
+
     this.fetchMembers();
   }
 
@@ -111,7 +120,6 @@ export class ListTeamMembersController {
    */
   fetchMembers(): void {
     this.isLoading = true;
-
     this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
       this.isLoading = false;
       this.formUserList();
@@ -132,9 +140,16 @@ export class ListTeamMembersController {
     let permissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
     this.members = [];
 
+    let noOwnerPermissions = true;
+
     permissions.forEach((permission) => {
       let userId = permission.userId;
       let user = this.cheProfile.getProfileFromId(userId);
+
+      if (userId === this.owner.id) {
+        noOwnerPermissions = false;
+      }
+
       if (user) {
         this.formUserItem(user, permission);
       } else {
@@ -143,6 +158,18 @@ export class ListTeamMembersController {
         });
       }
     });
+
+    if (noOwnerPermissions) {
+      let user = this.cheProfile.getProfileFromId(this.owner.id);
+
+      if (user) {
+        this.formUserItem(user, null);
+      } else {
+        this.cheProfile.fetchProfileId(this.owner.id).then(() => {
+          this.formUserItem(this.cheProfile.getProfileFromId(this.owner.id), null);
+        });
+      }
+    }
   }
 
   /**
@@ -285,8 +312,6 @@ export class ListTeamMembersController {
       }
     });
   }
-
-
 
   /**
    * Perform edit member permissions.

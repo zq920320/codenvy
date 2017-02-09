@@ -14,7 +14,6 @@
  */
 'use strict';
 import {CodenvyTeam} from '../../../../components/api/codenvy-team.factory';
-import {CodenvyTeamRoles} from '../../../../components/api/codenvy-team-roles';
 import {CodenvyPermissions} from '../../../../components/api/codenvy-permissions.factory';
 import {CodenvyUser} from '../../../../components/api/codenvy-user.factory';
 
@@ -25,11 +24,14 @@ import {CodenvyUser} from '../../../../components/api/codenvy-user.factory';
  * @author Ann Shumilova
  */
 export class ListTeamOwnersController {
-
   /**
    * Team API interaction.
    */
   private codenvyTeam: CodenvyTeam;
+  /**
+   * User API interaction.
+   */
+  private codenvyUser: CodenvyUser;
   /**
    * User profile API interaction.
    */
@@ -39,10 +41,6 @@ export class ListTeamOwnersController {
    */
   private codenvyPermissions: CodenvyPermissions;
   /**
-   * Service for displaying dialogs.
-   */
-  private $mdDialog: angular.material.IDialogService;
-  /**
    * Notifications service.
    */
   private cheNotification: any;
@@ -51,108 +49,46 @@ export class ListTeamOwnersController {
    */
   private lodash: any;
   /**
-   * Promises service.
+   * Team's owners string.
    */
-  private $q: ng.IQService;
-  /**
-   * Team's members list.
-   */
-  private members: Array<any>;
+  private owners: string;
   /**
    * Loading state of the page.
    */
   private isLoading: boolean;
   /**
-   * Filter for members list.
+   * Current team's owner (comes from directive's scope).
    */
-  private memberFilter: any;
-  /**
-   * Selected status of members in list.
-   */
-  private membersSelectedStatus: any;
-  /**
-   * Bulk operation state.
-   */
-  private isBulkChecked: boolean;
-  /**
-   * No selected members state.
-   */
-  private isNoSelected: boolean;
-  /**
-   * All selected members state.
-   */
-  private isAllSelected: boolean;
-
-  /**
-   * Current team (comes from directive's scope).
-   */
-  private team: any;
+  private owner: any;
 
   /**
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, cheProfile: any,
-              $mdDialog: angular.material.IDialogService, $q: ng.IQService, cheNotification: any, lodash: any) {
+  constructor(codenvyTeam: CodenvyTeam, codenvyUser: CodenvyUser, codenvyPermissions: CodenvyPermissions, cheProfile: any, cheNotification: any, lodash: any) {
     this.codenvyTeam = codenvyTeam;
+    this.codenvyUser = codenvyUser;
     this.codenvyPermissions = codenvyPermissions;
     this.cheProfile = cheProfile;
-    this.$mdDialog = $mdDialog;
-    this.$q = $q;
     this.cheNotification = cheNotification;
     this.lodash = lodash;
 
-    this.members = [];
     this.isLoading = true;
-
-    this.memberFilter = {name: ''};
-
-    this.membersSelectedStatus = {};
-    this.isBulkChecked = false;
-    this.isNoSelected = true;
-    this.fetchMembers();
+    this.processOwner();
   }
 
   /**
-   * Fetches the lis of team members.
+   * Process owner.
    */
-  fetchMembers(): void {
-    this.isLoading = true;
-
-    this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
-      this.isLoading = false;
-      this.formUserList();
-    }, (error: any) => {
-      this.isLoading = false;
-      if (error.status === 304) {
-        this.formUserList();
-      } else {
-        this.cheNotification.showError(error.data && error.data.message ? error.data.message : 'Failed to retrieve team permissions.');
-      }
-    });
-  }
-
-  /**
-   * Combines permissions and users data in one list.
-   */
-  formUserList(): void {
-    let permissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
-    this.members = [];
-
-    permissions.forEach((permission) => {
-      let userId = permission.userId;
-      let roles = this.codenvyTeam.getRolesFromActions(permission.actions);
-      if (roles.indexOf(CodenvyTeamRoles.TEAM_OWNER) >= 0) {
-        let user = this.cheProfile.getProfileFromId(userId);
-        if (user) {
-          this.formUserItem(user, permission);
-        } else {
-          this.cheProfile.fetchProfileId(userId).then(() => {
-            this.formUserItem(this.cheProfile.getProfileFromId(userId), permission);
-          });
-        }
-      }
-    });
+  processOwner(): void {
+    let profile = this.cheProfile.getProfileFromId(this.owner.id);
+    if (profile) {
+      this.formUserItem(profile);
+    } else {
+      this.cheProfile.fetchProfileId(this.owner.id).then(() => {
+        this.formUserItem(this.cheProfile.getProfileFromId(this.owner.id));
+      });
+    }
   }
 
   /**
@@ -161,277 +97,8 @@ export class ListTeamOwnersController {
    * @param user user data
    * @param permissions permissions data
    */
-  formUserItem(user: any, permissions: any): void {
-    let userItem = angular.copy(user);
-    userItem.name = this.cheProfile.getFullName(userItem.attributes);
-    userItem.permissions = permissions;
-    this.members.push(userItem);
-  }
-
-  /**
-   * Return <code>true</code> if all members in list are checked.
-   * @returns {boolean}
-   */
-  isAllMembersSelected(): boolean {
-    return this.isAllSelected;
-  }
-
-  /**
-   * Returns <code>true</code> if all members in list are not checked.
-   * @returns {boolean}
-   */
-  isNoMemberSelected(): boolean {
-    return this.isNoSelected;
-  }
-
-  /**
-   * Make all members in list selected.
-   */
-  selectAllMembers(): void {
-    this.members.forEach((member: any) => {
-      this.membersSelectedStatus[member.userId] = true;
-    });
-  }
-
-  /**
-   * Make all members in list deselected.
-   */
-  deselectAllMembers(): void {
-    this.members.forEach((member: any) => {
-      this.membersSelectedStatus[member.userId] = false;
-    });
-  }
-
-  /**
-   * Change bulk selection value.
-   */
-  changeBulkSelection(): void {
-    if (this.isBulkChecked) {
-      this.deselectAllMembers();
-      this.isBulkChecked = false;
-    } else {
-      this.selectAllMembers();
-      this.isBulkChecked = true;
-    }
-    this.updateSelectedStatus();
-  }
-
-  /**
-   * Update members selected status.
-   */
-  updateSelectedStatus(): void {
-    this.isNoSelected = true;
-    this.isAllSelected = true;
-
-    Object.keys(this.membersSelectedStatus).forEach((key) => {
-      if (this.membersSelectedStatus[key]) {
-        this.isNoSelected = false;
-      } else {
-        this.isAllSelected = false;
-      }
-    });
-
-    if (this.isNoSelected) {
-      this.isBulkChecked = false;
-      return;
-    }
-
-    if (this.isAllSelected) {
-      this.isBulkChecked = true;
-    }
-  }
-
-  /**
-   * Shows dialog for adding new member to the team.
-   */
-  showMemberDialog(): void {
-    this.$mdDialog.show({
-      controller: 'MemberDialogController',
-      controllerAs: 'memberDialogController',
-      bindToController: true,
-      clickOutsideToClose: true,
-      locals: {
-        members: this.members,
-        callbackController: this,
-        role: CodenvyTeamRoles.TEAM_OWNER
-      },
-      templateUrl: 'app/teams/member-dialog/member-dialog.html'
-    });
-  }
-
-  /**
-   * Add new members to the team.
-   *
-   * @param members members to be added
-   * @param roles member roles
-   */
-  addMembers(members: Array<any>, roles: Array<any>): void {
-    let promises = [];
-    let unregistered = [];
-    let existingPermissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
-
-    members.forEach((member: any) => {
-      if (member.id) {
-        let actions = this.codenvyTeam.getActionsFromRoles(roles);
-        let permissions = this.getPermissionsForOwner(member.id, actions, existingPermissions);
-        let promise = this.codenvyPermissions.storePermissions(permissions);
-        promises.push(promise);
-      } else {
-        unregistered.push(member.email);
-      }
-    });
-
-    this.isLoading = true;
-    this.$q.all(promises).then(() => {
-      this.fetchMembers();
-    }).finally(() => {
-      this.isLoading = false;
-      if (unregistered.length > 0) {
-        this.cheNotification.showError('User' + (unregistered.length > 1 ? 's ' : ' ') + unregistered.join(', ') + (unregistered.length > 1 ? ' are' : ' is') + ' not registered in the system.');
-      }
-    });
-  }
-
-  /**
-   * Form the permissions by adding owner role actions.
-   *
-   * @param memberId member id to be added as owner
-   * @param actions owner actions
-   * @param existingPermissions existing permissions of current team
-   * @returns {{instanceId: any, userId: string, domainId: string, actions: Array<string>}}
-   */
-  getPermissionsForOwner(memberId: string, actions: Array<string>, existingPermissions: Array<any>): any {
-    let permissions = this.lodash.find(existingPermissions, (permissions: any) => {
-      return permissions.userId === memberId;
-    });
-
-    if (permissions) {
-      actions = actions.concat(permissions.actions);
-    }
-
-    return {
-      instanceId: this.team.id,
-      userId: memberId,
-      domainId: 'organization',
-      actions: actions
-    };
-  }
-
-  /**
-   * Stores provided permissions.
-   *
-   * @param permissions
-   */
-  storePermissions(permissions: any): void {
-    this.isLoading = true;
-    this.codenvyPermissions.storePermissions(permissions).then(() => {
-      this.fetchMembers();
-    }, (error: any) => {
-      this.isLoading = false;
-      this.cheNotification.showError(error.data && error.data.message ? error.data.message : 'Set user permissions failed.');
-    });
-  }
-
-  addOwner(): any {
-    this.showMemberDialog();
-  }
-
-  /**
-   * Remove all selected members.
-   */
-  removeOwners(): void {
-    let membersSelectedStatusKeys = Object.keys(this.membersSelectedStatus);
-    let checkedKeys = [];
-
-    if (!membersSelectedStatusKeys.length) {
-      this.cheNotification.showError('No such developers.');
-      return;
-    }
-
-    membersSelectedStatusKeys.forEach((key) => {
-      if (this.membersSelectedStatus[key] === true) {
-        checkedKeys.push(key);
-      }
-    });
-
-    if (!checkedKeys.length) {
-      this.cheNotification.showError('No such developers.');
-      return;
-    }
-
-    let confirmationPromise = this.showDeleteMembersConfirmation(checkedKeys.length);
-    confirmationPromise.then(() => {
-      let removalError;
-      let removeOwnersPromises = [];
-
-      checkedKeys.forEach((id : string) => {
-        this.membersSelectedStatus[id] = false;
-
-        let permissions = this.removeOwnerPermissions(id);
-        let promise;
-        if (permissions && permissions.actions.length > 0) {
-          promise = this.codenvyPermissions.storePermissions(permissions);
-        } else {
-          promise = this.codenvyPermissions.removeTeamPermissions(this.team.id, id).then(() => {},
-            (error: any) => {
-              removalError = error;
-            });
-        }
-
-        removeOwnersPromises.push(promise);
-      });
-
-      this.$q.all(removeOwnersPromises).finally(() => {
-        this.fetchMembers();
-        this.updateSelectedStatus();
-        if (removalError) {
-          this.cheNotification.showError(removalError.data && removalError.data.message ? removalError.data.message : 'User removal failed.');
-        }
-      });
-    });
-  }
-
-  /**
-   * Remove the owner permissions only.
-   *
-   * @param id user's id to remove permissions
-   * @returns {any} permissions free from owner ones
-   */
-  removeOwnerPermissions(id: string): any {
-    let member = this.lodash.find(this.members, (member: any) => {
-      return member.userId === id;
-    });
-
-    if (!member) {
-      return null;
-    }
-
-    let roles = this.codenvyTeam.getRolesFromActions(member.permissions.actions);
-    roles.splice(roles.indexOf(CodenvyTeamRoles.TEAM_OWNER), 1);
-    let permissions = angular.copy(member.permissions);
-    permissions.actions = this.codenvyTeam.getActionsFromRoles(roles);
-    return permissions;
-  }
-
-  /**
-   * Show confirmation popup before members removal
-   * @param numberToDelete
-   * @returns {*}
-   */
-  showDeleteMembersConfirmation(numberToDelete: number) {
-    let confirmTitle = 'Would you like to remove ';
-    if (numberToDelete > 1) {
-      confirmTitle += 'these ' + numberToDelete + ' owners?';
-    } else {
-      confirmTitle += 'the selected owner?';
-    }
-    let confirm = this.$mdDialog.confirm()
-      .title(confirmTitle)
-      .ariaLabel('Remove owners')
-      .ok('Delete!')
-      .cancel('Cancel')
-      .clickOutsideToClose(true);
-
-    return this.$mdDialog.show(confirm);
+  formUserItem(user: any): void {
+    let name = this.cheProfile.getFullName(user.attributes) + ' (' + user.email + ')';
+    this.owners = name;
   }
 }

@@ -20,13 +20,12 @@
  * @author Ann Shumilova
  */
 export enum CodenvyTeamRoles {
-  TEAM_MEMBER = <any> {'title': 'Team Member', 'description': 'Can create and use workspaces.', 'actions' : ['createWorkspaces']},
-  TEAM_ADMIN = <any> {'title': 'Team Admin', 'description': 'Can edit the team’s settings, manage workspaces, resources and members.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces', 'manageSuborganizations']},
-  TEAM_OWNER = <any> {'title': 'Team Owner', 'description': 'Owner of the team, has all permissions.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces', 'delete']},
+  TEAM_MEMBER = <any> {'title': 'Team Developer', 'description': 'Can create and use own workspaces.', 'actions' : ['createWorkspaces']},
+  TEAM_ADMIN = <any> {'title': 'Team Admin', 'description': 'Can edit the team’s settings, manage workspaces and members.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces']},
 }
 
 export namespace CodenvyTeamRoles {
   export function getValues(): any[] {
-    return [CodenvyTeamRoles.TEAM_MEMBER, CodenvyTeamRoles.TEAM_ADMIN, CodenvyTeamRoles.TEAM_OWNER];
+    return [CodenvyTeamRoles.TEAM_MEMBER, CodenvyTeamRoles.TEAM_ADMIN];
   }
 }

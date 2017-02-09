@@ -38,6 +38,11 @@ export class MemberItemController {
    */
   private member: any;
   /**
+   * Whether current member is owner of the team. (Comes from directive's scope).
+   */
+  private isOwner: boolean;
+
+  /**
    * Lodash library.
    */
   private lodash: any;
@@ -89,6 +94,10 @@ export class MemberItemController {
    * @returns {string} string format of roles array
    */
   getMemberRoles(): string {
+    if (this.isOwner) {
+      return 'Team Owner';
+    }
+
     let roles = this.codenvyTeam.getRolesFromActions(this.member.permissions.actions);
     let titles = [];
     let processedActions = []

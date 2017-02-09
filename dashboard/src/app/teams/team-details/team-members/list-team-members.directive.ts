@@ -39,6 +39,7 @@ export class ListTeamMembers implements ng.IDirective {
 
   scope: any = {
     team: '=',
+    owner: '=',
     editable: '='
   };
 
