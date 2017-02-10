@@ -42,9 +42,10 @@
                    ng-model-options="{allowInvalid: true, updateOn: 'default blur', debounce: { 'default': 200, 'blur': 0 } }"
                    unique-team-name="createTeamController.teamName"
                    ng-keypress="createTeamForm.$valid && $event.which === 13 && createTeamController.createTeam()"
-                   ng-pattern="/^[A-Za-z0-9\-\_]+$/" required focusable>
+                   ng-pattern="/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i"
+                   required focusable>
           <div ng-message="required" ng-if="createTeamForm.$dirty">A team name is required.</div>
-          <div ng-message="pattern">Team name must contain only letters and digits.
+          <div ng-message="pattern">The name can contain alphanumeric characters or single '-' inside.
           </div>
           <div ng-message="minlength">The name has to be more than 1 characters long.</div>
           <div ng-message="maxlength">The name has to be less than 20 characters long.</div>

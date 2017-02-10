@@ -50,9 +50,9 @@
                                  ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 1000, 'blur': 0 } }"
                                  required
                                  ng-maxlength="128"
-                                 ng-pattern="/^[A-Za-z0-9\-\_]+$/">
+                                 ng-pattern="/^[a-z\d](?:[a-z\d]|-(?=[a-z\d])){0,38}$/i">
                     <div ng-message="required">A name is required.</div>
-                    <div ng-message="pattern">The name should not contain special characters like dollar, etc.
+                    <div ng-message="pattern">The name can contain alphanumeric characters or single '-' inside.
                     </div>
                     <div ng-message="maxlength">The name has to be less than 128 characters long.</div>
                     <div ng-message="md-maxlength">The name has to be less than 128 characters long.</div>
