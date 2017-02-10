@@ -148,6 +148,7 @@ node default {
   $pgsql_checkpoint_completion_target = getValue("CODENVY_PGSQL_CHECKPOINT_COMPLETION_TARGET","0.9")
   $pgsql_effective_cache_size = getValue("CODENVY_PGSQL_EFFECTIVE_CACHE_SIZE","768MB")
   $pgsql_default_statistics_target = getValue("CODENVY_PGSQL_DEFAULT_STATISTICS_TARGET","100")
+  $pgsql_log_min_duration_statement = getValue("CODENVY_PGSQL_LOG_MIN_DURATION_STATEMENT","2000")
 
 ###############################
 # JMX credentials
@@ -276,6 +277,11 @@ $machine_docker_parent_cgroup = getValue("CODENVY_DOCKER_PARENT_CGROUP","NULL")
 
 ###############################
 #
+# System super privileged mode
+  $system_super_privileged_mode = getValue("CODENVY_SYSTEM_SUPER_PRIVILEGED_MODE","false")
+
+###############################
+#
 # Codenvy folders on host machine
   $codenvy_folder = getValue("CHE_INSTANCE","/tmp/codenvy")
 
@@ -301,6 +307,16 @@ $machine_docker_parent_cgroup = getValue("CODENVY_DOCKER_PARENT_CGROUP","NULL")
 ###############################
 # DB initialization and migration configuration
   $db_schema_flyway_scripts_locations=getValue("DB_SCHEMA_FLYWAY_SCRIPTS_LOCATIONS","classpath:che-schema,classpath:codenvy-schema")
+
+###############################
+# Rsync backup/restore configuration
+# Throughput of rsync connection for workspace files restoring in KiB. Value may include dot, unit suffix, e.g. 1.5m.
+  $rsync_restore_bwlimit=getValue("RSYNC_RESTORE_BWLIMIT","7000")
+# Throughput of rsync connection for workspace files backup in KiB.
+  $rsync_backup_bwlimit=getValue("RSYNC_BACKUP_BWLIMIT","7000")
+# Sets log level of ssh connection used by rsync for workspace syncing. Value may include dot, unit suffix, e.g. 1.5m.
+# Default value INFO. Possible values: QUIET, FATAL, ERROR, INFO, VERBOSE, DEBUG1, DEBUG2, and DEBUG3
+  $rsync_ssh_log_level=getValue("RSYNC_SSH_LOG_LEVEL","INFO")
 
 ###############################
 # Include base module
