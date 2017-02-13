@@ -92,9 +92,6 @@ describe('CodenvyTeam', () => {
       codenvyBackend.usersBackendSetup();
       codenvyBackend.teamsBackendSetup();
 
-      // setup backend for users
-      codenvyBackend.teamsBackendSetup();
-
       // check before
       expect(namespaces.length).toEqual(0);
       expect(factory.getTeams().length).toEqual(0);

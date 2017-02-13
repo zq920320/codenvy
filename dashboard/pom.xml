@@ -153,10 +153,6 @@
                                         <exec dir="${basedir}" executable="gulp" failonerror="true">
                                             <arg value="test" />
                                         </exec>
-                                        <!-- Run e2e tests in dist mode-->
-                                        <exec dir="${basedir}" executable="gulp" failonerror="true">
-                                            <arg value="protractor:dist" />
-                                        </exec>
                                     </target>
                                 </configuration>
                             </execution>

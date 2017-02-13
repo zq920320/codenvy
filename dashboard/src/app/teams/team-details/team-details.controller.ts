@@ -50,9 +50,9 @@ export class TeamDetailsController {
    */
   private $location: ng.ILocationService;
   /**
-   * Service for displaying dialogs.
+   * Confirm dialog service.
    */
-  private $mdDialog: angular.material.IDialogService;
+  private confirmDialogService: any;
   /**
    * Lodash library.
    */
@@ -108,14 +108,14 @@ export class TeamDetailsController {
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyResourcesDistribution: CodenvyResourcesDistribution, codenvyPermissions: CodenvyPermissions,
               codenvyUser: CodenvyUser, $route: ng.route.IRouteService, $location: ng.ILocationService, $rootScope: che.IRootScopeService,
-              $mdDialog: angular.material.IDialogService, cheNotification: any, lodash: any) {
+              cheNotification: any, lodash: any, confirmDialogService: any) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
     this.codenvyPermissions = codenvyPermissions;
     this.codenvyUser = codenvyUser;
     this.teamName = $route.current.params.teamName;
     this.$location = $location;
-    this.$mdDialog = $mdDialog;
+    this.confirmDialogService = confirmDialogService;
     this.cheNotification = cheNotification;
     this.lodash = lodash;
 
@@ -335,18 +335,11 @@ export class TeamDetailsController {
 
   /**
    * Confirms and performs team's deletion.
-   *
-   * @param event
    */
-  deleteTeam(event: MouseEvent): void {
-    let confirm = this.$mdDialog.confirm()
-      .title('Would you like to delete team \'' + this.team.name + '\'?')
-      .ariaLabel('Delete team')
-      .ok('Delete it!')
-      .cancel('Cancel')
-      .clickOutsideToClose(true)
-      .targetEvent(event);
-    this.$mdDialog.show(confirm).then(() => {
+  deleteTeam(): void {
+    let content = 'Would you like to delete team \'' + this.team.name + '\'?'
+
+    this.confirmDialogService.showConfirmDialog('Remove team', content, 'Delete').then(() => {
       let promise = this.codenvyTeam.deleteTeam(this.team.id);
       promise.then(() => {
         this.$location.path('/workspaces');

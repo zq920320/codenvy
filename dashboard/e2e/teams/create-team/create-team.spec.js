@@ -1,10 +1,11 @@
 'use strict';
 
 describe('Create team', () => {
-  let pageObject, loginPageObject;
+  let pageObject, loginPageObject, deleteTeamObject;
 
   beforeAll(() => {
     loginPageObject = require('../../login/login.po');
+    deleteTeamObject = require('./../delete-team/delete-team.po');
 
     // login
     browser.get('/');
@@ -16,9 +17,11 @@ describe('Create team', () => {
   });
 
   afterAll(() => {
-    // logout
-    //loginPageObject.findNavbarElements();
-    //loginPageObject.doLogout();
+    // delete all teams
+    deleteTeamObject.deleteAllTeams();
+    //logout
+    loginPageObject.findNavbarElements();
+    loginPageObject.doLogout();
   });
 
   beforeEach(() => {

@@ -18,7 +18,7 @@ exports.config = {
     'browserName': 'chrome',
     'chromeOptions': {
       args: ['--lang=en',
-        '--window-size=1024,768']
+        '--window-size=1350,900 ']
     }
   },
 
@@ -39,6 +39,13 @@ exports.config = {
       user: 'fake-login',
       password: 'fake-password'
     }
+  },
+
+  // Suite can be run via command line as:
+  // --suite teams
+  suites: {
+    login: paths.e2e + '/login/*.js',
+    teams: paths.e2e + '/teams/**/*.js'
   },
 
   // Options to be passed to Jasmine-node.

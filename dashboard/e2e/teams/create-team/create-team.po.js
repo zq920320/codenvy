@@ -16,9 +16,12 @@ let CreateTeamPageObject = function() {
   this.createTeamButtonElement = $('#create-team-button');
 
   this.createTeam = (name) => {
-    this.navbarCreateTeamElement.click();
-    this.newTeamNameElement.sendKeys(name);
-    this.createTeamButtonElement.click();
+    this.navbarCreateTeamElement.click().then (()=>{
+      this.newTeamNameElement.clear();
+      this.newTeamNameElement.sendKeys(name).then(() => {
+        this.createTeamButtonElement.click();
+      });
+    });
     browser.waitForAngular();
   }
 };

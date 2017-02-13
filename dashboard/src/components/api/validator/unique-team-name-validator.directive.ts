@@ -63,9 +63,6 @@ export class UniqueTeamNameValidator {
 
         let currentTeamName = scopingTest.$eval(attributes.uniqueTeamName),
           teams = this.codenvyTeam.getTeams();
-        if (!currentTeamName) {
-          return this.$q.resolve(true);
-        }
 
         if (teams.length) {
           for (let i = 0; i < teams.length; i++) {

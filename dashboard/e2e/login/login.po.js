@@ -44,12 +44,11 @@ let LoginPage = function() {
 
   this.findNavbarElements = () => {
     this.adminNavbarMenuElement = $('.navbar-account-section');
-    this.logoutMenuItemElement = $('.navbar-dropdown-menu').element(by.cssContainingText('.navbar-click-area', 'Logout'));
   };
 
   this.doLogout = () => {
     this.adminNavbarMenuElement.click().then(() => {
-      return this.logoutMenuItemElement.click();
+      return element(by.cssContainingText('.navbar-click-area', 'Logout')).click();
     });
   };
 
