@@ -72,6 +72,10 @@ export class CreateTeamController {
    * Owner'e email.
    */
   private owner: string;
+  /**
+   * Account name.
+   */
+  private accountName: string;
 
   /**
    * Default constructor
@@ -94,14 +98,17 @@ export class CreateTeamController {
 
     if (codenvyUser.getUser()) {
       this.owner = codenvyUser.getUser().email;
+      this.accountName = codenvyUser.getUser().name;
       this.isLoading = false;
     } else {
       codenvyUser.fetchUser().then(() => {
         this.owner = codenvyUser.getUser().email;
+        this.accountName = codenvyUser.getUser().name;
         this.isLoading = false;
       }, (error: any) => {
         if (error.status === 304) {
           this.owner = codenvyUser.getUser().email;
+          this.accountName = codenvyUser.getUser().name;
           this.isLoading = false;
         } else {
           this.$log.error('Failed to retrieve current user:', error);
@@ -150,7 +157,7 @@ export class CreateTeamController {
 
      this.$q.all(promises).then(() => {
        this.isLoading = false;
-       this.$location.path('/team/' + team.name);
+       this.$location.path('/team/' + team.qualifiedName);
      }, (error: any) => {
        this.isLoading = false;
        let message = error.data && error.data.message ? error.data.message : 'Failed to create team ' + this.teamName + '.';

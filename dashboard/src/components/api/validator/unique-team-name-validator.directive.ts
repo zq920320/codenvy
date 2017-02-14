@@ -60,35 +60,25 @@ export class UniqueTeamNameValidator {
         if (!scopingTest) {
           scopingTest = $scope;
         }
-
+        var deferred = this.$q.defer();
         let currentTeamName = scopingTest.$eval(attributes.uniqueTeamName),
+          parentAccount = scopingTest.$eval(attributes.parentAccount),
           teams = this.codenvyTeam.getTeams();
-        if (!currentTeamName) {
-          return this.$q.resolve(true);
-        }
 
         if (teams.length) {
           for (let i = 0; i < teams.length; i++) {
-            if (teams[i].name === currentTeamName && teams[i].name === modelValue) {
-              return this.$q.resolve(true);
+            if (teams[i].qualifiedName === parentAccount + '/' + currentTeamName) {
+              continue;
             }
-            if (teams[i].name === modelValue) {
-              return this.$q.reject(false);
+            if (teams[i].qualifiedName === parentAccount + '/' + modelValue) {
+              deferred.reject(false);
             }
           }
+          deferred.resolve(true);
+        } else {
+          deferred.resolve(true);
         }
-
-        let defer = this.$q.defer();
-        this.codenvyTeam.fetchTeamByName(modelValue).then(() => {
-          defer.reject(false);
-        }, (error: any) => {
-          if (error.status === 304) {
-            defer.reject(false);
-          }
-          defer.resolve(true);
-        });
-
-        return defer.promise;
+        return deferred.promise;
       };
     }
   }

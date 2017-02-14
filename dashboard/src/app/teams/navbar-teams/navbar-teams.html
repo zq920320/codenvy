@@ -29,11 +29,11 @@
         <md-list-item class="navbar-subsection-item"
                       ng-repeat="team in navbarTeamsController.getTeams()">
           <md-button nav-bar-selected flex che-reload-href
-                     ng-href="#/team/{{team.name}}" layout-align="left"
+                     ng-href="#/team/{{team.qualifiedName}}" layout-align="left"
                      target="_self">
             <div class="navbar-item" layout="row" layout-align="start center">
               <span class="navbar-icon"></span>
-              <span title="{{team.name}}">{{team.name}}</span>
+              <span title="{{team.qualifiedName}}">{{team.qualifiedName}}</span>
             </div>
           </md-button>
         </md-list-item>

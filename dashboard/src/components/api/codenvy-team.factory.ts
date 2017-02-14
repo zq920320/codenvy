@@ -139,12 +139,12 @@ export class CodenvyTeam {
     let name = user.name;
     // detection personal account (organization which name equals to current user's name):
     this.personalAccount = this.lodash.find(teams, (team: any) => {
-      return team.name === name;
+      return team.qualifiedName === name;
     });
 
     if (this.personalAccount) {
       // display personal account as "personal" on UI, namespace(id) stays the same for API interactions:
-      this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.name, label: 'personal', location: '/billing'});
+      this.cheNamespaceRegistry.getNamespaces().push({id: this.personalAccount.qualifiedName, label: 'personal', location: '/billing'});
     }
 
     teams.forEach((team : any) => {
@@ -152,7 +152,7 @@ export class CodenvyTeam {
       // team has to have parent (root organizations are skipped):
       if (team.parent) {
         this.teams.push(team);
-        this.cheNamespaceRegistry.getNamespaces().push({id: team.name, label: team.name, location: '/team/' + team.name});
+        this.cheNamespaceRegistry.getNamespaces().push({id: team.qualifiedName, label: team.qualifiedName, location: '/team/' + team.qualifiedName});
       }
     });
   }
@@ -208,7 +208,7 @@ export class CodenvyTeam {
    */
   getTeamByName(name: string): any {
     for (let i = 0; i < this.teams.length; i++) {
-      if (this.teams[i].name === name) {
+      if (this.teams[i].qualifiedName === name) {
         return this.teams[i];
       }
     };

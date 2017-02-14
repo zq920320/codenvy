@@ -38,7 +38,6 @@
           <ng-form name="teamForm">
             <!-- Name -->
           <che-label-container che-label-name="Name">
-
                   <che-input-box che-form="teamForm"
                                  che-name="name"
                                  aria-label="Name of the team"
@@ -46,6 +45,7 @@
                                  ng-model="teamDetailsController.newName"
                                  che-readonly="!teamDetailsController.isUserAllowedTo('update')"
                                  unique-team-name="teamDetailsController.team.name"
+                                 parent-account="teamDetailsController.owner.name"
                                  ng-change="teamDetailsController.updateTeamName(teamForm.$invalid)"
                                  ng-model-options="{ updateOn: 'default blur', debounce: { 'default': 1000, 'blur': 0 } }"
                                  required
@@ -168,13 +168,13 @@
     </md-tab>-->
 
     <!-- Workspaces Tab -->
-    <md-tab>
+    <md-tab md-on-select="workspacesPageSelected=true" md-on-deselect="workspacesPageSelected=false">
       <md-tab-label>
         <md-icon md-font-icon="chefont cheico-workspace" class="che-tab-label-icon"></md-icon>
         <span class="che-tab-label-title">Workspaces</span>
       </md-tab-label>
       <md-tab-body>
-        <list-team-workspaces team="teamDetailsController.team" ng-if="teamDetailsController.team"></list-team-workspaces>
+        <list-team-workspaces team="teamDetailsController.team" ng-if="teamDetailsController.team && workspacesPageSelected"></list-team-workspaces>
       </md-tab-body>
     </md-tab>
 

@@ -401,7 +401,6 @@ export class ListTeamMembersController {
           currentUserPromise = this.codenvyPermissions.removeTeamPermissions(this.team.id, id);
           continue;
         }
-        debugger;
         let promise = this.codenvyPermissions.removeTeamPermissions(this.team.id, id).then(() => {},
           (error: any) => {
             removalError = error;

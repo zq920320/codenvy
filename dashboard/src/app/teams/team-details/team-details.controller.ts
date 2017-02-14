@@ -145,7 +145,7 @@ export class TeamDetailsController {
     }
 
     this.fetchTeamDetails();
-    this.fetchAccount();
+    this.fetchUser();
   }
 
   /**
@@ -153,51 +153,39 @@ export class TeamDetailsController {
    */
   fetchTeamDetails(): void {
     this.team  = this.codenvyTeam.getTeamByName(this.teamName);
-    this.newName = angular.copy(this.teamName);
+
     if (!this.team) {
       this.codenvyTeam.fetchTeamByName(this.teamName).then((team: any) => {
         this.team = team;
+        this.newName = angular.copy(this.team.name);
         this.fetchLimits();
         this.fetchUserPermissions();
       }, (error: any) => {
         this.invalidTeam = true;
       });
     } else {
+      this.newName = angular.copy(this.team.name);
       this.fetchLimits();
       this.fetchUserPermissions();
     }
   }
 
   /**
-   * Fetch parent account of the team.
-   */
-  fetchAccount(): void {
-    this.codenvyTeam.fetchTeamById(this.team.parent).then(() => {
-        this.fetchUser();
-      }, (error: any) => {
-        if (error.status === 304) {
-          this.fetchUser();
-        }
-        this.isLoading = false;
-        //TODO
-      }
-    );
-  }
-
-  /**
    * Fetch user by name (the name is the same as accounts).
    */
   fetchUser(): void {
-    let account = this.codenvyTeam.getTeamById(this.team.parent);
-    if (!account) {
+    if (!this.teamName) {
       return;
     }
 
-    this.codenvyUser.fetchUserByName(account.name).then(() => {
-      this.owner = this.codenvyUser.getUserByName(account.name);
+    let parts = this.teamName.split('/');
+    let accountName = (parts && parts.length > 0) ? parts[0] : '';
+
+    this.codenvyUser.fetchUserByName(accountName).then(() => {
+      this.owner = this.codenvyUser.getUserByName(accountName);
     }, (error: any) => {
       if (error.status === 304) {
-        this.owner = this.codenvyUser.getUserByName(account.name);
+        this.owner = this.codenvyUser.getUserByName(accountName);
       }
     });
   }
@@ -367,9 +355,9 @@ export class TeamDetailsController {
   updateTeamName(invalid: boolean): void {
     if (!invalid && this.newName && this.team && this.newName !== this.team.name) {
       this.team.name = this.newName;
-      this.codenvyTeam.updateTeam(this.team).then(() => {
+      this.codenvyTeam.updateTeam(this.team).then((team) => {
         this.codenvyTeam.fetchTeams().then(() => {
-          this.$location.path('/team/' + this.newName);
+          this.$location.path('/team/' + team.qualifiedName);
         });
       }, (error: any) => {
         this.cheNotification.showError((error.data && error.data.message !== null) ? error.data.message : 'Rename team failed.');

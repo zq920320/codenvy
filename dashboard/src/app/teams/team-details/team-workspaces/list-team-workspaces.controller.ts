@@ -14,6 +14,8 @@
  */
 'use strict';
 import {CodenvyTeam} from '../../../../components/api/codenvy-team.factory';
+import {CodenvyPermissions} from '../../../../components/api/codenvy-permissions.factory';
+import {CodenvyUser} from "../../../../components/api/codenvy-user.factory";
 /**
  * @ngdoc controller
  * @name teams.workspaces:ListTeamWorkspacesController
@@ -26,6 +28,14 @@ export class ListTeamWorkspacesController {
    * Team API interaction.
    */
   private codenvyTeam: CodenvyTeam;
+  /**
+   * User API interaction.
+   */
+  private codenvyUser: CodenvyUser;
+  /**
+   * Permissions API interaction.
+   */
+  private codenvyPermissions: CodenvyPermissions;
   /**
    * Workspace API interaction.
    */
@@ -42,6 +52,8 @@ export class ListTeamWorkspacesController {
    * Promises service.
    */
   private $q: ng.IQService;
+
+  private lodash: _.LoDashStatic;
   /**
    * List of team's workspaces
    */
@@ -79,12 +91,16 @@ export class ListTeamWorkspacesController {
    * Default constructor that is using resource
    * @ngInject for Dependency injection
    */
-  constructor(codenvyTeam: CodenvyTeam, cheWorkspace: any, cheNotification: any, $mdDialog: angular.material.IDialogService, $q: ng.IQService) {
+  constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, codenvyUser: CodenvyUser, cheWorkspace: any,
+              cheNotification: any, lodash: _.LoDashStatic, $mdDialog: angular.material.IDialogService, $q: ng.IQService) {
     this.codenvyTeam = codenvyTeam;
     this.cheWorkspace = cheWorkspace;
     this.cheNotification = cheNotification;
+    this.codenvyPermissions = codenvyPermissions;
+    this.codenvyUser = codenvyUser;
     this.$mdDialog = $mdDialog;
     this.$q = $q;
+    this.lodash = lodash;
 
     this.workspaces = [];
     this.isLoading = true;
@@ -93,7 +109,46 @@ export class ListTeamWorkspacesController {
     this.workspacesSelectedStatus = {};
     this.isBulkChecked = false;
     this.isNoSelected = true;
-    this.fetchWorkspaces();
+
+    this.fetchPermissions();
+  }
+
+  fetchPermissions(): void {
+    this.codenvyPermissions.fetchTeamPermissions(this.team.id).then(() => {
+      this.processPermissions();
+    }, (error: any) => {
+      if (error.status === 304) {
+        this.processPermissions();
+      } else {
+        this.cheNotification.showError('Failed to access workspaces of the ' + this.team.name + ' team.');
+      }
+    });
+  }
+
+  processPermissions(): void {
+    let permissions = this.codenvyPermissions.getTeamPermissions(this.team.id);
+    let currentUserPermissions = this.lodash.find(permissions, (permission: any) => {
+      return permission.userId === this.codenvyUser.getUser().id;
+    });
+
+    if (currentUserPermissions && currentUserPermissions.actions.indexOf('manageWorkspaces') >= 0) {
+      this.fetchWorkspacesByNamespace();
+    } else {
+      this.fetchWorkspaces();
+    }
+  }
+
+  fetchWorkspacesByNamespace(): void {
+    this.cheWorkspace.fetchWorkspacesByNamespace(this.team.qualifiedName).then(() => {
+      this.isLoading = false;
+      this.workspaces = this.cheWorkspace.getWorkspacesByNamespace(this.team.qualifiedName);
+    }, (error: any) => {
+      this.isLoading = false;
+      if (error.status === 304) {
+        this.workspaces = this.cheWorkspace.getWorkspacesByNamespace(this.team.qualifiedName);
+      }
+      //TODO
+    });
   }
 
   /**
@@ -102,16 +157,29 @@ export class ListTeamWorkspacesController {
   fetchWorkspaces(): void {
     let promise = this.cheWorkspace.fetchWorkspaces();
 
+
+
     promise.then(() => {
         this.isLoading = false;
-        this.workspaces = this.cheWorkspace.getWorkspacesByNamespace(this.team.name);
+        this.workspaces = this.filterWorkspacesByNamespace();
       },
       (error: any) => {
         if (error.status === 304) {
-          this.workspaces = this.cheWorkspace.getWorkspacesByNamespace(this.team.name);
+          this.workspaces = this.filterWorkspacesByNamespace();
         }
         this.isLoading = false;
       });
+  }
+
+  /**
+   * Filter workspaces by namespace.
+   *
+   * @returns {any}
+   */
+  filterWorkspacesByNamespace(): Array<any> {
+    return this.lodash.filter((this.cheWorkspace.getWorkspaces(), (workspace) => {
+      return workspace.namespace === this.team.qualifiedName;
+    }));
   }
 
   /**

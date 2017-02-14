@@ -115,8 +115,8 @@ export class TeamsConfig {
           check: ['$q', 'codenvyTeam', checkPersonalTeam]
         }
       })
-      .accessWhen('/team/:teamName', locationProvider)
-      .accessWhen('/team/:teamName/:page', locationProvider);
+      .accessWhen('/team/:teamName*', locationProvider)
+      .accessWhen('/team/:teamName*/page/:page', locationProvider);
     });
   }
 }
