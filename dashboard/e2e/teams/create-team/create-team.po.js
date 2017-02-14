@@ -15,6 +15,8 @@ let CreateTeamPageObject = function() {
 
   this.createTeamButtonElement = $('#create-team-button');
 
+  this.createTeamErrorMessage = $$('[mg-message]');
+
   this.createTeam = (name) => {
     this.navbarCreateTeamElement.click().then (()=>{
       this.newTeamNameElement.clear();

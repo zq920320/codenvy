@@ -12,7 +12,7 @@ let DeleteTeamPageObject = function() {
   this.deleteTeamButton = $('[che-name="team-details-delete-team"]').$('button');
 
   this.deleteTeam = (teamName) => {
-    browser.get('/#/team/'+ teamName);
+    browser.setLocation('/team/'+ teamName);
     browser.waitForAngular();
     this.deleteTeamButton.click().then(()=>{
       browser.waitForAngular();
@@ -29,12 +29,7 @@ let DeleteTeamPageObject = function() {
   };
 
   this.deleteAllTeams = () => {
-/*    let teamsCount = element.all(by.repeater('team in navbarTeamsController.getTeams()')).count();
-    browser.waitForAngular();
-    if (!teamsCount) {
-      return;
-    }*/
-    browser.get('/#/billing');
+    browser.setLocation('/billing');
     this.findBillingTeamElements();
     this.listBodyElement.all(by.repeater('team in listTeamsController.teams')).count().then((count) => {
       if (count) {
