@@ -14,6 +14,9 @@ describe('Create team', () => {
     loginPageObject.fillInCredentials();
     loginPageObject.doLogin();
     browser.waitForAngular();
+
+    // delete all teams
+    deleteTeamObject.deleteAllTeams();
   });
 
   afterAll(() => {
