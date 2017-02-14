@@ -94,16 +94,7 @@ export class BillingService {
    * @return {ng.IPromise<any>}
    */
   addCreditCard(accountId: string, creditCard: ICreditCard): ng.IPromise<any> {
-    let defer = this.$q.defer();
-
-    this.codenvyPayment.addCreditCard(accountId, creditCard).then(() => {
-      defer.resolve();
-    }, (error: any) => {
-      this.$log.error(error);
-      defer.reject();
-    });
-
-    return defer.promise;
+    return this.codenvyPayment.addCreditCard(accountId, creditCard);
   }
 
   /**
@@ -115,15 +106,7 @@ export class BillingService {
    * @return {ng.IPromise<any>}
    */
   updateCreditCard(accountId: string, creditCard: ICreditCard): ng.IPromise<any> {
-    let defer = this.$q.defer();
-
-    this.codenvyPayment.updateCreditCard(accountId, creditCard).then(() => {
-      defer.resolve();
-    }, (error: any) => {
-      this.$log.error(error);
-      defer.reject();
-    });
-
-    return defer.promise;
+    return this.codenvyPayment.updateCreditCard(accountId, creditCard);
   }
+
 }

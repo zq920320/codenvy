@@ -25,6 +25,7 @@ import {ListInvoicesController} from './invoices/list-invoices.controller';
 import {RamInfo} from './ram-info/ram-info.directive';
 import {RamInfoController} from './ram-info/ram-info.controller';
 import {MoreRamController} from './ram-info/more-ram.controller';
+import {ErrorPopupController} from './error-popup/error-popup.controller';
 
 export class BillingConfig {
 
@@ -45,6 +46,7 @@ export class BillingConfig {
     register.directive('ramInfo', RamInfo);
 
     register.controller('MoreRamController', MoreRamController);
+    register.controller('ErrorPopupController', ErrorPopupController);
 
     // config routes
     register.app.config(($routeProvider: ng.route.IRouteProvider) => {

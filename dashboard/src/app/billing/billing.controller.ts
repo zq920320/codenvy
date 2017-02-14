@@ -17,10 +17,16 @@ import {CodenvyPayment, ICreditCard} from '../../components/api/codenvy-payment.
 import {BillingService} from './billing.service';
 import {CodenvyTeam} from '../../components/api/codenvy-team.factory';
 
+interface ICreditCardProblem {
+  message: string;
+  [propName: string]: string;
+}
+
 enum Tab {Summary, Card, Invoices}
 
 export class BillingController {
   $log: ng.ILogService;
+  $mdDialog: ng.material.IDialogService;
   $q: ng.IQService;
   cheAPI: any;
   codenvyPayment: CodenvyPayment;
@@ -40,9 +46,11 @@ export class BillingController {
   /**
    * @ngInject for Dependency injection
    */
-  constructor ($log: ng.ILogService, $q: ng.IQService, $rootScope: che.IRootScopeService, cheAPI: any, codenvyPayment: CodenvyPayment,
+  constructor ($log: ng.ILogService, $mdDialog: ng.material.IDialogService, $q: ng.IQService,
+               $rootScope: che.IRootScopeService, cheAPI: any, codenvyPayment: CodenvyPayment,
                codenvyTeam: CodenvyTeam,cheNotification: any, billingService: BillingService) {
     this.$log = $log;
+    this.$mdDialog = $mdDialog;
     this.$q = $q;
     this.cheAPI = cheAPI;
     this.codenvyPayment = codenvyPayment;
@@ -138,13 +146,30 @@ export class BillingController {
       savePromise = this.billingService.addCreditCard(this.accountId, this.creditCard);
     }
 
-    savePromise.then(() => {
-      return this.fetchCreditCard();
+    savePromise.then((data: any) => {
+      if (data && data.problems && data.problems.length) {
+        this.showProblems(data.problems);
+      } else {
+        return this.fetchCreditCard();
+      }
     }, (error: any) => {
-      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to save the credit card.');
+      if (error && error.problems && error.problems.length) {
+        this.showProblems(error.problems);
+      } else {
+        let problem: ICreditCardProblem = {message: 'Failed to save the credit card.'};
+        this.showProblems([problem]);
+      }
     }).finally(() => {
       this.loading = false;
     });
+  }
+
+  showProblems(problems: ICreditCardProblem[]): void {
+    let messages: string[] = [];
+    problems.forEach((problem: {message: string, [propName: string]: string}) => {
+      messages.push(problem.message);
+    });
+    this.showErrorPopup(messages);
   }
 
   /**
@@ -183,4 +208,23 @@ export class BillingController {
   isSaveButtonVisible(): boolean {
     return this.selectedTabIndex === Tab.Card && !this.loading;
   }
+
+  /**
+   * todo
+   *
+   * @param messages
+   */
+  showErrorPopup(messages: string[]): void {
+    this.$mdDialog.show({
+      controller: 'ErrorPopupController',
+      controllerAs: 'errorPopupController',
+      bindToController: true,
+      clickOutsideToClose: true,
+      locals: {
+        messages: messages
+      },
+      templateUrl: 'app/billing/error-popup/error-popup.html'
+    });
+  }
+
 }

@@ -150,13 +150,15 @@ export class CodenvyPayment {
         newCreditCard.streetAddress = creditCard.streetAddress;
         newCreditCard.city = creditCard.city;
 
-        this.remotePaymentAPI.add({accountId: accountId}, newCreditCard).$promise.then(() => {
-          defer.resolve();
+        this.remotePaymentAPI.add({accountId: accountId}, newCreditCard).$promise.then((data: any) => {
+          defer.resolve(data);
         }, (error: any) => {
           defer.reject(error);
         });
 
       });
+    }, (error: any) => {
+      defer.reject(error);
     });
     return defer.promise;
   }

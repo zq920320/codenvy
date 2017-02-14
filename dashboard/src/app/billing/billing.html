@@ -9,8 +9,7 @@
 
 <md-progress-linear md-mode="indeterminate" ng-show="billingController.loading"></md-progress-linear>
 
-<md-content ng-hide="billingController.loading"
-            md-scroll-y flex
+<md-content md-scroll-y flex
             class="billing-content" md-theme="default">
   <md-tabs md-dynamic-height md-stretch-tabs="auto"
            md-selected="billingController.selectedTabIndex"
@@ -43,10 +42,12 @@
         </che-description>
         <div class="billing-credit-card">
           <ng-form name="cardInfoForm" ng-if="creditCardSelected">
-            <card-info ng-init="billingController.onCreditCardSelect(cardInfoForm)"
-                       credit-card="billingController.creditCard"
-                       credit-card-on-change="billingController.creditCardChanged(creditCard)"
-                       credit-card-on-delete="billingController.creditCardDeleted()"></card-info>
+            <fieldset ng-disabled="billingController.loading">
+              <card-info ng-init="billingController.onCreditCardSelect(cardInfoForm)"
+                         credit-card="billingController.creditCard"
+                         credit-card-on-change="billingController.creditCardChanged(creditCard)"
+                         credit-card-on-delete="billingController.creditCardDeleted()"></card-info>
+            </fieldset>
           </ng-form>
         </div>
       </md-tab-body>
