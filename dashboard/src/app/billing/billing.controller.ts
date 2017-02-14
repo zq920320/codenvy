@@ -164,14 +164,6 @@ export class BillingController {
     });
   }
 
-  showProblems(problems: ICreditCardProblem[]): void {
-    let messages: string[] = [];
-    problems.forEach((problem: {message: string, [propName: string]: string}) => {
-      messages.push(problem.message);
-    });
-    this.showErrorPopup(messages);
-  }
-
   /**
    * Cancels credit card information changes
    */
@@ -210,11 +202,16 @@ export class BillingController {
   }
 
   /**
-   * todo
+   * Creates popup with list of error messages.
    *
-   * @param messages
+   * @param {ICreditCardProblem[]} problems
    */
-  showErrorPopup(messages: string[]): void {
+  showProblems(problems: ICreditCardProblem[]): void {
+    let messages: string[] = [];
+    problems.forEach((problem: {message: string, [propName: string]: string}) => {
+      messages.push(problem.message);
+    });
+
     this.$mdDialog.show({
       controller: 'ErrorPopupController',
       controllerAs: 'errorPopupController',
