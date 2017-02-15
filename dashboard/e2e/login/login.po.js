@@ -52,6 +52,22 @@ let LoginPage = function() {
     });
   };
 
+  this.login = (username, password) => {
+    browser.get('/');
+    browser.waitForAngular();
+    this.findLoginFormElements();
+    this.loginFieldElement.sendKeys(username);
+    this.passwordFieldElement.sendKeys(password);
+    this.doLogin();
+    browser.waitForAngular();
+  };
+
+  this.logout = () => {
+    this.findNavbarElements();
+    this.doLogout();
+    browser.waitForAngular();
+  }
+
 };
 
 module.exports = new LoginPage();

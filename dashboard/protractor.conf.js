@@ -38,7 +38,9 @@ exports.config = {
     fakeLogin: {
       user: 'fake-login',
       password: 'fake-password'
-    }
+    },
+    // --params.devs='user1:pass1 user2:pass2 user3:pass3'
+    devs: ''
   },
 
   // Suite can be run via command line as:
