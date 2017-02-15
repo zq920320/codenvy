@@ -74,8 +74,8 @@ export class CodenvyResourcesDistribution {
     this.teamAvailableResources = new Map();
 
     this.remoteResourcesAPI = <ICodenvyResourcesResource<any>>this.$resource('/api/organization/resource', {}, {
-      distribute: {method: 'POST', url: '/api/organization/resource/:teamId'},
-      getResources: {method: 'GET', url: '/api/resource/:teamId', isArray: true},
+      distribute: {method: 'POST', url: '/api/organization/resource'},
+      getResources: {method: 'GET', url: '/api/organization/resource/:teamId'},
       getUsedResources: {method: 'GET', url: '/api/resource/:teamId/used', isArray: true},
       getAvailableResources: {method: 'GET', url: '/api/resource/:teamId/available', isArray: true}
     });
@@ -89,7 +89,8 @@ export class CodenvyResourcesDistribution {
    * @returns {ng.IPromise<T>}
    */
   distributeResources(teamId: string, resources: Array<any>): ng.IPromise<any> {
-     return this.remoteResourcesAPI.distribute({'teamId': teamId}, resources).$promise;
+     let data = {organizationId: teamId, resourcesCap: resources};
+     return this.remoteResourcesAPI.distribute(data).$promise;
   }
 
   /**
@@ -181,7 +182,7 @@ export class CodenvyResourcesDistribution {
       return null;
     }
 
-    return this.lodash.find(resources, (resource: any) => {
+    return this.lodash.find(resources.resourcesCap, (resource: any) => {
       return resource.type === type.valueOf();
     });
   }
@@ -195,6 +196,9 @@ export class CodenvyResourcesDistribution {
    * @returns {any} modified
    */
   setTeamResourceLimitByType(resources: any, type: CodenvyResourceLimits, value: string): any {
+    resources = resources || [];
+
+
     let resource = this.lodash.find(resources, (resource: any) => {
       return resource.type === type.valueOf();
     });

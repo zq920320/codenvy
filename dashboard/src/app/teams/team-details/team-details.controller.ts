@@ -94,10 +94,6 @@ export class TeamDetailsController {
    */
   private limitsCopy: any;
   /**
-   * Parent available resource limits, that can be redistributed to team.
-   */
-  private maxLimits: any;
-  /**
    * Page loading state.
    */
   private isLoading: boolean;
@@ -244,29 +240,22 @@ export class TeamDetailsController {
     this.isLoading = true;
     this.codenvyResourcesDistribution.fetchTeamResources(this.team.id).then(() => {
       this.isLoading = false;
-      this.processResources(this.codenvyResourcesDistribution.getTeamResources(this.team.id));
+      this.processResources();
     }, (error: any) => {
       this.isLoading = false;
       if (error.status === 304) {
-        this.processResources(this.codenvyResourcesDistribution.getTeamResources(this.team.id));
-      }
-    });
-
-    this.codenvyResourcesDistribution.fetchTeamResources(this.team.parent).then(() => {
-      this.processMaxValues(this.codenvyResourcesDistribution.getTeamResources(this.team.parent));
-    }, (error: any) => {
-      if (error.status === 304) {
-        this.processMaxValues(this.codenvyResourcesDistribution.getTeamResources(this.team.parent));
+        this.processResources();
+      } else if (error.status === 404) {
+        this.limits = {};
+        this.limitsCopy = angular.copy(this.limits);
       }
     });
   }
 
   /**
    * Process resources limits.
-   *
-   * @param resources resources to process
    */
-  processResources(resources): void {
+  processResources(): void {
     let ramLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.RAM);
     let workspaceLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.WORKSPACE);
     let runtimeLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.RUNTIME);
@@ -276,49 +265,6 @@ export class TeamDetailsController {
     this.limits.runtimeCap = runtimeLimit ? runtimeLimit.amount : undefined;
     this.limits.ramCap = ramLimit ? ramLimit.amount / 1000 : undefined;
     this.limitsCopy = angular.copy(this.limits);
-  }
-
-  /**
-   * Process max available values (parent available resources).
-   *
-   * @param resources
-   */
-  processMaxValues(resources): void {
-    let ramLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.RAM);
-    let workspaceLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.WORKSPACE);
-    let runtimeLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.parent, CodenvyResourceLimits.RUNTIME);
-
-    this.maxLimits = {};
-    this.maxLimits.workspaceCap = workspaceLimit ? workspaceLimit.amount : undefined;
-    this.maxLimits.runtimeCap = runtimeLimit ? runtimeLimit.amount : undefined;
-    this.maxLimits.ramCap = ramLimit ? ramLimit.amount / 1000 : undefined;
-  }
-
-  /**
-   * Checks value whether provided value of provided type is valid.
-   *
-   * @param value value to be checked
-   * @param type type of the resources
-   * @returns {boolean} <code>true</code> if value is valid
-   */
-  isValidLimit(value: any, type: CodenvyResourceLimits): boolean {
-    if (!this.maxLimits || !this.limitsCopy) {
-      return true;
-    }
-
-    let valid;
-    switch (type) {
-      case CodenvyResourceLimits.RAM:
-        valid = value <= ((this.limitsCopy.ramCap || 0) + (this.maxLimits.ramCap || 0));
-        break;
-      case CodenvyResourceLimits.WORKSPACE:
-        valid = value <= ((this.limitsCopy.workspaceCap || 0) + (this.maxLimits.workspaceCap || 0));
-        break;
-      case CodenvyResourceLimits.RUNTIME:
-        valid = value <= ((this.limitsCopy.runtimeCap || 0) + (this.maxLimits.runtimeCap || 0));
-        break;
-    }
-    return valid;
   }
 
   /**
@@ -381,6 +327,8 @@ export class TeamDetailsController {
     let runtimeLimit = this.codenvyResourcesDistribution.getTeamResourceByType(this.team.id, CodenvyResourceLimits.RUNTIME);
 
     let resources = this.codenvyResourcesDistribution.getTeamResources(this.team.id);
+    resources = resources ? resources.resourcesCap : resources;
+
     resources = angular.copy(resources);
 
     if (this.limits.ramCap) {
