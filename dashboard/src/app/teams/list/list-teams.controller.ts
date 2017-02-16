@@ -45,7 +45,7 @@ export class ListTeamsController {
   /**
    * Service for displaying dialogs.
    */
-  private $mdDialog: angular.material.IDialogService;
+  private confirmDialogService: any;
    /**
    * Promises service.
    */
@@ -92,13 +92,13 @@ export class ListTeamsController {
    * @ngInject for Dependency injection
    */
   constructor(codenvyTeam: CodenvyTeam, codenvyPermissions: CodenvyPermissions, codenvyResourcesDistribution: CodenvyResourcesDistribution,
-              cheNotification: any, $mdDialog: angular.material.IDialogService, $q: ng.IQService, $location: ng.ILocationService) {
+              cheNotification: any, confirmDialogService: any, $q: ng.IQService, $location: ng.ILocationService) {
     this.codenvyTeam = codenvyTeam;
     this.codenvyPermissions = codenvyPermissions;
     this.codenvyResourcesDistribution = codenvyResourcesDistribution;
 
     this.cheNotification = cheNotification;
-    this.$mdDialog = $mdDialog;
+    this.confirmDialogService = confirmDialogService;
     this.$q = $q;
     this.$location = $location;
 
@@ -338,19 +338,13 @@ export class ListTeamsController {
    * @returns {*}
    */
   showDeleteTeamsConfirmation(numberToDelete: number): ng.IPromise<any> {
-    let confirmTitle = 'Would you like to delete ';
+    let content = 'Would you like to delete ';
     if (numberToDelete > 1) {
-      confirmTitle += 'these ' + numberToDelete + ' teams?';
+      content += 'these ' + numberToDelete + ' teams?';
     } else {
-      confirmTitle += 'this selected team?';
+      content += 'this selected team?';
     }
-    let confirm = this.$mdDialog.confirm()
-      .title(confirmTitle)
-      .ariaLabel('Remove teams')
-      .ok('Delete!')
-      .cancel('Cancel')
-      .clickOutsideToClose(true);
 
-    return this.$mdDialog.show(confirm);
+    return this.confirmDialogService.showConfirmDialog('Delete teams', content, 'Delete');
   }
 }

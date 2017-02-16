@@ -43,6 +43,10 @@ export class NavbarTeamsController {
     this.codenvyTeam.fetchTeams();
   }
 
+  getTeamDisplayName(team: any): string {
+    return this.codenvyTeam.getTeamDisplayName(team);
+  }
+
   /**
    * Get the list of available teams.
    *

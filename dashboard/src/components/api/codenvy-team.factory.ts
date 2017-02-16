@@ -152,7 +152,13 @@ export class CodenvyTeam {
       // team has to have parent (root organizations are skipped):
       if (team.parent) {
         this.teams.push(team);
-        this.cheNamespaceRegistry.getNamespaces().push({id: team.qualifiedName, label: team.qualifiedName, location: '/team/' + team.qualifiedName});
+      }
+    });
+
+    this.teams.forEach((team : any) => {
+      // team has to have parent (root organizations are skipped):
+      if (team.parent) {
+        this.cheNamespaceRegistry.getNamespaces().push({id: team.qualifiedName, label: this.getTeamDisplayName(team), location: '/team/' + team.qualifiedName});
       }
     });
   }
@@ -290,5 +296,12 @@ export class CodenvyTeam {
     });
 
     return actions;
+  }
+
+  getTeamDisplayName(team: any): string {
+    let teamNames = this.lodash.pluck(this.teams, 'name');
+    let size = this.lodash.pull(teamNames, team.name).length;
+
+    return (this.teams.length - size) > 1 ? team.qualifiedName : team.name;
   }
 }

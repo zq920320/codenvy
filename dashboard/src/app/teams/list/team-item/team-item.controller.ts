@@ -24,7 +24,7 @@ export class TeamItemController {
   /**
    * Service for displaying dialogs.
    */
-  private $mdDialog: angular.material.IDialogService;
+  private confirmDialogService: any;
   /**
    * Location service.
    */
@@ -50,9 +50,9 @@ export class TeamItemController {
    * Default constructor that is using resource injection
    * @ngInject for Dependency injection
    */
-  constructor($location: ng.ILocationService, codenvyTeam: CodenvyTeam, $mdDialog: angular.material.IDialogService, cheNotification: any) {
+  constructor($location: ng.ILocationService, codenvyTeam: CodenvyTeam, confirmDialogService: any, cheNotification: any) {
     this.$location = $location;
-    this.$mdDialog = $mdDialog;
+    this.confirmDialogService = confirmDialogService;
     this.codenvyTeam = codenvyTeam;
     this.cheNotification = cheNotification;
   }
@@ -78,19 +78,24 @@ export class TeamItemController {
   }
 
   /**
+   * Get team display name.
+   *
+   * @param team
+   * @returns {string}
+   */
+  getTeamDisplayName(team): string {
+    return this.codenvyTeam.getTeamDisplayName(team);
+  }
+
+  /**
    * Shows dialog to confirm the current team removal.
    *
    * @returns {angular.IPromise<any>}
    */
   confirmRemoval(): ng.IPromise<any> {
-    let confirm = this.$mdDialog.confirm()
-      .title('Do you want to delete team ' + this.team.name + ' ?')
-      .ariaLabel('Remove teams')
-      .ok('Delete!')
-      .cancel('Cancel')
-      .clickOutsideToClose(true);
-
-    return this.$mdDialog.show(confirm);
+    let promise = this.confirmDialogService.showConfirmDialog('Delete team',
+      'Would you like to delete team \'' + this.team.name + '\'?', 'Delete');
+    return promise;
   }
 }
 

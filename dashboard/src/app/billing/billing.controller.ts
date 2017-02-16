@@ -28,6 +28,7 @@ export class BillingController {
   $log: ng.ILogService;
   $mdDialog: ng.material.IDialogService;
   $q: ng.IQService;
+  confirmDialogService: any;
   cheAPI: any;
   codenvyPayment: CodenvyPayment;
   codenvyTeam: CodenvyTeam;
@@ -47,11 +48,12 @@ export class BillingController {
    * @ngInject for Dependency injection
    */
   constructor ($log: ng.ILogService, $mdDialog: ng.material.IDialogService, $q: ng.IQService,
-               $rootScope: che.IRootScopeService, cheAPI: any, codenvyPayment: CodenvyPayment,
+               $rootScope: che.IRootScopeService, confirmDialogService: any, cheAPI: any, codenvyPayment: CodenvyPayment,
                codenvyTeam: CodenvyTeam,cheNotification: any, billingService: BillingService) {
     this.$log = $log;
     this.$mdDialog = $mdDialog;
     this.$q = $q;
+    this.confirmDialogService = confirmDialogService;
     this.cheAPI = cheAPI;
     this.codenvyPayment = codenvyPayment;
     this.codenvyTeam = codenvyTeam;
@@ -120,14 +122,18 @@ export class BillingController {
    * Deletes existing credit card.
    */
   creditCardDeleted(): void {
-    this.loading = true;
+    let promise = this.confirmDialogService.showConfirmDialog('Remove billing information',
+      'Are you sure you want to delete all your billing information? This is irreversible.', 'Delete');
 
-    this.billingService.removeCreditCard(this.creditCard.accountId, this.creditCard.token).then(() => {
-      return this.fetchCreditCard();
-    },(error: any) => {
-      this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete the credit card.');
-    }).finally(() => {
-      this.loading = false;
+    promise.then(() => {
+      this.loading = true;
+      this.billingService.removeCreditCard(this.creditCard.accountId, this.creditCard.token).then(() => {
+        return this.fetchCreditCard();
+      },(error: any) => {
+        this.cheNotification.showError(error && error.data && error.data.message ? error.data.message : 'Failed to delete the credit card.');
+      }).finally(() => {
+        this.loading = false;
+      });
     });
   }
 
