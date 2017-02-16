@@ -19,6 +19,7 @@ import org.eclipse.che.security.oauth.shared.User;
 
 /**
  * Represents LinkedIn user.
+ * @author Max Shaposhnik
  */
 public class LinkedInUser implements User {
     private String email;
@@ -31,8 +32,6 @@ public class LinkedInUser implements User {
 
     @Override
     public final void setId(String id) {
-        // JSON response from Google API contains key 'id' but it has different purpose.
-        // Ignore calls of this method. Email address is used as user identifier.
     }
 
     @Override

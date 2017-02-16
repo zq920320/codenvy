@@ -63,12 +63,9 @@ public class LinkedInOauthAuthenticator extends OAuthAuthenticator {
             && !isNullOrEmpty(tokenUri)
             && !isNullOrEmpty(userUri)
             && redirectUris != null && redirectUris.length != 0) {
-
             configure(clientId, clientSecret, redirectUris, authUri, tokenUri, new MemoryDataStoreFactory());
         }
-
         this.userUri = userUri;
-
     }
 
     @Override
