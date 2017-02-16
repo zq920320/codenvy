@@ -77,6 +77,9 @@ public class LinkedInOAuthAuthenticator extends OAuthAuthenticator {
             final String values = "(email-address,first-name,last-name)";
             final String query = String.format("format=json");
             JsonValue userValue = doRequest(new URL(userUri + ":" + values + "?" + query), params);
+            if (userValue.getElement("emailAddress")  == null) {
+                throw new OAuthAuthenticationException("Cannot retrieve user email, authentication impossible.");
+            }
             User user = new LinkedInUser();
             user.setEmail(userValue.getElement("emailAddress").getStringValue());
             user.setName(userValue.getElement("firstName").getStringValue().toLowerCase()
