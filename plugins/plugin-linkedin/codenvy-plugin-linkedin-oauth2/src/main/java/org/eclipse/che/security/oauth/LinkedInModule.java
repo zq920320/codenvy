@@ -29,6 +29,6 @@ public class LinkedInModule extends AbstractModule {
     @Override
     protected void configure() {
         Multibinder<OAuthAuthenticator> oAuthAuthenticators = Multibinder.newSetBinder(binder(), OAuthAuthenticator.class);
-        oAuthAuthenticators.addBinding().to(LinkedInOauthAuthenticator.class);
+        oAuthAuthenticators.addBinding().to(LinkedInOAuthAuthenticator.class);
     }
 }

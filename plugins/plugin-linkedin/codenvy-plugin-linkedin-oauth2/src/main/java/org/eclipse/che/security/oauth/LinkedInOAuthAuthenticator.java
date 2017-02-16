@@ -43,15 +43,15 @@ import static com.google.common.base.Strings.isNullOrEmpty;
  *
  * @author Max Shaposhnik (mshaposhnik@codenvy.com)
  */
-public class LinkedInOauthAuthenticator extends OAuthAuthenticator {
+public class LinkedInOAuthAuthenticator extends OAuthAuthenticator {
 
 
-    private static final Logger LOG = LoggerFactory.getLogger(LinkedInOauthAuthenticator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LinkedInOAuthAuthenticator.class);
 
     private final String userUri;
 
     @Inject
-    public LinkedInOauthAuthenticator(@Nullable @Named("oauth.linkedin.clientid") String clientId,
+    public LinkedInOAuthAuthenticator(@Nullable @Named("oauth.linkedin.clientid") String clientId,
                                       @Nullable @Named("oauth.linkedin.clientsecret") String clientSecret,
                                       @Nullable @Named("oauth.linkedin.redirecturis") String[] redirectUris,
                                       @Nullable @Named("oauth.linkedin.authuri") String authUri,
