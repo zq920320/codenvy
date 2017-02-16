@@ -80,11 +80,18 @@ public class LinkedInOAuthAuthenticator extends OAuthAuthenticator {
             if (userValue.getElement("emailAddress")  == null) {
                 throw new OAuthAuthenticationException("Cannot retrieve user email, authentication impossible.");
             }
+            final String email =  userValue.getElement("emailAddress").getStringValue();
+            String username = "";
             User user = new LinkedInUser();
-            user.setEmail(userValue.getElement("emailAddress").getStringValue());
-            user.setName(userValue.getElement("firstName").getStringValue().toLowerCase()
+            user.setEmail(email);
+            if (userValue.getElement("firstName") == null || userValue.getElement("lastName") == null) {
+                username = email.substring(0, email.indexOf("@"));
+            } else {
+                username = userValue.getElement("firstName").getStringValue().toLowerCase()
                                   .concat("_")
-                                  .concat(userValue.getElement("lastName").getStringValue().toLowerCase()));
+                                  .concat(userValue.getElement("lastName").getStringValue().toLowerCase());
+            }
+            user.setName(username);
             return user;
         } catch (JsonParseException | IOException e) {
             throw new OAuthAuthenticationException(e.getMessage(), e);
