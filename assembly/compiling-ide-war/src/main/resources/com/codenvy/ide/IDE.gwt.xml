@@ -70,6 +70,7 @@
 
     <inherits name='org.eclipse.che.plugin.cpp.Cpp'/>
     <inherits name='org.eclipse.che.plugin.csharp.CSharp'/>
+    <inherits name='org.eclipse.che.plugin.factory.Factory'/>
     <inherits name='org.eclipse.che.plugin.python.Python'/>
     <inherits name='org.eclipse.che.plugin.java.plain.PlainJava'/>
     <inherits name='org.eclipse.che.plugin.nodejs.NodeJs'/>
@@ -97,7 +98,6 @@
     <!--Hosted specific -->
     <inherits name='com.codenvy.ide.profile.Profile'/>
     <inherits name='com.codenvy.ide.hosted.Hosted'/>
-    <inherits name='com.codenvy.ide.factory.Factory'/>
     <!--
     <inherits name='com.codenvy.api.subscription.Subscription'/>
     -->

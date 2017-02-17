@@ -257,11 +257,6 @@
             </dependency>
             <dependency>
                 <groupId>com.codenvy.onpremises.wsmaster</groupId>
-                <artifactId>codenvy-hosted-api-factory</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.onpremises.wsmaster</groupId>
                 <artifactId>codenvy-hosted-api-machine</artifactId>
                 <version>${project.version}</version>
             </dependency>
@@ -464,11 +459,6 @@
             <dependency>
                 <groupId>com.codenvy.plugin</groupId>
                 <artifactId>codenvy-hosted-client-gwt-subscription</artifactId>
-                <version>${project.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>com.codenvy.plugin</groupId>
-                <artifactId>codenvy-hosted-ext-factory</artifactId>
                 <version>${project.version}</version>
             </dependency>
             <dependency>
