@@ -38,7 +38,8 @@ export class ListMembers implements ng.IDirective {
   bindToController: boolean = true;
 
   scope: any = {
-    members: '='
+    members: '=',
+    owner: '='
   };
 
   constructor () {

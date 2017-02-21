@@ -21,7 +21,8 @@
  */
 export enum CodenvyTeamRoles {
   TEAM_MEMBER = <any> {'title': 'Team Developer', 'description': 'Can create and use own workspaces.', 'actions' : ['createWorkspaces']},
-  TEAM_ADMIN = <any> {'title': 'Team Admin', 'description': 'Can edit the team’s settings, manage workspaces and members.', 'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces']},
+  TEAM_ADMIN = <any> {'title': 'Team Admin', 'description': 'Can edit the team’s settings, manage workspaces and members.',
+    'actions' : ['update', 'setPermissions', 'manageResources', 'manageWorkspaces', 'createWorkspaces', 'delete']},
 }
 
 export namespace CodenvyTeamRoles {

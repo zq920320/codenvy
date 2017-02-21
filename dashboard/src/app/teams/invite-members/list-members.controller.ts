@@ -57,13 +57,13 @@ export class ListMembersController {
    */
   private membersOrderBy: string;
   /**
-   * Member roles by email.
-   */
-  private memberRoles: any;
-  /**
    * List of members to be invited.
    */
   private members: Array<any>;
+  /**
+   * Owner of the team (comes from scope).
+   */
+  private owner: string;
 
   /**
    * Default constructor that is using resource
@@ -79,40 +79,41 @@ export class ListMembersController {
     this.membersSelectedStatus = {};
     this.membersSelectedNumber = 0;
     this.membersOrderBy = 'email';
-    this.memberRoles = {};
   }
 
   /**
    * Forms the list of members.
    */
   buildMembersList(): void {
-    this.memberRoles = {};
     this.members.forEach((member: any) => {
-      let roles = {
-        isTeamMember: member.roles.indexOf(CodenvyTeamRoles.TEAM_MEMBER) >= 0,
-        isTeamAdmin: member.roles.indexOf(CodenvyTeamRoles.TEAM_ADMIN) >= 0
-      };
-      this.memberRoles[member.email] = roles;
+      member.role = member.roles ? angular.toJson(member.roles[0]) : angular.toJson(CodenvyTeamRoles.TEAM_MEMBER);
     });
   }
 
   /**
-   * Handler the roles changes and updates member's roles.
+   * Returns developer role value.
    *
-   * @param member member
+   * @returns {string} string of the developer role value
    */
-  onRolesChanged(member: any): void {
-    let roles = [];
-    let rolesInfo = this.memberRoles[member.email];
-    if (rolesInfo.isTeamMember) {
-      roles.push(CodenvyTeamRoles.TEAM_MEMBER);
-    }
+  getDeveloperRoleValue(): string {
+    return angular.toJson(CodenvyTeamRoles.TEAM_MEMBER);
+  }
 
-    if (rolesInfo.isTeamAdmin) {
-      roles.push(CodenvyTeamRoles.TEAM_ADMIN);
-    }
+  /**
+   * Returns admin role value.
+   *
+   * @returns {string} string of the admin role value
+   */
+  getAdminRoleValue(): string {
+    return angular.toJson(CodenvyTeamRoles.TEAM_ADMIN);
+  }
 
-    member.roles = roles;
+  /**
+   * Handler for value changed in the list.
+   * @param member
+   */
+  onValueChanged(member): void {
+    member.roles = [angular.fromJson(member.role)];
   }
 
   /**
@@ -181,6 +182,7 @@ export class ListMembersController {
    * @param $event
    */
   showAddDialog($event: MouseEvent): void {
+    let members = this.members.concat([{email: this.owner}]);
     this.$mdDialog.show({
       targetEvent: $event,
       controller: 'MemberDialogController',
@@ -188,7 +190,7 @@ export class ListMembersController {
       bindToController: true,
       clickOutsideToClose: true,
       locals: {
-        members: this.members,
+        members: members,
         member: null,
         callbackController: this
       },

@@ -35,9 +35,9 @@
           <che-list-header-column flex="30"
                                   che-sort-value="listMembersController.membersOrderBy"
                                   che-sort-item="name"
-                                  che-column-title='Invited Developers'></che-list-header-column>
+                                  che-column-title='Invited Members'></che-list-header-column>
           <che-list-header-column flex="35"
-                                  che-column-title='Team Member'></che-list-header-column>
+                                  che-column-title='Team Developer'></che-list-header-column>
           <che-list-header-column flex="35"
                                   che-column-title='Team Admin'></che-list-header-column>
         </div>
@@ -68,16 +68,14 @@
               <span class="che-hover">{{member.email}}</span>
             </div>
             <div flex="35">
-              <md-switch ng-model="listMembersController.memberRoles[member.email].isTeamMember"
-                         ng-change="listMembersController.onRolesChanged(member)"
-                         aria-label="{{member}} manage team" class="permission-switcher">
-              </md-switch>
+              <md-radio-group ng-model="member.role" ng-change="listMembersController.onValueChanged(member)">
+                <md-radio-button value="{{listMembersController.getDeveloperRoleValue()}}"></md-radio-button>
+              </md-radio-group>
             </div>
             <div flex="35">
-              <md-switch ng-model="listMembersController.memberRoles[member.email].isTeamAdmin"
-                         ng-change="listMembersController.onRolesChanged(member)"
-                         aria-label="{{member}} manage resources" class="permission-switcher">
-              </md-switch>
+              <md-radio-group ng-model="member.role" ng-change="listMembersController.onValueChanged(member)">
+                <md-radio-button value="{{listMembersController.getAdminRoleValue()}}"></md-radio-button>
+              </md-radio-group>
             </div>
           </div>
         </div>

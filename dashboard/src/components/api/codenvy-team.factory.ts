@@ -280,7 +280,34 @@ export class CodenvyTeam {
         roles.push(role);
       }
     });
+
+    // Avoid roles intake (filter if any role's action is subset of any other):
+    roles = this.lodash.filter(roles, (role: any) => {
+      return !this._checkIsSubset(role, roles);
+    });
+
     return roles;
+  }
+
+  /**
+   * Checks the actions in provided role to be part (subset) of any other role's actions.
+   *
+   * @param role role to be checked
+   * @param roles list of roles
+   * @returns {boolean} <code>true</code> if subset
+   * @private
+   */
+  _checkIsSubset(role: any, roles: Array<any>): boolean {
+    let isSubset = false;
+    for (let i = 0; i < roles.length; i++) {
+      let r = roles[i];
+      // Checks provided role's action is subset of any other role's actions in the roles list:
+      if (role.actions.length === this.lodash.intersection(role.actions, r.actions).length && role.actions.length !== r.actions.length) {
+        return true;
+      }
+    }
+
+    return isSubset;
   }
 
   /**

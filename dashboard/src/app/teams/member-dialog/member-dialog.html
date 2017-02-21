@@ -1,5 +1,5 @@
 <che-popup title="{{memberDialogController.title}}" on-close="memberDialogController.hide()">
-  <div class="member-dialog-content">
+  <div class="member-dialog-content" md-theme="default">
     <ng-form flex layout="column" name="memberForm">
       <che-label-container che-label-name="Email" ng-show="!memberDialogController.member"
                            che-label-description="User email address.">
@@ -18,27 +18,22 @@
             <div ng-message="customValidator">{{memberDialogController.emailError}}</div>
           </che-input-box>
       </che-label-container>
-      <che-label-container che-label-name="Permissions" che-label-description="Allowed actions of team member." ng-if="!memberDialogController.role">
+      <che-label-container che-label-name="Role" che-label-description="Allowed actions of team member." ng-if="!memberDialogController.role">
         <div layout="column">
-            <md-switch ng-repeat="roleInfo in memberDialogController.roles" ng-model="roleInfo.allowed"
-                       ng-disabled="memberDialogController.isProcessing">
-              <span>{{roleInfo.role.title}}</span>
-              <span class="member-role-description">{{roleInfo.role.description}}</span>
-            </md-switch>
-            <div class="member-role-warning-label">
-              <span ng-show="memberDialogController.member && memberDialogController.getCurrentActions().length === 0">
-                In this case member will be removed from team. Press Save to continue.
-              </span>
-          </div>
-          </div>
+          <md-radio-group ng-model="memberDialogController.newRole">
+            <div ng-repeat="roleInfo in memberDialogController.roles" layout="row">
+              <md-radio-button value="{{roleInfo}}">{{roleInfo.title}}</md-radio-button>
+              <span class="member-role-description">({{roleInfo.description}})</span>
+            </div>
+          </md-radio-group>
+        </div>
       </che-label-container>
     </ng-form>
 
     <div layout="row" layout-align="end center">
       <che-button-primary che-button-title="{{memberDialogController.buttonTitle}}"
                           ng-if="!memberDialogController.member"
-                          ng-disabled="memberForm.$invalid || memberDialogController.isProcessing ||
-                          (!memberDialogController.role && memberDialogController.getCurrentActions().length === 0)"
+                          ng-disabled="memberForm.$invalid || memberDialogController.isProcessing"
                           ng-click="memberDialogController.addMembers()"></che-button-primary>
       <che-button-primary che-button-title="{{memberDialogController.buttonTitle}}"
                           ng-disabled="memberDialogController.isProcessing"

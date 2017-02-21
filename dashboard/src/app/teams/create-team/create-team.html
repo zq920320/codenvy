@@ -68,9 +68,9 @@
         </che-input-box>
       </div>
     </che-label-container>
-    <che-label-container che-label-name="Developers" che-label-description="Invite others to collaborate on the workspace."
+    <che-label-container che-label-name="Members" che-label-description="Invite others to collaborate on the workspace."
       che-alignment="{{createTeamController.members.length > 0 ? 'column' : 'row'}}">
-      <list-members members="createTeamController.members" class="create-team-list"></list-members>
+      <list-members members="createTeamController.members" owner="createTeamController.owner" class="create-team-list"></list-members>
     </che-label-container>
   </ng-form>
 

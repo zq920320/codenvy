@@ -73,11 +73,14 @@ export class MemberDialogController {
    * Member to be displayed, may be <code>null</code> if add new member is needed. (Comes from outside)
    */
   private member: any;
-
   /**
    * Role to be used, may be <code>null</code> if role is needed to be set. (Comes from outside)
    */
   private role: any;
+  /**
+   * Choosen role for user.
+   */
+  private newRole: any;
   /**
    * Dialog window title.
    */
@@ -117,20 +120,18 @@ export class MemberDialogController {
       return;
     }
 
-    this.roles = [];
+    this.roles = CodenvyTeamRoles.getValues();
     if (this.member) {
       this.title = 'Edit ' + this.member.name + ' roles';
       this.buttonTitle = 'Save';
       this.email = this.member.email;
       let roles = this.codenvyTeam.getRolesFromActions(this.member.permissions.actions);
-      this.roles.push({'role' : CodenvyTeamRoles.TEAM_MEMBER, 'allowed' : roles.indexOf(CodenvyTeamRoles.TEAM_MEMBER) >= 0});
-      this.roles.push({'role' : CodenvyTeamRoles.TEAM_ADMIN, 'allowed' : roles.indexOf(CodenvyTeamRoles.TEAM_ADMIN) >= 0});
+      this.newRole = (roles && roles.length > 0) ? angular.toJson(roles[0]) : angular.toJson(CodenvyTeamRoles.TEAM_MEMBER);
     } else {
       this.email = '';
       this.title = 'Invite member to collaborate';
       this.buttonTitle = 'Add';
-      this.roles.push({'role' : CodenvyTeamRoles.TEAM_MEMBER, 'allowed' : true});
-      this.roles.push({'role' : CodenvyTeamRoles.TEAM_ADMIN, 'allowed' : false});
+      this.newRole = angular.toJson(CodenvyTeamRoles.TEAM_MEMBER);
     }
   }
 
@@ -169,7 +170,8 @@ export class MemberDialogController {
    * Adds new member.
    */
   addMembers(): void {
-    let userRoles =  this.role ? [this.role] : this.getRoles();
+    let userRoles =  this.role ? [this.role] : [angular.fromJson(this.newRole)];
+
 
     let emails = this.email.replace(/ /g, ',').split(',');
     // form the list of emails without duplicates and empty values:
@@ -213,21 +215,6 @@ export class MemberDialogController {
   }
 
   /**
-   * Forms the list of user's roles by role's info from page.
-   *
-   * @returns {Array<any>} roles
-   */
-  getRoles(): Array<any> {
-    let userRoles = [];
-    this.roles.forEach((roleInfo: any) => {
-      if (roleInfo.allowed) {
-        userRoles.push(roleInfo.role);
-      }
-    });
-    return userRoles;
-  }
-
-  /**
    * Handle edit member user's action.
    */
   editMember(): void {
@@ -240,10 +227,10 @@ export class MemberDialogController {
    * Returns the actions of current chosen roles.
    */
   getCurrentActions(): Array<string> {
-    let userRoles = this.getRoles();
+    let userRoles = this.role ? [this.role] : [angular.fromJson(this.newRole)];
     let processedActions = [];
-    this.roles.forEach((data: any) => {
-      processedActions = processedActions.concat(data.role.actions);
+    this.roles.forEach((role: any) => {
+      processedActions = processedActions.concat(role.actions);
     });
 
 
