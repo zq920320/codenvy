@@ -60,6 +60,7 @@ public final class DtoConverter {
     public static OrganizationRemovedEventDto asDto(OrganizationRemovedEvent event) {
         return DtoFactory.newDto(OrganizationRemovedEventDto.class)
                          .withType(event.getType())
+                         .withPerformerName(event.getPerformerName())
                          .withOrganization(event.getOrganization());
     }
 
@@ -68,6 +69,7 @@ public final class DtoConverter {
                          .withType(event.getType())
                          .withOldName(event.getOldName())
                          .withNewName(event.getNewName())
+                         .withPerformerName(event.getPerformerName())
                          .withOrganization(event.getOrganization());
     }
 

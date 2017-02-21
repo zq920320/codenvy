@@ -21,9 +21,9 @@ import com.codenvy.template.processor.html.thymeleaf.ThymeleafTemplate;
  *
  * @author Anton Korneta
  */
-public class OrgMemberRemovedTemplate extends ThymeleafTemplate {
+public class MemberRemovedTemplate extends ThymeleafTemplate {
 
-    public OrgMemberRemovedTemplate(String teamName, String managerName) {
+    public MemberRemovedTemplate(String teamName, String managerName) {
         context.setVariable("teamName", teamName);
         context.setVariable("managerName", managerName);
     }

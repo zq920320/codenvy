@@ -22,10 +22,10 @@ import com.codenvy.organization.api.event.MemberAddedEvent;
 import com.codenvy.organization.api.event.MemberRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRenamedEvent;
-import com.codenvy.organization.api.listener.templates.OrgMemberAddedTemplate;
-import com.codenvy.organization.api.listener.templates.OrgMemberRemovedTemplate;
-import com.codenvy.organization.api.listener.templates.OrgRemovedTemplate;
-import com.codenvy.organization.api.listener.templates.OrgRenamedTemplate;
+import com.codenvy.organization.api.listener.templates.MemberAddedTemplate;
+import com.codenvy.organization.api.listener.templates.MemberRemovedTemplate;
+import com.codenvy.organization.api.listener.templates.OrganizationRemovedTemplate;
+import com.codenvy.organization.api.listener.templates.OrganizationRenamedTemplate;
 import com.codenvy.organization.shared.event.OrganizationEvent;
 import com.codenvy.organization.shared.model.Member;
 import com.codenvy.template.processor.html.HTMLTemplateProcessor;
@@ -127,7 +127,7 @@ public class OrganizationNotificationEmailSender implements EventSubscriber<Orga
         final String emailTo = userManager.getById(event.getAddedUserId()).getEmail();
         final String referrerName = event.getPerformerName();
         final String teamLink = apiEndpoint.replace("api", "dashboard/#/team/" + referrerName + '/' + teamName);
-        final String processed = thymeleaf.process(new OrgMemberAddedTemplate(teamName, teamLink, referrerName));
+        final String processed = thymeleaf.process(new MemberAddedTemplate(teamName, teamLink, referrerName));
         send(new EmailBean().withBody(processed), emailTo);
     }
 
@@ -135,12 +135,12 @@ public class OrganizationNotificationEmailSender implements EventSubscriber<Orga
         final String teamName = organizationManager.getById(event.getOrganizationId()).getName();
         final String managerName = event.getPerformerName();
         final String emailTo = userManager.getById(event.getRemovedUserId()).getEmail();
-        final String processed = thymeleaf.process(new OrgMemberRemovedTemplate(teamName, managerName));
+        final String processed = thymeleaf.process(new MemberRemovedTemplate(teamName, managerName));
         send(new EmailBean().withBody(processed), emailTo);
     }
 
     private void send(OrganizationRemovedEvent event) throws Exception {
-        final String processed = thymeleaf.process(new OrgRemovedTemplate(event.getOrganization().getName()));
+        final String processed = thymeleaf.process(new OrganizationRemovedTemplate(event.getOrganization().getName()));
         for (Member member : event.getMembers()) {
             final String emailTo = userManager.getById(member.getUserId()).getEmail();
             try {
@@ -151,8 +151,8 @@ public class OrganizationNotificationEmailSender implements EventSubscriber<Orga
     }
 
     private void send(OrganizationRenamedEvent event) throws Exception {
-        final String processed = thymeleaf.process(new OrgRenamedTemplate(event.getOldName(),
-                                                                          event.getNewName()));
+        final String processed = thymeleaf.process(new OrganizationRenamedTemplate(event.getOldName(),
+                                                                                   event.getNewName()));
         Page<? extends Member> members;
         long next = 0;
         do {

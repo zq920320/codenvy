@@ -21,15 +21,15 @@ import com.codenvy.template.processor.html.thymeleaf.ThymeleafTemplate;
  *
  * @author Anton Korneta
  */
-public class OrgMemberAddedTemplate extends ThymeleafTemplate {
+public class MemberAddedTemplate extends ThymeleafTemplate {
 
     public String getPath() {
         return "/email-templates/user_added_to_team";
     }
 
-    public OrgMemberAddedTemplate(String teamName,
-                                  String teamLink,
-                                  String referrer) {
+    public MemberAddedTemplate(String teamName,
+                               String teamLink,
+                               String referrer) {
         context.setVariable("teamName", teamName);
         context.setVariable("teamLink", teamLink);
         context.setVariable("referrer", referrer);
