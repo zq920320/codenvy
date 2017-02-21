@@ -14,21 +14,32 @@
  */
 package com.codenvy.organization.api;
 
+import com.codenvy.organization.api.event.BeforeOrganizationRemovedEvent;
+import com.codenvy.organization.api.event.OrganizationRemovedEvent;
+import com.codenvy.organization.api.event.OrganizationRenamedEvent;
+import com.codenvy.organization.api.permissions.OrganizationDomain;
+import com.codenvy.organization.shared.model.Member;
 import com.codenvy.organization.shared.model.Organization;
 import com.codenvy.organization.spi.MemberDao;
 import com.codenvy.organization.spi.OrganizationDao;
+import com.codenvy.organization.spi.impl.MemberImpl;
 import com.codenvy.organization.spi.impl.OrganizationImpl;
+import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
 import org.eclipse.che.api.core.Page;
 import org.eclipse.che.api.core.ServerException;
+import org.eclipse.che.api.core.notification.EventService;
+import org.eclipse.che.commons.env.EnvironmentContext;
 import org.eclipse.che.commons.lang.NameGenerator;
 
 import javax.inject.Inject;
 import javax.inject.Named;
 import javax.inject.Singleton;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 import static java.util.Objects.requireNonNull;
@@ -41,17 +52,23 @@ import static java.util.Objects.requireNonNull;
  */
 @Singleton
 public class OrganizationManager {
+
+    private static final int PAGE_SIZE = 100;
+
     private final OrganizationDao organizationDao;
     private final MemberDao       memberDao;
     private final Set<String>     reservedNames;
+    private final EventService    eventService;
 
     @Inject
     public OrganizationManager(OrganizationDao organizationDao,
                                MemberDao memberDao,
-                               @Named("che.auth.reserved_user_names") String[] reservedNames) {
+                               @Named("che.auth.reserved_user_names") String[] reservedNames,
+                               EventService eventService) {
         this.organizationDao = organizationDao;
         this.memberDao = memberDao;
         this.reservedNames = Sets.newHashSet(reservedNames);
+        this.eventService = eventService;
     }
 
     /**
@@ -100,10 +117,15 @@ public class OrganizationManager {
                                                                                   ServerException {
         requireNonNull(organizationId, "Required non-null organization id");
         requireNonNull(update, "Required non-null organization");
-        checkNameReservation(update.getName());
+        final String newName = update.getName();
+        checkNameReservation(newName);
         final OrganizationImpl organization = organizationDao.getById(organizationId);
-        organization.setName(update.getName());
+        final String oldName = organization.getName();
+        organization.setName(newName);
         organizationDao.update(organization);
+        if (!newName.equals(oldName)) {
+            eventService.publish(new OrganizationRenamedEvent(oldName, newName, organization));
+        }
         return organization;
     }
 
@@ -119,7 +141,14 @@ public class OrganizationManager {
      */
     public void remove(String organizationId) throws ServerException {
         requireNonNull(organizationId, "Required non-null organization id");
-        organizationDao.remove(organizationId);
+        try {
+            final OrganizationImpl organization = organizationDao.getById(organizationId);
+            final List<Member> members = removeMembers(organizationId, PAGE_SIZE);
+            removeSuborganizations(organizationId, PAGE_SIZE);
+            organizationDao.remove(organizationId);
+            eventService.publish(new OrganizationRemovedEvent(organization, members));
+        } catch (NotFoundException ignore) {
+        }
     }
 
     /**
@@ -196,6 +225,52 @@ public class OrganizationManager {
     public Page<? extends Organization> getByMember(String userId, int maxItems, int skipCount) throws ServerException {
         requireNonNull(userId, "Required non-null user id");
         return memberDao.getOrganizations(userId, maxItems, skipCount);
+    }
+
+    public Page<? extends Member> getMembers(String organizationId, int maxItems, long skipCount) throws ServerException {
+        requireNonNull(organizationId, "Required non-null organization id");
+        return memberDao.getMembers(organizationId, maxItems, skipCount);
+    }
+
+    /**
+     * Removes suborganizations of given parent organization page by page
+     *
+     * @param organizationId
+     *         parent organization id
+     * @param pageSize
+     *         number of items which should removed by one request
+     */
+    @VisibleForTesting
+    void removeSuborganizations(String organizationId, int pageSize) throws ServerException {
+        Page<? extends Organization> suborganizationsPage;
+        do {
+            // skip count always equals to 0 because elements will be shifted after removing previous items
+            suborganizationsPage = organizationDao.getByParent(organizationId, pageSize, 0);
+            for (Organization suborganization : suborganizationsPage.getItems()) {
+                remove(suborganization.getId());
+            }
+        } while (suborganizationsPage.hasNextPage());
+    }
+
+    @VisibleForTesting
+    List<Member> removeMembers(String organizationId, int pageSize) throws ServerException {
+        List<Member> removed = new ArrayList<>();
+        Page<MemberImpl> membersPage;
+        do {
+            // skip count always equals to 0 because elements will be shifted after removing previous items
+            membersPage = memberDao.getMembers(organizationId, pageSize, 0);
+            for (MemberImpl member : membersPage.getItems()) {
+                removed.add(member);
+                memberDao.remove(member.getUserId(), member.getOrganizationId());
+            }
+        } while (membersPage.hasNextPage());
+        return removed;
+    }
+
+    protected void addFirstMember(Organization organization) throws ServerException {
+        memberDao.store(new MemberImpl(EnvironmentContext.getCurrent().getSubject().getUserId(),
+                                       organization.getId(),
+                                       OrganizationDomain.getActions()));
     }
 
     /**

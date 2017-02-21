@@ -64,6 +64,10 @@ public class OrganizationApiModule extends AbstractModule {
         bind(OrganizationResourcesDistributionService.class);
         bind(OrganizationResourceDistributionServicePermissionsFilter.class);
 
+        bind(com.codenvy.organization.api.listener.OrganizationEventsWebsocketBroadcaster.class).asEagerSingleton();
+        bind(com.codenvy.organization.api.listener.OrganizationNotificationEmailSender.class).asEagerSingleton();
+        bind(com.codenvy.organization.api.listener.MemberEventsMapper.class).asEagerSingleton();
+
         Multibinder.newSetBinder(binder(), PermissionsDomain.class, Names.named(SuperPrivilegesChecker.SUPER_PRIVILEGED_DOMAINS))
                    .addBinding().to(OrganizationDomain.class);
     }

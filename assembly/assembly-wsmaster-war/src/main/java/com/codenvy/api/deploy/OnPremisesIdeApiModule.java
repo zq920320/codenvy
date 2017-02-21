@@ -51,12 +51,16 @@ import com.codenvy.report.ReportModule;
 import com.codenvy.resource.api.ResourceModule;
 import com.codenvy.service.bitbucket.BitbucketConfigurationService;
 import com.codenvy.service.system.DockerBasedSystemRamInfoProvider;
+import com.codenvy.service.system.HostedSystemService;
 import com.codenvy.service.system.SystemRamInfoProvider;
 import com.codenvy.service.system.SystemRamLimitMessageSender;
-import com.codenvy.service.system.HostedSystemService;
 import com.codenvy.service.system.SystemServicePermissionsFilter;
+import com.codenvy.template.processor.html.HTMLTemplateProcessor;
+import com.codenvy.template.processor.html.thymeleaf.HTMLTemplateProcessorImpl;
+import com.codenvy.template.processor.html.thymeleaf.ThymeleafTemplate;
 import com.google.inject.AbstractModule;
 import com.google.inject.Key;
+import com.google.inject.TypeLiteral;
 import com.google.inject.assistedinject.FactoryModuleBuilder;
 import com.google.inject.multibindings.MapBinder;
 import com.google.inject.multibindings.Multibinder;
@@ -464,5 +468,7 @@ public class OnPremisesIdeApiModule extends AbstractModule {
         install(new WorkspaceInfrastructureModule());
 
         install(new org.eclipse.che.plugin.docker.machine.dns.DnsResolversModule());
+
+        bind(new TypeLiteral<HTMLTemplateProcessor<ThymeleafTemplate>>() {}).to(HTMLTemplateProcessorImpl.class);
     }
 }

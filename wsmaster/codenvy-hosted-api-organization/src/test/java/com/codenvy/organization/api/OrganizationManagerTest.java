@@ -21,6 +21,7 @@ import com.codenvy.organization.spi.impl.OrganizationImpl;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.Page;
+import org.eclipse.che.api.core.notification.EventService;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Captor;
 import org.mockito.Mock;
@@ -29,10 +30,14 @@ import org.testng.annotations.BeforeMethod;
 import org.testng.annotations.Listeners;
 import org.testng.annotations.Test;
 
+import java.util.Collections;
+
 import static java.util.Collections.singletonList;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -54,6 +59,8 @@ public class OrganizationManagerTest {
     OrganizationDao organizationDao;
     @Mock
     MemberDao       memberDao;
+    @Mock
+    EventService    eventService;
 
     OrganizationManager manager;
 
@@ -61,7 +68,8 @@ public class OrganizationManagerTest {
     public void setUp() throws Exception {
         manager = new OrganizationManager(organizationDao,
                                           memberDao,
-                                          new String[] {"reserved"});
+                                          new String[] {"reserved"},
+                                          eventService);
     }
 
     @Test
@@ -139,6 +147,11 @@ public class OrganizationManagerTest {
 
     @Test
     public void shouldRemoveOrganization() throws Exception {
+        doReturn(new Page<>(Collections.emptyList(), 1, 1, 1)).when(memberDao)
+                                                              .getMembers(anyString(), anyInt(), anyInt());
+        doReturn(new Page<>(Collections.emptyList(), 1, 1, 1)).when(organizationDao)
+                                                              .getByParent(anyString(), anyInt(), anyInt());
+
         manager.remove("org123");
 
         verify(organizationDao).remove(eq("org123"));
