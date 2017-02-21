@@ -88,6 +88,9 @@
                     case "microsoft":
                         scope = "scope=vso.code_manage vso.code_status";
                         break;
+                    case "redhat":
+                        scope = "scope=user";
+                        
                 }
                 oauthUrl = oauthUrl + scope + redirectAfterLogin;
                 if (typeof callback !== 'undefined') {
