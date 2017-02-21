@@ -35,6 +35,13 @@ public interface OrganizationRemovedEventDto extends OrganizationEventDto {
     @Override
     OrganizationRemovedEventDto withType(EventType eventType);
 
+    /** Returns the name of the user that performed the removal of the organization */
+    String getPerformerName();
+
+    void setPerformerName(String performerName);
+
+    OrganizationRemovedEventDto withPerformerName(String performerName);
+
     /** Returns removed organization */
     Organization getOrganization();
 

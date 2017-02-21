@@ -120,8 +120,8 @@ public class PermissionsManager {
         }
 
         dao.store(permission);
-        eventService.publish(new PermissionsAddedEvent(permissions,
-                                                       EnvironmentContext.getCurrent().getSubject().getUserName()));
+        final String performerName = EnvironmentContext.getCurrent().getSubject().getUserName();
+        eventService.publish(new PermissionsAddedEvent(performerName, permissions));
     }
 
     /**
@@ -196,8 +196,8 @@ public class PermissionsManager {
         }
         Permissions permissions = permissionsDao.get(userId, instanceId);
         permissionsDao.remove(userId, instanceId);
-        eventService.publish(new PermissionsRemovedEvent(permissions,
-                                                         EnvironmentContext.getCurrent().getSubject().getUserName()));
+        final String performerName = EnvironmentContext.getCurrent().getSubject().getUserName();
+        eventService.publish(new PermissionsRemovedEvent(performerName, permissions));
     }
 
     /**

@@ -35,6 +35,13 @@ public interface OrganizationRenamedEventDto extends OrganizationEventDto {
     @Override
     OrganizationRenamedEventDto withType(EventType eventType);
 
+    /** Returns the name of the user that performed the rename of the organization */
+    String getPerformerName();
+
+    void setPerformerName(String performerName);
+
+    OrganizationRenamedEventDto withPerformerName(String performerName);
+
     /** Returns organization name before renaming */
     String getOldName();
 

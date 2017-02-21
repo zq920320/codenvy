@@ -31,13 +31,20 @@ import static com.codenvy.organization.shared.event.EventType.ORGANIZATION_REMOV
  */
 public class OrganizationRemovedEvent implements OrganizationEvent {
 
+    private final String                 performerName;
     private final Organization           organization;
     private final List<? extends Member> members;
 
-    public OrganizationRemovedEvent(Organization organization,
+    public OrganizationRemovedEvent(String performerName,
+                                    Organization organization,
                                     List<? extends Member> members) {
+        this.performerName = performerName;
         this.organization = organization;
         this.members = members;
+    }
+
+    public String getPerformerName() {
+        return performerName;
     }
 
     public Organization getOrganization() {
@@ -67,26 +74,28 @@ public class OrganizationRemovedEvent implements OrganizationEvent {
             return false;
         }
         final OrganizationRemovedEvent that = (OrganizationRemovedEvent)obj;
-        return Objects.equals(organization, that.organization)
+        return Objects.equals(performerName, that.performerName)
+               && Objects.equals(organization, that.organization)
                && getMembers().equals(that.getMembers());
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
+        hash = 31 * hash + Objects.hashCode(performerName);
         hash = 31 * hash + Objects.hashCode(organization);
         hash = 31 * hash + getMembers().hashCode();
         return hash;
     }
 
-
     @Override
     public String toString() {
         return "OrganizationRemovedEvent{" +
                "organizationId='" + getOrganizationId() + '\'' +
+               ", eventType='" + getType() + '\'' +
+               ", performerName='" + performerName + '\'' +
                ", members=" + members +
                ", organization=" + organization +
-               ", eventType='" + getType() + '\'' +
                '}';
     }
 

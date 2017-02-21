@@ -19,29 +19,25 @@ import com.codenvy.organization.shared.event.OrganizationEvent;
 
 import java.util.Objects;
 
+import static com.codenvy.organization.shared.event.EventType.MEMBER_ADDED;
+
 /**
- * Defines the event for organization member removal.
+ * Defines the event of adding the organization member.
  *
  * @author Anton Korneta
  */
-public class OrganizationMemberRemovedEvent implements OrganizationEvent {
+public class MemberAddedEvent implements OrganizationEvent {
 
-    private final String organizationManagerName;
-    private final String removedUserId;
+    private final String performerName;
+    private final String addedUserId;
     private final String organizationId;
 
-
-    public OrganizationMemberRemovedEvent(String organizationManagerName,
-                                          String removedUserId,
-                                          String organizationId) {
-        this.organizationManagerName = organizationManagerName;
-        this.removedUserId = removedUserId;
+    public MemberAddedEvent(String performerName,
+                            String addedUserId,
+                            String organizationId) {
+        this.performerName = performerName;
+        this.addedUserId = addedUserId;
         this.organizationId = organizationId;
-    }
-
-    @Override
-    public EventType getType() {
-        return EventType.ORGANIZATION_MEMBER_REMOVED;
     }
 
     @Override
@@ -49,12 +45,17 @@ public class OrganizationMemberRemovedEvent implements OrganizationEvent {
         return organizationId;
     }
 
-    public String getOrganizationManagerName() {
-        return organizationManagerName;
+    @Override
+    public EventType getType() {
+        return MEMBER_ADDED;
     }
 
-    public String getRemovedUserId() {
-        return removedUserId;
+    public String getPerformerName() {
+        return performerName;
+    }
+
+    public String getAddedUserId() {
+        return addedUserId;
     }
 
     @Override
@@ -62,31 +63,31 @@ public class OrganizationMemberRemovedEvent implements OrganizationEvent {
         if (this == obj) {
             return true;
         }
-        if (!(obj instanceof OrganizationMemberRemovedEvent)) {
+        if (!(obj instanceof MemberAddedEvent)) {
             return false;
         }
-        final OrganizationMemberRemovedEvent that = (OrganizationMemberRemovedEvent)obj;
-        return Objects.equals(organizationManagerName, that.organizationManagerName)
-               && Objects.equals(removedUserId, that.removedUserId)
+        final MemberAddedEvent that = (MemberAddedEvent)obj;
+        return Objects.equals(performerName, that.performerName)
+               && Objects.equals(addedUserId, that.addedUserId)
                && Objects.equals(organizationId, that.organizationId);
     }
 
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 31 * hash + Objects.hashCode(organizationManagerName);
-        hash = 31 * hash + Objects.hashCode(removedUserId);
+        hash = 31 * hash + Objects.hashCode(performerName);
+        hash = 31 * hash + Objects.hashCode(addedUserId);
         hash = 31 * hash + Objects.hashCode(organizationId);
         return hash;
     }
 
     @Override
     public String toString() {
-        return "OrganizationMemberRemovedEvent{" +
+        return "MemberAddedEvent{" +
                "organizationId='" + getOrganizationId() + '\'' +
                ", eventType='" + getType() + '\'' +
-               ", organizationManagerName='" + organizationManagerName + '\'' +
-               ", userId='" + removedUserId + '\'' +
+               ", performerName='" + performerName + '\'' +
+               ", addedUserId='" + addedUserId + '\'' +
                '}';
     }
 

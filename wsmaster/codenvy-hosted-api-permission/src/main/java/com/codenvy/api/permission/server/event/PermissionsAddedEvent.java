@@ -27,13 +27,12 @@ import static com.codenvy.api.permission.shared.event.EventType.PERMISSIONS_ADDE
  */
 public class PermissionsAddedEvent implements PermissionsEvent {
 
+    private final String      performerName;
     private final Permissions permissions;
-    private final String      usernameWhoAddPermissions;
 
-    public PermissionsAddedEvent(Permissions permissions,
-                                 String usernameWhoAddPermissions) {
+    public PermissionsAddedEvent(String performerName, Permissions permissions) {
         this.permissions = permissions;
-        this.usernameWhoAddPermissions = usernameWhoAddPermissions;
+        this.performerName = performerName;
     }
 
     @Override
@@ -41,8 +40,8 @@ public class PermissionsAddedEvent implements PermissionsEvent {
         return permissions;
     }
 
-    public String getUsernameWhoAddPermissions() {
-        return usernameWhoAddPermissions;
+    public String getPerformerName() {
+        return performerName;
     }
 
     @Override

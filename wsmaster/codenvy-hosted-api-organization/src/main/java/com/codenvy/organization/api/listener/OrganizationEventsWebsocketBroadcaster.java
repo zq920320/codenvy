@@ -56,4 +56,5 @@ public class OrganizationEventsWebsocketBroadcaster implements EventSubscriber<O
             LOG.error(x.getMessage(), x);
         }
     }
+
 }

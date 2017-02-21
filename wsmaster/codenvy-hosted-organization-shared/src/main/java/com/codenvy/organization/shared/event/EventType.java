@@ -32,13 +32,13 @@ public enum EventType {
     ORGANIZATION_REMOVED,
 
     /**
-     * Published when new organization member added.
+     * Published when new member added to organization.
      */
-    ORGANIZATION_MEMBER_ADDED,
+    MEMBER_ADDED,
 
     /**
-     * Published when organization member removed.
+     * Published when member removed from organization.
      */
-    ORGANIZATION_MEMBER_REMOVED
+    MEMBER_REMOVED
 
 }

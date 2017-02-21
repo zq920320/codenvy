@@ -18,8 +18,8 @@ import com.codenvy.mail.Attachment;
 import com.codenvy.mail.EmailBean;
 import com.codenvy.mail.MailSender;
 import com.codenvy.organization.api.OrganizationManager;
-import com.codenvy.organization.api.event.OrganizationMemberAddedEvent;
-import com.codenvy.organization.api.event.OrganizationMemberRemovedEvent;
+import com.codenvy.organization.api.event.MemberAddedEvent;
+import com.codenvy.organization.api.event.MemberRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRenamedEvent;
 import com.codenvy.organization.api.listener.templates.OrgMemberAddedTemplate;
@@ -105,11 +105,11 @@ public class OrganizationNotificationEmailSender implements EventSubscriber<Orga
     public void onEvent(OrganizationEvent event) {
         try {
             switch (event.getType()) {
-                case ORGANIZATION_MEMBER_ADDED:
-                    send((OrganizationMemberAddedEvent)event);
+                case MEMBER_ADDED:
+                    send((MemberAddedEvent)event);
                     break;
-                case ORGANIZATION_MEMBER_REMOVED:
-                    send((OrganizationMemberRemovedEvent)event);
+                case MEMBER_REMOVED:
+                    send((MemberRemovedEvent)event);
                     break;
                 case ORGANIZATION_REMOVED:
                     send((OrganizationRemovedEvent)event);
@@ -122,18 +122,18 @@ public class OrganizationNotificationEmailSender implements EventSubscriber<Orga
         }
     }
 
-    private void send(OrganizationMemberAddedEvent event) throws Exception {
+    private void send(MemberAddedEvent event) throws Exception {
         final String teamName = organizationManager.getById(event.getOrganizationId()).getName();
         final String emailTo = userManager.getById(event.getAddedUserId()).getEmail();
-        final String referrerName = event.getReferrerName();
+        final String referrerName = event.getPerformerName();
         final String teamLink = apiEndpoint.replace("api", "dashboard/#/team/" + referrerName + '/' + teamName);
         final String processed = thymeleaf.process(new OrgMemberAddedTemplate(teamName, teamLink, referrerName));
         send(new EmailBean().withBody(processed), emailTo);
     }
 
-    private void send(OrganizationMemberRemovedEvent event) throws Exception {
+    private void send(MemberRemovedEvent event) throws Exception {
         final String teamName = organizationManager.getById(event.getOrganizationId()).getName();
-        final String managerName = event.getOrganizationManagerName();
+        final String managerName = event.getPerformerName();
         final String emailTo = userManager.getById(event.getRemovedUserId()).getEmail();
         final String processed = thymeleaf.process(new OrgMemberRemovedTemplate(teamName, managerName));
         send(new EmailBean().withBody(processed), emailTo);

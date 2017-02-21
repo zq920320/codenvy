@@ -15,6 +15,7 @@
 package com.codenvy.organization.api.permissions;
 
 import com.codenvy.api.permission.server.jpa.listener.RemovePermissionsOnLastUserRemovedEventSubscriber;
+import com.codenvy.organization.api.OrganizationManager;
 import com.codenvy.organization.spi.OrganizationDao;
 import com.codenvy.organization.spi.jpa.JpaMemberDao;
 
@@ -35,10 +36,10 @@ public class RemoveOrganizationOnLastUserRemovedEventSubscriber
         extends RemovePermissionsOnLastUserRemovedEventSubscriber<JpaMemberDao> {
 
     @Inject
-    private OrganizationDao organizationDao;
+    private OrganizationManager organizationManager;
 
     @Override
     public void remove(String instanceId) throws ServerException {
-        organizationDao.remove(instanceId);
+        organizationManager.remove(instanceId);
     }
 }

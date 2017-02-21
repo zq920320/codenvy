@@ -14,15 +14,15 @@
  */
 package com.codenvy.organization.api;
 
-import com.codenvy.organization.api.event.OrganizationMemberAddedEvent;
-import com.codenvy.organization.api.event.OrganizationMemberRemovedEvent;
+import com.codenvy.organization.api.event.MemberAddedEvent;
+import com.codenvy.organization.api.event.MemberRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRenamedEvent;
+import com.codenvy.organization.shared.dto.MemberRemovedEventDto;
 import com.codenvy.organization.shared.dto.OrganizationDistributedResourcesDto;
 import com.codenvy.organization.shared.dto.OrganizationDto;
 import com.codenvy.organization.shared.dto.OrganizationEventDto;
-import com.codenvy.organization.shared.dto.OrganizationMemberAddedEventDto;
-import com.codenvy.organization.shared.dto.OrganizationMemberRemovedEventDto;
+import com.codenvy.organization.shared.dto.MemberAddedEventDto;
 import com.codenvy.organization.shared.dto.OrganizationRemovedEventDto;
 import com.codenvy.organization.shared.dto.OrganizationRenamedEventDto;
 import com.codenvy.organization.shared.event.OrganizationEvent;
@@ -71,20 +71,20 @@ public final class DtoConverter {
                          .withOrganization(event.getOrganization());
     }
 
-    public static OrganizationMemberAddedEventDto asDto(OrganizationMemberAddedEvent event) {
-        return DtoFactory.newDto(OrganizationMemberAddedEventDto.class)
+    public static MemberAddedEventDto asDto(MemberAddedEvent event) {
+        return DtoFactory.newDto(MemberAddedEventDto.class)
                          .withType(event.getType())
                          .withOrganizationId(event.getOrganizationId())
-                         .withReferrer(event.getReferrerName())
+                         .withPerformerName(event.getPerformerName())
                          .withAddedUserId(event.getAddedUserId());
     }
 
-    public static OrganizationMemberRemovedEventDto asDto(OrganizationMemberRemovedEvent event) {
-        return DtoFactory.newDto(OrganizationMemberRemovedEventDto.class)
+    public static MemberRemovedEventDto asDto(MemberRemovedEvent event) {
+        return DtoFactory.newDto(MemberRemovedEventDto.class)
                          .withType(event.getType())
                          .withOrganizationId(event.getOrganizationId())
                          .withRemovedUserId(event.getRemovedUserId())
-                         .withOrganizationManagerName(event.getOrganizationManagerName());
+                         .withPerformerName(event.getPerformerName());
     }
 
     public static OrganizationEventDto asDto(OrganizationEvent event) {
@@ -93,10 +93,10 @@ public final class DtoConverter {
                 return asDto((OrganizationRenamedEvent)event);
             case ORGANIZATION_REMOVED:
                 return asDto((OrganizationRemovedEvent)event);
-            case ORGANIZATION_MEMBER_ADDED:
-                return asDto((OrganizationMemberAddedEvent)event);
-            case ORGANIZATION_MEMBER_REMOVED:
-                return asDto((OrganizationMemberRemovedEvent)event);
+            case MEMBER_ADDED:
+                return asDto((MemberAddedEvent)event);
+            case MEMBER_REMOVED:
+                return asDto((MemberRemovedEvent)event);
             default:
                 throw new IllegalArgumentException("Can't convert event to dto, event type '" + event.getType() + "' is unknown");
         }

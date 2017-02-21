@@ -27,13 +27,12 @@ import static com.codenvy.api.permission.shared.event.EventType.PERMISSIONS_REMO
  */
 public class PermissionsRemovedEvent implements PermissionsEvent {
 
+    private final String      performerName;
     private final Permissions permissions;
-    private final String      usernameWhoRemovePermissions;
 
-    public PermissionsRemovedEvent(Permissions permissions,
-                                   String usernameWhoRemovePermissions) {
+    public PermissionsRemovedEvent(String performerName, Permissions permissions) {
         this.permissions = permissions;
-        this.usernameWhoRemovePermissions = usernameWhoRemovePermissions;
+        this.performerName = performerName;
     }
 
     @Override
@@ -41,8 +40,8 @@ public class PermissionsRemovedEvent implements PermissionsEvent {
         return permissions;
     }
 
-    public String getUsernameWhoRemovePermissions() {
-        return usernameWhoRemovePermissions;
+    public String getPerformerName() {
+        return performerName;
     }
 
     @Override

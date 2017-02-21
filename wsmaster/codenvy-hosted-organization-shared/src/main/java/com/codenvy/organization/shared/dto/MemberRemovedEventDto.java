@@ -26,26 +26,26 @@ import org.eclipse.che.dto.shared.DTO;
  */
 @DTO
 @EventOrigin("organization")
-public interface OrganizationMemberRemovedEventDto extends OrganizationEventDto {
+public interface MemberRemovedEventDto extends OrganizationEventDto {
 
     @Override
-    OrganizationMemberRemovedEventDto withOrganizationId(String organizationId);
+    MemberRemovedEventDto withOrganizationId(String organizationId);
 
     @Override
-    OrganizationMemberRemovedEventDto withType(EventType eventType);
+    MemberRemovedEventDto withType(EventType eventType);
 
-    /** Returns the manager of the organization that removed the organization member */
-    String getOrganizationManagerName();
+    /** Returns the name of the user that performed organization member removal */
+    String getPerformerName();
 
-    void setOrganizationManagerName(String organizationManagerName);
+    void setPerformerName(String performerName);
 
-    OrganizationMemberRemovedEventDto withOrganizationManagerName(String organizationManagerName);
+    MemberRemovedEventDto withPerformerName(String performerName);
 
     /** Returns removed organization member */
     String getRemovedUserId();
 
     void setRemovedUserId(String removedUserId);
 
-    OrganizationMemberRemovedEventDto withRemovedUserId(String removedUserId);
+    MemberRemovedEventDto withRemovedUserId(String removedUserId);
 
 }

@@ -26,26 +26,26 @@ import org.eclipse.che.dto.shared.DTO;
  */
 @DTO
 @EventOrigin("organization")
-public interface OrganizationMemberAddedEventDto extends OrganizationEventDto {
+public interface MemberAddedEventDto extends OrganizationEventDto {
 
     @Override
-    OrganizationMemberAddedEventDto withOrganizationId(String organizationId);
+    MemberAddedEventDto withOrganizationId(String organizationId);
 
     @Override
-    OrganizationMemberAddedEventDto withType(EventType eventType);
+    MemberAddedEventDto withType(EventType eventType);
 
-    /** Returns username of organization member who invite */
-    String getReferrer();
+    /** Returns the name of the user that performed adding new organization member */
+    String getPerformerName();
 
-    void setReferrer(String referrer);
+    void setPerformerName(String performerName);
 
-    OrganizationMemberAddedEventDto withReferrer(String referrer);
+    MemberAddedEventDto withPerformerName(String performerName);
 
     /** Returns new organization member uid */
     String getAddedUserId();
 
     void setAddedUserId(String addedUserId);
 
-    OrganizationMemberAddedEventDto withAddedUserId(String addedUserId);
+    MemberAddedEventDto withAddedUserId(String addedUserId);
 
 }

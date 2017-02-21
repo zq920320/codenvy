@@ -29,16 +29,23 @@ import static com.codenvy.organization.shared.event.EventType.ORGANIZATION_RENAM
  */
 public class OrganizationRenamedEvent implements OrganizationEvent {
 
+    private final String       performerName;
     private final String       oldName;
     private final String       newName;
     private final Organization organization;
 
-    public OrganizationRenamedEvent(String oldName,
+    public OrganizationRenamedEvent(String performerName,
+                                    String oldName,
                                     String newName,
                                     Organization organization) {
+        this.performerName = performerName;
         this.oldName = oldName;
         this.newName = newName;
         this.organization = organization;
+    }
+
+    public String getPerformerName() {
+        return performerName;
     }
 
     public String getOldName() {
@@ -72,7 +79,8 @@ public class OrganizationRenamedEvent implements OrganizationEvent {
             return false;
         }
         final OrganizationRenamedEvent that = (OrganizationRenamedEvent)obj;
-        return Objects.equals(oldName, that.oldName)
+        return Objects.equals(performerName, that.performerName)
+               && Objects.equals(oldName, that.oldName)
                && Objects.equals(newName, that.newName)
                && Objects.equals(organization, that.organization);
     }
@@ -80,6 +88,7 @@ public class OrganizationRenamedEvent implements OrganizationEvent {
     @Override
     public int hashCode() {
         int hash = 7;
+        hash = 31 * hash + Objects.hashCode(performerName);
         hash = 31 * hash + Objects.hashCode(oldName);
         hash = 31 * hash + Objects.hashCode(newName);
         hash = 31 * hash + Objects.hashCode(organization);
@@ -91,6 +100,7 @@ public class OrganizationRenamedEvent implements OrganizationEvent {
         return "OrganizationRenamedEvent{" +
                "organizationId='" + getOrganizationId() + '\'' +
                ", eventType='" + getType() + '\'' +
+               ", performerName='" + performerName + '\'' +
                ", oldName='" + oldName + '\'' +
                ", newName='" + newName + '\'' +
                ", organization=" + organization +

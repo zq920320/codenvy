@@ -14,7 +14,6 @@
  */
 package com.codenvy.organization.api;
 
-import com.codenvy.organization.api.event.BeforeOrganizationRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRemovedEvent;
 import com.codenvy.organization.api.event.OrganizationRenamedEvent;
 import com.codenvy.organization.api.permissions.OrganizationDomain;
@@ -26,6 +25,7 @@ import com.codenvy.organization.spi.impl.MemberImpl;
 import com.codenvy.organization.spi.impl.OrganizationImpl;
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.collect.Sets;
+import com.google.inject.persist.Transactional;
 
 import org.eclipse.che.api.core.ConflictException;
 import org.eclipse.che.api.core.NotFoundException;
@@ -124,7 +124,8 @@ public class OrganizationManager {
         organization.setName(newName);
         organizationDao.update(organization);
         if (!newName.equals(oldName)) {
-            eventService.publish(new OrganizationRenamedEvent(oldName, newName, organization));
+            final String performerName = EnvironmentContext.getCurrent().getSubject().getUserName();
+            eventService.publish(new OrganizationRenamedEvent(performerName, oldName, newName, organization));
         }
         return organization;
     }
@@ -139,6 +140,7 @@ public class OrganizationManager {
      * @throws ServerException
      *         when any other error occurs during organization removing
      */
+    @Transactional
     public void remove(String organizationId) throws ServerException {
         requireNonNull(organizationId, "Required non-null organization id");
         try {
@@ -146,7 +148,8 @@ public class OrganizationManager {
             final List<Member> members = removeMembers(organizationId, PAGE_SIZE);
             removeSuborganizations(organizationId, PAGE_SIZE);
             organizationDao.remove(organizationId);
-            eventService.publish(new OrganizationRemovedEvent(organization, members));
+            final String performerName = EnvironmentContext.getCurrent().getSubject().getUserName();
+            eventService.publish(new OrganizationRemovedEvent(performerName, organization, members));
         } catch (NotFoundException ignore) {
         }
     }
