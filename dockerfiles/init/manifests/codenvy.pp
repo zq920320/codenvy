@@ -191,6 +191,9 @@ node default {
 # Microsoft
   $microsoft_client_id = getValue("CODENVY_MICROSOFT_CLIENT_ID","NULL")
   $microsoft_secret = getValue("CODENVY_MICROSOFT_SECRET","NULL")
+# RedHat
+  $redhat_client_id = getValue("CODENVY_REDHAT_CLIENT_ID","NULL")
+  $redhat_secret = getValue("CODENVY_REDHAT_SECRET","NULL")
 
 # Integration
   $integration_factory_owner_username = getValue("CODENVY_INTEGRATION_FACTORY_OWNER_USERNAME","")
